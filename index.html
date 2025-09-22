@@ -1,165 +1,47 @@
+<!-- resume.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ajay Sommi — Software/ML Engineer</title>
-  <meta name="description" content="Software/ML engineer focused on reliable data pipelines, clean interfaces, and cloud.">
-  <meta property="og:title" content="Ajay Sommi — Software/ML Engineer" />
-  <meta property="og:description" content="From Azure App Insights to polished product UIs. Projects, experience, and resume." />
-  <meta name="theme-color" content="#0B0F14" />
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" as="style" onload="this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap"></noscript>
-  <link rel="stylesheet" href="style.css" />
+  <title>Resume — Ajay Sommi</title>
+
+  <!-- Keep your main site CSS -->
+  <link rel="stylesheet" href="/style.css" />
+
+  <!-- Scope resume-specific tweaks so they don't leak site-wide -->
+  <style>
+    .resume-page { /* a containment wrapper */ }
+
+    /* All resume styles are prefixed with .resume-page */
+    .resume-page .frame { max-width: 1100px; margin: 40px auto; padding: 16px; }
+    .resume-page .embed { aspect-ratio: 8.5 / 11; width: 100%; border: 1px solid var(--stroke); border-radius: 16px; overflow: hidden; }
+    .resume-page .note { color: #aab4bd; margin: 12px 0; }
+
+    /* Optional: normalize just inside the wrapper to avoid global resets */
+    .resume-page * { all: revert; box-sizing: border-box; }
+    .resume-page :root { all: revert; }
+  </style>
 </head>
 <body>
-  <!-- cursor follower -->
-<!--   <div class="cursor"></div> -->
-
-  <!-- background field -->
-  <div class="bg">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="noise"></div>
-  </div>
-
-  <!-- NAV -->
   <header class="nav glass">
-    <div class="brand">
-      <div class="logo">A</div>
-      <span>Ajay Sommi</span>
-    </div>
+    <div class="brand"><div class="logo">A</div><span>Ajay Sommi</span></div>
     <nav>
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#experience">Experience</a>
-      <a href="resume.html">Resume</a>
-      <a href="#contact" class="cta">Contact</a>
+      <a href="/index.html#projects">Projects</a>
+      <a href="/index.html#experience">Experience</a>
+      <a aria-current="page">Resume</a>
     </nav>
   </header>
 
-  <main>
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-card glass parallax" data-depth="12">
-        <p class="eyebrow">Software / ML • Cloud</p>
-        <h1>Build simply. Ship reliably.</h1>
-        <p class="sub">I design reliable data pipelines and ship clean interfaces—grounded in Azure, Power BI, Salesforce, and product-focused engineering.</p>
-        <div class="actions">
-          <a href="#projects" class="btn solid">View projects</a>
-          <a href="resume.html" class="btn">Resume</a>
-        </div>
-      </div>
-    </section>
+  <main class="resume-page">
+    <div class="frame">
+      <div class="note">PDF viewer is sandboxed and styles are scoped to this page.</div>
 
-    <!-- PROJECTS -->
-    <section id="projects" class="section">
-      <h2>Selected Projects</h2>
-      <div class="grid">
-        <!-- JM Family / SE Toyota -->
-        <article class="card glass tilt">
-          <h3>Azure ETL & Data Quality</h3>
-          <p>Automated Blob ➝ SharePoint ETL; standardized metadata, enabled cross-team discoverability. Built App Insights → Power BI flow with KQL.</p>
-          <ul>
-            <li>Python • Azure SDK • Power Automate</li>
-            <li>Impact: faster access to logs and artifacts; consistent standards</li>
-          </ul>
-        </article>
-
-        <!-- MERN marketplace -->
-        <article class="card glass tilt">
-          <h3>GatorGoods — MERN Marketplace</h3>
-          <p>Full-stack marketplace with listings, verification flow, and a clean API. Focus on auth, secure endpoints, and image handling.</p>
-          <ul>
-            <li>MongoDB • Express • React • Node</li>
-            <li>JWT auth, input validation, API-first design</li>
-          </ul>
-        </article>
-
-        <!-- WAD filesystem -->
-        <article class="card glass tilt">
-          <h3>WAD Filesystem (C++)</h3>
-          <p>Implemented a WAD reader/writer + FUSE-style daemon, reconstructing directory trees and descriptors with careful on-disk updates.</p>
-          <ul>
-            <li>C++ • File systems • Tests</li>
-            <li>Focus: correctness, reconstruction logic, edge-cases</li>
-          </ul>
-        </article>
-
-        <!-- AVL Tree -->
-        <article class="card glass tilt">
-          <h3>AVL Tree — Search Helpers</h3>
-          <p>Balanced tree with custom search helpers and rigorous unit tests; memory-safe operations and rotation correctness.</p>
-          <ul>
-            <li>C++ • Data structures</li>
-            <li>Focus: invariants, rotations, asymptotic behavior</li>
-          </ul>
-        </article>
-
-        <!-- Salesforce + IRS API -->
-        <article class="card glass tilt">
-          <h3>Salesforce + IRS Integration</h3>
-          <p>Apex + LWC work integrating with IRS API for automated workflows and data integrity checks.</p>
-          <ul>
-            <li>Apex • LWC • API integration</li>
-            <li>Focus: reliability, error handling, DX</li>
-          </ul>
-        </article>
-
-        <!-- Power BI / KQL toolkit -->
-        <article class="card glass tilt">
-          <h3>Power BI + KQL Toolkit</h3>
-          <p>Dynamic queries and data-quality visuals; refactored iterators and separated KQL/SQL flows for stable refreshes.</p>
-          <ul>
-            <li>Power BI • KQL • SQL</li>
-            <li>Focus: Formula.Firewall fixes, refresh stability</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <!-- SKILLS -->
-    <section id="skills" class="section">
-      <h2>Skills & Tools</h2>
-      <div class="pills glass">
-        <span>Python</span><span>C++</span><span>JavaScript/TypeScript</span><span>React/Next.js</span>
-        <span>Azure</span><span>Power BI</span><span>KQL</span><span>Salesforce (Apex/LWC)</span>
-        <span>SQL</span><span>GitHub Actions</span>
-      </div>
-    </section>
-
-    <!-- EXPERIENCE -->
-    <section id="experience" class="section">
-      <h2>Experience</h2>
-      <div class="timeline">
-        <div class="row glass">
-          <div class="when">JM Family Enterprises</div>
-          <div class="what">
-            <strong>Software Engineering Intern</strong> — Azure ecosystem, App Insights, Power BI dashboards, Salesforce (Apex/LWC), automation.
-          </div>
-        </div>
-        <div class="row glass">
-          <div class="when">UF — Research</div>
-          <div class="what">
-            <strong>Machine Learning Research Assistant (GIS/Spatial)</strong> — data pipelines, model experimentation, Python tooling.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section id="contact" class="section">
-      <h2>Contact</h2>
-      <div class="contact glass">
-        <a href="mailto:hi@ajaysommi.com">hi@ajaysommi.com</a>
-        <a href="https://github.com/ajaysommi" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="https://www.linkedin.com/in/ajaysommi" target="_blank" rel="noreferrer">LinkedIn</a>
-        <a href="resume.html" class="btn solid">Open Resume</a>
-      </div>
-    </section>
+      <!-- Prefer native PDF render with no extra CSS/JS -->
+      <object data="/assets/resume.pdf" type="application/pdf" class="embed">
+        <p>Your browser can’t display the PDF. <a href="/assets/resume.pdf">Download the resume</a>.</p>
+      </object>
+    </div>
   </main>
-
-  <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
-  <script src="script.js" defer></script>
 </body>
 </html>
