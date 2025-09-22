@@ -212,18 +212,36 @@
   <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
   <script src="script.js" defer></script>
   <script>
-  const heroCard = document.querySelector('.hero-card');
+  const card = document.querySelector('.hero-card');
 
-  document.addEventListener('mousemove', e => {
-    const { innerWidth, innerHeight } = window;
-    const x = (e.clientX / innerWidth - 0.5) * 20;  // adjust 20 = tilt intensity
-    const y = (e.clientY / innerHeight - 0.5) * 20;
-    heroCard.style.transform = `translate(${x}px, ${y}px)`;
+  // how far it can move (px). lower = subtler
+  const INTENSITY = 16;
+
+  let targetX = 0, targetY = 0;   // where we want to go
+  let currX = 0, currY = 0;       // where we are now
+
+  // Track mouse, set the *target* only
+  window.addEventListener('mousemove', (e) => {
+    const w = window.innerWidth, h = window.innerHeight;
+    targetX = (e.clientX / w - 0.5) * INTENSITY;
+    targetY = (e.clientY / h - 0.5) * INTENSITY;
   });
 
-  document.addEventListener('mouseleave', () => {
-    heroCard.style.transform = 'translate(0,0)'; // reset when mouse leaves
+  // Smoothly ease towards the target every frame
+  function tick() {
+    const ease = 0.15; // 0.1 = slower, 0.25 = snappier
+    currX += (targetX - currX) * ease;
+    currY += (targetY - currY) * ease;
+    card.style.transform = `translate3d(${currX}px, ${currY}px, 0)`;
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // Optional: reset when leaving the window
+  window.addEventListener('mouseout', (e) => {
+    if (!e.relatedTarget) { targetX = 0; targetY = 0; }
   });
 </script>
+
 </body>
 </html>
