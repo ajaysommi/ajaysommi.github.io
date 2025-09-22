@@ -71,7 +71,20 @@ body{
   display:flex;align-items:center;gap:32px;padding:32px;border-radius:20px;
   background:var(--glass);box-shadow:var(--shadow);border:1px solid var(--stroke);
 }
-.hero-pic{width:160px;height:160px;border-radius:50%;object-fit:cover;border:3px solid var(--stroke)}
+.hero-pic {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  /* Current border is subtle */
+  border: 3px solid var(--stroke);
+
+  /* Try these tweaks: */
+  background: #000;          /* solid backdrop so transparency doesn’t fade image */
+  border: 3px solid #fff;    /* brighter border to separate from background */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6); /* drop shadow to lift image */
+}
 .hero-text h1{margin:0;font-size:32px;font-weight:700}
 .hero-text .sub{margin-top:12px;font-size:16px;line-height:1.5}
 .actions{margin-top:16px}
