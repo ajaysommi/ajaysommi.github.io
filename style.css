@@ -100,11 +100,17 @@ body{
 .tilt:hover{border-color:#ffffff44}
 .tilt h3, .tilt p, .tilt ul{transform:translateZ(14px)}
 
+/* Global offset for anchor jumps */
+html {
+  scroll-padding-top: calc(var(--nav-h) + 20px); /* header height + the 10px sticky gap */
+}
+
+/* Per-section safety so clicking #projects/#skills etc. keeps the H2 visible */
+section[id], .section[id] {
+  scroll-margin-top: calc(var(--nav-h) + 20px);
+}
+
 /* responsive */
 @media (max-width:680px){
   .row{grid-template-columns:1fr}
-}
-
-html {
-  scroll-padding-top: var(--nav-h); /* uses your --nav-h = 72px */
 }
