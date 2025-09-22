@@ -229,7 +229,7 @@
 
   // Smoothly ease towards the target every frame
   function tick() {
-    const ease = 0.15; // 0.1 = slower, 0.25 = snappier
+    const ease = 0.30; // 0.1 = slower, 0.25 = snappier
     currX += (targetX - currX) * ease;
     currY += (targetY - currY) * ease;
     card.style.transform = `translate3d(${currX}px, ${currY}px, 0)`;
