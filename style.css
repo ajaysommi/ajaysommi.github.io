@@ -138,3 +138,68 @@ body{
   background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4"/></filter><rect width="100%" height="100%" filter="url(%23n)" /></svg>');
   opacity:0.03;
 }
+
+/* === Logo Carousel === */
+.logo-marquee{
+  --speed: 35s;                  /* slower = bigger number; try 25s for faster */
+  position: relative;
+  overflow: hidden;              /* hide the looping seam */
+  padding: 28px 0;               /* taller band */
+  border-radius: 28px;
+  border: 1px solid var(--stroke);
+  background: var(--glass);
+  box-shadow: var(--shadow);
+}
+
+/* subtle fade at edges */
+.logo-marquee::before,
+.logo-marquee::after{
+  content:"";
+  position:absolute; top:0; bottom:0; width:90px; pointer-events:none;
+  z-index:2;
+  background:linear-gradient(to right, rgba(11,15,20,0.9), rgba(11,15,20,0));
+}
+.logo-marquee::after{
+  right:0; left:auto;
+  transform:scaleX(-1);          /* mirror the gradient for the right edge */
+}
+.logo-marquee::before{ left:0; }
+
+/* moving strip */
+.logo-track{
+  display:flex;
+  align-items:center;
+  gap: 56px;                     /* space between logos */
+  width: max-content;            /* shrink-wrap to content so translate works */
+  animation: marquee var(--speed) linear infinite;
+}
+
+/* pause on hover */
+.logo-marquee:hover .logo-track{ animation-play-state: paused; }
+
+/* logos themselves */
+.logo-marquee .logo{
+  height: 84px;                  /* adjust logo size here (try 100px for bigger) */
+  width: auto;
+  object-fit: contain;
+  display:block;
+  opacity:1 !important;
+  filter:none !important;
+  mix-blend-mode: normal !important;
+  transition: transform .18s ease;
+}
+.logo-marquee .logo:hover{ transform: translateY(-3px) scale(1.04); }
+
+/* marquee animation */
+@keyframes marquee{
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* because we duplicated the list once */
+}
+
+/* wider & taller companies section than the rest */
+#logos.section{ max-width: 1300px; padding-top: 110px; }
+
+/* Respect user reduced-motion preference */
+@media (prefers-reduced-motion: reduce){
+  .logo-track{ animation: none; }
+}
