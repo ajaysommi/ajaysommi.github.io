@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resume — Ajay Sommi</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .frame{max-width:1100px; margin:40px auto; padding:16px}
+    .embed{aspect-ratio:8.5/11; width:100%; border:1px solid var(--stroke); border-radius:16px; overflow:hidden}
+    .note{color:#aab4bd; margin:12px 0}
+  </style>
+</head>
+<body>
+  <header class="nav glass">
+    <div class="brand"><div class="logo">A</div><span>Ajay Sommi</span></div>
+    <nav><a href="index.html#projects">Projects</a><a href="index.html#experience">Experience</a><a href="index.html#contact" class="cta">Contact</a></nav>
+  </header>
+  <main class="frame">
+    <h1 style="font-size:1.4rem;margin:10px 0 16px">Resume</h1>
+    <div class="note">Tip: open in a new tab if the inline preview is slow.</div>
+    <div class="embed glass">
+      <!-- Replace resume.pdf with your actual file name -->
+      <iframe src="resume.pdf" title="Ajay Sommi — Resume" style="width:100%;height:100%;border:0;"></iframe>
+    </div>
+    <p class="note"><a class="btn solid" href="resume.pdf" download>Download PDF</a></p>
+  </main>
+  <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
+  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+</body>
+</html>
