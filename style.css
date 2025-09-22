@@ -34,9 +34,10 @@ body{
   align-items: center;
   justify-content: space-between;
 
-  padding: 0 28px;                  /* space inside the pill */
+  padding: 0 48px;                  /* space inside the pill */
+  min-width: 1000px;            /* force the pill to be wider */
   border-radius: 999px;             /* fully rounded corners */
-  background: rgba(11,15,20,0.35);  /* translucent glass */
+  background: rgba(11,15,20,0.25);  /* translucent glass */
   -webkit-backdrop-filter: saturate(140%) blur(12px);
   backdrop-filter: saturate(140%) blur(12px);
   border: 1px solid var(--stroke);
