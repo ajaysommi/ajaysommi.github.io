@@ -68,7 +68,7 @@ body{
 /* HERO */
 .hero{padding:calc(var(--nav-h) + 40px) 20px 30px;display:flex;justify-content:center}
 .hero-card{
-  display:flex;align-items:center;gap:32px;padding:32px;border-radius:20px;
+  display:flex;align-items:center;gap:48px;padding:32px;border-radius:20px;
   background:var(--glass);box-shadow:var(--shadow);border:1px solid var(--stroke);
   /* add smooth motion for cursor effect */
   transition: transform 0.2s ease;
