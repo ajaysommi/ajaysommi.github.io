@@ -67,7 +67,7 @@ body{
 
 /* HERO layout tweaks */
 .hero {
-  padding: calc(var(--nav-h) + 60px) 20px 20px;
+  padding: calc(var(--nav-h) + 60px) 20px 5px;
   display: flex;
   justify-content: center;
 }
