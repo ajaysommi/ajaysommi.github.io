@@ -81,12 +81,12 @@ body{
   background: var(--glass);
   box-shadow: var(--shadow);
   border: 1px solid var(--stroke);
-  max-width: 2900px;          /* keep the tile from getting too wide */
+  max-width: 1600px;          /* keep the tile from getting too wide */
   width: 100%;
 }
 
 /* text wraps at a readable line length */
-.hero-text { max-width: 58ch; }
+.hero-text { max-width: 100%; }
 
 .hero-text h1 {
   margin: 0;
