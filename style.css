@@ -31,8 +31,8 @@ body{
 
   height: var(--nav-h);
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
 
   /* >>> wider pill */
   width: clamp(1100px, 92vw, 1400px);  /* grow with viewport, cap at 1400px */
