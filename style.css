@@ -79,7 +79,7 @@ body{
 .footer{padding:40px 0 70px; text-align:center; color:#aab4bd}
 
 /* cursor follower */
-.cursor{position:fixed; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:9999; border:1px solid var(--stroke); background:#ffffff1a; backdrop-filter:blur(4px); transform:translate(-50%,-50%); transition:transform .06s linear}
+/* .cursor{position:fixed; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:9999; border:1px solid var(--stroke); background:#ffffff1a; backdrop-filter:blur(4px); transform:translate(-50%,-50%); transition:transform .06s linear} */
 
 /* tilt effect */
 .tilt{transform-style:preserve-3d}
