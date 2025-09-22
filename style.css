@@ -81,7 +81,7 @@ body{
   background: var(--glass);
   box-shadow: var(--shadow);
   border: 1px solid var(--stroke);
-  max-width: 960px;          /* keep the tile from getting too wide */
+  max-width: 1200px;          /* keep the tile from getting too wide */
   width: 100%;
 }
 
