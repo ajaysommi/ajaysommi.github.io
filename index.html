@@ -1,208 +1,135 @@
-<!DOCTYPE HTML>
-<!--
-	Hyperspace by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Hyperspace by HTML5 UP</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ajay Sommi — Software/ML Engineer</title>
+  <meta name="description" content="Ajay Sommi — software/ML engineer. Data → Decisions → Delight. Azure, Power BI, Salesforce, Next.js." />
+  <meta property="og:title" content="Ajay Sommi — Software/ML Engineer" />
+  <meta property="og:description" content="I build reliable data pipelines and clean interfaces — from Azure App Insights to polished product UIs." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0B0F14" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --ink:#0B0F14; --teal:#1DB9A8; --steel:#A9B3BD; --highlight:#F5A524;
+    }
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:radial-gradient(1200px 800px at 20% -10%, rgba(29,185,168,.15), transparent 60%),
+    radial-gradient(1000px 600px at 110% 10%, rgba(169,179,189,.18), transparent 60%),
+    linear-gradient(180deg,#0b0f14 0%, #0b0f14 60%, #0e1319 100%);
+      color:#e6edf3;
+    }
+    .glass{backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); box-shadow:0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);}
+    .grain{position:fixed; inset:0; pointer-events:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.05"/></svg>'); mix-blend-mode:soft-light;}
+    .code{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="grain"></div>
+  <header class="sticky top-0 z-40">
+    <div class="glass mx-auto max-w-6xl mt-4 rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-[var(--teal)]/20 border border-[var(--teal)]/40 flex items-center justify-center shadow-md"><span class="text-[var(--teal)] font-extrabold">A</span></div>
+        <span class="text-sm text-[var(--steel)]">Ajay Sommi</span>
+      </div>
+      <nav class="hidden sm:flex items-center gap-6 text-sm text-[var(--steel)]">
+        <a href="#projects" class="hover:text-white">Projects</a>
+        <a href="#experience" class="hover:text-white">Experience</a>
+        <a href="#notes" class="hover:text-white">Notes</a>
+        <a href="#contact" class="hover:text-white">Contact</a>
+      </nav>
+      <a href="#contact" class="text-sm px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40">Get in touch</a>
+    </div>
+  </header>
 
-		<!-- Sidebar -->
-			<section id="sidebar">
-				<div class="inner">
-					<nav>
-						<ul>
-							<li><a href="#intro">Welcome</a></li>
-							<li><a href="#one">Who we are</a></li>
-							<li><a href="#two">What we do</a></li>
-							<li><a href="#three">Get in touch</a></li>
-						</ul>
-					</nav>
-				</div>
-			</section>
+  <main class="mx-auto max-w-6xl px-4 sm:px-6">
+    <!-- Hero -->
+    <section class="mt-20">
+      <div class="glass rounded-3xl p-8 sm:p-12">
+        <p class="text-[var(--teal)] text-xs tracking-widest uppercase mb-3">Software / ML Engineer</p>
+        <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight">Build simply. Ship reliably.</h1>
+        <p class="mt-4 text-[var(--steel)] max-w-2xl">I ship reliable data pipelines and clean interfaces — from Azure App Insights to polished product UIs. Currently interning at JM Family Enterprises; previously worked with Southeast Toyota data and dashboards.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#projects" class="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15">View Projects</a>
+          <a href="#resume" class="px-4 py-2 rounded-xl border border-white/20 hover:border-white/40">Resume</a>
+        </div>
+      </div>
+    </section>
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+    <!-- Highlights -->
+    <section class="mt-12 grid sm:grid-cols-3 gap-4" aria-label="Highlights">
+      <div class="glass rounded-2xl p-5">
+        <div class="text-xs text-[var(--steel)]">Vehicles Analyzed</div>
+        <div class="text-3xl font-extrabold">51,000+</div>
+        <p class="text-sm text-[var(--steel)] mt-1">SQL on Amazon RDS for Toyota/Lexus tire-to-wheel accuracy.</p>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="text-xs text-[var(--steel)]">Projects Managed</div>
+        <div class="text-3xl font-extrabold">160+</div>
+        <p class="text-sm text-[var(--steel)] mt-1">Agile/Kanban for accessories with real-time visibility.</p>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <div class="text-xs text-[var(--steel)]">Pipelines Automated</div>
+        <div class="text-3xl font-extrabold">Blob ➜ SharePoint</div>
+        <p class="text-sm text-[var(--steel)] mt-1">Python + Azure SDK metadata standardization & uploads.</p>
+      </div>
+    </section>
 
-				<!-- Intro -->
-					<section id="intro" class="wrapper style1 fullscreen fade-up">
-						<div class="inner">
-							<h1>Ajay Sommmi</h1>
-							<p>Welcome to my personal website!</p>
-							<ul class="actions">
-								<li><a href="#one" class="button scrolly">Learn more</a></li>
-							</ul>
-						</div>
-					</section>
+    <!-- Projects -->
+    <section id="projects" class="mt-16">
+      <h2 class="text-xl font-bold mb-4">Selected Projects</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <article class="glass rounded-2xl p-6">
+          <h3 class="font-semibold">JM Family — Azure ETL & Data Quality</h3>
+          <p class="text-[var(--steel)] mt-2">Automated Azure Blob → SharePoint pipeline; standardized metadata; improved accessibility across 5 teams. App Insights + Power BI + KQL.</p>
+          <ul class="list-disc list-inside text-sm text-[var(--steel)] mt-3">
+            <li>Python, Azure SDK, Power Automate</li>
+            <li>VIsual dashboards; before/after quality checks</li>
+          </ul>
+        </article>
+        <article class="glass rounded-2xl p-6">
+          <h3 class="font-semibold">GatorGoods — MERN Marketplace</h3>
+          <p class="text-[var(--steel)] mt-2">Full-stack listings, verification flow; API-first mindset, clean UI.</p>
+          <ul class="list-disc list-inside text-sm text-[var(--steel)] mt-3">
+            <li>MongoDB, Express, React, Node</li>
+            <li>Focus: auth, secure APIs (JWT), image optimization</li>
+          </ul>
+        </article>
+      </div>
+    </section>
 
-				<!-- One -->
-					<section id="one" class="wrapper style2 spotlights">
-						<section>
-							<a href="#" class="image"><img src="images/pic01.jpg" alt="" data-position="center center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Sed ipsum dolor</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic02.jpg" alt="" data-position="top center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Feugiat consequat</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="images/pic03.jpg" alt="" data-position="25% 25%" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Ultricies aliquam</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-					</section>
+    <!-- Experience -->
+    <section id="experience" class="mt-16">
+      <h2 class="text-xl font-bold mb-4">Experience</h2>
+      <div class="glass rounded-2xl p-6">
+        <h3 class="font-semibold">JM Family Enterprises — Software Engineering Intern</h3>
+        <p class="text-[var(--steel)]">Azure ecosystem, Power BI, Salesforce (Apex/LWC), AI Foundry pipelines.</p>
+      </div>
+    </section>
 
-				<!-- Two -->
-					<section id="two" class="wrapper style3 fade-up">
-						<div class="inner">
-							<h2>What we do</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
-							<div class="features">
-								<section>
-									<span class="icon solid major fa-code"></span>
-									<h3>Lorem ipsum amet</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-lock"></span>
-									<h3>Aliquam sed nullam</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-cog"></span>
-									<h3>Sed erat ullam corper</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-desktop"></span>
-									<h3>Veroeros quis lorem</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon solid major fa-link"></span>
-									<h3>Urna quis bibendum</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon major fa-gem"></span>
-									<h3>Aliquam urna dapibus</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-							</div>
-							<ul class="actions">
-								<li><a href="generic.html" class="button">Learn more</a></li>
-							</ul>
-						</div>
-					</section>
+    <!-- Notes -->
+    <section id="notes" class="mt-16">
+      <h2 class="text-xl font-bold mb-4">Notes</h2>
+      <div class="glass rounded-2xl p-6 text-[var(--steel)]">
+        <p>Coming soon: quick posts on KQL tricks, Power BI automation, and ML fundamentals (logistic regression from scratch).</p>
+      </div>
+    </section>
 
-				<!-- Three -->
-					<section id="three" class="wrapper style1 fade-up">
-						<div class="inner">
-							<h2>Get in touch</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
-							<div class="split style1">
-								<section>
-									<form method="post" action="#">
-										<div class="fields">
-											<div class="field half">
-												<label for="name">Name</label>
-												<input type="text" name="name" id="name" />
-											</div>
-											<div class="field half">
-												<label for="email">Email</label>
-												<input type="text" name="email" id="email" />
-											</div>
-											<div class="field">
-												<label for="message">Message</label>
-												<textarea name="message" id="message" rows="5"></textarea>
-											</div>
-										</div>
-										<ul class="actions">
-											<li><a href="" class="button submit">Send Message</a></li>
-										</ul>
-									</form>
-								</section>
-								<section>
-									<ul class="contact">
-										<li>
-											<h3>Address</h3>
-											<span>12345 Somewhere Road #654<br />
-											Nashville, TN 00000-0000<br />
-											USA</span>
-										</li>
-										<li>
-											<h3>Email</h3>
-											<a href="#">user@untitled.tld</a>
-										</li>
-										<li>
-											<h3>Phone</h3>
-											<span>(000) 000-0000</span>
-										</li>
-										<li>
-											<h3>Social</h3>
-											<ul class="icons">
-												<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-												<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-												<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-												<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-												<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-											</ul>
-										</li>
-									</ul>
-								</section>
-							</div>
-						</div>
-					</section>
+    <!-- Contact -->
+    <section id="contact" class="mt-16 mb-20">
+      <h2 class="text-xl font-bold mb-4">Contact</h2>
+      <div class="glass rounded-2xl p-6 flex flex-wrap items-center gap-4 text-[var(--steel)]">
+        <a class="underline hover:text-white" href="mailto:hi@ajaysommi.com">hi@ajaysommi.com</a>
+        <a class="underline hover:text-white" href="https://github.com/ajaysommi" target="_blank" rel="noreferrer">GitHub</a>
+        <a class="underline hover:text-white" href="https://www.linkedin.com/in/ajaysommi" target="_blank" rel="noreferrer">LinkedIn</a>
+      </div>
+    </section>
+  </main>
 
-			</div>
-
-		<!-- Footer -->
-			<footer id="footer" class="wrapper style1-alt">
-				<div class="inner">
-					<ul class="menu">
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
-				</div>
-			</footer>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-
-	</body>
+  <footer class="text-center text-xs text-[var(--steel)] pb-10">© <span id="y"></span> Ajay Sommi</footer>
+  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+</body>
 </html>
