@@ -211,5 +211,19 @@
 
   <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
   <script src="script.js" defer></script>
+  <script>
+  const heroCard = document.querySelector('.hero-card');
+
+  document.addEventListener('mousemove', e => {
+    const { innerWidth, innerHeight } = window;
+    const x = (e.clientX / innerWidth - 0.5) * 20;  // adjust 20 = tilt intensity
+    const y = (e.clientY / innerHeight - 0.5) * 20;
+    heroCard.style.transform = `translate(${x}px, ${y}px)`;
+  });
+
+  document.addEventListener('mouseleave', () => {
+    heroCard.style.transform = 'translate(0,0)'; // reset when mouse leaves
+  });
+</script>
 </body>
 </html>
