@@ -40,7 +40,7 @@ body{
   /* <<< */
 
   border-radius: 999px;             /* fully rounded corners */
-  background: rgba(11,15,20,0.25);  /* translucent glass */
+  background: rgba(11,15,20,0.20);  /* translucent glass */
   -webkit-backdrop-filter: saturate(140%) blur(12px);
   backdrop-filter: saturate(140%) blur(12px);
   border: 1px solid var(--stroke);
@@ -70,6 +70,8 @@ body{
 .hero-card{
   display:flex;align-items:center;gap:32px;padding:32px;border-radius:20px;
   background:var(--glass);box-shadow:var(--shadow);border:1px solid var(--stroke);
+  /* add smooth motion for cursor effect */
+  transition: transform 0.2s ease;
 }
 .hero-pic {
   width: 160px;
