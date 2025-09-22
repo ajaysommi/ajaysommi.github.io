@@ -86,6 +86,14 @@ body{
 .tilt:hover{border-color:#ffffff44}
 .tilt h3, .tilt p, .tilt ul{transform:translateZ(14px)}
 
+/* style.css */
+.nav{
+  position: sticky;
+  top: 10px;
+  z-index: 9999;            /* << keep it above transformed content */
+}
+
+
 /* responsive */
 @media (max-width:680px){
   .row{grid-template-columns:1fr}
