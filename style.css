@@ -74,7 +74,7 @@ body{
   transition: transform 0.2s ease;
 
   /* ⬇️ new line to keep it narrower */
-  max-width: 900px;         /* adjust: try 800–1000px until it feels right */
+  max-width: 1100px;         /* adjust: try 800–1000px until it feels right */
   width: 100%;              /* makes it center nicely */
 }
 .hero-pic {
