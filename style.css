@@ -252,7 +252,7 @@ body{
 
 /* Cap JM Lexus logo size */
 .logo.jm-lexus {
-  max-width: 100px;   /* shrink horizontally */
+  max-width: 170px;   /* shrink horizontally */
   max-height: 60px;   /* shrink vertically */
   height: auto;       /* preserve aspect ratio */
   width: auto;        /* preserve aspect ratio */
