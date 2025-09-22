@@ -86,7 +86,7 @@ body{
 }
 
 /* text wraps at a readable line length */
-.hero-text { max-width: 100%; }
+.hero-text { max-width: 64ch; }
 
 .hero-text h1 {
   margin: 0;
