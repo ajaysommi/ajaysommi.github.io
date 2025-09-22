@@ -21,29 +21,36 @@ body{
 }
 
 /* NAV */
-/* NAV (fixed glass) */
-.nav{
-  position: fixed;          /* stay at top when scrolling */
-  top: 0; left: 0; right: 0;
-  z-index: 9999;            /* always above everything */
-  height: var(--nav-h);
-  display:flex; align-items:center; justify-content:space-between;
-  padding: 0 24px;
+/* NAV (floating glass pill) */
+.nav {
+  position: fixed;
+  top: 16px;                        /* distance from top of page */
+  left: 50%;                        /* center horizontally */
+  transform: translateX(-50%);      /* align center */
+  z-index: 9999;
 
-  /* glass effect */
-  background: rgba(11,15,20,0.35);              /* subtle at top */
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 28px;                  /* space inside the pill */
+  border-radius: 999px;             /* fully rounded corners */
+  background: rgba(11,15,20,0.35);  /* translucent glass */
   -webkit-backdrop-filter: saturate(140%) blur(12px);
   backdrop-filter: saturate(140%) blur(12px);
-  border-bottom: 1px solid var(--stroke);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
   transition: background .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 
 /* stronger glass when scrolled */
-.nav.scrolled{
+.nav.scrolled {
   background: rgba(11,15,20,0.55);
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
   border-bottom-color: rgba(255,255,255,.22);
+  box-shadow: 0 12px 40px rgba(0,0,0,.45);
 }
+
 
 .nav .brand{display:flex;align-items:center;font-weight:600;font-size:18px}
 .nav .logo{
