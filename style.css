@@ -72,6 +72,10 @@ body{
   background:var(--glass);box-shadow:var(--shadow);border:1px solid var(--stroke);
   /* add smooth motion for cursor effect */
   transition: transform 0.2s ease;
+
+  /* ⬇️ new line to keep it narrower */
+  max-width: 900px;         /* adjust: try 800–1000px until it feels right */
+  width: 100%;              /* makes it center nicely */
 }
 .hero-pic {
   width: 160px;
@@ -154,6 +158,22 @@ body{
 }
 .timeline .when{flex:0 0 200px;font-weight:600}
 .timeline .what{flex:1}
+
+/* Float effect for project & experience cards */
+.card,
+.timeline .row,
+.testimonials .card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover,
+.timeline .row:hover,
+.testimonials .card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+}
+
+
 
 /* RECS */
 .testimonials{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
