@@ -162,7 +162,7 @@ body{
 
 /* === Logo Carousel === */
 .logo-marquee{
-  --speed: 38s;                  /* slower = bigger number; try 25s for faster */
+  --speed: 48s;                  /* slower = bigger number; try 25s for faster */
   position: relative;
   overflow: hidden;              /* hide the looping seam */
   padding: 28px 0;               /* taller band */
@@ -223,4 +223,12 @@ body{
 /* Respect user reduced-motion preference */
 @media (prefers-reduced-motion: reduce){
   .logo-track{ animation: none; }
+}
+
+/* add this */
+.bg{
+  position: fixed;   /* it already behaves like a backdrop */
+  inset: 0;          /* top:0; right:0; bottom:0; left:0 */
+  overflow: hidden;  /* <-- prevents blobs from causing page overflow */
+  pointer-events: none;
 }
