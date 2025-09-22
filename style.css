@@ -21,16 +21,30 @@ body{
 }
 
 /* NAV */
+/* NAV (fixed glass) */
 .nav{
-  height:var(--nav-h);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 24px;
-  backdrop-filter:blur(12px);
-  background:var(--glass);
-  border-bottom:1px solid var(--stroke);
+  position: fixed;          /* stay at top when scrolling */
+  top: 0; left: 0; right: 0;
+  z-index: 9999;            /* always above everything */
+  height: var(--nav-h);
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 24px;
+
+  /* glass effect */
+  background: rgba(11,15,20,0.35);              /* subtle at top */
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--stroke);
+  transition: background .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
+
+/* stronger glass when scrolled */
+.nav.scrolled{
+  background: rgba(11,15,20,0.55);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  border-bottom-color: rgba(255,255,255,.22);
+}
+
 .nav .brand{display:flex;align-items:center;font-weight:600;font-size:18px}
 .nav .logo{
   width:32px;height:32px;border-radius:50%;
