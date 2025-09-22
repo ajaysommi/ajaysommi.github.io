@@ -2,6 +2,7 @@
   --ink:#0B0F14; --ink-2:#0e1319;
   --teal:#1DB9A8; --steel:#A9B3BD; --glass:#ffffff14; --stroke:#ffffff26;
   --highlight:#F5A524; --shadow:0 20px 60px rgba(0,0,0,.35);
+  --nav-h: 72px;                 /* approx nav height for safe hero spacing */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -30,8 +31,17 @@ body{
   border-radius:20px;
 }
 
-/* nav */
-.nav{position:sticky; top:10px; margin:10px auto; max-width:1100px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; gap:12px}
+/* NAV — always on top */
+.nav{
+  position: sticky;
+  top: 10px;
+  margin:10px auto;
+  max-width:1100px;
+  padding:10px 14px;
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  z-index: 9999;              /* sits above any transformed content */
+  isolation: isolate;         /* create its own stacking context */
+}
 .nav nav{display:flex; gap:18px; align-items:center}
 .nav a{color:#cdd6dd; text-decoration:none; font-size:.95rem}
 .nav a:hover{color:white}
@@ -39,8 +49,12 @@ body{
 .brand{display:flex; align-items:center; gap:10px}
 .logo{width:34px; height:34px; display:grid; place-items:center; border-radius:10px; color:var(--teal); border:1px solid color-mix(in oklab,var(--teal) 40%, white); background:color-mix(in oklab,var(--teal) 15%, transparent)}
 
-/* hero */
-.hero{display:grid; place-items:center; padding:80px 16px 40px}
+/* HERO */
+.hero{
+  display:grid; place-items:center;
+  padding: calc(var(--nav-h) + 8px) 16px 40px;  /* safe space under sticky nav */
+  position: relative; z-index: 1;               /* ensure under nav */
+}
 .hero-card{max-width:960px; padding:36px}
 .eyebrow{color:var(--teal); text-transform:uppercase; letter-spacing:.2em; font-size:.7rem; margin:0 0 10px}
 .hero-card h1{margin:0; font-weight:800; font-size:clamp(28px,5vw,56px)}
@@ -50,11 +64,11 @@ body{
 .btn:hover{color:white}
 .btn.solid{background:#ffffff12; border-color:#ffffff33}
 
-/* sections */
-.section{padding:28px 16px; max-width:1100px; margin:0 auto}
+/* SECTIONS */
+.section{padding:28px 16px; max-width:1100px; margin:0 auto; position: relative; z-index: 1;}
 .section h2{font-size:1.4rem; margin:0 0 14px}
-.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px}
-.card{padding:18px; transition:transform .15s ease, border-color .15s ease}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; position: relative; z-index: 1;}
+.card{padding:18px; transition:transform .15s ease, border-color .15s ease; position: relative; z-index: 1;}
 .card:hover{transform:translateY(-2px)}
 .card h3{margin:0 0 6px; font-size:1.04rem}
 .card p{margin:6px 0 8px; color:#b9c3cb}
@@ -65,34 +79,26 @@ body{
 .pills span{padding:8px 12px; border-radius:999px; border:1px solid var(--stroke); background:#ffffff10; font-size:.92rem}
 
 /* timeline */
-.timeline{display:grid; gap:12px}
+.timeline{display:grid; gap:12px; position: relative; z-index: 1;}
 .row{display:grid; grid-template-columns:160px 1fr; gap:14px; padding:16px}
 .when{color:#c9d1d9}
 .what{color:#b9c3cb}
 
 /* contact */
-.contact{display:flex; flex-wrap:wrap; gap:14px; padding:16px}
+.contact{display:flex; flex-wrap:wrap; gap:14px; padding:16px; position: relative; z-index: 1;}
 .contact a{color:#cdd6dd; text-decoration:none}
 .contact a:hover{color:white}
 
 /* footer */
 .footer{padding:40px 0 70px; text-align:center; color:#aab4bd}
 
-/* cursor follower */
-/* .cursor{position:fixed; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:9999; border:1px solid var(--stroke); background:#ffffff1a; backdrop-filter:blur(4px); transform:translate(-50%,-50%); transition:transform .06s linear} */
+/* cursor follower — removed */
+/* .cursor{ ... } */
 
 /* tilt effect */
 .tilt{transform-style:preserve-3d}
 .tilt:hover{border-color:#ffffff44}
 .tilt h3, .tilt p, .tilt ul{transform:translateZ(14px)}
-
-/* style.css */
-.nav{
-  position: sticky;
-  top: 10px;
-  z-index: 9999;            /* << keep it above transformed content */
-}
-
 
 /* responsive */
 @media (max-width:680px){
