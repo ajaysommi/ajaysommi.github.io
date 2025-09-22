@@ -324,3 +324,15 @@ body{
   color: #f0f4f8;
   font-family: "Georgia", "Times New Roman", serif; /* fancier serif look */
 }
+
+.blob.b4 {
+  position: absolute;
+  bottom: -100px;   /* push below viewport edge */
+  left: -100px;     /* push left off screen */
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0,123,255,0.6), transparent 70%);
+  filter: blur(120px);
+  z-index: 0;
+}
+
