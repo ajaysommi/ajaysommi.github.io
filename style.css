@@ -236,3 +236,12 @@ body{
   overflow: hidden;  /* <-- prevents blobs from causing page overflow */
   pointer-events: none;
 }
+
+/* Cap JM Lexus logo size */
+.logo.jm-lexus {
+  max-width: 140px;   /* shrink horizontally */
+  max-height: 60px;   /* shrink vertically */
+  height: auto;       /* preserve aspect ratio */
+  width: auto;        /* preserve aspect ratio */
+}
+
