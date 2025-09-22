@@ -66,7 +66,7 @@ body{
 .nav a.cta{padding:6px 14px;border-radius:8px;background:var(--teal);color:#fff}
 
 /* HERO */
-.hero{padding:calc(var(--nav-h) + 40px) 20px 60px;display:flex;justify-content:center}
+.hero{padding:calc(var(--nav-h) + 40px) 20px 30px;display:flex;justify-content:center}
 .hero-card{
   display:flex;align-items:center;gap:32px;padding:32px;border-radius:20px;
   background:var(--glass);box-shadow:var(--shadow);border:1px solid var(--stroke);
