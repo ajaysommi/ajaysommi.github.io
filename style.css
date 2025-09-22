@@ -35,7 +35,7 @@ body{
   align-items: center;
 
   /* >>> wider pill */
-  width: clamp(700px, 80vw, 900px);  /* grow with viewport, cap at 1400px */
+  width: clamp(700px, 80vw, 800px);  /* grow with viewport, cap at 1400px */
   padding: 0 56px;                     /* a bit more inner breathing room */
   /* <<< */
 
