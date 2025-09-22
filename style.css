@@ -162,7 +162,7 @@ body{
 
 /* === Logo Carousel === */
 .logo-marquee{
-  --speed: 38s;                  /* slower = bigger number; try 25s for faster */
+  --speed: 48s;                  /* slower = bigger number; try 25s for faster */
   position: relative;
   overflow: hidden;              /* hide the looping seam */
   padding: 28px 0;               /* taller band */
@@ -176,7 +176,7 @@ body{
 .logo-marquee::before,
 .logo-marquee::after{
   content:"";
-  position:absolute; top:0; bottom:0; width:90px; pointer-events:none;
+  position:absolute; top:0; bottom:0; width:60px; pointer-events:none;
   z-index:2;
   background:linear-gradient(to right, rgba(11,15,20,0.9), rgba(11,15,20,0));
 }
