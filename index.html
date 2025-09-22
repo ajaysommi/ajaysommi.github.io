@@ -4,132 +4,162 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ajay Sommi — Software/ML Engineer</title>
-  <meta name="description" content="Ajay Sommi — software/ML engineer. Data → Decisions → Delight. Azure, Power BI, Salesforce, Next.js." />
+  <meta name="description" content="Software/ML engineer focused on reliable data pipelines, clean interfaces, and cloud.">
   <meta property="og:title" content="Ajay Sommi — Software/ML Engineer" />
-  <meta property="og:description" content="I build reliable data pipelines and clean interfaces — from Azure App Insights to polished product UIs." />
-  <meta property="og:type" content="website" />
+  <meta property="og:description" content="From Azure App Insights to polished product UIs. Projects, experience, and resume." />
   <meta name="theme-color" content="#0B0F14" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root{
-      --ink:#0B0F14; --teal:#1DB9A8; --steel:#A9B3BD; --highlight:#F5A524;
-    }
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:radial-gradient(1200px 800px at 20% -10%, rgba(29,185,168,.15), transparent 60%),
-    radial-gradient(1000px 600px at 110% 10%, rgba(169,179,189,.18), transparent 60%),
-    linear-gradient(180deg,#0b0f14 0%, #0b0f14 60%, #0e1319 100%);
-      color:#e6edf3;
-    }
-    .glass{backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); box-shadow:0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);}
-    .grain{position:fixed; inset:0; pointer-events:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.05"/></svg>'); mix-blend-mode:soft-light;}
-    .code{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
-  </style>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap"></noscript>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="min-h-screen">
-  <div class="grain"></div>
-  <header class="sticky top-0 z-40">
-    <div class="glass mx-auto max-w-6xl mt-4 rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-xl bg-[var(--teal)]/20 border border-[var(--teal)]/40 flex items-center justify-center shadow-md"><span class="text-[var(--teal)] font-extrabold">A</span></div>
-        <span class="text-sm text-[var(--steel)]">Ajay Sommi</span>
-      </div>
-      <nav class="hidden sm:flex items-center gap-6 text-sm text-[var(--steel)]">
-        <a href="#projects" class="hover:text-white">Projects</a>
-        <a href="#experience" class="hover:text-white">Experience</a>
-        <a href="#notes" class="hover:text-white">Notes</a>
-        <a href="#contact" class="hover:text-white">Contact</a>
-      </nav>
-      <a href="#contact" class="text-sm px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40">Get in touch</a>
+<body>
+  <!-- cursor follower -->
+  <div class="cursor"></div>
+
+  <!-- background field -->
+  <div class="bg">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="noise"></div>
+  </div>
+
+  <!-- NAV -->
+  <header class="nav glass">
+    <div class="brand">
+      <div class="logo">A</div>
+      <span>Ajay Sommi</span>
     </div>
+    <nav>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="resume.html">Resume</a>
+      <a href="#contact" class="cta">Contact</a>
+    </nav>
   </header>
 
-  <main class="mx-auto max-w-6xl px-4 sm:px-6">
-    <!-- Hero -->
-    <section class="mt-20">
-      <div class="glass rounded-3xl p-8 sm:p-12">
-        <p class="text-[var(--teal)] text-xs tracking-widest uppercase mb-3">Software / ML Engineer</p>
-        <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight">Build simply. Ship reliably.</h1>
-        <p class="mt-4 text-[var(--steel)] max-w-2xl">I ship reliable data pipelines and clean interfaces — from Azure App Insights to polished product UIs. Currently interning at JM Family Enterprises; previously worked with Southeast Toyota data and dashboards.</p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="#projects" class="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15">View Projects</a>
-          <a href="#resume" class="px-4 py-2 rounded-xl border border-white/20 hover:border-white/40">Resume</a>
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-card glass parallax" data-depth="12">
+        <p class="eyebrow">Software / ML • Cloud</p>
+        <h1>Build simply. Ship reliably.</h1>
+        <p class="sub">I design reliable data pipelines and ship clean interfaces—grounded in Azure, Power BI, Salesforce, and product-focused engineering.</p>
+        <div class="actions">
+          <a href="#projects" class="btn solid">View projects</a>
+          <a href="resume.html" class="btn">Resume</a>
         </div>
       </div>
     </section>
 
-    <!-- Highlights -->
-    <section class="mt-12 grid sm:grid-cols-3 gap-4" aria-label="Highlights">
-      <div class="glass rounded-2xl p-5">
-        <div class="text-xs text-[var(--steel)]">Vehicles Analyzed</div>
-        <div class="text-3xl font-extrabold">51,000+</div>
-        <p class="text-sm text-[var(--steel)] mt-1">SQL on Amazon RDS for Toyota/Lexus tire-to-wheel accuracy.</p>
-      </div>
-      <div class="glass rounded-2xl p-5">
-        <div class="text-xs text-[var(--steel)]">Projects Managed</div>
-        <div class="text-3xl font-extrabold">160+</div>
-        <p class="text-sm text-[var(--steel)] mt-1">Agile/Kanban for accessories with real-time visibility.</p>
-      </div>
-      <div class="glass rounded-2xl p-5">
-        <div class="text-xs text-[var(--steel)]">Pipelines Automated</div>
-        <div class="text-3xl font-extrabold">Blob ➜ SharePoint</div>
-        <p class="text-sm text-[var(--steel)] mt-1">Python + Azure SDK metadata standardization & uploads.</p>
-      </div>
-    </section>
-
-    <!-- Projects -->
-    <section id="projects" class="mt-16">
-      <h2 class="text-xl font-bold mb-4">Selected Projects</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        <article class="glass rounded-2xl p-6">
-          <h3 class="font-semibold">JM Family — Azure ETL & Data Quality</h3>
-          <p class="text-[var(--steel)] mt-2">Automated Azure Blob → SharePoint pipeline; standardized metadata; improved accessibility across 5 teams. App Insights + Power BI + KQL.</p>
-          <ul class="list-disc list-inside text-sm text-[var(--steel)] mt-3">
-            <li>Python, Azure SDK, Power Automate</li>
-            <li>VIsual dashboards; before/after quality checks</li>
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <h2>Selected Projects</h2>
+      <div class="grid">
+        <!-- JM Family / SE Toyota -->
+        <article class="card glass tilt">
+          <h3>Azure ETL & Data Quality</h3>
+          <p>Automated Blob ➝ SharePoint ETL; standardized metadata, enabled cross-team discoverability. Built App Insights → Power BI flow with KQL.</p>
+          <ul>
+            <li>Python • Azure SDK • Power Automate</li>
+            <li>Impact: faster access to logs and artifacts; consistent standards</li>
           </ul>
         </article>
-        <article class="glass rounded-2xl p-6">
-          <h3 class="font-semibold">GatorGoods — MERN Marketplace</h3>
-          <p class="text-[var(--steel)] mt-2">Full-stack listings, verification flow; API-first mindset, clean UI.</p>
-          <ul class="list-disc list-inside text-sm text-[var(--steel)] mt-3">
-            <li>MongoDB, Express, React, Node</li>
-            <li>Focus: auth, secure APIs (JWT), image optimization</li>
+
+        <!-- MERN marketplace -->
+        <article class="card glass tilt">
+          <h3>GatorGoods — MERN Marketplace</h3>
+          <p>Full-stack marketplace with listings, verification flow, and a clean API. Focus on auth, secure endpoints, and image handling.</p>
+          <ul>
+            <li>MongoDB • Express • React • Node</li>
+            <li>JWT auth, input validation, API-first design</li>
+          </ul>
+        </article>
+
+        <!-- WAD filesystem -->
+        <article class="card glass tilt">
+          <h3>WAD Filesystem (C++)</h3>
+          <p>Implemented a WAD reader/writer + FUSE-style daemon, reconstructing directory trees and descriptors with careful on-disk updates.</p>
+          <ul>
+            <li>C++ • File systems • Tests</li>
+            <li>Focus: correctness, reconstruction logic, edge-cases</li>
+          </ul>
+        </article>
+
+        <!-- AVL Tree -->
+        <article class="card glass tilt">
+          <h3>AVL Tree — Search Helpers</h3>
+          <p>Balanced tree with custom search helpers and rigorous unit tests; memory-safe operations and rotation correctness.</p>
+          <ul>
+            <li>C++ • Data structures</li>
+            <li>Focus: invariants, rotations, asymptotic behavior</li>
+          </ul>
+        </article>
+
+        <!-- Salesforce + IRS API -->
+        <article class="card glass tilt">
+          <h3>Salesforce + IRS Integration</h3>
+          <p>Apex + LWC work integrating with IRS API for automated workflows and data integrity checks.</p>
+          <ul>
+            <li>Apex • LWC • API integration</li>
+            <li>Focus: reliability, error handling, DX</li>
+          </ul>
+        </article>
+
+        <!-- Power BI / KQL toolkit -->
+        <article class="card glass tilt">
+          <h3>Power BI + KQL Toolkit</h3>
+          <p>Dynamic queries and data-quality visuals; refactored iterators and separated KQL/SQL flows for stable refreshes.</p>
+          <ul>
+            <li>Power BI • KQL • SQL</li>
+            <li>Focus: Formula.Firewall fixes, refresh stability</li>
           </ul>
         </article>
       </div>
     </section>
 
-    <!-- Experience -->
-    <section id="experience" class="mt-16">
-      <h2 class="text-xl font-bold mb-4">Experience</h2>
-      <div class="glass rounded-2xl p-6">
-        <h3 class="font-semibold">JM Family Enterprises — Software Engineering Intern</h3>
-        <p class="text-[var(--steel)]">Azure ecosystem, Power BI, Salesforce (Apex/LWC), AI Foundry pipelines.</p>
+    <!-- SKILLS -->
+    <section id="skills" class="section">
+      <h2>Skills & Tools</h2>
+      <div class="pills glass">
+        <span>Python</span><span>C++</span><span>JavaScript/TypeScript</span><span>React/Next.js</span>
+        <span>Azure</span><span>Power BI</span><span>KQL</span><span>Salesforce (Apex/LWC)</span>
+        <span>SQL</span><span>GitHub Actions</span>
       </div>
     </section>
 
-    <!-- Notes -->
-    <section id="notes" class="mt-16">
-      <h2 class="text-xl font-bold mb-4">Notes</h2>
-      <div class="glass rounded-2xl p-6 text-[var(--steel)]">
-        <p>Coming soon: quick posts on KQL tricks, Power BI automation, and ML fundamentals (logistic regression from scratch).</p>
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section">
+      <h2>Experience</h2>
+      <div class="timeline">
+        <div class="row glass">
+          <div class="when">JM Family Enterprises</div>
+          <div class="what">
+            <strong>Software Engineering Intern</strong> — Azure ecosystem, App Insights, Power BI dashboards, Salesforce (Apex/LWC), automation.
+          </div>
+        </div>
+        <div class="row glass">
+          <div class="when">UF — Research</div>
+          <div class="what">
+            <strong>Machine Learning Research Assistant (GIS/Spatial)</strong> — data pipelines, model experimentation, Python tooling.
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="mt-16 mb-20">
-      <h2 class="text-xl font-bold mb-4">Contact</h2>
-      <div class="glass rounded-2xl p-6 flex flex-wrap items-center gap-4 text-[var(--steel)]">
-        <a class="underline hover:text-white" href="mailto:hi@ajaysommi.com">hi@ajaysommi.com</a>
-        <a class="underline hover:text-white" href="https://github.com/ajaysommi" target="_blank" rel="noreferrer">GitHub</a>
-        <a class="underline hover:text-white" href="https://www.linkedin.com/in/ajaysommi" target="_blank" rel="noreferrer">LinkedIn</a>
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <h2>Contact</h2>
+      <div class="contact glass">
+        <a href="mailto:hi@ajaysommi.com">hi@ajaysommi.com</a>
+        <a href="https://github.com/ajaysommi" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://www.linkedin.com/in/ajaysommi" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="resume.html" class="btn solid">Open Resume</a>
       </div>
     </section>
   </main>
 
-  <footer class="text-center text-xs text-[var(--steel)] pb-10">© <span id="y"></span> Ajay Sommi</footer>
-  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+  <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
+  <script src="script.js" defer></script>
 </body>
 </html>
