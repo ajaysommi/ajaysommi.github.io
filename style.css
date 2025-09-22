@@ -224,3 +224,20 @@ body{
 @media (prefers-reduced-motion: reduce){
   .logo-track{ animation: none; }
 }
+
+/* kill any sideways scrolling caused by wide tracks/blur */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* make sure the carousel never extends the page width */
+.logo-marquee {
+  max-width: 100%;
+  margin-inline: auto;
+  overflow: hidden;            /* already there, keep it */
+}
+
+/* (optional) background blobs can also push layout width on some browsers */
+.bg { overflow: hidden; }       /* prevents blur from creating horizontal scroll */
+
