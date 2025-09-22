@@ -297,3 +297,30 @@ body{
   height: auto;       /* preserve aspect ratio */
   width: auto;        /* preserve aspect ratio */
 }
+
+/* QUOTE BLOCKS */
+.quote {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  padding: 60px 20px;
+  margin: 60px auto;
+  max-width: 1000px;
+
+  border-radius: 20px;
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
+}
+
+.quote blockquote {
+  margin: 0;
+  font-size: 28px;            /* bigger text */
+  font-style: italic;         /* italics */
+  font-weight: 600;           /* bolder */
+  line-height: 1.4;
+  color: #f0f4f8;
+  font-family: "Georgia", "Times New Roman", serif; /* fancier serif look */
+}
