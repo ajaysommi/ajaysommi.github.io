@@ -358,5 +358,34 @@
   });
 </script>
 
+  <script>
+  // 1) Stop the browser from restoring scroll on refresh/back
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+
+  // 2) If there’s a hash in the URL (e.g. #projects), clear it and go to top
+  window.addEventListener('load', () => {
+    if (location.hash) {
+      window.scrollTo(0, 0);
+      // remove the hash without reloading
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  });
+
+  // 3) Make header links scroll smoothly WITHOUT putting a hash in the URL
+  document.querySelectorAll('header.nav a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // keep URL clean so refresh doesn't jump
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    });
+  });
+</script>
+
+
 </body>
 </html>
