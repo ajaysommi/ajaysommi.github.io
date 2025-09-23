@@ -277,6 +277,11 @@ body{
   font-size: 0.9rem;font-weight: 500;color: #aab4bd;margin: 4px 0 12px;display: flex;align-items: center;
 }
 
+html {
+  scroll-padding-top: 100px; /* adjust to match your navbar height */
+}
+
+
 /* -------------------------
    MOBILE FRIENDLY ADJUSTMENTS
    ------------------------- */
