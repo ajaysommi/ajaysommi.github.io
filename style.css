@@ -242,7 +242,7 @@ body{
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-#logos.section{ max-width: 1300px; padding-top: 110px; }
+#logos.section{ max-width: 1300px; padding-top: 40px; }
 @media (prefers-reduced-motion: reduce){ .logo-track{ animation: none; } }
 
 .bg{
