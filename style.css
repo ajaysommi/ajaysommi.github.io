@@ -116,7 +116,7 @@ body{
 
 /* ===== COMPANIES / LOGO STRIP ===== */
 #logos.section{
-  padding:60px 20px;
+  padding:20px 20px;
   max-width:1300px;
 }
 
@@ -292,7 +292,7 @@ body{
   .nav{
     width: 90%;
     padding: 0 20px;
-    height: 60px;
+    height: 72px;
   }
   .nav .brand{display:none;} /* hide logo text for space */
   .nav a{margin-left:12px;font-size:14px;}
