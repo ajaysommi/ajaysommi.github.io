@@ -8,6 +8,8 @@
   --highlight:#F5A524; 
   --shadow:0 20px 60px rgba(0,0,0,.35);
   --nav-h: 72px;
+
+  --accent:#FB923C; /* bright modern orange */
 }
 
 *{box-sizing:border-box}
@@ -106,7 +108,7 @@ body{
 .hero-text .sub{margin-top:12px;font-size:16px;line-height:1.5}
 .actions{margin-top:16px}
 .btn{display:inline-block;padding:10px 20px;margin-right:12px;border:1px solid var(--stroke);border-radius:10px;text-decoration:none;color:#e6edf3}
-.btn.solid{background:var(--teal);border:none;color:#fff}
+.btn.solid{background:var(--accent);border:none;color:#fff}
 
 /* SECTION */
 .section{padding:40px 20px;max-width:1100px;margin:0 auto}
