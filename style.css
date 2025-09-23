@@ -251,7 +251,7 @@ body{
 
 /* Cap logos */
 .logo.jm-lexus { max-width: 280px; max-height: 180px; height: auto; width: auto; }
-.logo.toyota   { max-width: 260px; max-height: 160px; height: auto; width: auto; }
+.logo.toyota   { max-width: 240px; max-height: 140px; height: auto; width: auto; }
 
 /* QUOTE BLOCKS */
 .quote {
