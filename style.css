@@ -9,7 +9,7 @@
   --shadow:0 20px 60px rgba(0,0,0,.35);
   --nav-h: 72px;
 
-  --accent:#FB923C; /* bright modern orange */
+  --accent:#EA7A1F; /* bright modern orange */
 }
 
 *{box-sizing:border-box}
@@ -62,7 +62,7 @@ body{
   margin-right:8px;font-weight:700;
 }
 .nav a{color:#e6edf3;text-decoration:none;margin-left:16px;font-weight:500}
-.nav a.cta{padding:6px 14px;border-radius:8px;background:var(--teal);color:#fff}
+.nav a.cta{padding:6px 14px;border-radius:16px;background:var(--teal);color:#fff}
 
 /* HERO layout tweaks */
 .hero {
