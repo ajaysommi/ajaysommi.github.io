@@ -107,7 +107,7 @@ body{
 .hero-text h1{margin:0;font-size:32px;font-weight:700}
 .hero-text .sub{margin-top:12px;font-size:16px;line-height:1.5}
 .actions{margin-top:16px}
-.btn{display:inline-block;padding:10px 20px;margin-right:12px;border:1px solid var(--stroke);border-radius:10px;text-decoration:none;color:#e6edf3}
+.btn{display:inline-block;padding:10px 20px;margin-right:12px;border:1px solid var(--stroke);border-radius:16px;text-decoration:none;color:#e6edf3}
 .btn.solid{background:var(--accent);border:none;color:#fff}
 
 /* SECTION */
@@ -297,7 +297,7 @@ html {
   .nav{
     width: 90%;
     padding: 0 20px;
-    height: auto;
+    height: 72px;
   }
   .nav .brand{display:none;} /* hide logo text for space */
   .nav a{margin-left:12px;font-size:14px;}
