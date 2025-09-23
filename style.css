@@ -297,7 +297,7 @@ html {
   .nav{
     width: 90%;
     padding: 0 20px;
-    height: 72px;
+    height: auto;
   }
   .nav .brand{display:none;} /* hide logo text for space */
   .nav a{margin-left:12px;font-size:14px;}
