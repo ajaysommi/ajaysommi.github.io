@@ -300,8 +300,8 @@ body{
 
 /* Cap JM Lexus logo size */
 .logo.toyota {
-  max-width: 280px;   /* shrink horizontally */
-  max-height: 180px;   /* shrink vertically */
+  max-width: 260px;   /* shrink horizontally */
+  max-height: 160px;   /* shrink vertically */
   height: auto;       /* preserve aspect ratio */
   width: auto;        /* preserve aspect ratio */
 }
