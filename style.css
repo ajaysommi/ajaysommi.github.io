@@ -183,7 +183,7 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
   color:#052B26; font-weight:700; border-color: transparent;
 }
 
-/* ---------- LOGO MARQUEE (FIXED) ---------- */
+/* ---------- LOGO MARQUEE (FIXED, NO HOVER TEXT) ---------- */
 .logo-marquee{
   position:relative;
   padding: 18px 20px;
@@ -198,20 +198,24 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
     #000 88%,
     rgba(0,0,0,0) calc(100% - 18px) 100%);
   min-height: clamp(110px, 12vw, 140px);
+  display:flex;                 /* center contents vertically inside the bar */
+  align-items:center;
 }
 
 .logo-track{
   display:flex; align-items:center;
   gap: clamp(36px, 5vw, 72px);
   min-width:max-content;
-  animation: marquee 28s linear infinite;
+  animation: marquee 42s linear infinite;
+  align-items:center;           /* center each logo on its line */
+  margin-top: 2px;              /* ↓ adjust to taste (0–4px). Positive = move row down */
 }
 
 #logos .logo-marquee a{
   position:relative;
   display:flex; align-items:center; justify-content:center;
   flex:0 0 auto;
-  line-height:0;                      /* fixes “slightly higher” logos */
+  line-height:0;                /* kill stray baseline space */
 }
 
 .logo{
@@ -231,61 +235,11 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
 #logos .logo-marquee .logo.jm-lexus{
   height:auto !important;
   width:auto !important;
-  max-height: 92px;        /* slightly bigger */
-  max-width: 320px;        /* lets it breathe without stretching */
-  object-fit:contain;
-  flex:0 0 auto;
-}
-
-/* Hover caption for first set */
-#logos .logo-marquee a[aria-label]::after{
-  content: attr(aria-label);
-  position:absolute; bottom:-26px; left:50%;
-  transform: translateX(-50%) translateY(6px);
-  padding:4px 8px;
-  border-radius:999px;
-  font-size:12px; font-weight:700;
-  color:#0e0e0e;
-  background: linear-gradient(135deg, #F8FAFF, #DDE9FF);
-  border:1px solid #ffffff55;
-  box-shadow: 0 8px 22px rgba(0,0,0,.25);
-  opacity:0;
-  pointer-events:none;
-  transition: opacity .2s ease, transform .2s ease;
-  white-space:nowrap;
-}
-#logos .logo-marquee a[aria-label]:hover::after{
-  opacity:.95; transform: translateX(-50%) translateY(0);
-}
-
-/* --- Fix vertical alignment (center + tiny downward nudge) --- */
-.logo-marquee{
-  display:flex;                 /* center contents vertically inside the bar */
-  align-items:center;
-}
-
-.logo-track{
-  align-items:center;           /* center each logo on its line */
-  margin-top: 2px;              /* ↓ adjust to taste (0–4px). Positive = move row down */
-}
-
-#logos .logo-marquee a{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  line-height:0;                /* kill stray baseline space */
-}
-
-/* --- JM Lexus: a bit larger, aspect locked --- */
-#logos .logo-marquee .logo.jm-lexus{
-  height:auto !important;
-  width:auto !important;
   max-height: 96px;             /* bump size; tweak 88–100px as you like */
   max-width: 340px;
   object-fit:contain;
   flex:0 0 auto;
 }
-
 
 
 /* ---------- GRID CARDS (PROJECTS) ---------- */
@@ -318,18 +272,30 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
   text-shadow: 0 2px 24px #0009;
 }
 
-/* ---------- SKILLS: PILLS ---------- */
+/* ---------- SKILLS: PILLS (SPACED OUT) ---------- */
 .pills{
-  display:flex; flex-wrap:wrap; gap:8px; padding:10px; border-radius:18px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;                    /* increased spacing between pills */
+  padding:14px;                /* more padding around the group */
+  border-radius:18px;
+  margin-bottom: 24px;         /* adds extra space between categories */
 }
+
 .pills span{
-  padding:8px 12px; border-radius:999px;
+  padding:10px 16px;           /* slightly bigger pill size */
+  border-radius:999px;
   background: linear-gradient(180deg, #ffffff18, #ffffff0e);
   border:1px solid #ffffff2a;
-  color:#EAF6FF; font-size:.92rem;
+  color:#EAF6FF;
+  font-size:.95rem;
   transition: transform .18s ease, background .18s ease;
 }
-.pills span:hover{ transform: translateY(-2px); background:#ffffff24; }
+
+.pills span:hover{
+  transform: translateY(-2px);
+  background:#ffffff24;
+}
 
 /* ---------- EXPERIENCE: TIMELINE ---------- */
 .timeline{ position:relative; margin-top: 10px; }
@@ -408,41 +374,118 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
   100% { transform: rotate(360deg) scale(1.02); }
 }
 
-/* ==== Crease/Banding Smoother (drop in after your CSS) ==== */
-
-/* 1) Promote key layers so the GPU composites them cleanly */
-.bg,
-.blob,
-.noise,
-.glass,
-header.nav,
-.hero-card,
-.section,
-.logo-marquee{
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform, opacity, filter;
+/* ---------- BUTTONS: GLASSY GLOW ---------- */
+.btn,
+.contact a{
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #ffffff33;
+  background: linear-gradient(180deg, #ffffff22 0%, #ffffff10 100%);
+  color:#EAF6FF;
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.35),         /* depth */
+    0 0 0 1px #ffffff1a inset,           /* inner ring */
+    0 1px 0 0 #ffffff3a inset;           /* specular edge */
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease, filter .2s ease;
 }
 
-/* 2) Isolate each glass panel’s blending so seams don’t appear between siblings */
-.glass{
-  isolation: isolate;                 /* new stacking context */
-  background-clip: padding-box;       /* avoid border + blur edge artifacts */
+/* soft top highlight */
+.btn::before,
+.contact a::before{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, #ffffff80 0%, #ffffff10 45%, transparent 60%);
+  mix-blend-mode: screen;
+  opacity:.45; pointer-events:none;
 }
 
-/* 3) Moving hero card: keep its blur self-contained to prevent streaks on scroll */
-.hero-card{
-  contain: paint;                      /* isolate painting; reduces “crease” lines */
-  backface-visibility: hidden;
+/* gentle center glow that intensifies on hover */
+.btn::after,
+.contact a::after{
+  content:"";
+  position:absolute; left:50%; top:50%;
+  width:160%; height:160%;
+  transform: translate(-50%,-50%);
+  background: radial-gradient(50% 50% at 50% 50%, #ffffff55 0%, transparent 60%);
+  opacity:.0; transition: opacity .25s ease;
+  pointer-events:none;
 }
 
-/* 4) Soften gradient banding with a subtler, blending noise overlay */
-.noise{
-  opacity: .06;                        /* a hair stronger to break bands */
-  mix-blend-mode: soft-light;          /* dither without visible grain */
-  pointer-events: none;
+.btn:hover,
+.contact a:hover{
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, #ffffff2a 0%, #ffffff16 100%);
+  box-shadow:
+    0 14px 36px rgba(0,0,0,.45),
+    0 0 0 1px #ffffff22 inset,
+    0 1px 0 0 #ffffff55 inset;
+}
+.btn:hover::after,
+.contact a:hover::after{ opacity:.25; }
+
+/* solid CTA variant: brighter glass + teal glow */
+.btn.solid{
+  background: linear-gradient(135deg, #71FFE9 0%, var(--teal) 100%);
+  color:#052B26; font-weight:700; border-color: transparent;
+  box-shadow:
+    0 12px 32px rgba(29,185,168,.45),
+    0 0 0 1px #ffffff33 inset,
+    0 1px 0 0 #ffffff88 inset;
+}
+.btn.solid::after{
+  background: radial-gradient(60% 60% at 50% 50%, #ffffff66 0%, #71FFE955 30%, transparent 65%);
+}
+.btn.solid:hover{
+  filter: brightness(1.05);
+  box-shadow:
+    0 16px 42px rgba(29,185,168,.55),
+    0 0 0 1px #ffffff44 inset,
+    0 1px 0 0 #ffffffa0 inset;
 }
 
-/* 5) If you still see a faint line, nudge the page paint strategy */
-html{ -webkit-overflow-scrolling: touch; }   /* harmless on desktop, helps on WebKit */
+/* ---------- MOBILE ---------- */
+@media (max-width: 960px){
+  /* keep nav centered and allow horizontal swipe */
+  header.nav{
+    left:50%;
+    transform:translateX(-50%);
+    max-width: calc(100% - 16px);
+  }
+  header.nav nav{
+    display:flex;
+    flex-wrap: nowrap;                 /* one line */
+    gap: 8px;
+    overflow-x: auto;                  /* enable swipe */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* smooth iOS scroll */
+    overscroll-behavior-x: contain;
+    padding: 6px 10px;
+
+    /* soft edge fades to hint more items off-screen */
+    mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+
+    scrollbar-width: none;             /* Firefox: hide bar */
+  }
+  header.nav nav::-webkit-scrollbar{ display:none; } /* WebKit: hide bar */
+
+  /* prevent items from shrinking; nicer scroll feel */
+  header.nav a{
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  /* your existing mobile layout rules */
+  .hero-card{ grid-template-columns: 1fr; }
+  .hero-pic{ margin: 6px auto 2px; }
+  .timeline::before{ left: 10px; }
+  .row{ grid-template-columns: 1fr; padding-left: 22px; }
+  .when{ order:-1; color:#CFE9FF; }
+
+  /* (safe to keep) ensure any old carousel captions stay hidden */
+  #logos .logo-marquee a[aria-label]::after{ display:none; }
+}
+
 
