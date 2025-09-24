@@ -211,9 +211,15 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
 
 /* brand-specific nudges while keeping ratio */
 .logo.toyota{ height: clamp(54px, 6.2vw, 82px); }
-.logo.jm-lexus{
-  max-height: clamp(70px, 7.6vw, 100px);
-  max-width: clamp(260px, 28vw, 420px); /* allow width to breathe so it won't look squished */
+
+/* --- JM LEXUS: lock aspect + make slightly smaller --- */
+#logos .logo-marquee .logo.jm-lexus{
+  height: auto !important;      /* ignore any fixed .logo height */
+  width: auto !important;       /* keep intrinsic ratio */
+  max-height: 70px;             /* ↓ tweak this number to taste (e.g., 64–76) */
+  max-width: 240px;             /* cap width so it never looks stretched long */
+  object-fit: contain;          /* extra safety */
+  flex: 0 0 auto;               /* prevent flexbox from squishing it */
 }
 
 /* Show company name below *only* for the first (aria-labeled) set */
