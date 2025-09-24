@@ -212,9 +212,8 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
 /* brand-specific nudges while keeping ratio */
 .logo.toyota{ height: clamp(54px, 6.2vw, 82px); }
 .logo.jm-lexus{
-  height: clamp(58px, 6.4vw, 92px);  /* larger but still locked ratio */
-  width:auto;
-  max-width: 260px;                  /* prevents it from getting too long on XL screens */
+  max-height: clamp(70px, 7.6vw, 100px);
+  max-width: clamp(260px, 28vw, 420px); /* allow width to breathe so it won't look squished */
 }
 
 /* Show company name below *only* for the first (aria-labeled) set */
