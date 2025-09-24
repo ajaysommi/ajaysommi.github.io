@@ -680,4 +680,20 @@ header.nav a{ padding: 9px 16px; }
   .hero-card { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 
+/* === Safe reveal: only hides when .willreveal is present === */
+.willreveal { opacity: 0; transform: translateY(18px); 
+  transition: transform .55s cubic-bezier(.22,.61,.36,1), opacity .55s ease;
+  will-change: transform, opacity;
+}
+.willreveal.inview { opacity: 1; transform: none; }
+
+/* optional variants */
+.willreveal.x     { transform: translateX(-22px); }
+.willreveal.x.r   { transform: translateX(22px); }
+.willreveal.scale { transform: scale(.96); }
+
+/* Section underline sweep stays as-is */
+.section.inview h2::after{ animation: underline-sweep .9s ease forwards; }
+
+
 
