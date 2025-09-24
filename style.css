@@ -258,6 +258,35 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
   opacity:.95; transform: translateX(-50%) translateY(0);
 }
 
+/* --- Fix vertical alignment (center + tiny downward nudge) --- */
+.logo-marquee{
+  display:flex;                 /* center contents vertically inside the bar */
+  align-items:center;
+}
+
+.logo-track{
+  align-items:center;           /* center each logo on its line */
+  margin-top: 2px;              /* ↓ adjust to taste (0–4px). Positive = move row down */
+}
+
+#logos .logo-marquee a{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:0;                /* kill stray baseline space */
+}
+
+/* --- JM Lexus: a bit larger, aspect locked --- */
+#logos .logo-marquee .logo.jm-lexus{
+  height:auto !important;
+  width:auto !important;
+  max-height: 96px;             /* bump size; tweak 88–100px as you like */
+  max-width: 340px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+
+
 
 /* ---------- GRID CARDS (PROJECTS) ---------- */
 .grid{
