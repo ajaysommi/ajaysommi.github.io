@@ -562,3 +562,23 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
     -webkit-backdrop-filter: blur(10px) saturate(120%);
   }
 }
+
+/* ------------ RESUME PAGE NAV FIX ------------ */
+/* Hide the old brand, center the links, and remove the scroll mask */
+header.nav .brand{ display:none; }
+
+header.nav nav{
+  justify-content: center;      /* center items horizontally */
+  overflow: visible;            /* no horizontal scrolling here */
+  -webkit-mask-image: none;     /* remove edge fades used on mobile scroll nav */
+  mask-image: none;
+}
+
+header.nav a{
+  flex: 0 0 auto;               /* keep pill widths consistent */
+}
+
+/* Optional: tighten the pill height a touch */
+header.nav{ padding: 8px; }
+header.nav a{ padding: 9px 16px; }
+
