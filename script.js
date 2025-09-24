@@ -24,3 +24,64 @@ if (container && card) {
     card.style.setProperty('--tz', '0px');
   });
 }
+
+// ==== SCROLL-LINKED REVEALS + PARALLAX ====
+(function () {
+  // Respect reduced motion
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+
+  // IntersectionObserver to add .inview
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('inview');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  // Observe containers we want to animate when they enter view
+  const observe = (sel, staggerChildren = false, baseDelay = 0.06) => {
+    document.querySelectorAll(sel).forEach((section) => {
+      io.observe(section);
+      if (staggerChildren) {
+        [...section.children].forEach((child, i) =>
+          child.style.setProperty('--delay', (i * baseDelay) + 's')
+        );
+      }
+    });
+  };
+
+  // Sections & groups
+  observe('.section', true, 0.06);
+  observe('.grid', true, 0.06);
+  observe('.timeline', true, 0.07);
+
+  // Hero card
+  const hero = document.querySelector('.hero-card');
+  if (hero) io.observe(hero);
+
+  // Stagger individual items
+  document.querySelectorAll('.grid .card')
+    .forEach((el, i) => el.style.setProperty('--delay', (i * 0.06) + 's'));
+  document.querySelectorAll('.pills span')
+    .forEach((el, i) => el.style.setProperty('--delay', (i * 0.04) + 's'));
+  document.querySelectorAll('.timeline .row')
+    .forEach((el, i) => el.style.setProperty('--delay', (i * 0.07) + 's'));
+
+  // Micro parallax on background blobs (cheap + continuous)
+  const blobs = [...document.querySelectorAll('.blob')];
+  if (blobs.length) {
+    const parallax = () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      blobs.forEach((b, idx) => {
+        const f = (idx + 1) * 0.05; // 0.05, 0.10, 0.15, ...
+        b.style.transform = `translate3d(0, ${-y * f}px, 0)`;
+      });
+      requestAnimationFrame(parallax);
+    };
+    requestAnimationFrame(parallax);
+  }
+})();
+
