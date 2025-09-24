@@ -407,3 +407,42 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
   0% { transform: rotate(0deg) scale(1); }
   100% { transform: rotate(360deg) scale(1.02); }
 }
+
+/* ==== Crease/Banding Smoother (drop in after your CSS) ==== */
+
+/* 1) Promote key layers so the GPU composites them cleanly */
+.bg,
+.blob,
+.noise,
+.glass,
+header.nav,
+.hero-card,
+.section,
+.logo-marquee{
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform, opacity, filter;
+}
+
+/* 2) Isolate each glass panel’s blending so seams don’t appear between siblings */
+.glass{
+  isolation: isolate;                 /* new stacking context */
+  background-clip: padding-box;       /* avoid border + blur edge artifacts */
+}
+
+/* 3) Moving hero card: keep its blur self-contained to prevent streaks on scroll */
+.hero-card{
+  contain: paint;                      /* isolate painting; reduces “crease” lines */
+  backface-visibility: hidden;
+}
+
+/* 4) Soften gradient banding with a subtler, blending noise overlay */
+.noise{
+  opacity: .06;                        /* a hair stronger to break bands */
+  mix-blend-mode: soft-light;          /* dither without visible grain */
+  pointer-events: none;
+}
+
+/* 5) If you still see a faint line, nudge the page paint strategy */
+html{ -webkit-overflow-scrolling: touch; }   /* harmless on desktop, helps on WebKit */
+
