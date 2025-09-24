@@ -216,7 +216,7 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
 #logos .logo-marquee .logo.jm-lexus{
   height: auto !important;      /* ignore any fixed .logo height */
   width: auto !important;       /* keep intrinsic ratio */
-  max-height: 70px;             /* ↓ tweak this number to taste (e.g., 64–76) */
+  max-height: 120px;             /* ↓ tweak this number to taste (e.g., 64–76) */
   max-width: 240px;             /* cap width so it never looks stretched long */
   object-fit: contain;          /* extra safety */
   flex: 0 0 auto;               /* prevent flexbox from squishing it */
