@@ -183,47 +183,61 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
   color:#052B26; font-weight:700; border-color: transparent;
 }
 
-/* ---------- LOGO MARQUEE (UPDATED) ---------- */
+/* ---------- LOGO MARQUEE (FIXED) ---------- */
 .logo-marquee{
   position:relative;
-  padding: 18px 20px;              /* a bit taller to fit bigger logos + captions */
+  padding: 18px 20px;
   border-radius: 20px;
-  mask-image: linear-gradient(90deg, transparent 0 32px, #000 10%, #000 calc(100% - 32px), transparent 100%);
-  min-height: clamp(110px, 12vw, 140px);   /* reserve vertical space for larger logos */
+  background: linear-gradient(180deg, #ffffff1a, #ffffff0d);
+  border: 1px solid #ffffff40;         /* stronger edge */
+  box-shadow: 0 8px 28px rgba(0,0,0,.35);
+  /* symmetric fade so both sides are visible */
+  mask-image: linear-gradient(90deg,
+    rgba(0,0,0,0) 0 18px,
+    #000 12%,
+    #000 88%,
+    rgba(0,0,0,0) calc(100% - 18px) 100%);
+  min-height: clamp(110px, 12vw, 140px);
 }
 
 .logo-track{
   display:flex; align-items:center;
-  gap: clamp(36px, 5vw, 72px);     /* more breathing room between bigger logos */
+  gap: clamp(36px, 5vw, 72px);
   min-width:max-content;
   animation: marquee 28s linear infinite;
 }
 
+#logos .logo-marquee a{
+  position:relative;
+  display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto;
+  line-height:0;                      /* fixes “slightly higher” logos */
+}
+
 .logo{
-  height: clamp(56px, 6.5vw, 84px); /* BIGGER; keeps aspect ratio by leaving width auto */
-  width:auto;                       /* ensures no stretching */
+  display:block;
+  height: clamp(56px, 6.5vw, 84px);
+  width:auto;
+  object-fit:contain;
   opacity:.95;
   filter: drop-shadow(0 2px 10px rgba(0,0,0,.45));
   transition: transform .25s ease, opacity .25s ease;
 }
-
 .logo:hover{ transform: translateY(-2px) scale(1.04); opacity:1; }
 
-/* brand-specific nudges while keeping ratio */
 .logo.toyota{ height: clamp(54px, 6.2vw, 82px); }
 
-/* --- JM LEXUS: lock aspect + make slightly smaller --- */
+/* --- JM LEXUS: lock aspect + a bit larger --- */
 #logos .logo-marquee .logo.jm-lexus{
-  height: auto !important;      /* ignore any fixed .logo height */
-  width: auto !important;       /* keep intrinsic ratio */
-  max-height: 120px;             /* ↓ tweak this number to taste (e.g., 64–76) */
-  max-width: 240px;             /* cap width so it never looks stretched long */
-  object-fit: contain;          /* extra safety */
-  flex: 0 0 auto;               /* prevent flexbox from squishing it */
+  height:auto !important;
+  width:auto !important;
+  max-height: 92px;        /* slightly bigger */
+  max-width: 320px;        /* lets it breathe without stretching */
+  object-fit:contain;
+  flex:0 0 auto;
 }
 
-/* Show company name below *only* for the first (aria-labeled) set */
-#logos .logo-marquee a{ position:relative; display:flex; align-items:center; justify-content:center; }
+/* Hover caption for first set */
 #logos .logo-marquee a[aria-label]::after{
   content: attr(aria-label);
   position:absolute; bottom:-26px; left:50%;
@@ -243,6 +257,7 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
 #logos .logo-marquee a[aria-label]:hover::after{
   opacity:.95; transform: translateX(-50%) translateY(0);
 }
+
 
 /* ---------- GRID CARDS (PROJECTS) ---------- */
 .grid{
