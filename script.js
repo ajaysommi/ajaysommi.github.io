@@ -25,13 +25,10 @@ if (container && card) {
   });
 }
 
-// ==== SCROLL-LINKED REVEALS + PARALLAX ====
+// ==== SCROLL-LINKED REVEALS + PARALLAX (safe) ====
 (function () {
-  // Respect reduced motion
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // IntersectionObserver to add .inview
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) {
@@ -39,49 +36,45 @@ if (container && card) {
         io.unobserve(e.target);
       }
     });
-  }, { threshold: 0.15 });
+  }, {
+    threshold: 0.01,
+    rootMargin: '0px 0px -10% 0px' // trigger a bit earlier
+  });
 
-  // Observe containers we want to animate when they enter view
-  const observe = (sel, staggerChildren = false, baseDelay = 0.06) => {
-    document.querySelectorAll(sel).forEach((section) => {
-      io.observe(section);
-      if (staggerChildren) {
-        [...section.children].forEach((child, i) =>
-          child.style.setProperty('--delay', (i * baseDelay) + 's')
-        );
-      }
+  // Helper to mark & observe
+  const mark = (nodes, cls='') => {
+    nodes.forEach((el, i) => {
+      el.classList.add('willreveal');
+      if (cls) el.classList.add(cls);
+      el.style.setProperty('--delay', (i * 0.06) + 's');
+      io.observe(el);
     });
   };
 
-  // Sections & groups
-  observe('.section', true, 0.06);
-  observe('.grid', true, 0.06);
-  observe('.timeline', true, 0.07);
-
-  // Hero card
+  // Hero
   const hero = document.querySelector('.hero-card');
-  if (hero) io.observe(hero);
+  if (hero) { hero.classList.add('willreveal'); io.observe(hero); }
 
-  // Stagger individual items
-  document.querySelectorAll('.grid .card')
-    .forEach((el, i) => el.style.setProperty('--delay', (i * 0.06) + 's'));
-  document.querySelectorAll('.pills span')
-    .forEach((el, i) => el.style.setProperty('--delay', (i * 0.04) + 's'));
-  document.querySelectorAll('.timeline .row')
-    .forEach((el, i) => el.style.setProperty('--delay', (i * 0.07) + 's'));
+  // Projects
+  mark([...document.querySelectorAll('.grid .card')]);
 
-  // Micro parallax on background blobs (cheap + continuous)
+  // Skills pills
+  mark([...document.querySelectorAll('.pills span')]);
+
+  // Timeline rows (slide in from left)
+  mark([...document.querySelectorAll('.timeline .row')], 'x');
+
+  // Parallax on background blobs (cheap)
   const blobs = [...document.querySelectorAll('.blob')];
-  if (blobs.length) {
-    const parallax = () => {
+  if (blobs.length){
+    const tick = () => {
       const y = window.scrollY || document.documentElement.scrollTop;
       blobs.forEach((b, idx) => {
-        const f = (idx + 1) * 0.05; // 0.05, 0.10, 0.15, ...
+        const f = (idx + 1) * 0.05;
         b.style.transform = `translate3d(0, ${-y * f}px, 0)`;
       });
-      requestAnimationFrame(parallax);
+      requestAnimationFrame(tick);
     };
-    requestAnimationFrame(parallax);
+    requestAnimationFrame(tick);
   }
 })();
-
