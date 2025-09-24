@@ -488,4 +488,30 @@ main{ padding-top: calc(var(--nav-h) + 48px); }
   #logos .logo-marquee a[aria-label]::after{ display:none; }
 }
 
+.citizenship {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap; /* prevent wrapping onto new line */
+  gap: 6px;            /* small space between flag and text */
+}
+
+/* ---------- COMPACT MODE: Tighter vertical spacing ---------- */
+.section {
+  padding:40px 16px;   /* less top/bottom padding */
+}
+.grid {
+  gap:12px;            /* smaller gap between cards */
+}
+.pills {
+  margin-bottom:16px;  /* tighter spacing between skill groups */
+}
+.row {
+  margin:10px 0;       /* reduce timeline row spacing */
+  padding:12px;        /* slightly smaller padding inside */
+}
+.section h2 {
+  margin-bottom:14px;  /* less space under section headers */
+}
+
+
 
