@@ -623,3 +623,61 @@ header.nav a{ padding: 9px 16px; }
   pointer-events:none;
 }
 
+
+
+/* ========= SCROLL-LINKED ANIMATIONS ========= */
+
+/* base reveal states */
+.reveal, .reveal-y, .reveal-x, .reveal-scale { opacity: 0; will-change: transform, opacity; }
+.reveal-y   { transform: translateY(24px); }
+.reveal-x   { transform: translateX(-24px); }
+.reveal-x.r { transform: translateX(24px); } /* right-to-left option */
+.reveal-scale { transform: scale(.96); }
+
+.inview { opacity: 1; transform: none; }
+
+/* smooth timing */
+.reveal, .reveal-y, .reveal-x, .reveal-scale {
+  transition: transform .55s cubic-bezier(.22,.61,.36,1), opacity .55s ease;
+  transition-delay: var(--delay, 0s);
+}
+
+/* section headings: subtle sweep when entering */
+.section h2 {
+  --sweep-delay: .05s;
+  position: relative;
+}
+.section.inview h2::after {
+  animation: underline-sweep .9s ease forwards;
+  animation-delay: var(--sweep-delay);
+}
+@keyframes underline-sweep {
+  from { width: 0; opacity: .0; }
+  to   { width: 88px; opacity: .35; }
+}
+
+/* cards/pills/timeline default reveal presets */
+.grid .card        { transform: translateY(22px); opacity: 0; }
+.grid.inview .card { transform: none; opacity: 1; transition: transform .5s var(--curve, cubic-bezier(.22,.61,.36,1)), opacity .5s ease; }
+
+.pills span        { transform: translateY(12px); opacity: 0; }
+.section.inview .pills span { transform: none; opacity: 1; transition: transform .45s ease, opacity .45s ease; transition-delay: var(--delay, 0s); }
+
+.timeline .row        { transform: translateX(-18px); opacity: 0; }
+.timeline.inview .row { transform: none; opacity: 1; transition: transform .5s ease, opacity .5s ease; transition-delay: var(--delay, 0s); }
+
+/* hero card: soft lift on load */
+.hero-card { transform: translateY(14px); opacity:.0; }
+.hero-card.inview { transform: none; opacity: 1; transition: transform .6s cubic-bezier(.22,.61,.36,1), opacity .6s ease; }
+
+/* parallax: tiny depth on background blobs */
+.blob { will-change: transform; }
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .reveal, .reveal-y, .reveal-x, .reveal-scale,
+  .grid .card, .pills span, .timeline .row,
+  .hero-card { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+
