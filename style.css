@@ -695,3 +695,32 @@ h1, h2, h3, .eyebrow{
     mix-blend-mode: screen;          /* brightens instead of darkening */
   }
 }
+
+/* ----- LOGO CAROUSEL: enable manual horizontal scroll (CSS-only) ----- */
+#logos .logo-marquee{
+  overflow-x: auto;               /* allow swipe/drag to scroll */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
+  scroll-snap-type: x mandatory;  /* nice snapping between logos */
+  scrollbar-width: none;          /* Firefox: hide scrollbar */
+  mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+}
+#logos .logo-marquee::-webkit-scrollbar{ display:none; } /* WebKit: hide scrollbar */
+
+#logos .logo-track{
+  min-width: max-content;         /* keep one long row */
+  gap: clamp(36px, 5vw, 72px);
+  scroll-padding: 20px;           /* nicer first/last snap feel */
+}
+
+#logos .logo-marquee a{
+  scroll-snap-align: center;      /* snap each logo into view */
+}
+
+/* Pause the auto-marquee while the user interacts */
+#logos .logo-marquee:hover .logo-track,
+#logos .logo-marquee:active .logo-track,
+#logos .logo-marquee:focus-within .logo-track{
+  animation-play-state: paused;
+}
