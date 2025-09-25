@@ -5,6 +5,10 @@
    Focus: elegant glassmorphism, soft motion, high performance.
 */
 
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600&family=Orbitron:wght@600;700&display=swap');
+
+
 /* ---------- THEME TOKENS ---------- */
 :root{
   --ink:#0B0F14;
@@ -622,3 +626,25 @@ header.nav a{ padding: 9px 16px; }
   z-index:-2;
   pointer-events:none;
 }
+
+/* tighten space before the hero */
+main{
+  padding-top: calc(var(--nav-h) + 20px) !important;  /* was +48px */
+}
+.hero{
+  padding: clamp(12px, 3vw, 22px) 20px 10px !important; /* reduce top padding */
+}
+
+/* (optional) nudge the fixed nav closer to the top too */
+header.nav{ top:12px; } /* was 16px */
+
+/* Font stack refresh */
+body{
+  font-family: 'Exo 2', system-ui, sans-serif;
+}
+
+h1, h2, h3, .eyebrow{
+  font-family: 'Orbitron', 'Exo 2', sans-serif;
+  letter-spacing: .02em;
+}
+
