@@ -35,6 +35,9 @@
 /* ---------- RESET / BASE ---------- */
 *{ box-sizing:border-box; }
 html, body { height:100%; scroll-behavior:smooth; }
+html {
+  scroll-padding-top: var(--nav-h); /* offset anchors by navbar height */
+}
 body{
   margin:0;
   color:#E6EDF3;
