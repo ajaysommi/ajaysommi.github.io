@@ -655,32 +655,43 @@ h1, h2, h3, .eyebrow{
   letter-spacing: .02em;
 }
 
-/* ---------- GRID MESH GLOW BACKGROUND ---------- */
-.noise {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(0deg, #ffffff05 0 1px, transparent 1px 80px),
-    repeating-linear-gradient(90deg, #ffffff05 0 1px, transparent 1px 80px),
-    radial-gradient(ellipse at center, rgba(29,185,168,0.08), transparent 70%);
-  background-size: 80px 80px, 80px 80px, cover;
-  animation: gridGlow 18s linear infinite;
-  opacity: 0.35;
+/* --- MOBILE: force horizontal scroll for the nav (wins last) --- */
+@media (max-width: 960px){
+  header.nav nav{
+    display:flex;
+    flex-wrap: nowrap;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent) !important;
+  }
+  header.nav a{ flex: 0 0 auto; }
 }
 
-/* subtle shimmering motion */
-@keyframes gridGlow {
-  0% {
-    background-position: 0px 0px, 0px 0px, 0% 50%;
+/* ---- MOBILE BACKGROUND VISIBILITY FIX ---- */
+@media (max-width: 960px){
+  /* make sure the background layer sits behind content */
+  .bg{ z-index:-1; }
+  header.nav, main, footer{ position:relative; z-index:1; }
+
+  /* blobs: more visible + avoid Safari blend bugs */
+  .blob{
+    opacity:.70;                     /* was ~.55 */
+    mix-blend-mode: normal;          /* instead of 'screen' on mobile */
+    filter: blur(70px) saturate(140%);
   }
-  50% {
-    background-position: 40px 20px, 20px 40px, 100% 50%;
-  }
-  100% {
-    background-position: 0px 0px, 0px 0px, 0% 50%;
+  /* slightly larger blobs so color reaches the center */
+  .b1{ width:70vw; height:70vw; left:-24vw; top:-16vh; }
+  .b2{ width:66vw; height:66vw; right:-26vw; bottom:-22vh; }
+  .b3{ width:56vw; height:56vw; right:-12vw; top:-12vh; }
+  .b4{ width:60vw; height:60vw; left:2vw; bottom:-26vh; }
+
+  /* grid mesh: lighten so it doesn't “black out” the page */
+  .noise{
+    opacity:.14;                     /* was higher */
+    background-size: 56px 56px, 56px 56px, cover; /* denser grid on mobile */
+    mix-blend-mode: screen;          /* brightens instead of darkening */
   }
 }
-
-
