@@ -698,3 +698,15 @@ h1, h2, h3, .eyebrow{
     mix-blend-mode: screen;          /* brightens instead of darkening */
   }
 }
+
+
+:root{
+  --marquee-speed: 40s;
+  --marquee-skip: 12s;  /* how far into the loop to start */
+}
+
+.logo-track{
+  animation: marquee var(--marquee-speed) linear infinite both;
+  animation-delay: calc(-1 * var(--marquee-skip));
+}
+
