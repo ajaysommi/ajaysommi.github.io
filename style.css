@@ -698,3 +698,54 @@ h1, h2, h3, .eyebrow{
     mix-blend-mode: screen;          /* brightens instead of darkening */
   }
 }
+
+
+
+/* === MARQUEE FIRST-VISIT SMOOTHING (drop-in) === */
+
+/* 1) Set fixed cell size + gap so width is predictable on first paint */
+:root{
+  --logo-slot: 160px;      /* width of each logo cell (tweak 120–200) */
+  --logo-gap: 48px;        /* space between cells */
+  --logo-count: 12;        /* number of logos in ONE sequence (not duplicated) */
+  --marquee-distance: calc((var(--logo-slot) + var(--logo-gap)) * var(--logo-count));
+  --marquee-speed: 40s;    /* total loop time */
+}
+
+/* 2) Give each anchor a fixed slot so images don't change the track width */
+#logos .logo-marquee a{
+  width: var(--logo-slot);
+  min-width: var(--logo-slot);
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* 3) Drive animation in pixels instead of % so speed is consistent even while images/fonts load */
+@keyframes marqueeFixed {
+  from { transform: translate3d(0,0,0); }
+  to   { transform: translate3d(calc(-1 * var(--marquee-distance)), 0, 0); }
+}
+
+.logo-track{
+  gap: var(--logo-gap);
+  animation: marqueeFixed var(--marquee-speed) linear infinite !important;
+  will-change: transform;
+  transform: translateZ(0);
+  contain: layout paint; /* keep it isolated */
+}
+
+/* 4) Small perf trims inside the marquee for first paint */
+#logos .logo{
+  /* keep your height rule; this just avoids expensive shadows on first frame */
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,.32));
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* 5) Safari: avoid backdrop-filter cost inside the marquee container on first paint */
+@supports (backdrop-filter: blur(10px)){
+  .logo-marquee{
+    /* glass stays, but slightly lighter to reduce early compositing cost */
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+  }
+}
+
