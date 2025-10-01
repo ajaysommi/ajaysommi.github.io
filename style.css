@@ -700,16 +700,15 @@ h1, h2, h3, .eyebrow{
 }
 
 
-
-/* === MARQUEE FIRST-VISIT SMOOTHING (drop-in) === */
+/* === MARQUEE FIRST-VISIT SMOOTHING (with fixes) === */
 
 /* 1) Set fixed cell size + gap so width is predictable on first paint */
 :root{
-  --logo-slot: 160px;      /* width of each logo cell (tweak 120–200) */
-  --logo-gap: 48px;        /* space between cells */
-  --logo-count: 12;        /* number of logos in ONE sequence (not duplicated) */
+  --logo-slot: 220px;      /* wider slot for Lexus/Toyota wordmarks */
+  --logo-gap: 56px;        /* more breathing room between logos */
+  --logo-count: 6;         /* number of logos in ONE sequence (not duplicated) */
   --marquee-distance: calc((var(--logo-slot) + var(--logo-gap)) * var(--logo-count));
-  --marquee-speed: 40s;    /* total loop time */
+  --marquee-speed: 55s;    /* slower loop time for smoother pace */
 }
 
 /* 2) Give each anchor a fixed slot so images don't change the track width */
@@ -717,6 +716,7 @@ h1, h2, h3, .eyebrow{
   width: var(--logo-slot);
   min-width: var(--logo-slot);
   display:flex; align-items:center; justify-content:center;
+  overflow:hidden; /* prevent wide marks from spilling */
 }
 
 /* 3) Drive animation in pixels instead of % so speed is consistent even while images/fonts load */
@@ -733,17 +733,25 @@ h1, h2, h3, .eyebrow{
   contain: layout paint; /* keep it isolated */
 }
 
-/* 4) Small perf trims inside the marquee for first paint */
+/* 4) Logo sizing and perf trims */
 #logos .logo{
-  /* keep your height rule; this just avoids expensive shadows on first frame */
+  max-width: calc(100% - 16px); /* inner padding so logos don’t kiss edge */
+  height:auto;
+  max-height: 86px;             /* consistent row height */
+  object-fit:contain;
   filter: drop-shadow(0 1px 4px rgba(0,0,0,.32));
   image-rendering: -webkit-optimize-contrast;
+}
+
+/* Special case: JM LEXUS mark a little larger but still contained */
+#logos .logo-marquee .logo.jm-lexus{
+  max-width: calc(100% - 12px) !important;
+  max-height: 96px;
 }
 
 /* 5) Safari: avoid backdrop-filter cost inside the marquee container on first paint */
 @supports (backdrop-filter: blur(10px)){
   .logo-marquee{
-    /* glass stays, but slightly lighter to reduce early compositing cost */
     backdrop-filter: blur(8px) saturate(120%);
     -webkit-backdrop-filter: blur(8px) saturate(120%);
   }
