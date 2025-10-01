@@ -699,61 +699,37 @@ h1, h2, h3, .eyebrow{
   }
 }
 
+/* === MARQUEE: keep original spacing, fix first-visit stutter === */
 
-/* === MARQUEE FIRST-VISIT SMOOTHING (with fixes) === */
+/* keep your original 42s speed unless you changed it elsewhere */
+:root{ --marquee-speed: 42s; }
 
-/* 1) Set fixed cell size + gap so width is predictable on first paint */
-:root{
-  --logo-slot: 220px;      /* wider slot for Lexus/Toyota wordmarks */
-  --logo-gap: 56px;        /* more breathing room between logos */
-  --logo-count: 6;         /* number of logos in ONE sequence (not duplicated) */
-  --marquee-distance: calc((var(--logo-slot) + var(--logo-gap)) * var(--logo-count));
-  --marquee-speed: 55s;    /* slower loop time for smoother pace */
-}
-
-/* 2) Give each anchor a fixed slot so images don't change the track width */
-#logos .logo-marquee a{
-  width: var(--logo-slot);
-  min-width: var(--logo-slot);
-  display:flex; align-items:center; justify-content:center;
-  overflow:hidden; /* prevent wide marks from spilling */
-}
-
-/* 3) Drive animation in pixels instead of % so speed is consistent even while images/fonts load */
-@keyframes marqueeFixed {
-  from { transform: translate3d(0,0,0); }
-  to   { transform: translate3d(calc(-1 * var(--marquee-distance)), 0, 0); }
-}
-
+/* run the existing keyframes (you already have @keyframes marquee) */
 .logo-track{
-  gap: var(--logo-gap);
-  animation: marqueeFixed var(--marquee-speed) linear infinite !important;
+  animation: marquee var(--marquee-speed) linear infinite;
   will-change: transform;
-  transform: translateZ(0);
-  contain: layout paint; /* keep it isolated */
+  transform: translateZ(0);          /* force GPU layer */
+  contain: layout paint;             /* isolate work */
 }
 
-/* 4) Logo sizing and perf trims */
-#logos .logo{
-  max-width: calc(100% - 16px); /* inner padding so logos don’t kiss edge */
-  height:auto;
-  max-height: 86px;             /* consistent row height */
-  object-fit:contain;
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,.32));
-  image-rendering: -webkit-optimize-contrast;
+/* pause by default; JS will flip the switch when ready */
+html:not(.marquee-ready) .logo-track{
+  animation-play-state: paused !important;
 }
 
-/* Special case: JM LEXUS mark a little larger but still contained */
-#logos .logo-marquee .logo.jm-lexus{
-  max-width: calc(100% - 12px) !important;
-  max-height: 96px;
-}
-
-/* 5) Safari: avoid backdrop-filter cost inside the marquee container on first paint */
+/* (optional) slightly lighter glass to reduce first paint work on Safari */
 @supports (backdrop-filter: blur(10px)){
   .logo-marquee{
-    backdrop-filter: blur(8px) saturate(120%);
-    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
   }
+}
+
+/* keep your original logo sizing; just ensure JM LEXUS doesn’t shrink */
+#logos .logo-marquee .logo.jm-lexus{
+  height:auto !important;
+  max-height: 96px;          /* same as your original special case */
+  max-width: 340px;          /* preserves its presence without overflow */
+  object-fit: contain;
 }
 
