@@ -752,8 +752,3 @@ html:not(.marquee-ready) .logo-track{
   }
 }
 
-
-.hero {
-  background: linear-gradient(135deg, rgba(0,33,165,0.15), rgba(250,70,22,0.15));
-}
-
