@@ -733,3 +733,22 @@ html:not(.marquee-ready) .logo-track{
   object-fit: contain;
 }
 
+
+/* === MOBILE NAV + HERO SPACING FIX === */
+@media (max-width: 960px){
+
+  /* 1) Nav links start flush left instead of centered */
+  header.nav nav{
+    justify-content: flex-start !important; /* override center */
+    padding-left: 8px;                      /* small breathing room */
+  }
+
+  /* 2) Reduce top spacing between nav and hero */
+  main{
+    padding-top: calc(var(--nav-h) + 8px) !important; /* was larger */
+  }
+  .hero{
+    padding-top: 12px !important; /* tighter hero spacing */
+  }
+}
+
