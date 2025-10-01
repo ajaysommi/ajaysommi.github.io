@@ -745,7 +745,7 @@ html:not(.marquee-ready) .logo-track{
 
   /* 2) Reduce top spacing between nav and hero */
   main{
-    padding-top: calc(var(--nav-h) + 8px) !important; /* was larger */
+    padding-top: calc(var(--nav-h) + 2px) !important; /* was larger */
   }
   .hero{
     padding-top: 12px !important; /* tighter hero spacing */
