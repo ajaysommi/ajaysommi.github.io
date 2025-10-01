@@ -409,6 +409,30 @@
   });
 </script>
 
+  <script>
+(function () {
+  const root = document.documentElement;
+  function ready() { root.classList.add('marquee-ready'); }
+
+  // wait for fonts
+  const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+
+  // wait for logos in the marquee
+  const imgs = Array.from(document.querySelectorAll('#logos .logo-marquee img, #logos .logo-marquee .logo'));
+  const imgPromises = imgs.map(img => new Promise(res => {
+    if (img.complete && img.naturalWidth) return res();
+    img.addEventListener('load', res, {once:true});
+    img.addEventListener('error', res, {once:true}); // don't block on errors
+  }));
+
+  // safety timeout so we don't hang on super-slow networks
+  const timeout = new Promise(res => setTimeout(res, 1500));
+
+  Promise.all([fontsReady, Promise.race([Promise.all(imgPromises), timeout])])
+    .finally(ready);
+})();
+</script>
+
 
 </body>
 </html>
