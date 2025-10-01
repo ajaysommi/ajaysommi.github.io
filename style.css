@@ -751,18 +751,3 @@ html:not(.marquee-ready) .logo-track{
     padding-top: 12px !important; /* tighter hero spacing */
   }
 }
-
-/* Fix hover for solid buttons like "Open Resume" */
-.btn.solid {
-  background: linear-gradient(135deg, var(--teal), var(--teal-2));
-  color: #fff;
-  border: 1px solid #ffffff30;
-  box-shadow: 0 0 10px rgba(0, 255, 200, .45);
-}
-
-.btn.solid:hover {
-  background: linear-gradient(135deg, var(--teal-2), var(--teal));
-  transform: translateY(-1px);
-  box-shadow: 0 0 14px rgba(0, 255, 200, .65);
-}
-
