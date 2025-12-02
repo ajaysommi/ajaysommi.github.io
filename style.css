@@ -11,26 +11,41 @@
 
 
 
-/* ---------- THEME TOKENS ---------- */
+/* --------- THEME TOKENS (Azure + UF) ---------- */
 :root{
-  --ink:#0B0F14;
-  --ink-2:#0E1319;
-  --teal:#1DB9A8;
-  --teal-2:#2CE6D6;
-  --steel:#A9B3BD;
-  --crystal:#ffffff10;     /* base glass */
-  --crystal-2:#ffffff06;   /* deeper glass */
-  --stroke:#ffffff24;      /* glass border */
-  --shine:#ffffff66;       /* specular edge */
-  --accent:#F5A524;        /* warm accent */
-  --danger:#E63946;        /* Toyota red glow */
-  --good:#38D0B5;          /* soft mint */
+  /* Inks: deep Azure/UF-inspired navy */
+  --ink:#050814;          /* main background (very dark navy) */
+  --ink-2:#07111E;        /* slightly lighter panel background */
+
+  /* Azure / cloud accents */
+  --teal:#0078D4;         /* Azure primary blue */
+  --teal-2:#3BA4F6;       /* lighter Azure glow / gradients */
+
+  /* Neutral text + chrome */
+  --steel:#B5C0CC;        /* soft steel gray for text/icons */
+
+  /* Glass surfaces */
+  --crystal:#ffffff10;    /* base glass */
+  --crystal-2:#ffffff06;  /* deeper glass */
+  --stroke:#ffffff24;     /* glass border */
+  --shine:#ffffff66;      /* specular edge */
+
+  /* Brand accents */
+  --accent:#FA4616;       /* UF orange (primary warm accent / CTA) */
+  --danger:#E63946;       /* Toyota red glow / error state */
+  --good:#38D0B5;         /* success / mint accent */
+
+  /* Optional explicit UF tokens if you want to use them directly */
+  --uf-blue:#0021A5;      /* UF blue for headings/badges if desired */
+  --uf-orange:#FA4616;    /* UF orange (same as accent) */
+
   --shadow:0 20px 60px rgba(0,0,0,.35);
   --nav-h:72px;
   --radius-xl:22px;
   --radius-xxl:28px;
   --ring:0 0 0 1px var(--stroke) inset, 0 1px 0 0 #ffffff1a inset;
 }
+
 
 /* ---------- RESET / BASE ---------- */
 *{ box-sizing:border-box; }
