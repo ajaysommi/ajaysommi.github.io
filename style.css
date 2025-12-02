@@ -85,18 +85,12 @@ a:hover{ text-decoration:none; }
   animation: floaty 28s ease-in-out infinite alternate;
 }
 .b1{ width:50vw; height:50vw; left:-18vw; top:-14vh; background: radial-gradient(60% 60% at 40% 40%, var(--teal-2), transparent 70%); }
-.b2{
-  width:46vw; height:46vw;
-  right:-20vw; bottom:-18vh;
-  background: radial-gradient(
-    60% 60% at 60% 60%,
-    #FFD08A 0%,              /* light peach center */
-    #FFB457 30%,             /* soft orange mid */
-    rgba(250,70,22,0.0) 72%  /* fade out */
-  );
-  animation-duration: 32s;
+.b2{ 
+  width:46vw; height:46vw; 
+  right:-20vw; bottom:-18vh; 
+  background: radial-gradient(60% 60% at 60% 60%, #6EA8FF, transparent 72%); 
+  animation-duration: 32s; 
 }
-
 .b3{ width:38vw; height:38vw; right:-8vw; top:-10vh; background: radial-gradient(60% 60% at 50% 50%, var(--danger), transparent 70%); animation-duration: 36s; }
 .b4{ width:40vw; height:40vw; left:10vw; bottom:-22vh; background: radial-gradient(60% 60% at 50% 50%, #8B5CF6, transparent 70%); animation-duration: 34s; }
 
