@@ -61,34 +61,55 @@
     </section>
 
     <!-- COMPANIES -->
-    <section id="companies" class="section">
+    <section id="logos" class="section">
       <div class="container">
         <div class="section-header">
           <h2>Impact delivered at and trusted by</h2>
         </div>
-        <div class="companies-grid">
-          <div class="company-item">
-            <img src="assets/logos/toyota_logo_inverted.png" alt="Southeast Toyota Distributors" />
-          </div>
-          <div class="company-item">
-            <img src="assets/logos/jm_family_white_text.png" alt="JM Family Enterprises" />
-          </div>
-          <div class="company-item">
-            <img src="assets/logos/FICS-Logo.png" alt="Florida Institute for Cybersecurity Research" />
-          </div>
-          <div class="company-item">
-            <img src="assets/logos/roboticsforall.png" alt="Robotics For All" />
-          </div>
-          <div class="company-item">
-            <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="Hunter Engineering Company" />
-          </div>
-          <div class="company-item">
-            <img src="assets/logos/logo-header-inverted.png" alt="JM Lexus" />
+        <div class="companies-carousel">
+          <div class="companies-track">
+            <!-- First set of logos -->
+            <a href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer" aria-label="Southeast Toyota Distributors, LLC" class="company-item">
+              <img src="assets/logos/toyota_logo_inverted.png" alt="Southeast Toyota Distributors, LLC" class="logo toyota">
+            </a>
+            <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-label="JM Family Enterprises" class="company-item">
+              <img src="assets/logos/jm_family_white_text.png" alt="JM Family Enterprises" class="logo">
+            </a>
+            <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-label="Florida Institute for Cybersecurity Research" class="company-item">
+              <img src="assets/logos/FICS-Logo.png" alt="Florida Institute for Cybersecurity Research" class="logo">
+            </a>
+            <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-label="Robotics For All" class="company-item">
+              <img src="assets/logos/roboticsforall.png" alt="Robotics For All" class="logo">
+            </a>
+            <a href="https://www.hunter.com" target="_blank" rel="noopener noreferrer" aria-label="Hunter Engineering Company" class="company-item">
+              <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="Hunter Engineering Company" class="logo">
+            </a>
+            <a href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer" aria-label="JM Lexus" class="company-item">
+              <img src="assets/logos/logo-header-inverted.png" alt="JM Lexus" class="logo jm-lexus">
+            </a>
+            <!-- Duplicate set for seamless loop -->
+            <a href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer" aria-label="Southeast Toyota Distributors, LLC" class="company-item">
+              <img src="assets/logos/toyota_logo_inverted.png" alt="Southeast Toyota Distributors, LLC" class="logo toyota">
+            </a>
+            <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-label="JM Family Enterprises" class="company-item">
+              <img src="assets/logos/jm_family_white_text.png" alt="JM Family Enterprises" class="logo">
+            </a>
+            <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-label="Florida Institute for Cybersecurity Research" class="company-item">
+              <img src="assets/logos/FICS-Logo.png" alt="Florida Institute for Cybersecurity Research" class="logo">
+            </a>
+            <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-label="Robotics For All" class="company-item">
+              <img src="assets/logos/roboticsforall.png" alt="Robotics For All" class="logo">
+            </a>
+            <a href="https://www.hunter.com" target="_blank" rel="noopener noreferrer" aria-label="Hunter Engineering Company" class="company-item">
+              <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="Hunter Engineering Company" class="logo">
+            </a>
+            <a href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer" aria-label="JM Lexus" class="company-item">
+              <img src="assets/logos/logo-header-inverted.png" alt="JM Lexus" class="logo jm-lexus">
+            </a>
           </div>
         </div>
       </div>
     </section>
-
 
 
     <!-- PROJECTS -->
@@ -99,34 +120,15 @@
           <p class="section-subtitle">Innovative solutions that solve real-world problems</p>
         </div>
         <div class="projects-grid">
-          
-          <!-- SommiScript -->
           <div class="project-card">
-            <h3 class="project-title">
-              <a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript — Lightweight Programming Language</a>
-            </h3>
-            <p class="project-description">Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
-            <div class="project-tech">
-              <span class="tech-tag">Java</span>
-              <span class="tech-tag">Language Design</span>
-              <span class="tech-tag">Interpreters</span>
-            </div>
-            <p class="project-focus">Focus: compilers, expressiveness, experimentation</p>
+            <h3 class="project-title"><a href="https://github.com/ajaysommi/azfunc-identity-validator" target="_blank" rel="noreferrer">Azure Function Identity Validator</a></h3>
+            <p class="project-tech">.NET, Azure Functions, Microsoft Graph API</p>
+            <p class="project-description">Built Azure Function Apps in .NET/C# to validate and reconcile dealer identity data for JM Lexus and Toyota dealership users across Microsoft Entra and Salesforce via Microsoft Graph API and a MuleSoft proxy.</p>
           </div>
-
-          <!-- GatorGoods -->
           <div class="project-card">
-            <h3 class="project-title">
-              <a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a>
-            </h3>
-            <p class="project-description">Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
-            <div class="project-tech">
-              <span class="tech-tag">MongoDB</span>
-              <span class="tech-tag">Express</span>
-              <span class="tech-tag">React</span>
-              <span class="tech-tag">Node</span>
-            </div>
-            <p class="project-focus">Focus: auth, usability, full-stack design</p>
+            <h3 class="project-title"><a href="https://github.com/ajaysommi/python-etl-pipeline" target="_blank" rel="noreferrer">Python ETL Pipeline</a></h3>
+            <p class="project-tech">Python, REST API, Azure Blob Storage</p>
+            <p class="project-description">Built Python + REST API ETL pipeline for Azure Blob ➝ SharePoint. Queried 51,000+ vehicle records with SQL for tire/wheel analysis and automated tracking of 160+ accessory projects.</p>
           </div>
 
           <!-- Tire & Wheel Data Pipeline -->
@@ -497,6 +499,69 @@
             </ul>
           </div>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL TERMINAL DEMO -->
+    <section id="terminal-demo" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>System Status</h2>
+          <p class="section-subtitle">Real-time portfolio diagnostics</p>
+        </div>
+        
+        <div class="interactive-terminal" style="max-width: 1000px; margin: 0 auto;">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="terminal-title">ajay@portfolio:~$ ./deploy --status --verbose</div>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-output">
+              <div class="output-line">$ ajay-portfolio deploy --production --verbose</div>
+              <div class="output-line">╭─────────────────────────────────────────────────────────╮</div>
+              <div class="output-line">│ AJAY SOMMI - ENGINEERING PORTFOLIO DEPLOYMENT STATUS      │</div>
+              <div class="output-line">╰─────────────────────────────────────────────────────────╯</div>
+              <div class="output-line"></div>
+              <div class="output-line">� INITIALIZING DEPLOYMENT SEQUENCE...</div>
+              <div class="output-line">✓ Authentication: GitHub OAuth</div>
+              <div class="output-line">✓ Environment: Production Ready</div>
+              <div class="output-line">✓ Dependencies: All packages installed</div>
+              <div class="output-line"></div>
+              <div class="output-line">📊 DEPLOYING PROJECT MODULES:</div>
+              <div class="output-line">├── Azure Function Identity Validator [DEPLOYED] ✓</div>
+              <div class="output-line">├── Python ETL Pipeline [DEPLOYED] ✓</div>
+              <div class="output-line">├── LLM Security Research [DEPLOYED] ✓</div>
+              <div class="output-line">└── All systems operational</div>
+              <div class="output-line"></div>
+              <div class="output-line">🏢 EXPERIENCE INTEGRATION:</div>
+              <div class="output-line">├── Hunter Engineering Co-op [ACTIVE]</div>
+              <div class="output-line">├── JM Family Enterprises [COMPLETED]</div>
+              <div class="output-line">├── Southeast Toyota Distributors [COMPLETED]</div>
+              <div class="output-line">└── 4 additional roles [VERIFIED]</div>
+              <div class="output-line"></div>
+              <div class="output-line">🛠️ SKILLS MATRIX LOADING:</div>
+              <div class="output-line">├── Cloud Platforms: Azure, AWS, GCP [MASTERED]</div>
+              <div class="output-line">├── Programming: Python, C#, JavaScript, SQL [EXPERT]</div>
+              <div class="output-line">├── DevOps: Docker, Kubernetes, Git [PROFICIENT]</div>
+              <div class="output-line">└── Databases: PostgreSQL, MongoDB, Redis [ADVANCED]</div>
+              <div class="output-line"></div>
+              <div class="output-line">� PERFORMANCE METRICS:</div>
+              <div class="output-line">├── Code Quality: 99.9%</div>
+              <div class="output-line">├── Problem Solving: 95% efficiency</div>
+              <div class="output-line">├── Team Collaboration: 100% synergy</div>
+              <div class="output-line">└── Innovation Score: 98/100</div>
+              <div class="output-line"></div>
+              <div class="output-line">✅ DEPLOYMENT SUCCESSFUL!</div>
+              <div class="output-line">🌐 Portfolio live and ready for opportunities</div>
+              <div class="output-line">📈 All systems monitoring for optimal performance</div>
+              <div class="output-line cursor">$ _</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
