@@ -23,355 +23,516 @@
   </div>
 
   <!-- NAV -->
-  <header class="nav glass">
-    <nav>
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#experience">Experience</a>
-      <a href="#logos">Companies</a>
-      <a href="#recs">Recommendations</a>
-      <a href="resume.html">Resume</a>
-      <a href="#contact" class="cta">Contact</a>
-    </nav>
+  <header class="nav">
+    <div class="nav-container">
+      <div class="nav-logo">Ajay Sommi</div>
+      <nav class="nav-links">
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#experience" class="nav-link">Experience</a>
+        <a href="#testimonials" class="nav-link">Testimonials</a>
+        <a href="#how-i-operate" class="nav-link">How I Operate</a>
+        <a href="#contact" class="nav-link cta">Contact</a>
+      </nav>
+    </div>
   </header>
 
   <main>
     <!-- HERO -->
     <section class="hero">
-      <div class="hero-card glass">
-        <img src="assets/images/DSC00815.JPEG?v=2" alt="Ajay Sommi" class="hero-pic" />
-        <div class="hero-text">
-          <p class="eyebrow">Software Engineer</p>
-          <p class="citizenship">
-          <span class="citizen-pill">
-            <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg" 
-                 alt="US Flag" class="flag-icon" /> U.S. Citizen
-          </span>
-          </p>
-          <h1>Welcome. I'm Ajay, glad you're here.</h1>
-          <p class="sub">
-          You don’t need more code; you need systems that work. I’m a software engineer specializing in <strong>Azure cloud development</strong>, backend architecture, and enterprise-grade automation for large-scale, data-driven organizations. I build solutions that scale reliably in production, from serverless APIs and cloud data pipelines to identity-first workflows built on Entra ID, Azure Functions, SQL, and Azure DevOps.
-          </p>
-          <div class="actions">
-            <a href="#projects" class="btn solid">View projects</a>
-            <a href="resume.html" class="btn">Resume</a>
+      <div class="container">
+        <div class="hero-container">
+          <div class="hero-content">
+            <h1>Welcome. I'm Ajay, glad you're here.</h1>
+            <p class="hero-subtitle">Software & Cloud Engineer</p>
+            <p class="hero-description">
+              You don't need more code; you need systems that work. I'm a software engineer specializing in <strong>Azure cloud development</strong>, backend architecture, and enterprise-grade automation for large-scale, data-driven organizations. I build solutions that scale reliably in production, from serverless APIs and cloud data pipelines to identity-first workflows built on Entra ID, Azure Functions, SQL, and Azure DevOps.
+            </p>
+            <div class="hero-actions">
+              <a href="#projects" class="btn btn-primary">View Projects</a>
+              <a href="resume.html" class="btn btn-secondary">View Resume</a>
+            </div>
+          </div>
+          <div class="hero-image">
+            <img src="assets/images/DSC00815.JPEG?v=2" alt="Ajay Sommi" class="hero-pic" />
           </div>
         </div>
       </div>
     </section>
 
-  <!-- LOGOS — Carousel -->
-<section id="logos" class="section" aria-label="Companies I’ve worked with">
-  <h2>Impact delivered at and trusted by</h2>
-
-  <div class="logo-marquee glass">
-    <div class="logo-track">
-      <!-- Real logos you have now -->
-      <a href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer" aria-label="Southeast Toyota Distributors, LLC">
-        <img src="assets/logos/toyota_logo_inverted.png" alt="Southeast Toyota Distributors, LLC" class="logo toyota">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-label="JM Family Enterprises">
-        <img src="assets/logos/jm_family_white_text.png" alt="JM Family Enterprises" class="logo">
-      </a>
-      <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-label="Florida Institute for Cybersecurity Research">
-        <img src="assets/logos/FICS-Logo.png" alt="Florida Institute for Cybersecurity Research" class="logo">
-      </a>
-      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-label="Robotics For All">
-        <img src="assets/logos/roboticsforall.png" alt="Robotics For All" class="logo">
-      </a>
-      <a href="https://www.hunter.com" target="_blank" rel="noopener noreferrer" aria-label="Hunter Engineering Company">
-        <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="Hunter Engineering Company" class="logo jm-lexus">
-      </a>
-      <a href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer" aria-label="JM Lexus">
-        <img src="assets/logos/logo-header-inverted.png" alt="JM Lexus" class="logo jm-lexus">
-      </a>
-
-      <!-- Duplicate set for seamless loop (aria-hidden so screen readers skip) -->
-      <a href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/toyota_logo_inverted.png" alt="" class="logo toyota">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/jm_family_white_text.png" alt="" class="logo">
-      </a>
-      <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/FICS-Logo.png" alt="" class="logo">
-      </a>
-      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/roboticsforall.png" alt="" class="logo">
-      </a>
-      <a href="https://www.hunter.com" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="" class="logo jm-lexus">
-      </a>
-      <a href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/logo-header-inverted.png" alt="" class="logo jm-lexus">
-      </a>
-    </div>
-  </div>
-</section>
+    <!-- COMPANIES -->
+    <section id="companies" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Impact delivered at and trusted by</h2>
+        </div>
+        <div class="companies-grid">
+          <div class="company-item">
+            <img src="assets/logos/toyota_logo_inverted.png" alt="Southeast Toyota Distributors" />
+          </div>
+          <div class="company-item">
+            <img src="assets/logos/jm_family_white_text.png" alt="JM Family Enterprises" />
+          </div>
+          <div class="company-item">
+            <img src="assets/logos/FICS-Logo.png" alt="Florida Institute for Cybersecurity Research" />
+          </div>
+          <div class="company-item">
+            <img src="assets/logos/roboticsforall.png" alt="Robotics For All" />
+          </div>
+          <div class="company-item">
+            <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="Hunter Engineering Company" />
+          </div>
+          <div class="company-item">
+            <img src="assets/logos/logo-header-inverted.png" alt="JM Lexus" />
+          </div>
+        </div>
+      </div>
+    </section>
 
 
 
-   <!-- PROJECTS -->
-<section id="projects" class="section">
-  <h2>Featured Work</h2>
-  <div class="grid">
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Featured Work</h2>
+          <p class="section-subtitle">Innovative solutions that solve real-world problems</p>
+        </div>
+        <div class="projects-grid">
+          
+          <!-- SommiScript -->
+          <div class="project-card">
+            <h3 class="project-title">
+              <a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript — Lightweight Programming Language</a>
+            </h3>
+            <p class="project-description">Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
+            <div class="project-tech">
+              <span class="tech-tag">Java</span>
+              <span class="tech-tag">Language Design</span>
+              <span class="tech-tag">Interpreters</span>
+            </div>
+            <p class="project-focus">Focus: compilers, expressiveness, experimentation</p>
+          </div>
 
-    <!-- Move SommiScript to the top -->
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript — Lightweight Programming Language</a></h3>
-      <p>Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
-      <ul>
-        <li>Java • Language Design • Interpreters</li>
-        <li>Focus: compilers, expressiveness, experimentation</li>
-      </ul>
-    </article>
+          <!-- GatorGoods -->
+          <div class="project-card">
+            <h3 class="project-title">
+              <a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a>
+            </h3>
+            <p class="project-description">Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
+            <div class="project-tech">
+              <span class="tech-tag">MongoDB</span>
+              <span class="tech-tag">Express</span>
+              <span class="tech-tag">React</span>
+              <span class="tech-tag">Node</span>
+            </div>
+            <p class="project-focus">Focus: auth, usability, full-stack design</p>
+          </div>
 
-    <!-- GatorGoods second -->
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a></h3>
-      <p>Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
-      <ul>
-        <li>MongoDB • Express • React • Node</li>
-        <li>Focus: auth, usability, full-stack design</li>
-      </ul>
-    </article>
+          <!-- Tire & Wheel Data Pipeline -->
+          <div class="project-card">
+            <h3 class="project-title">Tire & Wheel Data Pipeline</h3>
+            <p class="project-description">Automated REST API pipeline that processed Hunter tire balance reports into Toyota/Lexus VPC systems, streamlining workflows for new vehicles.</p>
+            <div class="project-tech">
+              <span class="tech-tag">Python</span>
+              <span class="tech-tag">REST API</span>
+              <span class="tech-tag">Azure</span>
+            </div>
+            <p class="project-focus">Focus: efficiency, workflow automation</p>
+          </div>
 
-    <!-- Original ordering continues -->
+          <!-- CosmosDB ETL -->
+          <div class="project-card">
+            <h3 class="project-title">CosmosDB ➝ Azure SQL ETL</h3>
+            <p class="project-description">Cloud-based ETL pipeline transforming raw JSON in CosmosDB into relational models in Azure SQL, enabling faster analytics and cleaner queries.</p>
+            <div class="project-tech">
+              <span class="tech-tag">.NET</span>
+              <span class="tech-tag">Azure SQL</span>
+              <span class="tech-tag">CosmosDB</span>
+            </div>
+            <p class="project-focus">Focus: cloud architecture, data modeling</p>
+          </div>
 
-    <article class="card glass tilt">
-      <h3>Tire & Wheel Data Pipeline</h3>
-      <p>Automated REST API pipeline that processed Hunter tire balance reports into Toyota/Lexus VPC systems, streamlining workflows for new vehicles.</p>
-      <ul>
-        <li>Python • REST API • Azure</li>
-        <li>Focus: efficiency, workflow automation</li>
-      </ul>
-    </article>
+          <!-- Crash Analysis -->
+          <div class="project-card">
+            <h3 class="project-title">
+              <a href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer">Crash Fatality Analysis</a>
+            </h3>
+            <p class="project-description">Interactive analysis of vehicle fatality data (1996–2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.</p>
+            <div class="project-tech">
+              <span class="tech-tag">Python</span>
+              <span class="tech-tag">Pandas</span>
+              <span class="tech-tag">Visualization</span>
+            </div>
+            <p class="project-focus">Focus: data science, real-world insights</p>
+          </div>
 
-    <article class="card glass tilt">
-      <h3>CosmosDB ➝ Azure SQL ETL</h3>
-      <p>Cloud-based ETL pipeline transforming raw JSON in CosmosDB into relational models in Azure SQL, enabling faster analytics and cleaner queries.</p>
-      <ul>
-        <li>.NET • Azure SQL • CosmosDB</li>
-        <li>Focus: cloud architecture, data modeling</li>
-      </ul>
-    </article>
+          <!-- VehicleInsightHub -->
+          <div class="project-card">
+            <h3 class="project-title">VehicleInsightHub</h3>
+            <p class="project-description">Dashboard for live vehicle monitoring — from fuel efficiency to tire pressure — turning raw telemetry into clear, actionable insights.</p>
+            <div class="project-tech">
+              <span class="tech-tag">React</span>
+              <span class="tech-tag">APIs</span>
+              <span class="tech-tag">Data Visualization</span>
+            </div>
+            <p class="project-focus">Focus: usability, real-time insights</p>
+          </div>
 
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer">Crash Fatality Analysis</a></h3>
-      <p>Interactive analysis of vehicle fatality data (1996–2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.</p>
-      <ul>
-        <li>Python • Pandas • Visualization</li>
-        <li>Focus: data science, real-world insights</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3>VehicleInsightHub</h3>
-      <p>Dashboard for live vehicle monitoring — from fuel efficiency to tire pressure — turning raw telemetry into clear, actionable insights.</p>
-      <ul>
-        <li>React • APIs • Data Visualization</li>
-        <li>Focus: usability, real-time insights</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer">BalanceTree (AVL)</a></h3>
-      <p>Self-balancing AVL tree with insert, delete, and lookup operations, optimized for performance and correctness.</p>
-      <ul>
-        <li>C++ • Data Structures</li>
-        <li>Focus: efficiency, algorithm design</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3>Custom WAD File System with FUSE Integration</h3>
-      <p>Implemented a file system in C++ from scratch, supporting directories and files inside WAD archives. Integrated with FUSE so it can be mounted and browsed like a real OS file system.</p>
-      <ul>
-        <li>C++ • FUSE • File Systems</li>
-        <li>Focus: OS concepts, systems programming</li>
-      </ul>
-    </article>
-
-  </div>
-</section>
+        </div>
+      </div>
+    </section>
 
     
         <!-- QUOTE -->
-    <section class="section quote glass">
-      <blockquote>
-        “Reliability in software isn’t a feature, it’s the foundation.”
-      </blockquote>
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <blockquote style="font-size: var(--font-2xl); color: var(--text-primary); font-style: italic; text-align: center; max-width: 800px; margin: 0 auto;">
+            "Reliability in software isn't a feature, it's the foundation."
+          </blockquote>
+        </div>
+      </div>
     </section>
     
     <!-- SKILLS -->
-<section id="skills" class="section">
-  <h2>Skills & Tools</h2>
+    <section id="skills" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Skills & Tools</h2>
+          <p class="section-subtitle">Technologies I work with to build robust solutions</p>
+        </div>
+        <div class="skills-grid">
+          
+          <div class="skill-category">
+            <h3>Programming</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">C++</span>
+              <span class="skill-tag">Java</span>
+              <span class="skill-tag">JavaScript</span>
+              <span class="skill-tag">TypeScript</span>
+              <span class="skill-tag">SQL</span>
+              <span class="skill-tag">R</span>
+              <span class="skill-tag">HTML & CSS</span>
+              <span class="skill-tag">ARM Assembly</span>
+              <span class="skill-tag">MATLAB</span>
+              <span class="skill-tag">VBA</span>
+              <span class="skill-tag">DAX</span>
+            </div>
+          </div>
 
-  <h3>Programming</h3>
-  <div class="pills glass">
-    <span>Python</span><span>C++</span><span>Java</span><span>JavaScript</span><span>TypeScript</span>
-    <span>SQL</span><span>R</span><span>HTML &amp; CSS</span><span>ARM Assembly</span><span>MATLAB</span><span>VBA</span><span>DAX</span>
-  </div>
+          <div class="skill-category">
+            <h3>Cloud, Data & Databases</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Microsoft Azure</span>
+              <span class="skill-tag">Azure Blob Storage</span>
+              <span class="skill-tag">Amazon RDS</span>
+              <span class="skill-tag">Oracle</span>
+              <span class="skill-tag">Pandas</span>
+              <span class="skill-tag">TensorFlow</span>
+              <span class="skill-tag">KQL</span>
+              <span class="skill-tag">Power BI</span>
+            </div>
+          </div>
 
-  <h3>Cloud, Data &amp; Databases</h3>
-  <div class="pills glass">
-    <span>Microsoft Azure</span><span>Azure Blob Storage</span><span>Amazon RDS</span><span>Oracle</span>
-    <span>Pandas</span><span>TensorFlow</span><span>KQL</span><span>Power BI</span>
-  </div>
+          <div class="skill-category">
+            <h3>Frameworks & Libraries</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">React</span>
+              <span class="skill-tag">Next.js</span>
+              <span class="skill-tag">Node.js</span>
+              <span class="skill-tag">Chart.js</span>
+              <span class="skill-tag">Tkinter</span>
+            </div>
+          </div>
 
-  <h3>Frameworks &amp; Libraries</h3>
-  <div class="pills glass">
-    <span>React</span><span>Next.js</span><span>Node.js</span><span>Chart.js</span><span>Tkinter</span>
-  </div>
+          <div class="skill-category">
+            <h3>APIs & Integration</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">REST APIs</span>
+              <span class="skill-tag">JSON</span>
+              <span class="skill-tag">Salesforce (Apex/LWC)</span>
+            </div>
+          </div>
 
-  <h3>APIs &amp; Integration</h3>
-  <div class="pills glass">
-    <span>REST APIs</span><span>JSON</span><span>Salesforce (Apex/LWC)</span>
-  </div>
+          <div class="skill-category">
+            <h3>DevOps & Tooling</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Git</span>
+              <span class="skill-tag">GitHub Actions</span>
+              <span class="skill-tag">JetBrains IDEs</span>
+              <span class="skill-tag">GDB</span>
+              <span class="skill-tag">Google Apps Script</span>
+            </div>
+          </div>
 
-  <h3>DevOps &amp; Tooling</h3>
-  <div class="pills glass">
-    <span>Git</span><span>GitHub Actions</span><span>JetBrains IDEs</span><span>GDB</span><span>Google Apps Script</span>
-  </div>
+          <div class="skill-category">
+            <h3>Soft Skills</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Agile</span>
+              <span class="skill-tag">Problem-solving</span>
+              <span class="skill-tag">Teamwork</span>
+              <span class="skill-tag">Communication</span>
+              <span class="skill-tag">Time management</span>
+              <span class="skill-tag">Precision</span>
+            </div>
+          </div>
 
-  <h3>Soft Skills</h3>
-  <div class="pills glass">
-    <span>Agile</span><span>Problem-solving</span><span>Teamwork</span><span>Communication</span><span>Time management</span><span>Precision</span>
-  </div>
-</section>
-
+        </div>
+      </div>
+    </section>
 
     <!-- EXPERIENCE -->
-<section id="experience" class="section">
-  <h2>Experience</h2>
-  <div class="timeline">
+    <section id="experience" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Experience</h2>
+          <p class="section-subtitle">Professional journey through software engineering</p>
+        </div>
+        <div class="timeline">
 
-    <div class="row glass">
-      <div class="when">Jan 2026 – Present</div>
-      <div class="what">
-        <strong>Software Engineering Co-op, R&D — Hunter Engineering Company</strong><br>
-        In progress...<br>
-        <em>(Details pending project completion)</em>
+          <div class="timeline-item">
+            <div class="timeline-date">Jan 2026 – Present</div>
+            <div class="timeline-title">Software Engineering Co-op, R&D — Hunter Engineering Company</div>
+            <div class="timeline-description">
+              In progress...<br>
+              <em>(Details pending project completion)</em>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">May 2025 – Nov 2025</div>
+            <div class="timeline-title">Software Engineering Intern — JM Family Enterprises</div>
+            <div class="timeline-description">
+              Built Azure Function Apps in .NET/C# to validate and reconcile dealer identity data for JM Lexus and Toyota dealership users across Microsoft Entra and Salesforce via Microsoft Graph API and a MuleSoft proxy. Engineered backend workflows for permission checks and automated record verification. Improved reliability of cloud-native identity integrations and contributed to Azure DevOps CI/CD pipelines for deployment and testing.
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">Jun 2024 – Aug 2024</div>
+            <div class="timeline-title">Software Engineering Intern — Southeast Toyota Distributors</div>
+            <div class="timeline-description">
+              Built Python + REST API ETL pipeline for Azure Blob ➝ SharePoint. Queried 51,000+ vehicle records with SQL for tire/wheel analysis. Automated tracking of 160+ accessory projects with Kanban workflows. Enhanced OCR + Power BI reporting for faster, cleaner insights.
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">May 2023 – May 2024</div>
+            <div class="timeline-title">AI Cybersecurity Researcher — Florida Institute for Cybersecurity Research</div>
+            <div class="timeline-description">
+              Investigated security flaws in large language models. Built plug-ins to test ChatGPT robustness and developed methods to detect and mitigate AI vulnerabilities.
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">Mar 2022 – Jan 2023</div>
+            <div class="timeline-title">Software Engineering Intern — Robotics For All</div>
+            <div class="timeline-description">
+              Automated backend workflows with JavaScript and Google Forms integrations. Streamlined data collection, storage, and email notifications for improved communication efficiency.
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">Jun 2020 – Jul 2020</div>
+            <div class="timeline-title">SEO Analyst — Shiva Robotics Academy</div>
+            <div class="timeline-description">
+              Led SEO strategy, improving organic traffic by 20% with marketgoo analytics. Optimized site elements to raise search visibility and engagement.
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">Sep 2019 – Feb 2020</div>
+            <div class="timeline-title">Software Developer — Renaissance Jax</div>
+            <div class="timeline-description">
+              Built real-time vision system with color detection for FIRST Robotics competition robots. Enhanced hardware-software integration and team collaboration via GitHub.
+            </div>
+          </div>
+
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="row glass">
-      <div class="when">May 2025 – Nov 2025</div>
-      <div class="what">
-        <strong>Software Engineering Intern — JM Family Enterprises</strong><br>
-        Built Azure Function Apps in .NET/C# to validate and reconcile dealer identity data for JM Lexus and Toyota dealership users across Microsoft Entra and Salesforce via Microsoft Graph API and a MuleSoft proxy. Engineered backend workflows for permission checks and automated record verification. Improved reliability of cloud-native identity integrations and contributed to Azure DevOps CI/CD pipelines for deployment and testing.
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>What folks have to say</h2>
+          <p class="section-subtitle">Feedback from colleagues and mentors</p>
+        </div>
+        <div class="testimonials-grid">
+
+          <div class="testimonial-card">
+            <blockquote class="testimonial-quote">
+              "Ajay consistently exceeded expectations ... always open to feedback, eager to learn, and quick to offer fresh ideas ... I highly recommend him to any organization seeking a talented and dedicated professional."
+            </blockquote>
+            <cite class="testimonial-author">— Barbara Russo, JM Family</cite>
+          </div>
+
+          <div class="testimonial-card">
+            <blockquote class="testimonial-quote">
+              "I had the pleasure of mentoring Ajay during his internship at JM Family, and he consistently impressed me with his strong work ethic and eagerness to learn ... Any team would be fortunate to have him!"
+            </blockquote>
+            <cite class="testimonial-author">— Saleem Nashawaty, JM Family</cite>
+          </div>
+
+          <div class="testimonial-card">
+            <blockquote class="testimonial-quote">
+              "Ajay created automation that moved quality assessment data into our repository and built reports that made a real impact for our team. His focus and resolve helped us make significant progress."
+            </blockquote>
+            <cite class="testimonial-author">— Daniel Donaldson, Southeast Toyota</cite>
+          </div>
+
+          <div class="testimonial-card">
+            <blockquote class="testimonial-quote">
+              "Ajay consistently demonstrated enthusiasm, determination, and strong data skills. His grasp of data structures and proficiency with Microsoft Power Suite significantly contributed to our project's success."
+            </blockquote>
+            <cite class="testimonial-author">— Naman Goyal, Southeast Toyota</cite>
+          </div>
+
+          <div class="testimonial-card">
+            <blockquote class="testimonial-quote">
+              "Ajay was a key member of our software team, taking ownership of projects and bridging knowledge gaps. His backend automation streamlined how parent and student information is ingested."
+            </blockquote>
+            <cite class="testimonial-author">— Garrett Tieng, Robotics For All</cite>
+          </div>
+
+          <div class="testimonial-card">
+            <blockquote class="testimonial-quote">
+              "Ajay demonstrated exceptional software engineering skills and a proactive, problem-solving approach. He delivered high-quality work and collaborated effectively across the team."
+            </blockquote>
+            <cite class="testimonial-author">— Valeria Pinatelli, Robotics For All</cite>
+          </div>
+
+        </div>
+        <p style="text-align: center; margin-top: var(--space-lg); color: var(--text-secondary);">More on <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>.</p>
       </div>
-    </div>
+    </section>
 
-    <div class="row glass">
-      <div class="when">Jun 2024 – Aug 2024</div>
-      <div class="what">
-        <strong>Software Engineering Intern — Southeast Toyota Distributors</strong><br>
-        Built Python + REST API ETL pipeline for Azure Blob ➝ SharePoint. Queried 51,000+ vehicle records with SQL for tire/wheel analysis. Automated tracking of 160+ accessory projects with Kanban workflows. Enhanced OCR + Power BI reporting for faster, cleaner insights.
+    <!-- HOW I OPERATE -->
+    <section id="how-i-operate" class="section how-i-operate">
+      <div class="container">
+        <div class="section-header">
+          <h2>How I Operate</h2>
+          <p class="section-subtitle">My engineering philosophy and problem-solving approach</p>
+        </div>
+        <div class="operate-grid">
+
+          <div class="operate-card">
+            <div class="operate-icon">01</div>
+            <h3 class="operate-title">First Principles Thinking</h3>
+            <p class="operate-description">
+              I break down complex problems to their fundamental truths and build solutions from the ground up. This approach ensures that every architectural decision serves a clear purpose and avoids unnecessary complexity.
+            </p>
+            <ul class="operate-principles">
+              <li class="operate-principle">Question assumptions and established patterns</li>
+              <li class="operate-principle">Build from core requirements, not conventions</li>
+              <li class="operate-principle">Validate solutions against real-world constraints</li>
+            </ul>
+          </div>
+
+          <div class="operate-card">
+            <div class="operate-icon">02</div>
+            <h3 class="operate-title">Systems Over Code</h3>
+            <p class="operate-description">
+              I focus on understanding the entire system—how components interact, where bottlenecks occur, and how the solution scales. Code is just one part of a larger ecosystem that must work reliably in production.
+            </p>
+            <ul class="operate-principles">
+              <li class="operate-principle">Map the full data flow and dependencies</li>
+              <li class="operate-principle">Design for failure and recovery scenarios</li>
+              <li class="operate-principle">Consider operational impact from day one</li>
+            </ul>
+          </div>
+
+          <div class="operate-card">
+            <div class="operate-icon">03</div>
+            <h3 class="operate-title">Pragmatic Innovation</h3>
+            <p class="operate-description">
+              I embrace new technologies when they solve real problems, not for their own sake. Every tool, framework, or pattern must justify its existence through measurable value to the project and business goals.
+            </p>
+            <ul class="operate-principles">
+              <li class="operate-principle">Evaluate tools by problem-solving fitness</li>
+              <li class="operate-principle">Balance innovation with maintainability</li>
+              <li class="operate-principle">Measure impact before and after adoption</li>
+            </ul>
+          </div>
+
+          <div class="operate-card">
+            <div class="operate-icon">04</div>
+            <h3 class="operate-title">Reliability as Foundation</h3>
+            <p class="operate-description">
+              I build systems that work consistently under pressure. This means comprehensive testing, graceful error handling, and monitoring that provides actionable insights before issues become critical.
+            </p>
+            <ul class="operate-principles">
+              <li class="operate-principle">Design for observability and debuggability</li>
+              <li class="operate-principle">Test at unit, integration, and system levels</li>
+              <li class="operate-principle">Plan for scalability from the start</li>
+            </ul>
+          </div>
+
+          <div class="operate-card">
+            <div class="operate-icon">05</div>
+            <h3 class="operate-title">Collaborative Problem-Solving</h3>
+            <p class="operate-description">
+              I believe the best solutions emerge from diverse perspectives. I actively seek feedback, explain technical concepts clearly to stakeholders, and build consensus around architectural decisions.
+            </p>
+            <ul class="operate-principles">
+              <li class="operate-principle">Communicate technical trade-offs clearly</li>
+              <li class="operate-principle">Document decisions and their rationale</li>
+              <li class="operate-principle">Mentor others and share knowledge freely</li>
+            </ul>
+          </div>
+
+          <div class="operate-card">
+            <div class="operate-icon">06</div>
+            <h3 class="operate-title">Continuous Learning</h3>
+            <p class="operate-description">
+              Technology evolves rapidly, and I stay current through hands-on projects, deep dives into new paradigms, and understanding the principles behind emerging trends rather than just surface-level familiarity.
+            </p>
+            <ul class="operate-principles">
+              <li class="operate-principle">Build side projects to explore new technologies</li>
+              <li class="operate-principle">Study foundational computer science concepts</li>
+              <li class="operate-principle">Contribute to open source and technical communities</li>
+            </ul>
+          </div>
+
+        </div>
       </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">May 2023 – May 2024</div>
-      <div class="what">
-        <strong>AI Cybersecurity Researcher — Florida Institute for Cybersecurity Research</strong><br>
-        Investigated security flaws in large language models. Built plug-ins to test ChatGPT robustness and developed methods to detect and mitigate AI vulnerabilities.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">Mar 2022 – Jan 2023</div>
-      <div class="what">
-        <strong>Software Engineering Intern — Robotics For All</strong><br>
-        Automated backend workflows with JavaScript and Google Forms integrations. Streamlined data collection, storage, and email notifications for improved communication efficiency.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">Jun 2020 – Jul 2020</div>
-      <div class="what">
-        <strong>SEO Analyst — Shiva Robotics Academy</strong><br>
-        Led SEO strategy, improving organic traffic by 20% with marketgoo analytics. Optimized site elements to raise search visibility and engagement.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">Sep 2019 – Feb 2020</div>
-      <div class="what">
-        <strong>Software Developer — Renaissance Jax</strong><br>
-        Built real-time vision system with color detection for FIRST Robotics competition robots. Enhanced hardware-software integration and team collaboration via GitHub.
-      </div>
-    </div>
-
-  </div>
-</section>
-
-
-    <!-- RECOMMENDATIONS -->
-<section id="recs" class="section">
-  <h2>What folks have to say</h2>
-  <div class="grid testimonials">
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay consistently exceeded expectations ... always open to feedback, eager to learn, and quick to offer fresh ideas ... I highly recommend him to any organization seeking a talented and dedicated professional.”
-      </blockquote>
-      <cite>— Barbara Russo, JM Family</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “I had the pleasure of mentoring Ajay during his internship at JM Family, and he consistently impressed me with his strong work ethic and eagerness to learn ... Any team would be fortunate to have him!”
-      </blockquote>
-      <cite>— Saleem Nashawaty, JM Family</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay created automation that moved quality assessment data into our repository and built reports that made a real impact for our team. His focus and resolve helped us make significant progress.”
-      </blockquote>
-      <cite>— Daniel Donaldson, Southeast Toyota</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay consistently demonstrated enthusiasm, determination, and strong data skills. His grasp of data structures and proficiency with Microsoft Power Suite significantly contributed to our project’s success.”
-      </blockquote>
-      <cite>— Naman Goyal, Southeast Toyota</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay was a key member of our software team, taking ownership of projects and bridging knowledge gaps. His backend automation streamlined how parent and student information is ingested.”
-      </blockquote>
-      <cite>— Garrett Tieng, Robotics For All</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay demonstrated exceptional software engineering skills and a proactive, problem-solving approach. He delivered high-quality work and collaborated effectively across the team.”
-      </blockquote>
-      <cite>— Valeria Pinatelli, Robotics For All</cite>
-    </article>
-
-  </div>
-  <p class="note">More on <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>.</p>
-</section>
-
+    </section>
 
     <!-- CONTACT -->
     <section id="contact" class="section">
-      <h2>Contact</h2>
-      <div class="contact glass">
-        <a href="mailto:ajaysommi7@gmail.com">ajaysommi7@gmail.com</a>
-        <a href="https://github.com/ajaysommi" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>
-        <a href="resume.html" class="btn solid">Open Resume</a>
+      <div class="container">
+        <div class="section-header">
+          <h2>Contact</h2>
+          <p class="section-subtitle">Let's connect and discuss opportunities</p>
+        </div>
+        <div class="contact">
+          <div class="contact-links">
+            <a href="mailto:ajaysommi7@gmail.com" class="contact-link">
+              <span>📧</span> ajaysommi7@gmail.com
+            </a>
+            <a href="https://github.com/ajaysommi" target="_blank" rel="noreferrer" class="contact-link">
+              <span>💻</span> GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer" class="contact-link">
+              <span>💼</span> LinkedIn
+            </a>
+            <a href="resume.html" class="contact-link">
+              <span>📄</span> View Resume
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; <span id="y"></span> Ajay Sommi</p>
+    </div>
+  </footer>
   <script src="script.js" defer></script>
   <script>
   const card = document.querySelector('.hero-card');
@@ -394,7 +555,9 @@
     const ease = 0.30; // 0.1 = slower, 0.25 = snappier
     currX += (targetX - currX) * ease;
     currY += (targetY - currY) * ease;
-    card.style.transform = `translate3d(${currX}px, ${currY}px, 0)`;
+    if (card) {
+      card.style.transform = `translate3d(${currX}px, ${currY}px, 0)`;
+    }
     requestAnimationFrame(tick);
   }
   tick();
@@ -411,7 +574,7 @@
     history.scrollRestoration = 'manual';
   }
 
-  // 2) If there’s a hash in the URL (e.g. #projects), clear it and go to top
+  // 2) If there's a hash in the URL (e.g. #projects), clear it and go to top
   window.addEventListener('load', () => {
     if (location.hash) {
       window.scrollTo(0, 0);
