@@ -89,7 +89,7 @@ a:hover{ text-decoration:none; }
 
 .blob{
   position:absolute;
-  filter: blur(85px) saturate(490%);
+  filter: blur(85px) saturate(400%);
   opacity:.40;
   mix-blend-mode: screen;
   will-change: transform, opacity;
@@ -104,7 +104,7 @@ a:hover{ text-decoration:none; }
   top:-18vh;
   background: radial-gradient(
     60% 60% at 40% 40%,
-    rgba(59, 206, 246, 0.45),
+    rgba(59, 246, 243, 0.45),
     transparent 72%
   );
 }
