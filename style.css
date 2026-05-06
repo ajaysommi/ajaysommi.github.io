@@ -253,7 +253,7 @@ main{
 
 .section{
   max-width:1150px;
-  padding:40px 16px;
+  padding:29px 16px;
   margin:0 auto;
 }
 
@@ -1085,4 +1085,18 @@ html:not(.marquee-ready) .logo-track{
   font-size: 0.9rem;
   color: #fa4616;
   letter-spacing: 0.02em;
+}
+
+#education.section{
+  padding-top:10px;
+  padding-bottom:16px;
+}
+
+#projects.section{
+  padding-top:18px;
+  padding-bottom:52px;
+}
+
+#skills.section{
+  padding-top:52px;
 }
