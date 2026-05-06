@@ -1,3 +1,19 @@
+<body>
+  <div class="page-loader" aria-hidden="true">
+    <div class="loader-stars"></div>
+
+    <div class="loader-card">
+      <div class="loader-orb"></div>
+
+      <div class="loader-text">
+        <span>initializing portfolio</span>
+        <span>loading experience</span>
+        <span>systems online</span>
+      </div>
+    </div>
+  </div>
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -26,6 +42,7 @@
   <header class="nav glass">
     <nav>
       <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
       <a href="#recs">Recommendations</a>
@@ -49,7 +66,9 @@
           </p>
           <h1>Welcome. I'm Ajay, glad you're here.</h1>
           <p class="sub">
-          You don’t need more code; you need systems that work. I’m a software engineer specializing in <strong>Azure cloud development</strong>, backend architecture, and enterprise-grade automation for large-scale, data-driven organizations. I build solutions that scale reliably in production, from serverless APIs and cloud data pipelines to identity-first workflows built on Entra ID, Azure Functions, SQL, and Azure DevOps.
+            I’m a software engineer who builds practical systems for real-world workflows: backend services, internal tools, dashboards, and automation that help teams manage complex data and operations.
+            I enjoy working on software that sits close to the business problem, where clean engineering, thoughtful design, and reliable execution make day-to-day work easier for real people.
+            My experience spans <strong>C#/.NET, Azure, SQL, APIs, Salesforce, Power BI, and research-driven software</strong>, with a focus on reliability, maintainability, and useful products that hold up beyond the demo.
           </p>
           <div class="actions">
             <a href="#projects" class="btn solid">View projects</a>
@@ -66,6 +85,9 @@
   <div class="logo-marquee glass">
     <div class="logo-track">
       <!-- Real logos you have now -->
+      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-label="Robotics For All">
+        <img src="assets/logos/roboticsforall.png" alt="Robotics For All" class="logo">
+      </a>
       <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-label="JM Family Enterprises">
         <img src="assets/logos/jm_family_white_text.png" alt="JM Family Enterprises" class="logo">
       </a>
@@ -84,11 +106,11 @@
       <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-label="Florida Institute for Cybersecurity Research">
         <img src="assets/logos/FICS-Logo.png" alt="Florida Institute for Cybersecurity Research" class="logo">
       </a>
-      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-label="Robotics For All">
-        <img src="assets/logos/roboticsforall.png" alt="Robotics For All" class="logo">
-      </a>
 
       <!-- Duplicate set for seamless loop (aria-hidden so screen readers skip) -->
+      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-hidden="true">
+        <img src="assets/logos/roboticsforall.png" alt="" class="logo">
+      </a>
       <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-hidden="true">
         <img src="assets/logos/jm_family_white_text.png" alt="" class="logo">
       </a>
@@ -106,9 +128,6 @@
       </a>
       <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-hidden="true">
         <img src="assets/logos/FICS-Logo.png" alt="" class="logo">
-      </a>
-      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/roboticsforall.png" alt="" class="logo">
       </a>
     </div>
   </div>
@@ -182,6 +201,21 @@
       </div>
     </div>
 
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education" class="section">
+  <h2>Education</h2>
+
+  <div class="timeline">
+    <div class="row glass education-card">
+      <div class="when">December 2026</div>
+      <div class="what">
+        <strong>University of Florida — B.S. in Computer Science, Herbert Wertheim College of Engineering</strong><br>
+        Earned the University of Florida AI Certificate, with coursework spanning operating systems, databases, data structures and algorithms, software engineering, artificial intelligence, and cybersecurity.
+      </div>
+    </div>
   </div>
 </section>
 
@@ -463,7 +497,52 @@
     .finally(ready);
 })();
 </script>
+<script>
+  const educationCard = document.querySelector(".education-card");
 
+  if (educationCard) {
+    let lastGatorTime = 0;
+
+    educationCard.addEventListener("mouseenter", (e) => {
+      const now = Date.now();
+
+      if (now - lastGatorTime < 1200) return;
+      lastGatorTime = now;
+
+      const flyer = document.createElement("div");
+      flyer.className = "flying-gator";
+
+      const ufEmojis = ["🐊", "🧡", "💙", "🏈", "🎓", "📘", "📚", "💻", "📎", "🌴"];
+      flyer.textContent = ufEmojis[Math.floor(Math.random() * ufEmojis.length)];
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const startX = e.clientX;
+      const startY = e.clientY;
+
+      const possibleEnds = [
+        { endX: width + 90, endY: Math.random() * height },
+        { endX: -90, endY: Math.random() * height },
+        { endX: Math.random() * width, endY: -90 },
+        { endX: Math.random() * width, endY: height + 90 }
+      ];
+
+      const path = possibleEnds[Math.floor(Math.random() * possibleEnds.length)];
+
+      flyer.style.setProperty("--start-x", `${startX}px`);
+      flyer.style.setProperty("--start-y", `${startY}px`);
+      flyer.style.setProperty("--end-x", `${path.endX}px`);
+      flyer.style.setProperty("--end-y", `${path.endY}px`);
+
+      document.body.appendChild(flyer);
+
+      flyer.addEventListener("animationend", () => {
+        flyer.remove();
+      });
+    });
+  }
+</script>
 
 </body>
 </html>
