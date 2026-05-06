@@ -844,3 +844,34 @@ html:not(.marquee-ready) .logo-track{
     padding-top: 12px !important; /* tighter hero spacing */
   }
 }
+
+html {
+  background-color: #050b18;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='%239bb8ff' fill-opacity='0.08' font-family='monospace' font-size='15'%3E%3Ctext x='14' y='28'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='92' y='52'%3E%7B%7D%3C/text%3E%3Ctext x='32' y='96'%3E%5B%5D%3C/text%3E%3Ctext x='118' y='118'%3E//%3C/text%3E%3Ctext x='56' y='150'%3E_%3C/text%3E%3Ctext x='130' y='160'%3E%5C%3C/text%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  background-attachment: fixed;
+}
+
+body {
+  background: transparent;
+}
+
+/* ---- CONTACT RESUME BUTTON FIX ---- */
+/* Best option: add class="resume-btn" to your Open Resume link */
+.contact a.resume-btn{
+  background: linear-gradient(180deg, #2f3442 0%, #171b26 100%) !important;
+  color: #F2F7FF !important;
+  border: 1px solid rgba(255,255,255,.28) !important;
+  text-shadow: none !important;
+
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.25),
+    inset 0 0 0 1px rgba(255,255,255,.08) !important;
+}
+
+.contact a.resume-btn:hover{
+  background: linear-gradient(180deg, #3b4253 0%, #202636 100%) !important;
+  color: #ffffff !important;
+}
