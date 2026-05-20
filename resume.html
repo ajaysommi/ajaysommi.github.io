@@ -5,27 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Resume — Ajay Sommi</title>
   <link rel="stylesheet" href="style.css" />
+
   <style>
-    .frame{max-width:1100px; margin:40px auto; padding:16px}
-    .embed{aspect-ratio:8.5/11; width:100%; border:1px solid var(--stroke); border-radius:16px; overflow:hidden}
-    .note{color:#aab4bd; margin:12px 0}
+    .frame {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 16px;
+    }
+
+    .resume-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 10px 0 16px;
+      flex-wrap: wrap;
+    }
+
+    .resume-top h1 {
+      font-size: 1.4rem;
+      margin: 0;
+    }
+
+    .back-home-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      margin-bottom: 18px;
+      text-decoration: none;
+    }
+
+    .embed {
+      aspect-ratio: 8.5 / 11;
+      width: 100%;
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .note {
+      color: #aab4bd;
+      margin: 12px 0;
+    }
+
+    .resume-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
   </style>
 </head>
+
 <body>
   <header class="nav glass">
-    <div class="brand"><div class="logo">A</div><span>Ajay Sommi</span></div>
-    <nav><a href="index.html#projects">Projects</a><a href="index.html#experience">Experience</a><a href="index.html#contact" class="cta">Contact</a></nav>
+    <nav>
+      <a href="index.html#experience">Experience</a>
+      <a href="index.html#education">Education</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#skills">Skills</a>
+      <a href="index.html#recs">Recommendations</a>
+      <a href="resume.html">Resume</a>
+      <a href="index.html#contact" class="cta">Contact</a>
+    </nav>
   </header>
+
   <main class="frame">
-    <h1 style="font-size:1.4rem;margin:10px 0 16px">Resume</h1>
-    <div class="note">Tip: open in a new tab if the inline preview is slow.</div>
-    <div class="embed glass">
-      <!-- Replace resume.pdf with your actual file name -->
-      <iframe src="./Ajay_Sommi_Resume.pdf" title="Ajay Sommi — Resume" style="width:100%;height:100%;border:0;"></iframe>
+    <a class="btn back-home-btn" href="index.html">← Back</a>
+
+    <div class="resume-top">
+      <h1>Resume</h1>
     </div>
-    <p class="note"><a class="btn solid" href="./Ajay_Sommi_Resume.pdf" download>Download PDF</a></p>
+
+    <div class="note">Tip: open in a new tab if the inline preview is slow.</div>
+
+    <div class="embed glass">
+      <iframe
+        src="./Ajay_Sommi_Resume.pdf"
+        title="Ajay Sommi — Resume"
+        style="width:100%;height:100%;border:0;">
+      </iframe>
+    </div>
+
+    <div class="resume-actions">
+      <a class="btn solid" href="./Ajay_Sommi_Resume.pdf" download>Download PDF</a>
+      <a class="btn" href="index.html">Return home</a>
+    </div>
   </main>
+
   <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
-  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
