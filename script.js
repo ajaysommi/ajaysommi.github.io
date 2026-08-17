@@ -1137,7 +1137,10 @@ const palette = (() => {
   // Click on the backdrop closes.
   dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
 
-  $('#paletteBtn')?.addEventListener('click', open);
+  // Desktop's inline button and mobile's floating one both open the same
+  // palette; only one is ever visible at a given breakpoint (CSS handles
+  // that), so wiring both here is just picking up whichever is showing.
+  $$('#paletteBtn, #paletteBtnMobile').forEach((btn) => btn.addEventListener('click', open));
 
   return { open, close };
 })();

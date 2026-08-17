@@ -133,6 +133,16 @@
     </div>
   </header>
 
+  <!-- Mobile-only search FAB: a sibling of header.nav, not a descendant.
+       header.nav has backdrop-filter, which creates a containing block for
+       position:fixed children — nesting this button inside it made
+       right/bottom position relative to the nav pill's own box instead of
+       the viewport, landing it beside the hamburger instead of a clean
+       circle at the screen edge. -->
+  <button class="icon-btn palette-fab" id="paletteBtnMobile" type="button" aria-label="Open command palette" title="Command palette">
+    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M11 3a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 11 3Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z" fill="currentColor"/></svg>
+  </button>
+
   <!-- Mobile menu sheet -->
   <div class="sheet-scrim" id="sheetScrim" hidden></div>
   <nav class="mobile-sheet" id="mobileSheet" aria-label="Mobile menu" hidden>

@@ -547,6 +547,7 @@
   header.nav a.cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
 
   .nav-toggle { display: none; }
+  .palette-fab { display: none; }
 
   .burger { display: grid; gap: 4px; width: 16px; }
   .burger i {
@@ -2262,19 +2263,48 @@
     .section { scroll-margin-top: max(16px, env(safe-area-inset-top)); }
 
     /* Nav moves to a bottom bar: reachable with a thumb, and out of the way
-       of the content instead of permanently eating the top of every screen. */
+       of the content instead of permanently eating the top of every screen.
+       It no longer spans the full width either: stretching it edge to edge
+       while only the brand sat at one end and the actions at the other
+       (via margin-left:auto) left a dead gap in the middle of the pill.
+       Shrinking it to hug its own content removes that gap outright. */
     header.nav {
       top: auto;
       bottom: max(10px, env(safe-area-inset-bottom));
+      left: 12px;
+      right: auto;
+      width: auto;
+      transform: none;
     }
 
-    /* Nav collapses to brand + actions + hamburger. */
+    /* Nav collapses to brand + theme + contact + hamburger. */
     .nav-links { display: none; }
     .nav-toggle { display: inline-grid; }
     header.nav { padding: 6px 7px 6px 10px; gap: 6px; }
-    .nav-actions { margin-left: auto; }
-    #paletteBtn .kbd-hint { display: none; }
+    .nav-actions { margin-left: 0; }
     header.nav a.cta { padding: 8px 14px; font-size: .86rem; }
+
+    /* The in-pill search button is replaced by the dedicated FAB below;
+       hiding it here (rather than deleting it) keeps one button and one
+       click handler doing the job on desktop, where it belongs inline. */
+    #paletteBtn { display: none; }
+
+    /* Search's own circular tile on the opposite side of the screen from
+       the main pill: fixed to the true viewport since this button is a
+       sibling of header.nav, not nested inside its backdrop-filter. */
+    .palette-fab {
+      display: grid;
+      position: fixed;
+      z-index: 60;
+      right: 12px;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      width: 46px;
+      height: 46px;
+      min-width: 0;
+      padding: 0;
+      border-radius: 50%;
+      place-items: center;
+    }
 
     /* Everything else fixed to the bottom needs to clear the new bar. */
     .mobile-sheet { bottom: var(--mobile-nav-clear); }
@@ -2289,9 +2319,14 @@
     .hero-pic { border-radius: 15px; }
     .hero-head h1 { font-size: clamp(21px, 6.4vw, 30px); }
     .sub { font-size: .93rem; }
-    .actions { display: grid; grid-template-columns: 1fr 1fr; }
-    .actions .btn { width: 100%; }
-    .actions .btn.ghost { grid-column: 1 / -1; }
+
+    /* This was a 3-up grid (a full-width button, two half-width, one of them
+       forced to span both columns) left over from when the hero had a third
+       CTA. With just Resume + Copy email now, that math gave Resume a
+       half-width column with dead space beside it. A plain equal-width pair
+       reads as one deliberate row instead. */
+    .actions { display: flex; gap: 10px; }
+    .actions .btn { flex: 1 1 0; }
 
     .section { padding-inline: 14px; }
 
@@ -2349,7 +2384,9 @@
   }
 
   @media (max-width: 380px) {
-    .actions { grid-template-columns: 1fr; }
+    /* Below this width "Copy email" starts crowding its icon; stack instead
+       of squeezing the pair. */
+    .actions { flex-direction: column; }
   }
 
   /* Touch devices: hover effects that need a real pointer are dropped. */
