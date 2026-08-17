@@ -365,14 +365,17 @@
   .b3 { width: 34vw; height: 34vw; right: -10vw; top: -12vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-3), transparent 76%); animation-duration: 42s; }
   .b4 { width: 36vw; height: 36vw; left: 12vw; bottom: -24vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-4), transparent 76%); animation-duration: 40s; }
 
-  /* Pointer spotlight that reveals the code-glyph wallpaper around the cursor. */
+  /* Pointer spotlight that reveals the code-glyph wallpaper around the cursor.
+     Kept faint on purpose: this used to read as a bright ring chasing the
+     mouse, which was distracting more than atmospheric. --spot-x/-y are
+     registered via @property so the position itself eases smoothly. */
   .spotlight {
     position: absolute;
     inset: 0;
     opacity: 0;
-    background: radial-gradient(260px 260px at var(--spot-x) var(--spot-y),
-                color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%);
-    transition: opacity .4s ease;
+    background: radial-gradient(220px 220px at var(--spot-x) var(--spot-y),
+                color-mix(in oklab, var(--accent) 6%, transparent), transparent 72%);
+    transition: opacity .5s ease, --spot-x .25s linear, --spot-y .25s linear;
   }
 
   .grid-veil { position: absolute; inset: 0; background: var(--veil); }
@@ -724,15 +727,15 @@
     overflow: hidden;
   }
 
-  /* Cursor-tracked sheen across the hero glass. */
+  /* Cursor-tracked sheen across the hero glass, toned down and eased. */
   .hero-shine {
     position: absolute;
     inset: 0;
     border-radius: inherit;
     opacity: 0;
-    background: radial-gradient(340px 340px at var(--spot-x) var(--spot-y),
-                color-mix(in oklab, var(--accent) 12%, transparent), transparent 68%);
-    transition: opacity var(--dur-slow) var(--ease);
+    background: radial-gradient(360px 360px at var(--spot-x) var(--spot-y),
+                color-mix(in oklab, var(--accent) 5%, transparent), transparent 70%);
+    transition: opacity var(--dur-slow) var(--ease), --spot-x .3s linear, --spot-y .3s linear;
     pointer-events: none;
   }
 
@@ -975,12 +978,19 @@
     opacity: .75;
   }
 
+  /* The logos section and the one after it both carry full .section padding,
+     which stacked into a noticeably dead gap. Trim the touching edges only. */
+  #logos.section { padding-bottom: clamp(14px, 2.4vw, 22px); }
+
   /* ==========================================================================
      THE PATH: scroll-driven career circuit board
      A PCB laid out in 3D. --p (0→1, set by script.js from scroll position)
      dollies the board past the camera and energises the trace behind it.
      ========================================================================== */
-  .journey-section { position: relative; }
+  .journey-section {
+    position: relative;
+    padding-top: clamp(14px, 2.4vw, 22px);
+  }
 
   .journey-scope {
     /* Height scales with node count so pacing stays even if roles are added. */
@@ -1508,9 +1518,9 @@
     position: absolute;
     inset: 0;
     opacity: 0;
-    background: radial-gradient(230px 230px at var(--spot-x) var(--spot-y),
-                color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%);
-    transition: opacity var(--dur) var(--ease);
+    background: radial-gradient(210px 210px at var(--spot-x) var(--spot-y),
+                color-mix(in oklab, var(--accent) 7%, transparent), transparent 72%);
+    transition: opacity var(--dur) var(--ease), --spot-x .25s linear, --spot-y .25s linear;
     pointer-events: none;
   }
 

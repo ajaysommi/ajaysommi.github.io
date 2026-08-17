@@ -366,16 +366,27 @@ function setTheme(name, announce = true) {
     }, { passive: true });
   });
 
-  // Magnetic buttons that lean toward the cursor.
+  // Magnetic buttons that lean gently toward the cursor. Raw pointermove
+  // deltas were driving the transform 1:1, which reads as skittish once the
+  // mouse jitters even slightly; rAF-throttling and a real transition (the
+  // element's own hover transition, left free instead of pinned per-frame)
+  // settle it into a lazier, springier lean.
   $$('[data-magnetic]').forEach((el) => {
-    const strength = 12;
+    const strength = 6;
+    let raf = 0, pendingX = 0, pendingY = 0;
+
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
-      const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
-      const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-      el.style.transform = `translate(${dx * strength}px, ${dy * strength * 0.5}px)`;
+      pendingX = ((e.clientX - (r.left + r.width / 2)) / (r.width / 2)) * strength;
+      pendingY = ((e.clientY - (r.top + r.height / 2)) / (r.height / 2)) * strength * 0.5;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        el.style.transform = `translate(${pendingX.toFixed(1)}px, ${pendingY.toFixed(1)}px)`;
+      });
     }, { passive: true });
-    const reset = () => { el.style.transform = ''; };
+
+    const reset = () => { cancelAnimationFrame(raf); raf = 0; el.style.transform = ''; };
     el.addEventListener('pointerleave', reset);
     el.addEventListener('blur', reset);
   });
@@ -488,10 +499,11 @@ function setTheme(name, announce = true) {
     idleTimer = setTimeout(() => { if (!dragging) goIdle(); }, delay);
   };
 
-  viewport.addEventListener('pointerenter', () => { if (!coarsePointer.matches) goBusy(); });
-  viewport.addEventListener('pointerleave', () => { if (!coarsePointer.matches && !dragging) goIdle(); });
+  // Merely hovering does not pause the drift, only an actual interaction
+  // does (drag, wheel, arrow keys, touch, keyboard focus) so the strip reads
+  // as continuously alive, and manual scrolling always overrides it.
   viewport.addEventListener('focusin', goBusy);
-  viewport.addEventListener('focusout', (e) => { if (!viewport.contains(e.relatedTarget)) goIdle(); });
+  viewport.addEventListener('focusout', (e) => { if (!viewport.contains(e.relatedTarget)) bumpIdle(600); });
 
   viewport.addEventListener('scroll', () => { wrap(); }, { passive: true });
   viewport.addEventListener('touchstart', () => bumpIdle(2400), { passive: true });
@@ -1175,7 +1187,7 @@ const terminal = (() => {
 
     education: () => write(
       `University of Florida, B.S. Computer Science\n` +
-      `<span class="t-dim">Herbert Wertheim College of Engineering · Graduated Dec 2026</span>\n` +
+      `<span class="t-dim">Herbert Wertheim College of Engineering · Dec 2026</span>\n` +
       `UF AI Certificate. OS, databases, DSA, software engineering,\n` +
       `artificial intelligence, cybersecurity.`
     ),
@@ -1317,21 +1329,9 @@ function gatorStorm(n = 12) {
   }
 }
 
-/* Education card keeps its gator flourish, now throttled and touch-friendly. */
-(function educationEasterEgg() {
-  const card = $('.education-card');
-  if (!card) return;
-  let last = 0;
-  const fire = (e) => {
-    const now = Date.now();
-    if (now - last < 900) return;
-    last = now;
-    const point = e.touches?.[0] || e;
-    flyGator(point.clientX ?? innerWidth / 2, point.clientY ?? innerHeight / 2);
-  };
-  card.addEventListener('pointerenter', fire);
-  card.addEventListener('click', fire);
-})();
+/* The gator flourish is opt-in now: reachable via the terminal `gator`
+   command, the command palette, and the Konami code, not fired at anyone
+   who happens to hover the education card. */
 
 /* ==========================================================================
    Global keyboard shortcuts
