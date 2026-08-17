@@ -1,548 +1,676 @@
-<body>
-  <div class="page-loader" aria-hidden="true">
-    <div class="loader-stars"></div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ajay Sommi · Software Engineer</title>
 
+  <meta name="description" content="Ajay Sommi is a software engineer who adapts to whatever the problem needs, building backend services, internal tools, and data pipelines that hold up in production." />
+  <link rel="canonical" href="https://ajaysommi.github.io/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajaysommi.github.io/" />
+  <meta property="og:title" content="Ajay Sommi · Software Engineer" />
+  <meta property="og:description" content="A software engineer who adapts to whatever the problem needs. Projects, experience, and resume." />
+  <meta property="og:image" content="https://ajaysommi.github.io/assets/images/opt/hero-960.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="theme-color" content="#050814" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#eef2f8" media="(prefers-color-scheme: light)" />
+  <meta name="color-scheme" content="dark light" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap" />
+
+  <link rel="preload" as="image" fetchpriority="high"
+        href="assets/images/opt/hero-640.webp"
+        imagesrcset="assets/images/opt/hero-320.webp 320w, assets/images/opt/hero-480.webp 480w, assets/images/opt/hero-640.webp 640w, assets/images/opt/hero-960.webp 960w"
+        imagesizes="(max-width: 719px) 42vw, 360px" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script>
+    /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
+    (function () {
+      var root = document.documentElement;
+      var saved = null;
+      try { saved = localStorage.getItem('as-theme'); } catch (e) {}
+      var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      root.dataset.theme = saved || (prefersLight ? 'daylight' : 'midnight');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.dataset.motion = 'reduced';
+      }
+      root.classList.add('js');
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    })();
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ajay Sommi",
+    "url": "https://ajaysommi.github.io/",
+    "jobTitle": "Software Engineer",
+    "email": "mailto:ajaysommi7@gmail.com",
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Florida" },
+    "sameAs": ["https://github.com/ajaysommi", "https://www.linkedin.com/in/ajay-sommi/"],
+    "knowsAbout": ["C#", ".NET", "Microsoft Azure", "SQL", "REST APIs", "Cloud Engineering"]
+  }
+  </script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Boot sequence; removed by script.js, with a CSS-only fallback timeout. -->
+  <div class="page-loader" id="pageLoader" aria-hidden="true">
+    <div class="loader-stars"></div>
     <div class="loader-card">
       <div class="loader-orb"></div>
-
       <div class="loader-text">
         <span>initializing portfolio</span>
         <span>loading experience</span>
         <span>systems online</span>
       </div>
+      <div class="loader-bar"><i></i></div>
     </div>
   </div>
 
-
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ajay Sommi — Software & Cloud Engineer</title>
-  <meta name="description" content="Software & Cloud engineer focused on reliable data pipelines, clean interfaces, and cloud.">
-  <meta property="og:title" content="Ajay Sommi — Software & Cloud Engineer" />
-  <meta property="og:description" content="From Azure App Insights to polished product UIs. Projects, experience, and resume." />
-  <meta name="theme-color" content="#0B0F14" />
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" as="style" onload="this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap"></noscript>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <!-- background field -->
-  <div class="bg">
-    <div class="blob b1"></div>  <!-- JM teal glow (left) -->
-    <div class="blob b2"></div>  <!-- steel/blue support (bottom-right) -->
-    <div class="blob b3"></div>  <!-- Toyota red glow (top-right) -->
-    <div class="blob b4"></div> 
+  <!-- Ambient background field -->
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="grid-veil"></div>
+    <div class="spotlight"></div>
     <div class="noise"></div>
   </div>
 
+  <!-- Scroll progress rail + section dots (desktop) -->
+  <nav class="rail" aria-label="Section progress">
+    <div class="rail-line"><span class="rail-fill"></span></div>
+    <ul class="rail-dots"></ul>
+  </nav>
+
   <!-- NAV -->
-  <header class="nav glass">
-    <nav>
-      <a href="#experience">Experience</a>
+  <header class="nav glass" id="siteNav">
+    <a class="brand" href="#top" aria-label="Ajay Sommi, home">
+      <span class="brand-mark" aria-hidden="true">AS</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#experience">The path</a>
       <a href="#education">Education</a>
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
       <a href="#recs">Recommendations</a>
       <a href="resume.html">Resume</a>
-      <a href="#contact" class="cta">Contact</a>
     </nav>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="paletteBtn" type="button" aria-label="Open command palette" title="Command palette (⌘K)">
+        <span class="kbd-hint" aria-hidden="true">⌘K</span>
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M11 3a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 11 3Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z" fill="currentColor"/></svg>
+      </button>
+
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Change theme" title="Change theme">
+        <svg class="ico-midnight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg>
+        <svg class="ico-daylight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        <svg class="ico-terminal" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 4h18v16H3V4Zm3 4 3.5 3.5L6 15m6 1h6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <a href="#contact" class="cta">Contact</a>
+
+      <button class="icon-btn nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileSheet">
+        <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+    </div>
   </header>
 
-  <main>
+  <!-- Mobile menu sheet -->
+  <div class="sheet-scrim" id="sheetScrim" hidden></div>
+  <nav class="mobile-sheet" id="mobileSheet" aria-label="Mobile menu" hidden>
+    <div class="sheet-grab" aria-hidden="true"></div>
+    <a href="#experience">The path<span>01</span></a>
+    <a href="#education">Education<span>02</span></a>
+    <a href="#projects">Projects<span>03</span></a>
+    <a href="#skills">Skills<span>04</span></a>
+    <a href="#recs">Recommendations<span>05</span></a>
+    <a href="resume.html">Resume<span>06</span></a>
+    <a href="#contact" class="sheet-cta">Contact<span>→</span></a>
+  </nav>
+
+  <main id="main">
+    <span id="top" class="anchor" aria-hidden="true"></span>
+
     <!-- HERO -->
     <section class="hero">
-      <div class="hero-card glass">
-        <img src="assets/images/DSC00815.JPEG?v=2" alt="Ajay Sommi" class="hero-pic" />
-        <div class="hero-text">
-          <p class="eyebrow">Software Engineer</p>
-          <p class="citizenship">
-          <span class="citizen-pill">
-            <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg" 
-                 alt="US Flag" class="flag-icon" /> U.S. Citizen
-          </span>
+      <div class="hero-card glass" id="heroCard">
+        <div class="hero-shine" aria-hidden="true"></div>
+
+        <figure class="hero-figure">
+          <picture>
+            <source type="image/webp"
+                    srcset="assets/images/opt/hero-320.webp 320w,
+                            assets/images/opt/hero-480.webp 480w,
+                            assets/images/opt/hero-640.webp 640w,
+                            assets/images/opt/hero-960.webp 960w,
+                            assets/images/opt/hero-1280.webp 1280w"
+                    sizes="(max-width: 719px) 42vw, 360px" />
+            <img src="assets/images/opt/hero-640.jpg"
+                 srcset="assets/images/opt/hero-320.jpg 320w,
+                         assets/images/opt/hero-480.jpg 480w,
+                         assets/images/opt/hero-640.jpg 640w,
+                         assets/images/opt/hero-960.jpg 960w"
+                 sizes="(max-width: 719px) 42vw, 360px"
+                 width="1375" height="1376"
+                 alt="Ajay Sommi" class="hero-pic"
+                 fetchpriority="high" decoding="async" />
+          </picture>
+        </figure>
+
+        <div class="hero-head">
+          <h1 data-scramble>Welcome. I'm Ajay, glad you're here.</h1>
+          <p class="hero-role">
+            <span class="prompt" aria-hidden="true">&gt;</span>
+            <span class="typed" id="typedRole" aria-live="polite"></span><span class="caret" aria-hidden="true"></span>
           </p>
-          <h1>Welcome. I'm Ajay, glad you're here.</h1>
+        </div>
+
+        <div class="hero-body">
           <p class="sub">
-            I’m a software engineer who builds practical systems for real-world workflows: backend services, internal tools, dashboards, and automation that help teams manage complex data and operations.
-            I enjoy working on software that sits close to the business problem, where clean engineering, thoughtful design, and reliable execution make day-to-day work easier for real people.
-            My experience spans <strong>C#/.NET, Azure, SQL, APIs, Salesforce, Power BI, and research-driven software</strong>, with a focus on reliability, maintainability, and useful products that hold up beyond the demo.
+            I'm a software engineer who adapts to whatever the problem needs. Most of my work lives in backend services, internal tools, and the plumbing that keeps them reliable. I care more about whether something holds up in production than which stack it was written in.
           </p>
+
+          <div class="hero-badges">
+            <span class="chip">
+              <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg"
+                   alt="" class="flag-icon" width="20" height="14" loading="lazy" /> U.S. Citizen
+            </span>
+            <span class="chip" id="statusChip">
+              <i class="pulse-dot" aria-hidden="true"></i>
+              <span id="localTime">Gainesville, FL</span>
+            </span>
+          </div>
+
           <div class="actions">
-            <a href="#projects" class="btn solid">View projects</a>
-            <a href="resume.html" class="btn">Resume</a>
+            <a href="#projects" class="btn solid" data-magnetic>View projects</a>
+            <a href="resume.html" class="btn" data-magnetic>Resume</a>
+            <button type="button" class="btn ghost" data-copy="ajaysommi7@gmail.com" data-magnetic>
+              <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M9 9V5h11v11h-4M4 8h11v11H4V8Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+              Copy email
+            </button>
           </div>
         </div>
       </div>
     </section>
 
-  <!-- LOGOS — Carousel -->
-<section id="logos" class="section" aria-label="Companies I’ve worked with">
-  <h2>Impact delivered at and trusted by</h2>
-
-  <div class="logo-marquee glass">
-    <div class="logo-track">
-      <!-- Real logos you have now -->
-      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-label="Robotics For All">
-        <img src="assets/logos/roboticsforall.png" alt="Robotics For All" class="logo">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-label="JM Family Enterprises">
-        <img src="assets/logos/jm_family_white_text.png" alt="JM Family Enterprises" class="logo">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer" aria-label="Southeast Toyota Distributors, LLC">
-        <img src="assets/logos/toyota_logo_inverted.png" alt="Southeast Toyota Distributors, LLC" class="logo toyota">
-      </a>
-      <a href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer" aria-label="JM Lexus">
-        <img src="assets/logos/jm-lexus.PNG" alt="JM Lexus" class="logo jm-lexus">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/ADT_Inc." target="_blank" rel="noopener noreferrer" aria-label="ADT">
-        <img src="assets/logos/ADT-Logo.png" alt="ADT" class="logo">
-      </a>
-      <a href="https://www.hunter.com" target="_blank" rel="noopener noreferrer" aria-label="Hunter Engineering Company">
-        <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="Hunter Engineering Company" class="logo hunter">
-      </a>
-      <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-label="Florida Institute for Cybersecurity Research">
-        <img src="assets/logos/FICS-Logo.png" alt="Florida Institute for Cybersecurity Research" class="logo">
-      </a>
-
-      <!-- Duplicate set for seamless loop (aria-hidden so screen readers skip) -->
-      <a href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/roboticsforall.png" alt="" class="logo">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/jm_family_white_text.png" alt="" class="logo">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/toyota_logo_inverted.png" alt="" class="logo toyota">
-      </a>
-      <a href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/jm-lexus.PNG" alt="" class="logo jm-lexus">
-      </a>
-      <a href="https://en.wikipedia.org/wiki/ADT_Inc." target="_blank" rel="noopener noreferrer" aria-label="ADT">
-        <img src="assets/logos/ADT-Logo.png" alt="ADT" class="logo">
-      </a>
-      <a href="https://www.hunter.com" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/Hunter-Engineering-Symbol-removebg-preview.png" alt="" class="logo hunter">
-      </a>
-      <a href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer" aria-hidden="true">
-        <img src="assets/logos/FICS-Logo.png" alt="" class="logo">
-      </a>
-    </div>
-  </div>
-</section>
-
-    <!-- EXPERIENCE -->
-<section id="experience" class="section">
-  <h2>Experience</h2>
-  <div class="timeline">
-    <div class="row glass">
-      <div class="when">May 2026 – Present</div>
-      <div class="what">
-        <strong>Software Engineering Intern — ADT</strong><br>
-        Details pending completion...
+    <!-- LOGOS -->
+    <section id="logos" class="section" aria-label="Companies I have worked with">
+      <div class="section-head">
+        <h2>Impact delivered at and trusted by</h2>
+        <div class="carousel-ctrl">
+          <button type="button" class="icon-btn" data-marquee-prev aria-label="Scroll logos left">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="icon-btn" data-marquee-toggle aria-label="Pause logo animation" aria-pressed="false">
+            <svg class="ico-pause" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor"/></svg>
+            <svg class="ico-play" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>
+          </button>
+          <button type="button" class="icon-btn" data-marquee-next aria-label="Scroll logos right">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
       </div>
-    </div>
-    
-    <div class="row glass">
-      <div class="when">Jan 2026 – May 2026</div>
-      <div class="what">
-        <strong>Software Engineering Co-op, R&D — Hunter Engineering Company</strong><br>
-        Engineered a secure C#/.NET and Blazor-based device deregistration workflow integrated with Azure IoT Hub, enabling API-driven reprovisioning of ADAS and alignment equipment at scale. Resolved concurrency issues, including race conditions and null reference failures, significantly improving system stability during installation and provisioning workflows. Modernized unit testing by migrating from Moq to NSubstitute, enhancing test isolation, maintainability, and long-term reliability of a large enterprise codebase.
+
+      <div class="logo-marquee glass" id="logoMarquee" tabindex="0" role="group"
+           aria-label="Company logos, scrollable. Use arrow keys or swipe">
+        <div class="logo-track" id="logoTrack">
+          <a class="logo-cell" href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/roboticsforall.webp" alt="Robotics For All" class="logo" width="200" height="200" loading="lazy" decoding="async">
+            <span class="logo-tip">Robotics For All</span>
+          </a>
+          <a class="logo-cell" href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/jm-family.webp" alt="JM Family Enterprises" class="logo" width="276" height="240" loading="lazy" decoding="async">
+            <span class="logo-tip">JM Family Enterprises</span>
+          </a>
+          <a class="logo-cell" href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/toyota.webp" alt="Southeast Toyota Distributors, LLC" class="logo" width="834" height="240" loading="lazy" decoding="async">
+            <span class="logo-tip">Southeast Toyota Distributors</span>
+          </a>
+          <a class="logo-cell" href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/jm-lexus.webp" alt="JM Lexus" class="logo" width="1002" height="185" loading="lazy" decoding="async">
+            <span class="logo-tip">JM Lexus</span>
+          </a>
+          <a class="logo-cell" href="https://en.wikipedia.org/wiki/ADT_Inc." target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/adt.webp" alt="ADT" class="logo" width="240" height="240" loading="lazy" decoding="async">
+            <span class="logo-tip">ADT</span>
+          </a>
+          <a class="logo-cell" href="https://www.hunter.com" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/hunter.webp" alt="Hunter Engineering Company" class="logo" width="632" height="170" loading="lazy" decoding="async">
+            <span class="logo-tip">Hunter Engineering</span>
+          </a>
+          <a class="logo-cell" href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/fics.webp" alt="Florida Institute for Cybersecurity Research" class="logo" width="396" height="234" loading="lazy" decoding="async">
+            <span class="logo-tip">Florida Institute for Cybersecurity</span>
+          </a>
+        </div>
       </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">May 2025 – Nov 2025</div>
-      <div class="what">
-        <strong>Software Engineering Intern — JM Family Enterprises</strong><br>
-        Built Azure Function Apps in .NET/C# to validate and reconcile dealer identity data for JM Lexus and Toyota dealership users across Microsoft Entra and Salesforce via Microsoft Graph API and a MuleSoft proxy. Engineered backend workflows for permission checks and automated record verification. Improved reliability of cloud-native identity integrations and contributed to Azure DevOps CI/CD pipelines for deployment and testing.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">Jun 2024 – Aug 2024</div>
-      <div class="what">
-        <strong>Software Engineering Intern — Southeast Toyota Distributors</strong><br>
-        Built Python + REST API ETL pipeline for Azure Blob ➝ SharePoint. Queried 51,000+ vehicle records with SQL for tire/wheel analysis. Automated tracking of 160+ accessory projects with Kanban workflows. Enhanced OCR + Power BI reporting for faster, cleaner insights.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">May 2023 – May 2024</div>
-      <div class="what">
-        <strong>AI Cybersecurity Researcher — Florida Institute for Cybersecurity Research</strong><br>
-        Investigated security flaws in large language models. Built plug-ins to test ChatGPT robustness and developed methods to detect and mitigate AI vulnerabilities.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">Mar 2022 – Jan 2023</div>
-      <div class="what">
-        <strong>Software Engineering Intern — Robotics For All</strong><br>
-        Automated backend workflows with JavaScript and Google Forms integrations. Streamlined data collection, storage, and email notifications for improved communication efficiency.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">Jun 2020 – Jul 2020</div>
-      <div class="what">
-        <strong>SEO Analyst — Shiva Robotics Academy</strong><br>
-        Led SEO strategy, improving organic traffic by 20% with marketgoo analytics. Optimized site elements to raise search visibility and engagement.
-      </div>
-    </div>
-
-    <div class="row glass">
-      <div class="when">Sep 2019 – Feb 2020</div>
-      <div class="what">
-        <strong>Software Developer — Renaissance Jax</strong><br>
-        Built real-time vision system with color detection for FIRST Robotics competition robots. Enhanced hardware-software integration and team collaboration via GitHub.
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- EDUCATION -->
-<section id="education" class="section">
-  <h2>Education</h2>
-
-  <div class="timeline">
-    <div class="row glass education-card">
-      <div class="when">December 2026</div>
-      <div class="what">
-        <strong>University of Florida — B.S. in Computer Science, Herbert Wertheim College of Engineering</strong><br>
-        Earned the University of Florida AI Certificate, with coursework spanning operating systems, databases, data structures and algorithms, software engineering, artificial intelligence, and cybersecurity.
-      </div>
-    </div>
-  </div>
-</section>
-
-   <!-- PROJECTS -->
-<section id="projects" class="section">
-  <h2>Featured Work</h2>
-  <div class="grid">
-
-    <!-- Move SommiScript to the top -->
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript — Lightweight Programming Language</a></h3>
-      <p>Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
-      <ul>
-        <li>Java • Language Design • Interpreters</li>
-        <li>Focus: compilers, expressiveness, experimentation</li>
-      </ul>
-    </article>
-
-    <!-- GatorGoods second -->
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a></h3>
-      <p>Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
-      <ul>
-        <li>MongoDB • Express • React • Node</li>
-        <li>Focus: auth, usability, full-stack design</li>
-      </ul>
-    </article>
-
-    <!-- Original ordering continues -->
-
-    <article class="card glass tilt">
-      <h3>Tire & Wheel Data Pipeline</h3>
-      <p>Automated REST API pipeline that processed Hunter tire balance reports into Toyota/Lexus VPC systems, streamlining workflows for new vehicles.</p>
-      <ul>
-        <li>Python • REST API • Azure</li>
-        <li>Focus: efficiency, workflow automation</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3>CosmosDB ➝ Azure SQL ETL</h3>
-      <p>Cloud-based ETL pipeline transforming raw JSON in CosmosDB into relational models in Azure SQL, enabling faster analytics and cleaner queries.</p>
-      <ul>
-        <li>.NET • Azure SQL • CosmosDB</li>
-        <li>Focus: cloud architecture, data modeling</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer">Crash Fatality Analysis</a></h3>
-      <p>Interactive analysis of vehicle fatality data (1996–2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.</p>
-      <ul>
-        <li>Python • Pandas • Visualization</li>
-        <li>Focus: data science, real-world insights</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3>VehicleInsightHub</h3>
-      <p>Dashboard for live vehicle monitoring — from fuel efficiency to tire pressure — turning raw telemetry into clear, actionable insights.</p>
-      <ul>
-        <li>React • APIs • Data Visualization</li>
-        <li>Focus: usability, real-time insights</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3><a href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer">BalanceTree (AVL)</a></h3>
-      <p>Self-balancing AVL tree with insert, delete, and lookup operations, optimized for performance and correctness.</p>
-      <ul>
-        <li>C++ • Data Structures</li>
-        <li>Focus: efficiency, algorithm design</li>
-      </ul>
-    </article>
-
-    <article class="card glass tilt">
-      <h3>Custom WAD File System with FUSE Integration</h3>
-      <p>Implemented a file system in C++ from scratch, supporting directories and files inside WAD archives. Integrated with FUSE so it can be mounted and browsed like a real OS file system.</p>
-      <ul>
-        <li>C++ • FUSE • File Systems</li>
-        <li>Focus: OS concepts, systems programming</li>
-      </ul>
-    </article>
-
-  </div>
-</section>
-
-    
-        <!-- QUOTE -->
-    <section class="section quote glass">
-      <blockquote>
-        “Reliability in software isn’t a feature, it’s the foundation.”
-      </blockquote>
+      <p class="marquee-hint" aria-hidden="true">Drag, swipe or scroll →</p>
     </section>
-    
+
+    <!-- THE PATH: scroll-driven career circuit -->
+    <section id="experience" class="section journey-section">
+      <div class="section-head"><h2>The path so far</h2></div>
+      <p class="section-lede">
+        Every role is a node on the board. Scroll to send current through the trace and watch the
+        route light up, from a robotics vision system in high school to identity infrastructure in the cloud.
+      </p>
+
+      <div class="journey-scope" id="journeyScope">
+        <div class="journey-sticky">
+
+          <!-- 3D circuit board -->
+          <div class="journey-stage" aria-hidden="true">
+            <div class="board-rot">
+              <div class="board" id="journeyBoard">
+                <svg class="board-trace" id="boardTrace" viewBox="0 0 560 2240" preserveAspectRatio="none">
+                  <path class="trace-bed"  id="traceBed"  d="" />
+                  <path class="trace-live" id="traceLive" d="" />
+                </svg>
+                <!-- .node elements are generated by script.js from the cards below -->
+              </div>
+            </div>
+            <div class="stage-fade stage-fade-top"></div>
+            <div class="stage-fade stage-fade-bottom"></div>
+          </div>
+
+          <!-- Readout: full detail for the active node -->
+          <div class="journey-readout">
+            <div class="readout-meter" aria-hidden="true">
+              <span class="readout-count"><b id="journeyIdx">01</b> / <span id="journeyTotal">08</span></span>
+              <span class="readout-bar"><i id="journeyBar"></i></span>
+            </div>
+
+            <ol class="journey-cards" id="journeyCards">
+
+              <li class="jcard" data-i="0" data-company="Renaissance Jax" data-short="2019">
+                <p class="jc-when">Sep 2019 to Feb 2020 · Jacksonville, FL</p>
+                <h3>Software Developer</h3>
+                <p class="jc-org">Renaissance Jax</p>
+                <p class="jc-built">Built a real-time vision system with color detection for FIRST Robotics competition robots, and kept hardware and software talking to each other through the season.</p>
+                <p class="jc-learn"><span>Took away</span> Hardware and software have to be debugged together, and version control is how a team stays sane.</p>
+                <div class="jc-tags"><span>C++</span><span>Computer Vision</span><span>Git</span></div>
+              </li>
+
+              <li class="jcard" data-i="1" data-company="Shiva Robotics" data-short="2020">
+                <p class="jc-when">Jun 2020 to Jul 2020 · Remote</p>
+                <h3>SEO Analyst</h3>
+                <p class="jc-org">Shiva Robotics Academy</p>
+                <p class="jc-built">Led SEO strategy with marketgoo analytics, optimizing on-page elements to lift search visibility and engagement. Organic traffic rose 20%.</p>
+                <p class="jc-learn"><span>Took away</span> Measure first. The 20% only counted because it was instrumented before anything changed.</p>
+                <div class="jc-tags"><span>Analytics</span><span>SEO</span></div>
+              </li>
+
+              <li class="jcard" data-i="2" data-company="Robotics For All" data-short="2022">
+                <p class="jc-when">Mar 2022 to Jan 2023 · Palo Alto, CA</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">Robotics For All</p>
+                <p class="jc-built">Automated backend workflows with JavaScript and Google Forms integrations, streamlining how parent and student information was collected, stored, and turned into email notifications.</p>
+                <p class="jc-learn"><span>Took away</span> The unglamorous automation is often the highest-leverage thing on the board.</p>
+                <div class="jc-tags"><span>JavaScript</span><span>Google Apps Script</span><span>Automation</span></div>
+              </li>
+
+              <li class="jcard" data-i="3" data-company="FICS @ UF" data-short="2023">
+                <p class="jc-when">May 2023 to May 2024 · Gainesville, FL</p>
+                <h3>AI Cybersecurity Researcher</h3>
+                <p class="jc-org">Florida Institute for Cybersecurity Research</p>
+                <p class="jc-built">Investigated security flaws in large language models, built plug-ins to probe ChatGPT's robustness, and developed methods to detect and mitigate model vulnerabilities.</p>
+                <p class="jc-learn"><span>Took away</span> You have to be able to attack a system to defend it, and reading papers is an engineering skill.</p>
+                <div class="jc-tags"><span>Python</span><span>LLM Security</span><span>Research</span></div>
+              </li>
+
+              <li class="jcard" data-i="4" data-company="Toyota" data-short="2024">
+                <p class="jc-when">Jun 2024 to Aug 2024 · Jacksonville, FL</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">Southeast Toyota Distributors</p>
+                <p class="jc-built">Engineered a Python solution using the Azure SDK and REST API to pull 1,000+ URLs out of Blob Storage and land the files in SharePoint, saving 350+ hours a year. Wrote SQL against Amazon RDS to analyze tire data for 51,000+ Toyota and Lexus vehicles across 21+ reports, and built a 14-parameter TMNA-standard entry form with VBA automation feeding a Power BI dashboard.</p>
+                <ul class="jc-impact">
+                  <li><b>20%</b> fewer warranty claims</li>
+                  <li><b>$150k</b> saved on prevented tire recalls</li>
+                  <li><b>5×</b> faster data entry</li>
+                </ul>
+                <p class="jc-learn"><span>Took away</span> Data work only matters when someone can act on it. The dashboard is the deliverable, not the query.</p>
+                <div class="jc-tags"><span>Python</span><span>SQL</span><span>Azure Blob</span><span>Amazon RDS</span><span>Power BI</span><span>VBA</span></div>
+              </li>
+
+              <li class="jcard" data-i="5" data-company="JM Family" data-short="2025">
+                <p class="jc-when">May 2025 to Nov 2025 · Deerfield Beach, FL</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">JM Family Enterprises</p>
+                <p class="jc-built">Architected an Azure Functions (.NET/C#) identity-validation workflow spanning Microsoft Graph, Salesforce, and MuleSoft, comparing access fields, detecting policy inconsistencies, and generating exception reports. Built a C#/.NET backend querying Azure Application Insights over REST across 100k+ service events for JM Lexus and Toyota dealership systems, with safeguards against race conditions. Supported AI Foundry work using Model Context Protocol to build GPT agents with RAG pipelines over enterprise event data.</p>
+                <p class="jc-learn"><span>Took away</span> Identity is the hardest part of enterprise integration, and race conditions hide inside the happy path.</p>
+                <div class="jc-tags"><span>Azure Functions</span><span>C#/.NET</span><span>Microsoft Graph</span><span>Salesforce</span><span>MuleSoft</span><span>App Insights</span><span>MCP</span><span>RAG</span></div>
+              </li>
+
+              <li class="jcard" data-i="6" data-company="Hunter Engineering" data-short="2026">
+                <p class="jc-when">Jan 2026 to May 2026 · St. Louis, MO</p>
+                <h3>Software Engineering Co-op, R&amp;D</h3>
+                <p class="jc-org">Hunter Engineering Company</p>
+                <p class="jc-built">Designed and implemented a secure C#/.NET and Blazor device "factory reset" workflow wired to Azure IoT Hub and containerized IoT Edge/EFLOW environments, enabling API-driven deregistration and re-provisioning of ADAS and wheel-alignment equipment across 100,000+ units worldwide. Tracked down asynchronous execution and concurrency defects such as race conditions and null reference paths, and migrated the test suite from Moq to NSubstitute.</p>
+                <ul class="jc-impact">
+                  <li><b>100,000+</b> units reachable worldwide</li>
+                  <li><b>Moq → NSubstitute</b> across an enterprise codebase</li>
+                </ul>
+                <p class="jc-learn"><span>Took away</span> At six figures of deployed devices, "works on my machine" is a rounding error. Reliability is the feature.</p>
+                <div class="jc-tags"><span>C#/.NET</span><span>Blazor</span><span>Azure IoT Hub</span><span>IoT Edge</span><span>NSubstitute</span><span>Docker</span></div>
+              </li>
+
+              <li class="jcard" data-i="7" data-company="ADT" data-short="Now">
+                <p class="jc-when">May 2026 to Present · Boca Raton, FL</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">ADT</p>
+                <p class="jc-built">Designed an AI-powered emergency dispatch verification system targeting false alarms, a major driver of wasted emergency response capacity, and presented it to business stakeholders and senior leadership. Consolidated Salesforce Custom Metadata Types into Custom Objects to stay under the platform's hard limit, then audited and cleaned up redundant records across the org. Used AI tooling (Cursor, Claude with MCP servers) to navigate a large enterprise codebase and optimize Apex, and raised Apex test class coverage to meet deployment requirements.</p>
+                <ul class="jc-impact">
+                  <li><b>False alarms</b> targeted by an AI dispatch verification concept pitched to senior leadership</li>
+                  <li><b>Under the cap</b> Custom Metadata Types consolidated into Custom Objects</li>
+                  <li><b>Coverage</b> Apex test classes raised to the deployment threshold</li>
+                </ul>
+                <p class="jc-learn"><span>Taking away</span> AI tooling earns its keep as an engineering accelerator, not a novelty. It is how you get productive in an unfamiliar enterprise codebase fast.</p>
+                <div class="jc-tags"><span>Salesforce</span><span>Apex</span><span>Custom Objects</span><span>Cursor</span><span>Claude + MCP</span><span>AI</span></div>
+              </li>
+
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="section">
+      <div class="section-head"><h2>Education</h2></div>
+      <div class="timeline">
+        <article class="row glass education-card" data-reveal>
+          <div class="when"><span class="when-dot" aria-hidden="true"></span>Graduated December 2026</div>
+          <div class="what">
+            <strong>University of Florida, B.S. in Computer Science, Herbert Wertheim College of Engineering</strong>
+            <p>Earned the University of Florida AI Certificate, with coursework spanning operating systems, databases, data structures and algorithms, software engineering, artificial intelligence, and cybersecurity.</p>
+            <div class="row-tags"><span>AI Certificate</span><span>Operating Systems</span><span>Databases</span><span>Algorithms</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="section-head">
+        <h2>Featured Work</h2>
+        <div class="filter-status" id="filterStatus" hidden>
+          <span>Filtering by <b id="filterTag"></b></span>
+          <button type="button" id="filterClear" class="chip-clear" aria-label="Clear filter">Clear ✕</button>
+        </div>
+      </div>
+
+      <div class="filters" id="projectFilters" role="group" aria-label="Filter projects by technology">
+        <button type="button" class="filter-chip is-active" data-filter="all">All</button>
+        <button type="button" class="filter-chip" data-filter="python">Python</button>
+        <button type="button" class="filter-chip" data-filter="c++">C++</button>
+        <button type="button" class="filter-chip" data-filter="java">Java</button>
+        <button type="button" class="filter-chip" data-filter="react">React</button>
+        <button type="button" class="filter-chip" data-filter="azure">Azure</button>
+        <button type="button" class="filter-chip" data-filter=".net">.NET</button>
+      </div>
+
+      <div class="grid" id="projectGrid">
+        <article class="card glass tilt" data-reveal data-tags="java,language design,interpreters">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top">
+            <span class="card-kind">Language</span>
+            <a class="card-repo" href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer" aria-label="SommiScript on GitHub">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4C3.8 14.2 3.3 13 3.3 13c-.4-1-1-1.2-1-1.2-.8-.6.1-.6.1-.6.9.1 1.4.9 1.4.9.8 1.4 2.1 1 2.6.8.1-.6.3-1 .6-1.2-2-.2-4-1-4-4.4 0-1 .3-1.8.9-2.4-.1-.3-.4-1.2.1-2.4 0 0 .7-.2 2.4.9a8.3 8.3 0 0 1 4.4 0c1.7-1.1 2.4-.9 2.4-.9.5 1.2.2 2.1.1 2.4.6.6.9 1.4.9 2.4 0 3.4-2 4.2-4 4.4.3.3.6.9.6 1.8v2.6c0 .2.1.5.6.4A8 8 0 0 0 8 0Z"/></svg>
+            </a>
+          </div>
+          <h3><a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript: Lightweight Programming Language</a></h3>
+          <p>Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
+          <div class="card-tags"><span>Java</span><span>Language Design</span><span>Interpreters</span></div>
+        </article>
+
+        <article class="card glass tilt" data-reveal data-tags="react,node,mongodb,express,javascript">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top">
+            <span class="card-kind">Full-stack</span>
+            <a class="card-repo" href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer" aria-label="GatorGoods on GitHub">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4C3.8 14.2 3.3 13 3.3 13c-.4-1-1-1.2-1-1.2-.8-.6.1-.6.1-.6.9.1 1.4.9 1.4.9.8 1.4 2.1 1 2.6.8.1-.6.3-1 .6-1.2-2-.2-4-1-4-4.4 0-1 .3-1.8.9-2.4-.1-.3-.4-1.2.1-2.4 0 0 .7-.2 2.4.9a8.3 8.3 0 0 1 4.4 0c1.7-1.1 2.4-.9 2.4-.9.5 1.2.2 2.1.1 2.4.6.6.9 1.4.9 2.4 0 3.4-2 4.2-4 4.4.3.3.6.9.6 1.8v2.6c0 .2.1.5.6.4A8 8 0 0 0 8 0Z"/></svg>
+            </a>
+          </div>
+          <h3><a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a></h3>
+          <p>Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
+          <div class="card-tags"><span>MongoDB</span><span>Express</span><span>React</span><span>Node</span></div>
+        </article>
+
+        <article class="card glass tilt" data-reveal data-tags="python,azure,rest apis">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top"><span class="card-kind">Pipeline</span></div>
+          <h3>Tire &amp; Wheel Data Pipeline</h3>
+          <p>Automated REST API pipeline that processed Hunter tire balance reports into Toyota/Lexus VPC systems, streamlining workflows for new vehicles.</p>
+          <div class="card-tags"><span>Python</span><span>REST API</span><span>Azure</span></div>
+        </article>
+
+        <article class="card glass tilt" data-reveal data-tags=".net,azure,sql,cosmosdb">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top"><span class="card-kind">Cloud ETL</span></div>
+          <h3>CosmosDB ➝ Azure SQL ETL</h3>
+          <p>Cloud-based ETL pipeline transforming raw JSON in CosmosDB into relational models in Azure SQL, enabling faster analytics and cleaner queries.</p>
+          <div class="card-tags"><span>.NET</span><span>Azure SQL</span><span>CosmosDB</span></div>
+        </article>
+
+        <article class="card glass tilt" data-reveal data-tags="python,pandas,data science">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top">
+            <span class="card-kind">Data science</span>
+            <a class="card-repo" href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer" aria-label="Crash Fatality Analysis on GitHub">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4C3.8 14.2 3.3 13 3.3 13c-.4-1-1-1.2-1-1.2-.8-.6.1-.6.1-.6.9.1 1.4.9 1.4.9.8 1.4 2.1 1 2.6.8.1-.6.3-1 .6-1.2-2-.2-4-1-4-4.4 0-1 .3-1.8.9-2.4-.1-.3-.4-1.2.1-2.4 0 0 .7-.2 2.4.9a8.3 8.3 0 0 1 4.4 0c1.7-1.1 2.4-.9 2.4-.9.5 1.2.2 2.1.1 2.4.6.6.9 1.4.9 2.4 0 3.4-2 4.2-4 4.4.3.3.6.9.6 1.8v2.6c0 .2.1.5.6.4A8 8 0 0 0 8 0Z"/></svg>
+            </a>
+          </div>
+          <h3><a href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer">Crash Fatality Analysis</a></h3>
+          <p>Interactive analysis of vehicle fatality data (1996 to 2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.</p>
+          <div class="card-tags"><span>Python</span><span>Pandas</span><span>Visualization</span></div>
+        </article>
+
+        <article class="card glass tilt" data-reveal data-tags="react,rest apis,data visualization">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top"><span class="card-kind">Dashboard</span></div>
+          <h3>VehicleInsightHub</h3>
+          <p>Dashboard for live vehicle monitoring, from fuel efficiency to tire pressure, turning raw telemetry into clear, actionable insights.</p>
+          <div class="card-tags"><span>React</span><span>APIs</span><span>Data Visualization</span></div>
+        </article>
+
+        <article class="card glass tilt" data-reveal data-tags="c++,data structures">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top">
+            <span class="card-kind">Algorithms</span>
+            <a class="card-repo" href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer" aria-label="BalanceTree on GitHub">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4C3.8 14.2 3.3 13 3.3 13c-.4-1-1-1.2-1-1.2-.8-.6.1-.6.1-.6.9.1 1.4.9 1.4.9.8 1.4 2.1 1 2.6.8.1-.6.3-1 .6-1.2-2-.2-4-1-4-4.4 0-1 .3-1.8.9-2.4-.1-.3-.4-1.2.1-2.4 0 0 .7-.2 2.4.9a8.3 8.3 0 0 1 4.4 0c1.7-1.1 2.4-.9 2.4-.9.5 1.2.2 2.1.1 2.4.6.6.9 1.4.9 2.4 0 3.4-2 4.2-4 4.4.3.3.6.9.6 1.8v2.6c0 .2.1.5.6.4A8 8 0 0 0 8 0Z"/></svg>
+            </a>
+          </div>
+          <h3><a href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer">BalanceTree (AVL)</a></h3>
+          <p>Self-balancing AVL tree with insert, delete, and lookup operations, optimized for performance and correctness.</p>
+          <div class="card-tags"><span>C++</span><span>Data Structures</span></div>
+        </article>
+
+        <article class="card glass tilt" data-reveal data-tags="c++,file systems,operating systems">
+          <div class="card-glow" aria-hidden="true"></div>
+          <div class="card-top"><span class="card-kind">Systems</span></div>
+          <h3>Custom WAD File System with FUSE Integration</h3>
+          <p>Implemented a file system in C++ from scratch, supporting directories and files inside WAD archives. Integrated with FUSE so it can be mounted and browsed like a real OS file system.</p>
+          <div class="card-tags"><span>C++</span><span>FUSE</span><span>File Systems</span></div>
+        </article>
+      </div>
+
+      <p class="empty-state" id="emptyState" hidden>No projects match that filter yet. <button type="button" class="linkish" data-filter-reset>show everything</button>.</p>
+    </section>
+
+    <!-- QUOTE -->
+    <section class="section quote glass" data-reveal>
+      <blockquote>"Reliability in software isn't a feature, it's the foundation."</blockquote>
+    </section>
+
     <!-- SKILLS -->
-<section id="skills" class="section">
-  <h2>Skills & Tools</h2>
+    <section id="skills" class="section">
+      <div class="section-head"><h2>Skills &amp; Tools</h2></div>
+      <p class="section-lede">Tap any skill to spotlight where I've used it.</p>
 
-  <h3>Programming</h3>
-  <div class="pills glass">
-    <span>C#</span><span>C++</span><span>Python</span><span>Java</span><span>JavaScript</span><span>TypeScript</span>
-    <span>SQL</span><span>HTML &amp; CSS</span><span>ARM Assembly</span><span>VBA</span><span>DAX</span>
-  </div>
+      <h3>Programming</h3>
+      <div class="pills glass">
+        <button type="button">C#</button><button type="button">C++</button><button type="button">Python</button>
+        <button type="button">Java</button><button type="button">JavaScript</button><button type="button">TypeScript</button>
+        <button type="button">SQL</button><button type="button">HTML &amp; CSS</button><button type="button">ARM Assembly</button>
+        <button type="button">VBA</button><button type="button">DAX</button>
+      </div>
 
-  <h3>Cloud, Data &amp; Databases</h3>
-  <div class="pills glass">
-    <span>Microsoft Azure</span><span>Azure Blob Storage</span><span>Amazon RDS</span><span>Oracle</span>
-    <span>Pandas</span><span>TensorFlow</span><span>KQL</span><span>Power BI</span>
-  </div>
+      <h3>Cloud, Data &amp; Databases</h3>
+      <div class="pills glass">
+        <button type="button">Microsoft Azure</button><button type="button">Azure Blob Storage</button><button type="button">Amazon RDS</button>
+        <button type="button">Oracle</button><button type="button">Pandas</button><button type="button">TensorFlow</button>
+        <button type="button">KQL</button><button type="button">Power BI</button>
+      </div>
 
-  <h3>Frameworks &amp; Libraries</h3>
-  <div class="pills glass">
-    <span>.NET</span><span>React</span><span>Next.js</span><span>Node.js</span><span>Chart.js</span><span>Tkinter</span>
-  </div>
+      <h3>Frameworks &amp; Libraries</h3>
+      <div class="pills glass">
+        <button type="button">.NET</button><button type="button">React</button><button type="button">Next.js</button>
+        <button type="button">Node.js</button><button type="button">Chart.js</button><button type="button">Tkinter</button>
+      </div>
 
-  <h3>APIs &amp; Integration</h3>
-  <div class="pills glass">
-    <span>REST APIs</span><span>JSON</span><span>Salesforce (Apex/LWC)</span>
-  </div>
+      <h3>APIs &amp; Integration</h3>
+      <div class="pills glass">
+        <button type="button">REST APIs</button><button type="button">JSON</button><button type="button">Salesforce (Apex/LWC)</button>
+      </div>
 
-  <h3>DevOps &amp; Tooling</h3>
-  <div class="pills glass">
-    <span>Git</span><span>Azure DevOps</span><span>Containerization</span><span>Docker</span><span>GitHub Actions</span><span>JetBrains IDEs</span><span>GDB</span><span>Google Apps Script</span>
-  </div>
+      <h3>DevOps &amp; Tooling</h3>
+      <div class="pills glass">
+        <button type="button">Git</button><button type="button">Azure DevOps</button><button type="button">Containerization</button>
+        <button type="button">Docker</button><button type="button">GitHub Actions</button><button type="button">JetBrains IDEs</button>
+        <button type="button">GDB</button><button type="button">Google Apps Script</button>
+      </div>
 
-  <h3>Soft Skills</h3>
-  <div class="pills glass">
-    <span>Agile</span><span>Problem-solving</span><span>Teamwork</span><span>Communication</span><span>Time management</span><span>Precision</span>
-  </div>
-</section>
+      <h3>Soft Skills</h3>
+      <div class="pills glass pills-static">
+        <span>Agile</span><span>Problem-solving</span><span>Teamwork</span>
+        <span>Communication</span><span>Time management</span><span>Precision</span>
+      </div>
+    </section>
 
     <!-- RECOMMENDATIONS -->
-<section id="recs" class="section">
-  <h2>What folks have to say</h2>
-  <div class="grid testimonials">
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay consistently exceeded expectations ... always open to feedback, eager to learn, and quick to offer fresh ideas ... I highly recommend him to any organization seeking a talented and dedicated professional.”
-      </blockquote>
-      <cite>— Barbara Russo, JM Family</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “I had the pleasure of mentoring Ajay during his internship at JM Family, and he consistently impressed me with his strong work ethic and eagerness to learn ... Any team would be fortunate to have him!”
-      </blockquote>
-      <cite>— Saleem Nashawaty, JM Family</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay created automation that moved quality assessment data into our repository and built reports that made a real impact for our team. His focus and resolve helped us make significant progress.”
-      </blockquote>
-      <cite>— Daniel Donaldson, Southeast Toyota</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay consistently demonstrated enthusiasm, determination, and strong data skills. His grasp of data structures and proficiency with Microsoft Power Suite significantly contributed to our project’s success.”
-      </blockquote>
-      <cite>— Naman Goyal, Southeast Toyota</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay was a key member of our software team, taking ownership of projects and bridging knowledge gaps. His backend automation streamlined how parent and student information is ingested.”
-      </blockquote>
-      <cite>— Garrett Tieng, Robotics For All</cite>
-    </article>
-
-    <article class="card glass">
-      <blockquote>
-        “Ajay demonstrated exceptional software engineering skills and a proactive, problem-solving approach. He delivered high-quality work and collaborated effectively across the team.”
-      </blockquote>
-      <cite>— Valeria Pinatelli, Robotics For All</cite>
-    </article>
-
-  </div>
-  <p class="note">More on <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>.</p>
-</section>
-
+    <section id="recs" class="section">
+      <div class="section-head"><h2>What folks have to say</h2></div>
+      <div class="grid testimonials">
+        <article class="card glass" data-reveal>
+          <span class="quote-mark" aria-hidden="true">"</span>
+          <blockquote>Ajay consistently exceeded expectations … always open to feedback, eager to learn, and quick to offer fresh ideas … I highly recommend him to any organization seeking a talented and dedicated professional.</blockquote>
+          <cite>Barbara Russo<span>JM Family</span></cite>
+        </article>
+        <article class="card glass" data-reveal>
+          <span class="quote-mark" aria-hidden="true">"</span>
+          <blockquote>I had the pleasure of mentoring Ajay during his internship at JM Family, and he consistently impressed me with his strong work ethic and eagerness to learn … Any team would be fortunate to have him!</blockquote>
+          <cite>Saleem Nashawaty<span>JM Family</span></cite>
+        </article>
+        <article class="card glass" data-reveal>
+          <span class="quote-mark" aria-hidden="true">"</span>
+          <blockquote>Ajay created automation that moved quality assessment data into our repository and built reports that made a real impact for our team. His focus and resolve helped us make significant progress.</blockquote>
+          <cite>Daniel Donaldson<span>Southeast Toyota</span></cite>
+        </article>
+        <article class="card glass" data-reveal>
+          <span class="quote-mark" aria-hidden="true">"</span>
+          <blockquote>Ajay consistently demonstrated enthusiasm, determination, and strong data skills. His grasp of data structures and proficiency with Microsoft Power Suite significantly contributed to our project's success.</blockquote>
+          <cite>Naman Goyal<span>Southeast Toyota</span></cite>
+        </article>
+        <article class="card glass" data-reveal>
+          <span class="quote-mark" aria-hidden="true">"</span>
+          <blockquote>Ajay was a key member of our software team, taking ownership of projects and bridging knowledge gaps. His backend automation streamlined how parent and student information is ingested.</blockquote>
+          <cite>Garrett Tieng<span>Robotics For All</span></cite>
+        </article>
+        <article class="card glass" data-reveal>
+          <span class="quote-mark" aria-hidden="true">"</span>
+          <blockquote>Ajay demonstrated exceptional software engineering skills and a proactive, problem-solving approach. He delivered high-quality work and collaborated effectively across the team.</blockquote>
+          <cite>Valeria Pinatelli<span>Robotics For All</span></cite>
+        </article>
+      </div>
+      <p class="note">More on <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>.</p>
+    </section>
 
     <!-- CONTACT -->
     <section id="contact" class="section">
-      <h2>Contact</h2>
+      <div class="section-head"><h2>Contact</h2></div>
       <div class="contact glass">
-        <a href="mailto:ajaysommi7@gmail.com">ajaysommi7@gmail.com</a>
-        <a href="https://github.com/ajaysommi" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>
-        <a href="resume.html" class="resume-btn">Open Resume</a>
+        <a href="mailto:ajaysommi7@gmail.com" data-magnetic>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 6h18v12H3z M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+          ajaysommi7@gmail.com
+        </a>
+        <a href="https://github.com/ajaysommi" target="_blank" rel="noreferrer" data-magnetic>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4C3.8 14.2 3.3 13 3.3 13c-.4-1-1-1.2-1-1.2-.8-.6.1-.6.1-.6.9.1 1.4.9 1.4.9.8 1.4 2.1 1 2.6.8.1-.6.3-1 .6-1.2-2-.2-4-1-4-4.4 0-1 .3-1.8.9-2.4-.1-.3-.4-1.2.1-2.4 0 0 .7-.2 2.4.9a8.3 8.3 0 0 1 4.4 0c1.7-1.1 2.4-.9 2.4-.9.5 1.2.2 2.1.1 2.4.6.6.9 1.4.9 2.4 0 3.4-2 4.2-4 4.4.3.3.6.9.6 1.8v2.6c0 .2.1.5.6.4A8 8 0 0 0 8 0Z"/></svg>
+          GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer" data-magnetic>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM.3 8.2h4.4V24H.3V8.2Zm7.5 0h4.2v2.2h.06c.6-1.1 2-2.3 4.14-2.3 4.4 0 5.2 2.9 5.2 6.7V24h-4.4v-7.6c0-1.8 0-4.1-2.5-4.1s-2.9 2-2.9 4V24H7.8V8.2Z"/></svg>
+          LinkedIn
+        </a>
+        <a href="resume.html" class="resume-btn" data-magnetic>Open Resume</a>
       </div>
     </section>
   </main>
 
-  <footer class="footer">© 2026 Ajay Sommi</footer>
-  <script src="script.js" defer></script>
-  <script>
-  const card = document.querySelector('.hero-card');
+  <footer class="footer">
+    <p>© <span id="y"></span> Ajay Sommi · Built by hand, no frameworks required.</p>
+    <p class="footer-hint">
+      Press <kbd>⌘</kbd><kbd>K</kbd> for the command palette · type <kbd>~</kbd> for a terminal
+    </p>
+  </footer>
 
-  // how far it can move (px). lower = subtler
-  const INTENSITY = 16;
+  <!-- ============ Overlays ============ -->
 
-  let targetX = 0, targetY = 0;   // where we want to go
-  let currX = 0, currY = 0;       // where we are now
+  <!-- Command palette -->
+  <dialog class="palette" id="palette" aria-label="Command palette">
+    <form method="dialog" class="palette-inner">
+      <div class="palette-search">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M11 3a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 11 3Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z" fill="currentColor"/></svg>
+        <input type="search" id="paletteInput" placeholder="Jump to a section, project or action…" autocomplete="off" aria-label="Search commands" />
+        <kbd>esc</kbd>
+      </div>
+      <ul class="palette-list" id="paletteList" role="listbox" aria-label="Results"></ul>
+      <div class="palette-foot">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> open</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </form>
+  </dialog>
 
-  // Track mouse, set the *target* only
-  window.addEventListener('mousemove', (e) => {
-    const w = window.innerWidth, h = window.innerHeight;
-    targetX = (e.clientX / w - 0.5) * INTENSITY;
-    targetY = (e.clientY / h - 0.5) * INTENSITY;
-  });
+  <!-- Mini terminal -->
+  <section class="terminal" id="terminal" hidden aria-label="Interactive terminal">
+    <header class="term-bar">
+      <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="term-title">ajay@portfolio · zsh</span>
+      <button type="button" class="term-close" id="termClose" aria-label="Close terminal">✕</button>
+    </header>
+    <div class="term-body" id="termBody" tabindex="0">
+      <div class="term-out" id="termOut"></div>
+      <div class="term-line">
+        <span class="term-prompt" aria-hidden="true">ajay@portfolio <b>~</b> %</span>
+        <input type="text" id="termInput" autocomplete="off" spellcheck="false" aria-label="Terminal input" />
+      </div>
+    </div>
+  </section>
 
-  // Smoothly ease towards the target every frame
-  function tick() {
-    const ease = 0.30; // 0.1 = slower, 0.25 = snappier
-    currX += (targetX - currX) * ease;
-    currY += (targetY - currY) * ease;
-    card.style.transform = `translate3d(${currX}px, ${currY}px, 0)`;
-    requestAnimationFrame(tick);
-  }
-  tick();
+  <!-- Toasts -->
+  <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
 
-  // Optional: reset when leaving the window
-  window.addEventListener('mouseout', (e) => {
-    if (!e.relatedTarget) { targetX = 0; targetY = 0; }
-  });
-</script>
-
-  <script>
-  // 1) Stop the browser from restoring scroll on refresh/back
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
-
-  // 2) If there’s a hash in the URL (e.g. #projects), clear it and go to top
-  window.addEventListener('load', () => {
-    if (location.hash) {
-      window.scrollTo(0, 0);
-      // remove the hash without reloading
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
-  });
-
-  // 3) Make header links scroll smoothly WITHOUT putting a hash in the URL
-  document.querySelectorAll('header.nav a[href^="#"]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      const id = a.getAttribute('href').slice(1);
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // keep URL clean so refresh doesn't jump
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    });
-  });
-</script>
-
-  <script>
-(function () {
-  const root = document.documentElement;
-  function ready() { root.classList.add('marquee-ready'); }
-
-  // wait for fonts
-  const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-
-  // wait for logos in the marquee
-  const imgs = Array.from(document.querySelectorAll('#logos .logo-marquee img, #logos .logo-marquee .logo'));
-  const imgPromises = imgs.map(img => new Promise(res => {
-    if (img.complete && img.naturalWidth) return res();
-    img.addEventListener('load', res, {once:true});
-    img.addEventListener('error', res, {once:true}); // don't block on errors
-  }));
-
-  // safety timeout so we don't hang on super-slow networks
-  const timeout = new Promise(res => setTimeout(res, 1500));
-
-  Promise.all([fontsReady, Promise.race([Promise.all(imgPromises), timeout])])
-    .finally(ready);
-})();
-</script>
-<script>
-  const educationCard = document.querySelector(".education-card");
-
-  if (educationCard) {
-    let lastGatorTime = 0;
-
-    educationCard.addEventListener("mouseenter", (e) => {
-      const now = Date.now();
-
-      if (now - lastGatorTime < 1200) return;
-      lastGatorTime = now;
-
-      const flyer = document.createElement("div");
-      flyer.className = "flying-gator";
-
-      const ufEmojis = ["🐊", "🧡", "💙", "🏈", "🎓", "📘", "📚", "💻", "📎", "🌴"];
-      flyer.textContent = ufEmojis[Math.floor(Math.random() * ufEmojis.length)];
-
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      const startX = e.clientX;
-      const startY = e.clientY;
-
-      const possibleEnds = [
-        { endX: width + 90, endY: Math.random() * height },
-        { endX: -90, endY: Math.random() * height },
-        { endX: Math.random() * width, endY: -90 },
-        { endX: Math.random() * width, endY: height + 90 }
-      ];
-
-      const path = possibleEnds[Math.floor(Math.random() * possibleEnds.length)];
-
-      flyer.style.setProperty("--start-x", `${startX}px`);
-      flyer.style.setProperty("--start-y", `${startY}px`);
-      flyer.style.setProperty("--end-x", `${path.endX}px`);
-      flyer.style.setProperty("--end-y", `${path.endY}px`);
-
-      document.body.appendChild(flyer);
-
-      flyer.addEventListener("animationend", () => {
-        flyer.remove();
-      });
-    });
-  }
-</script>
-
+  <script type="module" src="script.js"></script>
 </body>
 </html>
