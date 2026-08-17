@@ -94,14 +94,32 @@ const toast = (() => {
    ========================================================================== */
 const THEMES = ['midnight', 'daylight', 'terminal'];
 
+/* A few partner logos (Hunter, JM Family, Toyota, FICS) are white-on-dark
+   assets: legible on midnight/terminal, invisible on daylight's light
+   background. data-light-src points at a pre-darkened variant with the
+   brand colors left untouched; this swaps every matching <img> in the
+   document, which also covers the carousel's cloned copies since they carry
+   the same data attribute. */
+function syncLogoTheme() {
+  const light = root.dataset.theme === 'daylight';
+  $$('img[data-light-src]').forEach((img) => {
+    if (!img.dataset.darkSrc) img.dataset.darkSrc = img.getAttribute('src');
+    const want = light ? img.dataset.lightSrc : img.dataset.darkSrc;
+    if (img.getAttribute('src') !== want) img.setAttribute('src', want);
+  });
+}
+
 function setTheme(name, announce = true) {
   if (!THEMES.includes(name)) return;
   root.dataset.theme = name;
   try { localStorage.setItem('as-theme', name); } catch {}
   const meta = document.querySelector('meta[name="theme-color"]:not([media])');
   if (meta) meta.content = name === 'daylight' ? '#eef2f8' : '#050814';
+  syncLogoTheme();
   if (announce) toast(`${name[0].toUpperCase()}${name.slice(1)} theme`);
 }
+
+syncLogoTheme();
 
 (function themeToggle() {
   const btn = $('#themeBtn');
@@ -391,15 +409,26 @@ function setTheme(name, announce = true) {
     el.addEventListener('blur', reset);
   });
 
-  // 3D tilt on project cards.
+  // 3D tilt on project cards, rAF-throttled and toned down: the untamed
+  // version rotated up to 7deg and lifted 5px on every raw pointermove,
+  // which read as the card launching up rather than a subtle tilt.
   $$('.card.tilt').forEach((el) => {
+    let raf = 0, pendingX = 0, pendingY = 0;
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      el.style.transform = `perspective(900px) rotateY(${x * 7}deg) rotateX(${-y * 7}deg) translateY(-5px)`;
+      pendingX = (e.clientX - r.left) / r.width - 0.5;
+      pendingY = (e.clientY - r.top) / r.height - 0.5;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        el.style.transform =
+          `perspective(1000px) rotateY(${(pendingX * 3.5).toFixed(2)}deg) rotateX(${(-pendingY * 3.5).toFixed(2)}deg) translateY(-2px)`;
+      });
     }, { passive: true });
-    el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+    el.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(raf); raf = 0;
+      el.style.transform = '';
+    });
   });
 })();
 

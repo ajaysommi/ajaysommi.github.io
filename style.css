@@ -440,7 +440,10 @@
     place-items: center;
     width: 34px;
     height: 34px;
-    border-radius: 11px;
+    /* Match the pill radius the nav bar and icon buttons use, instead of
+       the squarer corners this had, which read as a mismatched shape
+       language sitting right next to fully round buttons. */
+    border-radius: var(--r-pill);
     border: 1px solid var(--stroke-hi);
     background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 28%, transparent), transparent);
     font-family: var(--font-mono);
@@ -1527,7 +1530,8 @@
   .card:hover .card-glow { opacity: 1; }
   .card:hover { border-color: var(--stroke-hi); box-shadow: var(--shadow-lg); }
 
-  .card.tilt:hover { transform: translateY(-5px); }
+  /* Fallback for touch/keyboard, where the JS 3D tilt never attaches. */
+  .card.tilt:hover { transform: translateY(-2px); }
 
   .card-top {
     display: flex;
@@ -1581,8 +1585,14 @@
   /* ==========================================================================
      QUOTE / SKILLS / TESTIMONIALS / CONTACT
      ========================================================================== */
+  /* Unlike the other glass boxes on the page, this one *is* the section, so
+     the base .section's padding only pushed the text inward, not the
+     border/background, leaving it flush against the viewport edge on narrow
+     screens. Sizing the box itself in from the edges fixes that. */
   .section.quote {
+    width: calc(100% - var(--gutter) * 2);
     max-width: 900px;
+    margin-inline: auto;
     padding: clamp(26px, 4vw, 40px) var(--gutter);
     text-align: center;
   }
@@ -2268,9 +2278,27 @@
 
   /* ---------- Phones ---------- */
   @media (max-width: 719px) {
-    :root { --nav-h: 56px; }
+    :root {
+      --nav-h: 56px;
+      /* Total space the bottom nav bar plus its own floating offset takes
+         up, so every other fixed element on this breakpoint (the hamburger
+         sheet, the terminal, toasts) can float clear of it, and the footer
+         can leave room at the very bottom of the page for it. */
+      --mobile-nav-clear: calc(48px + max(10px, env(safe-area-inset-bottom)) + 14px);
+    }
 
-    main { padding-top: calc(var(--nav-h) + 12px); }
+    /* Nothing occupies the top on mobile anymore, so top spacing shrinks
+       to a plain safe-area gap instead of reserving a bar's worth of room. */
+    main { padding-top: max(18px, env(safe-area-inset-top)); }
+    html { scroll-padding-top: max(16px, env(safe-area-inset-top)); }
+    .section { scroll-margin-top: max(16px, env(safe-area-inset-top)); }
+
+    /* Nav moves to a bottom bar: reachable with a thumb, and out of the way
+       of the content instead of permanently eating the top of every screen. */
+    header.nav {
+      top: auto;
+      bottom: max(10px, env(safe-area-inset-bottom));
+    }
 
     /* Nav collapses to brand + actions + hamburger. */
     .nav-links { display: none; }
@@ -2279,6 +2307,12 @@
     .nav-actions { margin-left: auto; }
     #paletteBtn .kbd-hint { display: none; }
     header.nav a.cta { padding: 8px 14px; font-size: .86rem; }
+
+    /* Everything else fixed to the bottom needs to clear the new bar. */
+    .mobile-sheet { bottom: var(--mobile-nav-clear); }
+    .terminal { bottom: var(--mobile-nav-clear); }
+    .toast-host { bottom: var(--mobile-nav-clear); }
+    .footer { padding-bottom: calc(var(--mobile-nav-clear) + 20px); }
 
     /* Hero: compact avatar beside the name, prose underneath. */
     .hero { padding-inline: 12px; }
@@ -2312,7 +2346,9 @@
 
     .journey-scope { height: calc(90svh + var(--nodes, 8) * 40svh); }
     .journey-sticky {
-      top: calc(var(--nav-h) + 8px);
+      /* Nav is a bottom bar on mobile, so the sticky board only needs to
+         clear the safe-area gap at the top, not a bar's worth of space. */
+      top: max(14px, env(safe-area-inset-top));
       /* Stage gets a smaller share so the longest role card fits without an
          inner scrollbar on a 390x812 phone. */
       grid-template-rows: minmax(0, 20svh) minmax(0, 1fr);
