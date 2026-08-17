@@ -96,16 +96,18 @@ const THEMES = ['midnight', 'daylight', 'terminal'];
 
 /* A few partner logos (Hunter, JM Family, Toyota, FICS) are white-on-dark
    assets: legible on midnight/terminal, invisible on daylight's light
-   background. data-light-src points at a pre-darkened variant with the
-   brand colors left untouched; this swaps every matching <img> in the
-   document, which also covers the carousel's cloned copies since they carry
-   the same data attribute. */
+   background. data-dark-src/data-light-src on the <img> name both variants
+   explicitly, both cloned faithfully by the logo carousel regardless of
+   when a clone is made. (An earlier version captured "dark" by reading
+   whatever src happened to be on the element the first time this ran; if
+   the carousel cloned a node *after* it had already been swapped to light,
+   the clone would permanently misremember light as its own "dark" source,
+   leaving that copy stuck with unreadable dark-on-dark text.) */
 function syncLogoTheme() {
   const light = root.dataset.theme === 'daylight';
   $$('img[data-light-src]').forEach((img) => {
-    if (!img.dataset.darkSrc) img.dataset.darkSrc = img.getAttribute('src');
     const want = light ? img.dataset.lightSrc : img.dataset.darkSrc;
-    if (img.getAttribute('src') !== want) img.setAttribute('src', want);
+    if (want && img.getAttribute('src') !== want) img.setAttribute('src', want);
   });
 }
 
@@ -1402,24 +1404,6 @@ function gatorStorm(n = 12) {
       toast('Konami unlocked. Go gators 🐊');
     }
   });
-})();
-
-/* ==========================================================================
-   Live local time chip (America/New_York, Gainesville)
-   ========================================================================== */
-(function localTime() {
-  const el = $('#localTime');
-  if (!el) return;
-
-  const fmt = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/New_York',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-
-  const tick = () => { el.textContent = `Gainesville, FL · ${fmt.format(new Date())}`; };
-  tick();
-  setInterval(tick, 30_000);
 })();
 
 /* ==========================================================================
