@@ -449,11 +449,30 @@ syncLogoTheme();
 
   const SPEED = 42;          // px per second of idle drift
   let setW = 0;              // width of one full set, including the trailing gap
-  let raf = 0;
-  let lastTs = 0;
   let paused = false;        // explicit pause button
   let idle = true;           // nobody is touching it
   let dragging = false;
+  let visible = true;        // section is on/near screen
+
+  /* ---------- Idle drift ----------
+     CSS-driven rather than a JS timer loop (see @keyframes logoDrift in
+     style.css): a requestAnimationFrame or setInterval callback can be
+     throttled or suspended by the browser, in backgrounded tabs, low-power
+     mode, or some embedded preview contexts, which would silently freeze a
+     JS-driven scroll instead of just slowing it down. A CSS animation only
+     needs the element to actually be rendering, a strictly weaker
+     requirement, so it keeps advancing in exactly the situations where a
+     timer-driven version would appear to have died. Native scrollLeft
+     still does all of the manual-interaction work (drag/wheel/touch/
+     arrows, all below); toggling the animation via this class never
+     touches scrollLeft, so the two never fight over positioning. A
+     transform layered on top of whatever scrollLeft the last manual
+     interaction left behind is still a perfectly seamless loop, since the
+     content repeats exactly every setW px regardless of phase. */
+  const syncDrift = () => {
+    const should = idle && !paused && !dragging && visible && !prefersReduced();
+    viewport.classList.toggle('is-drifting', should);
+  };
 
   /* ---------- Clone enough sets that the strip can never run out ----------
      The old build cloned exactly once and animated a CSS transform, so
@@ -491,6 +510,12 @@ syncLogoTheme();
 
     // Park in the middle copy so there is room to scroll both directions.
     viewport.scrollLeft = setW;
+
+    // Exact loop distance/duration for the CSS drift, measured from the
+    // real track rather than guessed, so the seam is invisible.
+    viewport.style.setProperty('--marquee-shift', `${-setW}px`);
+    viewport.style.setProperty('--marquee-speed', `${(setW / SPEED).toFixed(2)}s`);
+    syncDrift();
   };
 
   build();
@@ -508,20 +533,8 @@ syncLogoTheme();
     else if (viewport.scrollLeft < setW * 0.5) viewport.scrollLeft += setW;
   };
 
-  /* ---------- Idle drift ---------- */
-  const tick = (ts) => {
-    raf = requestAnimationFrame(tick);
-    const dt = lastTs ? Math.min((ts - lastTs) / 1000, 0.05) : 0;
-    lastTs = ts;
-    if (paused || !idle || dragging) return;
-    viewport.scrollLeft += SPEED * dt;
-    wrap();
-  };
-
-  if (!prefersReduced()) raf = requestAnimationFrame(tick);
-
-  const goBusy = () => { idle = false; };
-  const goIdle = () => { idle = true; };
+  const goBusy = () => { idle = false; syncDrift(); };
+  const goIdle = () => { idle = true; syncDrift(); };
 
   let idleTimer;
   const bumpIdle = (delay = 1800) => {
@@ -620,6 +633,7 @@ syncLogoTheme();
   const toggleBtn = $('[data-marquee-toggle]');
   toggleBtn?.addEventListener('click', () => {
     paused = !paused;
+    syncDrift();
     toggleBtn.setAttribute('aria-pressed', String(paused));
     toggleBtn.setAttribute('aria-label', paused ? 'Resume logo animation' : 'Pause logo animation');
   });
@@ -640,12 +654,13 @@ syncLogoTheme();
     bumpIdle();
   }, { passive: false });
 
-  // Drop the drift loop while the section is offscreen.
-  if ('IntersectionObserver' in window && !prefersReduced()) {
+  // Stop the drift while the section is offscreen (mostly courtesy to the
+  // compositor; the animation is cheap, but no reason to run it unseen).
+  if ('IntersectionObserver' in window) {
     new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && !raf) { lastTs = 0; raf = requestAnimationFrame(tick); }
-        else if (!entry.isIntersecting && raf) { cancelAnimationFrame(raf); raf = 0; }
+        visible = entry.isIntersecting;
+        syncDrift();
       });
     }, { rootMargin: '150px' }).observe(viewport);
   }

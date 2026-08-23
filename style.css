@@ -532,8 +532,17 @@
   [data-theme="daylight"] #themeBtn .ico-daylight,
   [data-theme="terminal"] #themeBtn .ico-terminal { display: block; }
 
+  /* Explicit height + flex-centered text, rather than letting padding and
+     line-height decide it, so this button is exactly as tall as the .icon-
+     btns beside it. Otherwise it was the tallest thing in the pill and
+     stretched header.nav taller than the fixed-size search fab sitting
+     next to it, throwing the two out of vertical alignment. */
   header.nav a.cta {
-    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+    padding: 0 16px;
     border-radius: var(--r-pill);
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: var(--accent-ink);
@@ -906,6 +915,25 @@
     gap: clamp(26px, 5vw, 64px);
     padding-inline: clamp(18px, 4vw, 40px);
     min-width: max-content;
+  }
+
+  /* Idle ambient drift, CSS-driven rather than a JS timer loop: a
+     requestAnimationFrame/setInterval callback can be throttled or
+     suspended by the browser (backgrounded tabs, low-power mode, some
+     embedded preview contexts), silently freezing a JS-driven scroll.
+     A CSS animation keeps advancing as long as the element is actually
+     rendering, which is a strictly weaker requirement. --marquee-shift and
+     --marquee-speed are measured in script.js from the real track width, so
+     the loop point is exact. Native scrollLeft (drag/wheel/touch/arrows)
+     still does all the manual-interaction work; this only ever runs while
+     scrollLeft is parked at 0, so the two never fight over positioning. */
+  .logo-marquee.is-drifting .logo-track {
+    animation: logoDrift var(--marquee-speed, 40s) linear infinite;
+  }
+
+  @keyframes logoDrift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(var(--marquee-shift, -50%)); }
   }
 
   .logo-cell {
@@ -2178,7 +2206,8 @@
     .loader-stars,
     .loader-orb,
     .loader-bar i,
-    .hero-role .caret {
+    .hero-role .caret,
+    .logo-marquee.is-drifting .logo-track {
       animation: none !important;
     }
 
@@ -2285,7 +2314,7 @@
     header.nav .icon-btn { min-width: 40px; height: 40px; }
     .brand-mark { width: 40px; height: 40px; }
     .nav-actions { margin-left: 0; }
-    header.nav a.cta { padding: 10px 16px; font-size: .92rem; }
+    header.nav a.cta { height: 40px; padding: 0 16px; font-size: .92rem; }
 
     /* The in-pill search button is replaced by the dedicated FAB below;
        hiding it here (rather than deleting it) keeps one button and one
@@ -2294,8 +2323,8 @@
 
     /* Search's own circular tile on the opposite side of the screen from
        the main pill: fixed to the true viewport since this button is a
-       sibling of header.nav, not nested inside its backdrop-filter — which
-       is also why it needs its own blur/tint below. .icon-btn's background
+       sibling of header.nav, not nested inside its backdrop-filter. That is
+       also why it needs its own blur/tint below. .icon-btn's background
        alone (a ~5-8% white tint) reads as solid inside header.nav only
        because header.nav's own backdrop-filter is blurring everything
        behind the whole pill first; out here on its own the fab had nothing
@@ -2307,8 +2336,10 @@
       z-index: 60;
       right: 12px;
       bottom: max(10px, env(safe-area-inset-bottom));
-      width: 54px;
-      height: 54px;
+      /* Matches the pill's own rendered height exactly: 40px icon-btn
+         content + 8px top/bottom padding + 1px top/bottom border. */
+      width: 58px;
+      height: 58px;
       min-width: 0;
       padding: 0;
       border-radius: 50%;
