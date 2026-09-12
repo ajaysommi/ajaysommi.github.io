@@ -889,15 +889,28 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 (function journeyPhotos() {
   if (!$('.jcard .jc-media')) return;
 
-  const MIN_H = 110;   // under this a photo reads as a stray band, not a photo
+  const COLLAGE_H = 190;  // over this, three photos are better as a collage
+
+  // Under this a photo reads as a stray band rather than a photo. Phones get a
+  // lower bar: the panel is tighter there, and a short strip of thumbnails is
+  // still worth more than a card with nothing in the gap.
+  const minH = () => (innerWidth <= 719 ? 86 : 110);
 
   // Re-queried each pass rather than captured once, so adding a photo to a
   // card later needs no change here.
   const fit = () => {
+    const MIN_H = minH();
     $$('.jcard .jc-media').forEach((fig) => {
       // Let it lay out first, then keep it only if it got real room.
       fig.hidden = false;
-      if (fig.getBoundingClientRect().height < MIN_H) fig.hidden = true;
+      fig.classList.remove('is-collage');
+      const h = fig.getBoundingClientRect().height;
+      if (h < MIN_H) { fig.hidden = true; return; }
+      // Two rows only pay off with height to spare; on a short panel they
+      // would just be a pair of thin bands, so stay in one row.
+      if (h >= COLLAGE_H && fig.querySelectorAll('img').length >= 3) {
+        fig.classList.add('is-collage');
+      }
     });
   };
 

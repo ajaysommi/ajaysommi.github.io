@@ -1401,35 +1401,27 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 28%;
+    /* Centre is the safe default; individual photos whose subject sits off
+       centre carry their own object-position inline. */
+    object-position: center;
     border: 1px solid var(--stroke);
     border-radius: var(--r-md);
     background: var(--surface);
   }
 
-  /* Diagrams stand in for the roles with no surviving photos. They draw what
-     the card already says rather than dressing it up as something it is not,
-     so they are deliberately schematic: flat, themed, obviously drawn. */
-  .jc-media-diagram {
-    padding: 10px 12px;
-    border: 1px solid var(--stroke);
-    border-radius: var(--r-md);
-    background: linear-gradient(160deg, var(--accent-soft), transparent 70%), var(--surface);
+  /* On a roomy panel three photos become a collage rather than three equal
+     columns, because equal columns turn into tall narrow slots that crop a
+     wide shot down to a meaningless middle sliver. On a short panel the
+     opposite is true (two rows would be thin bands), so script.js only adds
+     .is-collage once the box is tall enough to carry it. */
+  .jc-media.is-collage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1.25fr 1fr;
   }
 
-  .jc-media-diagram svg {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    color: var(--ink-3);
-  }
-
-  .jc-dg-line { fill: none; stroke: currentColor; stroke-width: 1.5; opacity: .55; }
-  .jc-dg-box { fill: none; stroke: currentColor; stroke-width: 1.5; opacity: .6; rx: 6; }
-  .jc-dg-fill { fill: var(--accent); opacity: .22; }
-  .jc-dg-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
-  .jc-dg-label { fill: var(--ink-2); font-family: var(--font-mono); font-size: 11px; }
-  .jc-dg-key { fill: var(--accent); font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+  .jc-media.is-collage img { min-width: 0; min-height: 0; }
+  .jc-media.is-collage img:first-child { grid-column: 1 / -1; }
 
   html:not(.js) .jc-media { height: 220px; }
   /* ==========================================================================
@@ -2449,8 +2441,9 @@
          clear the safe-area gap at the top, not a bar's worth of space. */
       top: max(14px, env(safe-area-inset-top));
       /* Stage gets a smaller share so the longest role card (Hunter) fits
-         without an inner scrollbar down to a 375x812 phone. */
-      grid-template-rows: minmax(0, 17svh) minmax(0, 1fr);
+         without an inner scrollbar down to a 375x812 phone, and so the roles
+         that carry photos still have a band of room left for them. */
+      grid-template-rows: minmax(0, 12svh) minmax(0, 1fr);
       height: min(89svh, 730px);
       gap: 8px;
     }
@@ -2487,7 +2480,7 @@
     /* Give the tallest role card (Hunter) the headroom it needs on short
        viewports by trimming the decorative board rather than letting the
        card grow an inner scrollbar. */
-    .journey-sticky { grid-template-rows: minmax(0, 13svh) minmax(0, 1fr); }
+    .journey-sticky { grid-template-rows: minmax(0, 11svh) minmax(0, 1fr); }
     .jc-built, .jc-learn, .jc-org, .jc-impact { margin-bottom: 6px; }
     .jc-impact { padding: 6px 9px; }
   }
@@ -2495,7 +2488,7 @@
   /* On the very smallest/shortest phones there is not enough height for both
      the board and a full role card, so the board (decorative) yields and the
      card gets the whole panel rather than an inner scrollbar. */
-  @media (max-width: 340px), (max-height: 750px) and (max-width: 719px) {
+  @media (max-width: 365px), (max-height: 750px) and (max-width: 719px) {
     .journey-stage { display: none; }
     .journey-sticky { grid-template-rows: minmax(0, 1fr); }
     .jc-built { font-size: .81rem; }
