@@ -878,6 +878,36 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
+   Journey photos
+   The panel is a fixed height sized for the wordiest role, so shorter roles
+   leave a gap underneath. A photo flexes into whatever is left over, which
+   turns that gap into something worth looking at. On a long role there is
+   no leftover, and CSS lets the photo collapse to nothing rather than push
+   the card into an inner scrollbar; a collapsed photo is a bordered sliver
+   though, so below a sensible minimum it is hidden outright.
+   ========================================================================== */
+(function journeyPhotos() {
+  if (!$('.jcard .jc-photo')) return;
+
+  const MIN_H = 110;   // under this a photo reads as a stray band, not a photo
+
+  // Re-queried each pass rather than captured once, so adding a photo to a
+  // card later needs no change here.
+  const fit = () => {
+    $$('.jcard .jc-photo').forEach((fig) => {
+      // Let it lay out first, then keep it only if it got real room.
+      fig.hidden = false;
+      if (fig.getBoundingClientRect().height < MIN_H) fig.hidden = true;
+    });
+  };
+
+  fit();
+  addEventListener('resize', fit, { passive: true });
+  // Fonts landing late changes how tall the text is, which changes the room.
+  if (document.fonts?.ready) document.fonts.ready.then(fit).catch(() => {});
+})();
+
+/* ==========================================================================
    Apple-style scroll-linked flourishes
    ========================================================================== */
 (function scrollFlourishes() {
