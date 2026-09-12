@@ -887,14 +887,14 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
    though, so below a sensible minimum it is hidden outright.
    ========================================================================== */
 (function journeyPhotos() {
-  if (!$('.jcard .jc-photo')) return;
+  if (!$('.jcard .jc-media')) return;
 
   const MIN_H = 110;   // under this a photo reads as a stray band, not a photo
 
   // Re-queried each pass rather than captured once, so adding a photo to a
   // card later needs no change here.
   const fit = () => {
-    $$('.jcard .jc-photo').forEach((fig) => {
+    $$('.jcard .jc-media').forEach((fig) => {
       // Let it lay out first, then keep it only if it got real room.
       fig.hidden = false;
       if (fig.getBoundingClientRect().height < MIN_H) fig.hidden = true;
