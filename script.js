@@ -880,37 +880,100 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 /* ==========================================================================
    Journey photos
    The panel is a fixed height sized for the wordiest role, so shorter roles
-   leave a gap underneath. A photo flexes into whatever is left over, which
-   turns that gap into something worth looking at. On a long role there is
-   no leftover, and CSS lets the photo collapse to nothing rather than push
-   the card into an inner scrollbar; a collapsed photo is a bordered sliver
-   though, so below a sensible minimum it is hidden outright.
+   leave a gap underneath and the photos expand into it. The height is set
+   here rather than left to flexbox because each photo sizes its own width
+   from its own aspect ratio, and that only works against a height the
+   browser already knows. Every role that has photos keeps them at every
+   viewport: the height has a floor, and a wordy role gives up a little of
+   its own slack rather than losing the photos.
    ========================================================================== */
 (function journeyPhotos() {
   if (!$('.jcard .jc-media')) return;
 
-  const COLLAGE_H = 190;  // over this, three photos are better as a collage
-
-  // Under this a photo reads as a stray band rather than a photo. Phones get a
-  // lower bar: the panel is tighter there, and a short strip of thumbnails is
-  // still worth more than a card with nothing in the gap.
-  const minH = () => (innerWidth <= 719 ? 86 : 110);
+  // Below this the photos stop reading as photos. The smallest phones get a
+  // lower floor because the panel there has almost nothing to spare.
+  const minH = () => (innerWidth <= 365 ? 74 : 88);
+  const MAX_H = 300;  // above this they start to dwarf the text
 
   // Re-queried each pass rather than captured once, so adding a photo to a
   // card later needs no change here.
   const fit = () => {
     const MIN_H = minH();
     $$('.jcard .jc-media').forEach((fig) => {
-      // Let it lay out first, then keep it only if it got real room.
+      const card = fig.closest('.jcard');
+      if (!card) return;
+
       fig.hidden = false;
-      fig.classList.remove('is-collage');
-      const h = fig.getBoundingClientRect().height;
-      if (h < MIN_H) { fig.hidden = true; return; }
-      // Two rows only pay off with height to spare; on a short panel they
-      // would just be a pair of thin bands, so stay in one row.
-      if (h >= COLLAGE_H && fig.querySelectorAll('img').length >= 3) {
-        fig.classList.add('is-collage');
+      // Measure the text, then hand the photos whatever it did not use.
+      let text = 0;
+      for (const el of card.children) {
+        if (el === fig) continue;
+        const cs = getComputedStyle(el);
+        text += el.offsetHeight +
+                (parseFloat(cs.marginTop) || 0) +
+                (parseFloat(cs.marginBottom) || 0);
       }
+      const figStyle = getComputedStyle(fig);
+      const gap = parseFloat(figStyle.marginTop) || 0;
+      // The 4px is slack against sub pixel rounding in the text measurement:
+      // without it a card can end up one or two pixels into a scrollbar.
+      const spare = card.clientHeight - text - gap - 4;
+      let h = Math.min(MAX_H, Math.max(MIN_H, spare));
+
+      /* Each photo keeps its own shape: at a shared height, a row is as wide
+         as the sum of its aspect ratios. So the height a row can reach is
+         capped by the card's width as well as by the leftover space. Where
+         the leftover is generous but the width is not, two rows of larger
+         photos beat one row of small ones. Nothing is ever cropped or
+         stretched either way. */
+      const imgs = $$('img', fig);
+      const ratios = imgs.map((img) => {
+        const w = Number(img.getAttribute('width'));
+        const ih = Number(img.getAttribute('height'));
+        return w > 0 && ih > 0 ? w / ih : 1;
+      });
+      const gapX = parseFloat(figStyle.columnGap) || 0;
+      const width = fig.clientWidth;
+      // How tall a row of images `n` wide with total aspect `r` can be.
+      const rowH = (r, n) => (width - gapX * Math.max(0, n - 1)) / (r || 1);
+
+      const budget = h;
+      const total = ratios.reduce((a, b) => a + b, 0);
+      const one = Math.min(budget, rowH(total, imgs.length));
+
+      // Two rows, split in document order wherever it balances best.
+      let two = 0;
+      let split = 0;
+      for (let k = 1; k < imgs.length; k++) {
+        const top = ratios.slice(0, k).reduce((a, b) => a + b, 0);
+        const cand = Math.min(
+          (budget - gapX) / 2,
+          rowH(top, k),
+          rowH(total - top, imgs.length - k),
+        );
+        if (cand > two) { two = cand; split = k; }
+      }
+
+      /* Two rows fill the leftover space exactly where one row would leave a
+         gap under it, so they win unless the photos would have to shrink a
+         lot to make that happen. */
+      const rows = split && two >= one * 0.75 ? 2 : 1;
+      h = Math.max(1, Math.floor(rows === 2 ? two : one));
+
+      // At the two row height the photos would still fit on one line, so the
+      // break has to be forced rather than left to wrapping.
+      $$('.jc-break', fig).forEach((el) => el.remove());
+      if (rows === 2) {
+        const br = document.createElement('i');
+        br.className = 'jc-break';
+        br.setAttribute('aria-hidden', 'true');
+        fig.insertBefore(br, imgs[split]);
+      }
+      fig.style.flexWrap = rows === 2 ? 'wrap' : 'nowrap';
+      fig.style.height = `${rows === 2 ? h * 2 + gapX : h}px`;
+      // A definite pixel height is what lets width:auto resolve through the
+      // aspect ratio; a percentage height leaves the flex base size intrinsic.
+      imgs.forEach((img) => { img.style.height = `${h}px`; });
     });
   };
 

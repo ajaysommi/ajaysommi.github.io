@@ -1002,7 +1002,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
     gap: clamp(14px, 2.6vw, 34px);
     align-items: center;
-    height: min(78svh, 660px);
+    height: min(82svh, 700px);
   }
 
   /* ---------- 3D stage ---------- */
@@ -1278,14 +1278,13 @@
     position: absolute;
     inset: 0;
     overflow-y: auto;
-    /* The panel is sized for the longest role, so shorter ones used to leave
-       a large dead gap underneath. A card with a photo pins its text to the
-       top and lets the photo absorb whatever height is left over; a card
-       without one centres its text so the leftover space is balanced above
-       and below instead of dumped at the bottom. */
+    /* The panel is sized for the longest role, so shorter ones have height to
+       spare. Text always starts at the top so the heading sits in the same
+       place on every card, and a card with photos lets them absorb whatever
+       is left over underneath. */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     opacity: 0;
     visibility: hidden;
     transform: translateY(16px);
@@ -1376,52 +1375,45 @@
     color: var(--ink-3);
   }
 
-  /* The media slot takes whatever height the text leaves behind, so every
-     card fills the panel exactly regardless of how much it has to say. The
-     floor is 0 on purpose: a role with a lot to say has no leftover space
-     and therefore no dead space to fill, so the media yields rather than
-     pushing the card into an inner scrollbar. script.js hides it outright
-     once the leftover drops below the point where it still reads as
-     something rather than a stray band. Holds one photo, several, or a
-     diagram for the roles there are no photos of. */
-  html.js .jcard:has(.jc-media:not([hidden])) { justify-content: flex-start; }
+  /* Every card starts its text at the top of the panel. Centring shorter
+     roles looked balanced in isolation but made the heading jump around as
+     you scrolled from one role to the next. */
   html.js .jcard > :not(.jc-media) { flex: 0 0 auto; }
 
+  /* The media slot takes whatever height the text leaves behind, so a card
+     fills the panel regardless of how much it has to say, with a floor so the
+     photos never get squeezed out of existence. script.js sets the exact
+     height, which is what lets each photo size itself by its own shape. */
   .jc-media {
     display: flex;
     gap: 6px;
-    flex: 1 1 0;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    flex: 0 0 auto;
     min-height: 0;
     margin: 12px 0 0;
   }
 
+  /* Height is the fixed dimension and width follows the photo's own aspect
+     ratio, so a portrait shot takes a narrow slot and a landscape one takes a
+     wide slot. Nothing is cropped and nothing is stretched: the whole frame is
+     always on screen. `contain` only matters in the rare case where the row
+     runs out of width and the images have to shrink. */
   .jc-media img {
-    flex: 1 1 0;
+    flex: 0 1 auto;
     min-width: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Centre is the safe default; individual photos whose subject sits off
-       centre carry their own object-position inline. */
-    object-position: center;
+    width: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+    object-fit: contain;
     border: 1px solid var(--stroke);
     border-radius: var(--r-md);
     background: var(--surface);
   }
 
-  /* On a roomy panel three photos become a collage rather than three equal
-     columns, because equal columns turn into tall narrow slots that crop a
-     wide shot down to a meaningless middle sliver. On a short panel the
-     opposite is true (two rows would be thin bands), so script.js only adds
-     .is-collage once the box is tall enough to carry it. */
-  .jc-media.is-collage {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1.25fr 1fr;
-  }
-
-  .jc-media.is-collage img { min-width: 0; min-height: 0; }
-  .jc-media.is-collage img:first-child { grid-column: 1 / -1; }
+  /* Forces a row break at the point script.js picked. */
+  .jc-media .jc-break { flex: 0 0 100%; height: 0; margin: 0; }
 
   html:not(.js) .jc-media { height: 220px; }
   /* ==========================================================================
@@ -2293,7 +2285,7 @@
     .journey-sticky {
       grid-template-columns: 1fr;
       grid-template-rows: minmax(0, 19svh) minmax(0, 1fr);
-      height: min(86svh, 720px);
+      height: min(88svh, 800px);
       gap: 10px;
       align-items: stretch;
     }
@@ -2444,7 +2436,9 @@
          without an inner scrollbar down to a 375x812 phone, and so the roles
          that carry photos still have a band of room left for them. */
       grid-template-rows: minmax(0, 12svh) minmax(0, 1fr);
-      height: min(89svh, 730px);
+      /* Bounded by the floating bottom nav rather than by a flat svh share,
+         so the panel never slides under the pill on a short phone. */
+      height: min(calc(100svh - 96px), 760px);
       gap: 8px;
     }
     .journey-readout { padding: 12px 13px; }
@@ -2453,11 +2447,12 @@
     .node-card b { font-size: .62rem; }
     .node-card span { font-size: .54rem; }
     .jcard h3 { font-size: 1.02rem; }
-    .jc-org { font-size: .88rem; margin-bottom: 7px; }
-    .jc-built { font-size: .86rem; margin-bottom: 7px; }
-    .jc-learn { font-size: .83rem; margin-bottom: 7px; }
-    .jc-impact { font-size: .78rem; padding: 7px 10px; margin-bottom: 7px; }
-    .jc-tags span { font-size: .62rem; padding: 2px 7px; }
+    .jc-org { font-size: .88rem; margin-bottom: 6px; }
+    .jc-built { font-size: .83rem; line-height: 1.45; margin-bottom: 6px; }
+    .jc-learn { font-size: .8rem; line-height: 1.4; margin-bottom: 6px; }
+    .jc-impact { font-size: .75rem; padding: 6px 9px; margin-bottom: 6px; }
+    .jc-impact li { line-height: 1.35; }
+    .jc-tags span { font-size: .6rem; padding: 2px 6px; }
     .readout-meter { margin-bottom: 8px; }
 
     .pills { gap: 6px; padding: 10px; }
@@ -2491,9 +2486,14 @@
   @media (max-width: 365px), (max-height: 750px) and (max-width: 719px) {
     .journey-stage { display: none; }
     .journey-sticky { grid-template-rows: minmax(0, 1fr); }
-    .jc-built { font-size: .81rem; }
-    .jc-learn { font-size: .79rem; }
-    .jc-impact { font-size: .74rem; }
+    .jcard h3 { font-size: .95rem; }
+    .jc-when { font-size: .68rem; margin-bottom: 4px; }
+    .jc-org { font-size: .82rem; margin-bottom: 5px; }
+    .jc-built { font-size: .74rem; line-height: 1.38; margin-bottom: 5px; }
+    .jc-learn { font-size: .72rem; line-height: 1.34; margin-bottom: 5px; }
+    .jc-impact { font-size: .68rem; padding: 5px 8px; margin-bottom: 5px; }
+    .jc-tags span { font-size: .57rem; }
+    .readout-meter { margin-bottom: 6px; }
   }
 
   /* Small Androids and the original SE: the bottom pill plus the search tile
