@@ -839,6 +839,8 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       n.dataset.state = k < i ? 'past' : k === i ? 'active' : 'future';
     });
     if (idxEl) idxEl.textContent = String(i + 1).padStart(2, '0');
+    // The photo/tile sizing pass lives in its own block and needs to know.
+    document.dispatchEvent(new CustomEvent('journey:active', { detail: { index: i } }));
   };
 
   const update = () => {
@@ -895,6 +897,23 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const minH = () => (innerWidth <= 365 ? 74 : 88);
   const MAX_H = 300;  // above this they start to dwarf the text
 
+  // How tall a card's own content is, independent of the panel it sits in.
+  // The children are all flex: 0 0 auto, so they measure the same whatever
+  // height the card has been given.
+  const contentHeight = (card, skip) => {
+    let h = 0;
+    for (const el of card.children) {
+      if (el === skip) continue;
+      const cs = getComputedStyle(el);
+      // Rect height rather than offsetHeight: the latter rounds to whole
+      // pixels, and six children of rounding adds up to a visible error.
+      h += el.getBoundingClientRect().height +
+           (parseFloat(cs.marginTop) || 0) +
+           (parseFloat(cs.marginBottom) || 0);
+    }
+    return h;
+  };
+
   // Re-queried each pass rather than captured once, so adding a photo to a
   // card later needs no change here.
   const fit = () => {
@@ -905,20 +924,17 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
       fig.hidden = false;
       // Measure the text, then hand the photos whatever it did not use.
-      let text = 0;
-      for (const el of card.children) {
-        if (el === fig) continue;
-        const cs = getComputedStyle(el);
-        text += el.offsetHeight +
-                (parseFloat(cs.marginTop) || 0) +
-                (parseFloat(cs.marginBottom) || 0);
-      }
+      const text = contentHeight(card, fig);
       const figStyle = getComputedStyle(fig);
       const gap = parseFloat(figStyle.marginTop) || 0;
       // The 4px is slack against sub pixel rounding in the text measurement:
       // without it a card can end up one or two pixels into a scrollbar.
       const spare = card.clientHeight - text - gap - 4;
-      let h = Math.min(MAX_H, Math.max(MIN_H, spare));
+      /* Take the leftover space as it is. Where there is barely any, the
+         photos still get a floor so they cannot vanish, but the floor is low
+         enough that the card does not grow a scrollbar to honour it. */
+      const ideal = Math.min(MAX_H, spare);
+      let h = ideal < MIN_H ? Math.max(56, ideal) : ideal;
 
       /* Each photo keeps its own shape: at a shared height, a row is as wide
          as the sum of its aspect ratios. So the height a row can reach is
@@ -977,10 +993,43 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     });
   };
 
-  fit();
-  addEventListener('resize', fit, { passive: true });
+  /* A role with no photos has nothing to fill the leftover space with, and on
+     the breakpoints where the readout is drawn as a bordered tile that reads
+     as an empty box wrapped around a short paragraph. So the tile shrinks to
+     that role's own content instead, and goes back to full height for a role
+     that has photos to show. */
+  const readout = $('.journey-readout');
+  const cardsEl = $('.journey-cards');
+
+  const sizeTile = () => {
+    if (!readout || !cardsEl) return;
+
+    // Reduced motion shows every card at once as a plain list; leave it be.
+    const active = $$('.jcard.is-active');
+    readout.style.alignSelf = '';
+    readout.style.height = '';
+    cardsEl.style.height = '';
+    cardsEl.style.flex = '';
+
+    const card = active.length === 1 ? active[0] : null;
+    // Above 900px the readout carries no border, so there is no box to shrink.
+    if (!card || innerWidth > 900 || card.querySelector('.jc-media')) {
+      fit();
+      return;
+    }
+
+    // flex-basis, not height, is what sizes a flex item along the main axis.
+    cardsEl.style.flex = '0 0 auto';
+    cardsEl.style.height = `${Math.ceil(contentHeight(card))}px`;
+    readout.style.alignSelf = 'start';
+    readout.style.height = 'auto';
+  };
+
+  sizeTile();
+  document.addEventListener('journey:active', sizeTile);
+  addEventListener('resize', sizeTile, { passive: true });
   // Fonts landing late changes how tall the text is, which changes the room.
-  if (document.fonts?.ready) document.fonts.ready.then(fit).catch(() => {});
+  if (document.fonts?.ready) document.fonts.ready.then(sizeTile).catch(() => {});
 })();
 
 /* ==========================================================================
