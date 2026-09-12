@@ -35,8 +35,6 @@
     --dur: .28s;
     --dur-slow: .6s;
     --ease: cubic-bezier(.22, 1, .36, 1);
-
-    --marquee-speed: 46s;
   }
 
   /* ---------- Midnight (default) ---------- */
@@ -894,6 +892,10 @@
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    /* Scroll anchoring will quietly re-adjust scrollLeft to keep content
+       visually put when the contents shift, which cancels out the drift's
+       own small scrollLeft nudges and freezes the strip in place. */
+    overflow-anchor: none;
     cursor: grab;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
@@ -917,32 +919,15 @@
     min-width: max-content;
   }
 
-  /* Idle ambient drift, CSS-driven rather than a JS timer loop: a
-     requestAnimationFrame/setInterval callback can be throttled or
-     suspended by the browser (backgrounded tabs, low-power mode, some
-     embedded preview contexts), silently freezing a JS-driven scroll.
-     A CSS animation keeps advancing as long as the element is actually
-     rendering, which is a strictly weaker requirement. --marquee-shift and
-     --marquee-speed are measured in script.js from the real track width, so
-     the loop point is exact. Native scrollLeft (drag/wheel/touch/arrows)
-     still does all the manual-interaction work; this only ever runs while
-     scrollLeft is parked at 0, so the two never fight over positioning. */
-  .logo-marquee.is-drifting .logo-track {
-    animation: logoDrift var(--marquee-speed, 40s) linear infinite;
-  }
-
-  @keyframes logoDrift {
-    from { transform: translateX(0); }
-    to   { transform: translateX(var(--marquee-shift, -50%)); }
-  }
-
+  /* No scroll-snap here on purpose: the strip drifts by nudging scrollLeft a
+     couple of px at a time, and snap points would keep yanking it back to the
+     nearest logo instead of letting it glide. */
   .logo-cell {
     position: relative;
     display: grid;
     place-items: center;
     flex: 0 0 auto;
     padding: 6px;
-    scroll-snap-align: center;
   }
 
   .logo {
@@ -2206,8 +2191,7 @@
     .loader-stars,
     .loader-orb,
     .loader-bar i,
-    .hero-role .caret,
-    .logo-marquee.is-drifting .logo-track {
+    .hero-role .caret {
       animation: none !important;
     }
 
@@ -2245,10 +2229,13 @@
   }
 
   @media (max-width: 900px) {
-    /* Board stacks above the readout rather than hiding behind it. */
+    /* Board stacks above the readout rather than hiding behind it. Its share
+       stays modest: stacking costs vertical room, and the longest role card
+       needs most of what is left (a 30svh board clipped three of them on an
+       iPad in portrait). */
     .journey-sticky {
       grid-template-columns: 1fr;
-      grid-template-rows: minmax(0, 30svh) minmax(0, 1fr);
+      grid-template-rows: minmax(0, 19svh) minmax(0, 1fr);
       height: min(86svh, 720px);
       gap: 10px;
       align-items: stretch;
@@ -2375,7 +2362,7 @@
     .section { padding-inline: 14px; }
 
     /* Logos: swipeable, snapping, no auto-scroll fighting the finger. */
-    .logo-marquee { min-height: 88px; padding: 10px 0; scroll-snap-type: x proximity; }
+    .logo-marquee { min-height: 88px; padding: 10px 0; }
     .logo-track { gap: 26px; padding-inline: 18px; }
     .logo { height: 40px; max-width: 52vw; }
     .logo-tip { display: none; }
@@ -2396,9 +2383,9 @@
       /* Nav is a bottom bar on mobile, so the sticky board only needs to
          clear the safe-area gap at the top, not a bar's worth of space. */
       top: max(14px, env(safe-area-inset-top));
-      /* Stage gets a smaller share so the longest role card fits without an
-         inner scrollbar on a 390x812 phone. */
-      grid-template-rows: minmax(0, 20svh) minmax(0, 1fr);
+      /* Stage gets a smaller share so the longest role card (Hunter) fits
+         without an inner scrollbar down to a 375x812 phone. */
+      grid-template-rows: minmax(0, 17svh) minmax(0, 1fr);
       height: min(89svh, 730px);
       gap: 8px;
     }
@@ -2408,12 +2395,12 @@
     .node-card b { font-size: .62rem; }
     .node-card span { font-size: .54rem; }
     .jcard h3 { font-size: 1.02rem; }
-    .jc-org { font-size: .88rem; margin-bottom: 9px; }
-    .jc-built { font-size: .86rem; margin-bottom: 9px; }
-    .jc-learn { font-size: .83rem; margin-bottom: 9px; }
-    .jc-impact { font-size: .78rem; padding: 8px 10px; margin-bottom: 9px; }
+    .jc-org { font-size: .88rem; margin-bottom: 7px; }
+    .jc-built { font-size: .86rem; margin-bottom: 7px; }
+    .jc-learn { font-size: .83rem; margin-bottom: 7px; }
+    .jc-impact { font-size: .78rem; padding: 7px 10px; margin-bottom: 7px; }
     .jc-tags span { font-size: .62rem; padding: 2px 7px; }
-    .readout-meter { margin-bottom: 10px; }
+    .readout-meter { margin-bottom: 8px; }
 
     .pills { gap: 6px; padding: 10px; }
     .pills button,
@@ -2431,6 +2418,35 @@
     /* Below this width "Copy email" starts crowding its icon; stack instead
        of squeezing the pair. */
     .actions { flex-direction: column; }
+
+    /* Give the tallest role card (Hunter) the headroom it needs on short
+       viewports by trimming the decorative board rather than letting the
+       card grow an inner scrollbar. */
+    .journey-sticky { grid-template-rows: minmax(0, 13svh) minmax(0, 1fr); }
+    .jc-built, .jc-learn, .jc-org, .jc-impact { margin-bottom: 6px; }
+    .jc-impact { padding: 6px 9px; }
+  }
+
+  /* On the very smallest/shortest phones there is not enough height for both
+     the board and a full role card, so the board (decorative) yields and the
+     card gets the whole panel rather than an inner scrollbar. */
+  @media (max-width: 340px), (max-height: 750px) and (max-width: 719px) {
+    .journey-stage { display: none; }
+    .journey-sticky { grid-template-rows: minmax(0, 1fr); }
+    .jc-built { font-size: .81rem; }
+    .jc-learn { font-size: .79rem; }
+    .jc-impact { font-size: .74rem; }
+  }
+
+  /* Small Androids and the original SE: the bottom pill plus the search tile
+     stop fitting side by side, so tighten the pill until they do. */
+  @media (max-width: 365px) {
+    header.nav { padding: 7px 8px 7px 10px; gap: 5px; }
+    header.nav .icon-btn { min-width: 36px; height: 36px; }
+    .brand-mark { width: 36px; height: 36px; }
+    header.nav a.cta { height: 36px; padding: 0 12px; font-size: .84rem; }
+    /* Stays equal to the pill: 36px content + 7px padding + 1px border, twice. */
+    .palette-fab { width: 52px; height: 52px; }
   }
 
   /* Touch devices: hover effects that need a real pointer are dropped. */

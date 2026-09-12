@@ -279,19 +279,49 @@ syncLogoTheme();
     return;
   }
 
+  const show = (el, delay = 0) => {
+    el.style.transitionDelay = delay ? `${delay}ms` : '';
+    el.classList.add('is-in');
+    io.unobserve(el);
+  };
+
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       // Stagger siblings slightly so a grid does not pop in all at once.
       const siblings = Array.from(entry.target.parentElement?.children || []);
       const idx = siblings.indexOf(entry.target);
-      entry.target.style.transitionDelay = `${Math.min(idx, 6) * 55}ms`;
-      entry.target.classList.add('is-in');
-      io.unobserve(entry.target);
+      show(entry.target, Math.min(idx, 6) * 55);
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
 
   items.forEach((el) => io.observe(el));
+
+  /* Safety net for anything the observer never got to sample. A fast flick,
+     or a nav link that jumps straight to a later section, can carry an
+     element from below the viewport to above it between two observer
+     deliveries; with no intersecting sample it never fires, and the element
+     is left sitting at opacity 0 for anyone who scrolls back up. Anything
+     already past the top of the viewport is revealed outright (no stagger:
+     it is not making an entrance, it is just catching up). */
+  let pending = items.length;
+  let queued = false;
+  const sweep = () => {
+    queued = false;
+    pending = 0;
+    items.forEach((el) => {
+      if (el.classList.contains('is-in')) return;
+      if (el.getBoundingClientRect().top < 0) show(el);
+      else pending++;
+    });
+    if (!pending) removeEventListener('scroll', onScroll);
+  };
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    setTimeout(sweep, 100);
+  };
+  addEventListener('scroll', onScroll, { passive: true });
 })();
 
 
@@ -448,30 +478,33 @@ syncLogoTheme();
   if (!originals.length) return;
 
   const SPEED = 42;          // px per second of idle drift
+  const STEP_MS = 50;        // drift tick; 20fps is plenty for a slow glide
   let setW = 0;              // width of one full set, including the trailing gap
   let paused = false;        // explicit pause button
   let idle = true;           // nobody is touching it
   let dragging = false;
   let visible = true;        // section is on/near screen
+  let driftTimer = 0;
 
   /* ---------- Idle drift ----------
-     CSS-driven rather than a JS timer loop (see @keyframes logoDrift in
-     style.css): a requestAnimationFrame or setInterval callback can be
-     throttled or suspended by the browser, in backgrounded tabs, low-power
-     mode, or some embedded preview contexts, which would silently freeze a
-     JS-driven scroll instead of just slowing it down. A CSS animation only
-     needs the element to actually be rendering, a strictly weaker
-     requirement, so it keeps advancing in exactly the situations where a
-     timer-driven version would appear to have died. Native scrollLeft
-     still does all of the manual-interaction work (drag/wheel/touch/
-     arrows, all below); toggling the animation via this class never
-     touches scrollLeft, so the two never fight over positioning. A
-     transform layered on top of whatever scrollLeft the last manual
-     interaction left behind is still a perfectly seamless loop, since the
-     content repeats exactly every setW px regardless of phase. */
+     scrollLeft is deliberately the single source of truth for position here.
+     An earlier attempt ran the drift as a CSS transform animation on the
+     track instead, which looked correct in isolation but cancelled itself
+     out in practice: the track lives inside an overflow-x scroll container,
+     and shifting it under the browser's nose makes scroll anchoring adjust
+     scrollLeft by the same amount in the opposite direction, pinning the
+     strip visually in place. Nudging scrollLeft directly keeps one mechanism
+     in charge, so manual scrolling and the drift can never disagree about
+     where the strip is. */
+  const tick = () => {
+    viewport.scrollLeft += SPEED * (STEP_MS / 1000);
+    wrap();
+  };
+
   const syncDrift = () => {
     const should = idle && !paused && !dragging && visible && !prefersReduced();
-    viewport.classList.toggle('is-drifting', should);
+    if (should && !driftTimer) driftTimer = setInterval(tick, STEP_MS);
+    else if (!should && driftTimer) { clearInterval(driftTimer); driftTimer = 0; }
   };
 
   /* ---------- Clone enough sets that the strip can never run out ----------
@@ -510,11 +543,6 @@ syncLogoTheme();
 
     // Park in the middle copy so there is room to scroll both directions.
     viewport.scrollLeft = setW;
-
-    // Exact loop distance/duration for the CSS drift, measured from the
-    // real track rather than guessed, so the seam is invisible.
-    viewport.style.setProperty('--marquee-shift', `${-setW}px`);
-    viewport.style.setProperty('--marquee-speed', `${(setW / SPEED).toFixed(2)}s`);
     syncDrift();
   };
 
@@ -960,8 +988,20 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     return aliases[v] || v;
   };
 
+  /* Containment has to respect word boundaries. Plain substring matching in
+     both directions let "Java" pull in anything tagged "javascript", which is
+     just wrong on a filter chip. Boundaries are anything outside the set of
+     characters that legitimately appear inside a tech name, so "azure" still
+     matches "azure sql" and "c++"/".net"/"c#" stay intact. */
+  const INNER = 'a-z0-9+#.';
+  const containsWord = (haystack, word) => {
+    if (haystack === word) return true;
+    const esc = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(^|[^${INNER}])${esc}([^${INNER}]|$)`).test(haystack);
+  };
+
   const matches = (el, needle) =>
-    tagsOf(el).some((t) => t === needle || t.includes(needle) || needle.includes(t));
+    tagsOf(el).some((t) => containsWord(t, needle) || containsWord(needle, t));
 
   let current = 'all';
 
