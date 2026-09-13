@@ -1555,14 +1555,26 @@
   /* ==========================================================================
      TIMELINE
      ========================================================================== */
-  .timeline { position: relative; margin-top: 8px; }
+  .timeline {
+    /* The rail and the node dots are drawn by two different elements, so the
+       column geometry lives here and both read it. Hard coding the numbers at
+       each end is what left the dot floating beside the heading instead of
+       sitting on the rail. */
+    --when-col: 158px;
+    --col-gap: 18px;
+    --row-inset: 15px;  /* a row's 1px border plus its 14px padding */
+
+    position: relative;
+    margin-top: 8px;
+  }
 
   .timeline::before {
     content: "";
     position: absolute;
     top: 6px;
     bottom: 6px;
-    left: 158px;
+    /* Less 1px so the 2px rail is centred on the gap, not started at it. */
+    left: calc(var(--row-inset) + var(--when-col) + var(--col-gap) / 2 - 1px);
     width: 2px;
     border-radius: 2px;
     background: linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 10%, transparent) 78%);
@@ -1571,8 +1583,8 @@
 
   .row {
     display: grid;
-    grid-template-columns: 158px 1fr;
-    gap: 18px;
+    grid-template-columns: var(--when-col) 1fr;
+    gap: var(--col-gap);
     padding: 14px;
     margin: 10px 0;
     border-radius: var(--r-lg);
@@ -1591,9 +1603,11 @@
     font-size: .92rem;
   }
 
+  /* Centred in the gap between the two columns, which is exactly where the
+     rail runs. */
   .when-dot {
     position: absolute;
-    left: calc(100% + 17px);
+    left: calc(100% + var(--col-gap) / 2);
     top: .55em;
     width: 9px;
     height: 9px;
@@ -1605,6 +1619,17 @@
   }
 
   .row:hover .when-dot { background: var(--accent); box-shadow: 0 0 16px var(--accent); }
+
+  /* The rail runs behind the rows, and a row is glass: its backdrop-filter
+     blurs away whatever is behind it, so the rail only ever showed in the
+     gaps. Drawn above instead, it reads as the timeline it is meant to be. */
+  .timeline::before { z-index: 1; }
+
+  /* With a single entry there is no timeline to draw. The rail has nothing to
+     connect and the lone node dot just reads as a stray mark next to the
+     heading, which is exactly how it looked. */
+  .timeline:not(:has(.row + .row))::before,
+  .timeline:not(:has(.row + .row)) .when-dot { display: none; }
 
   .what { min-width: 0; color: var(--ink-2); }
   .what strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 1.02rem; }
