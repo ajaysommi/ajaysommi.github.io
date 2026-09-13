@@ -1021,6 +1021,12 @@
     /* The fan leans left, so the board sits slightly right of centre to keep
        the active node's label out of the edge fade. */
     --board-x: 26px;
+    /* How far the billboard stands off its pad. */
+    --lift: 44px;
+    /* Where along the stage the active node is parked. script.js reads
+       this, so a breakpoint with a shorter stage can centre the node in
+       it rather than letting its label ride up past the top edge. */
+    --dolly: 120px;
     /* How far in the side fade reaches. It has to stop short of the closest
        the active label ever gets to the edge, or it dims the thing you are
        meant to be reading. */
@@ -1155,7 +1161,7 @@
     background: color-mix(in oklab, var(--surface-solid) 82%, transparent);
     transform-origin: bottom center;
     transform: translateX(-50%) rotateZ(var(--tilt)) rotateX(calc(-1 * var(--pitch)))
-               translateY(-44px);
+               translateY(calc(-1 * var(--lift)));
     opacity: .34;
     transition: opacity .45s var(--ease), border-color .45s var(--ease),
                 box-shadow .45s var(--ease), background .45s var(--ease);
@@ -1864,37 +1870,129 @@
     font-weight: 700;
   }
 
-  .testimonials .card { padding-top: 26px; }
-
-  .quote-mark {
-    position: absolute;
-    top: 2px;
-    left: 14px;
-    font-family: var(--font-serif);
-    font-size: 4rem;
-    line-height: 1;
-    color: var(--accent);
-    opacity: .22;
-    pointer-events: none;
+  /* ---------- Recommendations, as a conversation ----------
+     A grid of equal rectangles read as a wall of boxes. These are things
+     people actually said, so they are laid out as a thread instead: speech
+     bubbles alternating sides, each with the speaker's initials, arriving
+     from their own side as you scroll. */
+  .thread {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(18px, 3vw, 30px);
+    max-width: 940px;
+    margin: 8px auto 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .testimonials blockquote {
-    margin: 0 0 12px;
-    color: var(--ink-2);
-    font-size: .93rem;
-    line-height: 1.6;
-  }
-
-  .testimonials cite {
+  .rec {
     display: grid;
-    margin-top: auto;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "avatar bubble"
+      ".      cite";
+    align-items: end;
+    column-gap: 12px;
+    row-gap: 7px;
+    width: min(100%, 620px);
+    margin-right: auto;
+  }
+
+  /* Every other one answers from the other side. */
+  .rec:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "bubble avatar"
+      "cite   .";
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  .rec-avatar {
+    grid-area: avatar;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid color-mix(in oklab, var(--accent) 30%, var(--stroke));
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+  }
+
+  .rec-bubble {
+    position: relative;
+    grid-area: bubble;
+    padding: 14px 18px;
+    border: 1px solid var(--stroke);
+    /* The corner nearest the speaker is squared off: that, plus the tail, is
+       what turns a rounded box into something being said. */
+    border-radius: var(--r-lg) var(--r-lg) var(--r-lg) 6px;
+    background: color-mix(in oklab, var(--surface-solid) 82%, transparent);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .rec:nth-child(even) .rec-bubble {
+    border-radius: var(--r-lg) var(--r-lg) 6px var(--r-lg);
+  }
+
+  /* Tail, a skewed square tucked under the bubble's squared corner so it
+     picks up the same border and background. */
+  .rec-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: -7px;
+    width: 14px;
+    height: 14px;
+    border-left: 1px solid var(--stroke);
+    border-bottom: 1px solid var(--stroke);
+    border-bottom-left-radius: 3px;
+    background: inherit;
+    transform: skewX(20deg);
+  }
+
+  .rec:nth-child(even) .rec-bubble::before {
+    left: auto;
+    right: -7px;
+    border-left: 0;
+    border-right: 1px solid var(--stroke);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 3px;
+    transform: skewX(-20deg);
+  }
+
+  .thread blockquote {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: .94rem;
+    line-height: 1.62;
+  }
+
+  .thread cite {
+    grid-area: cite;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
     font-style: normal;
     font-weight: 700;
     color: var(--ink);
-    font-size: .9rem;
+    font-size: .88rem;
   }
 
-  .testimonials cite span { font-weight: 500; color: var(--ink-3); font-size: .8rem; }
+  .rec:nth-child(even) cite { justify-content: flex-end; }
+  .thread cite span { font-weight: 500; color: var(--ink-3); font-size: .78rem; }
+
+  /* Each bubble arrives from the side it belongs to. */
+  .thread .rec[data-reveal] { transform: translate(-24px, 10px); }
+  .thread .rec:nth-child(even)[data-reveal] { transform: translate(24px, 10px); }
+  .thread .rec[data-reveal].is-in { transform: none; }
 
   .note { margin-top: 16px; color: var(--ink-3); font-size: .9rem; }
   .note a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
@@ -2325,8 +2423,6 @@
   }
 
   /* Testimonials drift in opposite directions as the section passes. */
-  .testimonials[data-drift] > :nth-child(odd)  { transform: translateY(calc((.5 - var(--sp, .5)) * -22px)); }
-  .testimonials[data-drift] > :nth-child(even) { transform: translateY(calc((.5 - var(--sp, .5)) *  22px)); }
 
   /* Section headings sweep their gradient as they enter. */
   .section-head h2 {
@@ -2423,7 +2519,6 @@
     /* Scroll-linked effects resolve to their finished state. */
     .hero-card,
     .grid[data-scroll-lift] .card,
-    .testimonials[data-drift] > * { transform: none !important; opacity: 1 !important; }
 
     .quote-words span { color: var(--ink); text-shadow: none; }
     .node[data-state="active"] .node-pad { animation: none; }
@@ -2478,7 +2573,17 @@
       flex-direction: column;
     }
 
-    .journey-stage { --pitch: 64deg; --tilt: 20deg; --board-scale: .9; --board-x: 0px; --edge-fade: 7%; }
+    /* Stacked above the readout, the stage is a band rather than a column,
+       so the node parks lower and its label stands off less. */
+    .journey-stage {
+      --pitch: 64deg;
+      --tilt: 20deg;
+      --board-scale: .9;
+      --board-x: 0px;
+      --edge-fade: 7%;
+      --lift: 30px;
+      --dolly: 190px;
+    }
     .node-card { width: 150px; padding: 6px 9px; }
     .node-card b { font-size: .68rem; }
     .journey-cards { flex: 1; min-height: 0; }
@@ -2609,7 +2714,7 @@
       /* Stage gets a smaller share so the longest role card (Hunter) fits
          without an inner scrollbar down to a 375x812 phone, and so the roles
          that carry photos still have a band of room left for them. */
-      grid-template-rows: minmax(0, 12svh) minmax(0, 1fr);
+      grid-template-rows: minmax(0, 15svh) minmax(0, 1fr);
       /* Bounded by the floating bottom nav rather than by a flat svh share,
          so the panel never slides under the pill on a short phone. */
       height: min(calc(100svh - 96px), 760px);
@@ -2618,7 +2723,17 @@
     .journey-readout { padding: 12px 13px; }
     /* Narrow stage: the labels pass much closer to both edges here, so the
        fade has to be a thin dissolve rather than a wide one. */
-    .journey-stage { --pitch: 66deg; --tilt: 18deg; --board-scale: .78; --board-x: 0px; --edge-fade: 3%; }
+    .journey-stage {
+      --pitch: 66deg;
+      --tilt: 18deg;
+      --board-scale: .7;
+      --board-x: 0px;
+      --edge-fade: 3%;
+      /* The stage is a short strip here, and a label standing 44px off its
+         pad put the pair taller than the strip itself. */
+      --lift: 18px;
+      --dolly: 180px;
+    }
     .board-rot { width: 420px; }
     .node-card { width: 128px; padding: 5px 8px; }
     .node-card b { font-size: .62rem; }
@@ -2649,10 +2764,6 @@
        of squeezing the pair. */
     .actions { flex-direction: column; }
 
-    /* Give the tallest role card (Hunter) the headroom it needs on short
-       viewports by trimming the decorative board rather than letting the
-       card grow an inner scrollbar. */
-    .journey-sticky { grid-template-rows: minmax(0, 11svh) minmax(0, 1fr); }
     .jc-built, .jc-learn, .jc-org, .jc-impact { margin-bottom: 6px; }
     .jc-impact { padding: 6px 9px; }
   }

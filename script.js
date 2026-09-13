@@ -213,7 +213,7 @@ syncLogoTheme();
   const sections = [
     ['top', 'Top'],
     ['logos', 'Companies'],
-    ['experience', 'The path'],
+    ['experience', 'The Path'],
     ['education', 'Education'],
     ['projects', 'Projects'],
     ['skills', 'Skills'],
@@ -437,50 +437,85 @@ syncLogoTheme();
     }, { passive: true });
   });
 
-  // Magnetic buttons that lean gently toward the cursor. Raw pointermove
-  // deltas were driving the transform 1:1, which reads as skittish once the
-  // mouse jitters even slightly; rAF-throttling and a real transition (the
-  // element's own hover transition, left free instead of pinned per-frame)
-  // settle it into a lazier, springier lean.
+  /* Magnetic buttons that lean toward the cursor, barely. Earlier versions
+     wrote the cursor's position straight into the transform every frame, so
+     the button tracked the mouse exactly and read as twitchy. Now the cursor
+     only sets a target and the button eases a fraction of the remaining
+     distance each frame, which turns a jump into a drift you feel more than
+     you see. */
   $$('[data-magnetic]').forEach((el) => {
-    const strength = 6;
-    let raf = 0, pendingX = 0, pendingY = 0;
+    const STRENGTH = 2.2;   // px of lean at the very edge of the element
+    const EASE = 0.07;      // fraction of the remaining distance per frame
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+
+    const frame = () => {
+      cx += (tx - cx) * EASE;
+      cy += (ty - cy) * EASE;
+
+      if (Math.abs(tx - cx) < 0.03 && Math.abs(ty - cy) < 0.03) {
+        cx = tx; cy = ty;
+        raf = 0;
+        el.style.transform = tx || ty ? `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px)` : '';
+        return;
+      }
+
+      el.style.transform = `translate(${cx.toFixed(2)}px, ${cy.toFixed(2)}px)`;
+      raf = requestAnimationFrame(frame);
+    };
+
+    const run = () => { if (!raf) raf = requestAnimationFrame(frame); };
 
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
-      pendingX = ((e.clientX - (r.left + r.width / 2)) / (r.width / 2)) * strength;
-      pendingY = ((e.clientY - (r.top + r.height / 2)) / (r.height / 2)) * strength * 0.5;
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        el.style.transform = `translate(${pendingX.toFixed(1)}px, ${pendingY.toFixed(1)}px)`;
-      });
+      tx = ((e.clientX - (r.left + r.width / 2)) / (r.width / 2)) * STRENGTH;
+      ty = ((e.clientY - (r.top + r.height / 2)) / (r.height / 2)) * STRENGTH * 0.5;
+      run();
     }, { passive: true });
 
-    const reset = () => { cancelAnimationFrame(raf); raf = 0; el.style.transform = ''; };
+    // Ease back to rest rather than snapping there.
+    const reset = () => { tx = 0; ty = 0; run(); };
     el.addEventListener('pointerleave', reset);
     el.addEventListener('blur', reset);
   });
 
-  // 3D tilt on project cards, rAF-throttled and toned down: the untamed
-  // version rotated up to 7deg and lifted 5px on every raw pointermove,
-  // which read as the card launching up rather than a subtle tilt.
+  // 3D tilt on project cards, eased the same way as the buttons so the card
+  // trails the cursor instead of tracking it exactly.
   $$('.card.tilt').forEach((el) => {
-    let raf = 0, pendingX = 0, pendingY = 0;
+    const TILT = 2.6;   // degrees at the corners
+    const EASE = 0.07;
+    let tx = 0, ty = 0, cx = 0, cy = 0, hovering = false, raf = 0;
+
+    const frame = () => {
+      cx += (tx - cx) * EASE;
+      cy += (ty - cy) * EASE;
+
+      if (Math.abs(tx - cx) < 0.0004 && Math.abs(ty - cy) < 0.0004) {
+        cx = tx; cy = ty;
+        raf = 0;
+        if (!hovering) { el.style.transform = ''; return; }
+      } else {
+        raf = requestAnimationFrame(frame);
+      }
+
+      el.style.transform =
+        `perspective(1000px) rotateY(${(cx * TILT).toFixed(2)}deg) ` +
+        `rotateX(${(-cy * TILT).toFixed(2)}deg) translateY(-2px)`;
+    };
+
+    const run = () => { if (!raf) raf = requestAnimationFrame(frame); };
+
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
-      pendingX = (e.clientX - r.left) / r.width - 0.5;
-      pendingY = (e.clientY - r.top) / r.height - 0.5;
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        el.style.transform =
-          `perspective(1000px) rotateY(${(pendingX * 3.5).toFixed(2)}deg) rotateX(${(-pendingY * 3.5).toFixed(2)}deg) translateY(-2px)`;
-      });
+      hovering = true;
+      tx = (e.clientX - r.left) / r.width - 0.5;
+      ty = (e.clientY - r.top) / r.height - 0.5;
+      run();
     }, { passive: true });
+
     el.addEventListener('pointerleave', () => {
-      cancelAnimationFrame(raf); raf = 0;
-      el.style.transform = '';
+      hovering = false;
+      tx = 0; ty = 0;
+      run();
     });
   });
 })();
@@ -863,6 +898,17 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
   let activeIdx = -1;
 
+  /* Where the active node parks in the stage, in board pixels. Read from CSS
+     so each breakpoint can place it for the stage height it actually has. */
+  const stage = $('.journey-stage');
+  let dolly = 120;
+  const readDolly = () => {
+    const v = stage && parseFloat(getComputedStyle(stage).getPropertyValue('--dolly'));
+    if (Number.isFinite(v)) dolly = v;
+  };
+  readDolly();
+  addEventListener('resize', readDolly, { passive: true });
+
   const setActive = (i) => {
     if (i === activeIdx) return;
     const prev = activeIdx;
@@ -890,7 +936,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     const first = points[0].y;
     const lastY = points[N - 1].y;
     const y = first + (lastY - first) * p;
-    board.style.setProperty('--board-y', `${-y + 120}px`);
+    board.style.setProperty('--board-y', `${-y + dolly}px`);
 
     // Energise the trace behind the camera.
     if (live && traceLen) live.style.strokeDashoffset = `${traceLen * (1 - p)}`;
@@ -971,7 +1017,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
          photos still get a floor so they cannot vanish, but the floor is low
          enough that the card does not grow a scrollbar to honour it. */
       const ideal = Math.min(MAX_H, spare);
-      let h = ideal < MIN_H ? Math.max(56, ideal) : ideal;
+      let h = ideal < MIN_H ? Math.max(44, ideal) : ideal;
 
       /* Height is the only thing being decided: each photo is then as wide as
          its own shape makes it, and the strip scrolls sideways if the row
@@ -1170,11 +1216,8 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     track(projectGrid, { start: 1, end: 0.55 });
   }
 
-  const testimonials = $('.testimonials');
-  if (testimonials) {
-    testimonials.dataset.drift = '';
-    track(testimonials, { start: 1, end: 0.2 });
-  }
+  // The recommendations are a thread now: the bubbles carry their own
+  // side-entry reveal, so there is no parallax drift to drive here.
 
   /* --- Heading gradient sweep --- */
   $$('.section-head h2').forEach((h) => {
@@ -1314,7 +1357,7 @@ const palette = (() => {
 
   const commands = [
     { icon: '⌂', title: 'Top',              kind: 'section', run: go('top') },
-    { icon: '≡', title: 'The path',         sub: 'Career journey, role by role', kind: 'section', run: go('experience') },
+    { icon: '≡', title: 'The Path',         sub: 'Career journey, role by role', kind: 'section', run: go('experience') },
     { icon: '⌁', title: 'Education',        kind: 'section', run: go('education') },
     { icon: '▤', title: 'Projects',         kind: 'section', run: go('projects') },
     { icon: '✦', title: 'Skills & Tools',   kind: 'section', run: go('skills') },
