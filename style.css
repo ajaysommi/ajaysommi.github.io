@@ -1015,6 +1015,13 @@
     --pitch: 62deg;
     --tilt: 20deg;
     --board-scale: .9;
+    /* The fan leans left, so the board sits slightly right of centre to keep
+       the active node's label out of the edge fade. */
+    --board-x: 26px;
+    /* How far in the side fade reaches. It has to stop short of the closest
+       the active label ever gets to the edge, or it dims the thing you are
+       meant to be reading. */
+    --edge-fade: 5%;
 
     position: relative;
     height: 100%;
@@ -1026,10 +1033,12 @@
        label that does run past the edge dissolves instead of being sliced. */
     -webkit-mask-image:
       linear-gradient(180deg, transparent, #000 14%, #000 84%, transparent),
-      linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+      linear-gradient(90deg, transparent, #000 var(--edge-fade),
+                      #000 calc(100% - var(--edge-fade)), transparent);
     mask-image:
       linear-gradient(180deg, transparent, #000 14%, #000 84%, transparent),
-      linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+      linear-gradient(90deg, transparent, #000 var(--edge-fade),
+                      #000 calc(100% - var(--edge-fade)), transparent);
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
   }
@@ -1040,7 +1049,8 @@
     top: 50%;
     width: 560px;
     height: 100%;
-    transform: translate(-50%, -50%) rotateX(var(--pitch)) rotateZ(calc(-1 * var(--tilt)))
+    transform: translate(calc(-50% + var(--board-x, 0px)), -50%)
+               rotateX(var(--pitch)) rotateZ(calc(-1 * var(--tilt)))
                scale(var(--board-scale));
     transform-style: preserve-3d;
   }
@@ -2465,7 +2475,7 @@
       flex-direction: column;
     }
 
-    .journey-stage { --pitch: 64deg; --tilt: 20deg; --board-scale: .9; }
+    .journey-stage { --pitch: 64deg; --tilt: 20deg; --board-scale: .9; --board-x: 0px; --edge-fade: 7%; }
     .node-card { width: 150px; padding: 6px 9px; }
     .node-card b { font-size: .68rem; }
     .journey-cards { flex: 1; min-height: 0; }
@@ -2603,7 +2613,9 @@
       gap: 8px;
     }
     .journey-readout { padding: 12px 13px; }
-    .journey-stage { --pitch: 66deg; --tilt: 18deg; --board-scale: .78; }
+    /* Narrow stage: the labels pass much closer to both edges here, so the
+       fade has to be a thin dissolve rather than a wide one. */
+    .journey-stage { --pitch: 66deg; --tilt: 18deg; --board-scale: .78; --board-x: 0px; --edge-fade: 3%; }
     .board-rot { width: 420px; }
     .node-card { width: 128px; padding: 5px 8px; }
     .node-card b { font-size: .62rem; }
