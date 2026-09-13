@@ -407,71 +407,13 @@ syncLogoTheme();
 })();
 
 /* ==========================================================================
-   Pointer effects: background spotlight, card glow, magnetic buttons
+   Pointer effects: magnetic buttons and card tilt
+   Nothing here follows the cursor with light any more: the page spotlight,
+   the glyph trail and the per-card glow are gone. What is left moves the
+   element itself, and barely.
    ========================================================================== */
 (function pointerFx() {
   if (coarsePointer.matches || prefersReduced()) return;
-
-  // Background spotlight follows the cursor.
-  const spot = $('.spotlight');
-  if (spot) {
-    let raf = 0;
-    addEventListener('pointermove', (e) => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        spot.style.setProperty('--spot-x', `${e.clientX}px`);
-        spot.style.setProperty('--spot-y', `${e.clientY}px`);
-        spot.style.opacity = '1';
-      });
-    }, { passive: true });
-    document.addEventListener('pointerleave', () => { spot.style.opacity = '0'; });
-  }
-
-  /* A token of shell or source punctuation dropped behind the cursor every so
-     often. Rate limited by distance travelled rather than time, so it marks a
-     path rather than piling up when the pointer sits still, and capped so a
-     fast sweep across the page cannot flood the DOM. */
-  (function glyphTrail() {
-    const host = document.createElement('div');
-    host.className = 'glyph-trail';
-    host.setAttribute('aria-hidden', 'true');
-    ($('.bg') || document.body).appendChild(host);
-
-    const GLYPHS = ['</>', '{}', '[]', '0x', '>_', '~/', '::', '&&', '01',
-                    '#!', '/*', '*/', '|', '$', ';', '::=', '0b', '</', 'EOF'];
-    const MAX_LIVE = 12;   // never more than this on screen at once
-    const STEP = 130;      // px of travel between drops
-
-    let lastX = 0, lastY = 0, primed = false, live = 0;
-
-    addEventListener('pointermove', (e) => {
-      if (!primed) { lastX = e.clientX; lastY = e.clientY; primed = true; return; }
-      if (live >= MAX_LIVE) return;
-      if (Math.hypot(e.clientX - lastX, e.clientY - lastY) < STEP) return;
-
-      lastX = e.clientX;
-      lastY = e.clientY;
-
-      const g = document.createElement('i');
-      g.textContent = GLYPHS[(Math.random() * GLYPHS.length) | 0];
-      g.style.left = `${e.clientX + (Math.random() * 22 - 11)}px`;
-      g.style.top = `${e.clientY + (Math.random() * 22 - 11)}px`;
-      g.style.setProperty('--drift', `${(Math.random() * 18 - 9).toFixed(1)}px`);
-      host.appendChild(g);
-      live += 1;
-      g.addEventListener('animationend', () => { g.remove(); live -= 1; }, { once: true });
-    }, { passive: true });
-  })();
-
-  // Per-element glow: cards and the hero share the same --spot-* contract.
-  $$('.card, .hero-card').forEach((el) => {
-    el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty('--spot-x', `${e.clientX - r.left}px`);
-      el.style.setProperty('--spot-y', `${e.clientY - r.top}px`);
-    }, { passive: true });
-  });
 
   /* Magnetic buttons that lean toward the cursor, barely. Earlier versions
      wrote the cursor's position straight into the transform every frame, so
