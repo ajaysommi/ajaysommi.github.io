@@ -407,10 +407,10 @@ syncLogoTheme();
 })();
 
 /* ==========================================================================
-   Pointer effects: magnetic buttons and card tilt
-   Nothing here follows the cursor with light any more: the page spotlight,
-   the glyph trail and the per-card glow are gone. What is left moves the
-   element itself, and barely.
+   Pointer effects: magnetic buttons
+   Nothing follows the cursor with light any more (the page spotlight, the
+   glyph trail and the per-card glow are gone), and the project tiles no
+   longer tilt or lift. All that is left is the buttons' barely-there lean.
    ========================================================================== */
 (function pointerFx() {
   if (coarsePointer.matches || prefersReduced()) return;
@@ -456,46 +456,6 @@ syncLogoTheme();
     el.addEventListener('blur', reset);
   });
 
-  // 3D tilt on project cards, eased the same way as the buttons so the card
-  // trails the cursor instead of tracking it exactly.
-  $$('.card.tilt').forEach((el) => {
-    const TILT = 1.4;   // degrees at the corners
-    const EASE = 0.07;
-    let tx = 0, ty = 0, cx = 0, cy = 0, hovering = false, raf = 0;
-
-    const frame = () => {
-      cx += (tx - cx) * EASE;
-      cy += (ty - cy) * EASE;
-
-      if (Math.abs(tx - cx) < 0.0004 && Math.abs(ty - cy) < 0.0004) {
-        cx = tx; cy = ty;
-        raf = 0;
-        if (!hovering) { el.style.transform = ''; return; }
-      } else {
-        raf = requestAnimationFrame(frame);
-      }
-
-      el.style.transform =
-        `perspective(1000px) rotateY(${(cx * TILT).toFixed(2)}deg) ` +
-        `rotateX(${(-cy * TILT).toFixed(2)}deg) translateY(-2px)`;
-    };
-
-    const run = () => { if (!raf) raf = requestAnimationFrame(frame); };
-
-    el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      hovering = true;
-      tx = (e.clientX - r.left) / r.width - 0.5;
-      ty = (e.clientY - r.top) / r.height - 0.5;
-      run();
-    }, { passive: true });
-
-    el.addEventListener('pointerleave', () => {
-      hovering = false;
-      tx = 0; ty = 0;
-      run();
-    });
-  });
 })();
 
 /* ==========================================================================
@@ -1187,12 +1147,6 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       el.style.setProperty('--sp', viewportProgress(el, opts).toFixed(3));
     });
   };
-
-  const projectGrid = $('#projectGrid');
-  if (projectGrid) {
-    projectGrid.dataset.scrollLift = '';
-    track(projectGrid, { start: 1, end: 0.55 });
-  }
 
   // The recommendations are a thread now: the bubbles carry their own
   // side-entry reveal, so there is no parallax drift to drive here.

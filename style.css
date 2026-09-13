@@ -1717,8 +1717,6 @@
 
   .card:hover { border-color: var(--stroke-hi); box-shadow: var(--shadow-lg); }
 
-  /* Fallback for touch/keyboard, where the JS 3D tilt never attaches. */
-  .card.tilt:hover { transform: translateY(-1px); }
 
   .card-top {
     display: flex;
@@ -2360,11 +2358,6 @@
   }
 
   /* Project cards rise out of the page as their section scrolls in. */
-  .grid[data-scroll-lift] .card {
-    transform: translateY(calc((1 - var(--sp, 1)) * 34px)) rotateX(calc((1 - var(--sp, 1)) * 7deg));
-    transform-origin: 50% 100%;
-  }
-
   /* Skill pills charge left-to-right. */
   .pills[data-charge] button,
   .pills[data-charge] span {
@@ -2481,12 +2474,10 @@
 
     /* Scroll-linked effects resolve to their finished state. */
     .hero-card,
-    .grid[data-scroll-lift] .card,
 
     .quote-words span { color: var(--ink); text-shadow: none; }
     .node[data-state="active"] .node-pad { animation: none; }
 
-    .card.tilt:hover,
     .row:hover { transform: none; }
 
     .flying-gator,
