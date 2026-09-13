@@ -65,7 +65,7 @@
     --blob-2: rgba(110, 168, 255, .35);
     --blob-3: rgba(230, 57, 70, .28);
     --blob-4: rgba(139, 92, 246, .32);
-    --blob-opacity: .40;
+    --blob-opacity: .36;
     --blob-blend: screen;
 
     --glyph-color: %239bb8ff;
@@ -102,7 +102,7 @@
     --blob-2: rgba(0, 88, 176, .22);
     --blob-3: rgba(214, 58, 13, .16);
     --blob-4: rgba(120, 80, 220, .18);
-    --blob-opacity: .55;
+    --blob-opacity: .50;
     --blob-blend: multiply;
 
     --glyph-color: %231b3a6b;
@@ -139,7 +139,7 @@
     --blob-2: rgba(18, 217, 122, .22);
     --blob-3: rgba(120, 255, 190, .16);
     --blob-4: rgba(20, 180, 120, .24);
-    --blob-opacity: .35;
+    --blob-opacity: .32;
     --blob-blend: screen;
 
     --glyph-color: %2335ff94;
@@ -344,9 +344,9 @@
     overflow: hidden;
     pointer-events: none;
     background:
-      radial-gradient(900px 600px at 15% 5%, color-mix(in oklab, var(--accent-2) 14%, transparent), transparent 65%),
-      radial-gradient(850px 600px at 85% 10%, color-mix(in oklab, var(--uf-orange) 10%, transparent), transparent 70%),
-      radial-gradient(900px 650px at 50% 100%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%);
+      radial-gradient(900px 600px at 15% 5%, color-mix(in oklab, var(--accent-2) 13%, transparent), transparent 65%),
+      radial-gradient(850px 600px at 85% 10%, color-mix(in oklab, var(--uf-orange) 9%, transparent), transparent 70%),
+      radial-gradient(900px 650px at 50% 100%, color-mix(in oklab, var(--accent) 11%, transparent), transparent 70%);
   }
 
   .blob {
@@ -374,6 +374,37 @@
     background: radial-gradient(220px 220px at var(--spot-x) var(--spot-y),
                 color-mix(in oklab, var(--accent) 6%, transparent), transparent 72%);
     transition: opacity .5s ease, --spot-x .25s linear, --spot-y .25s linear;
+  }
+
+  /* Cursor trail: a token of shell or source punctuation dropped every so
+     often as the pointer travels, drifting up and out. It lives inside .bg,
+     behind everything, so it reads as something in the wallpaper rather than
+     a cursor effect pasted over the page. Peak opacity is a tenth: you are
+     meant to catch it out of the corner of your eye, not look at it. */
+  .glyph-trail {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .glyph-trail i {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: .08em;
+    white-space: nowrap;
+    color: var(--ink);
+    opacity: 0;
+    animation: glyph-drift 1.5s var(--ease) forwards;
+  }
+
+  @keyframes glyph-drift {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(.94); }
+    22%  { opacity: .1; }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--drift, 0px)), -150%) scale(1); }
   }
 
   .grid-veil { position: absolute; inset: 0; background: var(--veil); }
@@ -1737,8 +1768,11 @@
     padding: 18px;
     border-radius: var(--r-lg);
     overflow: hidden;
-    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
-                border-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+    /* Slower than the default: at .28s the border, shadow and glow all
+       snapped on together the moment the pointer crossed the edge, which
+       read as the card flinching rather than responding. */
+    transition: transform var(--dur-slow) var(--ease), box-shadow var(--dur-slow) var(--ease),
+                border-color var(--dur-slow) var(--ease), opacity var(--dur) var(--ease);
   }
 
   .card-glow {
@@ -1747,7 +1781,7 @@
     opacity: 0;
     background: radial-gradient(210px 210px at var(--spot-x) var(--spot-y),
                 color-mix(in oklab, var(--accent) 7%, transparent), transparent 72%);
-    transition: opacity var(--dur) var(--ease), --spot-x .25s linear, --spot-y .25s linear;
+    transition: opacity var(--dur-slow) var(--ease), --spot-x .4s linear, --spot-y .4s linear;
     pointer-events: none;
   }
 
@@ -1755,7 +1789,7 @@
   .card:hover { border-color: var(--stroke-hi); box-shadow: var(--shadow-lg); }
 
   /* Fallback for touch/keyboard, where the JS 3D tilt never attaches. */
-  .card.tilt:hover { transform: translateY(-2px); }
+  .card.tilt:hover { transform: translateY(-1px); }
 
   .card-top {
     display: flex;
@@ -1878,7 +1912,7 @@
   .thread {
     display: flex;
     flex-direction: column;
-    gap: clamp(18px, 3vw, 30px);
+    gap: clamp(10px, 1.4vw, 16px);
     max-width: 940px;
     margin: 8px auto 0;
     padding: 0;

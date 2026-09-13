@@ -428,6 +428,42 @@ syncLogoTheme();
     document.addEventListener('pointerleave', () => { spot.style.opacity = '0'; });
   }
 
+  /* A token of shell or source punctuation dropped behind the cursor every so
+     often. Rate limited by distance travelled rather than time, so it marks a
+     path rather than piling up when the pointer sits still, and capped so a
+     fast sweep across the page cannot flood the DOM. */
+  (function glyphTrail() {
+    const host = document.createElement('div');
+    host.className = 'glyph-trail';
+    host.setAttribute('aria-hidden', 'true');
+    ($('.bg') || document.body).appendChild(host);
+
+    const GLYPHS = ['</>', '{}', '[]', '0x', '>_', '~/', '::', '&&', '01',
+                    '#!', '/*', '*/', '|', '$', ';', '::=', '0b', '</', 'EOF'];
+    const MAX_LIVE = 12;   // never more than this on screen at once
+    const STEP = 130;      // px of travel between drops
+
+    let lastX = 0, lastY = 0, primed = false, live = 0;
+
+    addEventListener('pointermove', (e) => {
+      if (!primed) { lastX = e.clientX; lastY = e.clientY; primed = true; return; }
+      if (live >= MAX_LIVE) return;
+      if (Math.hypot(e.clientX - lastX, e.clientY - lastY) < STEP) return;
+
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      const g = document.createElement('i');
+      g.textContent = GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      g.style.left = `${e.clientX + (Math.random() * 22 - 11)}px`;
+      g.style.top = `${e.clientY + (Math.random() * 22 - 11)}px`;
+      g.style.setProperty('--drift', `${(Math.random() * 18 - 9).toFixed(1)}px`);
+      host.appendChild(g);
+      live += 1;
+      g.addEventListener('animationend', () => { g.remove(); live -= 1; }, { once: true });
+    }, { passive: true });
+  })();
+
   // Per-element glow: cards and the hero share the same --spot-* contract.
   $$('.card, .hero-card').forEach((el) => {
     el.addEventListener('pointermove', (e) => {
@@ -481,7 +517,7 @@ syncLogoTheme();
   // 3D tilt on project cards, eased the same way as the buttons so the card
   // trails the cursor instead of tracking it exactly.
   $$('.card.tilt').forEach((el) => {
-    const TILT = 2.6;   // degrees at the corners
+    const TILT = 1.4;   // degrees at the corners
     const EASE = 0.07;
     let tx = 0, ty = 0, cx = 0, cy = 0, hovering = false, raf = 0;
 
