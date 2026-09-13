@@ -936,62 +936,47 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const ideal = Math.min(MAX_H, spare);
       let h = ideal < MIN_H ? Math.max(56, ideal) : ideal;
 
-      /* Each photo keeps its own shape: at a shared height, a row is as wide
-         as the sum of its aspect ratios. So the height a row can reach is
-         capped by the card's width as well as by the leftover space. Where
-         the leftover is generous but the width is not, two rows of larger
-         photos beat one row of small ones. Nothing is ever cropped or
-         stretched either way. */
-      const imgs = $$('img', fig);
-      const ratios = imgs.map((img) => {
-        const w = Number(img.getAttribute('width'));
-        const ih = Number(img.getAttribute('height'));
-        return w > 0 && ih > 0 ? w / ih : 1;
-      });
-      const gapX = parseFloat(figStyle.columnGap) || 0;
-      const width = fig.clientWidth;
-      // How tall a row of images `n` wide with total aspect `r` can be.
-      const rowH = (r, n) => (width - gapX * Math.max(0, n - 1)) / (r || 1);
-
-      const budget = h;
-      const total = ratios.reduce((a, b) => a + b, 0);
-      const one = Math.min(budget, rowH(total, imgs.length));
-
-      // Two rows, split in document order wherever it balances best.
-      let two = 0;
-      let split = 0;
-      for (let k = 1; k < imgs.length; k++) {
-        const top = ratios.slice(0, k).reduce((a, b) => a + b, 0);
-        const cand = Math.min(
-          (budget - gapX) / 2,
-          rowH(top, k),
-          rowH(total - top, imgs.length - k),
-        );
-        if (cand > two) { two = cand; split = k; }
-      }
-
-      /* Two rows fill the leftover space exactly where one row would leave a
-         gap under it, so they win unless the photos would have to shrink a
-         lot to make that happen. */
-      const rows = split && two >= one * 0.75 ? 2 : 1;
-      h = Math.max(1, Math.floor(rows === 2 ? two : one));
-
-      // At the two row height the photos would still fit on one line, so the
-      // break has to be forced rather than left to wrapping.
-      $$('.jc-break', fig).forEach((el) => el.remove());
-      if (rows === 2) {
-        const br = document.createElement('i');
-        br.className = 'jc-break';
-        br.setAttribute('aria-hidden', 'true');
-        fig.insertBefore(br, imgs[split]);
-      }
-      fig.style.flexWrap = rows === 2 ? 'wrap' : 'nowrap';
-      fig.style.height = `${rows === 2 ? h * 2 + gapX : h}px`;
-      // A definite pixel height is what lets width:auto resolve through the
-      // aspect ratio; a percentage height leaves the flex base size intrinsic.
-      imgs.forEach((img) => { img.style.height = `${h}px`; });
+      /* Height is the only thing being decided: each photo is then as wide as
+         its own shape makes it, and the strip scrolls sideways if the row
+         comes out wider than the card. Nothing cropped, nothing stretched,
+         nothing stacked. */
+      h = Math.max(1, Math.floor(h));
+      fig.style.height = `${h}px`;
+      markScroll(fig);
     });
   };
+
+  /* The edge fade only earns its keep when there is something past the edge,
+     and which edge depends on where the strip is scrolled to. */
+  const markScroll = (fig) => {
+    const slack = fig.scrollWidth - fig.clientWidth;
+    fig.classList.toggle('is-scrollable', slack > 4);
+    if (slack <= 4) {
+      fig.classList.remove('at-end', 'at-middle');
+      return;
+    }
+    const atStart = fig.scrollLeft <= 2;
+    const atEnd = fig.scrollLeft >= slack - 2;
+    fig.classList.toggle('at-end', atEnd && !atStart);
+    fig.classList.toggle('at-middle', !atEnd && !atStart);
+  };
+
+  /* Each photo becomes a real button so it is reachable by keyboard and
+     announced as something you can act on. Done here rather than in the
+     markup so a photo added later needs no extra wrapper. */
+  $$('.jcard .jc-media img').forEach((img) => {
+    if (img.parentElement.classList.contains('jc-shot')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'jc-shot';
+    btn.setAttribute('aria-label', `Open photo: ${img.alt || 'journey photo'}`);
+    img.replaceWith(btn);
+    btn.appendChild(img);
+  });
+
+  $$('.jcard .jc-media').forEach((fig) => {
+    fig.addEventListener('scroll', () => markScroll(fig), { passive: true });
+  });
 
   /* A role with no photos has nothing to fill the leftover space with, and on
      the breakpoints where the readout is drawn as a bordered tile that reads
@@ -1030,6 +1015,73 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   addEventListener('resize', sizeTile, { passive: true });
   // Fonts landing late changes how tall the text is, which changes the room.
   if (document.fonts?.ready) document.fonts.ready.then(sizeTile).catch(() => {});
+})();
+
+/* ==========================================================================
+   Photo viewer
+   The strips are deliberately small, so every photo opens full size on click.
+   A <dialog> carries the focus trap, the backdrop and Escape for free.
+   ========================================================================== */
+(function lightbox() {
+  const dlg = $('#lightbox');
+  const img = $('#lbImg');
+  const cap = $('#lbCap');
+  const count = $('#lbCount');
+  if (!dlg || !img || !dlg.showModal) return;
+
+  // The strip loads a small file; the viewer wants the biggest one on offer.
+  const largest = (el) => {
+    const set = el.getAttribute('srcset');
+    if (!set) return el.currentSrc || el.src;
+    let best = { w: 0, url: el.src };
+    for (const part of set.split(',')) {
+      const [url, size] = part.trim().split(/\s+/);
+      const w = parseInt(size, 10) || 0;
+      if (url && w >= best.w) best = { w, url };
+    }
+    return best.url;
+  };
+
+  let group = [];
+  let at = 0;
+
+  const show = (i) => {
+    at = (i + group.length) % group.length;
+    const src = group[at];
+    img.src = largest(src);
+    img.alt = src.alt || '';
+    if (cap) cap.textContent = src.alt || '';
+    if (count) count.textContent = `${at + 1} / ${group.length}`;
+    dlg.toggleAttribute('data-single', group.length < 2);
+  };
+
+  document.addEventListener('click', (e) => {
+    const shot = e.target.closest('.jc-shot');
+    if (!shot) return;
+    const fig = shot.closest('.jc-media');
+    group = $$('img', fig);
+    const me = $('img', shot);
+    show(Math.max(0, group.indexOf(me)));
+    dlg.showModal();
+  });
+
+  $('#lbPrev')?.addEventListener('click', () => show(at - 1));
+  $('#lbNext')?.addEventListener('click', () => show(at + 1));
+  $('#lbClose')?.addEventListener('click', () => dlg.close());
+
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(at - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(at + 1); }
+  });
+
+  // Clicking the backdrop means clicking the dialog itself: anything inside it
+  // is a descendant, so a hit on the element proper is a hit outside the card.
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg) dlg.close();
+  });
+
+  // Release the decoded image rather than holding the largest file in memory.
+  dlg.addEventListener('close', () => { img.removeAttribute('src'); });
 })();
 
 /* ==========================================================================

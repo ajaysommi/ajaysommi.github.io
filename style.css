@@ -1007,14 +1007,31 @@
 
   /* ---------- 3D stage ---------- */
   .journey-stage {
+    /* Camera angles live here so the billboards can counter rotate by exactly
+       the same amounts. Hard coding both ends meant a breakpoint that changed
+       one left the cards facing slightly off camera. --tilt also decides how
+       far the board fans out sideways, which is what used to push the node
+       labels past the edge of the stage. */
+    --pitch: 62deg;
+    --tilt: 20deg;
+    --board-scale: .9;
+
     position: relative;
     height: 100%;
     perspective: 1300px;
     perspective-origin: 50% 42%;
     overflow: hidden;
     border-radius: var(--r-xl);
-    -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 84%, transparent);
-    mask-image: linear-gradient(180deg, transparent, #000 14%, #000 84%, transparent);
+    /* Vertical fade into the page, plus a softer horizontal one so a distant
+       label that does run past the edge dissolves instead of being sliced. */
+    -webkit-mask-image:
+      linear-gradient(180deg, transparent, #000 14%, #000 84%, transparent),
+      linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    mask-image:
+      linear-gradient(180deg, transparent, #000 14%, #000 84%, transparent),
+      linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
 
   .board-rot {
@@ -1023,7 +1040,8 @@
     top: 50%;
     width: 560px;
     height: 100%;
-    transform: translate(-50%, -50%) rotateX(62deg) rotateZ(-26deg);
+    transform: translate(-50%, -50%) rotateX(var(--pitch)) rotateZ(calc(-1 * var(--tilt)))
+               scale(var(--board-scale));
     transform-style: preserve-3d;
   }
 
@@ -1117,13 +1135,14 @@
     bottom: 0;
     display: grid;
     gap: 2px;
-    width: 190px;
+    width: 160px;
     padding: 9px 12px;
     border: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
     border-radius: var(--r-md);
     background: color-mix(in oklab, var(--surface-solid) 82%, transparent);
     transform-origin: bottom center;
-    transform: translateX(-50%) rotateZ(26deg) rotateX(-62deg) translateY(-44px);
+    transform: translateX(-50%) rotateZ(var(--tilt)) rotateX(calc(-1 * var(--pitch)))
+               translateY(-44px);
     opacity: .34;
     transition: opacity .45s var(--ease), border-color .45s var(--ease),
                 box-shadow .45s var(--ease), background .45s var(--ease);
@@ -1380,42 +1399,159 @@
      you scrolled from one role to the next. */
   html.js .jcard > :not(.jc-media) { flex: 0 0 auto; }
 
-  /* The media slot takes whatever height the text leaves behind, so a card
-     fills the panel regardless of how much it has to say, with a floor so the
-     photos never get squeezed out of existence. script.js sets the exact
-     height, which is what lets each photo size itself by its own shape. */
+  /* A single row of photos at one height, each as wide as its own shape, that
+     scrolls sideways when there are more than fit. Stacking them into rows
+     read as a grid of thumbnails; a strip reads as a roll of film. script.js
+     sets the height from whatever the text left behind. */
   .jc-media {
     display: flex;
-    gap: 6px;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
+    gap: 8px;
     flex: 0 0 auto;
     min-height: 0;
     margin: 12px 0 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* The strip lives inside a vertically scrolled page; anchoring would fight
+       the height script.js sets. */
+    overflow-anchor: none;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .jc-media::-webkit-scrollbar { display: none; }
+
+  /* Only once there is something past the edge, so a strip that fits is not
+     needlessly dimmed. The mask sits on the padding box and therefore stays
+     put while the content scrolls under it. */
+  .jc-media.is-scrollable {
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, #000 88%, transparent);
+  }
+
+  .jc-media.is-scrollable.at-end {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%);
+    mask-image: linear-gradient(90deg, transparent, #000 12%);
+  }
+
+  .jc-media.is-scrollable.at-middle {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
   }
 
   /* Height is the fixed dimension and width follows the photo's own aspect
-     ratio, so a portrait shot takes a narrow slot and a landscape one takes a
-     wide slot. Nothing is cropped and nothing is stretched: the whole frame is
-     always on screen. `contain` only matters in the rare case where the row
-     runs out of width and the images have to shrink. */
-  .jc-media img {
-    flex: 0 1 auto;
-    min-width: 0;
-    width: auto;
-    max-width: 100%;
+     ratio, so a portrait shot takes a narrow slot and a landscape one a wide
+     slot. Nothing is cropped and nothing is stretched. */
+  .jc-shot {
+    flex: 0 0 auto;
+    height: 100%;
     box-sizing: border-box;
-    object-fit: contain;
+    padding: 0;
     border: 1px solid var(--stroke);
     border-radius: var(--r-md);
     background: var(--surface);
+    overflow: hidden;
+    cursor: zoom-in;
+    scroll-snap-align: start;
+    transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
   }
 
-  /* Forces a row break at the point script.js picked. */
-  .jc-media .jc-break { flex: 0 0 100%; height: 0; margin: 0; }
+  /* No lift on hover: the strip is exactly as tall as the photos, so anything
+     that moves them vertically gets clipped by its own overflow. */
+  .jc-shot:hover,
+  .jc-shot:focus-visible {
+    border-color: color-mix(in oklab, var(--accent) 55%, var(--stroke));
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 22%, transparent);
+  }
+
+  .jc-media img {
+    display: block;
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+  }
 
   html:not(.js) .jc-media { height: 220px; }
+  html:not(.js) .jc-media img { border: 1px solid var(--stroke); border-radius: var(--r-md); }
+
+  /* ---------- Photo viewer ---------- */
+  .lightbox {
+    width: min(1100px, 94vw);
+    max-width: none;
+    max-height: 92svh;
+    padding: 0;
+    border: 1px solid var(--stroke);
+    border-radius: var(--r-lg);
+    background: var(--surface-solid);
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  .lightbox::backdrop {
+    background: color-mix(in oklab, #000 74%, transparent);
+    backdrop-filter: blur(6px);
+  }
+
+  .lb-frame {
+    position: relative;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    background: color-mix(in oklab, #000 45%, var(--surface-solid));
+  }
+
+  .lb-frame img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(92svh - 62px);
+    width: auto;
+    height: auto;
+  }
+
+  .lb-cap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 16px;
+    font-size: .86rem;
+    color: var(--ink-3);
+    border-top: 1px solid var(--stroke);
+  }
+
+  .lb-count { flex: 0 0 auto; font-family: var(--font-mono); font-size: .74rem; letter-spacing: .08em; }
+
+  .lb-btn {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--stroke);
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--surface-solid) 78%, transparent);
+    backdrop-filter: blur(10px);
+    color: var(--ink);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: background .2s var(--ease), border-color .2s var(--ease);
+  }
+
+  .lb-btn:hover { border-color: var(--accent); background: var(--surface-solid); }
+  .lb-prev { left: 12px; }
+  .lb-next { right: 12px; }
+
+  .lb-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    transform: none;
+  }
+
+  .lightbox[data-single] .lb-prev,
+  .lightbox[data-single] .lb-next { display: none; }
   /* ==========================================================================
      TIMELINE
      ========================================================================== */
@@ -2304,7 +2440,7 @@
       flex-direction: column;
     }
 
-    .board-rot { transform: translate(-50%, -50%) rotateX(64deg) rotateZ(-22deg) scale(.9); }
+    .journey-stage { --pitch: 64deg; --tilt: 20deg; --board-scale: .9; }
     .node-card { width: 150px; padding: 6px 9px; }
     .node-card b { font-size: .68rem; }
     .journey-cards { flex: 1; min-height: 0; }
@@ -2442,7 +2578,8 @@
       gap: 8px;
     }
     .journey-readout { padding: 12px 13px; }
-    .board-rot { width: 420px; transform: translate(-50%, -50%) rotateX(66deg) rotateZ(-18deg) scale(.78); }
+    .journey-stage { --pitch: 66deg; --tilt: 18deg; --board-scale: .78; }
+    .board-rot { width: 420px; }
     .node-card { width: 128px; padding: 5px 8px; }
     .node-card b { font-size: .62rem; }
     .node-card span { font-size: .54rem; }
