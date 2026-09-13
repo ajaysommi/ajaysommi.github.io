@@ -2720,27 +2720,10 @@
     .jc-impact { padding: 6px 9px; }
   }
 
-  /* On the very smallest/shortest phones there is not enough height for both
-     the board and a full role card, so the board (decorative) yields and the
-     card gets the whole panel rather than an inner scrollbar.
-
-     The cutoff is 710px rather than the 750px it used to be. A phone's CSS
-     viewport is its screen minus the browser's own chrome: an iPhone 14 is
-     844pt tall but reports about 745px to Safari with the toolbars showing,
-     and a 15 Pro about 734px. Both were landing under the old threshold, so
-     the board was being hidden on exactly the phones it was meant for.
-     Measured: cards still fit with the board visible down to 720px, and ADT
-     starts to clip at 700px. */
-  @media (max-width: 365px), (max-height: 710px) and (max-width: 719px) {
-    .journey-stage { display: none; }
-    .journey-sticky { grid-template-rows: minmax(0, 1fr); }
-  }
-
-  /* The card typography tightens earlier than the board disappears. These two
-     used to share one block, so raising the board's cutoff took the smaller
-     type with it and the wordiest roles started clipping again on exactly the
-     phones the change was for. */
-  @media (max-width: 365px), (max-height: 780px) and (max-width: 719px) {
+  /* Tighter card type on small or short phones. Deliberately back at the
+     threshold it had before the board work: widening it to 780px shrank the
+     text on ordinary phones, which was worse than the problem it solved. */
+  @media (max-width: 365px), (max-height: 750px) and (max-width: 719px) {
     .jcard h3 { font-size: .95rem; }
     .jc-when { font-size: .68rem; margin-bottom: 4px; }
     .jc-org { font-size: .82rem; margin-bottom: 5px; }
