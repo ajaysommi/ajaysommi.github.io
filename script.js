@@ -472,7 +472,7 @@ syncLogoTheme();
   if (!originals.length) return;
 
   const SPEED = 42;          // px per second of idle drift
-  const STEP_MS = 50;        // drift tick; 20fps is plenty for a slow glide
+  const STEP_MS = 16;        // drift tick, roughly a frame: 20fps read as steppy
   let setW = 0;              // width of one full set, including the trailing gap
   let paused = false;        // explicit pause button
   let idle = true;           // nobody is touching it
@@ -490,15 +490,43 @@ syncLogoTheme();
      strip visually in place. Nudging scrollLeft directly keeps one mechanism
      in charge, so manual scrolling and the drift can never disagree about
      where the strip is. */
+  /* Distance comes from the clock, not from the tick count. Timers are
+     throttled on a phone (background tabs, low power mode, a busy main thread
+     during a scroll), and a tick-based step meant every dropped tick was
+     distance silently lost, so the strip sped up and slowed down with the
+     device's mood. Measuring elapsed time keeps the speed honest however
+     irregularly the ticks arrive.
+
+     Whole pixels only, with the remainder carried: a fractional scrollLeft is
+     rounded away by some browsers, which turns a slow glide into a stutter. */
+  let carry = 0;
+  let lastT = 0;
+
   const tick = () => {
-    viewport.scrollLeft += SPEED * (STEP_MS / 1000);
+    const now = performance.now();
+    // Cap the delta so a long stall does not teleport the strip.
+    const dt = Math.min((now - lastT) / 1000, 0.1);
+    lastT = now;
+
+    carry += SPEED * dt;
+    const step = Math.floor(carry);
+    if (step >= 1) {
+      carry -= step;
+      viewport.scrollLeft += step;
+    }
     wrap();
   };
 
   const syncDrift = () => {
     const should = idle && !paused && !dragging && visible && !prefersReduced();
-    if (should && !driftTimer) driftTimer = setInterval(tick, STEP_MS);
-    else if (!should && driftTimer) { clearInterval(driftTimer); driftTimer = 0; }
+    if (should && !driftTimer) {
+      lastT = performance.now();
+      carry = 0;
+      driftTimer = setInterval(tick, STEP_MS);
+    } else if (!should && driftTimer) {
+      clearInterval(driftTimer);
+      driftTimer = 0;
+    }
   };
 
   /* ---------- Clone enough sets that the strip can never run out ----------
@@ -524,28 +552,54 @@ syncLogoTheme();
     return firstClone.offsetLeft - originals[0].offsetLeft;
   };
 
-  const build = () => {
-    // Reset to a single set, then clone until the track is comfortably wider
-    // than the viewport with a full spare set on either side.
-    track.querySelectorAll('[data-clone]').forEach((n) => n.remove());
-    addSet();
+  /* Grows the strip to fit and re-measures, without ever tearing down what is
+     already there. The earlier version removed every clone and re-added them,
+     then parked scrollLeft back at the start. That is why the logos blinked
+     out and snapped to the beginning while scrolling a phone: iOS fires a
+     resize every time Safari collapses or restores its toolbar, and each one
+     rebuilt the strip from scratch. */
+  let parked = false;
+  let lastW = -1;
+
+  const build = (force = false) => {
+    const w = viewport.clientWidth;
+    // A height-only change (the toolbar sliding away) must not touch the strip.
+    if (!force && w === lastW) return;
+    lastW = w;
+
+    if (!track.querySelector('[data-clone]')) addSet();
     setW = measure();
     if (setW <= 0) return;
 
-    const needed = Math.max(3, Math.ceil((viewport.clientWidth * 2) / setW) + 2);
+    const needed = Math.max(3, Math.ceil((w * 2) / setW) + 2);
     while (track.children.length / originals.length < needed) addSet();
 
-    // Park in the middle copy so there is room to scroll both directions.
-    viewport.scrollLeft = setW;
+    if (!parked) {
+      // Park in the middle copy so there is room to scroll both directions.
+      viewport.scrollLeft = setW;
+      parked = true;
+    } else {
+      // Already running: keep the reader's place, just pull it back in range.
+      wrap();
+    }
     syncDrift();
   };
 
-  build();
-  addEventListener('resize', build, { passive: true });
+  build(true);
+
+  /* Watches the strip's own box rather than the window, so it reacts to the
+     thing that actually matters and stays quiet for viewport height changes. */
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => build()).observe(viewport);
+  } else {
+    addEventListener('resize', () => build(), { passive: true });
+  }
+
+  // A logo arriving late changes the set width, so re-measure, but in place.
   $$('img', track).forEach((img) => {
-    if (!img.complete) img.addEventListener('load', build, { once: true });
+    if (!img.complete) img.addEventListener('load', () => build(true), { once: true });
   });
-  if (document.fonts?.ready) document.fonts.ready.then(build).catch(() => {});
+  if (document.fonts?.ready) document.fonts.ready.then(() => build(true)).catch(() => {});
 
   /* Keep scrollLeft inside one set width of the middle copy. Because every
      set is identical, the jump is invisible. */
