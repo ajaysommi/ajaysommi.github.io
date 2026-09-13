@@ -955,7 +955,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
          photos still get a floor so they cannot vanish, but the floor is low
          enough that the card does not grow a scrollbar to honour it. */
       const ideal = Math.min(MAX_H, spare);
-      let h = ideal < MIN_H ? Math.max(44, ideal) : ideal;
+      let h = ideal < MIN_H ? Math.max(36, ideal) : ideal;
 
       /* Height is the only thing being decided: each photo is then as wide as
          its own shape makes it, and the strip scrolls sideways if the row
