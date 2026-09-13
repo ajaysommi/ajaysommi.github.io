@@ -2,102 +2,196 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Resume — Ajay Sommi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Resume · Ajay Sommi</title>
+  <meta name="description" content="Resume for Ajay Sommi, software engineer." />
+
+  <meta name="theme-color" content="#050814" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#eef2f8" media="(prefers-color-scheme: light)" />
+  <meta name="color-scheme" content="dark light" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" />
   <link rel="stylesheet" href="style.css" />
 
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var saved = null;
+      try { saved = localStorage.getItem('as-theme'); } catch (e) {}
+      root.dataset.theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'daylight' : 'midnight');
+      root.classList.add('js');
+    })();
+  </script>
+
   <style>
-    .frame {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 16px;
+    /* Must clear the fixed nav: a bare `padding: 0 ...` here overrides the
+       shared `main { padding-top }` and hides the heading behind the bar. */
+    .resume-main {
+      max-width: 1000px;
+      margin-inline: auto;
+      padding: calc(var(--nav-h) + 28px) var(--gutter) 40px;
     }
 
-    .resume-top {
+    .resume-head {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin: 10px 0 16px;
       flex-wrap: wrap;
-    }
-
-    .resume-top h1 {
-      font-size: 1.4rem;
-      margin: 0;
-    }
-
-    .back-home-btn {
-      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      width: fit-content;
-      margin-bottom: 18px;
-      text-decoration: none;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 8px 0 16px;
     }
 
+    .resume-head h1 { margin: 0; font-size: clamp(22px, 4vw, 30px); }
+
+    .resume-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+
+    /* Fixed aspect keeps the viewer from collapsing before the PDF paints. */
     .embed {
-      aspect-ratio: 8.5 / 11;
+      position: relative;
       width: 100%;
-      border: 1px solid var(--stroke);
-      border-radius: 16px;
+      aspect-ratio: 8.5 / 11;
+      max-height: 78svh;
+      border-radius: var(--r-lg);
       overflow: hidden;
     }
 
-    .note {
-      color: #aab4bd;
-      margin: 12px 0;
+    .embed iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+    /* Shown when the browser will not render a PDF inline (iOS Safari, most
+       mobile browsers), otherwise the visitor just sees an empty box. */
+    .pdf-fallback {
+      display: grid;
+      gap: 14px;
+      justify-items: center;
+      padding: 30px 20px;
+      text-align: center;
+      border-radius: var(--r-lg);
     }
 
-    .resume-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 14px;
+    .pdf-fallback .pdf-mark {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border: 1px solid var(--stroke);
+      border-radius: var(--r-md);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      font-weight: 700;
     }
+
+    .pdf-fallback p { margin: 0; max-width: 42ch; color: var(--ink-3); font-size: .92rem; }
+    .pdf-fallback .actions { justify-content: center; }
   </style>
 </head>
 
-<body>
+<body class="resume-page">
+  <a class="skip-link" href="#resumeMain">Skip to content</a>
+
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b4"></div>
+    <div class="grid-veil"></div>
+  </div>
+
   <header class="nav glass">
-    <nav>
-      <a href="index.html#experience">Experience</a>
+    <a class="brand" href="index.html" aria-label="Ajay Sommi, home">
+      <span class="brand-mark" aria-hidden="true">AS</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html#experience">The Path</a>
       <a href="index.html#education">Education</a>
       <a href="index.html#projects">Projects</a>
       <a href="index.html#skills">Skills</a>
       <a href="index.html#recs">Recommendations</a>
-      <a href="resume.html">Resume</a>
-      <a href="index.html#contact" class="cta">Contact</a>
+      <a href="resume.html" class="is-current">Resume</a>
     </nav>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Change theme" title="Change theme">
+        <svg class="ico-midnight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg>
+        <svg class="ico-daylight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        <svg class="ico-terminal" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 4h18v16H3V4Zm3 4 3.5 3.5L6 15m6 1h6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <a href="index.html#contact" class="cta">Contact</a>
+    </div>
   </header>
 
-  <main class="frame">
-    <a class="btn back-home-btn" href="index.html">← Back</a>
+  <main class="resume-main" id="resumeMain">
+    <span id="top" class="anchor" aria-hidden="true"></span>
 
-    <div class="resume-top">
+    <div class="resume-head">
       <h1>Resume</h1>
-    </div>
-
-    <div class="note">Tip: open in a new tab if the inline preview is slow.</div>
-
-    <div class="embed glass">
-      <iframe
-        src="./Ajay_Sommi_Resume.pdf"
-        title="Ajay Sommi — Resume"
-        style="width:100%;height:100%;border:0;">
-      </iframe>
+      <a class="btn" href="index.html">← Back to portfolio</a>
     </div>
 
     <div class="resume-actions">
-      <a class="btn solid" href="./Ajay_Sommi_Resume.pdf" download>Download PDF</a>
-      <a class="btn" href="index.html">Return home</a>
+      <a class="btn solid" href="./Ajay_Sommi_Resume.pdf" download="Ajay-Sommi-Resume.pdf">Download PDF</a>
+      <a class="btn" href="./Ajay_Sommi_Resume.pdf" target="_blank" rel="noopener">Open in new tab</a>
+    </div>
+
+    <div class="embed glass" id="pdfEmbed">
+      <iframe src="./Ajay_Sommi_Resume.pdf" title="Ajay Sommi Resume" loading="lazy"></iframe>
+    </div>
+
+    <div class="pdf-fallback glass" id="pdfFallback" hidden>
+      <span class="pdf-mark" aria-hidden="true">PDF</span>
+      <h2>Your browser can't show the PDF inline</h2>
+      <p>Most mobile browsers won't render an embedded PDF. Open it in a new tab or download it instead. Same file either way.</p>
+      <div class="actions">
+        <a class="btn solid" href="./Ajay_Sommi_Resume.pdf" target="_blank" rel="noopener">Open resume</a>
+        <a class="btn" href="./Ajay_Sommi_Resume.pdf" download="Ajay-Sommi-Resume.pdf">Download</a>
+      </div>
     </div>
   </main>
 
-  <footer class="footer">© <span id="y"></span> Ajay Sommi</footer>
+  <footer class="footer">
+    <p>© <span id="y"></span> Ajay Sommi</p>
+  </footer>
 
   <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Theme cycling, matching the main page.
+    (function () {
+      var THEMES = ['midnight', 'daylight', 'terminal'];
+      var root = document.documentElement;
+      var btn = document.getElementById('themeBtn');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var next = THEMES[(THEMES.indexOf(root.dataset.theme) + 1) % THEMES.length];
+        root.dataset.theme = next;
+        try { localStorage.setItem('as-theme', next); } catch (e) {}
+      });
+    })();
+
+    /* Inline PDF viewing is unsupported on iOS and most mobile browsers, and
+       the iframe fails silently, so swap in explicit open/download actions. */
+    (function () {
+      var embed = document.getElementById('pdfEmbed');
+      var fallback = document.getElementById('pdfFallback');
+      if (!embed || !fallback) return;
+
+      var ua = navigator.userAgent;
+      var isIOS = /iPad|iPhone|iPod/.test(ua) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      var noInlinePdf = isIOS || /Android/.test(ua) ||
+                        (navigator.pdfViewerEnabled === false);
+
+      if (noInlinePdf) {
+        embed.hidden = true;
+        fallback.hidden = false;
+      }
+    })();
   </script>
 </body>
 </html>
