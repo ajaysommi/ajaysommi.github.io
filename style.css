@@ -419,13 +419,11 @@
     border-radius: var(--r-pill);
     border: 1px solid var(--stroke-hi);
     background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 28%, transparent), transparent);
-    font-family: var(--font-mono);
-    font-size: .78rem;
-    font-weight: 700;
-    letter-spacing: -.5px;
     color: var(--accent);
     transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
   }
+
+  .brand-mark svg { display: block; }
 
   .brand:hover .brand-mark {
     transform: rotate(-8deg) scale(1.06);
@@ -1717,8 +1715,6 @@
 
   .card:hover { border-color: var(--stroke-hi); box-shadow: var(--shadow-lg); }
 
-  /* Fallback for touch/keyboard, where the JS 3D tilt never attaches. */
-  .card.tilt:hover { transform: translateY(-1px); }
 
   .card-top {
     display: flex;
@@ -2360,11 +2356,6 @@
   }
 
   /* Project cards rise out of the page as their section scrolls in. */
-  .grid[data-scroll-lift] .card {
-    transform: translateY(calc((1 - var(--sp, 1)) * 34px)) rotateX(calc((1 - var(--sp, 1)) * 7deg));
-    transform-origin: 50% 100%;
-  }
-
   /* Skill pills charge left-to-right. */
   .pills[data-charge] button,
   .pills[data-charge] span {
@@ -2481,12 +2472,10 @@
 
     /* Scroll-linked effects resolve to their finished state. */
     .hero-card,
-    .grid[data-scroll-lift] .card,
 
     .quote-words span { color: var(--ink); text-shadow: none; }
     .node[data-state="active"] .node-pad { animation: none; }
 
-    .card.tilt:hover,
     .row:hover { transform: none; }
 
     .flying-gator,
@@ -2733,10 +2722,25 @@
 
   /* On the very smallest/shortest phones there is not enough height for both
      the board and a full role card, so the board (decorative) yields and the
-     card gets the whole panel rather than an inner scrollbar. */
-  @media (max-width: 365px), (max-height: 750px) and (max-width: 719px) {
+     card gets the whole panel rather than an inner scrollbar.
+
+     The cutoff is 710px rather than the 750px it used to be. A phone's CSS
+     viewport is its screen minus the browser's own chrome: an iPhone 14 is
+     844pt tall but reports about 745px to Safari with the toolbars showing,
+     and a 15 Pro about 734px. Both were landing under the old threshold, so
+     the board was being hidden on exactly the phones it was meant for.
+     Measured: cards still fit with the board visible down to 720px, and ADT
+     starts to clip at 700px. */
+  @media (max-width: 365px), (max-height: 710px) and (max-width: 719px) {
     .journey-stage { display: none; }
     .journey-sticky { grid-template-rows: minmax(0, 1fr); }
+  }
+
+  /* The card typography tightens earlier than the board disappears. These two
+     used to share one block, so raising the board's cutoff took the smaller
+     type with it and the wordiest roles started clipping again on exactly the
+     phones the change was for. */
+  @media (max-width: 365px), (max-height: 780px) and (max-width: 719px) {
     .jcard h3 { font-size: .95rem; }
     .jc-when { font-size: .68rem; margin-bottom: 4px; }
     .jc-org { font-size: .82rem; margin-bottom: 5px; }
