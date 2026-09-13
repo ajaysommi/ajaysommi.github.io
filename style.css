@@ -782,7 +782,10 @@
      when the line wraps on narrow screens. */
   .hero-role {
     margin: 0;
-    min-height: 2.9em;
+    /* One line by default. script.js raises this to whatever the longest role
+       string actually needs at the current width, so the line neither jumps
+       while typing nor leaves a blank reserved line above the paragraph. */
+    min-height: 1.45em;
     font-family: var(--font-mono);
     font-size: clamp(.75rem, 2.3vw, .95rem);
     line-height: 1.45;
@@ -2697,7 +2700,11 @@
         "figure head"
         "figure body";
       align-items: start;
-      gap: clamp(20px, 3vw, 34px);
+      /* Wide column gap, tighter row gap: the typed line and the paragraph
+         under it are one block, and a full 34px between them reads as a
+         break rather than a breath. */
+      column-gap: clamp(20px, 3vw, 34px);
+      row-gap: clamp(14px, 1.6vw, 20px);
     }
 
     .hero-figure { width: 100%; align-self: center; }

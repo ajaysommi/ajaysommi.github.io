@@ -369,6 +369,27 @@ syncLogoTheme();
     'B.S. Computer Science, University of Florida',
   ];
 
+  /* Reserve exactly the height the longest role needs, measured rather than
+     assumed: a fixed two line reservation left a visible blank line between
+     this and the paragraph below, and a one line reservation would make the
+     paragraph jump on any width where a role wraps. */
+  const line = typed.parentElement;
+  const reserve = () => {
+    const before = typed.textContent;
+    line.style.minHeight = '0px';
+    let tallest = 0;
+    for (const role of roles) {
+      typed.textContent = role;
+      tallest = Math.max(tallest, line.getBoundingClientRect().height);
+    }
+    typed.textContent = before;
+    line.style.minHeight = `${Math.ceil(tallest)}px`;
+  };
+
+  reserve();
+  addEventListener('resize', reserve, { passive: true });
+  if (document.fonts?.ready) document.fonts.ready.then(reserve).catch(() => {});
+
   if (prefersReduced()) { typed.textContent = roles[0]; return; }
 
   let r = 0, i = 0, deleting = false;
@@ -584,21 +605,35 @@ syncLogoTheme();
   /* ---------- Pointer drag (desktop; touch uses native scrolling) ---------- */
   let startX = 0, startScroll = 0, moved = 0, lastX = 0, velocity = 0, glideRaf = 0;
 
+  /* Capturing the pointer on pointerdown would retarget the click that
+     follows onto the viewport, so a plain click on a logo never reached its
+     link. The press is only armed here; capture waits until the pointer has
+     actually moved far enough to be a drag rather than a click. */
+  let armed = false;
+
   viewport.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'touch' || e.button !== 0) return;
-    dragging = true;
+    armed = true;
+    dragging = false;
     moved = 0;
     startX = lastX = e.clientX;
     startScroll = viewport.scrollLeft;
     velocity = 0;
     cancelAnimationFrame(glideRaf);
-    viewport.classList.add('is-dragging');
-    viewport.setPointerCapture(e.pointerId);
     goBusy();
   });
 
   viewport.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
+    if (!armed) return;
+
+    if (!dragging) {
+      // Under this it is still a click in progress, so stay out of the way.
+      if (Math.abs(e.clientX - startX) <= 4) return;
+      dragging = true;
+      viewport.classList.add('is-dragging');
+      try { viewport.setPointerCapture(e.pointerId); } catch {}
+    }
+
     e.preventDefault();
     const dx = e.clientX - startX;
     moved = Math.abs(dx);
@@ -611,7 +646,9 @@ syncLogoTheme();
   });
 
   const endDrag = (e) => {
-    if (!dragging) return;
+    if (!armed) return;
+    armed = false;
+    if (!dragging) { bumpIdle(1200); return; }  // a click, not a drag
     dragging = false;
     viewport.classList.remove('is-dragging');
     try { viewport.releasePointerCapture(e.pointerId); } catch {}
