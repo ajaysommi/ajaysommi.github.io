@@ -504,8 +504,12 @@ syncLogoTheme();
 
   const tick = () => {
     const now = performance.now();
-    // Cap the delta so a long stall does not teleport the strip.
-    const dt = Math.min((now - lastT) / 1000, 0.1);
+    /* Cap the delta so a stall does not teleport the strip. The cap is loose
+       enough that ordinary throttling (a busy main thread mid scroll) is
+       still made up for: too tight a cap turns every slow tick into lost
+       distance, which is the stutter it was meant to prevent. A backgrounded
+       tab is handled by pausing outright rather than by this cap. */
+    const dt = Math.min((now - lastT) / 1000, 0.25);
     lastT = now;
 
     carry += SPEED * dt;
@@ -518,7 +522,8 @@ syncLogoTheme();
   };
 
   const syncDrift = () => {
-    const should = idle && !paused && !dragging && visible && !prefersReduced();
+    const should = idle && !paused && !dragging && visible &&
+                   document.visibilityState === 'visible' && !prefersReduced();
     if (should && !driftTimer) {
       lastT = performance.now();
       carry = 0;
@@ -622,6 +627,9 @@ syncLogoTheme();
   // Merely hovering does not pause the drift, only an actual interaction
   // does (drag, wheel, arrow keys, touch, keyboard focus) so the strip reads
   // as continuously alive, and manual scrolling always overrides it.
+  // A hidden tab throttles timers hard, so stop rather than crawl.
+  document.addEventListener('visibilitychange', syncDrift);
+
   viewport.addEventListener('focusin', goBusy);
   viewport.addEventListener('focusout', (e) => { if (!viewport.contains(e.relatedTarget)) bumpIdle(600); });
 
@@ -1202,14 +1210,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 (function scrollFlourishes() {
   if (prefersReduced()) return;
 
-  /* --- Hero drifts away as you leave it --- */
-  const heroCard = $('#heroCard');
-  if (heroCard) {
-    onScrollFrame(() => {
-      const p = clamp(scrollY / Math.max(innerHeight * 0.85, 1), 0, 1);
-      heroCard.style.setProperty('--hero-p', p.toFixed(3));
-    });
-  }
+  /* The hero used to drift, shrink and fade as you scrolled past it. It is
+     a glass card, so every frame of that re-rasterised an 18px backdrop blur
+     over a transforming box: expensive everywhere, and enough to stall a
+     phone for a moment on first scroll. It now simply sits there. */
 
   /* --- Quote lights up word by word --- */
   const quote = $('.section.quote blockquote');

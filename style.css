@@ -2355,12 +2355,6 @@
     text-shadow: 0 0 26px color-mix(in oklab, var(--accent) 32%, transparent);
   }
 
-  /* Hero drifts and softens as you scroll past it. */
-  .hero-card {
-    transform: translateY(calc(var(--hero-p, 0) * 26px)) scale(calc(1 - var(--hero-p, 0) * .035));
-    opacity: calc(1 - var(--hero-p, 0) * .35);
-  }
-
   /* Project cards rise out of the page as their section scrolls in. */
   /* Skill pills charge left-to-right. */
   .pills[data-charge] button,
@@ -2477,8 +2471,6 @@
     [data-reveal] { opacity: 1; transform: none; transition: none; }
 
     /* Scroll-linked effects resolve to their finished state. */
-    .hero-card,
-
     .quote-words span { color: var(--ink); text-shadow: none; }
     .node[data-state="active"] .node-pad { animation: none; }
 
@@ -2806,6 +2798,15 @@
   /* Touch devices: hover effects that need a real pointer are dropped. */
   @media (hover: none) {
     .logo-marquee { cursor: default; }
+
+    /* Touch has no hover, but a tap leaves :hover applied until you tap
+       something else, so anything that moves on hover stays moved after your
+       finger has gone. */
+    .filter-chip:hover,
+    .card-repo:hover,
+    .contact a:hover,
+    .row:hover,
+    header.nav a.cta:hover { transform: none; }
   }
 
   /* Wide screens get the hero side-by-side. */
