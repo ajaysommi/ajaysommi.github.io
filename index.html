@@ -124,10 +124,7 @@
         <svg class="ico-terminal" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 4h18v16H3V4Zm3 4 3.5 3.5L6 15m6 1h6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
 
-      <a href="#contact" class="cta">
-        <svg class="cta-ico" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="cta-label">Contact</span>
-      </a>
+      <a href="#contact" class="cta">Contact</a>
 
       <button class="icon-btn nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileSheet">
         <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -141,11 +138,9 @@
        right/bottom position relative to the nav pill's own box instead of
        the viewport, landing it beside the hamburger instead of a clean
        circle at the screen edge. -->
-  <div class="dock-fab">
-    <button class="icon-btn" id="paletteBtnMobile" type="button" aria-label="Open command palette" title="Command palette">
-      <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M11 3a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 11 3Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z" fill="currentColor"/></svg>
-    </button>
-  </div>
+  <button class="icon-btn palette-fab" id="paletteBtnMobile" type="button" aria-label="Open command palette" title="Command palette">
+    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M11 3a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 11 3Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z" fill="currentColor"/></svg>
+  </button>
 
   <!-- Mobile menu sheet -->
   <div class="sheet-scrim" id="sheetScrim" hidden></div>
@@ -357,13 +352,13 @@
                 <p class="jc-when">Jun 2024 to Aug 2024 · Jacksonville, FL</p>
                 <h3>Software Engineering Intern</h3>
                 <p class="jc-org">Southeast Toyota Distributors</p>
-                <p class="jc-built">Cars come back with tire problems and nobody had a quick way to see the pattern. I wrote a Python job that moved a thousand plus files from Azure storage into SharePoint on its own, worth about 350 hours a year, then turned tire records for 51,000 Toyota and Lexus vehicles into 21 reports and replaced a hand typed spreadsheet with a form feeding a live Power BI dashboard.</p>
+                <p class="jc-built">Cars come back with tire problems and nobody had a quick way to see the pattern. I wrote a Python job that pulled a thousand plus files out of Azure storage and filed them into SharePoint on its own, which gave back roughly 350 hours a year of somebody's time. Then I went after the data itself, querying tire records for 51,000 Toyota and Lexus vehicles into 21 reports, and replacing a hand typed spreadsheet with a real entry form feeding a live Power BI dashboard.</p>
                 <ul class="jc-impact">
                   <li><b>20%</b> fewer warranty claims</li>
                   <li><b>$150k</b> saved on prevented tire recalls</li>
                   <li><b>5×</b> faster data entry</li>
                 </ul>
-                <p class="jc-learn"><span>Took away</span> The dashboard is the deliverable, not the query.</p>
+                <p class="jc-learn"><span>Took away</span> Data work only matters when someone can act on it. The dashboard is the deliverable, not the query.</p>
                 <div class="jc-tags"><span>Python</span><span>SQL</span><span>Azure Blob</span><span>Amazon RDS</span><span>Power BI</span><span>VBA</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/toyota-sign-400.webp"
@@ -426,12 +421,12 @@
                 <p class="jc-when">Jan 2026 to May 2026 · St. Louis, MO</p>
                 <h3>Software Engineering Co-op, R&amp;D</h3>
                 <p class="jc-org">Hunter Engineering Company</p>
-                <p class="jc-built">Hunter's alignment and ADAS machines sit in repair shops worldwide, and every so often one has to be wiped and started over. I built the secure path for that: a C#/.NET and Blazor workflow on Azure IoT Hub that signs a machine out and brings it back through an API instead of a service visit, across 100,000 plus units. The rest went to chasing race conditions and null crashes, and moving the test suite off Moq.</p>
+                <p class="jc-built">Hunter's alignment and ADAS machines sit in repair shops all over the world, and every so often one has to be wiped and started over. I built the secure path for that, a C#/.NET and Blazor workflow wired into Azure IoT Hub so a machine can be signed out and brought back online through an API instead of a service visit, across more than 100,000 units. The rest of my time went to the unglamorous half: chasing race conditions and null crashes in async code, and moving the test suite off Moq.</p>
                 <ul class="jc-impact">
                   <li><b>100,000+</b> units reachable worldwide</li>
                   <li><b>Moq to NSubstitute</b> across an enterprise codebase</li>
                 </ul>
-                <p class="jc-learn"><span>Took away</span> At six figures of deployed devices, reliability is the feature.</p>
+                <p class="jc-learn"><span>Took away</span> At six figures of deployed devices, "works on my machine" is a rounding error. Reliability is the feature.</p>
                 <div class="jc-tags"><span>C#/.NET</span><span>Blazor</span><span>Azure IoT Hub</span><span>IoT Edge</span><span>NSubstitute</span><span>Docker</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/hunter-sign-400.webp"
@@ -469,13 +464,13 @@
                 <p class="jc-when">May 2026 to Present · Boca Raton, FL</p>
                 <h3>Software Engineering Intern</h3>
                 <p class="jc-org">ADT</p>
-                <p class="jc-built">Working inside ADT's Salesforce platform, where a false alarm means a squad car sent to an empty house. I pitched a concept that uses AI to sanity check a dispatch before it goes out, and the rest of my time goes to the data model underneath and the test coverage that decides whether a release ships.</p>
+                <p class="jc-built">Working inside ADT's Salesforce platform, where a false alarm means a squad car sent to an empty house. I pitched a concept that uses AI to sanity check a dispatch before it goes out, and the rest of my time goes to the data model underneath the platform and the test coverage that decides whether a release is allowed to ship.</p>
                 <ul class="jc-impact">
-                  <li><b>False alarms</b> AI dispatch check, pitched to leadership</li>
-                  <li><b>Under the cap</b> metadata folded into Custom Objects</li>
-                  <li><b>Coverage</b> Apex tests back above the deploy bar</li>
+                  <li><b>False alarms</b> targeted by an AI dispatch verification concept pitched to senior leadership</li>
+                  <li><b>Under the cap</b> Custom Metadata Types consolidated into Custom Objects</li>
+                  <li><b>Coverage</b> Apex test classes raised to the deployment threshold</li>
                 </ul>
-                <p class="jc-learn"><span>Taking away</span> AI tooling is how you get productive in an unfamiliar enterprise codebase fast.</p>
+                <p class="jc-learn"><span>Taking away</span> AI tooling earns its keep as an engineering accelerator, not a novelty. It is how you get productive in an unfamiliar enterprise codebase fast.</p>
                 <div class="jc-tags"><span>Salesforce</span><span>Apex</span><span>Custom Objects</span><span>Cursor</span><span>Claude + MCP</span><span>AI</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/adt-hq-400.webp"
