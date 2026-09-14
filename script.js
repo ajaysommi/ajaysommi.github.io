@@ -504,12 +504,8 @@ syncLogoTheme();
 
   const tick = () => {
     const now = performance.now();
-    /* Cap the delta so a stall does not teleport the strip. The cap is loose
-       enough that ordinary throttling (a busy main thread mid scroll) is
-       still made up for: too tight a cap turns every slow tick into lost
-       distance, which is the stutter it was meant to prevent. A backgrounded
-       tab is handled by pausing outright rather than by this cap. */
-    const dt = Math.min((now - lastT) / 1000, 0.25);
+    // Cap the delta so a long stall does not teleport the strip.
+    const dt = Math.min((now - lastT) / 1000, 0.1);
     lastT = now;
 
     carry += SPEED * dt;
@@ -522,8 +518,7 @@ syncLogoTheme();
   };
 
   const syncDrift = () => {
-    const should = idle && !paused && !dragging && visible &&
-                   document.visibilityState === 'visible' && !prefersReduced();
+    const should = idle && !paused && !dragging && visible && !prefersReduced();
     if (should && !driftTimer) {
       lastT = performance.now();
       carry = 0;
@@ -627,9 +622,6 @@ syncLogoTheme();
   // Merely hovering does not pause the drift, only an actual interaction
   // does (drag, wheel, arrow keys, touch, keyboard focus) so the strip reads
   // as continuously alive, and manual scrolling always overrides it.
-  // A hidden tab throttles timers hard, so stop rather than crawl.
-  document.addEventListener('visibilitychange', syncDrift);
-
   viewport.addEventListener('focusin', goBusy);
   viewport.addEventListener('focusout', (e) => { if (!viewport.contains(e.relatedTarget)) bumpIdle(600); });
 
@@ -1019,49 +1011,12 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const ideal = Math.min(MAX_H, spare);
       let h = ideal < MIN_H ? Math.max(36, ideal) : ideal;
 
-      /* A tall row is a wide row, so on a narrow card four uncropped photos
-         can only sit side by side by shrinking to thumbnails. Show as many as
-         hold a usable height instead and leave the remainder to the lightbox,
-         which still opens the whole set. */
-      const shots = $$('.jc-shot', fig);
-      const aspectOf = (el) => {
-        const im = $('img', el);
-        const w = Number(im?.getAttribute('width'));
-        const ih = Number(im?.getAttribute('height'));
-        return w > 0 && ih > 0 ? w / ih : 1;
-      };
-      const gapX = parseFloat(figStyle.columnGap) || 0;
-      const room = fig.clientWidth;
-      const GOOD = 92;  // the height below which a photo stops reading as one
-
-      shots.forEach((el) => { el.hidden = false; });
-      let shown = shots.length;
-      while (shown > 1 && room > 0) {
-        const sum = shots.slice(0, shown).reduce((a2, el) => a2 + aspectOf(el), 0);
-        if ((room - gapX * (shown - 1)) / sum >= Math.min(GOOD, h)) break;
-        shown -= 1;
-      }
-      for (let i = shown; i < shots.length; i += 1) shots[i].hidden = true;
-
       /* Height is the only thing being decided: each photo is then as wide as
-         its own shape makes it. Nothing cropped, nothing stretched, nothing
-         stacked. */
+         its own shape makes it, and the strip scrolls sideways if the row
+         comes out wider than the card. Nothing cropped, nothing stretched,
+         nothing stacked. */
       h = Math.max(1, Math.floor(h));
       fig.style.height = `${h}px`;
-
-      /* Then bring the row in until it fits the card. A tall row is a wide
-         row, so the roles carrying three or four photos were overrunning the
-         edge and leaving the last one half off the card until you scrolled
-         sideways to find it. Shrinking the height is what makes them all fit
-         at once. Measured rather than calculated: each photo's border adds a
-         couple of pixels the aspect ratio does not know about. */
-      for (let pass = 0; pass < 3; pass += 1) {
-        const slack = fig.scrollWidth - fig.clientWidth;
-        if (slack <= 1 || fig.scrollWidth <= 0) break;
-        h = Math.max(1, Math.floor(h * (fig.clientWidth / fig.scrollWidth)));
-        fig.style.height = `${h}px`;
-      }
-
       markScroll(fig);
     });
   };
@@ -1210,10 +1165,14 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 (function scrollFlourishes() {
   if (prefersReduced()) return;
 
-  /* The hero used to drift, shrink and fade as you scrolled past it. It is
-     a glass card, so every frame of that re-rasterised an 18px backdrop blur
-     over a transforming box: expensive everywhere, and enough to stall a
-     phone for a moment on first scroll. It now simply sits there. */
+  /* --- Hero drifts away as you leave it --- */
+  const heroCard = $('#heroCard');
+  if (heroCard) {
+    onScrollFrame(() => {
+      const p = clamp(scrollY / Math.max(innerHeight * 0.85, 1), 0, 1);
+      heroCard.style.setProperty('--hero-p', p.toFixed(3));
+    });
+  }
 
   /* --- Quote lights up word by word --- */
   const quote = $('.section.quote blockquote');
