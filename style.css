@@ -478,6 +478,10 @@
     display: inline-grid;
     grid-auto-flow: column;
     align-items: center;
+    /* Without this the single glyph aligns to the start of the content box,
+       so any button wider than its icon (the hamburger, the theme toggle)
+       sits a few pixels left of centre. */
+    justify-content: center;
     gap: 6px;
     min-width: 34px;
     height: 34px;
@@ -536,8 +540,10 @@
 
   header.nav a.cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
 
+  .cta-ico { display: none; }
+
   .nav-toggle { display: none; }
-  .palette-fab { display: none; }
+  .dock-fab { display: none; }
 
   .burger { display: grid; gap: 4px; width: 16px; }
   .burger i {
@@ -2349,12 +2355,6 @@
     text-shadow: 0 0 26px color-mix(in oklab, var(--accent) 32%, transparent);
   }
 
-  /* Hero drifts and softens as you scroll past it. */
-  .hero-card {
-    transform: translateY(calc(var(--hero-p, 0) * 26px)) scale(calc(1 - var(--hero-p, 0) * .035));
-    opacity: calc(1 - var(--hero-p, 0) * .35);
-  }
-
   /* Project cards rise out of the page as their section scrolls in. */
   /* Skill pills charge left-to-right. */
   .pills[data-charge] button,
@@ -2471,8 +2471,6 @@
     [data-reveal] { opacity: 1; transform: none; transition: none; }
 
     /* Scroll-linked effects resolve to their finished state. */
-    .hero-card,
-
     .quote-words span { color: var(--ink); text-shadow: none; }
     .node[data-state="active"] .node-pad { animation: none; }
 
@@ -2581,7 +2579,49 @@
     header.nav .icon-btn { min-width: 40px; height: 40px; }
     .brand-mark { width: 40px; height: 40px; }
     .nav-actions { margin-left: 0; }
-    header.nav a.cta { height: 40px; padding: 0 16px; font-size: .92rem; }
+    /* The dock reads as one bar of plain glyphs, the way a phone tab bar
+       does: no circle drawn around each icon, no fill, no accent colour. The
+       pill itself is the only container. */
+    header.nav .icon-btn,
+    header.nav .brand-mark {
+      border-color: transparent;
+      background: none;
+      box-shadow: none;
+      color: var(--ink-2);
+    }
+
+    header.nav .icon-btn:hover,
+    header.nav .brand-mark:hover { color: var(--ink); }
+
+    /* Contact loses its own pill and becomes another glyph in the row. */
+    header.nav a.cta {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: var(--r-pill);
+      background: none;
+      box-shadow: none;
+      color: var(--ink-2);
+    }
+
+    header.nav a.cta:hover { filter: none; transform: none; color: var(--ink); }
+    header.nav .cta-ico { display: block; }
+    header.nav .cta-label { display: none; }
+
+    /* The search is a glyph on its own round glass, not a ring inside a ring. */
+    .dock-fab .icon-btn {
+      min-width: 40px;
+      height: 40px;
+      border-color: transparent;
+      background: none;
+      box-shadow: none;
+      color: var(--ink-2);
+    }
+
+    .dock-fab .icon-btn:hover { color: var(--ink); }
 
     /* The in-pill search button is replaced by the dedicated FAB below;
        hiding it here (rather than deleting it) keeps one button and one
@@ -2597,25 +2637,30 @@
        behind the whole pill first; out here on its own the fab had nothing
        blurring the page behind it, so the same faint tint looked far more
        see-through than the pill next to it. */
-    .palette-fab {
+    /* The search sits in its own pill rather than being one big circle, so
+       the button inside it is the same 40px circle, with the same border and
+       fill, as the ones in the nav pill. Same material, same sized circles,
+       two docks. */
+    .dock-fab {
       display: grid;
+      place-items: center;
       position: fixed;
       z-index: 60;
       right: 12px;
       bottom: max(10px, env(safe-area-inset-bottom));
-      /* Matches the pill's own rendered height exactly: 40px icon-btn
-         content + 8px top/bottom padding + 1px top/bottom border. */
+      /* Matches the nav pill's rendered height exactly: 40px circle + 8px
+         top/bottom padding + 1px top/bottom border. */
       width: 58px;
       height: 58px;
-      min-width: 0;
-      padding: 0;
+      border: 1px solid var(--stroke);
       border-radius: 50%;
-      place-items: center;
       background: color-mix(in oklab, var(--surface-solid) 80%, transparent);
       box-shadow: var(--shadow-lg);
       backdrop-filter: blur(16px) saturate(140%);
       -webkit-backdrop-filter: blur(16px) saturate(140%);
     }
+
+    .dock-fab .icon-btn { min-width: 40px; height: 40px; }
 
     /* Everything else fixed to the bottom needs to clear the new bar. */
     .mobile-sheet { bottom: var(--mobile-nav-clear); }
@@ -2745,12 +2790,23 @@
     .brand-mark { width: 36px; height: 36px; }
     header.nav a.cta { height: 36px; padding: 0 12px; font-size: .84rem; }
     /* Stays equal to the pill: 36px content + 7px padding + 1px border, twice. */
-    .palette-fab { width: 52px; height: 52px; }
+    .dock-fab { width: 52px; height: 52px; }
+    .dock-fab .icon-btn { min-width: 36px; height: 36px; }
+    header.nav a.cta { width: 36px; min-width: 36px; height: 36px; padding: 0; }
   }
 
   /* Touch devices: hover effects that need a real pointer are dropped. */
   @media (hover: none) {
     .logo-marquee { cursor: default; }
+
+    /* Touch has no hover, but a tap leaves :hover applied until you tap
+       something else, so anything that moves on hover stays moved after your
+       finger has gone. */
+    .filter-chip:hover,
+    .card-repo:hover,
+    .contact a:hover,
+    .row:hover,
+    header.nav a.cta:hover { transform: none; }
   }
 
   /* Wide screens get the hero side-by-side. */
