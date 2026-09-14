@@ -1011,12 +1011,49 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const ideal = Math.min(MAX_H, spare);
       let h = ideal < MIN_H ? Math.max(36, ideal) : ideal;
 
+      /* A tall row is a wide row, so on a narrow card four uncropped photos
+         can only sit side by side by shrinking to thumbnails. Show as many as
+         hold a usable height instead and leave the remainder to the lightbox,
+         which still opens the whole set. */
+      const shots = $$('.jc-shot', fig);
+      const aspectOf = (el) => {
+        const im = $('img', el);
+        const w = Number(im?.getAttribute('width'));
+        const ih = Number(im?.getAttribute('height'));
+        return w > 0 && ih > 0 ? w / ih : 1;
+      };
+      const gapX = parseFloat(figStyle.columnGap) || 0;
+      const room = fig.clientWidth;
+      const GOOD = 92;  // the height below which a photo stops reading as one
+
+      shots.forEach((el) => { el.hidden = false; });
+      let shown = shots.length;
+      while (shown > 1 && room > 0) {
+        const sum = shots.slice(0, shown).reduce((a2, el) => a2 + aspectOf(el), 0);
+        if ((room - gapX * (shown - 1)) / sum >= Math.min(GOOD, h)) break;
+        shown -= 1;
+      }
+      for (let i = shown; i < shots.length; i += 1) shots[i].hidden = true;
+
       /* Height is the only thing being decided: each photo is then as wide as
-         its own shape makes it, and the strip scrolls sideways if the row
-         comes out wider than the card. Nothing cropped, nothing stretched,
-         nothing stacked. */
+         its own shape makes it. Nothing cropped, nothing stretched, nothing
+         stacked. */
       h = Math.max(1, Math.floor(h));
       fig.style.height = `${h}px`;
+
+      /* Then bring the row in until it fits the card. A tall row is a wide
+         row, so the roles carrying three or four photos were overrunning the
+         edge and leaving the last one half off the card until you scrolled
+         sideways to find it. Shrinking the height is what makes them all fit
+         at once. Measured rather than calculated: each photo's border adds a
+         couple of pixels the aspect ratio does not know about. */
+      for (let pass = 0; pass < 3; pass += 1) {
+        const slack = fig.scrollWidth - fig.clientWidth;
+        if (slack <= 1 || fig.scrollWidth <= 0) break;
+        h = Math.max(1, Math.floor(h * (fig.clientWidth / fig.scrollWidth)));
+        fig.style.height = `${h}px`;
+      }
+
       markScroll(fig);
     });
   };
