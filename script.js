@@ -1223,7 +1223,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const field = $('.bg');
   if (field) {
     const FADE_OVER = 1.5;   // screens of scrolling to reach the floor
-    const FLOOR = 0.16;      // never all the way out
+    /* The floor has to leave enough colour for the per section palettes to be
+       legible. At 0.16 the field was so close to black that the zones were
+       switching hue with nothing to show for it. */
+    const FLOOR = 0.42;
     let last = -1;
 
     onScrollFrame(() => {
@@ -1233,6 +1236,28 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       last = fade;
       field.style.setProperty('--bg-fade', String(fade));
     });
+  }
+
+  /* --- The field takes its hue from the section you are reading ---
+     An observer rather than a scroll handler: the zone changes a handful of
+     times in a whole page, so there is no reason to ask the question sixty
+     times a second. The band is the middle tenth of the viewport, so whatever
+     section is under the centre of the screen is the one that sets the mood,
+     and the palettes cross fade in CSS from there. */
+  if (field && 'IntersectionObserver' in window) {
+    const zones = [$('.hero'), ...$$('main section[id]')].filter(Boolean);
+
+    const setZone = (name) => {
+      if (field.dataset.zone !== name) field.dataset.zone = name;
+    };
+
+    const zoneWatcher = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) setZone(entry.target.id || 'hero');
+      }
+    }, { rootMargin: '-45% 0px -45% 0px' });
+
+    zones.forEach((section) => zoneWatcher.observe(section));
   }
 
   /* --- Quote lights up word by word --- */

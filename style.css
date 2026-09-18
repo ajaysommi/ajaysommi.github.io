@@ -13,6 +13,14 @@
   /* Registered so gradients/glows can be animated smoothly. */
   @property --p      { syntax: "<number>";            inherits: true; initial-value: 0; }
 
+  /* Registered so they animate. An unregistered custom property flips
+     from one value to the next with no in between, which would make the
+     colour field jump at every section boundary instead of drifting. */
+  @property --blob-1 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+  @property --blob-2 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+  @property --blob-3 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+  @property --blob-4 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+
   :root {
     --font-sans: "Exo 2", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-display: "Orbitron", var(--font-sans);
@@ -231,21 +239,29 @@
 
   .anchor { display: block; position: relative; top: calc(var(--nav-h) * -1); }
 
+  /* Keyboard users need a way past the nav, but this had been a large bright
+     pill centred at the top of the screen: a lot of shouting for a control
+     most visitors never invoke. Now it is a small quiet chip in the corner
+     where the convention puts it, in the site's own surface colours. Still
+     the first thing Tab reaches, just no longer an event. */
   .skip-link {
     position: fixed;
-    top: 8px;
-    left: 50%;
+    top: 10px;
+    left: 12px;
     z-index: 200;
-    padding: 10px 16px;
+    padding: 7px 13px;
+    border: 1px solid var(--stroke-hi);
     border-radius: var(--r-pill);
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 700;
-    transform: translate(-50%, -160%);
+    background: var(--surface-solid);
+    color: var(--ink);
+    font-size: .82rem;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    transform: translateY(-180%);
     transition: transform var(--dur) var(--ease);
   }
 
-  .skip-link:focus-visible { transform: translate(-50%, 0); }
+  .skip-link:focus-visible { transform: translateY(0); }
 
   .visually-hidden {
     position: absolute;
@@ -363,6 +379,45 @@
   .b2 { width: 44vw; height: 44vw; right: -22vw; bottom: -20vh; background: radial-gradient(60% 60% at 60% 60%, var(--blob-2), transparent 74%); animation-duration: 38s; }
   .b3 { width: 34vw; height: 34vw; right: -10vw; top: -12vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-3), transparent 76%); animation-duration: 42s; }
   .b4 { width: 36vw; height: 36vw; left: 12vw; bottom: -24vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-4), transparent 76%); animation-duration: 40s; }
+
+  /* ---------- Colour zones ----------
+     The field takes its hue from whatever section you are reading. script.js
+     puts the section's name on .bg and the four colours cross fade to the new
+     palette over a couple of seconds, which is slow enough that you notice the
+     room has changed temperature rather than watching it happen. Every palette
+     is a variation on the same two or three hues so nothing ever reads as a
+     different site. */
+  .bg {
+    transition: --blob-1 2.2s linear, --blob-2 2.2s linear,
+                --blob-3 2.2s linear, --blob-4 2.2s linear;
+  }
+
+  /* Ocean: deeper blues for the work history. */
+  [data-theme="midnight"] .bg[data-zone="experience"],
+  [data-theme="midnight"] .bg[data-zone="education"] {
+    --blob-1: rgba(56, 160, 255, .42);
+    --blob-2: rgba(80, 120, 230, .34);
+    --blob-3: rgba(30, 90, 190, .26);
+    --blob-4: rgba(110, 90, 240, .30);
+  }
+
+  /* Circuit: green, for the build sections. */
+  [data-theme="midnight"] .bg[data-zone="projects"],
+  [data-theme="midnight"] .bg[data-zone="skills"] {
+    --blob-1: rgba(60, 240, 190, .40);
+    --blob-2: rgba(70, 200, 150, .32);
+    --blob-3: rgba(40, 160, 130, .24);
+    --blob-4: rgba(90, 210, 255, .28);
+  }
+
+  /* Dusk: warmer, to close on. */
+  [data-theme="midnight"] .bg[data-zone="recs"],
+  [data-theme="midnight"] .bg[data-zone="contact"] {
+    --blob-1: rgba(180, 130, 255, .38);
+    --blob-2: rgba(120, 140, 255, .30);
+    --blob-3: rgba(235, 110, 120, .24);
+    --blob-4: rgba(150, 100, 240, .30);
+  }
 
   .grid-veil { position: absolute; inset: 0; background: var(--veil); }
 
