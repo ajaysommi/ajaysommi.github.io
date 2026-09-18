@@ -59,12 +59,12 @@
     --shadow: 0 20px 60px rgba(0, 0, 0, .38);
     --shadow-lg: 0 28px 80px rgba(0, 0, 0, .5);
 
-    --blob-1: rgba(59, 246, 243, .45);
-    --blob-2: rgba(110, 168, 255, .35);
-    --blob-3: rgba(230, 57, 70, .28);
-    --blob-4: rgba(139, 92, 246, .32);
-    --blob-opacity: .36;
-    --blob-blend: screen;
+    /* The page sits on neutral slate. --bg-lift is the one step up from the
+       base used to keep the field from reading as flat black; --frost is the
+       translucent panel fill that gives elements their frosted pane. */
+    --bg-lift: #141a24;
+    --frost: rgba(255, 255, 255, .035);
+    --frost-edge: rgba(255, 255, 255, .07);
 
     --glyph-color: %239bb8ff;
     --glyph-opacity: 0.08;
@@ -96,12 +96,9 @@
     --shadow: 0 14px 40px rgba(16, 25, 43, .12);
     --shadow-lg: 0 24px 60px rgba(16, 25, 43, .18);
 
-    --blob-1: rgba(10, 127, 109, .30);
-    --blob-2: rgba(0, 88, 176, .22);
-    --blob-3: rgba(214, 58, 13, .16);
-    --blob-4: rgba(120, 80, 220, .18);
-    --blob-opacity: .50;
-    --blob-blend: multiply;
+    --bg-lift: #e2e8f0;
+    --frost: rgba(255, 255, 255, .55);
+    --frost-edge: rgba(15, 23, 42, .07);
 
     --glyph-color: %231b3a6b;
     --glyph-opacity: 0.07;
@@ -133,12 +130,9 @@
     --shadow: 0 20px 60px rgba(0, 20, 8, .55);
     --shadow-lg: 0 28px 80px rgba(0, 20, 8, .65);
 
-    --blob-1: rgba(53, 255, 148, .30);
-    --blob-2: rgba(18, 217, 122, .22);
-    --blob-3: rgba(120, 255, 190, .16);
-    --blob-4: rgba(20, 180, 120, .24);
-    --blob-opacity: .32;
-    --blob-blend: screen;
+    --bg-lift: #0d1a14;
+    --frost: rgba(255, 255, 255, .03);
+    --frost-edge: rgba(255, 255, 255, .06);
 
     --glyph-color: %2335ff94;
     --glyph-opacity: 0.10;
@@ -341,37 +335,41 @@
     z-index: -2;
     overflow: hidden;
     pointer-events: none;
+    /* Two soft neutral pools over the base colour. No filter, no blend mode
+       and nothing animating: this layer paints once and is never touched
+       again, where the coloured blobs it replaced were four huge blurred
+       elements compositing on every frame. */
     background:
-      radial-gradient(900px 600px at 15% 5%, color-mix(in oklab, var(--accent-2) 13%, transparent), transparent 65%),
-      radial-gradient(850px 600px at 85% 10%, color-mix(in oklab, var(--uf-orange) 9%, transparent), transparent 70%),
-      radial-gradient(900px 650px at 50% 100%, color-mix(in oklab, var(--accent) 11%, transparent), transparent 70%);
+      radial-gradient(1100px 760px at 18% 0%, var(--bg-lift), transparent 62%),
+      radial-gradient(1000px 700px at 84% 8%, var(--bg-lift), transparent 60%),
+      radial-gradient(1200px 800px at 50% 100%, var(--bg-lift), transparent 66%);
   }
-
-  .blob {
-    position: absolute;
-    opacity: var(--blob-opacity);
-    filter: blur(85px) saturate(340%);
-    mix-blend-mode: var(--blob-blend);
-    will-change: transform;
-    animation: floaty 34s ease-in-out infinite alternate;
-  }
-
-  .b1 { width: 46vw; height: 46vw; left: -20vw; top: -18vh; background: radial-gradient(60% 60% at 40% 40%, var(--blob-1), transparent 72%); }
-  .b2 { width: 44vw; height: 44vw; right: -22vw; bottom: -20vh; background: radial-gradient(60% 60% at 60% 60%, var(--blob-2), transparent 74%); animation-duration: 38s; }
-  .b3 { width: 34vw; height: 34vw; right: -10vw; top: -12vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-3), transparent 76%); animation-duration: 42s; }
-  .b4 { width: 36vw; height: 36vw; left: 12vw; bottom: -24vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-4), transparent 76%); animation-duration: 40s; }
 
   .grid-veil { position: absolute; inset: 0; background: var(--veil); }
 
   /* ---------- Glass primitive ---------- */
+  /* Frosted pane: a translucent fill with a highlight raked across the top.
+     Deliberately no backdrop-filter. A live blur only shows its work when
+     there is detail behind it to smear, and everything wearing .glass sits on
+     the background field, which is now a single flat colour. Blurring it
+     produced the same pixels at real cost: this rule alone accounted for
+     twenty three separate blur layers on the page, each one re-sampled on
+     every scroll frame. The overlays that genuinely have content passing
+     behind them ask for the blur themselves. */
   .glass {
     position: relative;
     border: 1px solid var(--stroke);
     border-radius: var(--r-lg);
-    background: var(--surface);
+    background:
+      linear-gradient(180deg, var(--frost-edge), transparent 55%),
+      var(--surface);
     box-shadow: var(--shadow);
-    backdrop-filter: blur(18px) saturate(125%);
-    -webkit-backdrop-filter: blur(18px) saturate(125%);
+  }
+
+  /* The nav is fixed and the page runs underneath it, so it keeps a real one. */
+  header.nav.glass {
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
   }
 
   .glass::after {
@@ -900,13 +898,25 @@
   /* No scroll-snap here on purpose: the strip drifts by nudging scrollLeft a
      couple of px at a time, and snap points would keep yanking it back to the
      nearest logo instead of letting it glide. */
+  /* Each logo sits on its own frosted pane. The frost is a translucent fill
+     with a hairline edge and a highlight along the top, not a backdrop-filter:
+     the field behind is a single flat colour now, so a real blur would sample
+     it and produce the same pixels at fifteen times the cost. */
   .logo-cell {
     position: relative;
     display: grid;
     place-items: center;
     flex: 0 0 auto;
-    padding: 6px;
+    padding: 14px 18px;
+    border: 1px solid var(--frost-edge);
+    border-radius: var(--r-lg);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, .04), transparent 58%),
+      var(--frost);
+    transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
   }
+
+  .logo-cell:hover { border-color: var(--stroke-hi); }
 
   .logo {
     width: auto;
@@ -1897,10 +1907,10 @@
     /* The corner nearest the speaker is squared off: that, plus the tail, is
        what turns a rounded box into something being said. */
     border-radius: var(--r-lg) var(--r-lg) var(--r-lg) 6px;
-    background: color-mix(in oklab, var(--surface-solid) 82%, transparent);
+    background:
+      linear-gradient(180deg, var(--frost-edge), transparent 55%),
+      color-mix(in oklab, var(--surface-solid) 82%, transparent);
     box-shadow: var(--shadow);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
   }
 
   .rec:nth-child(even) .rec-bubble {
@@ -2389,12 +2399,6 @@
   html:not(.js) .page-loader { display: none; }
   html:not(.js) .rail { display: none; }
 
-  @keyframes floaty {
-    0%   { transform: translate3d(0, 0, 0) scale(1); }
-    50%  { transform: translate3d(12px, -10px, 0) scale(1.06); }
-    100% { transform: translate3d(-8px, 12px, 0) scale(1.03); }
-  }
-
   @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
   @keyframes padPing {
@@ -2460,7 +2464,6 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
 
-    .blob,
     .loader-stars,
     .loader-orb,
     .loader-bar i,
@@ -2516,9 +2519,9 @@
       padding: 14px;
       border: 1px solid var(--stroke);
       border-radius: var(--r-lg);
-      background: color-mix(in oklab, var(--surface-solid) 76%, transparent);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background:
+        linear-gradient(180deg, var(--frost-edge), transparent 55%),
+        color-mix(in oklab, var(--surface-solid) 76%, transparent);
       display: flex;
       flex-direction: column;
     }
