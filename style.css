@@ -13,6 +13,14 @@
   /* Registered so gradients/glows can be animated smoothly. */
   @property --p      { syntax: "<number>";            inherits: true; initial-value: 0; }
 
+  /* Registered so they animate. An unregistered custom property flips
+     from one value to the next with no in between, which would make the
+     colour field jump at every section boundary instead of drifting. */
+  @property --blob-1 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+  @property --blob-2 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+  @property --blob-3 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+  @property --blob-4 { syntax: "<color>"; inherits: true; initial-value: transparent; }
+
   :root {
     --font-sans: "Exo 2", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-display: "Orbitron", var(--font-sans);
@@ -211,7 +219,11 @@
     text-wrap: balance;
   }
 
-  h1 { font-weight: 800; font-size: clamp(26px, 5.2vw, 42px); }
+  /* The cap is 37 rather than 42 for one reason: at 42 the hero greeting
+     needs 844px and the column it sits in is 772, so it wrapped to two short
+     ragged lines with a lot of empty column beside them. At 37 it sets on a
+     single line and fills the width it was given. */
+  h1 { font-weight: 800; font-size: clamp(26px, 5.2vw, 37px); }
   h2 { font-weight: 700; font-size: clamp(21px, 3.4vw, 29px); }
   h3 { font-weight: 600; font-size: clamp(17px, 2.2vw, 21px); }
 
@@ -226,26 +238,34 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
-    border-radius: 8px;
+    border-radius: var(--r-sm);
   }
 
   .anchor { display: block; position: relative; top: calc(var(--nav-h) * -1); }
 
+  /* Keyboard users need a way past the nav, but this had been a large bright
+     pill centred at the top of the screen: a lot of shouting for a control
+     most visitors never invoke. Now it is a small quiet chip in the corner
+     where the convention puts it, in the site's own surface colours. Still
+     the first thing Tab reaches, just no longer an event. */
   .skip-link {
     position: fixed;
-    top: 8px;
-    left: 50%;
+    top: 10px;
+    left: 12px;
     z-index: 200;
-    padding: 10px 16px;
+    padding: 7px 13px;
+    border: 1px solid var(--stroke-hi);
     border-radius: var(--r-pill);
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 700;
-    transform: translate(-50%, -160%);
+    background: var(--surface-solid);
+    color: var(--ink);
+    font-size: .82rem;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    transform: translateY(-180%);
     transition: transform var(--dur) var(--ease);
   }
 
-  .skip-link:focus-visible { transform: translate(-50%, 0); }
+  .skip-link:focus-visible { transform: translateY(0); }
 
   .visually-hidden {
     position: absolute;
@@ -349,7 +369,10 @@
 
   .blob {
     position: absolute;
-    opacity: var(--blob-opacity);
+    /* --bg-fade runs 1 to .16 as you scroll away from the hero, so the colour
+       is at full strength where it frames the introduction and has almost
+       receded by the time you are reading the rest. */
+    opacity: calc(var(--blob-opacity) * var(--bg-fade, 1));
     filter: blur(85px) saturate(340%);
     mix-blend-mode: var(--blob-blend);
     will-change: transform;
@@ -360,6 +383,112 @@
   .b2 { width: 44vw; height: 44vw; right: -22vw; bottom: -20vh; background: radial-gradient(60% 60% at 60% 60%, var(--blob-2), transparent 74%); animation-duration: 38s; }
   .b3 { width: 34vw; height: 34vw; right: -10vw; top: -12vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-3), transparent 76%); animation-duration: 42s; }
   .b4 { width: 36vw; height: 36vw; left: 12vw; bottom: -24vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-4), transparent 76%); animation-duration: 40s; }
+
+  /* ---------- Colour zones ----------
+     The field takes both its palette and its arrangement from whatever
+     section you are reading. script.js puts the section's name on .bg; the
+     four colours and the four offsets then cross fade to the new pattern
+     over a couple of seconds, slow enough that you notice the room has
+     changed rather than watching it change.
+
+     Position rides on `translate`, which is its own property and composes
+     with the `transform` the drift animation is already using, so the two
+     never fight over the same declaration. */
+  .bg {
+    transition: --blob-1 2.4s linear, --blob-2 2.4s linear,
+                --blob-3 2.4s linear, --blob-4 2.4s linear;
+  }
+
+  .blob { transition: translate 2.4s var(--ease); }
+
+  .b1 { translate: var(--b1x, 0) var(--b1y, 0); }
+  .b2 { translate: var(--b2x, 0) var(--b2y, 0); }
+  .b3 { translate: var(--b3x, 0) var(--b3y, 0); }
+  .b4 { translate: var(--b4x, 0) var(--b4y, 0); }
+
+  /* Logos: warm, a shade of the brand colours the strip is showing. */
+  [data-theme="midnight"] .bg[data-zone="logos"] {
+    --blob-1: rgba(255, 170, 120, .34);
+    --blob-2: rgba(120, 170, 255, .30);
+    --blob-3: rgba(230, 120, 140, .24);
+    --blob-4: rgba(180, 140, 245, .28);
+    --b1x: 14vw;  --b1y: 10vh;
+    --b2x: -10vw; --b2y: -6vh;
+    --b3x: -12vw; --b3y: 14vh;
+    --b4x: 16vw;  --b4y: -12vh;
+  }
+
+  /* The path: ocean, and the pools swing to the outside edges. */
+  [data-theme="midnight"] .bg[data-zone="experience"] {
+    --blob-1: rgba(56, 160, 255, .42);
+    --blob-2: rgba(80, 120, 230, .34);
+    --blob-3: rgba(30, 90, 190, .26);
+    --blob-4: rgba(110, 90, 240, .30);
+    --b1x: -6vw;  --b1y: 22vh;
+    --b2x: 8vw;   --b2y: -18vh;
+    --b3x: 10vw;  --b3y: 26vh;
+    --b4x: -14vw; --b4y: -10vh;
+  }
+
+  /* Education: indigo, gathered toward the top. */
+  [data-theme="midnight"] .bg[data-zone="education"] {
+    --blob-1: rgba(120, 140, 255, .38);
+    --blob-2: rgba(90, 110, 220, .30);
+    --blob-3: rgba(70, 90, 200, .22);
+    --blob-4: rgba(150, 120, 250, .28);
+    --b1x: 18vw;  --b1y: -8vh;
+    --b2x: -16vw; --b2y: 16vh;
+    --b3x: -8vw;  --b3y: -14vh;
+    --b4x: 6vw;   --b4y: 20vh;
+  }
+
+  /* Projects: circuit green, pulled low and wide. */
+  [data-theme="midnight"] .bg[data-zone="projects"] {
+    --blob-1: rgba(60, 240, 190, .40);
+    --blob-2: rgba(70, 200, 150, .32);
+    --blob-3: rgba(40, 160, 130, .24);
+    --blob-4: rgba(90, 210, 255, .28);
+    --b1x: -16vw; --b1y: 18vh;
+    --b2x: 14vw;  --b2y: 12vh;
+    --b3x: 18vw;  --b3y: -16vh;
+    --b4x: -10vw; --b4y: -18vh;
+  }
+
+  /* Skills: emerald, tight to the centre. */
+  [data-theme="midnight"] .bg[data-zone="skills"] {
+    --blob-1: rgba(80, 230, 170, .36);
+    --blob-2: rgba(50, 190, 190, .30);
+    --blob-3: rgba(30, 150, 120, .22);
+    --blob-4: rgba(110, 220, 210, .26);
+    --b1x: 10vw;  --b1y: -16vh;
+    --b2x: -12vw; --b2y: -14vh;
+    --b3x: -18vw; --b3y: 8vh;
+    --b4x: 12vw;  --b4y: 16vh;
+  }
+
+  /* Recommendations: blue, spread to opposite corners. */
+  [data-theme="midnight"] .bg[data-zone="recs"] {
+    --blob-1: rgba(90, 175, 255, .38);
+    --blob-2: rgba(130, 160, 255, .30);
+    --blob-3: rgba(60, 120, 215, .24);
+    --blob-4: rgba(105, 200, 255, .28);
+    --b1x: -18vw; --b1y: -12vh;
+    --b2x: 18vw;  --b2y: 18vh;
+    --b3x: -14vw; --b3y: 20vh;
+    --b4x: 14vw;  --b4y: -16vh;
+  }
+
+  /* Contact: dusk, low and warm to close on. */
+  [data-theme="midnight"] .bg[data-zone="contact"] {
+    --blob-1: rgba(180, 130, 255, .38);
+    --blob-2: rgba(120, 140, 255, .30);
+    --blob-3: rgba(235, 110, 120, .24);
+    --blob-4: rgba(150, 100, 240, .30);
+    --b1x: 8vw;   --b1y: 20vh;
+    --b2x: -8vw;  --b2y: -20vh;
+    --b3x: 16vw;  --b3y: 10vh;
+    --b4x: -16vw; --b4y: 14vh;
+  }
 
   .grid-veil { position: absolute; inset: 0; background: var(--veil); }
 
@@ -395,7 +524,9 @@
     align-items: center;
     gap: 8px;
     width: min(calc(100% - 20px), 1090px);
-    padding: 7px 8px 7px 12px;
+    /* Even on all four sides. It had been 12 on the left against 8 on the
+       right, which put the whole row a few pixels off centre in its own bar. */
+    padding: 7px 10px;
     border-radius: var(--r-pill);
     transform: translateX(-50%);
     transition: box-shadow var(--dur) var(--ease), background var(--dur) var(--ease);
@@ -408,20 +539,20 @@
 
   .brand { flex: 0 0 auto; }
 
+  /* A bare glyph, like every other control in the bar. The ring and the
+     accent wash it used to carry made it the loudest thing on screen for a
+     mark that is only ever "go back to the top". */
   .brand-mark {
     display: grid;
     place-items: center;
     width: 34px;
     height: 34px;
-    /* Match the pill radius the nav bar and icon buttons use, instead of
-       the squarer corners this had, which read as a mismatched shape
-       language sitting right next to fully round buttons. */
     border-radius: var(--r-pill);
-    border: 1px solid var(--stroke-hi);
-    background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 28%, transparent), transparent);
-    color: var(--accent);
-    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+    color: var(--ink-2);
+    transition: color var(--dur) var(--ease);
   }
+
+  .brand:hover .brand-mark { color: var(--ink); }
 
   .brand-mark svg { display: block; }
 
@@ -541,6 +672,49 @@
   header.nav a.cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
 
   .cta-ico { display: none; }
+
+  /* ---------- The bar's controls, above phone widths ----------
+     Square, evenly inset glyphs with nothing drawn around them. Each control
+     was its own shape before: a ringed mark, a 57px wide pill holding the
+     text "⌘K", a 37x34 box pretending to be a circle, and a filled accent
+     button. Four different silhouettes in a row of four. */
+  @media (min-width: 720px) {
+    header.nav .icon-btn,
+    header.nav a.cta {
+      width: 34px;
+      min-width: 34px;
+      height: 34px;
+      padding: 0;
+      /* Width 0, not just a transparent colour: a 1px transparent border
+         still takes a pixel out of the content box, which left the glyphs
+         inset by 9 in three controls and 8 in the fourth. */
+      border-width: 0;
+      background: none;
+      box-shadow: none;
+      color: var(--ink-2);
+    }
+
+    /* One glyph size across the row, so the optical weight matches. */
+    header.nav .icon-btn svg,
+    header.nav .cta-ico,
+    header.nav .brand-mark svg { width: 18px; height: 18px; }
+
+    header.nav .icon-btn:hover,
+    header.nav a.cta:hover {
+      color: var(--ink);
+      background: none;
+      filter: none;
+      transform: none;
+      border-color: transparent;
+    }
+
+    /* The shortcut is still on the button's tooltip and in the footer. */
+    header.nav .kbd-hint { display: none; }
+
+    /* Contact is the envelope, matching the phone dock. */
+    header.nav .cta-ico { display: block; }
+    header.nav .cta-label { display: none; }
+  }
 
   .nav-toggle { display: none; }
   .dock-fab { display: none; }
@@ -732,15 +906,20 @@
     position: absolute;
     inset: -10px;
     z-index: -1;
-    border-radius: 26px;
+    border-radius: calc(var(--r-sm) + 10px);
     background: radial-gradient(60% 60% at 40% 35%, var(--accent-soft), transparent 72%);
     filter: blur(16px);
   }
 
+  /* Sharper than it looks like it should be, because of where it sits. The
+     photo is inset 27px inside a card whose own corner is 26px, so the curve
+     that is actually concentric with the card is a square corner. 20px read
+     as a second, rounder shape floating inside the first. --r-sm splits the
+     difference: clearly nested, still soft. */
   .hero-pic {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 18px;
+    border-radius: var(--r-sm);
     object-fit: cover;
     box-shadow: inset 0 0 0 1px var(--stroke), 0 18px 44px rgba(0, 0, 0, .38);
     outline: 1px solid var(--stroke);
@@ -1097,7 +1276,7 @@
     height: 74px;
     margin: -37px 0 0 -37px;
     border: 2px solid color-mix(in oklab, var(--ink) 22%, transparent);
-    border-radius: 12px;
+    border-radius: var(--r-md);
     background: color-mix(in oklab, var(--bg) 55%, transparent);
     transition: border-color .45s var(--ease), background .45s var(--ease), box-shadow .45s var(--ease);
   }
@@ -2162,7 +2341,7 @@
     height: 28px;
     flex: 0 0 auto;
     border: 1px solid var(--stroke);
-    border-radius: 8px;
+    border-radius: var(--r-sm);
     font-size: .82rem;
     color: var(--accent);
   }
@@ -2672,7 +2851,6 @@
     .hero { padding-inline: 12px; }
     .hero-card { gap: 14px; padding: 15px; }
     .hero-figure { width: clamp(88px, 26vw, 116px); }
-    .hero-pic { border-radius: 15px; }
     .hero-head h1 { font-size: clamp(21px, 6.4vw, 30px); }
     .sub { font-size: .93rem; }
 

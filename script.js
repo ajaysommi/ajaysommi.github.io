@@ -15,6 +15,7 @@ const prefersReduced = () => reduceMotionQuery.matches;
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
+
 /* ==========================================================================
    Boot loader
    Dismissed as soon as the page is usable. The old build faded it with a
@@ -1215,6 +1216,89 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      over a transforming box: expensive everywhere, and enough to stall a
      phone for a moment on first scroll. It now simply sits there. */
 
+  /* --- The colour field recedes as you leave the hero ---
+     Full strength at the top, down to a trace by a screen and a half of
+     scrolling. Written to two decimal places and only when the value has
+     actually moved: the blobs carry an 85px blur and a blend mode, so a
+     redundant write is a repaint of four very expensive layers. */
+  const field = $('.bg');
+  if (field) {
+    const FADE_OVER = 1.5;   // screens of scrolling to reach the floor
+    /* The floor decides whether the per section palettes are visible at all,
+       and it has been too low twice. At .16 the field was effectively black
+       below the hero. At .42 the blobs were down to about rgb(5,10,15) of
+       contribution once the gradient alpha and the screen blend were through
+       with them, which is a few units per channel: the hue was changing and
+       there was nothing to see. At .75 the colour reads while the hero is
+       still clearly the brightest point on the page. */
+    const FLOOR = 0.75;
+    let last = -1;
+
+    onScrollFrame(() => {
+      const p = clamp(scrollY / Math.max(innerHeight * FADE_OVER, 1), 0, 1);
+      const fade = Math.round((1 - (1 - FLOOR) * p) * 100) / 100;
+      if (fade === last) return;
+      last = fade;
+      field.style.setProperty('--bg-fade', String(fade));
+    });
+  }
+
+  /* --- The field takes its palette and arrangement from the section ---
+     Whichever section you have most recently scrolled past the upper middle
+     of the screen owns the field. An IntersectionObserver on a centre band
+     was the first approach and it had a hole: the last section is short and
+     the page ends before it ever reaches the middle, so contact could never
+     win and the closing palette was unreachable. A comparison against
+     cached offsets has no such edge, and costs a walk of eight numbers.
+     Offsets are re-read on resize, not on every frame. */
+  if (field) {
+    const marks = [];
+    let maxScroll = 0;
+
+    /* Document offsets, measured through the rect rather than offsetTop:
+       offsetTop is relative to the nearest positioned ancestor, and these
+       sections sit inside one, so it read as a much smaller number and every
+       zone switched at the wrong point on the page. */
+    const remeasure = () => {
+      marks.length = 0;
+      const add = (el, name) => {
+        if (el) marks.push({ top: el.getBoundingClientRect().top + scrollY, name });
+      };
+      add($('.hero'), 'hero');
+      $$('main section[id]').forEach((sec) => add(sec, sec.id));
+      marks.sort((a, b) => a.top - b.top);
+      maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    };
+
+    remeasure();
+    addEventListener('resize', remeasure, { passive: true });
+    if (document.fonts?.ready) document.fonts.ready.then(remeasure).catch(() => {});
+
+    let zone = '';
+    onScrollFrame(() => {
+      if (!marks.length) return;
+
+      /* Normally the section under the upper middle of the screen owns the
+         field. Through the last screen of the page that mark slides toward
+         the bottom, because the page runs out before the closing section can
+         reach the middle: without this, contact sat 109px short of the line
+         at full scroll and its palette was unreachable. */
+      const runway = maxScroll - scrollY;
+      const slide = runway < innerHeight ? (innerHeight - runway) / innerHeight : 0;
+      const line = scrollY + innerHeight * (0.45 + 0.5 * clamp(slide, 0, 1));
+
+      let name = marks[0].name;
+      for (const mark of marks) {
+        if (mark.top > line) break;
+        name = mark.name;
+      }
+
+      if (name === zone) return;
+      zone = name;
+      field.dataset.zone = name;
+    });
+  }
+
   /* --- Quote lights up word by word --- */
   const quote = $('.section.quote blockquote');
   if (quote && !quote.querySelector('span')) {
@@ -1553,6 +1637,27 @@ const terminal = (() => {
       `  <span class="t-key">exit</span>        close this terminal`
     ),
 
+    /* Undocumented on purpose: these are not in help, and finding one is the
+       whole point. */
+    sudo: (rest) => write(
+      rest
+        ? `<span class="t-warn">ajay is not in the sudoers file.</span> This incident has been reported.`
+        : `<span class="t-dim">usage: sudo &lt;command&gt;. Though it will not help you here.</span>`
+    ),
+
+    ls: () => write(
+      `<span class="t-dim">drwxr-xr-x</span>  experience/\n` +
+      `<span class="t-dim">drwxr-xr-x</span>  projects/\n` +
+      `<span class="t-dim">drwxr-xr-x</span>  education/\n` +
+      `<span class="t-dim">-rw-r--r--</span>  resume.pdf\n` +
+      `<span class="t-dim">-rw-------</span>  .secrets  <span class="t-dim">(nice try)</span>`
+    ),
+
+    coffee: () => write(
+      `<span class="t-warn">418</span> I'm a teapot.\n` +
+      `<span class="t-dim">Though realistically it is closer to a fourth cold brew.</span>`
+    ),
+
     whoami: () => write(
       `ajay sommi\n` +
       `<span class="t-dim">Software engineer · Gainesville, FL · U.S. citizen</span>\n` +
@@ -1632,7 +1737,9 @@ const terminal = (() => {
     exit: () => close(),
   };
 
-  const ALIASES = { ls: 'help', man: 'help', '?': 'help', who: 'whoami', exp: 'experience', work: 'experience', proj: 'projects', edu: 'education', email: 'contact', cv: 'resume', quit: 'exit', close: 'exit' };
+  /* `ls` used to alias to help; it lists a directory now, which is what a
+     terminal ought to do with it. `man` and `?` still reach help. */
+  const ALIASES = { man: 'help', '?': 'help', who: 'whoami', exp: 'experience', work: 'experience', proj: 'projects', edu: 'education', email: 'contact', cv: 'resume', quit: 'exit', close: 'exit' };
 
   const run = (raw) => {
     const line = raw.trim();
