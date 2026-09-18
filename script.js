@@ -1215,6 +1215,26 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      over a transforming box: expensive everywhere, and enough to stall a
      phone for a moment on first scroll. It now simply sits there. */
 
+  /* --- The colour field recedes as you leave the hero ---
+     Full strength at the top, down to a trace by a screen and a half of
+     scrolling. Written to two decimal places and only when the value has
+     actually moved: the blobs carry an 85px blur and a blend mode, so a
+     redundant write is a repaint of four very expensive layers. */
+  const field = $('.bg');
+  if (field) {
+    const FADE_OVER = 1.5;   // screens of scrolling to reach the floor
+    const FLOOR = 0.16;      // never all the way out
+    let last = -1;
+
+    onScrollFrame(() => {
+      const p = clamp(scrollY / Math.max(innerHeight * FADE_OVER, 1), 0, 1);
+      const fade = Math.round((1 - (1 - FLOOR) * p) * 100) / 100;
+      if (fade === last) return;
+      last = fade;
+      field.style.setProperty('--bg-fade', String(fade));
+    });
+  }
+
   /* --- Quote lights up word by word --- */
   const quote = $('.section.quote blockquote');
   if (quote && !quote.querySelector('span')) {

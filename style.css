@@ -349,7 +349,10 @@
 
   .blob {
     position: absolute;
-    opacity: var(--blob-opacity);
+    /* --bg-fade runs 1 to .16 as you scroll away from the hero, so the colour
+       is at full strength where it frames the introduction and has almost
+       receded by the time you are reading the rest. */
+    opacity: calc(var(--blob-opacity) * var(--bg-fade, 1));
     filter: blur(85px) saturate(340%);
     mix-blend-mode: var(--blob-blend);
     will-change: transform;
