@@ -385,42 +385,109 @@
   .b4 { width: 36vw; height: 36vw; left: 12vw; bottom: -24vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-4), transparent 76%); animation-duration: 40s; }
 
   /* ---------- Colour zones ----------
-     The field takes its hue from whatever section you are reading. script.js
-     puts the section's name on .bg and the four colours cross fade to the new
-     palette over a couple of seconds, which is slow enough that you notice the
-     room has changed temperature rather than watching it happen. Every palette
-     is a variation on the same two or three hues so nothing ever reads as a
-     different site. */
+     The field takes both its palette and its arrangement from whatever
+     section you are reading. script.js puts the section's name on .bg; the
+     four colours and the four offsets then cross fade to the new pattern
+     over a couple of seconds, slow enough that you notice the room has
+     changed rather than watching it change.
+
+     Position rides on `translate`, which is its own property and composes
+     with the `transform` the drift animation is already using, so the two
+     never fight over the same declaration. */
   .bg {
-    transition: --blob-1 2.2s linear, --blob-2 2.2s linear,
-                --blob-3 2.2s linear, --blob-4 2.2s linear;
+    transition: --blob-1 2.4s linear, --blob-2 2.4s linear,
+                --blob-3 2.4s linear, --blob-4 2.4s linear;
   }
 
-  /* Ocean: deeper blues for the work history. */
-  [data-theme="midnight"] .bg[data-zone="experience"],
-  [data-theme="midnight"] .bg[data-zone="education"] {
+  .blob { transition: translate 2.4s var(--ease); }
+
+  .b1 { translate: var(--b1x, 0) var(--b1y, 0); }
+  .b2 { translate: var(--b2x, 0) var(--b2y, 0); }
+  .b3 { translate: var(--b3x, 0) var(--b3y, 0); }
+  .b4 { translate: var(--b4x, 0) var(--b4y, 0); }
+
+  /* Logos: warm, a shade of the brand colours the strip is showing. */
+  [data-theme="midnight"] .bg[data-zone="logos"] {
+    --blob-1: rgba(255, 170, 120, .34);
+    --blob-2: rgba(120, 170, 255, .30);
+    --blob-3: rgba(230, 120, 140, .24);
+    --blob-4: rgba(180, 140, 245, .28);
+    --b1x: 14vw;  --b1y: 10vh;
+    --b2x: -10vw; --b2y: -6vh;
+    --b3x: -12vw; --b3y: 14vh;
+    --b4x: 16vw;  --b4y: -12vh;
+  }
+
+  /* The path: ocean, and the pools swing to the outside edges. */
+  [data-theme="midnight"] .bg[data-zone="experience"] {
     --blob-1: rgba(56, 160, 255, .42);
     --blob-2: rgba(80, 120, 230, .34);
     --blob-3: rgba(30, 90, 190, .26);
     --blob-4: rgba(110, 90, 240, .30);
+    --b1x: -6vw;  --b1y: 22vh;
+    --b2x: 8vw;   --b2y: -18vh;
+    --b3x: 10vw;  --b3y: 26vh;
+    --b4x: -14vw; --b4y: -10vh;
   }
 
-  /* Circuit: green, for the build sections. */
-  [data-theme="midnight"] .bg[data-zone="projects"],
-  [data-theme="midnight"] .bg[data-zone="skills"] {
+  /* Education: indigo, gathered toward the top. */
+  [data-theme="midnight"] .bg[data-zone="education"] {
+    --blob-1: rgba(120, 140, 255, .38);
+    --blob-2: rgba(90, 110, 220, .30);
+    --blob-3: rgba(70, 90, 200, .22);
+    --blob-4: rgba(150, 120, 250, .28);
+    --b1x: 18vw;  --b1y: -8vh;
+    --b2x: -16vw; --b2y: 16vh;
+    --b3x: -8vw;  --b3y: -14vh;
+    --b4x: 6vw;   --b4y: 20vh;
+  }
+
+  /* Projects: circuit green, pulled low and wide. */
+  [data-theme="midnight"] .bg[data-zone="projects"] {
     --blob-1: rgba(60, 240, 190, .40);
     --blob-2: rgba(70, 200, 150, .32);
     --blob-3: rgba(40, 160, 130, .24);
     --blob-4: rgba(90, 210, 255, .28);
+    --b1x: -16vw; --b1y: 18vh;
+    --b2x: 14vw;  --b2y: 12vh;
+    --b3x: 18vw;  --b3y: -16vh;
+    --b4x: -10vw; --b4y: -18vh;
   }
 
-  /* Dusk: warmer, to close on. */
-  [data-theme="midnight"] .bg[data-zone="recs"],
+  /* Skills: emerald, tight to the centre. */
+  [data-theme="midnight"] .bg[data-zone="skills"] {
+    --blob-1: rgba(80, 230, 170, .36);
+    --blob-2: rgba(50, 190, 190, .30);
+    --blob-3: rgba(30, 150, 120, .22);
+    --blob-4: rgba(110, 220, 210, .26);
+    --b1x: 10vw;  --b1y: -16vh;
+    --b2x: -12vw; --b2y: -14vh;
+    --b3x: -18vw; --b3y: 8vh;
+    --b4x: 12vw;  --b4y: 16vh;
+  }
+
+  /* Recommendations: blue, spread to opposite corners. */
+  [data-theme="midnight"] .bg[data-zone="recs"] {
+    --blob-1: rgba(90, 175, 255, .38);
+    --blob-2: rgba(130, 160, 255, .30);
+    --blob-3: rgba(60, 120, 215, .24);
+    --blob-4: rgba(105, 200, 255, .28);
+    --b1x: -18vw; --b1y: -12vh;
+    --b2x: 18vw;  --b2y: 18vh;
+    --b3x: -14vw; --b3y: 20vh;
+    --b4x: 14vw;  --b4y: -16vh;
+  }
+
+  /* Contact: dusk, low and warm to close on. */
   [data-theme="midnight"] .bg[data-zone="contact"] {
     --blob-1: rgba(180, 130, 255, .38);
     --blob-2: rgba(120, 140, 255, .30);
     --blob-3: rgba(235, 110, 120, .24);
     --blob-4: rgba(150, 100, 240, .30);
+    --b1x: 8vw;   --b1y: 20vh;
+    --b2x: -8vw;  --b2y: -20vh;
+    --b3x: 16vw;  --b3y: 10vh;
+    --b4x: -16vw; --b4y: 14vh;
   }
 
   .grid-veil { position: absolute; inset: 0; background: var(--veil); }
@@ -839,15 +906,20 @@
     position: absolute;
     inset: -10px;
     z-index: -1;
-    border-radius: calc(var(--r-lg) + 10px);
+    border-radius: calc(var(--r-sm) + 10px);
     background: radial-gradient(60% 60% at 40% 35%, var(--accent-soft), transparent 72%);
     filter: blur(16px);
   }
 
+  /* Sharper than it looks like it should be, because of where it sits. The
+     photo is inset 27px inside a card whose own corner is 26px, so the curve
+     that is actually concentric with the card is a square corner. 20px read
+     as a second, rounder shape floating inside the first. --r-sm splits the
+     difference: clearly nested, still soft. */
   .hero-pic {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: var(--r-lg);
+    border-radius: var(--r-sm);
     object-fit: cover;
     box-shadow: inset 0 0 0 1px var(--stroke), 0 18px 44px rgba(0, 0, 0, .38);
     outline: 1px solid var(--stroke);
@@ -2779,7 +2851,6 @@
     .hero { padding-inline: 12px; }
     .hero-card { gap: 14px; padding: 15px; }
     .hero-figure { width: clamp(88px, 26vw, 116px); }
-    .hero-pic { border-radius: var(--r-md); }
     .hero-head h1 { font-size: clamp(21px, 6.4vw, 30px); }
     .sub { font-size: .93rem; }
 
