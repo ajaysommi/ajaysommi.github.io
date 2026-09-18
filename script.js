@@ -1224,10 +1224,14 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const field = $('.bg');
   if (field) {
     const FADE_OVER = 1.5;   // screens of scrolling to reach the floor
-    /* The floor has to leave enough colour for the per section palettes to be
-       legible. At 0.16 the field was so close to black that the zones were
-       switching hue with nothing to show for it. */
-    const FLOOR = 0.42;
+    /* The floor decides whether the per section palettes are visible at all,
+       and it has been too low twice. At .16 the field was effectively black
+       below the hero. At .42 the blobs were down to about rgb(5,10,15) of
+       contribution once the gradient alpha and the screen blend were through
+       with them, which is a few units per channel: the hue was changing and
+       there was nothing to see. At .75 the colour reads while the hero is
+       still clearly the brightest point on the page. */
+    const FLOOR = 0.75;
     let last = -1;
 
     onScrollFrame(() => {
