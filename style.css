@@ -572,25 +572,27 @@
     transition: transform .34s var(--ease), opacity .34s var(--ease);
   }
 
-  /* Home: the outline redraws itself, so the silhouette stays the single
-     clean path it was rather than being cut into parts that move. */
-  /* 53 is the path's measured length. A dasharray equal to the whole path
-     means one unbroken dash, so at rest the outline is exactly as it was. */
-  .ico-home path { --home-len: 53; stroke-dasharray: var(--home-len); }
-  .brand:hover .ico-home path { animation: home-draw .75s var(--ease); }
+  /* Home has no hover animation. It is the one control whose meaning does
+     not need demonstrating, and every version of it read as fidgeting. */
 
-  @keyframes home-draw {
-    from { stroke-dashoffset: var(--home-len, 53); }
-    to   { stroke-dashoffset: 0; }
-  }
-
-  /* Contact: the flap folds open and stays open. */
+  /* Contact: the flap folds up and open, and the fold across the front of
+     the envelope comes into view behind it, the way a real one looks once
+     the flap is lifted. */
   .cta-ico .mail-flap { transform-origin: center top; }
-  a.cta:hover .cta-ico .mail-flap { transform: scaleY(-1); }
+  .cta-ico .mail-front { opacity: 0; }
 
-  /* Search: the lens swells and a spark catches in the glass. */
+  a.cta:hover .cta-ico .mail-flap { transform: scaleY(-1); }
+  a.cta:hover .cta-ico .mail-front { opacity: 1; }
+
+  /* Search: the lens swells and a spark catches across the glyph. The spark
+     is drawn larger than the glass and sits over it: confined inside the
+     lens it was too small to register at the size this renders. */
   .ico-search .lens { transform-origin: center; }
-  .ico-search .lens-spark { opacity: 0; transform-origin: 10.5px 10.5px; }
+  .ico-search .lens-spark {
+    opacity: 0;
+    transform-origin: 10.5px 10.5px;
+    transform: scale(.2);
+  }
 
   #paletteBtn:hover .ico-search .lens,
   #paletteBtnMobile:hover .ico-search .lens { transform: scale(1.12); }
@@ -604,11 +606,11 @@
   }
 
   @keyframes lens-spark {
-    0%   { opacity: 0; transform: scale(.2) rotate(-40deg); }
-    30%  { opacity: 1; transform: scale(1)  rotate(0deg); }
-    55%  { opacity: 1; transform: scale(1)  rotate(0deg); }
-    85%  { opacity: 0; transform: scale(.2) rotate(40deg); }
-    100% { opacity: 0; transform: scale(.2) rotate(40deg); }
+    0%   { opacity: 0; transform: scale(.3)  rotate(-45deg); }
+    28%  { opacity: 1; transform: scale(1.9) rotate(0deg); }
+    58%  { opacity: 1; transform: scale(1.9) rotate(0deg); }
+    88%  { opacity: 0; transform: scale(.3)  rotate(45deg); }
+    100% { opacity: 0; transform: scale(.3)  rotate(45deg); }
   }
 
   /* Theme: the icon you are about to switch to rises into the button as the
@@ -649,7 +651,6 @@
     .ico-search circle,
     .ico-search path,
     #themeBtn svg { transition: none; }
-    .brand:hover .ico-home path { animation: none; }
     #paletteBtn:hover .ico-search .lens-spark,
     #paletteBtnMobile:hover .ico-search .lens-spark { animation: none; opacity: 1; }
   }
@@ -2864,6 +2865,19 @@
 
     header.nav .icon-btn:hover,
     header.nav .brand-mark:hover { color: var(--ink); }
+
+    /* One glyph size across the dock, the same rule the desktop bar gets.
+       The envelope was authored at 19 against everything else at 17, which
+       made it the heaviest thing in the row. */
+    header.nav .icon-btn svg,
+    header.nav .cta-ico,
+    header.nav .brand-mark svg,
+    .dock-fab .icon-btn svg { width: 17px; height: 17px; }
+
+    /* Three solid bars carry more ink than an outlined glyph of the same
+       box, so the hamburger is drawn a little smaller and looser to sit at
+       the same weight as the icons beside it. */
+    header.nav .burger { width: 15px; gap: 3.5px; }
 
     /* Contact loses its own pill and becomes another glyph in the row. */
     header.nav a.cta {
