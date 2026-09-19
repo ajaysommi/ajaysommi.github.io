@@ -176,20 +176,6 @@ syncLogoTheme();
   });
   scrim?.addEventListener('click', closeSheet);
 
-  /* The home mark travels with you. The class is cleared on animationend so
-     a second click replays it rather than doing nothing. */
-  const brandMark = $('.brand .brand-mark');
-  $('.brand')?.addEventListener('click', () => {
-    if (!brandMark || prefersReduced()) return;
-    brandMark.classList.remove('is-travelling');
-    void brandMark.offsetWidth;   // restart the animation from the top
-    brandMark.classList.add('is-travelling');
-  });
-
-  brandMark?.addEventListener('animationend', () => {
-    brandMark.classList.remove('is-travelling');
-  });
-
   // Delegated smooth scrolling for every in-page link.
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a[href^="#"]');
