@@ -575,14 +575,12 @@
   /* Home has no hover animation. It is the one control whose meaning does
      not need demonstrating, and every version of it read as fidgeting. */
 
-  /* Contact: the flap folds up and open, and the fold across the front of
-     the envelope comes into view behind it, the way a real one looks once
-     the flap is lifted. */
+  /* Contact: the flap lifts and stays up. The bottom fold is gone, but the
+     line across the top has to stay: it is the envelope's mouth, and without
+     it the walls run straight into the flap and the whole thing becomes the
+     home icon. Drawn and discarded three ways before settling on that. */
   .cta-ico .mail-flap { transform-origin: center top; }
-  .cta-ico .mail-front { opacity: 0; }
-
   a.cta:hover .cta-ico .mail-flap { transform: scaleY(-1); }
-  a.cta:hover .cta-ico .mail-front { opacity: 1; }
 
   /* Search: the lens swells and a spark catches across the glyph. The spark
      is drawn larger than the glass and sits over it: confined inside the
@@ -590,8 +588,8 @@
   .ico-search .lens { transform-origin: center; }
   .ico-search .lens-spark {
     opacity: 0;
-    transform-origin: 10.5px 10.5px;
-    transform: scale(.2);
+    transform-origin: 7px 6.9px;
+    transform: scale(.25);
   }
 
   #paletteBtn:hover .ico-search .lens,
@@ -606,11 +604,11 @@
   }
 
   @keyframes lens-spark {
-    0%   { opacity: 0; transform: scale(.3)  rotate(-45deg); }
-    28%  { opacity: 1; transform: scale(1.9) rotate(0deg); }
-    58%  { opacity: 1; transform: scale(1.9) rotate(0deg); }
-    88%  { opacity: 0; transform: scale(.3)  rotate(45deg); }
-    100% { opacity: 0; transform: scale(.3)  rotate(45deg); }
+    0%   { opacity: 0; transform: scale(.25) rotate(-45deg); }
+    28%  { opacity: 1; transform: scale(1.5) rotate(0deg); }
+    58%  { opacity: 1; transform: scale(1.5) rotate(0deg); }
+    88%  { opacity: 0; transform: scale(.25) rotate(45deg); }
+    100% { opacity: 0; transform: scale(.25) rotate(45deg); }
   }
 
   /* Theme: the icon you are about to switch to rises into the button as the
