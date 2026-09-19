@@ -565,7 +565,6 @@
      once and resetting: nothing here is a click confirmation, it is a preview
      of what you are about to do. Motion only, so `transform` is all that
      moves and every part keeps its own origin inside its own box. */
-  .ico-home path,
   .cta-ico path,
   .ico-search circle,
   .ico-search path {
@@ -573,21 +572,25 @@
     transition: transform .34s var(--ease), opacity .34s var(--ease);
   }
 
-  /* Home: the roof lifts off the walls. */
-  .ico-home .home-roof { transform-origin: center bottom; }
-  .brand:hover .ico-home .home-roof { transform: translateY(-2.4px); }
-  .brand:hover .ico-home .home-walls { transform: translateY(.6px); }
+  /* Home: the outline redraws itself, so the silhouette stays the single
+     clean path it was rather than being cut into parts that move. */
+  /* 53 is the path's measured length. A dasharray equal to the whole path
+     means one unbroken dash, so at rest the outline is exactly as it was. */
+  .ico-home path { --home-len: 53; stroke-dasharray: var(--home-len); }
+  .brand:hover .ico-home path { animation: home-draw .75s var(--ease); }
 
-  /* Contact: the flap folds open and a note rises out of the envelope. */
+  @keyframes home-draw {
+    from { stroke-dashoffset: var(--home-len, 53); }
+    to   { stroke-dashoffset: 0; }
+  }
+
+  /* Contact: the flap folds open and stays open. */
   .cta-ico .mail-flap { transform-origin: center top; }
-  .cta-ico .mail-note { transform-origin: center bottom; opacity: 0; }
-
   a.cta:hover .cta-ico .mail-flap { transform: scaleY(-1); }
-  a.cta:hover .cta-ico .mail-note { transform: translateY(-4.5px); opacity: 1; }
 
-  /* Search: the lens swells and a glint travels across the glass. */
+  /* Search: the lens swells and a spark catches in the glass. */
   .ico-search .lens { transform-origin: center; }
-  .ico-search .lens-glint { opacity: 0; transform-origin: center; }
+  .ico-search .lens-spark { opacity: 0; transform-origin: 10.5px 10.5px; }
 
   #paletteBtn:hover .ico-search .lens,
   #paletteBtnMobile:hover .ico-search .lens { transform: scale(1.12); }
@@ -595,16 +598,17 @@
   #paletteBtn:hover .ico-search .lens-handle,
   #paletteBtnMobile:hover .ico-search .lens-handle { transform: translate(1px, 1px); }
 
-  #paletteBtn:hover .ico-search .lens-glint,
-  #paletteBtnMobile:hover .ico-search .lens-glint {
-    animation: lens-sweep 1.1s var(--ease) infinite;
+  #paletteBtn:hover .ico-search .lens-spark,
+  #paletteBtnMobile:hover .ico-search .lens-spark {
+    animation: lens-spark 1.5s var(--ease) infinite;
   }
 
-  @keyframes lens-sweep {
-    0%   { opacity: 0; transform: translate(-2.6px, 2.6px); }
-    35%  { opacity: .9; }
-    70%  { opacity: .9; }
-    100% { opacity: 0; transform: translate(2.6px, -2.6px); }
+  @keyframes lens-spark {
+    0%   { opacity: 0; transform: scale(.2) rotate(-40deg); }
+    30%  { opacity: 1; transform: scale(1)  rotate(0deg); }
+    55%  { opacity: 1; transform: scale(1)  rotate(0deg); }
+    85%  { opacity: 0; transform: scale(.2) rotate(40deg); }
+    100% { opacity: 0; transform: scale(.2) rotate(40deg); }
   }
 
   /* Theme: the icon you are about to switch to rises into the button as the
@@ -641,13 +645,13 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ico-home path,
     .cta-ico path,
     .ico-search circle,
     .ico-search path,
     #themeBtn svg { transition: none; }
-    #paletteBtn:hover .ico-search .lens-glint,
-    #paletteBtnMobile:hover .ico-search .lens-glint { animation: none; opacity: .9; }
+    .brand:hover .ico-home path { animation: none; }
+    #paletteBtn:hover .ico-search .lens-spark,
+    #paletteBtnMobile:hover .ico-search .lens-spark { animation: none; opacity: 1; }
   }
 
   .nav-links {
