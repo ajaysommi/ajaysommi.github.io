@@ -552,14 +552,24 @@
     transition: color var(--dur) var(--ease);
   }
 
+  /* Colour only, the same as every other control in the bar. This used to
+     also rotate 8 degrees, scale up and throw an accent glow, which is why
+     it read as a different kind of button to the ones beside it. */
   .brand:hover .brand-mark { color: var(--ink); }
 
   .brand-mark svg { display: block; }
 
-  .brand:hover .brand-mark {
-    transform: rotate(-8deg) scale(1.06);
-    box-shadow: 0 0 22px var(--accent-soft);
+  /* Clicking it sends you to the top, so the mark goes up and out and
+     arrives again from below. 9px and half a second: enough to register as
+     having travelled, not enough to be a performance. */
+  @keyframes home-travel {
+    0%   { transform: translateY(0);    opacity: 1; }
+    34%  { transform: translateY(-9px); opacity: 0; }
+    35%  { transform: translateY(8px);  opacity: 0; }
+    100% { transform: translateY(0);    opacity: 1; }
   }
+
+  .brand-mark.is-travelling { animation: home-travel .5s var(--ease); }
 
   .nav-links {
     display: flex;
