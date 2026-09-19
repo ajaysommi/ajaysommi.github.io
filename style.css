@@ -560,16 +560,22 @@
   .brand-mark svg { display: block; }
 
   /* Clicking it sends you to the top, so the mark goes up and out and
-     arrives again from below. 9px and half a second: enough to register as
-     having travelled, not enough to be a performance. */
+     arrives again from below. The first pass at this moved 9px and faded
+     out inside a third of the animation, which meant most of it was spent
+     showing nothing: it read as a flicker rather than as travel. It now
+     covers twice the distance, shrinks as it goes so the exit has some
+     perspective to it, and overshoots slightly on the way back so the
+     landing is visible too. */
   @keyframes home-travel {
-    0%   { transform: translateY(0);    opacity: 1; }
-    34%  { transform: translateY(-9px); opacity: 0; }
-    35%  { transform: translateY(8px);  opacity: 0; }
-    100% { transform: translateY(0);    opacity: 1; }
+    0%   { transform: translateY(0)     scale(1);    opacity: 1; }
+    14%  { transform: translateY(3px)   scale(.94);  opacity: 1; }
+    34%  { transform: translateY(-20px) scale(.78);  opacity: 0; }
+    35%  { transform: translateY(18px)  scale(.82);  opacity: 0; }
+    68%  { transform: translateY(-4px)  scale(1.06); opacity: 1; }
+    100% { transform: translateY(0)     scale(1);    opacity: 1; }
   }
 
-  .brand-mark.is-travelling { animation: home-travel .5s var(--ease); }
+  .brand-mark.is-travelling { animation: home-travel .62s var(--ease); }
 
   .nav-links {
     display: flex;
