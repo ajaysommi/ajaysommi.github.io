@@ -169,18 +169,19 @@
 
         <!-- Planet limb behind the hero. Entirely CSS gradients: no photograph
              of Earth, just the shading a sphere and an atmosphere produce. The
-             sun's position and every colour come from --sun-x/--sun-y and the
-             palette on [data-sky], which script.js sets from the same hour it
-             uses to pick the greeting. -->
+             sun's position and every colour come from script.js, which works
+             out where the sun actually is from the clock: a continuous angle
+             through the day rather than a handful of named phases. The markup
+             is only the parts; the time decides how they look. -->
         <div class="hero-sky" aria-hidden="true">
           <span class="sky-stars"></span>
           <span class="sky-sun"></span>
           <span class="sky-limb">
             <span class="limb-glow"></span>
+            <span class="limb-sea"></span>
             <span class="limb-land"></span>
             <span class="limb-lights"></span>
           </span>
-          <span class="sky-here"><span></span><i></i><b></b></span>
         </div>
 
 

@@ -16,88 +16,209 @@ const prefersReduced = () => reduceMotionQuery.matches;
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
 /* ==========================================================================
-   Time of day greeting
-   Runs before the scramble effect reads the heading, so whatever it writes
-   is what gets scrambled into place. The tail is taken from the markup
-   rather than repeated here, so the sentence stays in one place and a
-   visitor without JavaScript still gets a whole greeting.
+   Time of day: the greeting and the sky
+
+   One reading of the clock drives both, so they can never disagree.
+
+   The sky is not a set of named phases. The sun is put on an arc through the
+   day and everything else follows from where it lands: the surface shading,
+   the terminator, the atmosphere colour, the stars, the city lights. Six in
+   the morning is genuinely a different picture from half seven, because the
+   sun is genuinely somewhere else.
+
+   The greeting runs before the scramble effect reads the heading, so what it
+   writes is what gets scrambled into place. The tail is taken from the markup
+   rather than repeated here, so the sentence stays in one place and a visitor
+   without JavaScript still gets a whole one.
    ========================================================================== */
-(function greeting() {
+(function sky() {
   const card = $('#heroCard');
   const el = $('[data-scramble]');
 
-  /* One reading of the clock drives both the sentence and the sky, so they
-     can never disagree about what time it is. */
-  function phaseFor(hour) {
+  /* ---- colour helpers -------------------------------------------------- */
+
+  const hex = (h) => [
+    parseInt(h.slice(1, 3), 16),
+    parseInt(h.slice(3, 5), 16),
+    parseInt(h.slice(5, 7), 16),
+  ];
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  const css = (c) => 'rgb(' + c[0] + ' ' + c[1] + ' ' + c[2] + ')';
+  const rgba = (c, a) => 'rgb(' + c[0] + ' ' + c[1] + ' ' + c[2] + ' / ' + a.toFixed(3) + ')';
+
+  /* ---- the palette, keyed to how high the sun is ------------------------
+
+     Each stop is what the scene looks like at that solar elevation, from
+     -1 (midnight, sun straight through the planet) to 1 (noon overhead).
+     Between stops everything is interpolated, which is where the detail
+     comes from: there is no step anywhere, just a curve. */
+  const STOPS = [
+    { e: -1.00, skyDeep: '#03040a', skyHigh: '#070c18', atmo: '#4c93e8', atmoA: .34,
+      surfLit: '#0d2038', surfDark: '#03050b', sun: '#cfe2ff', sunA: .20,
+      land: '#24507f', landA: .22, sea: '#12325c', seaA: .18, glint: '#5f86c4',
+      star: 1, city: .90 },
+
+    { e: -0.28, skyDeep: '#04060d', skyHigh: '#0d1226', atmo: '#5f80d8', atmoA: .38,
+      surfLit: '#132844', surfDark: '#03050c', sun: '#e6d8ff', sunA: .24,
+      land: '#2d5580', landA: .32, sea: '#173a63', seaA: .28, glint: '#7f9ed2',
+      star: .82, city: .78 },
+
+    { e: -0.08, skyDeep: '#06070f', skyHigh: '#141633', atmo: '#8a7ae0', atmoA: .42,
+      surfLit: '#1b2c4d', surfDark: '#04060d', sun: '#ffd9b0', sunA: .30,
+      land: '#4a4a76', landA: .42, sea: '#22426b', seaA: .40, glint: '#a9a7de',
+      star: .52, city: .58 },
+
+    { e:  0.05, skyDeep: '#0a0c18', skyHigh: '#241f38', atmo: '#ff8f5e', atmoA: .50,
+      surfLit: '#2e4763', surfDark: '#070a13', sun: '#ffe3bc', sunA: .42,
+      land: '#6a5566', landA: .50, sea: '#2c4f75', seaA: .52, glint: '#ffd0a0',
+      star: .20, city: .32 },
+
+    { e:  0.34, skyDeep: '#07101f', skyHigh: '#16294a', atmo: '#7fb6f0', atmoA: .50,
+      surfLit: '#2b5b87', surfDark: '#06111f', sun: '#fff4de', sunA: .45,
+      land: '#3d6f6a', landA: .58, sea: '#26608f', seaA: .58, glint: '#dceeff',
+      star: .04, city: .06 },
+
+    { e:  1.00, skyDeep: '#071022', skyHigh: '#10223d', atmo: '#63b8ff', atmoA: .50,
+      surfLit: '#2f6ba0', surfDark: '#071426', sun: '#ffffff', sunA: .45,
+      land: '#3f7a63', landA: .62, sea: '#2a72ab', seaA: .62, glint: '#ffffff',
+      star: 0, city: 0 },
+  ];
+
+  /* Dawn and dusk are not the same colour and never have been: morning air is
+     thin and clean, evening air has had all day to pick up dust. Rather than
+     tinting one table after the fact, which turned everything mauve, the
+     setting sun gets its own stops. They only differ where the sun is low;
+     at true noon and true midnight both tables hold the same values, so
+     switching between them at those points changes nothing.
+
+     The amber runs across the whole globe here, not just the sky, because
+     that is what low light does: it travels through far more atmosphere
+     before it reaches the ground. */
+  const DUSK = {
+    '-0.28': { atmo: '#c0603f', skyHigh: '#1a1024', surfLit: '#2f2536', sun: '#ffb98a',
+               land: '#4e3a44', sea: '#332b46', glint: '#c98f74' },
+    '-0.08': { atmo: '#ff7a4a', skyHigh: '#2a1729', surfLit: '#3d3346', sun: '#ffd0a0',
+               land: '#6d4b4a', sea: '#3d3352', glint: '#ffb98a' },
+    '0.05':  { atmo: '#ff6a3c', skyHigh: '#33203a', surfLit: '#4d4254', sun: '#ffe0b4',
+               land: '#7d5550', sea: '#48405c', glint: '#ffc79a' },
+    '0.34':  { atmo: '#ffa46a', skyHigh: '#1d2c4a', surfLit: '#41607c', sun: '#fff0d4',
+               land: '#5d7564', sea: '#3d6a90', glint: '#ffe6c8' },
+  };
+
+  const COLOURS = ['skyDeep', 'skyHigh', 'atmo', 'surfLit', 'surfDark', 'sun', 'land', 'sea', 'glint'];
+  const NUMBERS = ['atmoA', 'sunA', 'landA', 'seaA', 'star', 'city'];
+
+  /* Pre-parse both tables once, so the five minute tick is not re-reading
+     hex strings. */
+  const SETTING = STOPS.map((st) => {
+    const over = DUSK[st.e.toFixed(2)] || DUSK[String(st.e)] || {};
+    const out = { e: st.e };
+    COLOURS.forEach((k) => { out[k + '_'] = hex(over[k] || st[k]); });
+    NUMBERS.forEach((k) => { out[k] = st[k]; });
+    return out;
+  });
+  STOPS.forEach((st) => COLOURS.forEach((k) => { st[k + '_'] = hex(st[k]); }));
+
+  function paletteAt(table, e) {
+    let i = 0;
+    while (i < table.length - 2 && e > table[i + 1].e) i++;
+    const a = table[i], b = table[i + 1];
+    const t = clamp((e - a.e) / (b.e - a.e), 0, 1);
+
+    const out = {};
+    COLOURS.forEach((k) => { out[k] = mix(a[k + '_'], b[k + '_'], t); });
+    NUMBERS.forEach((k) => { out[k] = a[k] + (b[k] - a[k]) * t; });
+    return out;
+  }
+
+  /* ---- where the sun is ------------------------------------------------
+
+     A day is one turn. Six is sunrise on the left, noon is overhead, six in
+     the evening is sunset on the right, and midnight puts the sun straight
+     down through the planet. Everything else in here is a consequence of
+     this one angle. */
+  function solar(now) {
+    const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const a = ((h - 6) / 12) * Math.PI;
+
+    const elev = Math.sin(a);                 // -1 at midnight, 1 at noon
+    const x = 50 - 42 * Math.cos(a);          // 8% at dawn, 92% at dusk
+    return { h, elev, x, rising: Math.cos(a) > 0 };
+  }
+
+  /* ---- writing it onto the card ---------------------------------------- */
+
+  function paint(now) {
+    if (!card) return;
+    const { elev, x, rising } = solar(now);
+    const p = paletteAt(rising ? STOPS : SETTING, elev);
+
+    /* Height above the horizon, in units of the sky band. Negative sinks it
+       below the card, which is exactly where a set sun belongs: gone, but
+       still throwing light up into the atmosphere. */
+    const height = 1.15 * elev;
+
+    /* The same light in the planet circle's own coordinates. The circle is
+       190% of the card's width and centred, so it starts 45% to the left. */
+    const litX = (x + 45) / 1.9;
+
+    const set = (k, v) => card.style.setProperty(k, v);
+    set('--sun-x', x.toFixed(2) + '%');
+    set('--sun-h', height.toFixed(3));
+    set('--lit-x', litX.toFixed(2) + '%');
+
+    set('--sky-deep', css(p.skyDeep));
+    set('--sky-high', css(p.skyHigh));
+    set('--atmo', css(p.atmo));
+    set('--atmo-soft', rgba(p.atmo, p.atmoA));
+    set('--surface-lit', css(p.surfLit));
+    set('--surface-dark', css(p.surfDark));
+    set('--sun-core', css(p.sun));
+    set('--sun-halo', rgba(p.sun, p.sunA));
+    set('--land', css(p.land));
+    set('--land-op', p.landA.toFixed(3));
+    set('--sea', css(p.sea));
+    set('--sea-op', p.seaA.toFixed(3));
+    set('--glint', css(p.glint));
+    set('--star-op', p.star.toFixed(3));
+    set('--city-op', p.city.toFixed(3));
+  }
+
+  /* ---- the greeting ---------------------------------------------------- */
+
+  function openerFor(hour) {
     /* Midnight to 5am gets its own line. You said past 1, but the hour after
        midnight fell through to "Good morning", which is true by the clock and
        wrong to read at 00:30, so the window starts at midnight instead. */
-    if (hour < 5)  return { sky: 'night',     opener: 'Still up?' };
-    if (hour < 12) return { sky: 'morning',   opener: 'Good morning.' };
-    if (hour < 18) return { sky: 'afternoon', opener: 'Good afternoon.' };
-    return { sky: 'evening', opener: 'Good evening.' };
+    if (hour < 5)  return 'Still up?';
+    if (hour < 12) return 'Good morning.';
+    if (hour < 18) return 'Good afternoon.';
+    return 'Good evening.';
   }
 
-  /* Where the visitor is, placed on the limb.
-
-     No IP lookup: that means handing a third party their address on every
-     page load to learn something the browser already knows. The time zone
-     gives the same answer offline. Local clock time IS a longitude, near
-     enough: noon puts you under the sun, midnight puts you opposite it, and
-     everything between falls where it should. So the dot sits at the
-     visitor's hour angle from the sun, which is a real position on a real
-     sphere rather than a guess dressed up as one. */
-  const here = $('.sky-here');
-  const hereLabel = here && here.querySelector('span');
-
-  function placeHere() {
-    if (!card || !here) return;
-    const now = new Date();
-    const h = now.getHours() + now.getMinutes() / 60;
-    /* Compressed across the card rather than run edge to edge. Only the
-       near hemisphere of a sphere is ever visible, so someone twelve hours
-       from noon is genuinely round the back; sweeping them into the corner
-       would put the label half off the card to say something the curve
-       cannot show anyway. */
-    const x = clamp(50 + ((h - 12) / 24) * 62, 18, 82);
-    card.style.setProperty('--me-x', x.toFixed(2) + '%');
-    card.dataset.here = '';
+  function writeGreeting(now) {
+    if (!el) return;
+    const text = el.textContent.trim();
+    const cut = text.indexOf('.');
+    if (cut < 0) return;
+    el.textContent = openerFor(now.getHours()) + text.slice(cut + 1);
   }
 
-  if (hereLabel) {
-    let zone = '';
-    try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (_) {}
-    const city = zone.split('/').pop().replace(/_/g, ' ');
-    /* Only label it when the zone names somewhere. "UTC" or an offset tells
-       the visitor nothing they would enjoy reading. */
-    if (city && city !== zone.toUpperCase() && /[a-z]/.test(city)) hereLabel.textContent = city;
-  }
+  const first = new Date();
+  paint(first);
+  writeGreeting(first);
 
-  let current = '';
-  function apply(writeText) {
-    placeHere();
+  /* Five minutes moves the sun about a degree and a quarter, which the eye
+     reads as the scene having drifted rather than jumped. The heading is
+     left alone after the first write: a sentence the visitor has already
+     read should not change under them. */
+  setInterval(() => paint(new Date()), 5 * 60 * 1000);
 
-    const { sky, opener } = phaseFor(new Date().getHours());
-    if (sky === current) return;
-    current = sky;
-    if (card) card.dataset.sky = sky;
-
-    if (writeText && el) {
-      const text = el.textContent.trim();
-      const cut = text.indexOf('.');
-      if (cut < 0) return;
-      el.textContent = opener + text.slice(cut + 1);   // " I'm Ajay, glad you're here."
-    }
-  }
-
-  apply(true);
-
-  /* A tab left open across a sunset should not still be showing noon. The
-     check is every five minutes: the marker creeps a little each time, the
-     phase only turns over when it actually turns over, and the heading is
-     left alone after the first write so a sentence the visitor has already
-     read never changes under them. */
-  setInterval(() => apply(false), 5 * 60 * 1000);
+  /* A laptop shut at dusk and opened at midnight should not still be showing
+     dusk, and the interval will not have fired while it slept. */
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') paint(new Date());
+  });
 })();
 
 

@@ -916,11 +916,17 @@
      moves the shading, the glow and the shadow together, which is what keeps
      it reading as lit rather than painted.
 
-     [data-sky] on the card carries the palette. script.js sets it from the
-     same hour that picks the greeting, so the two always agree.
+     The values below are a dusk-ish default for visitors without JavaScript.
+     With it, script.js overwrites every one of them on the card itself from
+     the sun's actual angle for the current local time, so the sky is a
+     continuous function of the clock rather than four named phases.
      ========================================================================== */
   .hero-card {
     --land: #2f5f7a;
+    --land-op: .5;
+    --sea: #1d4f7d;
+    --sea-op: .5;
+    --glint: #bfe4ff;
     /* A band of empty card under the buttons for the planet to rise into.
        Without it the limb would cut across the paragraph. */
     --sky-band: clamp(40px, 6.6vw, 66px);
@@ -931,9 +937,9 @@
        always sits near the limb the way it does from orbit. --lit-x is the
        same light expressed in the planet circle's own coordinates, which is
        what actually shades the surface. */
-    --sun-x: 78%;
-    --sun-h: .6;
-    --lit-x: 65%;
+    --sun-x: 74%;
+    --sun-h: .45;
+    --lit-x: 62.6%;
     --sky-deep: #05070e;
     --sky-high: #0b1524;
     --atmo: #4aa8ff;
@@ -1016,6 +1022,17 @@
       0 0 110px 50px var(--sun-halo);
     transition: left 1.4s var(--ease), top 1.4s var(--ease),
                 background 1.2s var(--ease), box-shadow 1.2s var(--ease);
+    /* The real movement is the recalculated position, which is far too slow
+       to see. This is the other kind: it sits still, drifts a little, and
+       settles again. Long holds at both ends, a short move between them, so
+       it reads as something resting rather than something orbiting. */
+    animation: sunRest 19s var(--ease) infinite alternate;
+  }
+
+  @keyframes sunRest {
+    0%, 34%   { translate: 0 0;           scale: 1; }
+    52%       { translate: 2.5px -1.5px;  scale: 1.06; }
+    66%, 100% { translate: 3.5px -2.5px;  scale: 1.03; }
   }
 
   /* The planet. Far wider than the card and pushed most of the way below it,
@@ -1099,165 +1116,82 @@
     border-radius: 50%;
     opacity: var(--land-op, .55);
     mix-blend-mode: screen;
-    -webkit-mask-image: radial-gradient(circle at var(--lit-x) 0%, #000 4%, rgba(0,0,0,.25) 16%, transparent 26%);
-            mask-image: radial-gradient(circle at var(--lit-x) 0%, #000 4%, rgba(0,0,0,.25) 16%, transparent 26%);
+    /* Masked to the lit side. An unlit continent is just darkness, and
+       drawing one anyway is how a sphere stops looking like a sphere. */
+    -webkit-mask-image: radial-gradient(circle at var(--lit-x) 0%, #000 7%, rgba(0,0,0,.4) 22%, transparent 36%);
+            mask-image: radial-gradient(circle at var(--lit-x) 0%, #000 7%, rgba(0,0,0,.4) 22%, transparent 36%);
+    transition: opacity 1.2s var(--ease);
+    /* Four landmasses and a few islands. Each continent is a handful of
+       overlapping ellipses rather than one shape, because a single ellipse
+       reads as a bubble and several overlapping ones read as a coastline.
+       Each sits on the curve of the sphere, not on a flat line. */
+    background-image:
+      radial-gradient(4.73% 1.20% at 29.48% 7.99%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(4.83% 1.27% at 30.09% 5.57%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(5.61% 1.28% at 31.43% 4.75%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(5.68% 1.06% at 25.50% 9.33%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(6.27% 1.75% at 35.30% 5.00%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(2.66% 0.50% at 26.23% 8.44%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(3.52% 0.89% at 38.97% 2.22%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(5.80% 1.64% at 42.23% 3.01%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(5.12% 1.15% at 43.00% 2.72%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(6.38% 1.87% at 49.47% 3.34%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(3.47% 0.66% at 40.60% 2.63%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(4.12% 1.00% at 46.46% 3.48%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(5.82% 1.24% at 48.95% 0.91%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(4.39% 1.07% at 61.42% 5.07%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(4.99% 1.11% at 51.38% 3.18%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(3.86% 1.16% at 51.55% 3.72%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(3.54% 0.67% at 51.92% 1.23%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(3.28% 0.82% at 60.06% 3.55%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(5.38% 1.52% at 52.79% 1.36%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(4.20% 0.94% at 65.17% 3.87%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(5.65% 1.82% at 73.71% 7.76%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(4.10% 1.16% at 66.11% 6.04%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(6.36% 1.41% at 65.00% 3.82%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(3.85% 0.74% at 71.73% 6.73%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(4.81% 1.33% at 64.90% 3.88%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(1.57% 0.47% at 25.60% 8.46%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(2.16% 0.65% at 38.50% 3.51%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(1.77% 0.53% at 50.50% 2.94%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(1.38% 0.41% at 63.00% 3.23%, var(--land) 0%, var(--land) 46%, transparent 72%),
+      radial-gradient(2.11% 0.63% at 74.50% 9.25%, var(--land) 0%, var(--land) 46%, transparent 72%);
+  }
+
+
+  /* Water. The surface gradient underneath is the ocean already; this is the
+     bit that makes it read as water rather than as shading: a few broad
+     cooler sweeps between the land, and a brighter smear where the sun
+     glints off it. Same lit side mask, same reason. */
+  .limb-sea {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    opacity: var(--sea-op, .5);
+    mix-blend-mode: screen;
+    -webkit-mask-image: radial-gradient(circle at var(--lit-x) 0%, #000 4%, rgba(0,0,0,.25) 15%, transparent 26%);
+            mask-image: radial-gradient(circle at var(--lit-x) 0%, #000 4%, rgba(0,0,0,.25) 15%, transparent 26%);
     transition: opacity 1.2s var(--ease);
     background-image:
-      radial-gradient(9% 2.70% at 27.0% 8.20%, var(--land) 0%, transparent 70%),
-      radial-gradient(6% 1.80% at 34.0% 4.83%, var(--land) 0%, transparent 70%),
-      radial-gradient(11% 3.30% at 41.0% 2.72%, var(--land) 0%, transparent 70%),
-      radial-gradient(7% 2.10% at 52.0% 1.64%, var(--land) 0%, transparent 70%),
-      radial-gradient(9% 2.70% at 60.0% 2.81%, var(--land) 0%, transparent 70%),
-      radial-gradient(6% 1.80% at 69.0% 6.15%, var(--land) 0%, transparent 70%),
-      radial-gradient(8% 2.40% at 74.0% 9.04%, var(--land) 0%, transparent 70%);
+      radial-gradient(4% 1.1% at var(--lit-x) 1.4%, var(--glint) 0%, transparent 70%),
+      radial-gradient(9% 2.4% at 31.5% 6.3%, var(--sea) 0%, transparent 72%),
+      radial-gradient(11% 2.8% at 40.5% 3.1%, var(--sea) 0%, transparent 72%),
+      radial-gradient(10% 2.6% at 51.0% 1.5%, var(--sea) 0%, transparent 72%),
+      radial-gradient(11% 2.8% at 60.0% 2.6%, var(--sea) 0%, transparent 72%),
+      radial-gradient(9% 2.4% at 69.5% 6.0%, var(--sea) 0%, transparent 72%);
   }
 
-  /* Where the visitor is. --me-x comes from script.js: their local solar
-     time places them relative to the sun, which is a real position on a real
-     sphere, not a guess dressed up as one. Deliberately tiny: a tick and a
-     dot, the size of one of the city lights. */
-  .sky-here {
-    position: absolute;
-    left: var(--me-x, 50%);
-    bottom: calc(var(--sky-band) * .34);
-    width: 0;
-    opacity: 0;
-    transition: opacity .9s var(--ease), left 1.4s var(--ease);
-  }
-  .hero-card[data-here] .sky-here { opacity: .85; }
-
-  .sky-here b {
-    position: absolute;
-    left: -2.5px;
-    bottom: 0;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--here-dot, #7ff0d2);
-    box-shadow: 0 0 6px 1px var(--here-dot, #7ff0d2), 0 0 16px 4px color-mix(in oklab, var(--here-dot, #7ff0d2) 40%, transparent);
-    animation: herePulse 3.4s var(--ease) infinite;
-  }
-
-  .sky-here i {
-    position: absolute;
-    left: -.5px;
-    bottom: 6px;
-    width: 1px;
-    height: clamp(9px, 1.6vw, 15px);
-    background: linear-gradient(180deg, transparent, var(--here-dot, #7ff0d2));
-    opacity: .5;
-  }
-
-  .sky-here span {
-    position: absolute;
-    bottom: calc(6px + clamp(9px, 1.6vw, 15px) + 3px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    font: 500 clamp(8px, 1.1vw, 10px)/1 var(--mono, ui-monospace, monospace);
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: color-mix(in oklab, var(--here-dot, #7ff0d2) 70%, white);
-    opacity: .72;
-  }
-
-  @keyframes herePulse {
-    0%, 100% { transform: scale(1);    opacity: 1; }
-    50%      { transform: scale(1.45); opacity: .62; }
-  }
-
-  /* ---------- Times of day ---------- */
-
-  /* Deep night: the planet is a silhouette with its cities showing and the
-     atmosphere lit only by scattered starlight. */
-  .hero-card[data-sky="night"] {
-    --land: #24507f;
-    --land-op: .3;
-    --sun-x: 104%;
-    --sun-h: -.5;
-    --lit-x: 80%;
-    --sky-deep: #03040a;
-    --sky-high: #070c18;
-    --atmo: #4c93e8;
-    --atmo-soft: rgba(76, 147, 232, .5);
-    --surface-lit: #0d2038;
-    --surface-dark: #03050b;
-    --sun-core: #cfe2ff;
-    --sun-halo: rgba(150, 190, 255, .28);
-    --star-op: 1;
-    --city-op: .85;
-  }
-
-  /* Sunrise: the sun sits on the limb itself, so the atmosphere takes the
-     warm end of the spectrum where it grazes and stays blue above. */
-  .hero-card[data-sky="morning"] {
-    --land: #6f5f78;
-    --land-op: .5;
-    --sun-x: 24%;
-    --sun-h: .18;
-    --lit-x: 36%;
-    --sky-deep: #0a0e1c;
-    --sky-high: #1d2440;
-    --atmo: #ff9e5e;
-    --atmo-soft: rgba(255, 158, 94, .5);
-    --surface-lit: #33506f;
-    --surface-dark: #070b14;
-    --sun-core: #fff0d2;
-    --sun-halo: rgba(255, 186, 120, .45);
-    --star-op: .25;
-    --city-op: .2;
-  }
-
-  /* Midday: sun high, atmosphere at its bluest, surface brightest. */
-  .hero-card[data-sky="afternoon"] {
-    --land: #3f7a63;
-    --land-op: .62;
-    --sun-x: 64%;
-    --sun-h: .78;
-    --lit-x: 57%;
-    --sky-deep: #071022;
-    --sky-high: #10223d;
-    --atmo: #63b8ff;
-    --atmo-soft: rgba(99, 184, 255, .52);
-    --surface-lit: #2f6ba0;
-    --surface-dark: #071426;
-    --sun-core: #ffffff;
-    --sun-halo: rgba(200, 230, 255, .5);
-    --star-op: 0;
-    --city-op: 0;
-  }
-
-  /* Dusk: the terminator crosses the frame, so half the limb is already dark
-     and the cities on that side have started to come up. */
-  .hero-card[data-sky="evening"] {
-    --land: #6b4a52;
-    --land-op: .45;
-    --sun-x: 84%;
-    --sun-h: .12;
-    --lit-x: 68%;
-    --sky-deep: #05060f;
-    --sky-high: #17162e;
-    --atmo: #ff7a5c;
-    --atmo-soft: rgba(255, 122, 92, .45);
-    --surface-lit: #24405f;
-    --surface-dark: #04060d;
-    --sun-core: #ffe7c4;
-    --sun-halo: rgba(255, 150, 96, .42);
-    --star-op: .55;
-    --city-op: .5;
-  }
 
   /* The sky is decoration. Without JS there is no hour to read, so it stays
-     on the neutral default above rather than guessing. */
+     on the neutral dusk default above rather than guessing. */
   @media (prefers-reduced-motion: reduce) {
     .hero-sky,
     .sky-stars,
     .sky-sun,
     .sky-limb,
     .limb-glow,
-    .limb-lights,
-    .sky-here { transition: none; }
-    .sky-here b { animation: none; }
+    .limb-lights { transition: none; }
+    .sky-sun { animation: none; }
   }
 
   .hero-figure {
