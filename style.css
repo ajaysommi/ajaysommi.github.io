@@ -219,11 +219,11 @@
     text-wrap: balance;
   }
 
-  /* The cap is 37 rather than 42 for one reason: at 42 the hero greeting
-     needs 844px and the column it sits in is 772, so it wrapped to two short
-     ragged lines with a lot of empty column beside them. At 37 it sets on a
-     single line and fills the width it was given. */
-  h1 { font-weight: 800; font-size: clamp(26px, 5.2vw, 37px); }
+  /* Sized so the longest greeting still sets on one line. The heading is time
+     of day dependent now, and "Good afternoon. I'm Ajay, glad you're here."
+     needs 879px at 37 against a 772px column. At 32 it comes in at 760, so
+     every variant fits and the longest fills 98% of the width. */
+  h1 { font-weight: 800; font-size: clamp(26px, 5.2vw, 32px); }
   h2 { font-weight: 700; font-size: clamp(21px, 3.4vw, 29px); }
   h3 { font-weight: 600; font-size: clamp(17px, 2.2vw, 21px); }
 

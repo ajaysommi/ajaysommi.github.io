@@ -15,6 +15,36 @@ const prefersReduced = () => reduceMotionQuery.matches;
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
+/* ==========================================================================
+   Time of day greeting
+   Runs before the scramble effect reads the heading, so whatever it writes
+   is what gets scrambled into place. The tail is taken from the markup
+   rather than repeated here, so the sentence stays in one place and a
+   visitor without JavaScript still gets a whole greeting.
+   ========================================================================== */
+(function greeting() {
+  const el = $('[data-scramble]');
+  if (!el) return;
+
+  const text = el.textContent.trim();
+  const cut = text.indexOf('.');
+  if (cut < 0) return;
+
+  const tail = text.slice(cut + 1);          // " I'm Ajay, glad you're here."
+  const hour = new Date().getHours();
+
+  /* Midnight to 5am gets its own line. You said past 1, but the hour after
+     midnight fell through to "Good morning", which is true by the clock and
+     wrong to read at 00:30, so the window starts at midnight instead. */
+  const opener =
+    hour < 5    ? 'Still up?'
+    : hour < 12 ? 'Good morning.'
+    : hour < 18 ? 'Good afternoon.'
+    :             'Good evening.';
+
+  el.textContent = opener + tail;
+})();
+
 
 /* ==========================================================================
    Boot loader
