@@ -38,8 +38,45 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
     return { sky: 'evening', opener: 'Good evening.' };
   }
 
+  /* Where the visitor is, placed on the limb.
+
+     No IP lookup: that means handing a third party their address on every
+     page load to learn something the browser already knows. The time zone
+     gives the same answer offline. Local clock time IS a longitude, near
+     enough: noon puts you under the sun, midnight puts you opposite it, and
+     everything between falls where it should. So the dot sits at the
+     visitor's hour angle from the sun, which is a real position on a real
+     sphere rather than a guess dressed up as one. */
+  const here = $('.sky-here');
+  const hereLabel = here && here.querySelector('span');
+
+  function placeHere() {
+    if (!card || !here) return;
+    const now = new Date();
+    const h = now.getHours() + now.getMinutes() / 60;
+    /* Compressed across the card rather than run edge to edge. Only the
+       near hemisphere of a sphere is ever visible, so someone twelve hours
+       from noon is genuinely round the back; sweeping them into the corner
+       would put the label half off the card to say something the curve
+       cannot show anyway. */
+    const x = clamp(50 + ((h - 12) / 24) * 62, 18, 82);
+    card.style.setProperty('--me-x', x.toFixed(2) + '%');
+    card.dataset.here = '';
+  }
+
+  if (hereLabel) {
+    let zone = '';
+    try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (_) {}
+    const city = zone.split('/').pop().replace(/_/g, ' ');
+    /* Only label it when the zone names somewhere. "UTC" or an offset tells
+       the visitor nothing they would enjoy reading. */
+    if (city && city !== zone.toUpperCase() && /[a-z]/.test(city)) hereLabel.textContent = city;
+  }
+
   let current = '';
   function apply(writeText) {
+    placeHere();
+
     const { sky, opener } = phaseFor(new Date().getHours());
     if (sky === current) return;
     current = sky;
@@ -56,9 +93,10 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
   apply(true);
 
   /* A tab left open across a sunset should not still be showing noon. The
-     check is every five minutes and does nothing until the phase actually
-     turns over, and the heading is left alone after the first write so a
-     sentence the visitor has already read never changes under them. */
+     check is every five minutes: the marker creeps a little each time, the
+     phase only turns over when it actually turns over, and the heading is
+     left alone after the first write so a sentence the visitor has already
+     read never changes under them. */
   setInterval(() => apply(false), 5 * 60 * 1000);
 })();
 
