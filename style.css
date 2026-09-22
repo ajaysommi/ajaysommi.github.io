@@ -907,6 +907,266 @@
     overflow: hidden;
   }
 
+  /* ==========================================================================
+     Hero sky
+     A planet limb across the bottom of the hero, drawn entirely with
+     gradients. No photograph: a sphere lit from one side, an atmosphere that
+     scatters where the light grazes it, and a terminator that falls wherever
+     the sun is. Because the light is one pair of coordinates, moving the sun
+     moves the shading, the glow and the shadow together, which is what keeps
+     it reading as lit rather than painted.
+
+     [data-sky] on the card carries the palette. script.js sets it from the
+     same hour that picks the greeting, so the two always agree.
+     ========================================================================== */
+  .hero-card {
+    /* A band of empty card under the buttons for the planet to rise into.
+       Without it the limb would cut across the paragraph. */
+    --sky-band: clamp(58px, 11vw, 104px);
+    padding-bottom: calc(clamp(16px, 3vw, 26px) + var(--sky-band));
+
+    /* Where the light is. --sun-x runs across the card; --sun-h is its
+       height above the card's bottom edge in units of --sky-band, so the sun
+       always sits near the limb the way it does from orbit. --lit-x is the
+       same light expressed in the planet circle's own coordinates, which is
+       what actually shades the surface. */
+    --sun-x: 78%;
+    --sun-h: .6;
+    --lit-x: 65%;
+    --sky-deep: #05070e;
+    --sky-high: #0b1524;
+    --atmo: #4aa8ff;
+    --atmo-soft: rgba(74, 168, 255, .55);
+    --surface-lit: #1b3a5c;
+    --surface-dark: #060a12;
+    --sun-core: #fff6e2;
+    --sun-halo: rgba(255, 214, 150, .5);
+    --star-op: 0;
+    --city-op: 0;
+  }
+
+  .hero-sky {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+    /* Transparent across the top so the glass card keeps its own material,
+       darkening only over the band where the sky actually needs to be sky. */
+    background: linear-gradient(180deg,
+                  transparent 0%,
+                  color-mix(in oklab, var(--sky-deep) 55%, transparent) 38%,
+                  var(--sky-deep) 62%,
+                  var(--sky-high) 100%);
+    transition: background 1.2s var(--ease);
+  }
+
+  /* Everything the visitor actually reads sits above it. */
+  .hero-card > *:not(.hero-sky) { position: relative; z-index: 1; }
+
+  /* Stars: two speckle fields at different scales so the pattern does not
+     tile visibly. Only paid for at night, when --star-op lifts them. */
+  .sky-stars {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--sky-band) * .5);
+    height: clamp(44px, 9vw, 86px);
+    opacity: var(--star-op);
+    transition: opacity 1.2s var(--ease);
+    /* Faded at the top so the field thins out into the card rather than
+       stopping on a line. */
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 70%);
+            mask-image: linear-gradient(180deg, transparent 0%, #000 70%);
+    background-image:
+      radial-gradient(1.4px 1.4px at 9% 72%, #fff, transparent 60%),
+      radial-gradient(1.1px 1.1px at 21% 46%, #dce8ff, transparent 60%),
+      radial-gradient(1.6px 1.6px at 34% 88%, #fff, transparent 60%),
+      radial-gradient(1px 1px at 44% 58%, #cfe0ff, transparent 60%),
+      radial-gradient(1.5px 1.5px at 56% 82%, #fff, transparent 60%),
+      radial-gradient(1.2px 1.2px at 67% 40%, #e8f0ff, transparent 60%),
+      radial-gradient(1px 1px at 78% 92%, #fff, transparent 60%),
+      radial-gradient(1.3px 1.3px at 90% 64%, #d6e6ff, transparent 60%),
+      radial-gradient(1.1px 1.1px at 15% 94%, #fff, transparent 60%),
+      radial-gradient(1.4px 1.4px at 84% 30%, #eaf2ff, transparent 60%);
+  }
+
+
+  /* The light source. Small hard core, wide soft halo, the way a sun reads
+     through atmosphere rather than as a flat disc. */
+  .sky-sun {
+    position: absolute;
+    left: var(--sun-x);
+    top: calc(100% - var(--sky-band) * var(--sun-h));
+    width: 9px;
+    height: 9px;
+    margin: -4.5px 0 0 -4.5px;
+    border-radius: 50%;
+    background: var(--sun-core);
+    box-shadow:
+      0 0 12px 3px var(--sun-core),
+      0 0 40px 14px var(--sun-halo),
+      0 0 110px 50px var(--sun-halo);
+    transition: left 1.4s var(--ease), top 1.4s var(--ease),
+                background 1.2s var(--ease), box-shadow 1.2s var(--ease);
+  }
+
+  /* The planet. Far wider than the card and pushed most of the way below it,
+     so only the top of the sphere crosses the frame: that shallow arc is the
+     limb. The surface gradient is centred on the sun, so the lit side and the
+     terminator follow it without being drawn separately. */
+  .sky-limb {
+    position: absolute;
+    left: 50%;
+    top: calc(100% - var(--sky-band) * .62);
+    width: 190%;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at var(--lit-x) 0%,
+                      var(--surface-lit) 0%,
+                      color-mix(in oklab, var(--surface-lit) 42%, var(--surface-dark)) 11%,
+                      var(--surface-dark) 26%);
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, var(--atmo) 70%, white),
+      inset 0 14px 30px -14px var(--atmo-soft);
+    transition: background 1.2s var(--ease), box-shadow 1.2s var(--ease);
+  }
+
+  /* The atmosphere itself, sitting just off the surface. A ring slightly
+     larger than the planet, blurred, so the glow hugs the curve instead of
+     forming a halo around a disc. */
+  .limb-glow {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    box-shadow:
+      0 0 26px 2px var(--atmo-soft),
+      0 0 70px 14px color-mix(in oklab, var(--atmo) 28%, transparent);
+    transition: box-shadow 1.2s var(--ease);
+  }
+
+  /* City lights on the night side, scattered along the top of the sphere
+     where the limb actually crosses the card. */
+  .limb-lights {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    opacity: var(--city-op);
+    transition: opacity 1.2s var(--ease);
+    /* Cities only show where the sun is not. The mask is centred on the same
+       light the surface shading uses, so at dusk the lit half stays dark and
+       the towns come up behind the terminator. */
+    -webkit-mask-image: radial-gradient(circle at var(--lit-x) 0%, transparent 10%, #000 30%);
+            mask-image: radial-gradient(circle at var(--lit-x) 0%, transparent 10%, #000 30%);
+    background-image:
+      radial-gradient(1.1px 1.1px at 25.0% 7.54%, #ffcf8a, transparent 60%),
+      radial-gradient(1.1px 1.1px at 27.7% 6.59%, #ffdca8, transparent 60%),
+      radial-gradient(1.1px 1.1px at 30.3% 4.60%, #ffd9a0, transparent 60%),
+      radial-gradient(1.4px 1.4px at 33.5% 3.40%, #ffcf8a, transparent 60%),
+      radial-gradient(1.6px 1.6px at 36.1% 3.44%, #ffcf8a, transparent 60%),
+      radial-gradient(1.4px 1.4px at 39.5% 2.26%, #ffcf8a, transparent 60%),
+      radial-gradient(1.1px 1.1px at 41.4% 1.72%, #ffdca8, transparent 60%),
+      radial-gradient(1.3px 1.3px at 44.8% 0.80%, #ffd9a0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 46.8% 0.55%, #ffcf8a, transparent 60%),
+      radial-gradient(1.1px 1.1px at 49.6% 0.98%, #ffd9a0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 53.3% 1.01%, #ffe0b0, transparent 60%),
+      radial-gradient(1.4px 1.4px at 55.6% 1.36%, #ffd9a0, transparent 60%),
+      radial-gradient(1.2px 1.2px at 58.8% 1.92%, #ffdca8, transparent 60%),
+      radial-gradient(1.3px 1.3px at 61.4% 2.26%, #ffdca8, transparent 60%),
+      radial-gradient(1.1px 1.1px at 64.3% 3.60%, #ffc879, transparent 60%),
+      radial-gradient(1.4px 1.4px at 66.6% 3.58%, #ffcf8a, transparent 60%),
+      radial-gradient(1.5px 1.5px at 70.6% 5.45%, #ffc879, transparent 60%),
+      radial-gradient(1.3px 1.3px at 73.0% 6.35%, #ffe0b0, transparent 60%),
+      radial-gradient(1.1px 1.1px at 75.3% 7.48%, #ffcf8a, transparent 60%);
+  }
+
+  /* ---------- Times of day ---------- */
+
+  /* Deep night: the planet is a silhouette with its cities showing and the
+     atmosphere lit only by scattered starlight. */
+  .hero-card[data-sky="night"] {
+    --sun-x: 104%;
+    --sun-h: -.5;
+    --lit-x: 80%;
+    --sky-deep: #03040a;
+    --sky-high: #070c18;
+    --atmo: #4c93e8;
+    --atmo-soft: rgba(76, 147, 232, .5);
+    --surface-lit: #0d2038;
+    --surface-dark: #03050b;
+    --sun-core: #cfe2ff;
+    --sun-halo: rgba(150, 190, 255, .28);
+    --star-op: 1;
+    --city-op: .85;
+  }
+
+  /* Sunrise: the sun sits on the limb itself, so the atmosphere takes the
+     warm end of the spectrum where it grazes and stays blue above. */
+  .hero-card[data-sky="morning"] {
+    --sun-x: 24%;
+    --sun-h: .18;
+    --lit-x: 36%;
+    --sky-deep: #0a0e1c;
+    --sky-high: #1d2440;
+    --atmo: #ff9e5e;
+    --atmo-soft: rgba(255, 158, 94, .5);
+    --surface-lit: #33506f;
+    --surface-dark: #070b14;
+    --sun-core: #fff0d2;
+    --sun-halo: rgba(255, 186, 120, .45);
+    --star-op: .25;
+    --city-op: .2;
+  }
+
+  /* Midday: sun high, atmosphere at its bluest, surface brightest. */
+  .hero-card[data-sky="afternoon"] {
+    --sun-x: 64%;
+    --sun-h: .78;
+    --lit-x: 57%;
+    --sky-deep: #071022;
+    --sky-high: #10223d;
+    --atmo: #63b8ff;
+    --atmo-soft: rgba(99, 184, 255, .52);
+    --surface-lit: #2f6ba0;
+    --surface-dark: #071426;
+    --sun-core: #ffffff;
+    --sun-halo: rgba(200, 230, 255, .5);
+    --star-op: 0;
+    --city-op: 0;
+  }
+
+  /* Dusk: the terminator crosses the frame, so half the limb is already dark
+     and the cities on that side have started to come up. */
+  .hero-card[data-sky="evening"] {
+    --sun-x: 84%;
+    --sun-h: .12;
+    --lit-x: 68%;
+    --sky-deep: #05060f;
+    --sky-high: #17162e;
+    --atmo: #ff7a5c;
+    --atmo-soft: rgba(255, 122, 92, .45);
+    --surface-lit: #24405f;
+    --surface-dark: #04060d;
+    --sun-core: #ffe7c4;
+    --sun-halo: rgba(255, 150, 96, .42);
+    --star-op: .55;
+    --city-op: .5;
+  }
+
+  /* The sky is decoration. Without JS there is no hour to read, so it stays
+     on the neutral default above rather than guessing. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-sky,
+    .sky-stars,
+    .sky-sun,
+    .sky-limb,
+    .limb-glow,
+    .limb-lights { transition: none; }
+  }
+
   .hero-figure {
     position: relative;
     grid-area: figure;
@@ -2865,7 +3125,7 @@
 
     /* Hero: compact avatar beside the name, prose underneath. */
     .hero { padding-inline: 12px; }
-    .hero-card { gap: 14px; padding: 15px; }
+    .hero-card { gap: 14px; padding: 15px; padding-bottom: calc(15px + var(--sky-band)); }
     .hero-figure { width: clamp(88px, 26vw, 116px); }
     .hero-head h1 { font-size: clamp(21px, 6.4vw, 30px); }
     .sub { font-size: .93rem; }

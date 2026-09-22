@@ -167,6 +167,21 @@
     <section class="hero">
       <div class="hero-card glass" id="heroCard">
 
+        <!-- Planet limb behind the hero. Entirely CSS gradients: no photograph
+             of Earth, just the shading a sphere and an atmosphere produce. The
+             sun's position and every colour come from --sun-x/--sun-y and the
+             palette on [data-sky], which script.js sets from the same hour it
+             uses to pick the greeting. -->
+        <div class="hero-sky" aria-hidden="true">
+          <span class="sky-stars"></span>
+          <span class="sky-sun"></span>
+          <span class="sky-limb">
+            <span class="limb-glow"></span>
+            <span class="limb-lights"></span>
+          </span>
+        </div>
+
+
         <figure class="hero-figure">
           <picture>
             <source type="image/webp"

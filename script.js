@@ -23,26 +23,43 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
    visitor without JavaScript still gets a whole greeting.
    ========================================================================== */
 (function greeting() {
+  const card = $('#heroCard');
   const el = $('[data-scramble]');
-  if (!el) return;
 
-  const text = el.textContent.trim();
-  const cut = text.indexOf('.');
-  if (cut < 0) return;
+  /* One reading of the clock drives both the sentence and the sky, so they
+     can never disagree about what time it is. */
+  function phaseFor(hour) {
+    /* Midnight to 5am gets its own line. You said past 1, but the hour after
+       midnight fell through to "Good morning", which is true by the clock and
+       wrong to read at 00:30, so the window starts at midnight instead. */
+    if (hour < 5)  return { sky: 'night',     opener: 'Still up?' };
+    if (hour < 12) return { sky: 'morning',   opener: 'Good morning.' };
+    if (hour < 18) return { sky: 'afternoon', opener: 'Good afternoon.' };
+    return { sky: 'evening', opener: 'Good evening.' };
+  }
 
-  const tail = text.slice(cut + 1);          // " I'm Ajay, glad you're here."
-  const hour = new Date().getHours();
+  let current = '';
+  function apply(writeText) {
+    const { sky, opener } = phaseFor(new Date().getHours());
+    if (sky === current) return;
+    current = sky;
+    if (card) card.dataset.sky = sky;
 
-  /* Midnight to 5am gets its own line. You said past 1, but the hour after
-     midnight fell through to "Good morning", which is true by the clock and
-     wrong to read at 00:30, so the window starts at midnight instead. */
-  const opener =
-    hour < 5    ? 'Still up?'
-    : hour < 12 ? 'Good morning.'
-    : hour < 18 ? 'Good afternoon.'
-    :             'Good evening.';
+    if (writeText && el) {
+      const text = el.textContent.trim();
+      const cut = text.indexOf('.');
+      if (cut < 0) return;
+      el.textContent = opener + text.slice(cut + 1);   // " I'm Ajay, glad you're here."
+    }
+  }
 
-  el.textContent = opener + tail;
+  apply(true);
+
+  /* A tab left open across a sunset should not still be showing noon. The
+     check is every five minutes and does nothing until the phase actually
+     turns over, and the heading is left alone after the first write so a
+     sentence the visitor has already read never changes under them. */
+  setInterval(() => apply(false), 5 * 60 * 1000);
 })();
 
 
