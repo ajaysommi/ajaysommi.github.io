@@ -1716,6 +1716,15 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     return t * t * t * (t * (t * 6 - 15) + 10);
   };
 
+  /* A crossfade sits mostly after the boundary it belongs to rather than
+     centred on it: a quarter of its width before, three quarters after. It
+     keeps its full length, so the handover is exactly as gradual as it was,
+     but a chapter no longer spends half a fade bleeding into the section
+     above it. Up and down ramps are the same function of the same boundary,
+     so the two weights either side still add to one. */
+  const LEAD = 0.25;
+  const ramp = (line, span) => smootherstep((line - (span.top - LEAD * span.h)) / (2 * span.h));
+
   /* --- geometry -----------------------------------------------------------
      Measured through the rect rather than offsetTop, which is relative to
      the nearest positioned ancestor and reads far too small for sections
@@ -1755,20 +1764,21 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const next = spans[i + 1];
       const prevSlack = prev ? Math.max(0, len(prev) - MIN) : 0;
       const nextSlack = next ? Math.max(0, len(next) - MIN) : 0;
-      const slack = prevSlack + nextSlack;
-      if (slack <= 0) continue;
+      if (prevSlack + nextSlack <= 0) continue;
 
-      const take = Math.min(need, slack);
-      if (prevSlack > 0) {
-        const d = take * (prevSlack / slack);
-        spans[i].top -= d;
-        prev.end = spans[i].top;
-      }
-      if (nextSlack > 0) {
-        const d = take * (nextSlack / slack);
-        spans[i].end += d;
-        next.top = spans[i].end;
-      }
+      /* Forwards first, and backwards only for whatever is left over. The
+         two directions are not equivalent: room taken from the section
+         ahead means this chapter's colour lingers a little into the next
+         one, which nobody notices, while room taken from the section behind
+         means it arrives early and paints its mood over content that is not
+         its own. Education borrowing both ways had its amber warming up a
+         screen and a quarter before the section existed, over the last entry
+         of the path. */
+      let left = need;
+      const fromNext = Math.min(left, nextSlack);
+      if (fromNext > 0) { spans[i].end += fromNext; next.top = spans[i].end; left -= fromNext; }
+      const fromPrev = Math.min(left, prevSlack);
+      if (fromPrev > 0) { spans[i].top -= fromPrev; prev.end = spans[i].top; }
     }
 
     /* Half width of each crossfade, at the boundary that opens a stage.
@@ -1777,12 +1787,22 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
        twentieths of either neighbour, so a stage still reaches its own
        colour in the middle rather than being crossfaded out of existence
        from both sides at once. */
+    /* The furthest the reading line can ever get. The closing stage's span
+       runs to the end of the document, which is half a screen past anywhere
+       the line can reach, so clamping its crossfade against the span alone
+       let the ramp finish somewhere nobody can scroll to and the final
+       palette was never reached at all. */
+    const maxLine = Math.max(0, document.documentElement.scrollHeight - innerHeight) + innerHeight * 0.5;
+
     spans.forEach((s, i) => {
       if (i === 0) { s.h = 0; return; }
       const prev = spans[i - 1];
+      const reach = Math.max(1, Math.min(s.end, maxLine) - s.top);
       s.h = Math.max(1, Math.min(innerHeight * 0.44,
                                  (prev.end - prev.top) * 0.45,
-                                 (s.end - s.top) * 0.45));
+                                 (s.end - s.top) * 0.45,
+                                 /* leaves the ramp finished with room to spare */
+                                 (reach / (2 - LEAD)) * 0.85));
     });
   };
 
@@ -1827,9 +1847,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
     for (let i = 0; i < spans.length; i++) {
       const s = spans[i];
-      const up = i === 0 ? 1 : smootherstep((line - (s.top - s.h)) / (2 * s.h));
+      const up = i === 0 ? 1 : ramp(line, s);
       const nxt = spans[i + 1];
-      const down = nxt ? smootherstep((line - (nxt.top - nxt.h)) / (2 * nxt.h)) : 0;
+      const down = nxt ? ramp(line, nxt) : 0;
       const w = up - down;
       weights.push(w);
       wsum += w;
