@@ -432,29 +432,43 @@
 
   /* Education: indigo, gathered toward the top. */
   /* Education: the only place the two Florida colours appear together, and
-     the only place they are split by side. Blue down the left, orange down
-     the right, because that is how the two of them are worn.
+     the only place they are split by side. Blue into the top left, orange
+     into the right, because that is how the two of them are worn.
 
-     Which blob gets which colour is decided by where each one is anchored,
-     not by its number: b1 and b4 sit against the left edge, b3 and b2
-     against the right, so the pairs take the colour of the side they are
-     already on and the translations only push them further out. Any other
-     assignment would have the two colours crossing in the middle, which is
-     the one thing this zone is trying not to do.
+     Which blob takes which colour follows from where it is anchored rather
+     than from its number: b1 and b4 are pinned to the left edge, b3 and b2
+     to the right, so each pair takes the colour of the side it already sits
+     on and nothing has to cross the middle to get there.
 
-     The blues are lifted off the official #0021A5, which is so dark that a
-     screen blend over this background leaves it closer to grey than to
-     blue. */
+     The offsets pull every one of them INTO frame, not out of it. Each blob
+     is anchored well outside the viewport so it can be slid around without
+     its edge ever showing, which means a translation away from centre pushes
+     it off screen entirely: b1 is 46vw wide starting at -20vw, so it needs
+     to come right to be seen at all. An earlier pass had these pushed
+     outward on the theory that it would separate the two colours, and the
+     result was two colours nobody could see.
+
+     The blues are lifted well off the official #0021A5. Under a screen blend
+     on a background this dark, a colour only shows to the extent it is
+     already bright, so the literal hex adds almost nothing; the hue is what
+     reads as Florida, and it survives the lift.
+
+     The extra weight here is carried in the alpha of the colours rather than
+     in --blob-opacity. The four colours are registered with @property, so
+     they interpolate and a change in alpha eases in with everything else;
+     --blob-opacity feeds an opacity that --bg-fade is already rewriting on
+     every scroll frame, and putting a 2.4s transition on that would leave
+     the scroll fade permanently chasing itself. */
   [data-theme="midnight"] .bg[data-zone="education"] {
-    --blob-1: rgba(26, 58, 200, .46);   /* left,  upper  */
-    --blob-4: rgba(46, 88, 226, .34);   /* left,  lower  */
-    --blob-3: rgba(250, 70, 22, .38);   /* right, upper  */
-    --blob-2: rgba(255, 112, 44, .32);  /* right, lower  */
+    --blob-1: rgba(84, 120, 255, .58);   /* left,  upper  */
+    --blob-4: rgba(62, 98, 240, .44);    /* left,  lower  */
+    --blob-3: rgba(255, 96, 32, .52);    /* right, upper  */
+    --blob-2: rgba(255, 136, 62, .40);   /* right, lower  */
 
-    --b1x: -6vw;  --b1y: -4vh;
-    --b4x: -14vw; --b4y: 6vh;
-    --b3x: 10vw;  --b3y: 10vh;
-    --b2x: 8vw;   --b2y: -10vh;
+    --b1x: 12vw;  --b1y: 6vh;
+    --b4x: -14vw; --b4y: -8vh;
+    --b3x: -8vw;  --b3y: 8vh;
+    --b2x: -16vw; --b2y: -4vh;
   }
 
   /* Projects: circuit green, pulled low and wide. */
