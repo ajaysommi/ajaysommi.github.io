@@ -431,15 +431,30 @@
   }
 
   /* Education: indigo, gathered toward the top. */
+  /* Education: the only place the two Florida colours appear together, and
+     the only place they are split by side. Blue down the left, orange down
+     the right, because that is how the two of them are worn.
+
+     Which blob gets which colour is decided by where each one is anchored,
+     not by its number: b1 and b4 sit against the left edge, b3 and b2
+     against the right, so the pairs take the colour of the side they are
+     already on and the translations only push them further out. Any other
+     assignment would have the two colours crossing in the middle, which is
+     the one thing this zone is trying not to do.
+
+     The blues are lifted off the official #0021A5, which is so dark that a
+     screen blend over this background leaves it closer to grey than to
+     blue. */
   [data-theme="midnight"] .bg[data-zone="education"] {
-    --blob-1: rgba(120, 140, 255, .38);
-    --blob-2: rgba(90, 110, 220, .30);
-    --blob-3: rgba(70, 90, 200, .22);
-    --blob-4: rgba(150, 120, 250, .28);
-    --b1x: 18vw;  --b1y: -8vh;
-    --b2x: -16vw; --b2y: 16vh;
-    --b3x: -8vw;  --b3y: -14vh;
-    --b4x: 6vw;   --b4y: 20vh;
+    --blob-1: rgba(26, 58, 200, .46);   /* left,  upper  */
+    --blob-4: rgba(46, 88, 226, .34);   /* left,  lower  */
+    --blob-3: rgba(250, 70, 22, .38);   /* right, upper  */
+    --blob-2: rgba(255, 112, 44, .32);  /* right, lower  */
+
+    --b1x: -6vw;  --b1y: -4vh;
+    --b4x: -14vw; --b4y: 6vh;
+    --b3x: 10vw;  --b3y: 10vh;
+    --b2x: 8vw;   --b2y: -10vh;
   }
 
   /* Projects: circuit green, pulled low and wide. */

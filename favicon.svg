@@ -1,13 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Ajay Sommi">
+  <!--
+    A_ — the letter and a block cursor, the way a prompt sits waiting for
+    the next character.
+
+    One earlier attempt is worth recording so it is not tried again: putting
+    the cursor through the middle of the A as its crossbar read as a name
+    struck through rather than as a caret.
+
+    No blue: the gradient runs teal to green, the phosphor end of the site's
+    palette, which is what the terminal theme and the typed line under the
+    greeting are already made of.
+
+    Everything is drawn with round caps and joins, and the strokes are kept
+    light enough relative to the letter that the counter under the apex
+    still shows at 16px instead of filling into a solid triangle.
+  -->
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#71FFE9"/>
-      <stop offset="1" stop-color="#0078D4"/>
+    <!-- userSpaceOnUse, not the default objectBoundingBox, and not only for
+         tidiness. A gradient in bounding box units is degenerate on a shape
+         whose box has no area, and the spec says a degenerate gradient does
+         not render at all. The crossbar is a horizontal line and the stem of
+         the lowercase a that came before it was a vertical one: both had a
+         zero height or zero width box, so both silently disappeared, which
+         is why the first attempt came out as a bare /\ and the one before it
+         as an o. In user space the gradient is one diagonal across the whole
+         mark, so every stroke draws, and they share a single ramp instead of
+         each restarting it. -->
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="14" y1="18" x2="52" y2="46">
+      <stop offset="0" stop-color="#8CFFEA"/>
+      <stop offset="1" stop-color="#2FD8A6"/>
     </linearGradient>
   </defs>
+
   <rect width="64" height="64" rx="15" fill="#070C18"/>
-  <rect x="1.5" y="1.5" width="61" height="61" rx="13.5" fill="none" stroke="url(#g)" stroke-opacity=".55" stroke-width="2"/>
-  <text x="32" y="43" text-anchor="middle"
-        font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
-        font-size="27" font-weight="700" fill="url(#g)" letter-spacing="-1">AS</text>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="13.5" fill="none"
+        stroke="url(#g)" stroke-opacity=".5" stroke-width="2"/>
+
+  <!-- The two legs, meeting at a point. -->
+  <path d="M15.4 43 25 20.5 34.6 43" fill="none" stroke="url(#g)"
+        stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- The crossbar, ending just inside each leg so it joins rather than
+       pokes out the sides. -->
+  <path d="M18 37.5H32" fill="none" stroke="url(#g)"
+        stroke-width="4.8" stroke-linecap="round"/>
+
+  <!-- The cursor, sitting on the same baseline the feet stand on. -->
+  <rect x="40.5" y="40.6" width="10.5" height="4.8" rx="2.4" fill="#8CFFEA"/>
 </svg>
