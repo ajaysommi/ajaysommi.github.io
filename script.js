@@ -105,19 +105,87 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
                land: '#5d7564', sea: '#3d6a90', glint: '#ffe6c8' },
   };
 
+  /* The light theme is the same sphere with the contrast running the other
+     way: a white planet under a white sky, shaded down rather than lit up.
+     Nothing here changes what the scene is doing, only what it is made of,
+     so the structure below is identical and only the values differ.
+
+     Midnight and terminal both use the tables above. You said both were
+     already right, so neither is touched. */
+  const LIGHT_STOPS = [
+    { e: -1.00, skyDeep: '#e9edf5', skyHigh: '#dbe2f0', atmo: '#93a9c8', atmoA: .50,
+      surfLit: '#f3f6fb', surfDark: '#d5dceb', sun: '#dfe8fa', sunA: .16,
+      land: '#bfcadc', landA: .30, sea: '#ccd6e6', seaA: .26, glint: '#e8eef8',
+      star: 1, city: .55 },
+
+    { e: -0.28, skyDeep: '#ebeef6', skyHigh: '#e0e5f2', atmo: '#9fa9d2', atmoA: .50,
+      surfLit: '#f5f7fb', surfDark: '#dae0ee', sun: '#e9e4fb', sunA: .20,
+      land: '#c4c9dd', landA: .38, sea: '#d0d6e8', seaA: .34, glint: '#ecf0f8',
+      star: .82, city: .46 },
+
+    { e: -0.08, skyDeep: '#eeedf6', skyHigh: '#e6e2f2', atmo: '#ab9ad6', atmoA: .50,
+      surfLit: '#f7f5fc', surfDark: '#ded9ec', sun: '#ffe6d2', sunA: .26,
+      land: '#c8c1da', landA: .46, sea: '#d3d1e7', seaA: .44, glint: '#f2edf9',
+      star: .52, city: .34 },
+
+    { e:  0.05, skyDeep: '#f5efec', skyHigh: '#f7f1ee', atmo: '#ffa87c', atmoA: .50,
+      surfLit: '#fdf8f4', surfDark: '#e8dcd7', sun: '#ffeeda', sunA: .38,
+      land: '#dccdc4', landA: .52, sea: '#dbd6e2', seaA: .52, glint: '#fff3e4',
+      star: .20, city: .18 },
+
+    { e:  0.34, skyDeep: '#f1f6fc', skyHigh: '#e6effb', atmo: '#8cc4f2', atmoA: .50,
+      surfLit: '#fbfdff', surfDark: '#e0e9f5', sun: '#ffffff', sunA: .40,
+      land: '#c3d9d0', landA: .56, sea: '#cadef1', seaA: .56, glint: '#ffffff',
+      star: .04, city: .05 },
+
+    { e:  1.00, skyDeep: '#f4f8ff', skyHigh: '#e9f2fd', atmo: '#7bbdff', atmoA: .50,
+      surfLit: '#ffffff', surfDark: '#e2ebf7', sun: '#ffffff', sunA: .40,
+      land: '#bcd8cb', landA: .60, sea: '#c2daef', seaA: .60, glint: '#ffffff',
+      star: 0, city: 0 },
+  ];
+
+  const LIGHT_DUSK = {
+    '-0.28': { atmo: '#cf9c8e', skyHigh: '#f6f1f1', surfLit: '#f8f2f1', sun: '#ffd9bd',
+               land: '#d4c5c3', sea: '#dad2d6', glint: '#f4eae5' },
+    '-0.08': { atmo: '#ff9a72', skyHigh: '#f9ece7', surfLit: '#fbf3ef', sun: '#ffe0c2',
+               land: '#dec9c0', sea: '#e0d4d2', glint: '#ffefe0' },
+    '0.05':  { atmo: '#ff8a60', skyHigh: '#faece3', surfLit: '#fdf5ef', sun: '#ffeed8',
+               land: '#e4ccc0', sea: '#e4d6d0', glint: '#fff5e8' },
+    '0.34':  { atmo: '#ffb98c', skyHigh: '#f6f6fc', surfLit: '#fdf9f6', sun: '#fff9ee',
+               land: '#d4dace', sea: '#d6deec', glint: '#fff9f0' },
+  };
+
   const COLOURS = ['skyDeep', 'skyHigh', 'atmo', 'surfLit', 'surfDark', 'sun', 'land', 'sea', 'glint'];
   const NUMBERS = ['atmoA', 'sunA', 'landA', 'seaA', 'star', 'city'];
 
-  /* Pre-parse both tables once, so the five minute tick is not re-reading
-     hex strings. */
-  const SETTING = STOPS.map((st) => {
-    const over = DUSK[st.e.toFixed(2)] || DUSK[String(st.e)] || {};
-    const out = { e: st.e };
-    COLOURS.forEach((k) => { out[k + '_'] = hex(over[k] || st[k]); });
-    NUMBERS.forEach((k) => { out[k] = st[k]; });
-    return out;
-  });
-  STOPS.forEach((st) => COLOURS.forEach((k) => { st[k + '_'] = hex(st[k]); }));
+  /* Pre-parse every table once, so the five minute tick is not re-reading
+     hex strings. Each theme ends up with a rising pair and a setting pair. */
+  function prepare(stops, dusk) {
+    const rise = stops.map((st) => {
+      const out = { e: st.e };
+      COLOURS.forEach((k) => { out[k + '_'] = hex(st[k]); });
+      NUMBERS.forEach((k) => { out[k] = st[k]; });
+      return out;
+    });
+    const set = stops.map((st) => {
+      const over = dusk[st.e.toFixed(2)] || {};
+      const out = { e: st.e };
+      COLOURS.forEach((k) => { out[k + '_'] = hex(over[k] || st[k]); });
+      NUMBERS.forEach((k) => { out[k] = st[k]; });
+      return out;
+    });
+    return { rise, set };
+  }
+
+  const TABLES = {
+    dark:  prepare(STOPS, DUSK),
+    light: prepare(LIGHT_STOPS, LIGHT_DUSK),
+  };
+
+  /* Only the light theme differs. Terminal is dark, and so is anything the
+     page has not decided on yet. */
+  const tablesNow = () =>
+    (root.dataset.theme === 'daylight' ? TABLES.light : TABLES.dark);
 
   function paletteAt(table, e) {
     let i = 0;
@@ -151,7 +219,8 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
   function paint(now) {
     if (!card) return;
     const { elev, x, rising } = solar(now);
-    const p = paletteAt(rising ? STOPS : SETTING, elev);
+    const t = tablesNow();
+    const p = paletteAt(rising ? t.rise : t.set, elev);
 
     /* Height above the horizon, in units of the sky band. Negative sinks it
        below the card, which is exactly where a set sun belongs: gone, but
@@ -219,6 +288,14 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') paint(new Date());
   });
+
+  /* Every colour is written inline on the card, which beats any stylesheet
+     rule, so a theme swap cannot repaint the sky on its own: it has to be
+     told. Watching the attribute rather than hooking the toggle means this
+     keeps working however the theme gets changed, including before this
+     block ran. */
+  new MutationObserver(() => paint(new Date()))
+    .observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 
 
