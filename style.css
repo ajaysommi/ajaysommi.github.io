@@ -2211,10 +2211,14 @@
     margin-bottom: 10px;
   }
 
+  /* Same token as the skill chips, and for the same reason it cannot go any
+     larger: at 25px tall, --r-md would exceed half the height, clamp to
+     12.5, and come straight back as a pill. 10px leaves a 5px straight run
+     down each side, which is what stops it reading as one. */
   .card-kind {
     padding: 3px 10px;
     border: 1px solid color-mix(in oklab, var(--accent) 34%, transparent);
-    border-radius: var(--r-pill);
+    border-radius: var(--r-sm);
     background: var(--accent-soft);
     font-family: var(--font-mono);
     font-size: .68rem;
@@ -2287,11 +2291,20 @@
     border-radius: var(--r-lg);
   }
 
+  /* Matched to the contact buttons on ratio rather than on token, because
+     the token alone does not carry the look: what the eye reads is the
+     radius against the height, and these chips are 36px where those buttons
+     are 48. --r-md on both would have given them 0.385 against the
+     reference's 0.293 and left them visibly rounder. --r-sm gives 0.276,
+     which is the same shape at a smaller size.
+
+     They were pills, so a rounded box held a row of lozenges and the two
+     shapes had nothing to say to each other. */
   .pills button,
   .pills span {
     padding: 8px 14px;
     border: 1px solid var(--stroke);
-    border-radius: var(--r-pill);
+    border-radius: var(--r-sm);
     background: var(--surface);
     color: var(--ink-2);
     font-size: .87rem;
