@@ -1539,8 +1539,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
   /* --- the presets --------------------------------------------------------
      Each is a base wash plus five fields. A field is
-     [r, g, b, alpha, x%, y%, radius%], positions and radius relative to the
-     viewport. The alphas are the whole discipline of this system: nothing
+     [r, g, b, alpha, x%, y%, radius], the position a percentage across the
+     frame and the radius in vmin, so a field keeps its shape rather than
+     stretching out on a wide monitor. The alphas are the whole discipline of this system: nothing
      above .22 in the dark and nothing above .15 in the light, which is low
      enough that on any single screen you are unlikely to identify a colour,
      only a temperature.
@@ -1575,10 +1576,17 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
        hues are Florida's; the alphas are not, deliberately. It should land
        as a feeling that the colour belongs to the content, never as
        branding. */
+    /* The blues are further round toward azure than Florida's own #0021A5,
+       which sits at hue 228. Screened onto a background this dark, 228 comes
+       out as an indigo and reads as purple rather than blue, especially with
+       something warm on the other side of the frame pulling the eye. These
+       paint at hue 215, measured rather than guessed, which is far enough
+       round that a viewer calls it blue and not so far that it turns cyan
+       and stops meaning anything. */
     education: {
-      base: [46, 76, 150, .09],
-      f: [[ 56,  96, 235, .21, 10, 30, 66],
-          [ 48,  80, 210, .13, 22, 78, 56],
+      base: [40, 84, 152, .09],
+      f: [[ 24, 134, 250, .21, 10, 30, 66],
+          [ 22, 118, 228, .13, 22, 78, 56],
           [240, 150,  60, .18, 90, 32, 64],
           [235, 165,  90, .11, 82, 82, 54],
           [ 80, 110, 180, .07, 50, 56, 70]],
@@ -1646,9 +1654,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
           [160, 195, 220, .05, 50,100, 70]],
     },
     education: {
-      base: [168, 190, 222, .09],
-      f: [[120, 160, 235, .14, 10, 28, 66],
-          [135, 170, 230, .10, 22, 78, 56],
+      base: [162, 192, 226, .09],
+      f: [[ 96, 176, 240, .14, 10, 28, 66],
+          [116, 184, 236, .10, 22, 78, 56],
           [245, 195, 140, .13, 90, 30, 64],
           [245, 210, 170, .10, 82, 82, 54],
           [190, 200, 225, .05, 50, 56, 70]],
@@ -1728,7 +1736,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
        So any stage shorter than nine tenths of a screen borrows from its
        neighbours, and only from whatever they have above that same
        threshold, so nothing can be starved to feed something else. */
-    const MIN = innerHeight * 0.9;
+    const MIN = innerHeight * 1.1;
     const len = (x) => x.end - x.top;
 
     for (let i = 0; i < spans.length; i++) {
@@ -1755,15 +1763,16 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       }
     }
 
-    /* Half width of each crossfade, at the boundary that opens a stage. A
-       third of a screen where there is room, and never more than nine
+    /* Half width of each crossfade, at the boundary that opens a stage.
+       Just under half a screen where there is room, so a full handover takes
+       most of a screen's worth of scrolling, and never more than nine
        twentieths of either neighbour, so a stage still reaches its own
        colour in the middle rather than being crossfaded out of existence
        from both sides at once. */
     spans.forEach((s, i) => {
       if (i === 0) { s.h = 0; return; }
       const prev = spans[i - 1];
-      s.h = Math.max(1, Math.min(innerHeight * 0.34,
+      s.h = Math.max(1, Math.min(innerHeight * 0.44,
                                  (prev.end - prev.top) * 0.45,
                                  (s.end - s.top) * 0.45));
     });
@@ -1775,6 +1784,15 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      through its own colour on the way to nothing. Straight channel mixing
      sends a violet meeting an amber through grey, which is the one result
      neither section wanted. */
+  /* One master trim on every alpha in both tables. The presets are written
+     at the strength each chapter wants relative to the others; this is the
+     single place to say the whole environment should sit a little further
+     back, without touching seventy numbers and losing the balance between
+     them. It has come down twice by request, 1 to .92 to .83, so the whole
+     environment now sits at about five sixths of the strength the presets
+     are written at. */
+  const DIM = 0.83;
+
   const mixed = new Float64Array(5 * 7);
   const last = { key: '', theme: '' };
 
@@ -1836,13 +1854,14 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       if (!preset) continue;
 
       const b = preset.base;
-      baseR += w * b[3] * b[0]; baseG += w * b[3] * b[1];
-      baseB += w * b[3] * b[2]; baseA += w * b[3];
+      const ba = b[3] * DIM;
+      baseR += w * ba * b[0]; baseG += w * ba * b[1];
+      baseB += w * ba * b[2]; baseA += w * ba;
 
       for (let f = 0; f < 5; f++) {
         const v = preset.f[f];
         const o = f * 7;
-        const wa = w * v[3];
+        const wa = w * v[3] * DIM;
         mixed[o]     += wa * v[0];   // premultiplied colour
         mixed[o + 1] += wa * v[1];
         mixed[o + 2] += wa * v[2];
@@ -1881,7 +1900,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       }
       style.setProperty(`--f${n}x`, mixed[o + 4].toFixed(1) + '%');
       style.setProperty(`--f${n}y`, mixed[o + 5].toFixed(1) + '%');
-      style.setProperty(`--f${n}r`, mixed[o + 6].toFixed(1) + '%');
+      style.setProperty(`--f${n}r`, mixed[o + 6].toFixed(1) + 'vmin');
     }
   }
 
