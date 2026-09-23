@@ -1575,14 +1575,37 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     onScrollFrame(() => {
       if (!marks.length) return;
 
-      /* Normally the section under the upper middle of the screen owns the
-         field. Through the last screen of the page that mark slides toward
-         the bottom, because the page runs out before the closing section can
-         reach the middle: without this, contact sat 109px short of the line
-         at full scroll and its palette was unreachable. */
+      /* A section takes the field when its top passes 72% of the way down
+         the screen, well before it is anything you are reading.
+
+         That number and the 1.6s crossfade in the stylesheet are one
+         decision. At an unhurried 300px a second the handover happens about
+         0.6s before the heading reaches the middle of the screen, so the
+         colours are visibly arriving as it crosses rather than only catching
+         up once it has reached the top. The line was at 45%, which put the
+         whole fade after the middle, which is what you were seeing. There is
+         no setting that finishes the fade by the middle, incidentally: it
+         would need the handover to happen more than a screen's height early.
+
+         The lookahead has to be earned at both ends of the page, and for
+         mirror image reasons.
+
+         At the top, a fixed 72% lookahead reaches 590px into a document
+         whose second section starts at 530, so the logo strip owned the
+         field from scroll zero and the hero palette, the brightest one on
+         the page, could never be seen at all. The line therefore opens at
+         the top of the viewport and ramps out to its full depth over the
+         first screen.
+
+         At the bottom, the page runs out before the closing section can
+         reach the line on its own, so the line slides toward the foot of
+         the screen through the last screen of scrolling. Without it contact
+         sits short of the line at full scroll and its palette is equally
+         unreachable. */
+      const ramp = clamp(scrollY / Math.max(innerHeight, 1), 0, 1);
       const runway = maxScroll - scrollY;
       const slide = runway < innerHeight ? (innerHeight - runway) / innerHeight : 0;
-      const line = scrollY + innerHeight * (0.45 + 0.5 * clamp(slide, 0, 1));
+      const line = scrollY + innerHeight * (0.72 * ramp + 0.23 * clamp(slide, 0, 1));
 
       let name = marks[0].name;
       for (const mark of marks) {

@@ -395,11 +395,15 @@
      with the `transform` the drift animation is already using, so the two
      never fight over the same declaration. */
   .bg {
-    transition: --blob-1 2.4s linear, --blob-2 2.4s linear,
-                --blob-3 2.4s linear, --blob-4 2.4s linear;
+    /* 1.6s, paired with the 72% handover line in script.js. Together they
+       put the crossfade across the moment the section reaches the middle of
+       the screen. It was 2.4s from a 45% line, which started the fade so
+       late that it was still running when the heading hit the top. */
+    transition: --blob-1 1.6s linear, --blob-2 1.6s linear,
+                --blob-3 1.6s linear, --blob-4 1.6s linear;
   }
 
-  .blob { transition: translate 2.4s var(--ease); }
+  .blob { transition: translate 1.6s var(--ease); }
 
   .b1 { translate: var(--b1x, 0) var(--b1y, 0); }
   .b2 { translate: var(--b2x, 0) var(--b2y, 0); }
@@ -448,10 +452,27 @@
      outward on the theory that it would separate the two colours, and the
      result was two colours nobody could see.
 
-     The blues are lifted well off the official #0021A5. Under a screen blend
-     on a background this dark, a colour only shows to the extent it is
-     already bright, so the literal hex adds almost nothing; the hue is what
-     reads as Florida, and it survives the lift.
+     None of these are the official hexes, and the reason is the filter.
+     Every blob is drawn through saturate(340%), so the colour written here
+     is not the colour that lands on the page: the filter drives whichever
+     channels are below the luminance down toward zero, which swings the hue
+     as well as the chroma. The values above are chosen for what they come
+     out as, measured rather than guessed:
+
+       written              painted        hue
+       rgb(255, 96, 32)  -> rgb(255,26,0)   6   plainly red
+       rgb(255,164, 62)  -> rgb(255,135,0)  32  orange
+       rgb( 84,120,255)  -> rgb(0,115,255)  213 azure
+       rgb( 92,100,250)  -> rgb(51, 78,255) 232 Florida blue is 228
+
+     The first line is what the section looked like before and why it read
+     as red: an orange leaning even slightly toward red goes all the way
+     there once the filter is through with it.
+
+     They also sit far off #FA4616 and #0021A5 in brightness, which is a
+     second constraint: under a screen blend on a background this dark a
+     colour only contributes to the extent it is already bright, and
+     #0021A5 is dark enough to add close to nothing.
 
      The extra weight here is carried in the alpha of the colours rather than
      in --blob-opacity. The four colours are registered with @property, so
@@ -460,10 +481,10 @@
      every scroll frame, and putting a 2.4s transition on that would leave
      the scroll fade permanently chasing itself. */
   [data-theme="midnight"] .bg[data-zone="education"] {
-    --blob-1: rgba(84, 120, 255, .58);   /* left,  upper  */
-    --blob-4: rgba(62, 98, 240, .44);    /* left,  lower  */
-    --blob-3: rgba(255, 96, 32, .52);    /* right, upper  */
-    --blob-2: rgba(255, 136, 62, .40);   /* right, lower  */
+    --blob-1: rgba(92, 100, 250, .62);   /* left,  upper -> hue 232 */
+    --blob-4: rgba(78, 88, 240, .46);    /* left,  lower -> hue 234 */
+    --blob-3: rgba(255, 164, 62, .50);   /* right, upper -> hue 32  */
+    --blob-2: rgba(255, 186, 104, .34);  /* right, lower -> hue 39  */
 
     --b1x: 12vw;  --b1y: 6vh;
     --b4x: -14vw; --b4y: -8vh;
