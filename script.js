@@ -1582,13 +1582,21 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
        something warm on the other side of the frame pulling the eye. These
        paint at hue 215, measured rather than guessed, which is far enough
        round that a viewer calls it blue and not so far that it turns cyan
-       and stops meaning anything. */
+       and stops meaning anything.
+
+       This is also the one chapter that carries more weight than its
+       neighbours. The four coloured fields run about a quarter above
+       everything else on the page, which is deliberate: it is the only
+       moment where the colour means something specific, so it is the only
+       one allowed to be noticed. The fifth field and the base wash are left
+       where they were, so what lifts is the blue and the amber rather than
+       the section generally. */
     education: {
       base: [40, 84, 152, .09],
-      f: [[ 24, 134, 250, .21, 10, 30, 66],
-          [ 22, 118, 228, .13, 22, 78, 56],
-          [240, 150,  60, .18, 90, 32, 64],
-          [235, 165,  90, .11, 82, 82, 54],
+      f: [[ 24, 134, 250, .26, 10, 30, 66],
+          [ 22, 118, 228, .16, 22, 78, 56],
+          [240, 150,  60, .23, 90, 32, 64],
+          [235, 165,  90, .14, 82, 82, 54],
           [ 80, 110, 180, .07, 50, 56, 70]],
     },
     projects: {
@@ -1655,10 +1663,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     },
     education: {
       base: [162, 192, 226, .09],
-      f: [[ 96, 176, 240, .14, 10, 28, 66],
-          [116, 184, 236, .10, 22, 78, 56],
-          [245, 195, 140, .13, 90, 30, 64],
-          [245, 210, 170, .10, 82, 82, 54],
+      f: [[ 96, 176, 240, .17, 10, 28, 66],
+          [116, 184, 236, .13, 22, 78, 56],
+          [245, 195, 140, .16, 90, 30, 64],
+          [245, 210, 170, .13, 82, 82, 54],
           [190, 200, 225, .05, 50, 56, 70]],
     },
     projects: {
