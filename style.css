@@ -13,14 +13,6 @@
   /* Registered so gradients/glows can be animated smoothly. */
   @property --p      { syntax: "<number>";            inherits: true; initial-value: 0; }
 
-  /* Registered so they animate. An unregistered custom property flips
-     from one value to the next with no in between, which would make the
-     colour field jump at every section boundary instead of drifting. */
-  @property --blob-1 { syntax: "<color>"; inherits: true; initial-value: transparent; }
-  @property --blob-2 { syntax: "<color>"; inherits: true; initial-value: transparent; }
-  @property --blob-3 { syntax: "<color>"; inherits: true; initial-value: transparent; }
-  @property --blob-4 { syntax: "<color>"; inherits: true; initial-value: transparent; }
-
   :root {
     --font-sans: "Exo 2", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-display: "Orbitron", var(--font-sans);
@@ -67,21 +59,16 @@
     --shadow: 0 20px 60px rgba(0, 0, 0, .38);
     --shadow-lg: 0 28px 80px rgba(0, 0, 0, .5);
 
-    --blob-1: rgba(59, 246, 243, .45);
-    --blob-2: rgba(110, 168, 255, .35);
-    --blob-3: rgba(230, 57, 70, .28);
-    --blob-4: rgba(139, 92, 246, .32);
-    --blob-opacity: .36;
-    --blob-blend: screen;
 
-    --glyph-color: %239bb8ff;
-    --glyph-opacity: 0.08;
+    --glyphs:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='%239bb8ff' fill-opacity='0.08' font-family='monospace' font-size='15'%3E%3Ctext x='14' y='28'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='92' y='52'%3E%7B%7D%3C/text%3E%3Ctext x='32' y='96'%3E%5B%5D%3C/text%3E%3Ctext x='118' y='118'%3E//%3C/text%3E%3Ctext x='56' y='150'%3E_%3C/text%3E%3Ctext x='130' y='160'%3E%5C%3C/text%3E%3C/g%3E%3C/svg%3E");
     --veil: transparent;
     color-scheme: dark;
   }
 
   /* ---------- Daylight ---------- */
   [data-theme="daylight"] {
+    --amb-blend: multiply;
     --bg: #eef2f8;
     --bg-2: #e4eaf4;
     --ink: #10192b;
@@ -104,15 +91,9 @@
     --shadow: 0 14px 40px rgba(16, 25, 43, .12);
     --shadow-lg: 0 24px 60px rgba(16, 25, 43, .18);
 
-    --blob-1: rgba(10, 127, 109, .30);
-    --blob-2: rgba(0, 88, 176, .22);
-    --blob-3: rgba(214, 58, 13, .16);
-    --blob-4: rgba(120, 80, 220, .18);
-    --blob-opacity: .50;
-    --blob-blend: multiply;
 
-    --glyph-color: %231b3a6b;
-    --glyph-opacity: 0.07;
+    --glyphs:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='%231b3a6b' fill-opacity='0.07' font-family='monospace' font-size='15'%3E%3Ctext x='14' y='28'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='92' y='52'%3E%7B%7D%3C/text%3E%3Ctext x='32' y='96'%3E%5B%5D%3C/text%3E%3Ctext x='118' y='118'%3E//%3C/text%3E%3Ctext x='56' y='150'%3E_%3C/text%3E%3Ctext x='130' y='160'%3E%5C%3C/text%3E%3C/g%3E%3C/svg%3E");
     --veil: transparent;
     color-scheme: light;
   }
@@ -141,15 +122,9 @@
     --shadow: 0 20px 60px rgba(0, 20, 8, .55);
     --shadow-lg: 0 28px 80px rgba(0, 20, 8, .65);
 
-    --blob-1: rgba(53, 255, 148, .30);
-    --blob-2: rgba(18, 217, 122, .22);
-    --blob-3: rgba(120, 255, 190, .16);
-    --blob-4: rgba(20, 180, 120, .24);
-    --blob-opacity: .32;
-    --blob-blend: screen;
 
-    --glyph-color: %2335ff94;
-    --glyph-opacity: 0.10;
+    --glyphs:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='%2335ff94' fill-opacity='0.10' font-family='monospace' font-size='15'%3E%3Ctext x='14' y='28'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='92' y='52'%3E%7B%7D%3C/text%3E%3Ctext x='32' y='96'%3E%5B%5D%3C/text%3E%3Ctext x='118' y='118'%3E//%3C/text%3E%3Ctext x='56' y='150'%3E_%3C/text%3E%3Ctext x='130' y='160'%3E%5C%3C/text%3E%3C/g%3E%3C/svg%3E");
     --veil: repeating-linear-gradient(180deg, #00000000 0 2px, #00110844 2px 4px);
     color-scheme: dark;
   }
@@ -171,22 +146,16 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: calc(var(--nav-h) + 18px);
+    /* The code glyph texture used to be painted here. The ambient field is
+       an opaque layer above the root background now, because the fields
+       inside it have to have something to blend with, so painting the
+       texture here would simply have hidden it. It moved into the field, on
+       top of the light, which is where it always appeared to sit anyway. */
     background-color: var(--bg);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='%239bb8ff' fill-opacity='0.08' font-family='monospace' font-size='15'%3E%3Ctext x='14' y='28'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='92' y='52'%3E%7B%7D%3C/text%3E%3Ctext x='32' y='96'%3E%5B%5D%3C/text%3E%3Ctext x='118' y='118'%3E//%3C/text%3E%3Ctext x='56' y='150'%3E_%3C/text%3E%3Ctext x='130' y='160'%3E%5C%3C/text%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 180px 180px;
-    background-attachment: fixed;
     -webkit-text-size-adjust: 100%;
   }
 
-  [data-theme="daylight"] html,
-  html[data-theme="daylight"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='%231b3a6b' fill-opacity='0.07' font-family='monospace' font-size='15'%3E%3Ctext x='14' y='28'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='92' y='52'%3E%7B%7D%3C/text%3E%3Ctext x='32' y='96'%3E%5B%5D%3C/text%3E%3Ctext x='118' y='118'%3E//%3C/text%3E%3Ctext x='56' y='150'%3E_%3C/text%3E%3Ctext x='130' y='160'%3E%5C%3C/text%3E%3C/g%3E%3C/svg%3E");
-  }
 
-  html[data-theme="terminal"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='%2335ff94' fill-opacity='0.10' font-family='monospace' font-size='15'%3E%3Ctext x='14' y='28'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='92' y='52'%3E%7B%7D%3C/text%3E%3Ctext x='32' y='96'%3E%5B%5D%3C/text%3E%3Ctext x='118' y='118'%3E//%3C/text%3E%3Ctext x='56' y='150'%3E_%3C/text%3E%3Ctext x='130' y='160'%3E%5C%3C/text%3E%3C/g%3E%3C/svg%3E");
-  }
 
   body {
     margin: 0;
@@ -355,192 +324,105 @@
    BACKGROUND FIELD
    ========================================================================== */
 @layer components {
+  /* --------------------------------------------------------------------
+     Ambient field
+
+     One environment under the whole page rather than a background per
+     section. Seven presets, one per chapter, and what gets painted is a
+     weighted blend of them keyed to where you are reading: inside a section
+     its own preset stands alone, across a boundary the two neighbours cross
+     over. script.js does the blending and writes the result here as plain
+     values, so there is nothing for CSS to transition and nothing that can
+     lag behind the scroll.
+
+     Five gradient fields and no blur filter. A radial gradient with a soft
+     stop IS the blur, and it costs one paint rather than a filter pass over
+     a 46vw element, which is what the previous version spent on each of
+     four blobs. Losing the filter also means the colour written is the
+     colour painted: saturate(340%) used to swing hue as well as chroma, so
+     an orange came out red and a blue came out cyan.
+     -------------------------------------------------------------------- */
   .bg {
     position: fixed;
     inset: 0;
     z-index: -2;
     overflow: hidden;
     pointer-events: none;
-    background:
-      radial-gradient(900px 600px at 15% 5%, color-mix(in oklab, var(--accent-2) 13%, transparent), transparent 65%),
-      radial-gradient(850px 600px at 85% 10%, color-mix(in oklab, var(--uf-orange) 9%, transparent), transparent 70%),
-      radial-gradient(900px 650px at 50% 100%, color-mix(in oklab, var(--accent) 11%, transparent), transparent 70%);
+    /* Opaque, and exactly the page's own background. It has to be: z-index
+       makes this an isolated stacking context, so the fields inside can only
+       blend with what this element paints. Left transparent, a screen blend
+       had nothing to add light to and the whole field went flat. */
+    background-color: var(--bg);
+    background-image: var(--amb-base, none);
   }
 
-  .blob {
+  /* The fields are split across two layers only so each can drift on its
+     own long cycle. One layer would move rigidly; two let the environment
+     breathe slightly out of step with itself. Both are inset past the frame
+     so the drift never walks an edge into view. */
+  /* Screen in the dark, multiply in the light, and the difference is the
+     whole reason light mode does not look like an afterthought. Screen adds
+     light, which is what a glow is. Multiply removes it, which is what a
+     tint is: a pale amber multiplied into a near white page stays amber,
+     where the same colour laid over it at low alpha would drift toward the
+     page and end up grey. Several of those stacked is what makes an
+     ambient light theme look dirty. */
+  .amb {
     position: absolute;
-    /* --bg-fade runs 1 to .16 as you scroll away from the hero, so the colour
-       is at full strength where it frames the introduction and has almost
-       receded by the time you are reading the rest. */
-    opacity: calc(var(--blob-opacity) * var(--bg-fade, 1));
-    filter: blur(85px) saturate(340%);
-    mix-blend-mode: var(--blob-blend);
+    inset: -8%;
+    mix-blend-mode: var(--amb-blend, screen);
     will-change: transform;
-    animation: floaty 34s ease-in-out infinite alternate;
   }
 
-  .b1 { width: 46vw; height: 46vw; left: -20vw; top: -18vh; background: radial-gradient(60% 60% at 40% 40%, var(--blob-1), transparent 72%); }
-  .b2 { width: 44vw; height: 44vw; right: -22vw; bottom: -20vh; background: radial-gradient(60% 60% at 60% 60%, var(--blob-2), transparent 74%); animation-duration: 38s; }
-  .b3 { width: 34vw; height: 34vw; right: -10vw; top: -12vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-3), transparent 76%); animation-duration: 42s; }
-  .b4 { width: 36vw; height: 36vw; left: 12vw; bottom: -24vh; background: radial-gradient(60% 60% at 50% 50%, var(--blob-4), transparent 76%); animation-duration: 40s; }
-
-  /* ---------- Colour zones ----------
-     The field takes both its palette and its arrangement from whatever
-     section you are reading. script.js puts the section's name on .bg; the
-     four colours and the four offsets then cross fade to the new pattern
-     over a couple of seconds, slow enough that you notice the room has
-     changed rather than watching it change.
-
-     Position rides on `translate`, which is its own property and composes
-     with the `transform` the drift animation is already using, so the two
-     never fight over the same declaration. */
-  .bg {
-    /* 1.6s, paired with the 72% handover line in script.js. Together they
-       put the crossfade across the moment the section reaches the middle of
-       the screen. It was 2.4s from a 45% line, which started the fade so
-       late that it was still running when the heading hit the top. */
-    transition: --blob-1 1.6s linear, --blob-2 1.6s linear,
-                --blob-3 1.6s linear, --blob-4 1.6s linear;
+  .amb-a {
+    background:
+      radial-gradient(circle var(--f1r, 60%) at var(--f1x, 20%) var(--f1y, 25%), var(--f1c, transparent) 0%, transparent 68%),
+      radial-gradient(circle var(--f2r, 58%) at var(--f2x, 70%) var(--f2y, 18%), var(--f2c, transparent) 0%, transparent 68%),
+      radial-gradient(circle var(--f3r, 62%) at var(--f3x, 45%) var(--f3y, 65%), var(--f3c, transparent) 0%, transparent 68%);
+    animation: amb-drift-a 96s ease-in-out infinite alternate;
   }
 
-  .blob { transition: translate 1.6s var(--ease); }
-
-  .b1 { translate: var(--b1x, 0) var(--b1y, 0); }
-  .b2 { translate: var(--b2x, 0) var(--b2y, 0); }
-  .b3 { translate: var(--b3x, 0) var(--b3y, 0); }
-  .b4 { translate: var(--b4x, 0) var(--b4y, 0); }
-
-  /* Logos: warm, a shade of the brand colours the strip is showing. */
-  [data-theme="midnight"] .bg[data-zone="logos"] {
-    --blob-1: rgba(255, 170, 120, .34);
-    --blob-2: rgba(120, 170, 255, .30);
-    --blob-3: rgba(230, 120, 140, .24);
-    --blob-4: rgba(180, 140, 245, .28);
-    --b1x: 14vw;  --b1y: 10vh;
-    --b2x: -10vw; --b2y: -6vh;
-    --b3x: -12vw; --b3y: 14vh;
-    --b4x: 16vw;  --b4y: -12vh;
+  .amb-b {
+    background:
+      radial-gradient(circle var(--f4r, 50%) at var(--f4x, 86%) var(--f4y, 55%), var(--f4c, transparent) 0%, transparent 70%),
+      radial-gradient(circle var(--f5r, 72%) at var(--f5x, 50%) var(--f5y, 98%), var(--f5c, transparent) 0%, transparent 70%);
+    animation: amb-drift-b 137s ease-in-out infinite alternate;
   }
 
-  /* The path: ocean, and the pools swing to the outside edges. */
-  [data-theme="midnight"] .bg[data-zone="experience"] {
-    --blob-1: rgba(56, 160, 255, .42);
-    --blob-2: rgba(80, 120, 230, .34);
-    --blob-3: rgba(30, 90, 190, .26);
-    --blob-4: rgba(110, 90, 240, .30);
-    --b1x: -6vw;  --b1y: 22vh;
-    --b2x: 8vw;   --b2y: -18vh;
-    --b3x: 10vw;  --b3y: 26vh;
-    --b4x: -14vw; --b4y: -10vh;
+  /* Under 2% of the viewport over a minute and a half. It is not meant to be
+     seen happening; it is meant to stop the field feeling printed on.
+     Transform only, so it runs on the compositor and never repaints. */
+  @keyframes amb-drift-a {
+    from { transform: translate3d(-0.9%, -0.6%, 0) scale(1.012); }
+    to   { transform: translate3d( 1.1%,  0.8%, 0) scale(1); }
   }
 
-  /* Education: indigo, gathered toward the top. */
-  /* Education: the only place the two Florida colours appear together, and
-     the only place they are split by side. Blue into the top left, orange
-     into the right, because that is how the two of them are worn.
-
-     Which blob takes which colour follows from where it is anchored rather
-     than from its number: b1 and b4 are pinned to the left edge, b3 and b2
-     to the right, so each pair takes the colour of the side it already sits
-     on and nothing has to cross the middle to get there.
-
-     The offsets pull every one of them INTO frame, not out of it. Each blob
-     is anchored well outside the viewport so it can be slid around without
-     its edge ever showing, which means a translation away from centre pushes
-     it off screen entirely: b1 is 46vw wide starting at -20vw, so it needs
-     to come right to be seen at all. An earlier pass had these pushed
-     outward on the theory that it would separate the two colours, and the
-     result was two colours nobody could see.
-
-     None of these are the official hexes, and the reason is the filter.
-     Every blob is drawn through saturate(340%), so the colour written here
-     is not the colour that lands on the page: the filter drives whichever
-     channels are below the luminance down toward zero, which swings the hue
-     as well as the chroma. The values above are chosen for what they come
-     out as, measured rather than guessed:
-
-       written              painted        hue
-       rgb(255, 96, 32)  -> rgb(255,26,0)   6   plainly red
-       rgb(255,164, 62)  -> rgb(255,135,0)  32  orange
-       rgb( 84,120,255)  -> rgb(0,115,255)  213 azure
-       rgb( 92,100,250)  -> rgb(51, 78,255) 232 Florida blue is 228
-
-     The first line is what the section looked like before and why it read
-     as red: an orange leaning even slightly toward red goes all the way
-     there once the filter is through with it.
-
-     They also sit far off #FA4616 and #0021A5 in brightness, which is a
-     second constraint: under a screen blend on a background this dark a
-     colour only contributes to the extent it is already bright, and
-     #0021A5 is dark enough to add close to nothing.
-
-     The extra weight here is carried in the alpha of the colours rather than
-     in --blob-opacity. The four colours are registered with @property, so
-     they interpolate and a change in alpha eases in with everything else;
-     --blob-opacity feeds an opacity that --bg-fade is already rewriting on
-     every scroll frame, and putting a 2.4s transition on that would leave
-     the scroll fade permanently chasing itself. */
-  [data-theme="midnight"] .bg[data-zone="education"] {
-    --blob-1: rgba(92, 100, 250, .62);   /* left,  upper -> hue 232 */
-    --blob-4: rgba(78, 88, 240, .46);    /* left,  lower -> hue 234 */
-    --blob-3: rgba(255, 164, 62, .50);   /* right, upper -> hue 32  */
-    --blob-2: rgba(255, 186, 104, .34);  /* right, lower -> hue 39  */
-
-    --b1x: 12vw;  --b1y: 6vh;
-    --b4x: -14vw; --b4y: -8vh;
-    --b3x: -8vw;  --b3y: 8vh;
-    --b2x: -16vw; --b2y: -4vh;
+  @keyframes amb-drift-b {
+    from { transform: translate3d( 0.8%,  0.7%, 0) scale(1); }
+    to   { transform: translate3d(-1.0%, -0.5%, 0) scale(1.014); }
   }
 
-  /* Projects: circuit green, pulled low and wide. */
-  [data-theme="midnight"] .bg[data-zone="projects"] {
-    --blob-1: rgba(60, 240, 190, .40);
-    --blob-2: rgba(70, 200, 150, .32);
-    --blob-3: rgba(40, 160, 130, .24);
-    --blob-4: rgba(90, 210, 255, .28);
-    --b1x: -16vw; --b1y: 18vh;
-    --b2x: 14vw;  --b2y: 12vh;
-    --b3x: 18vw;  --b3y: -16vh;
-    --b4x: -10vw; --b4y: -18vh;
+  /* The colours are the story and they stay: which chapter you are in is
+     content, not motion, and the ambient block in script.js runs whether or
+     not motion is reduced. Only the drift goes, and with it the hint, which
+     would otherwise hold a composited layer for an animation that is never
+     going to run. */
+  @media (prefers-reduced-motion: reduce) {
+    .amb-a, .amb-b { animation: none; transform: none; will-change: auto; }
   }
 
-  /* Skills: emerald, tight to the centre. */
-  [data-theme="midnight"] .bg[data-zone="skills"] {
-    --blob-1: rgba(80, 230, 170, .36);
-    --blob-2: rgba(50, 190, 190, .30);
-    --blob-3: rgba(30, 150, 120, .22);
-    --blob-4: rgba(110, 220, 210, .26);
-    --b1x: 10vw;  --b1y: -16vh;
-    --b2x: -12vw; --b2y: -14vh;
-    --b3x: -18vw; --b3y: 8vh;
-    --b4x: 12vw;  --b4y: 16vh;
+  /* The veil and the code glyph texture, both above the ambient light and
+     below everything you read. Absolute inside a fixed parent, so the
+     pattern stays put while the page scrolls, exactly as the old
+     background-attachment: fixed did. */
+  .grid-veil {
+    position: absolute;
+    inset: 0;
+    background-color: var(--veil);
+    background-image: var(--glyphs);
+    background-repeat: repeat;
+    background-size: 180px 180px;
   }
-
-  /* Recommendations: blue, spread to opposite corners. */
-  [data-theme="midnight"] .bg[data-zone="recs"] {
-    --blob-1: rgba(90, 175, 255, .38);
-    --blob-2: rgba(130, 160, 255, .30);
-    --blob-3: rgba(60, 120, 215, .24);
-    --blob-4: rgba(105, 200, 255, .28);
-    --b1x: -18vw; --b1y: -12vh;
-    --b2x: 18vw;  --b2y: 18vh;
-    --b3x: -14vw; --b3y: 20vh;
-    --b4x: 14vw;  --b4y: -16vh;
-  }
-
-  /* Contact: dusk, low and warm to close on. */
-  [data-theme="midnight"] .bg[data-zone="contact"] {
-    --blob-1: rgba(180, 130, 255, .38);
-    --blob-2: rgba(120, 140, 255, .30);
-    --blob-3: rgba(235, 110, 120, .24);
-    --blob-4: rgba(150, 100, 240, .30);
-    --b1x: 8vw;   --b1y: 20vh;
-    --b2x: -8vw;  --b2y: -20vh;
-    --b3x: 16vw;  --b3y: 10vh;
-    --b4x: -16vw; --b4y: 14vh;
-  }
-
-  .grid-veil { position: absolute; inset: 0; background: var(--veil); }
 
   /* ---------- Glass primitive ---------- */
   .glass {
@@ -2976,11 +2858,6 @@
   html:not(.js) .page-loader { display: none; }
   html:not(.js) .rail { display: none; }
 
-  @keyframes floaty {
-    0%   { transform: translate3d(0, 0, 0) scale(1); }
-    50%  { transform: translate3d(12px, -10px, 0) scale(1.06); }
-    100% { transform: translate3d(-8px, 12px, 0) scale(1.03); }
-  }
 
   @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
@@ -3047,7 +2924,7 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
 
-    .blob,
+    .amb,
     .loader-stars,
     .loader-orb,
     .loader-bar i,

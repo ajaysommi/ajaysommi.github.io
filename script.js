@@ -1503,6 +1503,404 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
+   Ambient field
+
+   One environment under the whole page, not a background per section. Seven
+   presets, one per chapter, and what gets painted is a weighted blend of
+   them keyed to where you are reading. Inside a section its own preset
+   stands alone; across a boundary the two neighbours cross over. Nothing
+   switches, so there is no moment you can point at and say the background
+   just changed.
+
+   The reference is bias lighting behind a television: the room takes its
+   colour from what is on screen, and nobody watches the wall.
+
+   The blend is done here and written out as finished values, which is why
+   there is no CSS transition on any of it. A transition would be a second
+   opinion about where the colour should be, always a beat behind the
+   scroll, and the two would spend the whole page disagreeing.
+   ========================================================================== */
+(function ambient() {
+  const field = $('.bg');
+  if (!field) return;
+
+  /* --- the chapters -------------------------------------------------------
+     Seven, in reading order. The logo strip has no entry of its own: it is
+     the tail of the opening, so the hero's light carries through it. */
+  const STAGES = [
+    { key: 'hero',      sel: '.hero' },
+    { key: 'path',      sel: '#experience' },
+    { key: 'education', sel: '#education' },
+    { key: 'projects',  sel: '#projects' },
+    { key: 'skills',    sel: '#skills' },
+    { key: 'recs',      sel: '#recs' },
+    { key: 'resume',    sel: '#contact' },
+  ];
+
+  /* --- the presets --------------------------------------------------------
+     Each is a base wash plus five fields. A field is
+     [r, g, b, alpha, x%, y%, radius%], positions and radius relative to the
+     viewport. The alphas are the whole discipline of this system: nothing
+     above .22 in the dark and nothing above .15 in the light, which is low
+     enough that on any single screen you are unlikely to identify a colour,
+     only a temperature.
+
+     The story: the hero holds the widest mixture, the path narrows it to
+     cool and directional, education is the one moment the colours mean
+     something specific, projects turns that into something built, skills
+     resolves the mass into separate nodes, recommendations warms into
+     human, and the close cools back down to a quieter version of the
+     opening. Possibility at the top, resolution at the bottom. */
+  const DARK = {
+    hero: {
+      base: [40, 96, 150, .10],
+      f: [[56, 200, 215, .20, 18, 22, 62],
+          [60, 120, 230, .18, 70, 16, 58],
+          [120,  95, 220, .15, 46, 62, 66],
+          [190,  80, 110, .11, 88, 48, 50],
+          [ 70, 150, 200, .12, 50, 96, 75]],
+    },
+    /* Cooler, and the fields fall on a diagonal rather than spreading out:
+       the timeline already reads as movement, so the light leans with it
+       instead of drawing its own line. */
+    path: {
+      base: [36, 86, 150, .09],
+      f: [[ 50, 205, 205, .21, 12, 28, 55],
+          [ 55, 115, 225, .19, 42, 54, 58],
+          [105,  95, 205, .12, 76, 80, 52],
+          [ 48, 100, 200, .10, 92, 18, 46],
+          [ 40,  90, 150, .08, 50,100, 70]],
+    },
+    /* Blue down one side, amber down the other, meeting in the middle. The
+       hues are Florida's; the alphas are not, deliberately. It should land
+       as a feeling that the colour belongs to the content, never as
+       branding. */
+    education: {
+      base: [46, 76, 150, .09],
+      f: [[ 56,  96, 235, .21, 10, 30, 66],
+          [ 48,  80, 210, .13, 22, 78, 56],
+          [240, 150,  60, .18, 90, 32, 64],
+          [235, 165,  90, .11, 82, 82, 54],
+          [ 80, 110, 180, .07, 50, 56, 70]],
+    },
+    projects: {
+      base: [44, 92, 160, .10],
+      f: [[ 50, 210, 210, .20, 20, 26, 56],
+          [ 60, 120, 235, .18, 62, 40, 58],
+          [125,  90, 225, .16, 40, 80, 60],
+          [190,  80, 190, .10, 86, 70, 48],
+          [ 45, 170, 200, .09, 92, 12, 44]],
+    },
+    /* The same light broken into five smaller sources of near equal weight.
+       Not one per skill, and not sharp enough to count: a mass resolving
+       into parts. */
+    skills: {
+      base: [40, 90, 158, .09],
+      f: [[ 50, 195, 205, .15, 16, 24, 42],
+          [ 58, 118, 225, .15, 44, 34, 40],
+          [110,  95, 210, .13, 74, 26, 40],
+          [ 48, 180, 200, .13, 30, 74, 40],
+          [ 55, 110, 215, .13, 68, 78, 42]],
+    },
+    recs: {
+      base: [120, 86, 70, .09],
+      f: [[230, 160,  80, .17, 24, 30, 60],
+          [235, 140, 110, .14, 66, 58, 58],
+          [220, 175,  95, .12, 86, 24, 50],
+          [120,  95, 190, .09, 14, 80, 52],
+          [200, 150, 110, .08, 50,100, 68]],
+    },
+    /* Quieter than the hero on purpose. The top of the page is what could
+       happen; the bottom is what did. */
+    resume: {
+      base: [46, 96, 150, .08],
+      f: [[ 80, 200, 210, .15, 50, 28, 62],
+          [ 70, 130, 215, .12, 22, 62, 56],
+          [180, 210, 230, .09, 78, 66, 54],
+          [190, 150, 120, .06, 90, 20, 42],
+          [ 60, 110, 180, .07, 50,100, 70]],
+    },
+  };
+
+  /* Light is not the dark values turned down. Colour on a light ground works
+     by tinting rather than glowing, and several low alpha hues stacked on
+     white average toward grey, which is the failure mode here: not too
+     strong, but dirty. So the hues are held apart across the frame, the
+     alphas are roughly two thirds of the dark ones, and every colour stays
+     light enough that it tints the page without darkening it. */
+  const LIGHT = {
+    hero: {
+      base: [150, 195, 225, .10],
+      f: [[120, 205, 225, .13, 18, 20, 64],
+          [130, 170, 235, .12, 72, 14, 60],
+          [175, 165, 230, .10, 46, 60, 66],
+          [232, 175, 190, .08, 90, 46, 50],
+          [150, 195, 225, .08, 50, 98, 76]],
+    },
+    path: {
+      base: [146, 190, 222, .10],
+      f: [[120, 205, 220, .13, 12, 28, 56],
+          [130, 170, 230, .12, 44, 54, 58],
+          [170, 165, 225, .08, 76, 80, 52],
+          [140, 180, 225, .07, 92, 18, 46],
+          [160, 195, 220, .05, 50,100, 70]],
+    },
+    education: {
+      base: [168, 190, 222, .09],
+      f: [[120, 160, 235, .14, 10, 28, 66],
+          [135, 170, 230, .10, 22, 78, 56],
+          [245, 195, 140, .13, 90, 30, 64],
+          [245, 210, 170, .10, 82, 82, 54],
+          [190, 200, 225, .05, 50, 56, 70]],
+    },
+    projects: {
+      base: [150, 190, 225, .10],
+      f: [[120, 210, 215, .13, 20, 24, 56],
+          [130, 172, 235, .12, 62, 40, 58],
+          [180, 160, 235, .11, 40, 80, 60],
+          [225, 165, 225, .07, 86, 70, 48],
+          [140, 200, 220, .06, 92, 10, 44]],
+    },
+    skills: {
+      base: [148, 188, 222, .09],
+      f: [[125, 205, 220, .10, 16, 22, 42],
+          [135, 175, 235, .10, 44, 32, 40],
+          [175, 168, 228, .09, 74, 24, 40],
+          [130, 198, 218, .09, 30, 74, 40],
+          [138, 175, 230, .09, 68, 78, 42]],
+    },
+    recs: {
+      base: [232, 200, 172, .10],
+      f: [[245, 200, 145, .13, 24, 28, 60],
+          [246, 185, 165, .11, 66, 56, 58],
+          [240, 210, 155, .10, 86, 22, 50],
+          [190, 175, 225, .06, 14, 80, 52],
+          [238, 205, 180, .06, 50,100, 68]],
+    },
+    resume: {
+      base: [176, 206, 228, .08],
+      f: [[140, 210, 220, .10, 50, 26, 62],
+          [140, 180, 230, .09, 22, 62, 56],
+          [200, 220, 235, .07, 78, 66, 54],
+          [230, 205, 185, .04, 90, 18, 42],
+          [160, 195, 225, .05, 50,100, 70]],
+    },
+  };
+
+  /* Terminal is a phosphor display, so it gets the dark story rendered in
+     one colour rather than a third table. Pulling each hue most of the way
+     to green keeps the shape of the narrative, which is what the warm and
+     cool moments are made of, without pretending a monochrome tube can show
+     amber next to cyan. */
+  const PHOSPHOR = [53, 255, 148];
+  const PHOSPHOR_PULL = 0.62;
+
+  const smootherstep = (x) => {
+    const t = clamp(x, 0, 1);
+    return t * t * t * (t * (t * 6 - 15) + 10);
+  };
+
+  /* --- geometry -----------------------------------------------------------
+     Measured through the rect rather than offsetTop, which is relative to
+     the nearest positioned ancestor and reads far too small for sections
+     that sit inside one. Re-read on resize and once the fonts land, never
+     per frame. */
+  let spans = [];
+
+  const measure = () => {
+    spans = [];
+    for (const stage of STAGES) {
+      const el = $(stage.sel);
+      if (el) spans.push({ key: stage.key, top: el.getBoundingClientRect().top + scrollY });
+    }
+    spans.sort((a, b) => a.top - b.top);
+
+    const docEnd = document.documentElement.scrollHeight;
+    spans.forEach((s, i) => { s.end = i + 1 < spans.length ? spans[i + 1].top : docEnd; });
+
+    /* A chapter's share of the journey should not be decided by how much
+       markup it happens to contain. Education is one card and about 300px
+       tall; the path is four thousand. Left alone, the single most
+       deliberate colour moment on the page would get a fifteenth of the
+       scroll distance the section before it gets, and would be crossfading
+       out before it had finished arriving.
+
+       So any stage shorter than nine tenths of a screen borrows from its
+       neighbours, and only from whatever they have above that same
+       threshold, so nothing can be starved to feed something else. */
+    const MIN = innerHeight * 0.9;
+    const len = (x) => x.end - x.top;
+
+    for (let i = 0; i < spans.length; i++) {
+      const need = MIN - len(spans[i]);
+      if (need <= 0) continue;
+
+      const prev = spans[i - 1];
+      const next = spans[i + 1];
+      const prevSlack = prev ? Math.max(0, len(prev) - MIN) : 0;
+      const nextSlack = next ? Math.max(0, len(next) - MIN) : 0;
+      const slack = prevSlack + nextSlack;
+      if (slack <= 0) continue;
+
+      const take = Math.min(need, slack);
+      if (prevSlack > 0) {
+        const d = take * (prevSlack / slack);
+        spans[i].top -= d;
+        prev.end = spans[i].top;
+      }
+      if (nextSlack > 0) {
+        const d = take * (nextSlack / slack);
+        spans[i].end += d;
+        next.top = spans[i].end;
+      }
+    }
+
+    /* Half width of each crossfade, at the boundary that opens a stage. A
+       third of a screen where there is room, and never more than nine
+       twentieths of either neighbour, so a stage still reaches its own
+       colour in the middle rather than being crossfaded out of existence
+       from both sides at once. */
+    spans.forEach((s, i) => {
+      if (i === 0) { s.h = 0; return; }
+      const prev = spans[i - 1];
+      s.h = Math.max(1, Math.min(innerHeight * 0.34,
+                                 (prev.end - prev.top) * 0.45,
+                                 (s.end - s.top) * 0.45));
+    });
+  };
+
+  /* --- paint --------------------------------------------------------------
+     Colours are mixed premultiplied by their own alpha, so a field on its
+     way out stops contributing hue as it goes rather than dragging the mix
+     through its own colour on the way to nothing. Straight channel mixing
+     sends a violet meeting an amber through grey, which is the one result
+     neither section wanted. */
+  const mixed = new Float64Array(5 * 7);
+  const last = { key: '', theme: '' };
+
+  function paint(force) {
+    if (!spans.length) return;
+
+    const vh = innerHeight;
+
+    /* The middle of the screen decides the chapter. Nothing else: the older
+       version accelerated this line toward the foot of the window over the
+       last screen so the closing palette could be reached, and measuring the
+       result showed it shoving a whole crossfade through the final eighty
+       pixels of the page, one step of which moved a channel by 88. It is not
+       needed here. The closing section's span runs to the end of the
+       document, and the line can never leave it, because at full scroll the
+       line sits half a screen above the bottom. */
+    const line = scrollY + vh * 0.5;
+
+    /* Weight per chapter: fully on inside its own span, crossfading across
+       each boundary. The two ramps at a shared boundary are complements of
+       one another, so the weights always add to one and nothing has to be
+       normalised afterwards. */
+    let progress = 0;
+    let wsum = 0;
+    const weights = [];
+
+    for (let i = 0; i < spans.length; i++) {
+      const s = spans[i];
+      const up = i === 0 ? 1 : smootherstep((line - (s.top - s.h)) / (2 * s.h));
+      const nxt = spans[i + 1];
+      const down = nxt ? smootherstep((line - (nxt.top - nxt.h)) / (2 * nxt.h)) : 0;
+      const w = up - down;
+      weights.push(w);
+      wsum += w;
+      progress += w * i;
+    }
+    if (wsum <= 0) return;
+
+    /* Quantised so the paint does not run on every frame of every scroll.
+       Five hundred steps across the whole story is a change too small to
+       see between one step and the next, and a few hundred repaints across
+       an entire page rather than one per frame. */
+    const theme = root.dataset.theme || '';
+    const key = Math.round((progress / Math.max(spans.length - 1, 1)) * 500) + '|' + theme;
+    if (!force && key === last.key + '|' + last.theme) return;
+    last.key = String(Math.round((progress / Math.max(spans.length - 1, 1)) * 500));
+    last.theme = theme;
+
+    const table = theme === 'daylight' ? LIGHT : DARK;
+    const phosphor = theme === 'terminal';
+
+    mixed.fill(0);
+    let baseR = 0, baseG = 0, baseB = 0, baseA = 0;
+
+    for (let i = 0; i < spans.length; i++) {
+      const w = weights[i] / wsum;
+      if (w <= 0.0001) continue;
+      const preset = table[spans[i].key];
+      if (!preset) continue;
+
+      const b = preset.base;
+      baseR += w * b[3] * b[0]; baseG += w * b[3] * b[1];
+      baseB += w * b[3] * b[2]; baseA += w * b[3];
+
+      for (let f = 0; f < 5; f++) {
+        const v = preset.f[f];
+        const o = f * 7;
+        const wa = w * v[3];
+        mixed[o]     += wa * v[0];   // premultiplied colour
+        mixed[o + 1] += wa * v[1];
+        mixed[o + 2] += wa * v[2];
+        mixed[o + 3] += wa;          // alpha
+        mixed[o + 4] += w * v[4];    // x, y and radius mix straight
+        mixed[o + 5] += w * v[5];
+        mixed[o + 6] += w * v[6];
+      }
+    }
+
+    const style = field.style;
+
+    const toward = (c) => phosphor
+      ? [Math.round(c[0] + (PHOSPHOR[0] - c[0]) * PHOSPHOR_PULL),
+         Math.round(c[1] + (PHOSPHOR[1] - c[1]) * PHOSPHOR_PULL),
+         Math.round(c[2] + (PHOSPHOR[2] - c[2]) * PHOSPHOR_PULL)]
+      : c;
+
+    if (baseA > 0.0005) {
+      const c = toward([Math.round(baseR / baseA), Math.round(baseG / baseA), Math.round(baseB / baseA)]);
+      style.setProperty('--amb-base',
+        `radial-gradient(130% 92% at 50% 0%, rgba(${c[0]},${c[1]},${c[2]},${baseA.toFixed(3)}) 0%, transparent 72%)`);
+    } else {
+      style.setProperty('--amb-base', 'transparent');
+    }
+
+    for (let f = 0; f < 5; f++) {
+      const o = f * 7;
+      const a = mixed[o + 3];
+      const n = f + 1;
+      if (a > 0.0005) {
+        const c = toward([Math.round(mixed[o] / a), Math.round(mixed[o + 1] / a), Math.round(mixed[o + 2] / a)]);
+        style.setProperty(`--f${n}c`, `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`);
+      } else {
+        style.setProperty(`--f${n}c`, 'transparent');
+      }
+      style.setProperty(`--f${n}x`, mixed[o + 4].toFixed(1) + '%');
+      style.setProperty(`--f${n}y`, mixed[o + 5].toFixed(1) + '%');
+      style.setProperty(`--f${n}r`, mixed[o + 6].toFixed(1) + '%');
+    }
+  }
+
+  measure();
+  paint(true);
+
+  onScrollFrame(() => paint(false));
+
+  addEventListener('resize', () => { measure(); paint(true); }, { passive: true });
+  if (document.fonts?.ready) document.fonts.ready.then(() => { measure(); paint(true); }).catch(() => {});
+
+  /* A theme swap has to repaint from the same place in the story rather than
+     wait for the next scroll, or the ambient light stays on the old theme
+     until you move. */
+  new MutationObserver(() => paint(true))
+    .observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+
+/* ==========================================================================
    Apple-style scroll-linked flourishes
    ========================================================================== */
 (function scrollFlourishes() {
@@ -1513,111 +1911,11 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      over a transforming box: expensive everywhere, and enough to stall a
      phone for a moment on first scroll. It now simply sits there. */
 
-  /* --- The colour field recedes as you leave the hero ---
-     Full strength at the top, down to a trace by a screen and a half of
-     scrolling. Written to two decimal places and only when the value has
-     actually moved: the blobs carry an 85px blur and a blend mode, so a
-     redundant write is a repaint of four very expensive layers. */
-  const field = $('.bg');
-  if (field) {
-    const FADE_OVER = 1.5;   // screens of scrolling to reach the floor
-    /* The floor decides whether the per section palettes are visible at all,
-       and it has been too low twice. At .16 the field was effectively black
-       below the hero. At .42 the blobs were down to about rgb(5,10,15) of
-       contribution once the gradient alpha and the screen blend were through
-       with them, which is a few units per channel: the hue was changing and
-       there was nothing to see. At .75 the colour reads while the hero is
-       still clearly the brightest point on the page. */
-    const FLOOR = 0.75;
-    let last = -1;
-
-    onScrollFrame(() => {
-      const p = clamp(scrollY / Math.max(innerHeight * FADE_OVER, 1), 0, 1);
-      const fade = Math.round((1 - (1 - FLOOR) * p) * 100) / 100;
-      if (fade === last) return;
-      last = fade;
-      field.style.setProperty('--bg-fade', String(fade));
-    });
-  }
-
-  /* --- The field takes its palette and arrangement from the section ---
-     Whichever section you have most recently scrolled past the upper middle
-     of the screen owns the field. An IntersectionObserver on a centre band
-     was the first approach and it had a hole: the last section is short and
-     the page ends before it ever reaches the middle, so contact could never
-     win and the closing palette was unreachable. A comparison against
-     cached offsets has no such edge, and costs a walk of eight numbers.
-     Offsets are re-read on resize, not on every frame. */
-  if (field) {
-    const marks = [];
-    let maxScroll = 0;
-
-    /* Document offsets, measured through the rect rather than offsetTop:
-       offsetTop is relative to the nearest positioned ancestor, and these
-       sections sit inside one, so it read as a much smaller number and every
-       zone switched at the wrong point on the page. */
-    const remeasure = () => {
-      marks.length = 0;
-      const add = (el, name) => {
-        if (el) marks.push({ top: el.getBoundingClientRect().top + scrollY, name });
-      };
-      add($('.hero'), 'hero');
-      $$('main section[id]').forEach((sec) => add(sec, sec.id));
-      marks.sort((a, b) => a.top - b.top);
-      maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
-    };
-
-    remeasure();
-    addEventListener('resize', remeasure, { passive: true });
-    if (document.fonts?.ready) document.fonts.ready.then(remeasure).catch(() => {});
-
-    let zone = '';
-    onScrollFrame(() => {
-      if (!marks.length) return;
-
-      /* A section takes the field when its top passes 72% of the way down
-         the screen, well before it is anything you are reading.
-
-         That number and the 1.6s crossfade in the stylesheet are one
-         decision. At an unhurried 300px a second the handover happens about
-         0.6s before the heading reaches the middle of the screen, so the
-         colours are visibly arriving as it crosses rather than only catching
-         up once it has reached the top. The line was at 45%, which put the
-         whole fade after the middle, which is what you were seeing. There is
-         no setting that finishes the fade by the middle, incidentally: it
-         would need the handover to happen more than a screen's height early.
-
-         The lookahead has to be earned at both ends of the page, and for
-         mirror image reasons.
-
-         At the top, a fixed 72% lookahead reaches 590px into a document
-         whose second section starts at 530, so the logo strip owned the
-         field from scroll zero and the hero palette, the brightest one on
-         the page, could never be seen at all. The line therefore opens at
-         the top of the viewport and ramps out to its full depth over the
-         first screen.
-
-         At the bottom, the page runs out before the closing section can
-         reach the line on its own, so the line slides toward the foot of
-         the screen through the last screen of scrolling. Without it contact
-         sits short of the line at full scroll and its palette is equally
-         unreachable. */
-      const ramp = clamp(scrollY / Math.max(innerHeight, 1), 0, 1);
-      const runway = maxScroll - scrollY;
-      const slide = runway < innerHeight ? (innerHeight - runway) / innerHeight : 0;
-      const line = scrollY + innerHeight * (0.72 * ramp + 0.23 * clamp(slide, 0, 1));
-
-      let name = marks[0].name;
-      for (const mark of marks) {
-        if (mark.top > line) break;
-        name = mark.name;
-      }
-
-      if (name === zone) return;
-      zone = name;
-      field.dataset.zone = name;
-    });
-  }
+  /* The colour field used to live here: a scroll fade plus a per section
+     palette that switched when a section crossed a line. Both are gone,
+     replaced by the ambient block above, which blends continuously and runs
+     whether or not motion is reduced. This function does not, and the
+     section colours are content rather than motion. */
 
   /* --- Quote lights up word by word --- */
   const quote = $('.section.quote blockquote');

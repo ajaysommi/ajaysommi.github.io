@@ -82,12 +82,13 @@
     </div>
   </div>
 
-  <!-- Ambient background field -->
+  <!-- Ambient field. One environment under the whole page whose lighting
+       follows the chapter you are reading; script.js blends between seven
+       presets and writes the result onto .bg as custom properties. Two
+       layers, only so each can drift on its own long cycle. -->
   <div class="bg" aria-hidden="true">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-    <div class="blob b4"></div>
+    <div class="amb amb-a"></div>
+    <div class="amb amb-b"></div>
     <div class="grid-veil"></div>
   </div>
 
