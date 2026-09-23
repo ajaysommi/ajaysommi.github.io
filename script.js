@@ -1788,10 +1788,8 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      at the strength each chapter wants relative to the others; this is the
      single place to say the whole environment should sit a little further
      back, without touching seventy numbers and losing the balance between
-     them. It has come down three times by request, 1 to .92 to .83 to .70,
-     so the whole environment now sits at seven tenths of the strength the
-     presets are written at while the balance between chapters is untouched. */
-  const DIM = 0.70;
+     them. One number to turn, which is what it is for. */
+  const DIM = 0.77;
 
   const mixed = new Float64Array(5 * 7);
   const last = { key: '', theme: '' };
