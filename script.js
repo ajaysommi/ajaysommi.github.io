@@ -1743,50 +1743,18 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     const docEnd = document.documentElement.scrollHeight;
     spans.forEach((s, i) => { s.end = i + 1 < spans.length ? spans[i + 1].top : docEnd; });
 
-    /* A chapter's share of the journey should not be decided by how much
-       markup it happens to contain. Education is one card and about 300px
-       tall; the path is four thousand. Left alone, the single most
-       deliberate colour moment on the page would get a fifteenth of the
-       scroll distance the section before it gets, and would be crossfading
-       out before it had finished arriving.
+    /* No minimum length, and no borrowing from neighbours. Both were here
+       so a short chapter would not be crossfaded out of existence from both
+       sides at once, and they worked, but the cost was that education owned
+       nearly a screen more scrolling than it had content for, so its amber
+       outlived the section by more than the section's own length.
 
-       So any stage shorter than nine tenths of a screen borrows from its
-       neighbours, and only from whatever they have above that same
-       threshold, so nothing can be starved to feed something else. */
-    const MIN = innerHeight * 1.1;
-    const len = (x) => x.end - x.top;
+       A stage reaches full strength without any of that as long as its own
+       two ramps do not overlap, which needs the half width under half the
+       stage. The clamp below is .38, which leaves a short chapter a window
+       of about a quarter of its length at full colour. Education is the
+       shortest thing on the page at 368px and it still gets one. */
 
-    for (let i = 0; i < spans.length; i++) {
-      const need = MIN - len(spans[i]);
-      if (need <= 0) continue;
-
-      const prev = spans[i - 1];
-      const next = spans[i + 1];
-      const prevSlack = prev ? Math.max(0, len(prev) - MIN) : 0;
-      const nextSlack = next ? Math.max(0, len(next) - MIN) : 0;
-      if (prevSlack + nextSlack <= 0) continue;
-
-      /* Forwards first, and backwards only for whatever is left over. The
-         two directions are not equivalent: room taken from the section
-         ahead means this chapter's colour lingers a little into the next
-         one, which nobody notices, while room taken from the section behind
-         means it arrives early and paints its mood over content that is not
-         its own. Education borrowing both ways had its amber warming up a
-         screen and a quarter before the section existed, over the last entry
-         of the path. */
-      let left = need;
-      const fromNext = Math.min(left, nextSlack);
-      if (fromNext > 0) { spans[i].end += fromNext; next.top = spans[i].end; left -= fromNext; }
-      const fromPrev = Math.min(left, prevSlack);
-      if (fromPrev > 0) { spans[i].top -= fromPrev; prev.end = spans[i].top; }
-    }
-
-    /* Half width of each crossfade, at the boundary that opens a stage.
-       Just under half a screen where there is room, so a full handover takes
-       most of a screen's worth of scrolling, and never more than nine
-       twentieths of either neighbour, so a stage still reaches its own
-       colour in the middle rather than being crossfaded out of existence
-       from both sides at once. */
     /* The furthest the reading line can ever get. The closing stage's span
        runs to the end of the document, which is half a screen past anywhere
        the line can reach, so clamping its crossfade against the span alone
@@ -1794,13 +1762,33 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
        palette was never reached at all. */
     const maxLine = Math.max(0, document.documentElement.scrollHeight - innerHeight) + innerHeight * 0.5;
 
+    /* The closing section can sit below anywhere the line can get. Contact
+       starts 8888px down a document whose last reachable line is 8864, so
+       the line never entered its span at all and the resolution palette was
+       not merely rushed, it never appeared: at the very bottom of the page
+       the field was still showing the warm colours of the section above.
+
+       Pulling that one boundary up is the smallest fix. It means the closing
+       colour starts gathering a little before its section, which is the
+       thing I have otherwise been removing, but an ending that arrives early
+       is worth having and an ending that never arrives is not. It only
+       applies when the section is genuinely out of reach. */
+    const last = spans[spans.length - 1];
+    if (last && spans.length > 1) {
+      const cap = maxLine - innerHeight * 0.62;
+      if (last.top > cap) {
+        last.top = cap;
+        spans[spans.length - 2].end = cap;
+      }
+    }
+
     spans.forEach((s, i) => {
       if (i === 0) { s.h = 0; return; }
       const prev = spans[i - 1];
       const reach = Math.max(1, Math.min(s.end, maxLine) - s.top);
       s.h = Math.max(1, Math.min(innerHeight * 0.44,
-                                 (prev.end - prev.top) * 0.45,
-                                 (s.end - s.top) * 0.45,
+                                 (prev.end - prev.top) * 0.38,
+                                 (s.end - s.top) * 0.38,
                                  /* leaves the ramp finished with room to spare */
                                  (reach / (2 - LEAD)) * 0.85));
     });
