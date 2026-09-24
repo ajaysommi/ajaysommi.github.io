@@ -1503,6 +1503,60 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
+   Citizenship chip: a small celebration
+
+   Red, white and blue bloom out of the chip and are gone again. Built from
+   the same parts as the ambient field so it reads as the environment
+   reacting rather than as an effect stuck on top: same blend mode, same soft
+   radials, alphas in the same neighbourhood.
+
+   It lives inside the hero card, which is where the chip is. A burst in the
+   page's background layer is behind the card and therefore invisible unless
+   it is made big enough to spill past the card's edges, at which point it is
+   no longer local to the thing that was pressed.
+   ========================================================================== */
+(function citizenSalute() {
+  const chip = $('#citizenChip');
+  const burst = $('#ambBurst');
+  if (!chip || !burst) return;
+
+  /* No in-flight guard. One was here and it was a latch: it was cleared by
+     animationend, so anything that stopped the animation without ending it
+     left the flag stuck true and the easter egg dead for the rest of the
+     session. Restarting mid burst is also just the better behaviour, since
+     pressing it again should set it off again. */
+  const fire = () => {
+    if (prefersReduced()) return;
+
+    /* The burst is positioned inside the card, so the chip's place is
+       measured against the card rather than against the viewport. Both rects
+       come from the same layout pass, so no reflow is forced between them. */
+    const host = burst.offsetParent || burst.parentElement;
+    const c = chip.getBoundingClientRect();
+    const h = host.getBoundingClientRect();
+
+    burst.style.setProperty('--burst-x', (c.left + c.width / 2 - h.left).toFixed(1) + 'px');
+    burst.style.setProperty('--burst-y', (c.top + c.height / 2 - h.top).toFixed(1) + 'px');
+
+    /* Restart on a second press by dropping the class and waiting two
+       frames, rather than by reading back a layout value to force the style
+       through. The read is the usual trick and it works, but it flushes
+       layout for the whole document in the middle of a click handler, on top
+       of the flush the two rects above already cost: measured, that put one
+       frame at 150ms at the moment the burst appeared, which is exactly the
+       jolt it was supposed to be smoothing over. Two frames of waiting is
+       imperceptible and forces nothing. */
+    burst.classList.remove('is-firing');
+    requestAnimationFrame(() => requestAnimationFrame(() => burst.classList.add('is-firing')));
+  };
+
+  burst.addEventListener('animationend', () => burst.classList.remove('is-firing'));
+
+  chip.addEventListener('click', fire);
+})();
+
+
+/* ==========================================================================
    Ambient field
 
    One environment under the whole page, not a background per section. Seven
@@ -1805,7 +1859,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      single place to say the whole environment should sit a little further
      back, without touching seventy numbers and losing the balance between
      them. One number to turn, which is what it is for. */
-  const DIM = 0.77;
+  const DIM = 0.70;
 
   const mixed = new Float64Array(5 * 7);
   const last = { key: '', theme: '' };

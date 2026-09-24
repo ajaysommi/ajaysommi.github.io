@@ -185,6 +185,14 @@
           </span>
         </div>
 
+        <!-- Celebration burst, idle until the citizenship chip is pressed.
+             It lives in the card rather than in the page's background layer
+             because the chip is in the middle of the card: a burst behind the
+             card is a burst you cannot see, and one big enough to spill past
+             its edges is no longer local to the thing that was pressed. The
+             card clips it, which is the shape you want anyway. -->
+        <div class="hero-burst" id="ambBurst" aria-hidden="true"></div>
+
 
         <figure class="hero-figure">
           <picture>
@@ -221,10 +229,13 @@
           </p>
 
           <div class="hero-badges">
-            <span class="chip">
+            <!-- A button rather than a span, so the easter egg is reachable
+                 with a keyboard too and announces itself as something you can
+                 press. It is styled exactly as the chip was. -->
+            <button type="button" class="chip" id="citizenChip" aria-label="U.S. Citizen">
               <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg"
                    alt="" class="flag-icon" width="20" height="14" loading="lazy" /> U.S. Citizen
-            </span>
+            </button>
           </div>
 
           <div class="actions">

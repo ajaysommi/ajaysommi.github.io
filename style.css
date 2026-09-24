@@ -414,6 +414,87 @@
     to   { transform: translate3d(-1.0%, -0.5%, 0) scale(1.014); }
   }
 
+  /* --------------------------------------------------------------------
+     Celebration burst
+
+     A small element centred on the chip, not a layer over the viewport. The
+     first version was the latter: three gradients tens of vmin across, on a
+     full screen box with a blend mode, scaled up. Every frame of that had to
+     re-rasterise an enormous gradient and re-composite it against everything
+     behind it, which is where the judder came from, and it had to be that
+     big to be seen at all from behind the hero card. Both problems have the
+     same answer, which is to put it in the card and make it small: a few
+     hundred pixels of gradient costs nothing to scale, and the card clips it
+     into a bloom around the thing you pressed.
+
+     will-change only while it runs. The layer is promoted for the second and
+     a half it needs and released afterwards, which is what the hint is for;
+     leaving it on permanently is what made the ambient field expensive.
+     -------------------------------------------------------------------- */
+  .hero-burst {
+    --burst-size: clamp(190px, 26vw, 330px);
+    position: absolute;
+    z-index: 0;
+    left: var(--burst-x, 50%);
+    top: var(--burst-y, 50%);
+    width: var(--burst-size);
+    height: var(--burst-size);
+    margin: calc(var(--burst-size) / -2);
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(.35);
+    mix-blend-mode: var(--amb-blend, screen);
+    background:
+      radial-gradient(circle at 30% 42%, var(--burst-red) 0%, transparent 58%),
+      radial-gradient(circle at 52% 62%, var(--burst-white) 0%, transparent 54%),
+      radial-gradient(circle at 72% 40%, var(--burst-blue) 0%, transparent 58%);
+  }
+
+  .hero-burst.is-firing {
+    will-change: transform, opacity;
+    animation: hero-burst 1.5s cubic-bezier(.17, .78, .3, 1) 1;
+  }
+
+  /* One push out and one settle back. Four stops rather than the six it had,
+     because each extra stop is another place for the easing to change its
+     mind, and that reads as a stutter rather than as one movement. */
+  @keyframes hero-burst {
+    0%   { opacity: 0;   transform: scale(.35); }
+    22%  { opacity: 1;   transform: scale(1); }
+    100% { opacity: 0;   transform: scale(1.5); }
+  }
+
+  /* All three themes name their own colours rather than two of them naming
+     theirs and the third falling through to an inline fallback. */
+  .hero-card {
+    --burst-red: rgba(226, 72, 92, .42);
+    --burst-white: rgba(226, 236, 255, .32);
+    --burst-blue: rgba(74, 122, 246, .44);
+  }
+
+  /* Light mode multiplies, so the burst has to be pale for the same reason
+     every other field is: a saturated colour multiplied into a near white
+     page goes muddy and dark rather than bright. */
+  [data-theme="daylight"] .hero-card {
+    --burst-red: rgba(240, 150, 168, .32);
+    --burst-white: rgba(206, 222, 248, .22);
+    --burst-blue: rgba(146, 176, 246, .34);
+  }
+
+  /* Terminal has one phosphor, so the flag is out. It still celebrates, just
+     in the only colour the tube has. */
+  [data-theme="terminal"] .hero-card {
+    --burst-red: rgba(53, 255, 148, .28);
+    --burst-white: rgba(190, 255, 220, .32);
+    --burst-blue: rgba(40, 210, 130, .36);
+  }
+
+  /* A burst is a flourish and nothing depends on it, so reduced motion gets
+     nothing rather than a smaller version of the same thing. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-burst.is-firing { animation: none; will-change: auto; }
+  }
+
   /* The colours are the story and they stay: which chapter you are in is
      content, not motion, and the ambient block in script.js runs whether or
      not motion is reduced. Only the drift goes, and with it the hint, which
@@ -968,7 +1049,7 @@
   }
 
   /* Everything the visitor actually reads sits above it. */
-  .hero-card > *:not(.hero-sky) { position: relative; z-index: 1; }
+  .hero-card > *:not(.hero-sky):not(.hero-burst) { position: relative; z-index: 1; }
 
   /* Stars: two speckle fields at different scales so the pattern does not
      tile visibly. Only paid for at night, when --star-op lifts them. */
@@ -1271,6 +1352,11 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
+    /* It is a <button> now, for the easter egg, so the defaults that come
+       with one have to go: a button does not inherit the page's font and
+       arrives with its own margin. */
+    margin: 0;
+    font-family: inherit;
     padding: 5px 11px;
     border: 1px solid var(--stroke);
     border-radius: var(--r-pill);
