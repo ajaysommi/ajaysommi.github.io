@@ -1505,56 +1505,43 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 /* ==========================================================================
    Citizenship chip: a small celebration
 
-   Red, white and blue bloom out of the chip and are gone again. Built from
-   the same parts as the ambient field so it reads as the environment
-   reacting rather than as an effect stuck on top: same blend mode, same soft
-   radials, alphas in the same neighbourhood.
+   Press it and the pill fills with the flag and dances. Everything stays
+   inside the pill, which is both the point and the cheap way to do it: a
+   120px box animating its own transform costs nothing, where the earlier
+   version bloomed a large blurred gradient into the card behind it and had
+   to recomposite against the whole page on every frame.
 
-   It lives inside the hero card, which is where the chip is. A burst in the
-   page's background layer is behind the card and therefore invisible unless
-   it is made big enough to spill past the card's edges, at which point it is
-   no longer local to the thing that was pressed.
+   The whole thing is two classes and a listener. CSS owns the movement.
    ========================================================================== */
 (function citizenSalute() {
   const chip = $('#citizenChip');
-  const burst = $('#ambBurst');
-  if (!chip || !burst) return;
+  if (!chip) return;
 
   /* No in-flight guard. One was here and it was a latch: it was cleared by
      animationend, so anything that stopped the animation without ending it
      left the flag stuck true and the easter egg dead for the rest of the
-     session. Restarting mid burst is also just the better behaviour, since
-     pressing it again should set it off again. */
-  const fire = () => {
+     session. Pressing it again mid dance should just set it off again. */
+  chip.addEventListener('click', () => {
     if (prefersReduced()) return;
 
-    /* The burst is positioned inside the card, so the chip's place is
-       measured against the card rather than against the viewport. Both rects
-       come from the same layout pass, so no reflow is forced between them. */
-    const host = burst.offsetParent || burst.parentElement;
-    const c = chip.getBoundingClientRect();
-    const h = host.getBoundingClientRect();
+    /* Restart by dropping the class and waiting two frames rather than by
+       reading back a layout value to force the style through. The read is the
+       usual trick and it works, but it flushes layout for the whole document
+       inside a click handler, which measured at one 150ms frame on the
+       version of this that lived in the card. Two frames is imperceptible
+       and forces nothing. */
+    chip.classList.remove('is-celebrating');
+    requestAnimationFrame(() => requestAnimationFrame(() => chip.classList.add('is-celebrating')));
+  });
 
-    burst.style.setProperty('--burst-x', (c.left + c.width / 2 - h.left).toFixed(1) + 'px');
-    burst.style.setProperty('--burst-y', (c.top + c.height / 2 - h.top).toFixed(1) + 'px');
-
-    /* Restart on a second press by dropping the class and waiting two
-       frames, rather than by reading back a layout value to force the style
-       through. The read is the usual trick and it works, but it flushes
-       layout for the whole document in the middle of a click handler, on top
-       of the flush the two rects above already cost: measured, that put one
-       frame at 150ms at the moment the burst appeared, which is exactly the
-       jolt it was supposed to be smoothing over. Two frames of waiting is
-       imperceptible and forces nothing. */
-    burst.classList.remove('is-firing');
-    requestAnimationFrame(() => requestAnimationFrame(() => burst.classList.add('is-firing')));
-  };
-
-  burst.addEventListener('animationend', () => burst.classList.remove('is-firing'));
-
-  chip.addEventListener('click', fire);
+  /* Two animations run: the pill's dance at 1s and the fill's sweep at
+     1.35s. The class has to come off on the longer of the two, or removing
+     it ends the fill three quarters of the way through, at full opacity,
+     which is a snap rather than a fade. */
+  chip.addEventListener('animationend', (e) => {
+    if (e.animationName === 'chip-fill') chip.classList.remove('is-celebrating');
+  });
 })();
-
 
 /* ==========================================================================
    Ambient field

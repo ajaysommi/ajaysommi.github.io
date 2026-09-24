@@ -414,87 +414,6 @@
     to   { transform: translate3d(-1.0%, -0.5%, 0) scale(1.014); }
   }
 
-  /* --------------------------------------------------------------------
-     Celebration burst
-
-     A small element centred on the chip, not a layer over the viewport. The
-     first version was the latter: three gradients tens of vmin across, on a
-     full screen box with a blend mode, scaled up. Every frame of that had to
-     re-rasterise an enormous gradient and re-composite it against everything
-     behind it, which is where the judder came from, and it had to be that
-     big to be seen at all from behind the hero card. Both problems have the
-     same answer, which is to put it in the card and make it small: a few
-     hundred pixels of gradient costs nothing to scale, and the card clips it
-     into a bloom around the thing you pressed.
-
-     will-change only while it runs. The layer is promoted for the second and
-     a half it needs and released afterwards, which is what the hint is for;
-     leaving it on permanently is what made the ambient field expensive.
-     -------------------------------------------------------------------- */
-  .hero-burst {
-    --burst-size: clamp(190px, 26vw, 330px);
-    position: absolute;
-    z-index: 0;
-    left: var(--burst-x, 50%);
-    top: var(--burst-y, 50%);
-    width: var(--burst-size);
-    height: var(--burst-size);
-    margin: calc(var(--burst-size) / -2);
-    pointer-events: none;
-    opacity: 0;
-    transform: scale(.35);
-    mix-blend-mode: var(--amb-blend, screen);
-    background:
-      radial-gradient(circle at 30% 42%, var(--burst-red) 0%, transparent 58%),
-      radial-gradient(circle at 52% 62%, var(--burst-white) 0%, transparent 54%),
-      radial-gradient(circle at 72% 40%, var(--burst-blue) 0%, transparent 58%);
-  }
-
-  .hero-burst.is-firing {
-    will-change: transform, opacity;
-    animation: hero-burst 1.5s cubic-bezier(.17, .78, .3, 1) 1;
-  }
-
-  /* One push out and one settle back. Four stops rather than the six it had,
-     because each extra stop is another place for the easing to change its
-     mind, and that reads as a stutter rather than as one movement. */
-  @keyframes hero-burst {
-    0%   { opacity: 0;   transform: scale(.35); }
-    22%  { opacity: 1;   transform: scale(1); }
-    100% { opacity: 0;   transform: scale(1.5); }
-  }
-
-  /* All three themes name their own colours rather than two of them naming
-     theirs and the third falling through to an inline fallback. */
-  .hero-card {
-    --burst-red: rgba(226, 72, 92, .42);
-    --burst-white: rgba(226, 236, 255, .32);
-    --burst-blue: rgba(74, 122, 246, .44);
-  }
-
-  /* Light mode multiplies, so the burst has to be pale for the same reason
-     every other field is: a saturated colour multiplied into a near white
-     page goes muddy and dark rather than bright. */
-  [data-theme="daylight"] .hero-card {
-    --burst-red: rgba(240, 150, 168, .32);
-    --burst-white: rgba(206, 222, 248, .22);
-    --burst-blue: rgba(146, 176, 246, .34);
-  }
-
-  /* Terminal has one phosphor, so the flag is out. It still celebrates, just
-     in the only colour the tube has. */
-  [data-theme="terminal"] .hero-card {
-    --burst-red: rgba(53, 255, 148, .28);
-    --burst-white: rgba(190, 255, 220, .32);
-    --burst-blue: rgba(40, 210, 130, .36);
-  }
-
-  /* A burst is a flourish and nothing depends on it, so reduced motion gets
-     nothing rather than a smaller version of the same thing. */
-  @media (prefers-reduced-motion: reduce) {
-    .hero-burst.is-firing { animation: none; will-change: auto; }
-  }
-
   /* The colours are the story and they stay: which chapter you are in is
      content, not motion, and the ambient block in script.js runs whether or
      not motion is reduced. Only the drift goes, and with it the hint, which
@@ -1049,7 +968,7 @@
   }
 
   /* Everything the visitor actually reads sits above it. */
-  .hero-card > *:not(.hero-sky):not(.hero-burst) { position: relative; z-index: 1; }
+  .hero-card > *:not(.hero-sky) { position: relative; z-index: 1; }
 
   /* Stars: two speckle fields at different scales so the pattern does not
      tile visibly. Only paid for at night, when --star-op lifts them. */
@@ -1369,6 +1288,103 @@
 
 
   .flag-icon { width: 19px; height: 13px; border-radius: 2px; }
+
+  /* --------------------------------------------------------------------
+     Citizenship chip: a small celebration
+
+     Press it and the pill fills with the flag and has a little dance about
+     it. Nothing leaves the pill: an earlier version bloomed into the card
+     behind it, which was both harder to see and far more expensive, since a
+     large blurred thing under a blend mode has to recomposite against the
+     whole page on every frame. A 120px pill animating its own transform
+     costs nothing.
+     -------------------------------------------------------------------- */
+  #citizenChip {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* The flag and the label ride above the fill. Both have to be elements for
+     this, which is why the label is wrapped in the markup: a positioned
+     pseudo element paints above a bare text node, so unwrapped, the fill
+     would cover the words it is celebrating. */
+  #citizenChip > * { position: relative; z-index: 1; }
+
+  #citizenChip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0;
+    /* Translucent on purpose. At full strength the label has to fight the
+       white band in the middle of it, and the point is the pill, not a
+       flag with some text over it. */
+    background: linear-gradient(104deg,
+      var(--cel-red)   0%,
+      var(--cel-red)   26%,
+      var(--cel-white) 47%,
+      var(--cel-white) 55%,
+      var(--cel-blue)  76%,
+      var(--cel-blue)  100%);
+  }
+
+  .hero-badges {
+    --cel-red: rgba(214, 64, 84, .58);
+    --cel-white: rgba(232, 240, 255, .50);
+    --cel-blue: rgba(60, 110, 240, .60);
+  }
+
+  /* Light mode: the same colours would sit on a near white pill and the
+     middle band would vanish into it, so the whole thing goes a shade
+     deeper rather than paler, which is the opposite of what the ambient
+     field needs and for the opposite reason. */
+  [data-theme="daylight"] .hero-badges {
+    --cel-red: rgba(200, 42, 66, .42);
+    --cel-white: rgba(150, 170, 205, .30);
+    --cel-blue: rgba(36, 84, 210, .44);
+  }
+
+  /* One phosphor, so no flag. It still celebrates. */
+  [data-theme="terminal"] .hero-badges {
+    --cel-red: rgba(53, 255, 148, .34);
+    --cel-white: rgba(200, 255, 225, .46);
+    --cel-blue: rgba(34, 200, 126, .40);
+  }
+
+  #citizenChip.is-celebrating { animation: chip-dance 1s var(--ease) 1; }
+  #citizenChip.is-celebrating::before { animation: chip-fill 1.35s var(--ease) 1; }
+
+  /* A dance wants the stops. This is the one animation on the site where
+     several direction changes are the point rather than a stutter, so it
+     swings hard early and settles rather than easing evenly throughout. */
+  @keyframes chip-dance {
+    0%   { transform: scale(1)    rotate(0deg); }
+    12%  { transform: scale(1.11) rotate(-4.5deg); }
+    26%  { transform: scale(1.08) rotate(4deg); }
+    40%  { transform: scale(1.06) rotate(-3deg); }
+    54%  { transform: scale(1.04) rotate(2deg); }
+    68%  { transform: scale(1.02) rotate(-1deg); }
+    84%  { transform: scale(1.01) rotate(.5deg); }
+    100% { transform: scale(1)    rotate(0deg); }
+  }
+
+  /* Sweeps in from the left, holds while the pill is still moving, then
+     lets go. It is wider than the pill and slides across, so the fill
+     arrives rather than simply appearing. */
+  @keyframes chip-fill {
+    0%   { opacity: 0; transform: translateX(-38%); }
+    16%  { opacity: 1; transform: translateX(0); }
+    62%  { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(14%); }
+  }
+
+  /* A flourish nothing depends on, so reduced motion gets none of it. */
+  @media (prefers-reduced-motion: reduce) {
+    #citizenChip.is-celebrating,
+    #citizenChip.is-celebrating::before { animation: none; }
+  }
+
 
   .sub { max-width: 78ch; margin: 0 0 16px; color: var(--ink-2); }
 
