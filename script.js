@@ -1846,7 +1846,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      single place to say the whole environment should sit a little further
      back, without touching seventy numbers and losing the balance between
      them. One number to turn, which is what it is for. */
-  const DIM = 0.70;
+  const DIM = 0.60;
 
   const mixed = new Float64Array(5 * 7);
   const last = { key: '', theme: '' };
