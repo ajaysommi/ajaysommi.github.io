@@ -2029,19 +2029,6 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     });
   });
 
-  /* --- Skill pills charge as their row scrolls in --- */
-  $$('#skills .pills').forEach((row) => {
-    row.dataset.charge = '';
-    const items = $$('button, span', row);
-    onScrollFrame(() => {
-      const p = viewportProgress(row, { start: 0.92, end: 0.62 });
-      items.forEach((item, i) => {
-        // Each pill fills a little after the one before it.
-        const local = clamp(p * items.length - i, 0, 1);
-        item.style.setProperty('--charge', local.toFixed(3));
-      });
-    });
-  });
 })();
 
 /* ==========================================================================

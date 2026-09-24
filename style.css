@@ -2951,29 +2951,6 @@
     text-shadow: 0 0 26px color-mix(in oklab, var(--accent) 32%, transparent);
   }
 
-  /* Project cards rise out of the page as their section scrolls in. */
-  /* Skill pills charge left-to-right. */
-  .pills[data-charge] button,
-  .pills[data-charge] span {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .pills[data-charge] button::before,
-  .pills[data-charge] span::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(90deg, var(--accent-soft), transparent);
-    transform: scaleX(var(--charge, 0));
-    transform-origin: left center;
-    transition: transform .5s var(--ease);
-    pointer-events: none;
-  }
-
-  /* Testimonials drift in opposite directions as the section passes. */
-
   /* Section headings sweep their gradient as they enter. */
   .section-head h2 {
     background-size: 220% 100%;
