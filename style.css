@@ -3955,6 +3955,53 @@
       --lg-press .09s ease-out;
   }
 
+  /* ---------- Photo viewer ------------------------------------------------
+
+     The arrows and close button sit on top of the photo, often a bright
+     one, where light glass and a small text chevron all but vanished. Here
+     they are dark smoked glass in every theme, with drawn chevrons at a
+     size you can actually see, a white glyph with its own faint shadow, and
+     a heavier drop shadow so they lift off whatever is behind them. Their
+     edges catch the light top and bottom like the rest of the glass. Only
+     the viewer's buttons change. */
+  .lightbox .lb-btn {
+    width: 48px;
+    height: 48px;
+    color: #fff;
+    background:
+      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(255, 255, 255, var(--lg-press)), transparent 72%),
+      rgba(10, 14, 24, .58);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow:
+      0 10px 26px -8px rgba(0, 0, 0, .6),
+      0 2px 8px rgba(0, 0, 0, .35),
+      inset .3px 1px 0 rgba(255, 255, 255, .34),
+      inset -.3px -1px 0 rgba(255, 255, 255, .14),
+      inset 0 0 0 1px rgba(255, 255, 255, .07);
+  }
+  .lightbox .lb-btn svg { filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .45)); }
+  .lightbox .lb-btn:hover { background-color: rgba(10, 14, 24, .78); }
+
+  .lightbox .lb-btn.lg-press {
+    transition:
+      background-color .2s var(--ease),
+      scale .5s cubic-bezier(.3, 1.2, .5, 1),
+      --lg-press .6s ease-out;
+  }
+  .lightbox .lb-btn.lg-press.lg-pressed {
+    transition:
+      background-color .2s var(--ease),
+      scale .09s ease-out,
+      --lg-press .09s ease-out;
+  }
+
+  @media (max-width: 719px) {
+    .lightbox .lb-btn { width: 44px; height: 44px; }
+    .lightbox .lb-btn svg { width: 24px; height: 24px; }
+    .lightbox .lb-close svg { width: 20px; height: 20px; }
+  }
+
   /* ---------- The Path ------------------------------------------------------
 
      On phones and tablets the role card is a tile of its own, with the
@@ -4389,6 +4436,8 @@
     .lg-press.lg-pressed,
     .pills button.lg-press,
     .pills button.lg-press.lg-pressed,
+    .lightbox .lb-btn.lg-press,
+    .lightbox .lb-btn.lg-press.lg-pressed,
     header.nav .icon-btn,
     header.nav a.cta,
     header.nav .brand-mark,
