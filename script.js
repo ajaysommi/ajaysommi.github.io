@@ -2693,12 +2693,11 @@ function gatorStorm(n = 12) {
 
   const ITEM_SEL = '.nav-links a, header.nav .brand, header.nav .icon-btn, header.nav a.cta';
   let items = [];
-  let barRect = null, border = 1, pocketH = 40;
+  let barRect = null, border = 1;
 
   function measure() {
     barRect = bar.getBoundingClientRect();
     border = parseFloat(getComputedStyle(bar).borderLeftWidth) || 0;
-    pocketH = pocket.offsetHeight || 40;
     items = $$(ITEM_SEL, bar)
       .filter((el) => el.offsetWidth > 0 && getComputedStyle(el).display !== 'none')
       .map((el) => {
@@ -2726,11 +2725,9 @@ function gatorStorm(n = 12) {
   const S = {
     near: 0, vNear: 0, tNear: 0,
     dx: 0, vDx: 0, tDx: 0,
-    dy: 0, vDy: 0, tDy: 0,
     press: 0, vPress: 0, tPress: 0,
     L: 0, vL: 0, tL: 0,
     R: 0, vR: 0, tR: 0,
-    w0: 0,                        // width when it was last sent somewhere
     op: 0, vOp: 0, tOp: 0,
   };
 
@@ -2775,17 +2772,16 @@ function gatorStorm(n = 12) {
     // Pointer response and press.
     busy = spring('near', 240, 30, dt) || busy;
     busy = spring('press', 700, 46, dt) || busy;
-    if (!rm) {
-      busy = spring('dx', 240, 30, dt) || busy;
-      busy = spring('dy', 240, 30, dt) || busy;
-    } else { S.dx = S.dy = 0; }
+    if (!rm) busy = spring('dx', 240, 30, dt) || busy;
+    else S.dx = 0;
 
     bar.style.setProperty('--lg-near', clamp01(S.near).toFixed(3));
-    /* A tiny deformation toward the pointer, a couple of pixels at most, on
-       the independent translate and scale properties so it composes with
-       the transform that centres the bar. */
-    bar.style.translate = rm ? '' : `${S.dx.toFixed(2)}px ${S.dy.toFixed(2)}px`;
-    bar.style.scale = rm ? '' : (1 + clamp01(S.near) * 0.0025 - clamp01(S.press) * 0.004).toFixed(4);
+    /* A tiny lean toward the pointer, a pixel or so, on the independent
+       translate and scale properties so it composes with the transform that
+       centres the bar. Sideways only: any vertical give read as the bar
+       bobbing up and down under the pointer. */
+    bar.style.translate = rm ? '' : `${S.dx.toFixed(2)}px 0`;
+    bar.style.scale = rm ? '' : `${(1 + clamp01(S.near) * 0.0025 - clamp01(S.press) * 0.004).toFixed(4)} 1`;
 
     // Pocket.
     const dir = Math.sign((S.tL + S.tR) - (S.L + S.R));
@@ -2809,43 +2805,24 @@ function gatorStorm(n = 12) {
       busy = spring('R', kR, cR, dt) || busy;
     }
     busy = spring('op', rm ? 900 : 300, rm ? 60 : 34, dt) || busy;
-    renderPocket(rm);
+    renderPocket();
 
     raf = busy ? requestAnimationFrame(frame) : 0;
   }
 
-  function renderPocket(rm) {
+  function renderPocket() {
     const w = Math.max(0, S.R - S.L);
     const op = clamp01(S.op);
     pocket.style.opacity = op.toFixed(3);
     if (op < 0.005) return;
 
-    /* Stretch is length beyond both the width it set out with and the width
-       it is heading for. Measured against the target alone, a pocket
-       shrinking from a wide item to a narrow one counted as stretched and
-       pinched its waist for no reason: that is contraction, not tension. */
-    const restW = Math.max(0, S.tR - S.tL);
-    const stretch = rm ? 0 : Math.max(0, w - Math.max(restW, S.w0));
-    const h = pocketH;
+    /* It stretches and settles sideways only. It used to pinch in at the
+       waist while stretched, and it shrank in both directions on a press;
+       together they read as the bubble billowing up and down as it moved
+       between tabs. Its height never changes now. */
     const pressK = 1 - clamp01(S.press) * 0.018;
     pocket.style.width = `${w.toFixed(2)}px`;
-    pocket.style.transform = `translate3d(${S.L.toFixed(2)}px, -50%, 0) scale(${pressK.toFixed(4)})`;
-
-    /* Surface tension: while it is stretched, the middle draws in. A path
-       rather than a radius, because a radius cannot narrow a shape at its
-       waist, and it is dropped the moment the stretch is gone. */
-    const waist = Math.min(stretch * 0.11, h * 0.16);
-    if (waist > 0.3 && w > h) {
-      const r = h / 2;
-      const q = waist * 1.33;
-      pocket.style.clipPath =
-        `path('M ${r} 0 C ${(w * 0.35).toFixed(1)} ${q.toFixed(2)} ${(w * 0.65).toFixed(1)} ${q.toFixed(2)} ${(w - r).toFixed(1)} 0 ` +
-        `A ${r} ${r} 0 0 1 ${(w - r).toFixed(1)} ${h} ` +
-        `C ${(w * 0.65).toFixed(1)} ${(h - q).toFixed(2)} ${(w * 0.35).toFixed(1)} ${(h - q).toFixed(2)} ${r} ${h} ` +
-        `A ${r} ${r} 0 0 1 ${r} 0 Z')`;
-    } else if (pocket.style.clipPath) {
-      pocket.style.clipPath = '';
-    }
+    pocket.style.transform = `translate3d(${S.L.toFixed(2)}px, -50%, 0) scale(${pressK.toFixed(4)}, 1)`;
   }
 
   /* ------------------------------------------------------------------------
@@ -2875,7 +2852,6 @@ function gatorStorm(n = 12) {
         const mid = target.left + target.width / 2;
         S.L = S.R = mid; S.vL = S.vR = 0;
       }
-      S.w0 = Math.max(0, S.R - S.L);
       S.tL = target.left;
       S.tR = target.left + target.width;
       S.tOp = 1;
@@ -2890,7 +2866,7 @@ function gatorStorm(n = 12) {
 
   function pointerUpdate() {
     if (!barRect || pointerKind !== 'mouse' || reduced()) {
-      S.tNear = 0; S.tDx = S.tDy = 0;
+      S.tNear = 0; S.tDx = 0;
       wake();
       return;
     }
@@ -2901,9 +2877,8 @@ function gatorStorm(n = 12) {
     S.tNear = near;
     if (near > 0) {
       S.tDx = clamp((px - (r.left + r.width / 2)) / (r.width / 2), -1, 1) * 1.6 * near;
-      S.tDy = clamp((py - (r.top + r.height / 2)) / (r.height / 2), -1, 1) * 1.0 * near;
     } else {
-      S.tDx = S.tDy = 0;
+      S.tDx = 0;
     }
     wake();
   }

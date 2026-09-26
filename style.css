@@ -3423,12 +3423,13 @@
    What makes them read as glass is not an outline and not any bending of
    what is behind them, but where the light sits on the edge:
 
-   1. Light comes in from above. A bright hairline along the whole top
-      edge, which wraps round the corners and fades out as the edge turns
-      down the sides.
-   2. It catches again, faintly, along the whole bottom edge, where light
-      that came in through the top reflects back off the inside of the
-      glass.
+   1. Light comes in from above and a few degrees to the left. A bright
+      hairline along the whole top edge, a little brighter left of centre,
+      which wraps round the corners and fades out as the edge turns down
+      the sides.
+   2. It catches again, fainter, along the whole bottom edge and a little
+      to the right, where light that came in through the top reflects back
+      off the inside of the glass.
    3. The sides stay dark. There is no line all the way round: in dark
       mode a full ring reads as a sticker's border, not as glass.
    4. In light mode, where white light on white glass barely shows, a very
@@ -3462,8 +3463,8 @@
 
     /* The edge light: along the top, fainter along the bottom, nothing at
        the sides. */
-    --lg-spot-top: rgba(255, 255, 255, .30);
-    --lg-spot-bot: rgba(255, 255, 255, .16);
+    --lg-spot-top: rgba(255, 255, 255, .42);
+    --lg-spot-bot: rgba(255, 255, 255, .22);
     --lg-glow-top: rgba(255, 255, 255, .045);   /* light just inside the top */
     --lg-light: 255, 255, 255;
 
@@ -3478,8 +3479,8 @@
        widest at the top, thinning to nothing at the sides. */
     --lg-btn-top: rgba(255, 255, 255, .11);
     --lg-btn-bot: rgba(255, 255, 255, .055);
-    --lg-arc-top: rgba(255, 255, 255, .24);
-    --lg-arc-bot: rgba(255, 255, 255, .11);
+    --lg-arc-top: rgba(255, 255, 255, .33);
+    --lg-arc-bot: rgba(255, 255, 255, .16);
     --lg-btn-shadow: 0 6px 16px -8px rgba(0, 0, 0, .5);
   }
 
@@ -3494,11 +3495,11 @@
     --lg-bright: 1.03;
 
     --lg-spot-top: rgba(255, 255, 255, 1);
-    --lg-spot-bot: rgba(255, 255, 255, .75);
+    --lg-spot-bot: rgba(255, 255, 255, .9);
     --lg-glow-top: rgba(255, 255, 255, .5);
     --lg-light: 255, 255, 255;
 
-    --lg-outline: rgba(16, 25, 43, .065);
+    --lg-outline: rgba(16, 25, 43, .075);
     --lg-edge: rgba(16, 25, 43, .03);
     --lg-lo-soft: rgba(16, 25, 43, .045);
     --lg-shadow: 0 14px 34px -14px rgba(16, 25, 43, .2), 0 5px 14px -6px rgba(16, 25, 43, .06);
@@ -3514,14 +3515,14 @@
   [data-theme="terminal"] {
     --lg-fill-top: rgba(53, 255, 148, .06);
     --lg-fill-bot: rgba(53, 255, 148, .02);
-    --lg-spot-top: rgba(150, 255, 200, .38);
-    --lg-spot-bot: rgba(53, 255, 148, .2);
+    --lg-spot-top: rgba(150, 255, 200, .5);
+    --lg-spot-bot: rgba(53, 255, 148, .27);
     --lg-glow-top: rgba(53, 255, 148, .05);
     --lg-light: 120, 255, 190;
     --lg-btn-top: rgba(53, 255, 148, .1);
     --lg-btn-bot: rgba(53, 255, 148, .04);
-    --lg-arc-top: rgba(150, 255, 200, .3);
-    --lg-arc-bot: rgba(53, 255, 148, .13);
+    --lg-arc-top: rgba(150, 255, 200, .4);
+    --lg-arc-bot: rgba(53, 255, 148, .18);
   }
 
   /* ---------- Tiles --------------------------------------------------------
@@ -3530,7 +3531,6 @@
      edge light pseudo element draws over it. */
   .glass,
   .dock-fab,
-  .rec-bubble,
   .mobile-sheet,
   .palette {
     border-color: transparent;
@@ -3548,8 +3548,13 @@
      and faintly from the bottom rather than filled. The top light runs the
      whole width of the top edge, like the toolbar pills in Safari, and
      wraps round the corners, fading as the edge turns downward; the
-     bottom light does the same, fainter, from below. On a circle that
-     makes the keypad's two arcs. How far each reaches is capped in pixels,
+     bottom light does the same, fainter, from below. Each is a very wide
+     ellipse centred a little off the middle, left of centre on top and
+     right of centre underneath, so the light falls a few degrees from the
+     upper left: across a long bar that is only a slight brightening toward
+     one end, and on a circle it turns the keypad's two arcs a few degrees
+     round. A straight angled gradient would do that on a circle but light
+     only one end of a long bar. How far each reaches is capped in pixels,
      so a tall card's sides stay dark rather than lighting up for half its
      height. It sits above the content because it is a hairline at the very
      edge that content never reaches. */
@@ -3568,8 +3573,8 @@
     border-radius: inherit;
     padding: 1px;
     background:
-      linear-gradient(180deg, var(--lg-spot-top), transparent min(46%, 30px)),
-      linear-gradient(0deg, var(--lg-spot-bot), transparent min(38%, 22px));
+      radial-gradient(130% 30px at 40% 0%, var(--lg-spot-top), transparent),
+      radial-gradient(130% 22px at 60% 100%, var(--lg-spot-bot), transparent);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -3588,7 +3593,7 @@
     z-index: -1;
     border-radius: inherit;
     box-shadow: none;
-    background: linear-gradient(180deg, var(--lg-glow-top), transparent min(45%, 40px));
+    background: radial-gradient(130% 44px at 40% 0%, var(--lg-glow-top), transparent);
     pointer-events: none;
   }
 
@@ -3611,29 +3616,30 @@
       inset 0 -20px 32px -24px var(--lg-lo-soft);
   }
 
-  /* The testimonial tail is a skewed square that inherits the bubble's
-     background, so it picks up the glass fill. Its old stroke would be a
-     line where the bubble has none, so it only keeps the light ring. */
-  .rec-bubble::before {
-    border-color: var(--lg-outline);
+  /* The recommendation bubbles are deliberately not glass: they keep the
+     original solid bubble and tail, as on main. */
+
+  /* A message arrives from its sender: the bubble grows out of the corner
+     where the avatar sits, rather than sliding in as a block. */
+  @media (prefers-reduced-motion: no-preference) {
+    .thread .rec[data-reveal] {
+      transform: translate(-10px, 6px) scale(.94);
+      transform-origin: 0% 100%;
+    }
+    .thread .rec:nth-child(even)[data-reveal] {
+      transform: translate(10px, 6px) scale(.94);
+      transform-origin: 100% 100%;
+    }
+    .thread .rec[data-reveal].is-in { transform: none; }
   }
-  .rec-bubble {
-    box-shadow:
-      var(--lg-shadow),
-      inset 0 1px 0 var(--lg-arc-top),
-      inset 0 -1px 0 var(--lg-arc-bot),
-      inset 0 0 0 1px var(--lg-outline),
-      inset 0 -20px 32px -24px var(--lg-lo-soft),
-      inset 0 0 18px 0 var(--lg-edge);
-  }
+
 
   /* ---------- Controls: glass on glass ------------------------------------
 
      No blur of their own: they sit on a tile that already blurs, and forty
      skill pills each running their own backdrop filter would be forty more
      layers to composite for no visible difference. The press light is the
-     top background layer, so it needs no pseudo element and cannot collide
-     with the ones some of these already use. */
+     top background layer. */
   .btn,
   .filter-chip,
   .pills button,
@@ -3654,10 +3660,68 @@
       linear-gradient(180deg, var(--lg-btn-top), var(--lg-btn-bot));
     box-shadow:
       var(--lg-btn-shadow),
-      inset 0 1px 0 var(--lg-arc-top),
-      inset 0 -1px 0 var(--lg-arc-bot),
       inset 0 0 0 1px var(--lg-outline),
       inset 0 0 10px 0 var(--lg-edge);
+  }
+
+  /* Edge light, two ways, by shape.
+
+     Round ended things, the pills and circles, get it as a one pixel inset
+     light top and bottom. On a round end that thins out to nothing by the
+     side on its own, and nudging it a third of a pixel sideways turns it a
+     few degrees toward the upper left.
+
+     Rounded rectangles cannot do that: they have straight sides, and the
+     same sideways nudge draws a hairline all the way down both of them,
+     which is exactly the outline this is meant to avoid. They get the
+     tiles' ring instead, scaled to their height: light along the top a
+     little brighter left of centre, fainter along the bottom a little
+     right of centre, fading out well before the sides. */
+  .filter-chip,
+  .card-tags span,
+  .jc-tags span,
+  .row-tags span,
+  .chip,
+  .chip-clear,
+  .carousel-ctrl .icon-btn,
+  .lb-btn {
+    box-shadow:
+      var(--lg-btn-shadow),
+      inset .3px 1px 0 var(--lg-arc-top),
+      inset -.3px -1px 0 var(--lg-arc-bot),
+      inset 0 0 0 1px var(--lg-outline),
+      inset 0 0 10px 0 var(--lg-edge);
+  }
+
+  .pills button,
+  .pills span,
+  .contact a,
+  .card-repo,
+  .card-kind,
+  .sheet-cta,
+  .jc-impact { position: relative; }
+
+  .btn::after,
+  .pills button::after,
+  .pills span::after,
+  .contact a::after,
+  .card-repo::after,
+  .card-kind::after,
+  .sheet-cta::after,
+  .jc-impact::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background:
+      radial-gradient(130% var(--lg-ring-top, 15px) at 40% 0%, var(--lg-ctl-top, var(--lg-arc-top)), transparent),
+      radial-gradient(130% var(--lg-ring-bot, 11px) at 60% 100%, var(--lg-ctl-bot, var(--lg-arc-bot)), transparent);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+    pointer-events: none;
   }
 
   .btn:hover,
@@ -3684,44 +3748,94 @@
   .rec-avatar {
     border-color: transparent;
     box-shadow:
-      inset 0 1px 0 color-mix(in oklab, var(--accent) 40%, rgba(255, 255, 255, .55)),
-      inset 0 -1px 0 color-mix(in oklab, var(--accent) 30%, rgba(255, 255, 255, .15)),
+      inset .3px 1px 0 color-mix(in oklab, var(--accent) 40%, rgba(255, 255, 255, .55)),
+      inset -.3px -1px 0 color-mix(in oklab, var(--accent) 30%, rgba(255, 255, 255, .15)),
       inset 0 0 0 1px var(--lg-outline);
   }
 
-  /* ---------- Tinted glass ------------------------------------------------
+  /* ---------- Accent glass ------------------------------------------------
 
-     The accented controls are coloured glass: the colour is even top to
-     bottom, lit across the top and caught faintly across the bottom like
-     everything else, with no ring round them. */
+     The primary actions (Resume, Open Resume, the active filter, the menu's
+     Contact) had been a solid block of bright cyan, the loudest thing on
+     the page and the one thing that was not glass. Now they are the same
+     clear glass as every other control with the accent in it rather than
+     painted on: a faint tint through the body, a little more of it pooled
+     at the bottom where light passing through coloured glass gathers, the
+     label in the accent, and edge light like everything else, the lower
+     line catching the tint. Primary by colour and light, not by volume. */
+  :root,
+  [data-theme="midnight"] {
+    --lg-acc-ink: color-mix(in oklab, var(--accent) 82%, white);
+    --lg-acc-fill-top: color-mix(in oklab, var(--accent) 16%, rgba(255, 255, 255, .08));
+    --lg-acc-fill-bot: color-mix(in oklab, var(--accent) 9%, rgba(255, 255, 255, .035));
+    --lg-acc-pool: color-mix(in oklab, var(--accent) 24%, transparent);
+    --lg-acc-edge-top: color-mix(in oklab, var(--accent) 30%, rgba(255, 255, 255, .62));
+    --lg-acc-edge-bot: color-mix(in oklab, var(--accent) 60%, rgba(255, 255, 255, .3));
+    --lg-acc-glow: color-mix(in oklab, var(--accent) 38%, transparent);
+  }
+  [data-theme="daylight"] {
+    --lg-acc-ink: var(--accent);
+    --lg-acc-fill-top: color-mix(in oklab, var(--accent) 9%, rgba(255, 255, 255, .92));
+    --lg-acc-fill-bot: color-mix(in oklab, var(--accent) 14%, rgba(255, 255, 255, .74));
+    --lg-acc-pool: color-mix(in oklab, var(--accent) 14%, transparent);
+    --lg-acc-edge-top: rgba(255, 255, 255, 1);
+    --lg-acc-edge-bot: color-mix(in oklab, var(--accent) 38%, rgba(255, 255, 255, .6));
+    --lg-acc-glow: color-mix(in oklab, var(--accent) 24%, transparent);
+  }
+
   .btn.solid,
   .filter-chip.is-active,
   .pills button.is-active,
   .contact a.resume-btn,
   .sheet-cta {
-    color: var(--accent-ink);
+    --lg-ctl-top: var(--lg-acc-edge-top);
+    --lg-ctl-bot: var(--lg-acc-edge-bot);
+    color: var(--lg-acc-ink);
     background:
-      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(255, 255, 255, var(--lg-press)), transparent 72%),
-      radial-gradient(70% 120% at 50% -30%, rgba(255, 255, 255, .22), transparent 60%),
-      linear-gradient(180deg,
-        color-mix(in oklab, var(--accent) 88%, white 12%) 0%,
-        color-mix(in oklab, var(--accent) 72%, var(--accent-2) 28%) 100%);
+      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(var(--lg-light), var(--lg-press)), transparent 72%),
+      radial-gradient(90% 80% at 62% 118%, var(--lg-acc-pool), transparent 72%),
+      linear-gradient(180deg, var(--lg-acc-fill-top), var(--lg-acc-fill-bot));
     box-shadow:
-      0 8px 20px -12px color-mix(in oklab, var(--accent-2) 50%, transparent),
-      inset 0 1px 0 rgba(255, 255, 255, .5),
-      inset 0 -1px 0 rgba(255, 255, 255, .2);
+      0 10px 24px -14px var(--lg-acc-glow),
+      var(--lg-btn-shadow),
+      inset 0 0 0 1px var(--lg-outline);
+  }
+  /* The active filter is a pill, so its light is the inset kind. */
+  .filter-chip.is-active {
+    box-shadow:
+      0 10px 24px -14px var(--lg-acc-glow),
+      var(--lg-btn-shadow),
+      inset .3px 1px 0 var(--lg-acc-edge-top),
+      inset -.3px -1px 0 var(--lg-acc-edge-bot),
+      inset 0 0 0 1px var(--lg-outline);
+  }
+
+  .btn.solid:hover,
+  .filter-chip.is-active:hover,
+  .pills button.is-active:hover,
+  .contact a.resume-btn:hover,
+  .sheet-cta:hover {
+    color: var(--lg-acc-ink);
+    background:
+      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(var(--lg-light), var(--lg-press)), transparent 72%),
+      radial-gradient(90% 80% at 62% 118%, var(--lg-acc-pool), transparent 72%),
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--lg-acc-fill-top), var(--accent) 8%),
+        color-mix(in oklab, var(--lg-acc-fill-bot), var(--accent) 6%));
   }
 
   /* The project kind badge is a label, not a button, so it is tinted
      glass without the lift. */
   .card-kind {
+    --lg-ctl-top: color-mix(in oklab, var(--accent) 45%, rgba(255, 255, 255, .5));
+    --lg-ctl-bot: color-mix(in oklab, var(--accent) 35%, rgba(255, 255, 255, .15));
+    --lg-ring-top: 11px;
+    --lg-ring-bot: 8px;
     border-color: transparent;
     background: linear-gradient(180deg,
       color-mix(in oklab, var(--accent) 26%, transparent),
       color-mix(in oklab, var(--accent) 12%, transparent));
-    box-shadow:
-      inset 0 1px 0 color-mix(in oklab, var(--accent) 45%, rgba(255, 255, 255, .5)),
-      inset 0 -1px 0 color-mix(in oklab, var(--accent) 30%, rgba(255, 255, 255, .12));
+    box-shadow: none;
   }
 
   /* ---------- The Path ------------------------------------------------------
@@ -3750,8 +3864,8 @@
       border-radius: inherit;
       padding: 1px;
       background:
-        linear-gradient(180deg, var(--lg-spot-top), transparent min(46%, 30px)),
-        linear-gradient(0deg, var(--lg-spot-bot), transparent min(38%, 22px));
+        radial-gradient(130% 30px at 40% 0%, var(--lg-spot-top), transparent),
+        radial-gradient(130% 22px at 60% 100%, var(--lg-spot-bot), transparent);
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
               mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -3774,8 +3888,8 @@
     border-radius: inherit;
     padding: 1px;
     background:
-      linear-gradient(180deg, var(--lg-spot-top), transparent min(46%, 30px)),
-      linear-gradient(0deg, var(--lg-spot-bot), transparent min(38%, 22px));
+      radial-gradient(130% 30px at 40% 0%, var(--lg-spot-top), transparent),
+      radial-gradient(130% 22px at 60% 100%, var(--lg-spot-bot), transparent);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -3796,9 +3910,11 @@
     background: linear-gradient(180deg,
       color-mix(in oklab, var(--accent) 17%, transparent),
       color-mix(in oklab, var(--accent) 9%, transparent));
-    box-shadow:
-      inset 0 1px 0 color-mix(in oklab, var(--accent) 35%, rgba(255, 255, 255, .35)),
-      inset 0 -1px 0 color-mix(in oklab, var(--accent) 22%, rgba(255, 255, 255, .12));
+    --lg-ctl-top: color-mix(in oklab, var(--accent) 35%, rgba(255, 255, 255, .38));
+    --lg-ctl-bot: color-mix(in oklab, var(--accent) 25%, rgba(255, 255, 255, .14));
+    --lg-ring-top: 16px;
+    --lg-ring-bot: 12px;
+    box-shadow: none;
   }
 
   /* ---------- Press physics ------------------------------------------------
@@ -3913,10 +4029,10 @@
   header.nav::before,
   .dock-fab::before {
     background:
-      linear-gradient(180deg,
+      radial-gradient(130% 30px at 40% 0%,
         color-mix(in oklab, var(--lg-spot-top), rgba(var(--lg-spec), 1) calc(var(--lg-near) * 22%)),
-        transparent min(46%, 30px)),
-      linear-gradient(0deg, var(--lg-spot-bot), transparent min(38%, 22px));
+        transparent),
+      radial-gradient(130% 22px at 60% 100%, var(--lg-spot-bot), transparent);
   }
 
   /* Pressing anything in the bar tightens its shadow: the glass has come a
@@ -3952,8 +4068,9 @@
      One piece of glass that marks where you are and where you are pointing,
      and flows between the two. It is the same substance as the bar: no
      shadow of its own, just a little more light and the same light on its
-     edge. script.js moves it on two springs, one per edge, so it stretches toward where it is
-     going, narrows at the waist while it is stretched, and settles. */
+     edge. script.js moves it on two springs, one per edge, so it stretches
+     sideways toward where it is going and settles. Its height never
+     changes. */
   .nav-pocket {
     position: absolute;
     left: 0;
@@ -3968,12 +4085,12 @@
     /* Lit like a keypad button: light along the top, fainter along the
        bottom, thinning out round the ends. */
     box-shadow:
-      inset 0 1px 0 var(--lg-arc-top),
-      inset 0 -1px 0 var(--lg-arc-bot),
+      inset .3px 1px 0 var(--lg-arc-top),
+      inset -.3px -1px 0 var(--lg-arc-bot),
       inset 0 0 0 1px var(--lg-outline);
     opacity: 0;
     pointer-events: none;
-    will-change: transform, width, clip-path, opacity;
+    will-change: transform, width, opacity;
   }
 
   /* ---------- Menus -------------------------------------------------------
@@ -4005,6 +4122,25 @@
        gap: the two curves are concentric, which is what makes the pocket
        look like part of the bar rather than something placed on it. */
     header.nav { padding: 8px; }
+
+    /* Denser on desktop. Page content scrolls under the whole width of it
+       here, headlines and photos included, and the phone dock's veil let
+       too much of that through: the bar read as bright and see through.
+       More of the page colour in the veil, less milk, a heavier blur and a
+       touch less brightness. The phone keeps its lighter glass. */
+    header.nav {
+      --lg-bar-veil: color-mix(in oklab, var(--bg) 46%, transparent);
+      --lg-bar-milk: rgba(255, 255, 255, .035);
+      backdrop-filter: blur(20px) saturate(150%) brightness(calc(.97 - var(--lg-dim) * .5));
+      -webkit-backdrop-filter: blur(20px) saturate(150%) brightness(calc(.97 - var(--lg-dim) * .5));
+    }
+    /* In light mode denser means whiter, not darker. */
+    [data-theme="daylight"] header.nav {
+      --lg-bar-veil: color-mix(in oklab, var(--bg) 32%, transparent);
+      --lg-bar-milk: rgba(255, 255, 255, .5);
+      backdrop-filter: blur(20px) saturate(150%) brightness(1.03);
+      -webkit-backdrop-filter: blur(20px) saturate(150%) brightness(1.03);
+    }
 
     header.nav .icon-btn,
     header.nav a.cta,
