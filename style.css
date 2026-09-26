@@ -3616,8 +3616,63 @@
       inset 0 -20px 32px -24px var(--lg-lo-soft);
   }
 
-  /* The recommendation bubbles are deliberately not glass: they keep the
-     original solid bubble and tail, as on main. */
+  /* ---------- Speech bubble tail -------------------------------------------
+
+     The recommendation bubbles are deliberately not glass: they keep their
+     solid fill and hairline border. Only the tail changes. It had been a
+     skewed square tucked under the bubble's corner, which read as a stray
+     parallelogram. Now it is part of the bubble's own outline, the horn of
+     a message bubble: it leaves the bubble's side 18px above the bottom,
+     tangent to it so there is no kink, and curves down to a point toward
+     the speaker. It fills in the rounded corner nearest the speaker, so
+     the bubble and tail read as one shape with one continuous border: the
+     bubble's side, the tail's curve, the tail's underside, the bubble's
+     bottom. The bubble's own border where the two meet is covered by the
+     tail's fill, so no seam shows.
+
+     Geometry, in the tail's 22 by 18 box: the bubble's outer left edge is
+     at x 9 and its border runs to x 10; its bottom is y 18. The outer curve
+     is a circle of radius 21.2 centred at (-11.2, 0), tangent to x 10 at
+     the top and meeting the bottom at the tip, (0, 18). The inner edge is
+     the bubble's corner, radius 12 about (21, 6), taken at its inner
+     radius, 11, so the whole border width is covered. */
+  .rec-bubble { border-radius: var(--r-lg) var(--r-lg) var(--r-lg) 12px; }
+  .rec:nth-child(even) .rec-bubble { border-radius: var(--r-lg) var(--r-lg) 12px var(--r-lg); }
+
+  .rec-bubble::before,
+  .rec:nth-child(even) .rec-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: -10px;
+    right: auto;
+    width: 22px;
+    height: 18px;
+    border: 0;
+    border-radius: 0;
+    transform: none;
+    /* The border along the curve, then the fill: opaque, the colour the
+       bubble's 82% fill comes out as over the page. At the bubble's own
+       82% the bubble's corner border showed through as a faint inner
+       curve; opaque, it is hidden completely. */
+    background:
+      radial-gradient(circle 22.6px at -11.2px 0px,
+        transparent 21px, var(--stroke) 21.45px, var(--stroke) 21.95px, transparent 22.4px),
+      color-mix(in oklab, var(--surface-solid) 82%, var(--bg));
+    /* The border along the underside, carrying on the bubble's bottom. */
+    box-shadow: inset 0 -1px 0 var(--stroke);
+    clip-path: path('M 10 0 A 21.2 21.2 0 0 1 0 18 L 21 18 L 21 17 A 11 11 0 0 1 10 6 Z');
+  }
+  .rec:nth-child(even) .rec-bubble::before {
+    left: auto;
+    right: -10px;
+    background:
+      radial-gradient(circle 22.6px at 33.2px 0px,
+        transparent 21px, var(--stroke) 21.45px, var(--stroke) 21.95px, transparent 22.4px),
+      color-mix(in oklab, var(--surface-solid) 82%, var(--bg));
+    clip-path: path('M 12 0 A 21.2 21.2 0 0 0 22 18 L 1 18 L 1 17 A 11 11 0 0 0 12 6 Z');
+  }
+
 
   /* A message arrives from its sender: the bubble grows out of the corner
      where the avatar sits, rather than sliding in as a block. */
