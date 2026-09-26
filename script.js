@@ -2568,9 +2568,10 @@ function gatorStorm(n = 12) {
    LIQUID GLASS
    Experiment branch. The bar is treated as one persistent piece of optical
    material that changes state, rather than as elements playing animations.
-   The material itself (fill, tint, contrast layers, specular, internal
-   reflection) is CSS in the liquid layer; this is everything that has to
-   be computed: the optics, the environment it sits in, and how it moves.
+   The material itself (fill, frost, tint, contrast layers, the light on
+   its edges) is CSS in the liquid layer; this is everything that has to be
+   computed: the environment it sits in, and how it moves. There is no
+   refraction: the glass is a soft blur in every browser.
 
    Pointer movement writes a handful of numbers per frame and never touches
    layout. Geometry is measured on resize and cached.
@@ -2581,187 +2582,7 @@ function gatorStorm(n = 12) {
 
   const fab = $('.dock-fab');
   const reduced = prefersReduced;
-  const chromium = !!navigator.userAgentData?.brands?.some((b) => /Chromium/i.test(b.brand));
-  if (chromium) root.classList.add('lg-refract');
-
-  const NS = 'http://www.w3.org/2000/svg';
-  const make = (tag, attrs = {}) => {
-    const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]);
-    return n;
-  };
   const clamp01 = (v) => clamp(v, 0, 1);
-
-  /* ------------------------------------------------------------------------
-     Optics
-
-     The glass is modelled as a slab with a rounded bevel all the way round
-     its edge, and what is behind it is traced through that bevel. Each ray
-     entering the bevel is refracted by Snell's law at the curved surface,
-     followed down to the page, and the map records where it lands. Near
-     the edge the surface is steep and rays are bent hard toward the
-     middle, so the outer few pixels of the rim show a strip of page from
-     further in, magnified and very slightly mirrored: the stretched,
-     wrapped look at the ends of an iOS tab bar. Further in the bevel
-     flattens and the bending fades out, and the middle shows the page
-     magnified a couple of percent. Red, green and blue are bent by
-     slightly different amounts, so hard edges in the rim pick up the
-     faintest fringe of colour.
-
-     Everything the light passes through is then treated the same way: one
-     even frost over the whole surface, no brighter or sharper band at the
-     rim. An earlier pass kept the rim sharp, saturated and lifted while the
-     middle was frosted, which left the top and bottom of the bar visibly
-     brighter than the strip down the middle. Only the geometry differs
-     between rim and middle now, which is what refraction is.
-
-     Chromium only. Safari and Firefox do not accept url() in
-     backdrop-filter and would discard the whole declaration, blur
-     included, so the stylesheet only ever sees a --lg-refract that this
-     sets, and everywhere else the glass is a plain soft blur.
-     navigator.userAgentData is itself Chromium only, which makes it an
-     honest test for a Chromium only feature rather than a UA string guess.
-     ------------------------------------------------------------------------ */
-  const ETA = 1 / 1.5;               // air into glass
-
-  /* How far a ray moves sideways on its way through the bevel, by how far
-     in from the edge it enters. The profile is a squircle, vertical at the
-     very edge and easing flat into the top. Tabulated once per size, since
-     every pixel of the map looks it up. */
-  function bevel(b, T) {
-    const N = 512, tab = new Float32Array(N + 1);
-    for (let i = 0; i <= N; i++) {
-      const t = Math.max(i / N, 1e-4), q = 1 - t;
-      const inner = 1 - q ** 4;
-      const z = T * inner ** 0.25;                           // surface height
-      const slope = (T / b) * q ** 3 * inner ** -0.75;       // and its gradient
-      const len = Math.hypot(slope, 1);
-      const cosi = 1 / len;
-      const f = ETA * cosi - Math.sqrt(1 - ETA * ETA * (1 - cosi * cosi));
-      const tu = f * (-slope / len), tz = -ETA + f * cosi;   // the refracted ray
-      tab[i] = z * (tu / -tz);                               // sideways travel to the page
-    }
-    return (u) => {
-      if (u >= b) return 0;
-      const x = (Math.max(u, 0) / b) * N, i = Math.floor(x), fr = x - i;
-      return tab[i] + (tab[Math.min(i + 1, N)] - tab[i]) * fr;
-    };
-  }
-
-  /* The map for a W by H rounded rectangle of radius R. Red and green are
-     the offset, centred on 0.5, scaled so the largest offset uses the full
-     range; the filter is told that scale. The bevel is about three fifths
-     of the corner radius, so a 62px capsule bends through its outer 19px
-     and keeps a calm strip down the middle for the icons. */
-  function lensMap(W, H, R, o) {
-    const res = Math.min(1, 1400 / Math.max(W, H));
-    const w = Math.max(8, Math.round(W * res));
-    const h = Math.max(8, Math.round(H * res));
-    const r = Math.min(R, W / 2, H / 2) * res;
-    const half0 = (Math.min(W, H) / 2) * res;
-    const b = Math.min(r || half0, half0) * 0.62;
-    const D = bevel(b, b * o.depth);
-    const zk = 1 - 1 / o.zoom, zcap = o.zoomCap * res;
-    const hx = w / 2, hy = h / 2;
-
-    const n = w * h;
-    const vx = new Float32Array(n), vy = new Float32Array(n);
-    let max = 0.5;
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const px = x + 0.5 - hx, py = y + 0.5 - hy;
-        const qx = Math.abs(px) - (hx - r), qy = Math.abs(py) - (hy - r);
-        const u = -(Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r);
-        if (u < 0) continue;
-
-        let nx = 0, ny = 0;
-        if (qx > 0 && qy > 0) {
-          const l = Math.hypot(qx, qy) || 1;
-          nx = (qx / l) * Math.sign(px); ny = (qy / l) * Math.sign(py);
-        } else if (qx > qy) nx = Math.sign(px);
-        else ny = Math.sign(py);
-
-        const d = D(u);
-        const i = y * w + x;
-        vx[i] = -nx * d + clamp(-px * zk, -zcap, zcap);
-        vy[i] = -ny * d + clamp(-py * zk, -zcap, zcap);
-        max = Math.max(max, Math.abs(vx[i]), Math.abs(vy[i]));
-      }
-    }
-
-    const scale = 2 * max * 1.02, half = scale / 2;
-    const c = document.createElement('canvas');
-    c.width = w; c.height = h;
-    const g = c.getContext('2d');
-    const img = g.createImageData(w, h);
-    const px = img.data;
-    for (let i = 0; i < n; i++) {
-      const j = i * 4;
-      px[j]     = Math.round(127.5 + 127.5 * clamp(vx[i] / half, -1, 1));
-      px[j + 1] = Math.round(127.5 + 127.5 * clamp(vy[i] / half, -1, 1));
-      px[j + 2] = 128;
-      px[j + 3] = 255;
-    }
-    g.putImageData(img, 0, 0);
-    return { url: c.toDataURL(), scale };
-  }
-
-  let host = null;
-  if (chromium) {
-    host = make('svg', { width: '0', height: '0', 'aria-hidden': 'true', focusable: 'false' });
-    host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';
-    document.body.appendChild(host);
-  }
-
-  /* One pass per colour channel, each bent by the map at a very slightly
-     different strength, put back together, then frosted as a whole. The
-     frost comes after the bending so it also smooths the steps an 8 bit
-     map leaves where the bevel is steepest. */
-  function buildFilter(id, W, H, lens, o) {
-    const f = make('filter', {
-      id, x: '0', y: '0', width: '100%', height: '100%',
-      /* sRGB, or the map's neutral 0.5 is converted to linear light on the
-         way in, stops being neutral, and the whole backdrop slides. */
-      'color-interpolation-filters': 'sRGB',
-    });
-    f.append(make('feImage', { x: '0', y: '0', width: String(W), height: String(H), preserveAspectRatio: 'none', href: lens.url, result: 'map' }));
-    const channel = (k, m, keep) => {
-      f.append(make('feDisplacementMap', { in: 'SourceGraphic', in2: 'map', scale: String(lens.scale * m), xChannelSelector: 'R', yChannelSelector: 'G', result: `d${k}` }));
-      f.append(make('feColorMatrix', { in: `d${k}`, type: 'matrix', values: keep, result: k }));
-    };
-    channel('r', 1,                  '1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0');
-    channel('g', 1 - o.disperse,     '0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0');
-    channel('b', 1 - o.disperse * 2, '0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0');
-    f.append(make('feBlend', { in: 'r', in2: 'g', mode: 'screen', result: 'rg' }));
-    f.append(make('feBlend', { in: 'rg', in2: 'b', mode: 'screen', result: 'rgb' }));
-    f.append(make('feGaussianBlur', { in: 'rgb', stdDeviation: String(o.frost), edgeMode: 'duplicate' }));
-    return f;
-  }
-
-  const OPTS = {
-    bar: { frost: 3.2, disperse: 0.022 },
-    fab: { frost: 3.2, disperse: 0.022 },
-  };
-  const optics = new Map();       // element -> { id, sig }
-  let nextId = 0;
-
-  function applyOptics(el, kind, force = false) {
-    if (!host || !el || !el.offsetWidth) return;
-    const W = Math.round(el.offsetWidth), H = Math.round(el.offsetHeight);
-    if (W < 8 || H < 8) return;
-    const v = getComputedStyle(el).borderTopLeftRadius;
-    const R = v.endsWith('%') ? (parseFloat(v) / 100) * Math.min(W, H) : parseFloat(v) || 0;
-    const sig = `${W}x${H}r${Math.round(R)}`;
-    const prev = optics.get(el);
-    if (!force && prev && prev.sig === sig) return;
-
-    const lens = lensMap(W, H, R, { depth: 1, zoom: 1.025, zoomCap: 5 });
-    const id = prev?.id || `lg-${++nextId}`;
-    host.querySelector(`#${id}`)?.remove();
-    host.appendChild(buildFilter(id, W, H, lens, OPTS[kind]));
-    el.style.setProperty('--lg-refract', `url(#${id})`);
-    optics.set(el, { id, sig });
-  }
 
   /* ------------------------------------------------------------------------
      Environment
@@ -2893,9 +2714,6 @@ function gatorStorm(n = 12) {
      ranges and tuned by eye:
 
        pointer response    k 240, c 30   almost no overshoot
-       specular            k 160, c 24   softer, so the highlight lags the
-                                         surface slightly and reads as light
-                                         on a moving object
        pocket, leading     k 520, c 34   a touch of overshoot on arrival
        pocket, trailing    k 250, c 30   the back edge catches up late,
                                          which is the stretch
@@ -2907,8 +2725,6 @@ function gatorStorm(n = 12) {
      ------------------------------------------------------------------------ */
   const S = {
     near: 0, vNear: 0, tNear: 0,
-    sx: 18, vSx: 0, tSx: 18,
-    sy: 0, vSy: 0, tSy: 0,
     dx: 0, vDx: 0, tDx: 0,
     dy: 0, vDy: 0, tDy: 0,
     press: 0, vPress: 0, tPress: 0,
@@ -2958,8 +2774,6 @@ function gatorStorm(n = 12) {
 
     // Pointer response and press.
     busy = spring('near', 240, 30, dt) || busy;
-    busy = spring('sx', 160, 24, dt) || busy;
-    busy = spring('sy', 160, 24, dt) || busy;
     busy = spring('press', 700, 46, dt) || busy;
     if (!rm) {
       busy = spring('dx', 240, 30, dt) || busy;
@@ -2967,8 +2781,6 @@ function gatorStorm(n = 12) {
     } else { S.dx = S.dy = 0; }
 
     bar.style.setProperty('--lg-near', clamp01(S.near).toFixed(3));
-    bar.style.setProperty('--lg-sx', `${S.sx.toFixed(1)}%`);
-    bar.style.setProperty('--lg-sy', `${S.sy.toFixed(1)}%`);
     /* A tiny deformation toward the pointer, a couple of pixels at most, on
        the independent translate and scale properties so it composes with
        the transform that centres the bar. */
@@ -3078,7 +2890,7 @@ function gatorStorm(n = 12) {
 
   function pointerUpdate() {
     if (!barRect || pointerKind !== 'mouse' || reduced()) {
-      S.tNear = 0; S.tSx = 18; S.tSy = 0; S.tDx = S.tDy = 0;
+      S.tNear = 0; S.tDx = S.tDy = 0;
       wake();
       return;
     }
@@ -3088,12 +2900,10 @@ function gatorStorm(n = 12) {
     const near = clamp01(1 - Math.hypot(ox, oy) / 90);
     S.tNear = near;
     if (near > 0) {
-      S.tSx = clamp((px - r.left) / r.width, 0, 1) * 100;
-      S.tSy = clamp((py - r.top) / r.height, -0.4, 1.4) * 100;
       S.tDx = clamp((px - (r.left + r.width / 2)) / (r.width / 2), -1, 1) * 1.6 * near;
       S.tDy = clamp((py - (r.top + r.height / 2)) / (r.height / 2), -1, 1) * 1.0 * near;
     } else {
-      S.tSx = 18; S.tSy = 0; S.tDx = S.tDy = 0;
+      S.tDx = S.tDy = 0;
     }
     wake();
   }
@@ -3159,18 +2969,16 @@ function gatorStorm(n = 12) {
   addEventListener('scroll', queueEnv, { passive: true });
   new MutationObserver(queueEnv).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
-  const relayout = (force) => {
+  const relayout = () => {
     measure();
-    applyOptics(bar, 'bar', force);
-    applyOptics(fab, 'fab', force);
     retarget();
     queueEnv();
   };
 
   let rt = 0;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => relayout(false), 140); }, { passive: true });
-  document.fonts?.ready.then(() => relayout(true)).catch(() => {});
-  relayout(false);
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(relayout, 140); }, { passive: true });
+  document.fonts?.ready.then(relayout).catch(() => {});
+  relayout();
 })();
 
 /* --- Menus grow out of what opened them --------------------------------------
