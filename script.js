@@ -2353,7 +2353,7 @@ const terminal = (() => {
     ),
 
     experience: () => write(
-      `<span class="t-key">2026 on</span>    Software Engineering Intern · ADT\n` +
+      `<span class="t-key">2026</span>       Software Engineering Intern · ADT\n` +
       `<span class="t-key">2026</span>       SWE Co-op, R&amp;D · Hunter Engineering\n` +
       `<span class="t-key">2025</span>       SWE Intern · JM Family Enterprises\n` +
       `<span class="t-key">2024</span>       SWE Intern · Southeast Toyota Distributors\n` +
