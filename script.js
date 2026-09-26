@@ -2595,54 +2595,84 @@ function gatorStorm(n = 12) {
   /* ------------------------------------------------------------------------
      Optics
 
-     The bar's backdrop goes through one SVG filter, built here to match its
-     exact size. Chromium only: Safari and Firefox do not accept url() in
-     backdrop-filter and would discard the whole declaration, blur included,
-     so the stylesheet only ever sees a --lg-refract that this sets. In
-     every other engine the bar keeps its tint, contrast, specular and
-     motion, and simply does not bend what is behind it.
+     The glass is modelled as a slab with a rounded bevel all the way round
+     its edge, and what is behind it is traced through that bevel. Each ray
+     entering the bevel is refracted by Snell's law at the curved surface,
+     followed down to the page, and the map records where it lands. Near
+     the edge the surface is steep and rays are bent hard toward the
+     middle, so the outer few pixels of the rim show a strip of page from
+     further in, magnified and very slightly mirrored: the stretched,
+     wrapped look at the ends of an iOS tab bar. Further in the bevel
+     flattens and the bending fades out, and the middle shows the page
+     magnified a couple of percent. Red, green and blue are bent by
+     slightly different amounts, so hard edges in the rim pick up the
+     faintest fringe of colour.
+
+     Everything the light passes through is then treated the same way: one
+     even frost over the whole surface, no brighter or sharper band at the
+     rim. An earlier pass kept the rim sharp, saturated and lifted while the
+     middle was frosted, which left the top and bottom of the bar visibly
+     brighter than the strip down the middle. Only the geometry differs
+     between rim and middle now, which is what refraction is.
+
+     Chromium only. Safari and Firefox do not accept url() in
+     backdrop-filter and would discard the whole declaration, blur
+     included, so the stylesheet only ever sees a --lg-refract that this
+     sets, and everywhere else the glass is a plain soft blur.
      navigator.userAgentData is itself Chromium only, which makes it an
      honest test for a Chromium only feature rather than a UA string guess.
-
-     The displacement map encodes, per pixel, which way and how far to look
-     for the content behind. Red and green are the offset, blue is how much
-     of the pixel belongs to the rim. Three regions:
-
-       rim      a band about 8px wide. Content is pulled outward, up to 5px
-                at the very edge and nothing at the inner side of the band,
-                on a square curve, the way a rounded bevel bends light.
-       inside   just within the rim, a gentle pull the other way, which
-                magnifies what is behind very slightly.
-       middle   calm. No displacement at all.
-
-     Everything stays inside 6px, so the effect registers without anyone
-     seeing distortion. The blue channel then splits the image: the middle
-     is diffused heavily, the rim barely at all but bent, brightened and
-     saturated, which is what makes glass read as glass and not as frost.
      ------------------------------------------------------------------------ */
-  const SCALE = 12;               // feDisplacementMap scale: max offset is half this
+  const ETA = 1 / 1.5;               // air into glass
 
+  /* How far a ray moves sideways on its way through the bevel, by how far
+     in from the edge it enters. The profile is a squircle, vertical at the
+     very edge and easing flat into the top. Tabulated once per size, since
+     every pixel of the map looks it up. */
+  function bevel(b, T) {
+    const N = 512, tab = new Float32Array(N + 1);
+    for (let i = 0; i <= N; i++) {
+      const t = Math.max(i / N, 1e-4), q = 1 - t;
+      const inner = 1 - q ** 4;
+      const z = T * inner ** 0.25;                           // surface height
+      const slope = (T / b) * q ** 3 * inner ** -0.75;       // and its gradient
+      const len = Math.hypot(slope, 1);
+      const cosi = 1 / len;
+      const f = ETA * cosi - Math.sqrt(1 - ETA * ETA * (1 - cosi * cosi));
+      const tu = f * (-slope / len), tz = -ETA + f * cosi;   // the refracted ray
+      tab[i] = z * (tu / -tz);                               // sideways travel to the page
+    }
+    return (u) => {
+      if (u >= b) return 0;
+      const x = (Math.max(u, 0) / b) * N, i = Math.floor(x), fr = x - i;
+      return tab[i] + (tab[Math.min(i + 1, N)] - tab[i]) * fr;
+    };
+  }
+
+  /* The map for a W by H rounded rectangle of radius R. Red and green are
+     the offset, centred on 0.5, scaled so the largest offset uses the full
+     range; the filter is told that scale. The bevel is about three fifths
+     of the corner radius, so a 62px capsule bends through its outer 19px
+     and keeps a calm strip down the middle for the icons. */
   function lensMap(W, H, R, o) {
-    const cap = o.cap || 1400;
-    const res = Math.min(1, cap / Math.max(W, H));
+    const res = Math.min(1, 1400 / Math.max(W, H));
     const w = Math.max(8, Math.round(W * res));
     const h = Math.max(8, Math.round(H * res));
     const r = Math.min(R, W / 2, H / 2) * res;
-    const band = o.band * res, kick = o.kick, mag = o.mag, wBand = o.wBand * res;
-    const half = SCALE / 2;
-
-    const c = document.createElement('canvas');
-    c.width = w; c.height = h;
-    const g = c.getContext('2d');
-    const img = g.createImageData(w, h);
-    const d = img.data;
+    const half0 = (Math.min(W, H) / 2) * res;
+    const b = Math.min(r || half0, half0) * 0.62;
+    const D = bevel(b, b * o.depth);
+    const zk = 1 - 1 / o.zoom, zcap = o.zoomCap * res;
     const hx = w / 2, hy = h / 2;
 
+    const n = w * h;
+    const vx = new Float32Array(n), vy = new Float32Array(n);
+    let max = 0.5;
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         const px = x + 0.5 - hx, py = y + 0.5 - hy;
         const qx = Math.abs(px) - (hx - r), qy = Math.abs(py) - (hy - r);
-        const sd = Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r;
+        const u = -(Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r);
+        if (u < 0) continue;
 
         let nx = 0, ny = 0;
         if (qx > 0 && qy > 0) {
@@ -2651,55 +2681,30 @@ function gatorStorm(n = 12) {
         } else if (qx > qy) nx = Math.sign(px);
         else ny = Math.sign(py);
 
-        const depth = -sd;
-        let v = 0, e = 0;
-        if (depth >= 0) {
-          if (depth < band) v += kick * (1 - depth / band) ** 2;
-          v -= mag * Math.exp(-(((depth - band * 1.5) / (band * 1.1)) ** 2));
-          if (depth < wBand) e = (1 - depth / wBand) ** 1.4;
-        }
-
-        const i = (y * w + x) * 4;
-        d[i]     = Math.round(127.5 + 127.5 * clamp((nx * v) / half, -1, 1));
-        d[i + 1] = Math.round(127.5 + 127.5 * clamp((ny * v) / half, -1, 1));
-        d[i + 2] = Math.round(255 * e);
-        d[i + 3] = 255;
+        const d = D(u);
+        const i = y * w + x;
+        vx[i] = -nx * d + clamp(-px * zk, -zcap, zcap);
+        vy[i] = -ny * d + clamp(-py * zk, -zcap, zcap);
+        max = Math.max(max, Math.abs(vx[i]), Math.abs(vy[i]));
       }
     }
-    g.putImageData(img, 0, 0);
-    return c.toDataURL();
-  }
 
-  /* The pocket's field: a soft bulge that pulls toward the pill's centre
-     line, strongest halfway out and gone at both the centre and the edge.
-     Drawn once at a fixed size and stretched onto the pocket every frame,
-     which is exact at rest and near enough while it is moving. */
-  const pocketField = (() => {
-    const w = 200, h = 40, r = h / 2;
+    const scale = 2 * max * 1.02, half = scale / 2;
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
     const g = c.getContext('2d');
     const img = g.createImageData(w, h);
-    const d = img.data;
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const ax = clamp(x + 0.5, r, w - r);          // nearest point on the axis
-        const dx = x + 0.5 - ax, dy = y + 0.5 - r;
-        const dist = Math.hypot(dx, dy);
-        const t = dist / r;
-        const i = (y * w + x) * 4;
-        if (t >= 1) { d[i + 3] = 0; continue; }       // outside: transparent, neutral shows through
-        const m = 4 * t * (1 - t);                     // 0 at the axis and the edge
-        const ux = dist ? dx / dist : 0, uy = dist ? dy / dist : 0;
-        d[i]     = Math.round(127.5 - 127.5 * ux * m * 0.66);
-        d[i + 1] = Math.round(127.5 - 127.5 * uy * m * 0.66);
-        d[i + 2] = 0;
-        d[i + 3] = 255;
-      }
+    const px = img.data;
+    for (let i = 0; i < n; i++) {
+      const j = i * 4;
+      px[j]     = Math.round(127.5 + 127.5 * clamp(vx[i] / half, -1, 1));
+      px[j + 1] = Math.round(127.5 + 127.5 * clamp(vy[i] / half, -1, 1));
+      px[j + 2] = 128;
+      px[j + 3] = 255;
     }
     g.putImageData(img, 0, 0);
-    return c.toDataURL();
-  })();
+    return { url: c.toDataURL(), scale };
+  }
 
   let host = null;
   if (chromium) {
@@ -2708,100 +2713,54 @@ function gatorStorm(n = 12) {
     document.body.appendChild(host);
   }
 
-  function buildFilter(id, W, H, url, withPocket) {
+  /* One pass per colour channel, each bent by the map at a very slightly
+     different strength, put back together, then frosted as a whole. The
+     frost comes after the bending so it also smooths the steps an 8 bit
+     map leaves where the bevel is steepest. */
+  function buildFilter(id, W, H, lens, o) {
     const f = make('filter', {
       id, x: '0', y: '0', width: '100%', height: '100%',
       /* sRGB, or the map's neutral 0.5 is converted to linear light on the
          way in, stops being neutral, and the whole backdrop slides. */
       'color-interpolation-filters': 'sRGB',
     });
-    const refs = { disp: [], pk: null };
-    let src = 'SourceGraphic';
-
-    if (withPocket) {
-      /* A neutral field everywhere, with the pocket's bulge laid over it
-         wherever the pocket is. Transparent map pixels would otherwise read
-         as maximum displacement, so the neutral flood underneath matters. */
-      f.append(make('feFlood', { 'flood-color': 'rgb(128,128,128)', result: 'nz' }));
-      refs.pk = make('feImage', { x: '0', y: '0', width: '0', height: '0', preserveAspectRatio: 'none', href: pocketField, result: 'pk' });
-      f.append(refs.pk);
-      const merge = make('feMerge', { result: 'pf' });
-      merge.append(make('feMergeNode', { in: 'nz' }), make('feMergeNode', { in: 'pk' }));
-      f.append(merge);
-      f.append(make('feDisplacementMap', { in: 'SourceGraphic', in2: 'pf', scale: '6', xChannelSelector: 'R', yChannelSelector: 'G', result: 'mag' }));
-      src = 'mag';
-    }
-
-    f.append(make('feImage', { x: '0', y: '0', width: String(W), height: String(H), preserveAspectRatio: 'none', href: url, result: 'map' }));
-
-    // The middle: the same gentle field, then diffused.
-    const dc = make('feDisplacementMap', { in: src, in2: 'map', scale: String(SCALE), xChannelSelector: 'R', yChannelSelector: 'G', result: 'dc' });
-    f.append(dc); refs.disp.push([dc, 1]);
-    f.append(make('feGaussianBlur', { in: 'dc', stdDeviation: '8', edgeMode: 'duplicate', result: 'bc' }));
-
-    /* The rim: displaced once per colour channel at very slightly different
-       strengths and put back together. At these scales red and blue land a
-       third of a pixel apart, which only shows as a faint fringe over a hard
-       edge, never as a rainbow. */
+    f.append(make('feImage', { x: '0', y: '0', width: String(W), height: String(H), preserveAspectRatio: 'none', href: lens.url, result: 'map' }));
     const channel = (k, m, keep) => {
-      const node = make('feDisplacementMap', { in: src, in2: 'map', scale: String(SCALE * m), xChannelSelector: 'R', yChannelSelector: 'G', result: `d${k}` });
-      f.append(node); refs.disp.push([node, m]);
+      f.append(make('feDisplacementMap', { in: 'SourceGraphic', in2: 'map', scale: String(lens.scale * m), xChannelSelector: 'R', yChannelSelector: 'G', result: `d${k}` }));
       f.append(make('feColorMatrix', { in: `d${k}`, type: 'matrix', values: keep, result: k }));
     };
-    channel('r', 1,     '1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0');
-    channel('g', 0.975, '0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0');
-    channel('b', 0.95,  '0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0');
+    channel('r', 1,                  '1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0');
+    channel('g', 1 - o.disperse,     '0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0');
+    channel('b', 1 - o.disperse * 2, '0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0');
     f.append(make('feBlend', { in: 'r', in2: 'g', mode: 'screen', result: 'rg' }));
     f.append(make('feBlend', { in: 'rg', in2: 'b', mode: 'screen', result: 'rgb' }));
-    f.append(make('feGaussianBlur', { in: 'rgb', stdDeviation: '2.2', edgeMode: 'duplicate', result: 'es' }));
-    f.append(make('feColorMatrix', { in: 'es', type: 'saturate', values: '1.14', result: 'esat' }));
-    const lift = make('feComponentTransfer', { in: 'esat', result: 'elit' });
-    ['R', 'G', 'B'].forEach((ch) => lift.append(make(`feFunc${ch}`, { type: 'linear', slope: '1.07', intercept: '0.012' })));
-    f.append(lift);
-
-    // Split by the blue channel: rim from one path, middle from the other.
-    f.append(make('feColorMatrix', { in: 'map', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0', result: 'me' }));
-    f.append(make('feColorMatrix', { in: 'map', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 -1 0 1', result: 'mc' }));
-    f.append(make('feComposite', { in: 'elit', in2: 'me', operator: 'in', result: 'ep' }));
-    f.append(make('feComposite', { in: 'bc', in2: 'mc', operator: 'in', result: 'cp' }));
-    f.append(make('feComposite', { in: 'ep', in2: 'cp', operator: 'arithmetic', k1: '0', k2: '1', k3: '1', k4: '0' }));
-    return { f, refs };
+    f.append(make('feGaussianBlur', { in: 'rgb', stdDeviation: String(o.frost), edgeMode: 'duplicate' }));
+    return f;
   }
 
-  const optics = new Map();       // element -> { id, W, H, refs }
+  const OPTS = {
+    bar: { frost: 3.2, disperse: 0.022 },
+    fab: { frost: 3.2, disperse: 0.022 },
+  };
+  const optics = new Map();       // element -> { id, sig }
   let nextId = 0;
 
-  function applyOptics(el, withPocket, force = false) {
-    if (!host || !el) return;
+  function applyOptics(el, kind, force = false) {
+    if (!host || !el || !el.offsetWidth) return;
     const W = Math.round(el.offsetWidth), H = Math.round(el.offsetHeight);
     if (W < 8 || H < 8) return;
+    const v = getComputedStyle(el).borderTopLeftRadius;
+    const R = v.endsWith('%') ? (parseFloat(v) / 100) * Math.min(W, H) : parseFloat(v) || 0;
+    const sig = `${W}x${H}r${Math.round(R)}`;
     const prev = optics.get(el);
-    if (!force && prev && Math.abs(prev.W - W) < 2 && Math.abs(prev.H - H) < 2) return;
+    if (!force && prev && prev.sig === sig) return;
 
-    const R = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
-    const url = lensMap(W, H, R, { band: 8, kick: 5, mag: 1.4, wBand: 12 });
+    const lens = lensMap(W, H, R, { depth: 1, zoom: 1.025, zoomCap: 5 });
     const id = prev?.id || `lg-${++nextId}`;
     host.querySelector(`#${id}`)?.remove();
-    const { f, refs } = buildFilter(id, W, H, url, withPocket);
-    host.appendChild(f);
+    host.appendChild(buildFilter(id, W, H, lens, OPTS[kind]));
     el.style.setProperty('--lg-refract', `url(#${id})`);
-    optics.set(el, { id, W, H, refs });
-  }
-
-  /* Refraction strength, eased. The pointer's proximity adds a little, a
-     press adds a little more for the moment it lasts. Written to the
-     filter only when it has actually moved, since every write re-runs it. */
-  /* Snapped to hundredths and written when the snapped value changes. A
-     threshold on the raw difference let the last small step back to rest
-     go unwritten, so the glass stayed a fraction stronger than it should
-     after the pointer had gone. */
-  let lastBoost = -1;
-  function setBoost(k) {
-    const o = optics.get(bar);
-    const kr = Math.round(k * 100) / 100;
-    if (!o || kr === lastBoost) return;
-    lastBoost = kr;
-    o.refs.disp.forEach(([node, m]) => node.setAttribute('scale', (SCALE * m * kr).toFixed(2)));
+    optics.set(el, { id, sig });
   }
 
   /* ------------------------------------------------------------------------
@@ -3040,9 +2999,6 @@ function gatorStorm(n = 12) {
     busy = spring('op', rm ? 900 : 300, rm ? 60 : 34, dt) || busy;
     renderPocket(rm);
 
-    // Refraction: the pointer adds a little, a press a little more.
-    setBoost(1 + clamp01(S.near) * 0.12 + clamp01(S.press) * 0.22);
-
     raf = busy ? requestAnimationFrame(frame) : 0;
   }
 
@@ -3050,12 +3006,7 @@ function gatorStorm(n = 12) {
     const w = Math.max(0, S.R - S.L);
     const op = clamp01(S.op);
     pocket.style.opacity = op.toFixed(3);
-    if (op < 0.005) {
-      /* Gone, so its magnification goes too. Returning without this left
-         the bar bending the page under a pocket nobody could see. */
-      optics.get(bar)?.refs.pk?.setAttribute('width', '0');
-      return;
-    }
+    if (op < 0.005) return;
 
     /* Stretch is length beyond both the width it set out with and the width
        it is heading for. Measured against the target alone, a pocket
@@ -3082,16 +3033,6 @@ function gatorStorm(n = 12) {
         `A ${r} ${r} 0 0 1 ${r} 0 Z')`;
     } else if (pocket.style.clipPath) {
       pocket.style.clipPath = '';
-    }
-
-    // The bar's filter magnifies the page under wherever the pocket is.
-    const o = optics.get(bar);
-    if (o?.refs.pk) {
-      const top = (barRect ? barRect.height : 58) / 2 - h / 2;
-      o.refs.pk.setAttribute('x', (S.L + border).toFixed(1));
-      o.refs.pk.setAttribute('y', top.toFixed(1));
-      o.refs.pk.setAttribute('width', (w * op).toFixed(1));
-      o.refs.pk.setAttribute('height', h.toFixed(1));
     }
   }
 
@@ -3184,9 +3125,8 @@ function gatorStorm(n = 12) {
     if (!bar.contains(e.relatedTarget)) { hovered = null; retarget(); }
   });
 
-  /* Press. The item and the pocket compress about 2%, the bar's shadow
-     tightens and its refraction rises for the moment, then all of it
-     springs back. On a phone there is no hover and no current section in
+  /* Press. The item and the pocket compress about 2% and the bar's shadow
+     tightens, then all of it springs back. On a phone there is no hover and no current section in
      the dock, so this is also what brings the pocket up at all: it swells
      under the thumb and goes when the thumb lifts. */
   const release = () => {
@@ -3221,8 +3161,8 @@ function gatorStorm(n = 12) {
 
   const relayout = (force) => {
     measure();
-    applyOptics(bar, true, force);
-    applyOptics(fab, false, force);
+    applyOptics(bar, 'bar', force);
+    applyOptics(fab, 'fab', force);
     retarget();
     queueEnv();
   };

@@ -3466,11 +3466,10 @@
 
     --lg-hi: rgba(255, 255, 255, .14);      /* top inner specular line */
     --lg-hi-soft: rgba(255, 255, 255, .08); /* light entering          */
-    --lg-lo: rgba(0, 0, 0, .30);            /* bottom inner line       */
     --lg-lo-soft: rgba(0, 0, 0, .24);       /* light leaving           */
     --lg-edge: rgba(255, 255, 255, .06);    /* lens thickness glow     */
     --lg-outline: rgba(255, 255, 255, .05);
-    --lg-shadow: 0 18px 44px -18px rgba(0, 0, 0, .62), 0 3px 10px -2px rgba(0, 0, 0, .28);
+    --lg-shadow: 0 18px 44px -18px rgba(0, 0, 0, .58), 0 6px 18px -8px rgba(0, 0, 0, .22);
     --lg-sheen: rgba(255, 255, 255, .05);
     --lg-light: 255, 255, 255;
 
@@ -3497,11 +3496,10 @@
 
     --lg-hi: rgba(255, 255, 255, .95);
     --lg-hi-soft: rgba(255, 255, 255, .75);
-    --lg-lo: rgba(16, 25, 43, .09);
     --lg-lo-soft: rgba(16, 25, 43, .09);
     --lg-edge: rgba(16, 25, 43, .045);
     --lg-outline: rgba(16, 25, 43, .09);
-    --lg-shadow: 0 14px 34px -14px rgba(16, 25, 43, .30), 0 1px 3px rgba(16, 25, 43, .08);
+    --lg-shadow: 0 14px 34px -14px rgba(16, 25, 43, .24), 0 5px 14px -6px rgba(16, 25, 43, .07);
     --lg-sheen: rgba(255, 255, 255, .55);
     --lg-light: 255, 255, 255;
 
@@ -3543,7 +3541,6 @@
     box-shadow:
       var(--lg-shadow),
       inset 0 1px 0 var(--lg-hi),
-      inset 0 -1px 0 var(--lg-lo),
       inset 0 0 0 1px var(--lg-outline),
       inset 0 16px 28px -20px var(--lg-hi-soft),
       inset 0 -20px 32px -24px var(--lg-lo-soft),
@@ -3610,7 +3607,6 @@
     box-shadow:
       var(--lg-shadow),
       inset 0 1px 0 var(--lg-hi),
-      inset 0 -1px 0 var(--lg-lo),
       inset 1px 0 0 var(--lg-rim-b),
       inset -1px 0 0 var(--lg-rim-b),
       inset 0 16px 28px -20px var(--lg-hi-soft),
@@ -3650,7 +3646,6 @@
     box-shadow:
       var(--lg-btn-shadow),
       inset 0 1px 0 var(--lg-hi),
-      inset 0 -1px 0 var(--lg-lo),
       inset 0 0 0 1px var(--lg-outline),
       inset 0 9px 14px -11px var(--lg-hi-soft),
       inset 0 -9px 14px -11px var(--lg-lo-soft);
@@ -3689,20 +3684,22 @@
     color: var(--accent-ink);
     background:
       radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(255, 255, 255, var(--lg-press)), transparent 72%),
+      radial-gradient(120% 150% at 30% -40%, rgba(255, 255, 255, .26), transparent 55%),
       linear-gradient(180deg,
-        color-mix(in oklab, var(--accent) 90%, white 10%) 0%,
-        color-mix(in oklab, var(--accent) 62%, var(--accent-2) 38%) 58%,
-        color-mix(in oklab, var(--accent-2) 82%, transparent) 100%);
-    /* Pulled back from a glossy candy button: a smaller, fainter glow
-       beneath, a softer top line and less milk mixed in. The colour is in
-       the glass; it does not need to shine to say so. */
+        color-mix(in oklab, var(--accent) 88%, white 12%) 0%,
+        color-mix(in oklab, var(--accent) 72%, var(--accent-2) 28%) 100%);
+    /* It used to end in a band of the darker accent at 82% opacity with a
+       dark inner line under it, which read as a grey stripe along the
+       bottom. Glass does not darken at its lower edge: light that entered
+       at the top reflects back off the inside of the bottom, so that edge
+       gets a faint bright line, and the whole rim is a touch brighter than
+       the middle, where the bevel gathers light. */
     box-shadow:
-      0 6px 18px -10px color-mix(in oklab, var(--accent-2) 48%, transparent),
-      inset 0 1px 0 rgba(255, 255, 255, .45),
-      inset 0 -1px 2px color-mix(in oklab, var(--accent-2) 50%, black 20%),
-      inset 0 0 0 1px rgba(255, 255, 255, .16),
-      inset 0 9px 14px -10px rgba(255, 255, 255, .28),
-      inset 0 0 14px color-mix(in oklab, var(--accent) 24%, transparent);
+      0 8px 20px -12px color-mix(in oklab, var(--accent-2) 50%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, .5),
+      inset 0 -1px 0 rgba(255, 255, 255, .2),
+      inset 0 0 0 1px rgba(255, 255, 255, .14),
+      inset 0 0 12px rgba(255, 255, 255, .16);
   }
 
   /* The project kind badge is a label, not a button, so it is tinted
@@ -3751,19 +3748,23 @@
      material spec rather than as a blurred translucent strip. Its layers,
      back to front:
 
-       sample, blur, refraction   one SVG filter from script.js: calm and
-                                  diffuse in the middle, sharper and bent in
-                                  a narrow band at the rim, faintly
-                                  magnified under the selection pocket
+       sample, refraction, frost  one SVG filter from script.js in
+                                  Chromium: the page bent through a bevel
+                                  round the edge, then one even frost over
+                                  the whole surface. A plain soft blur in
+                                  every other engine.
+       frost                      a faint, even veil of the page colour and
+                                  of light, so the glass is never crystal
+                                  clear, and the same at the rim as in the
+                                  middle
        adaptive tint              --lg-env, the colour of what is behind it
        contrast                   --lg-dim / --lg-lift, from the luminance
                                   of what is behind it, so text stays
                                   legible without ever flipping theme
-       edge lensing               brighter and more saturated at the rim,
-                                  inside the filter
-       internal reflection        a faint second rim 2px inside the edge
-       specular                   brighter top left, darker bottom, and a
-                                  highlight that drifts toward the pointer
+       internal reflection        a very faint second rim inside the edge
+       specular                   a hairline, brighter top left and again
+                                  bottom right, and a highlight that
+                                  drifts toward the pointer
        controls
        interaction volume         the pocket, which flows between items
 
@@ -3773,26 +3774,24 @@
   :root,
   [data-theme="midnight"],
   [data-theme="terminal"] {
-    --lg-bar-top: rgba(255, 255, 255, .05);
-    --lg-bar-bot: rgba(255, 255, 255, .012);
+    --lg-bar-veil: color-mix(in oklab, var(--bg) 22%, transparent);
+    --lg-bar-milk: rgba(255, 255, 255, .055);
     --lg-spec: 255, 255, 255;
-    --lg-contact: rgba(0, 0, 0, .34);
+    --lg-contact: rgba(0, 0, 0, .26);
     --lg-ambient: rgba(0, 0, 0, .30);
     --lg-scatter: rgba(255, 255, 255, .035);
-    --lg-under: rgba(0, 0, 0, .22);
     --lg-pk-top: .12;
     --lg-pk-bot: .045;
     --lg-face: rgba(0, 0, 0, .32);
   }
 
   [data-theme="daylight"] {
-    --lg-bar-top: rgba(255, 255, 255, .36);
-    --lg-bar-bot: rgba(255, 255, 255, .16);
+    --lg-bar-veil: color-mix(in oklab, var(--bg) 20%, transparent);
+    --lg-bar-milk: rgba(255, 255, 255, .30);
     --lg-spec: 255, 255, 255;
-    --lg-contact: rgba(16, 25, 43, .09);
+    --lg-contact: rgba(16, 25, 43, .07);
     --lg-ambient: rgba(16, 25, 43, .09);
     --lg-scatter: rgba(255, 255, 255, .45);
-    --lg-under: rgba(16, 25, 43, .10);
     --lg-pk-top: .78;
     --lg-pk-bot: .42;
     /* On white glass a highlight weakening reads as a faint grey, not a
@@ -3812,21 +3811,27 @@
     --lg-near: 0;
 
     border-color: transparent;
+    /* Every layer is flat, top to bottom. Gradients here, a sheen at the
+       top and a fill that faded downward, stacked with the filter and made
+       the top and bottom of the bar read as brighter bands. */
     background:
-      radial-gradient(120% 110% at 30% -45%, rgba(var(--lg-spec), .055), transparent 62%),
-      linear-gradient(180deg, rgba(var(--lg-env), .10), rgba(var(--lg-env), .035)),
+      linear-gradient(rgba(var(--lg-env), .06), rgba(var(--lg-env), .06)),
       linear-gradient(rgba(0, 0, 0, var(--lg-dim)), rgba(0, 0, 0, var(--lg-dim))),
       linear-gradient(rgba(255, 255, 255, var(--lg-lift)), rgba(255, 255, 255, var(--lg-lift))),
-      linear-gradient(180deg, var(--lg-bar-top), var(--lg-bar-bot));
+      linear-gradient(var(--lg-bar-milk), var(--lg-bar-milk)),
+      linear-gradient(var(--lg-bar-veil), var(--lg-bar-veil));
     backdrop-filter: blur(14px) saturate(160%) brightness(calc(1.06 - var(--lg-dim) * .5));
     -webkit-backdrop-filter: blur(14px) saturate(160%) brightness(calc(1.06 - var(--lg-dim) * .5));
     /* Floating, not pasted on: a close contact shadow, a broad soft one, and
        a faint scatter of light just beneath the glass. No hard edge. */
+    /* No contact line. A 1px, 2px blur shadow straight under the edge and a
+       dark inner line along the bottom together drew a grey stripe under
+       the bar over anything pale. The lift comes from two soft shadows
+       that start inside the edge, so nothing hard ever shows below it. */
     box-shadow:
-      0 1px 2px var(--lg-contact),
-      0 12px 32px -8px var(--lg-ambient),
-      0 3px 14px -4px var(--lg-scatter),
-      inset 0 -1px 0 var(--lg-under);
+      0 12px 32px -10px var(--lg-ambient),
+      0 4px 12px -5px var(--lg-contact),
+      0 3px 14px -4px var(--lg-scatter);
     transition: box-shadow .3s ease;
   }
 
@@ -3848,11 +3853,11 @@
     background:
       radial-gradient(circle 150px at var(--lg-sx) var(--lg-sy),
         rgba(var(--lg-spec), calc(.12 + var(--lg-near) * .26)), transparent 72%),
-      linear-gradient(180deg,
-        rgba(var(--lg-spec), .20) 0%,
-        rgba(var(--lg-spec), .06) 36%,
-        rgba(var(--lg-spec), .02) 62%,
-        rgba(0, 0, 0, .18) 100%);
+      linear-gradient(162deg,
+        rgba(var(--lg-spec), .26) 0%,
+        rgba(var(--lg-spec), .07) 34%,
+        rgba(var(--lg-spec), .03) 60%,
+        rgba(var(--lg-spec), .14) 100%);
   }
 
   /* Internal reflection: a second, much fainter rim 2px inside the edge,
@@ -3862,10 +3867,10 @@
     inset: 2px;
     z-index: -1;
     padding: 1px;
-    background: linear-gradient(180deg,
-      rgba(var(--lg-spec), .075) 0%,
-      rgba(var(--lg-spec), .012) 48%,
-      rgba(var(--lg-spec), .04) 100%);
+    background: linear-gradient(162deg,
+      rgba(var(--lg-spec), .045) 0%,
+      rgba(var(--lg-spec), .012) 45%,
+      rgba(var(--lg-spec), .025) 100%);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -3876,10 +3881,9 @@
      fraction closer to the page. */
   header.nav.lg-bar-pressed {
     box-shadow:
-      0 1px 1px var(--lg-contact),
-      0 8px 22px -8px var(--lg-ambient),
-      0 2px 10px -4px var(--lg-scatter),
-      inset 0 -1px 0 var(--lg-under);
+      0 8px 22px -9px var(--lg-ambient),
+      0 3px 9px -5px var(--lg-contact),
+      0 2px 10px -4px var(--lg-scatter);
     transition: box-shadow .1s ease;
   }
 
@@ -3903,8 +3907,9 @@
 
      One piece of glass that marks where you are and where you are pointing,
      and flows between the two. It is the same substance as the bar: no
-     shadow of its own, just a little more light and a soft volume, and the
-     bar's filter magnifies the page slightly underneath it. script.js moves
+     shadow of its own, just a little more light and a soft volume. It used
+     to magnify the page under it as well, which read as distortion around
+     whatever the pointer was on, so it no longer bends anything. script.js moves
      it on two springs, one per edge, so it stretches toward where it is
      going, narrows at the waist while it is stretched, and settles. */
   .nav-pocket {
@@ -4051,22 +4056,22 @@
         radial-gradient(38px 90% at 100% 50%, var(--lg-face), transparent 72%),
         radial-gradient(circle 150px at var(--lg-sx) var(--lg-sy),
           rgba(var(--lg-spec), calc(.12 + var(--lg-near) * .26)), transparent 72%),
-        linear-gradient(180deg,
-          rgba(var(--lg-spec), .20) 0%,
-          rgba(var(--lg-spec), .06) 36%,
-          rgba(var(--lg-spec), .02) 62%,
-          rgba(0, 0, 0, .18) 100%);
+        linear-gradient(162deg,
+          rgba(var(--lg-spec), .26) 0%,
+          rgba(var(--lg-spec), .07) 34%,
+          rgba(var(--lg-spec), .03) 60%,
+          rgba(var(--lg-spec), .14) 100%);
     }
     .dock-fab::before {
       background:
         radial-gradient(34px 90% at 0% 50%, var(--lg-face), transparent 72%),
         radial-gradient(circle 150px at var(--lg-sx) var(--lg-sy),
           rgba(var(--lg-spec), calc(.12 + var(--lg-near) * .26)), transparent 72%),
-        linear-gradient(180deg,
-          rgba(var(--lg-spec), .20) 0%,
-          rgba(var(--lg-spec), .06) 36%,
-          rgba(var(--lg-spec), .02) 62%,
-          rgba(0, 0, 0, .18) 100%);
+        linear-gradient(162deg,
+          rgba(var(--lg-spec), .26) 0%,
+          rgba(var(--lg-spec), .07) 34%,
+          rgba(var(--lg-spec), .03) 60%,
+          rgba(var(--lg-spec), .14) 100%);
     }
   }
 
@@ -4090,7 +4095,7 @@
   /* ---------- Reduced motion ---------------------------------------------
 
      The material stays; only the movement goes. No springing on press, and
-     the lens jumps rather than travels, which script.js also honours. */
+     the pocket jumps rather than travels, which script.js also honours. */
   @media (prefers-reduced-motion: reduce) {
     .lg-press,
     .lg-press.lg-pressed,
