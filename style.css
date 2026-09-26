@@ -3448,6 +3448,7 @@
 @property --lg-press { syntax: "<number>"; inherits: false; initial-value: 0; }
 @property --lg-px    { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
 @property --lg-py    { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --lg-hov   { syntax: "<number>"; inherits: false; initial-value: 0; }
 
 @layer liquid {
 
@@ -3893,6 +3894,67 @@
     box-shadow: none;
   }
 
+  /* ---------- Skills --------------------------------------------------------
+
+     The pills had two faults. Their light ring sat just inside the
+     transparent border while the fill ran under it, so every pill had two
+     edges, the fill's and the ring's a pixel in, and at the corners, where
+     the ring kept the outer radius on a box a pixel smaller, the gap
+     between them opened up unevenly. And the press transition had replaced
+     their own, so the hover lift and colour change had none at all: every
+     pill the pointer crossed jumped 2px and snapped back.
+
+     Now the ring is the outer edge itself, one crisp edge, with its light
+     kept nearer the top and bottom, and hovering eases: the lift, the
+     label colour, and the fill, which brightens through a registered
+     property because a gradient cannot be transitioned directly. */
+  .pills button::after,
+  .pills span::after {
+    inset: -1px;
+    /* The light mode grey ring rides on the same outer edge as the light.
+       As an inset shadow it sat a pixel inside it, a second edge again. */
+    background:
+      radial-gradient(130% var(--lg-ring-top, 15px) at 40% 0%, var(--lg-ctl-top, var(--lg-arc-top)), transparent),
+      radial-gradient(130% var(--lg-ring-bot, 11px) at 60% 100%, var(--lg-ctl-bot, var(--lg-arc-bot)), transparent),
+      linear-gradient(var(--lg-outline), var(--lg-outline));
+  }
+  .pills button,
+  .pills span { box-shadow: var(--lg-btn-shadow), inset 0 0 10px 0 var(--lg-edge); }
+  .pills button.is-active { box-shadow: 0 10px 24px -14px var(--lg-acc-glow), var(--lg-btn-shadow); }
+
+  .pills button,
+  .pills span {
+    --lg-ring-top: 12px;
+    --lg-ring-bot: 9px;
+  }
+
+  .pills button,
+  .pills button:hover {
+    background:
+      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(var(--lg-light), var(--lg-press)), transparent 72%),
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--lg-btn-top) calc(100% - var(--lg-hov) * 30%), rgba(var(--lg-light), .5)),
+        var(--lg-btn-bot));
+  }
+  .pills button:hover { --lg-hov: 1; }
+
+  .pills button.lg-press {
+    transition:
+      transform .24s var(--ease),
+      color .24s var(--ease),
+      --lg-hov .24s var(--ease),
+      scale .5s cubic-bezier(.3, 1.2, .5, 1),
+      --lg-press .6s ease-out;
+  }
+  .pills button.lg-press.lg-pressed {
+    transition:
+      transform .24s var(--ease),
+      color .24s var(--ease),
+      --lg-hov .24s var(--ease),
+      scale .09s ease-out,
+      --lg-press .09s ease-out;
+  }
+
   /* ---------- The Path ------------------------------------------------------
 
      On phones and tablets the role card is a tile of its own, with the
@@ -4171,12 +4233,14 @@
 
   /* ---------- Desktop bar ----------------------------------------------- */
   @media (min-width: 720px) {
-    /* 8px of padding and a 1px border on every side make a 56px bar. The
-       pocket is 38px, so it sits 9px from the outer edge above, below and
-       at the ends, and its 19px radius is exactly the bar's 28 less that
-       gap: the two curves are concentric, which is what makes the pocket
-       look like part of the bar rather than something placed on it. */
-    header.nav { padding: 8px; }
+    /* 8px of padding above and below and a 1px border make a 56px bar. The
+       pocket is 38px, so it sits 9px from the outer edge above and below,
+       and its 19px radius is the bar's 28 less that gap: the two curves are
+       concentric, which is what makes the pocket look like part of the bar
+       rather than something placed on it. The ends get 12px rather than 8,
+       so the first and last icons stand a little clear of the rounded ends
+       instead of crowding them. */
+    header.nav { padding: 8px 12px; }
 
     /* Denser on desktop. Page content scrolls under the whole width of it
        here, headlines and photos included, and the phone dock's veil let
@@ -4323,6 +4387,8 @@
   @media (prefers-reduced-motion: reduce) {
     .lg-press,
     .lg-press.lg-pressed,
+    .pills button.lg-press,
+    .pills button.lg-press.lg-pressed,
     header.nav .icon-btn,
     header.nav a.cta,
     header.nav .brand-mark,
