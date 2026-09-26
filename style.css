@@ -4,7 +4,7 @@
    rules never have to fight base rules with specificity hacks.
    ========================================================================== */
 
-@layer tokens, base, layout, components, overlays, motion, responsive;
+@layer tokens, base, layout, components, overlays, motion, responsive, liquid;
 
 /* ==========================================================================
    TOKENS
@@ -3410,5 +3410,693 @@
     .journey-sticky { position: static; display: block; height: auto; }
     .journey-stage { display: none; }
     html.js .jcard { position: static; opacity: 1; visibility: visible; transform: none; }
+  }
+}
+
+/* ==========================================================================
+   LIQUID GLASS
+   Experiment branch. Everything that makes the surfaces read as Apple's
+   Liquid Glass lives in this one layer, last in the cascade, so it can be
+   compared against main or removed in a single cut.
+
+   What makes glass read as glass rather than as frost, in the order it
+   matters:
+
+   1. Refraction at the rim. Content behind the edge bends, the way it does
+      through the thick bevel of a lens. Done with an SVG displacement map
+      fed to backdrop-filter, generated per element by script.js to match
+      its exact size and radius. Chromium renders this; Safari and Firefox
+      do not accept url() in backdrop-filter, so there it is simply absent
+      and everything below still applies.
+   2. A rim that catches light: bright at the top left, dim along the
+      sides, catching again at the bottom right, the way a curved edge
+      picks up a light source above it.
+   3. Thickness: a crisp specular line along the top inside edge, a soft
+      bloom just under it where light enters, and a darker band along the
+      bottom where it leaves.
+   4. Clarity. Liquid Glass is much less frosted than the old material:
+      the blur is light and the content behind is brightened and saturated
+      rather than washed out.
+
+   Layout is not touched here. Only material: fill, rim, shadow, blur,
+   colour. Radii are left as they were, since those were tuned already.
+   ========================================================================== */
+
+/* Registered so the press light can fade rather than snap. Not inherited:
+   a pressed tile must not light up every button inside it. */
+@property --lg-press { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --lg-px    { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --lg-py    { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+
+@layer liquid {
+
+  /* ---------- Material tokens ------------------------------------------- */
+
+  :root,
+  [data-theme="midnight"] {
+    --lg-fill-top: rgba(255, 255, 255, .085);
+    --lg-fill-bot: rgba(255, 255, 255, .022);
+    --lg-blur: 12px;
+    --lg-sat: 175%;
+    --lg-bright: 1.08;
+
+    --lg-rim-a: rgba(255, 255, 255, .26);   /* top-left catch   */
+    --lg-rim-b: rgba(255, 255, 255, .045);  /* sides            */
+    --lg-rim-c: rgba(255, 255, 255, .11);   /* bottom-right catch */
+
+    --lg-hi: rgba(255, 255, 255, .14);      /* top inner specular line */
+    --lg-hi-soft: rgba(255, 255, 255, .08); /* light entering          */
+    --lg-lo: rgba(0, 0, 0, .30);            /* bottom inner line       */
+    --lg-lo-soft: rgba(0, 0, 0, .24);       /* light leaving           */
+    --lg-edge: rgba(255, 255, 255, .06);    /* lens thickness glow     */
+    --lg-outline: rgba(255, 255, 255, .05);
+    --lg-shadow: 0 18px 44px -18px rgba(0, 0, 0, .62), 0 3px 10px -2px rgba(0, 0, 0, .28);
+    --lg-sheen: rgba(255, 255, 255, .05);
+    --lg-light: 255, 255, 255;
+
+    /* Controls sit on glass already, so they are glass on glass: a little
+       brighter than the tile under them, with no blur of their own. */
+    --lg-btn-top: rgba(255, 255, 255, .13);
+    --lg-btn-bot: rgba(255, 255, 255, .04);
+    --lg-btn-shadow: 0 6px 16px -8px rgba(0, 0, 0, .55);
+  }
+
+  /* Light: glass on a pale page is mostly white, and its depth comes from
+     the faint grey ring inside the edge, like the keypad buttons, rather
+     than from bright rims, which barely show against white. */
+  [data-theme="daylight"] {
+    --lg-fill-top: rgba(255, 255, 255, .66);
+    --lg-fill-bot: rgba(255, 255, 255, .36);
+    --lg-blur: 14px;
+    --lg-sat: 165%;
+    --lg-bright: 1.04;
+
+    --lg-rim-a: rgba(255, 255, 255, 1);
+    --lg-rim-b: rgba(255, 255, 255, .30);
+    --lg-rim-c: rgba(255, 255, 255, .60);
+
+    --lg-hi: rgba(255, 255, 255, .95);
+    --lg-hi-soft: rgba(255, 255, 255, .75);
+    --lg-lo: rgba(16, 25, 43, .09);
+    --lg-lo-soft: rgba(16, 25, 43, .09);
+    --lg-edge: rgba(16, 25, 43, .045);
+    --lg-outline: rgba(16, 25, 43, .09);
+    --lg-shadow: 0 14px 34px -14px rgba(16, 25, 43, .30), 0 1px 3px rgba(16, 25, 43, .08);
+    --lg-sheen: rgba(255, 255, 255, .55);
+    --lg-light: 255, 255, 255;
+
+    --lg-btn-top: rgba(255, 255, 255, .92);
+    --lg-btn-bot: rgba(255, 255, 255, .58);
+    --lg-btn-shadow: 0 5px 14px -7px rgba(16, 25, 43, .30);
+  }
+
+  /* Terminal: the same glass, lit by one phosphor. */
+  [data-theme="terminal"] {
+    --lg-fill-top: rgba(53, 255, 148, .07);
+    --lg-fill-bot: rgba(53, 255, 148, .015);
+    --lg-rim-a: rgba(140, 255, 196, .60);
+    --lg-rim-b: rgba(53, 255, 148, .08);
+    --lg-rim-c: rgba(53, 255, 148, .30);
+    --lg-hi: rgba(160, 255, 205, .40);
+    --lg-hi-soft: rgba(53, 255, 148, .14);
+    --lg-edge: rgba(53, 255, 148, .07);
+    --lg-outline: rgba(53, 255, 148, .06);
+    --lg-sheen: rgba(120, 255, 190, .08);
+    --lg-light: 120, 255, 190;
+    --lg-btn-top: rgba(53, 255, 148, .12);
+    --lg-btn-bot: rgba(53, 255, 148, .03);
+  }
+
+  /* ---------- Tiles --------------------------------------------------------
+
+     The border stays at 1px so nothing shifts, but goes transparent: the
+     rim pseudo element draws over it. */
+  .glass,
+  .dock-fab,
+  .rec-bubble,
+  .mobile-sheet,
+  .palette {
+    border-color: transparent;
+    background: linear-gradient(180deg, var(--lg-fill-top), var(--lg-fill-bot));
+    backdrop-filter: var(--lg-refract,) blur(var(--lg-blur)) saturate(var(--lg-sat)) brightness(var(--lg-bright));
+    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat)) brightness(var(--lg-bright));
+    box-shadow:
+      var(--lg-shadow),
+      inset 0 1px 0 var(--lg-hi),
+      inset 0 -1px 0 var(--lg-lo),
+      inset 0 0 0 1px var(--lg-outline),
+      inset 0 16px 28px -20px var(--lg-hi-soft),
+      inset 0 -20px 32px -24px var(--lg-lo-soft),
+      inset 0 0 24px 0 var(--lg-edge);
+  }
+
+  /* The rim: a gradient ring cut out with a mask, so it can be brighter in
+     some places than others, which a border cannot. It sits above the
+     content because it is a hairline at the very edge that content never
+     reaches, and the front edge of glass is the frontmost thing you see. */
+  .glass::before,
+  .dock-fab::before,
+  .mobile-sheet::before,
+  .palette::before {
+    content: "";
+    position: absolute;
+    /* 0, not -1px over the border: cards, the hero and the palette clip
+       their overflow at the padding edge, which cut a rim drawn over the
+       border straight off. The fill paints under the transparent border
+       anyway, so sitting just inside it leaves no gap. */
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    padding: 1.25px;
+    background: linear-gradient(142deg,
+      var(--lg-rim-a) 0%,
+      var(--lg-rim-b) 26%,
+      transparent 48%,
+      var(--lg-rim-b) 74%,
+      var(--lg-rim-c) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* The sheen: a soft highlight across the top, under the content, where
+     the curve of the surface faces the light. */
+  .glass::after,
+  .dock-fab::after,
+  .mobile-sheet::after,
+  .palette::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: none;
+    background: radial-gradient(130% 90% at 18% -14%, var(--lg-sheen), transparent 56%);
+    pointer-events: none;
+  }
+
+  /* The hero card holds the sky at z-index 0, so a sheen at -1 would sit
+     underneath it. At 0 it comes after the sky in paint order and still
+     under the content, which is at 1. */
+  .hero-card::after { z-index: 0; }
+
+  /* The carousel is a scroll container, and an absolutely positioned pseudo
+     element inside one scrolls away with the content. Its rim and sheen are
+     box shadows instead, which stay put. */
+  .logo-marquee::before { content: none; }
+  .logo-marquee {
+    box-shadow:
+      var(--lg-shadow),
+      inset 0 1px 0 var(--lg-hi),
+      inset 0 -1px 0 var(--lg-lo),
+      inset 1px 0 0 var(--lg-rim-b),
+      inset -1px 0 0 var(--lg-rim-b),
+      inset 0 16px 28px -20px var(--lg-hi-soft),
+      inset 0 -20px 32px -24px var(--lg-lo-soft);
+  }
+
+  /* The testimonial tail is a skewed square that inherits the bubble's
+     background, so it picks up the glass fill; it just needs its border
+     to match the rim rather than the old stroke. */
+  .rec-bubble::before {
+    border-color: var(--lg-rim-b);
+  }
+
+  /* ---------- Controls: glass on glass ------------------------------------
+
+     No blur of their own: they sit on a tile that already blurs, and forty
+     skill pills each running their own backdrop filter would be forty more
+     layers to composite for no visible difference. The press light is the
+     top background layer, so it needs no pseudo element and cannot collide
+     with the ones some of these already use. */
+  .btn,
+  .filter-chip,
+  .pills button,
+  .pills span,
+  .contact a,
+  .card-repo,
+  .card-tags span,
+  .chip,
+  .chip-clear,
+  .carousel-ctrl .icon-btn,
+  .sheet-cta,
+  .lb-btn {
+    border-color: transparent;
+    background:
+      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(var(--lg-light), var(--lg-press)), transparent 72%),
+      linear-gradient(180deg, var(--lg-btn-top), var(--lg-btn-bot));
+    box-shadow:
+      var(--lg-btn-shadow),
+      inset 0 1px 0 var(--lg-hi),
+      inset 0 -1px 0 var(--lg-lo),
+      inset 0 0 0 1px var(--lg-outline),
+      inset 0 9px 14px -11px var(--lg-hi-soft),
+      inset 0 -9px 14px -11px var(--lg-lo-soft);
+  }
+
+  .btn:hover,
+  .filter-chip:hover,
+  .pills button:hover,
+  .contact a:hover,
+  .card-repo:hover,
+  .carousel-ctrl .icon-btn:hover,
+  .chip:hover {
+    border-color: transparent;
+    background:
+      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(var(--lg-light), var(--lg-press)), transparent 72%),
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--lg-btn-top) 70%, rgba(var(--lg-light), .5)),
+        var(--lg-btn-bot));
+  }
+
+  /* The ghost button was fully transparent. On glass it becomes the plain
+     control, and the solid one becomes tinted glass. */
+  .btn.ghost { background: linear-gradient(180deg, var(--lg-btn-top), var(--lg-btn-bot)); }
+
+  /* ---------- Tinted glass ------------------------------------------------
+
+     The accented controls become coloured glass rather than an opaque
+     gradient, like the green capsule in the reference: the colour is in
+     the glass, so it is brighter at the top where light enters, deeper at
+     the bottom, and glows faintly at the edge. */
+  .btn.solid,
+  .filter-chip.is-active,
+  .pills button.is-active,
+  .contact a.resume-btn,
+  .sheet-cta {
+    color: var(--accent-ink);
+    background:
+      radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(255, 255, 255, var(--lg-press)), transparent 72%),
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--accent) 90%, white 10%) 0%,
+        color-mix(in oklab, var(--accent) 62%, var(--accent-2) 38%) 58%,
+        color-mix(in oklab, var(--accent-2) 82%, transparent) 100%);
+    /* Pulled back from a glossy candy button: a smaller, fainter glow
+       beneath, a softer top line and less milk mixed in. The colour is in
+       the glass; it does not need to shine to say so. */
+    box-shadow:
+      0 6px 18px -10px color-mix(in oklab, var(--accent-2) 48%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, .45),
+      inset 0 -1px 2px color-mix(in oklab, var(--accent-2) 50%, black 20%),
+      inset 0 0 0 1px rgba(255, 255, 255, .16),
+      inset 0 9px 14px -10px rgba(255, 255, 255, .28),
+      inset 0 0 14px color-mix(in oklab, var(--accent) 24%, transparent);
+  }
+
+  /* The project kind badge is a label, not a button, so it is tinted
+     glass without the lift. */
+  .card-kind {
+    border-color: transparent;
+    background: linear-gradient(180deg,
+      color-mix(in oklab, var(--accent) 26%, transparent),
+      color-mix(in oklab, var(--accent) 10%, transparent));
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, var(--accent) 45%, rgba(255, 255, 255, .5)),
+      inset 0 0 0 1px color-mix(in oklab, var(--accent) 30%, transparent),
+      inset 0 -6px 10px -8px color-mix(in oklab, var(--accent) 40%, transparent);
+  }
+
+  /* ---------- Press physics ------------------------------------------------
+
+     Pressing lifts the glass toward you: it grows a touch and a light
+     blooms under the pointer, then it springs back past its resting size
+     and settles. scale rather than transform, so it composes with the
+     magnetic lean that already writes a transform on some of these. */
+  /* Press compresses by about a percent and a half and comes back on
+     something close to a critically damped spring: a whisker of overshoot
+     at most. It had grown by 4.5% with a visible bounce, which read as a
+     jelly toy rather than as a surface being pressed. */
+  .lg-press {
+    transition:
+      scale .5s cubic-bezier(.3, 1.2, .5, 1),
+      --lg-press .6s ease-out;
+  }
+
+  .lg-press.lg-pressed {
+    scale: .985;
+    --lg-press: .18;
+    transition:
+      scale .09s ease-out,
+      --lg-press .09s ease-out;
+  }
+}
+
+@layer liquid {
+
+  /* ---------- The bar ------------------------------------------------------
+
+     A thin piece of glass a few millimetres above the page, built to the
+     material spec rather than as a blurred translucent strip. Its layers,
+     back to front:
+
+       sample, blur, refraction   one SVG filter from script.js: calm and
+                                  diffuse in the middle, sharper and bent in
+                                  a narrow band at the rim, faintly
+                                  magnified under the selection pocket
+       adaptive tint              --lg-env, the colour of what is behind it
+       contrast                   --lg-dim / --lg-lift, from the luminance
+                                  of what is behind it, so text stays
+                                  legible without ever flipping theme
+       edge lensing               brighter and more saturated at the rim,
+                                  inside the filter
+       internal reflection        a faint second rim 2px inside the edge
+       specular                   brighter top left, darker bottom, and a
+                                  highlight that drifts toward the pointer
+       controls
+       interaction volume         the pocket, which flows between items
+
+     Every value is kept low. The aim is for the bar to feel dimensional
+     and physically coherent, not for anyone to notice a glass effect. */
+
+  :root,
+  [data-theme="midnight"],
+  [data-theme="terminal"] {
+    --lg-bar-top: rgba(255, 255, 255, .05);
+    --lg-bar-bot: rgba(255, 255, 255, .012);
+    --lg-spec: 255, 255, 255;
+    --lg-contact: rgba(0, 0, 0, .34);
+    --lg-ambient: rgba(0, 0, 0, .30);
+    --lg-scatter: rgba(255, 255, 255, .035);
+    --lg-under: rgba(0, 0, 0, .22);
+    --lg-pk-top: .12;
+    --lg-pk-bot: .045;
+    --lg-face: rgba(0, 0, 0, .32);
+  }
+
+  [data-theme="daylight"] {
+    --lg-bar-top: rgba(255, 255, 255, .36);
+    --lg-bar-bot: rgba(255, 255, 255, .16);
+    --lg-spec: 255, 255, 255;
+    --lg-contact: rgba(16, 25, 43, .09);
+    --lg-ambient: rgba(16, 25, 43, .09);
+    --lg-scatter: rgba(255, 255, 255, .45);
+    --lg-under: rgba(16, 25, 43, .10);
+    --lg-pk-top: .78;
+    --lg-pk-bot: .42;
+    /* On white glass a highlight weakening reads as a faint grey, not a
+       shadow, so the facing shade is barely there. */
+    --lg-face: rgba(16, 25, 43, .06);
+  }
+
+  header.nav,
+  .dock-fab {
+    /* Written by script.js. These defaults are what a visitor gets before
+       it runs, and what Safari keeps apart from the refraction. */
+    --lg-env: 120, 160, 230;
+    --lg-dim: 0;
+    --lg-lift: 0;
+    --lg-sx: 18%;
+    --lg-sy: 0%;
+    --lg-near: 0;
+
+    border-color: transparent;
+    background:
+      radial-gradient(120% 110% at 30% -45%, rgba(var(--lg-spec), .055), transparent 62%),
+      linear-gradient(180deg, rgba(var(--lg-env), .10), rgba(var(--lg-env), .035)),
+      linear-gradient(rgba(0, 0, 0, var(--lg-dim)), rgba(0, 0, 0, var(--lg-dim))),
+      linear-gradient(rgba(255, 255, 255, var(--lg-lift)), rgba(255, 255, 255, var(--lg-lift))),
+      linear-gradient(180deg, var(--lg-bar-top), var(--lg-bar-bot));
+    backdrop-filter: blur(14px) saturate(160%) brightness(calc(1.06 - var(--lg-dim) * .5));
+    -webkit-backdrop-filter: blur(14px) saturate(160%) brightness(calc(1.06 - var(--lg-dim) * .5));
+    /* Floating, not pasted on: a close contact shadow, a broad soft one, and
+       a faint scatter of light just beneath the glass. No hard edge. */
+    box-shadow:
+      0 1px 2px var(--lg-contact),
+      0 12px 32px -8px var(--lg-ambient),
+      0 3px 14px -4px var(--lg-scatter),
+      inset 0 -1px 0 var(--lg-under);
+    transition: box-shadow .3s ease;
+  }
+
+  /* Chromium: the filter carries the blur itself, varied across the
+     surface, so the CSS blur goes. The fallback inside var() covers the
+     moment before script.js has built the filter. */
+  html.lg-refract header.nav,
+  html.lg-refract .dock-fab {
+    backdrop-filter: var(--lg-refract, blur(14px)) saturate(155%) brightness(calc(1.05 - var(--lg-dim) * .5));
+  }
+
+  /* Specular. Not a white border: a ring whose brightness varies round the
+     edge the way light on a curved surface does, plus a highlight that
+     sits top left at rest and drifts toward the pointer as it approaches,
+     brightening as it gets closer. */
+  header.nav::before,
+  .dock-fab::before {
+    padding: 1px;
+    background:
+      radial-gradient(circle 150px at var(--lg-sx) var(--lg-sy),
+        rgba(var(--lg-spec), calc(.12 + var(--lg-near) * .26)), transparent 72%),
+      linear-gradient(180deg,
+        rgba(var(--lg-spec), .20) 0%,
+        rgba(var(--lg-spec), .06) 36%,
+        rgba(var(--lg-spec), .02) 62%,
+        rgba(0, 0, 0, .18) 100%);
+  }
+
+  /* Internal reflection: a second, much fainter rim 2px inside the edge,
+     which is what makes the glass read as having a thickness. */
+  header.nav::after,
+  .dock-fab::after {
+    inset: 2px;
+    z-index: -1;
+    padding: 1px;
+    background: linear-gradient(180deg,
+      rgba(var(--lg-spec), .075) 0%,
+      rgba(var(--lg-spec), .012) 48%,
+      rgba(var(--lg-spec), .04) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+  }
+
+  /* Pressing anything in the bar tightens its shadow: the glass has come a
+     fraction closer to the page. */
+  header.nav.lg-bar-pressed {
+    box-shadow:
+      0 1px 1px var(--lg-contact),
+      0 8px 22px -8px var(--lg-ambient),
+      0 2px 10px -4px var(--lg-scatter),
+      inset 0 -1px 0 var(--lg-under);
+    transition: box-shadow .1s ease;
+  }
+
+  /* The controls ride above the pocket. The old marker (an accent
+     underline and a hover fill) is gone: the pocket replaces both. */
+  header.nav > *:not(.nav-pocket) { position: relative; z-index: 1; }
+  .nav-links a::after { content: none; }
+  .nav-links a:hover { background: transparent; color: var(--ink); }
+  .nav-links a.is-current,
+  .nav-links a.is-pocketed { color: var(--ink); }
+
+  header.nav .icon-btn,
+  header.nav a.cta,
+  header.nav .brand-mark {
+    transition: scale .5s cubic-bezier(.3, 1.2, .5, 1), color var(--dur-fast) var(--ease);
+  }
+  header.nav .is-pocketed,
+  header.nav .brand.is-pocketed .brand-mark { color: var(--ink); }
+
+  /* ---------- The pocket ---------------------------------------------------
+
+     One piece of glass that marks where you are and where you are pointing,
+     and flows between the two. It is the same substance as the bar: no
+     shadow of its own, just a little more light and a soft volume, and the
+     bar's filter magnifies the page slightly underneath it. script.js moves
+     it on two springs, one per edge, so it stretches toward where it is
+     going, narrows at the waist while it is stretched, and settles. */
+  .nav-pocket {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 0;
+    width: 0;
+    height: 40px;
+    border-radius: var(--r-pill);
+    background: linear-gradient(180deg,
+      rgba(var(--lg-spec), var(--lg-pk-top)),
+      rgba(var(--lg-spec), var(--lg-pk-bot)));
+    box-shadow:
+      inset 0 1px 0 rgba(var(--lg-spec), .16),
+      inset 0 -1px 0 rgba(0, 0, 0, .14),
+      inset 0 0 0 .5px rgba(var(--lg-spec), .06),
+      inset 0 9px 14px -10px rgba(var(--lg-spec), .16);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, width, clip-path, opacity;
+  }
+
+  /* ---------- Menus -------------------------------------------------------
+
+     The palette and the phone menu are glass too, grown out of the control
+     that opens them by script.js. Denser than the bar, because they carry
+     paragraphs of text rather than a row of short labels, and legibility
+     outranks translucency the moment there is reading to do. */
+  .palette,
+  .mobile-sheet {
+    background:
+      linear-gradient(180deg, var(--lg-fill-top), var(--lg-fill-bot)),
+      linear-gradient(color-mix(in oklab, var(--bg) 72%, transparent), color-mix(in oklab, var(--bg) 72%, transparent));
+    backdrop-filter: blur(22px) saturate(165%) brightness(1.04);
+    -webkit-backdrop-filter: blur(22px) saturate(165%) brightness(1.04);
+  }
+  .palette { position: fixed; }
+
+  /* While a menu is being grown, script.js owns its motion: its own entry
+     animation and slide would fight the morph. */
+  .palette.lg-morph { animation: none; }
+  .mobile-sheet.lg-morph { transition: none; }
+
+  /* ---------- Desktop bar ----------------------------------------------- */
+  @media (min-width: 720px) {
+    /* 9px of padding and a 1px border on every side. The pocket is 40px in
+       a 60px bar, so it sits 10px from the outer edge above, below and at
+       the ends, and its 20px radius is exactly the bar's 30 less that gap:
+       the two curves are concentric, which is what makes the pocket look
+       like part of the bar rather than something placed on it. */
+    header.nav { padding: 9px; }
+
+    header.nav .icon-btn,
+    header.nav a.cta,
+    header.nav .brand-mark {
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+    }
+
+    /* Glyphs at about 20px of ink in a 58px bar, a third of its height,
+       where they had been 13px. Beside text links they stop short of the
+       two fifths an icon-only bar would take, so they do not shout over the
+       words next to them. Each box is sized from its own path's share of
+       the 24 unit viewBox, so the four land at the same visual size. */
+    header.nav .brand-mark svg { width: 32px; height: 32px; }   /* 15.2/24 */
+    /* The theme button swaps between three glyphs that fill very different
+       shares of their viewBox, measured: the moon 74.5%, the terminal 83%,
+       the sun, rays and all, the whole thing. One box size drew the sun a
+       third larger than the moon beside it. */
+    header.nav #themeBtn .ico-midnight { width: 27px; height: 27px; }
+    header.nav #themeBtn .ico-terminal { width: 24px; height: 24px; }
+    header.nav #themeBtn .ico-daylight { width: 20px; height: 20px; }
+    header.nav .cta-ico        { width: 28px; height: 28px; }   /* 17.0/24 */
+    header.nav #paletteBtn svg { width: 29px; height: 29px; }   /* 16.4/24, measured */
+
+    /* A fixed 40px, the pocket's height and the icons', rather than padding
+       around a line box: 10px either side of a 23px line made them 43, which
+       made the whole bar 63 and broke the concentric gap. */
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      height: 40px;
+      padding: 0 15px;
+    }
+  }
+}
+
+@layer liquid {
+
+  /* ---------- Phone dock -------------------------------------------------
+
+     An icon-only bar, so the glyphs can take the proportion the reference
+     bars give theirs: about two fifths of the bar's height. 24px of ink in
+     a 62px bar, where they had been 13px in 58, which is why they read as
+     small. Boxes sized per glyph from each path's share of its viewBox, so
+     all four land at the same visual size rather than the same box. */
+  @media (max-width: 719px) {
+    header.nav { padding: 8px 10px; gap: 6px; }
+
+    header.nav .icon-btn,
+    header.nav a.cta {
+      width: 44px;
+      min-width: 44px;
+      height: 44px;
+      padding: 0;
+    }
+    .brand-mark { width: 44px; height: 44px; }
+
+    header.nav .brand-mark svg { width: 38px; height: 38px; }   /* 15.2/24 */
+    header.nav #themeBtn .ico-midnight { width: 32px; height: 32px; }   /* 74.5% */
+    header.nav #themeBtn .ico-terminal { width: 29px; height: 29px; }   /* 83%   */
+    header.nav #themeBtn .ico-daylight { width: 24px; height: 24px; }   /* 100%  */
+    header.nav .cta-ico        { width: 34px; height: 34px; }   /* 17.0/24 */
+
+    /* The burger is drawn in CSS rather than a path, so it scales by hand:
+       22 wide at the same 2.2px weight the stroked glyphs come out at. */
+    .burger { width: 22px; gap: 5px; }
+    .burger i { height: 2.2px; }
+    /* One bar plus one gap, so the outer two land exactly on the middle. */
+    [aria-expanded="true"] .burger i:nth-child(1) { transform: translateY(7.2px) rotate(45deg); }
+    [aria-expanded="true"] .burger i:nth-child(3) { transform: translateY(-7.2px) rotate(-45deg); }
+
+    /* The search button is its own circle of glass, like the separate
+       button beside the reference bar, and stays exactly as tall as it. */
+    .dock-fab { width: 62px; height: 62px; }
+    .dock-fab .icon-btn { width: 44px; min-width: 44px; height: 44px; padding: 0; }
+    .dock-fab svg { width: 35px; height: 35px; }                /* 16.4/24, measured */
+
+    /* The pocket matches the dock's 44px controls, which leaves it 8px from
+       the bar's edge all round and concentric with it. */
+    .nav-pocket { height: 44px; }
+  }
+
+  /* Two pieces of glass side by side. Where the dock and the search button
+     face each other their highlights weaken, the way two lenses close
+     together each shade the other's edge, so they read as neighbours in
+     one material rather than two stickers. Kept faint: it is the kind of
+     thing that should only ever register as the pair looking right. */
+  @media (max-width: 719px) {
+    header.nav::before {
+      background:
+        radial-gradient(38px 90% at 100% 50%, var(--lg-face), transparent 72%),
+        radial-gradient(circle 150px at var(--lg-sx) var(--lg-sy),
+          rgba(var(--lg-spec), calc(.12 + var(--lg-near) * .26)), transparent 72%),
+        linear-gradient(180deg,
+          rgba(var(--lg-spec), .20) 0%,
+          rgba(var(--lg-spec), .06) 36%,
+          rgba(var(--lg-spec), .02) 62%,
+          rgba(0, 0, 0, .18) 100%);
+    }
+    .dock-fab::before {
+      background:
+        radial-gradient(34px 90% at 0% 50%, var(--lg-face), transparent 72%),
+        radial-gradient(circle 150px at var(--lg-sx) var(--lg-sy),
+          rgba(var(--lg-spec), calc(.12 + var(--lg-near) * .26)), transparent 72%),
+        linear-gradient(180deg,
+          rgba(var(--lg-spec), .20) 0%,
+          rgba(var(--lg-spec), .06) 36%,
+          rgba(var(--lg-spec), .02) 62%,
+          rgba(0, 0, 0, .18) 100%);
+    }
+  }
+
+  /* The narrowest phones keep the proportion at a smaller size. */
+  @media (max-width: 365px) {
+    header.nav { padding: 7px 8px; gap: 4px; }
+    header.nav .icon-btn,
+    header.nav a.cta { width: 40px; min-width: 40px; height: 40px; }
+    .brand-mark { width: 40px; height: 40px; }
+    header.nav .brand-mark svg { width: 34px; height: 34px; }
+    header.nav #themeBtn .ico-midnight { width: 29px; height: 29px; }
+    header.nav #themeBtn .ico-terminal { width: 26px; height: 26px; }
+    header.nav #themeBtn .ico-daylight { width: 22px; height: 22px; }
+    header.nav .cta-ico        { width: 30px; height: 30px; }
+    .dock-fab { width: 56px; height: 56px; }
+    .dock-fab .icon-btn { width: 40px; min-width: 40px; height: 40px; }
+    .dock-fab svg { width: 32px; height: 32px; }
+    .nav-pocket { height: 40px; }
+  }
+
+  /* ---------- Reduced motion ---------------------------------------------
+
+     The material stays; only the movement goes. No springing on press, and
+     the lens jumps rather than travels, which script.js also honours. */
+  @media (prefers-reduced-motion: reduce) {
+    .lg-press,
+    .lg-press.lg-pressed,
+    header.nav .icon-btn,
+    header.nav a.cta,
+    header.nav .brand-mark,
+    .dock-fab .icon-btn { transition: none; scale: none; }
   }
 }

@@ -2565,6 +2565,909 @@ function gatorStorm(n = 12) {
 })();
 
 /* ==========================================================================
+   LIQUID GLASS
+   Experiment branch. The bar is treated as one persistent piece of optical
+   material that changes state, rather than as elements playing animations.
+   The material itself (fill, tint, contrast layers, specular, internal
+   reflection) is CSS in the liquid layer; this is everything that has to
+   be computed: the optics, the environment it sits in, and how it moves.
+
+   Pointer movement writes a handful of numbers per frame and never touches
+   layout. Geometry is measured on resize and cached.
+   ========================================================================== */
+(function liquidGlass() {
+  const bar = $('header.nav');
+  if (!bar) return;
+
+  const fab = $('.dock-fab');
+  const reduced = prefersReduced;
+  const chromium = !!navigator.userAgentData?.brands?.some((b) => /Chromium/i.test(b.brand));
+  if (chromium) root.classList.add('lg-refract');
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const make = (tag, attrs = {}) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  };
+  const clamp01 = (v) => clamp(v, 0, 1);
+
+  /* ------------------------------------------------------------------------
+     Optics
+
+     The bar's backdrop goes through one SVG filter, built here to match its
+     exact size. Chromium only: Safari and Firefox do not accept url() in
+     backdrop-filter and would discard the whole declaration, blur included,
+     so the stylesheet only ever sees a --lg-refract that this sets. In
+     every other engine the bar keeps its tint, contrast, specular and
+     motion, and simply does not bend what is behind it.
+     navigator.userAgentData is itself Chromium only, which makes it an
+     honest test for a Chromium only feature rather than a UA string guess.
+
+     The displacement map encodes, per pixel, which way and how far to look
+     for the content behind. Red and green are the offset, blue is how much
+     of the pixel belongs to the rim. Three regions:
+
+       rim      a band about 8px wide. Content is pulled outward, up to 5px
+                at the very edge and nothing at the inner side of the band,
+                on a square curve, the way a rounded bevel bends light.
+       inside   just within the rim, a gentle pull the other way, which
+                magnifies what is behind very slightly.
+       middle   calm. No displacement at all.
+
+     Everything stays inside 6px, so the effect registers without anyone
+     seeing distortion. The blue channel then splits the image: the middle
+     is diffused heavily, the rim barely at all but bent, brightened and
+     saturated, which is what makes glass read as glass and not as frost.
+     ------------------------------------------------------------------------ */
+  const SCALE = 12;               // feDisplacementMap scale: max offset is half this
+
+  function lensMap(W, H, R, o) {
+    const cap = o.cap || 1400;
+    const res = Math.min(1, cap / Math.max(W, H));
+    const w = Math.max(8, Math.round(W * res));
+    const h = Math.max(8, Math.round(H * res));
+    const r = Math.min(R, W / 2, H / 2) * res;
+    const band = o.band * res, kick = o.kick, mag = o.mag, wBand = o.wBand * res;
+    const half = SCALE / 2;
+
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    const img = g.createImageData(w, h);
+    const d = img.data;
+    const hx = w / 2, hy = h / 2;
+
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const px = x + 0.5 - hx, py = y + 0.5 - hy;
+        const qx = Math.abs(px) - (hx - r), qy = Math.abs(py) - (hy - r);
+        const sd = Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r;
+
+        let nx = 0, ny = 0;
+        if (qx > 0 && qy > 0) {
+          const l = Math.hypot(qx, qy) || 1;
+          nx = (qx / l) * Math.sign(px); ny = (qy / l) * Math.sign(py);
+        } else if (qx > qy) nx = Math.sign(px);
+        else ny = Math.sign(py);
+
+        const depth = -sd;
+        let v = 0, e = 0;
+        if (depth >= 0) {
+          if (depth < band) v += kick * (1 - depth / band) ** 2;
+          v -= mag * Math.exp(-(((depth - band * 1.5) / (band * 1.1)) ** 2));
+          if (depth < wBand) e = (1 - depth / wBand) ** 1.4;
+        }
+
+        const i = (y * w + x) * 4;
+        d[i]     = Math.round(127.5 + 127.5 * clamp((nx * v) / half, -1, 1));
+        d[i + 1] = Math.round(127.5 + 127.5 * clamp((ny * v) / half, -1, 1));
+        d[i + 2] = Math.round(255 * e);
+        d[i + 3] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+
+  /* The pocket's field: a soft bulge that pulls toward the pill's centre
+     line, strongest halfway out and gone at both the centre and the edge.
+     Drawn once at a fixed size and stretched onto the pocket every frame,
+     which is exact at rest and near enough while it is moving. */
+  const pocketField = (() => {
+    const w = 200, h = 40, r = h / 2;
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    const img = g.createImageData(w, h);
+    const d = img.data;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const ax = clamp(x + 0.5, r, w - r);          // nearest point on the axis
+        const dx = x + 0.5 - ax, dy = y + 0.5 - r;
+        const dist = Math.hypot(dx, dy);
+        const t = dist / r;
+        const i = (y * w + x) * 4;
+        if (t >= 1) { d[i + 3] = 0; continue; }       // outside: transparent, neutral shows through
+        const m = 4 * t * (1 - t);                     // 0 at the axis and the edge
+        const ux = dist ? dx / dist : 0, uy = dist ? dy / dist : 0;
+        d[i]     = Math.round(127.5 - 127.5 * ux * m * 0.66);
+        d[i + 1] = Math.round(127.5 - 127.5 * uy * m * 0.66);
+        d[i + 2] = 0;
+        d[i + 3] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+    return c.toDataURL();
+  })();
+
+  let host = null;
+  if (chromium) {
+    host = make('svg', { width: '0', height: '0', 'aria-hidden': 'true', focusable: 'false' });
+    host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';
+    document.body.appendChild(host);
+  }
+
+  function buildFilter(id, W, H, url, withPocket) {
+    const f = make('filter', {
+      id, x: '0', y: '0', width: '100%', height: '100%',
+      /* sRGB, or the map's neutral 0.5 is converted to linear light on the
+         way in, stops being neutral, and the whole backdrop slides. */
+      'color-interpolation-filters': 'sRGB',
+    });
+    const refs = { disp: [], pk: null };
+    let src = 'SourceGraphic';
+
+    if (withPocket) {
+      /* A neutral field everywhere, with the pocket's bulge laid over it
+         wherever the pocket is. Transparent map pixels would otherwise read
+         as maximum displacement, so the neutral flood underneath matters. */
+      f.append(make('feFlood', { 'flood-color': 'rgb(128,128,128)', result: 'nz' }));
+      refs.pk = make('feImage', { x: '0', y: '0', width: '0', height: '0', preserveAspectRatio: 'none', href: pocketField, result: 'pk' });
+      f.append(refs.pk);
+      const merge = make('feMerge', { result: 'pf' });
+      merge.append(make('feMergeNode', { in: 'nz' }), make('feMergeNode', { in: 'pk' }));
+      f.append(merge);
+      f.append(make('feDisplacementMap', { in: 'SourceGraphic', in2: 'pf', scale: '6', xChannelSelector: 'R', yChannelSelector: 'G', result: 'mag' }));
+      src = 'mag';
+    }
+
+    f.append(make('feImage', { x: '0', y: '0', width: String(W), height: String(H), preserveAspectRatio: 'none', href: url, result: 'map' }));
+
+    // The middle: the same gentle field, then diffused.
+    const dc = make('feDisplacementMap', { in: src, in2: 'map', scale: String(SCALE), xChannelSelector: 'R', yChannelSelector: 'G', result: 'dc' });
+    f.append(dc); refs.disp.push([dc, 1]);
+    f.append(make('feGaussianBlur', { in: 'dc', stdDeviation: '8', edgeMode: 'duplicate', result: 'bc' }));
+
+    /* The rim: displaced once per colour channel at very slightly different
+       strengths and put back together. At these scales red and blue land a
+       third of a pixel apart, which only shows as a faint fringe over a hard
+       edge, never as a rainbow. */
+    const channel = (k, m, keep) => {
+      const node = make('feDisplacementMap', { in: src, in2: 'map', scale: String(SCALE * m), xChannelSelector: 'R', yChannelSelector: 'G', result: `d${k}` });
+      f.append(node); refs.disp.push([node, m]);
+      f.append(make('feColorMatrix', { in: `d${k}`, type: 'matrix', values: keep, result: k }));
+    };
+    channel('r', 1,     '1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0');
+    channel('g', 0.975, '0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0');
+    channel('b', 0.95,  '0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0');
+    f.append(make('feBlend', { in: 'r', in2: 'g', mode: 'screen', result: 'rg' }));
+    f.append(make('feBlend', { in: 'rg', in2: 'b', mode: 'screen', result: 'rgb' }));
+    f.append(make('feGaussianBlur', { in: 'rgb', stdDeviation: '2.2', edgeMode: 'duplicate', result: 'es' }));
+    f.append(make('feColorMatrix', { in: 'es', type: 'saturate', values: '1.14', result: 'esat' }));
+    const lift = make('feComponentTransfer', { in: 'esat', result: 'elit' });
+    ['R', 'G', 'B'].forEach((ch) => lift.append(make(`feFunc${ch}`, { type: 'linear', slope: '1.07', intercept: '0.012' })));
+    f.append(lift);
+
+    // Split by the blue channel: rim from one path, middle from the other.
+    f.append(make('feColorMatrix', { in: 'map', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0', result: 'me' }));
+    f.append(make('feColorMatrix', { in: 'map', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 -1 0 1', result: 'mc' }));
+    f.append(make('feComposite', { in: 'elit', in2: 'me', operator: 'in', result: 'ep' }));
+    f.append(make('feComposite', { in: 'bc', in2: 'mc', operator: 'in', result: 'cp' }));
+    f.append(make('feComposite', { in: 'ep', in2: 'cp', operator: 'arithmetic', k1: '0', k2: '1', k3: '1', k4: '0' }));
+    return { f, refs };
+  }
+
+  const optics = new Map();       // element -> { id, W, H, refs }
+  let nextId = 0;
+
+  function applyOptics(el, withPocket, force = false) {
+    if (!host || !el) return;
+    const W = Math.round(el.offsetWidth), H = Math.round(el.offsetHeight);
+    if (W < 8 || H < 8) return;
+    const prev = optics.get(el);
+    if (!force && prev && Math.abs(prev.W - W) < 2 && Math.abs(prev.H - H) < 2) return;
+
+    const R = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+    const url = lensMap(W, H, R, { band: 8, kick: 5, mag: 1.4, wBand: 12 });
+    const id = prev?.id || `lg-${++nextId}`;
+    host.querySelector(`#${id}`)?.remove();
+    const { f, refs } = buildFilter(id, W, H, url, withPocket);
+    host.appendChild(f);
+    el.style.setProperty('--lg-refract', `url(#${id})`);
+    optics.set(el, { id, W, H, refs });
+  }
+
+  /* Refraction strength, eased. The pointer's proximity adds a little, a
+     press adds a little more for the moment it lasts. Written to the
+     filter only when it has actually moved, since every write re-runs it. */
+  /* Snapped to hundredths and written when the snapped value changes. A
+     threshold on the raw difference let the last small step back to rest
+     go unwritten, so the glass stayed a fraction stronger than it should
+     after the pointer had gone. */
+  let lastBoost = -1;
+  function setBoost(k) {
+    const o = optics.get(bar);
+    const kr = Math.round(k * 100) / 100;
+    if (!o || kr === lastBoost) return;
+    lastBoost = kr;
+    o.refs.disp.forEach(([node, m]) => node.setAttribute('scale', (SCALE * m * kr).toFixed(2)));
+  }
+
+  /* ------------------------------------------------------------------------
+     Environment
+
+     The glass takes a faint colour from what is behind it and adjusts its
+     own density so what is in front of it stays legible. A backdrop cannot
+     be read back from script, so this estimates it from two things it can
+     know: the ambient field, whose colours and positions are already
+     written on .bg, and whatever element is actually under the bar at a few
+     points along it. A photograph under a dark bar darkens the glass; a
+     dark stretch under a light bar lifts it. Estimates ease toward their
+     targets, so nothing ever switches.
+     ------------------------------------------------------------------------ */
+  const field = $('.bg');
+  const env = { r: 120, g: 160, b: 230, dim: 0, lift: 0 };
+  const envT = { ...env };
+  const parseRGBA = (s) => {
+    const m = s && s.match(/rgba?\(([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)(?:[, /]+([\d.]+))?/);
+    return m ? [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]] : null;
+  };
+  const luma = (r, g, b) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+  function underLuma(x, y) {
+    const stack = document.elementsFromPoint(x, y);
+    for (const el of stack) {
+      if (el === bar || bar.contains(el) || el === fab || fab?.contains(el)) continue;
+      if (el === field || field?.contains(el) || el === document.body || el === root) break;
+      if (el.tagName === 'IMG' || el.tagName === 'VIDEO' || el.tagName === 'CANVAS') return 0.55;
+      const c = parseRGBA(getComputedStyle(el).backgroundColor);
+      if (c && c[3] > 0.35) return luma(c[0], c[1], c[2]);
+    }
+    return null;
+  }
+
+  function sampleEnv() {
+    const rect = bar.getBoundingClientRect();
+    const yPct = ((rect.top + rect.height / 2) / Math.max(innerHeight, 1)) * 100;
+
+    // Ambient colour, weighted by each field's strength and nearness.
+    let r = 0, g = 0, b = 0, wsum = 0;
+    if (field) {
+      for (let n = 1; n <= 5; n++) {
+        const c = parseRGBA(field.style.getPropertyValue(`--f${n}c`));
+        if (!c) continue;
+        const fx = parseFloat(field.style.getPropertyValue(`--f${n}x`)) || 50;
+        const fy = parseFloat(field.style.getPropertyValue(`--f${n}y`)) || 50;
+        const dist = Math.hypot((fx - 50) * 0.55, fy - yPct);
+        const w = c[3] * Math.exp(-((dist / 48) ** 2));
+        r += c[0] * w; g += c[1] * w; b += c[2] * w; wsum += w;
+      }
+    }
+    if (wsum > 0.001) {
+      envT.r = r / wsum; envT.g = g / wsum; envT.b = b / wsum;
+    }
+
+    // What is actually behind it, at five points along its length.
+    const pageL = luma(...(parseRGBA(getComputedStyle(root).backgroundColor) || [8, 12, 22, 1]).slice(0, 3));
+    let sum = 0, count = 0;
+    const cy = rect.top + rect.height / 2;
+    for (let i = 0; i < 5; i++) {
+      const x = rect.left + rect.width * (0.1 + 0.2 * i);
+      const l = underLuma(x, cy);
+      sum += l === null ? pageL : l;
+      count++;
+    }
+    const L = sum / count;
+    const light = root.dataset.theme === 'daylight';
+    envT.dim = light ? 0 : clamp((L - 0.28) * 0.9, 0, 0.42);
+    envT.lift = light ? clamp((0.62 - L) * 0.9, 0, 0.38) : 0;
+    wake();
+  }
+
+  /* Only what changed is written. --lg-dim feeds the backdrop filter, and
+     every write to it re-runs the filter, whether or not the value moved. */
+  let envSig = '';
+  function writeEnv() {
+    const v = `${env.r.toFixed(0)}, ${env.g.toFixed(0)}, ${env.b.toFixed(0)}`;
+    const dim = env.dim.toFixed(3), lift = env.lift.toFixed(3);
+    const sig = `${v}|${dim}|${lift}`;
+    if (sig === envSig) return;
+    envSig = sig;
+    [bar, fab].forEach((el) => {
+      if (!el) return;
+      el.style.setProperty('--lg-env', v);
+      el.style.setProperty('--lg-dim', dim);
+      el.style.setProperty('--lg-lift', lift);
+    });
+  }
+
+  let envTimer = 0, envLast = 0;
+  const queueEnv = () => {
+    const now = performance.now();
+    if (now - envLast > 110) { envLast = now; sampleEnv(); return; }
+    clearTimeout(envTimer);
+    envTimer = setTimeout(() => { envLast = performance.now(); sampleEnv(); }, 120);
+  };
+
+  /* ------------------------------------------------------------------------
+     Geometry, cached
+
+     Everything the per frame loop needs is measured here, on resize and
+     once the fonts land, and never while the pointer is moving.
+     ------------------------------------------------------------------------ */
+  const pocket = document.createElement('span');
+  pocket.className = 'nav-pocket';
+  pocket.setAttribute('aria-hidden', 'true');
+  bar.prepend(pocket);
+
+  const ITEM_SEL = '.nav-links a, header.nav .brand, header.nav .icon-btn, header.nav a.cta';
+  let items = [];
+  let barRect = null, border = 1, pocketH = 40;
+
+  function measure() {
+    barRect = bar.getBoundingClientRect();
+    border = parseFloat(getComputedStyle(bar).borderLeftWidth) || 0;
+    pocketH = pocket.offsetHeight || 40;
+    items = $$(ITEM_SEL, bar)
+      .filter((el) => el.offsetWidth > 0 && getComputedStyle(el).display !== 'none')
+      .map((el) => {
+        const r = (el.classList.contains('brand') ? el.querySelector('.brand-mark') || el : el).getBoundingClientRect();
+        return { el, left: r.left - barRect.left - border, width: r.width };
+      });
+  }
+
+  /* ------------------------------------------------------------------------
+     Motion
+
+     Damped springs on a unit mass, one clock. Values chosen from the spec's
+     ranges and tuned by eye:
+
+       pointer response    k 240, c 30   almost no overshoot
+       specular            k 160, c 24   softer, so the highlight lags the
+                                         surface slightly and reads as light
+                                         on a moving object
+       pocket, leading     k 520, c 34   a touch of overshoot on arrival
+       pocket, trailing    k 250, c 30   the back edge catches up late,
+                                         which is the stretch
+       press               k 700, c 46   fast in, fast out
+
+     Distant moves raise the stiffness a little so a long trip across the
+     bar does not feel sluggish, and scale the damping with it so the
+     character of the motion stays the same.
+     ------------------------------------------------------------------------ */
+  const S = {
+    near: 0, vNear: 0, tNear: 0,
+    sx: 18, vSx: 0, tSx: 18,
+    sy: 0, vSy: 0, tSy: 0,
+    dx: 0, vDx: 0, tDx: 0,
+    dy: 0, vDy: 0, tDy: 0,
+    press: 0, vPress: 0, tPress: 0,
+    L: 0, vL: 0, tL: 0,
+    R: 0, vR: 0, tR: 0,
+    w0: 0,                        // width when it was last sent somewhere
+    op: 0, vOp: 0, tOp: 0,
+  };
+
+  const spring = (key, k, c, dt) => {
+    const v = 'v' + key[0].toUpperCase() + key.slice(1);
+    const t = 't' + key[0].toUpperCase() + key.slice(1);
+    const a = -k * (S[key] - S[t]) - c * S[v];
+    S[v] += a * dt;
+    S[key] += S[v] * dt;
+    return Math.abs(S[key] - S[t]) > 0.02 || Math.abs(S[v]) > 0.05;
+  };
+
+  /* The clock starts on the first frame it is given, not on
+     performance.now() when it was asked for. The two are not the same
+     clock: a frame callback requested from an input handler can run in the
+     current frame, whose timestamp is already in the past, so measuring
+     from performance.now() gives a negative step. A damped spring stepped
+     backwards is an undamped one, and it grows without limit: that sent the
+     pocket to a hundred and fifty thousand pixels wide on a press. dt is
+     also clamped at zero for the same reason, and at a thirtieth of a
+     second above so a stalled frame cannot fling anything. */
+  let raf = 0, lastT = -1;
+  function wake() {
+    if (!raf) { lastT = -1; raf = requestAnimationFrame(frame); }
+  }
+
+  function frame(now) {
+    if (lastT < 0) lastT = now;
+    const dt = clamp((now - lastT) / 1000, 0, 1 / 30);
+    lastT = now;
+    const rm = reduced();
+    let busy = false;
+
+    // Environment eases toward its estimate.
+    for (const k of ['r', 'g', 'b', 'dim', 'lift']) {
+      const d = envT[k] - env[k];
+      if (Math.abs(d) > (k.length === 1 ? 0.3 : 0.002)) { env[k] += d * Math.min(1, dt * 7); busy = true; }
+      else env[k] = envT[k];
+    }
+    writeEnv();
+
+    // Pointer response and press.
+    busy = spring('near', 240, 30, dt) || busy;
+    busy = spring('sx', 160, 24, dt) || busy;
+    busy = spring('sy', 160, 24, dt) || busy;
+    busy = spring('press', 700, 46, dt) || busy;
+    if (!rm) {
+      busy = spring('dx', 240, 30, dt) || busy;
+      busy = spring('dy', 240, 30, dt) || busy;
+    } else { S.dx = S.dy = 0; }
+
+    bar.style.setProperty('--lg-near', clamp01(S.near).toFixed(3));
+    bar.style.setProperty('--lg-sx', `${S.sx.toFixed(1)}%`);
+    bar.style.setProperty('--lg-sy', `${S.sy.toFixed(1)}%`);
+    /* A tiny deformation toward the pointer, a couple of pixels at most, on
+       the independent translate and scale properties so it composes with
+       the transform that centres the bar. */
+    bar.style.translate = rm ? '' : `${S.dx.toFixed(2)}px ${S.dy.toFixed(2)}px`;
+    bar.style.scale = rm ? '' : (1 + clamp01(S.near) * 0.0025 - clamp01(S.press) * 0.004).toFixed(4);
+
+    // Pocket.
+    const dir = Math.sign((S.tL + S.tR) - (S.L + S.R));
+    const dist = Math.abs((S.tL + S.tR) / 2 - (S.L + S.R) / 2);
+    /* Long trips get stiffer so crossing the bar does not drag, and the
+       trailing edge lags more on long trips than on short ones: next door,
+       it keeps nearly level with the front and the move settles almost at
+       once; across the bar, it falls behind and the stretch shows. Damping
+       scales with stiffness so the character of the motion holds. */
+    const boost = 1 + Math.min(dist / 420, 0.6);
+    const near = 1 - Math.min(dist / 300, 1);
+    const kLead = 520 * boost, kTrail = (250 + 230 * near) * boost;
+    const lead = [kLead, 1.5 * Math.sqrt(kLead)];
+    const trail = [kTrail, 1.86 * Math.sqrt(kTrail)];
+    if (rm) {
+      S.L = S.tL; S.R = S.tR; S.vL = S.vR = 0;
+    } else {
+      const [kL, cL] = dir > 0 ? trail : lead;
+      const [kR, cR] = dir > 0 ? lead : trail;
+      busy = spring('L', kL, cL, dt) || busy;
+      busy = spring('R', kR, cR, dt) || busy;
+    }
+    busy = spring('op', rm ? 900 : 300, rm ? 60 : 34, dt) || busy;
+    renderPocket(rm);
+
+    // Refraction: the pointer adds a little, a press a little more.
+    setBoost(1 + clamp01(S.near) * 0.12 + clamp01(S.press) * 0.22);
+
+    raf = busy ? requestAnimationFrame(frame) : 0;
+  }
+
+  function renderPocket(rm) {
+    const w = Math.max(0, S.R - S.L);
+    const op = clamp01(S.op);
+    pocket.style.opacity = op.toFixed(3);
+    if (op < 0.005) {
+      /* Gone, so its magnification goes too. Returning without this left
+         the bar bending the page under a pocket nobody could see. */
+      optics.get(bar)?.refs.pk?.setAttribute('width', '0');
+      return;
+    }
+
+    /* Stretch is length beyond both the width it set out with and the width
+       it is heading for. Measured against the target alone, a pocket
+       shrinking from a wide item to a narrow one counted as stretched and
+       pinched its waist for no reason: that is contraction, not tension. */
+    const restW = Math.max(0, S.tR - S.tL);
+    const stretch = rm ? 0 : Math.max(0, w - Math.max(restW, S.w0));
+    const h = pocketH;
+    const pressK = 1 - clamp01(S.press) * 0.018;
+    pocket.style.width = `${w.toFixed(2)}px`;
+    pocket.style.transform = `translate3d(${S.L.toFixed(2)}px, -50%, 0) scale(${pressK.toFixed(4)})`;
+
+    /* Surface tension: while it is stretched, the middle draws in. A path
+       rather than a radius, because a radius cannot narrow a shape at its
+       waist, and it is dropped the moment the stretch is gone. */
+    const waist = Math.min(stretch * 0.11, h * 0.16);
+    if (waist > 0.3 && w > h) {
+      const r = h / 2;
+      const q = waist * 1.33;
+      pocket.style.clipPath =
+        `path('M ${r} 0 C ${(w * 0.35).toFixed(1)} ${q.toFixed(2)} ${(w * 0.65).toFixed(1)} ${q.toFixed(2)} ${(w - r).toFixed(1)} 0 ` +
+        `A ${r} ${r} 0 0 1 ${(w - r).toFixed(1)} ${h} ` +
+        `C ${(w * 0.65).toFixed(1)} ${(h - q).toFixed(2)} ${(w * 0.35).toFixed(1)} ${(h - q).toFixed(2)} ${r} ${h} ` +
+        `A ${r} ${r} 0 0 1 ${r} 0 Z')`;
+    } else if (pocket.style.clipPath) {
+      pocket.style.clipPath = '';
+    }
+
+    // The bar's filter magnifies the page under wherever the pocket is.
+    const o = optics.get(bar);
+    if (o?.refs.pk) {
+      const top = (barRect ? barRect.height : 58) / 2 - h / 2;
+      o.refs.pk.setAttribute('x', (S.L + border).toFixed(1));
+      o.refs.pk.setAttribute('y', top.toFixed(1));
+      o.refs.pk.setAttribute('width', (w * op).toFixed(1));
+      o.refs.pk.setAttribute('height', h.toFixed(1));
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     Where the pocket goes
+
+     At rest it marks the current section. Pointing at an item takes it
+     there; leaving the bar sends it back. Arriving from nothing it swells
+     out from the middle of its target rather than fading in, and leaving
+     for nothing it draws back into a point and goes, so it always reads as
+     the same piece of glass.
+     ------------------------------------------------------------------------ */
+  let hovered = null, pressedItem = null;
+
+  const itemFor = (el) => items.find((it) => it.el === el || it.el.contains(el));
+
+  function retarget() {
+    const cur = bar.querySelector('.nav-links a.is-current');
+    const target = pressedItem || hovered || (cur && itemFor(cur)) || null;
+    items.forEach((it) => it.el.classList.toggle('is-pocketed', !!target && it === target));
+
+    if (!target) {
+      const mid = (S.L + S.R) / 2;
+      S.tL = S.tR = mid;
+      S.tOp = 0;
+    } else {
+      if (S.op < 0.05) {
+        const mid = target.left + target.width / 2;
+        S.L = S.R = mid; S.vL = S.vR = 0;
+      }
+      S.w0 = Math.max(0, S.R - S.L);
+      S.tL = target.left;
+      S.tR = target.left + target.width;
+      S.tOp = 1;
+    }
+    wake();
+  }
+
+  /* ------------------------------------------------------------------------
+     Input
+     ------------------------------------------------------------------------ */
+  let px = -1e4, py = -1e4, pointerKind = 'mouse';
+
+  function pointerUpdate() {
+    if (!barRect || pointerKind !== 'mouse' || reduced()) {
+      S.tNear = 0; S.tSx = 18; S.tSy = 0; S.tDx = S.tDy = 0;
+      wake();
+      return;
+    }
+    const r = barRect;
+    const ox = Math.max(r.left - px, 0, px - r.right);
+    const oy = Math.max(r.top - py, 0, py - r.bottom);
+    const near = clamp01(1 - Math.hypot(ox, oy) / 90);
+    S.tNear = near;
+    if (near > 0) {
+      S.tSx = clamp((px - r.left) / r.width, 0, 1) * 100;
+      S.tSy = clamp((py - r.top) / r.height, -0.4, 1.4) * 100;
+      S.tDx = clamp((px - (r.left + r.width / 2)) / (r.width / 2), -1, 1) * 1.6 * near;
+      S.tDy = clamp((py - (r.top + r.height / 2)) / (r.height / 2), -1, 1) * 1.0 * near;
+    } else {
+      S.tSx = 18; S.tSy = 0; S.tDx = S.tDy = 0;
+    }
+    wake();
+  }
+
+  addEventListener('pointermove', (e) => {
+    px = e.clientX; py = e.clientY; pointerKind = e.pointerType || 'mouse';
+    pointerUpdate();
+  }, { passive: true });
+
+  /* Leaving the window: pointerout with nowhere to go. pointerleave on the
+     document is not something browsers fire reliably. */
+  document.addEventListener('pointerout', (e) => {
+    if (!e.relatedTarget) { px = py = -1e4; pointerUpdate(); }
+  });
+
+  bar.addEventListener('pointerover', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const it = itemFor(e.target);
+    if (it && it !== hovered) { hovered = it; retarget(); }
+  });
+  bar.addEventListener('pointerleave', () => { if (hovered) { hovered = null; retarget(); } });
+
+  // Keyboard focus moves the pocket the same way a pointer does.
+  bar.addEventListener('focusin', (e) => {
+    const it = itemFor(e.target);
+    if (it) { hovered = it; retarget(); }
+  });
+  bar.addEventListener('focusout', (e) => {
+    if (!bar.contains(e.relatedTarget)) { hovered = null; retarget(); }
+  });
+
+  /* Press. The item and the pocket compress about 2%, the bar's shadow
+     tightens and its refraction rises for the moment, then all of it
+     springs back. On a phone there is no hover and no current section in
+     the dock, so this is also what brings the pocket up at all: it swells
+     under the thumb and goes when the thumb lifts. */
+  const release = () => {
+    S.tPress = 0;
+    bar.classList.remove('lg-bar-pressed');
+    if (pressedItem) { pressedItem = null; retarget(); }
+    wake();
+  };
+  bar.addEventListener('pointerdown', (e) => {
+    if (e.button > 0) return;
+    S.tPress = 1;
+    bar.classList.add('lg-bar-pressed');
+    const it = itemFor(e.target);
+    if (it && e.pointerType !== 'mouse') { pressedItem = it; retarget(); }
+    wake();
+  }, { passive: true });
+  ['pointerup', 'pointercancel'].forEach((t) => addEventListener(t, release, { passive: true }));
+  addEventListener('blur', release);
+
+  // The scroll spy decides the current section; the pocket follows it.
+  /* Only is-current matters here. The pocket toggles is-pocketed on these
+     same links, and reacting to that would just be the pocket reacting to
+     itself. */
+  const mo = new MutationObserver((recs) => {
+    if (recs.some((r) => (r.oldValue || '').includes('is-current') !== r.target.classList.contains('is-current'))) retarget();
+  });
+  $$('.nav-links a', bar).forEach((a) => mo.observe(a, { attributes: true, attributeFilter: ['class'], attributeOldValue: true }));
+
+  // The environment changes as the page moves under the glass.
+  addEventListener('scroll', queueEnv, { passive: true });
+  new MutationObserver(queueEnv).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+  const relayout = (force) => {
+    measure();
+    applyOptics(bar, true, force);
+    applyOptics(fab, false, force);
+    retarget();
+    queueEnv();
+  };
+
+  let rt = 0;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => relayout(false), 140); }, { passive: true });
+  document.fonts?.ready.then(() => relayout(true)).catch(() => {});
+  relayout(false);
+})();
+
+/* --- Menus grow out of what opened them --------------------------------------
+   The command palette and the phone menu do not appear on their own. They
+   start as the glass of the control that opened them, stretch out toward
+   where they are going, and only show their contents once there is enough
+   surface for them. Closing runs the other way and merges back into the
+   control, so what you are looking at is one object changing shape rather
+   than a new thing arriving.
+
+   The shape is drawn with a clip on the menu itself, shifted with translate
+   so the visible part starts exactly over the control. No scaling, so the
+   text and the radii are never stretched, and the menu's own glass and
+   blur are what grow, since clip-path clips the backdrop as well.
+
+   Both the palette and the sheet are opened and closed by code elsewhere.
+   Rather than rewiring that, this watches for the state change and takes
+   over the motion: the palette's showModal and close are wrapped on the
+   instance, and Escape's native cancel is intercepted, because it would
+   otherwise close the dialog without going through close() at all. */
+(function liquidMorph() {
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const radiusOf = (el) => parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+  /* DOMRect has width and height, not w and h. Reading .w off one gave
+     undefined, every coordinate came out NaN, and the browser quietly threw
+     away the translate and the clip, leaving only the fade. */
+  const box = (el) => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; };
+  const visible = (el) => el && el.offsetWidth > 0 && getComputedStyle(el).display !== 'none';
+
+  /* content is what fades in once there is room: one element, or a list,
+     but never the surface itself, or the two fades land on the same
+     element and the second overwrites the first. */
+  function createMorph(el, content, { kOpen = 300, cOpen = 31, kClose = 460, cClose = 40 } = {}) {
+    let p = 0, v = 0, target = 0, raf = 0, last = 0;
+    let from = null, to = null, fromR = 20, toR = 26, done = null, k = kOpen, c = cOpen;
+    const parts = Array.isArray(content) ? content : [content];
+    const setContent = (o) => parts.forEach((n) => { n.style.opacity = o; });
+
+    const clear = () => {
+      el.style.translate = '';
+      el.style.clipPath = '';
+      el.style.opacity = '';
+      setContent('');
+      el.classList.remove('lg-morph');
+    };
+
+    const render = () => {
+      const q = p;
+      const w = lerp(from.w, to.w, q), h = lerp(from.h, to.h, q);
+      const cx = lerp(from.x + from.w / 2, to.x + to.w / 2, q);
+      const cy = lerp(from.y + from.h / 2, to.y + to.h / 2, q);
+      const dx = cx - (to.x + to.w / 2), dy = cy - (to.y + to.h / 2);
+      const ix = (to.w - w) / 2, iy = (to.h - h) / 2;
+      const r = lerp(fromR, toR, clamp(q, 0, 1));
+      el.style.translate = `${dx.toFixed(2)}px ${dy.toFixed(2)}px`;
+      el.style.clipPath = `inset(${iy.toFixed(2)}px ${ix.toFixed(2)}px ${iy.toFixed(2)}px ${ix.toFixed(2)}px round ${r.toFixed(2)}px)`;
+      // Contents only once there is room for them; the glass itself never pops.
+      setContent(smooth(0.55, 0.95, q).toFixed(3));
+      el.style.opacity = smooth(0, 0.12, q).toFixed(3);
+    };
+
+    const step = (now) => {
+      // Same clock rule as the bar: baseline from the first frame, never negative.
+      if (last < 0) last = now;
+      const dt = clamp((now - last) / 1000, 0, 1 / 30);
+      last = now;
+      const a = -k * (p - target) - c * v;
+      v += a * dt; p += v * dt;
+      render();
+      if (Math.abs(p - target) < 0.002 && Math.abs(v) < 0.01) {
+        p = target; v = 0; raf = 0;
+        const cb = done; done = null;
+        if (target === 1) clear();
+        cb?.();
+        return;
+      }
+      raf = requestAnimationFrame(step);
+    };
+
+    const run = (t, cb) => {
+      target = t; done = cb;
+      k = t ? kOpen : kClose; c = t ? cOpen : cClose;
+      if (!raf) { last = -1; raf = requestAnimationFrame(step); }
+    };
+
+    return {
+      open(src) {
+        cancelAnimationFrame(raf); raf = 0;
+        clear();
+        to = box(el);
+        toR = radiusOf(el);
+        if (!src || prefersReduced()) {
+          /* No control to grow from, or motion reduced: a short fade in
+             place, which keeps the glass and loses the travel. */
+          el.style.opacity = '0';
+          requestAnimationFrame(() => { el.style.transition = 'opacity .16s ease'; el.style.opacity = ''; });
+          setTimeout(() => { el.style.transition = ''; }, 200);
+          return;
+        }
+        from = box(src);
+        fromR = Math.min(radiusOf(src), from.w / 2, from.h / 2);
+        el.classList.add('lg-morph');
+        p = 0; v = 0;
+        render();
+        run(1);
+      },
+      close(src, cb) {
+        if (!src || prefersReduced() || !to) {
+          el.style.transition = 'opacity .14s ease';
+          el.style.opacity = '0';
+          setTimeout(() => { el.style.transition = ''; clear(); cb?.(); }, 150);
+          return;
+        }
+        from = box(src);
+        fromR = Math.min(radiusOf(src), from.w / 2, from.h / 2);
+        if (!el.classList.contains('lg-morph')) { el.classList.add('lg-morph'); p = 1; v = 0; }
+        run(0, () => { clear(); cb?.(); });
+      },
+    };
+  }
+
+  /* ---- The palette ---- */
+  const dialog = $('#palette');
+  const inner = dialog?.querySelector('.palette-inner');
+  if (dialog && inner && dialog.showModal) {
+    const morph = createMorph(dialog, inner);
+    let source = null;
+
+    // Whichever search control opened it; ⌘K has no pointer, so it uses
+    // whichever of the two is on screen.
+    document.addEventListener('pointerdown', (e) => {
+      const b = e.target.closest?.('#paletteBtn, #paletteBtnMobile');
+      if (b) source = b;
+    }, { capture: true, passive: true });
+    const pickSource = () => {
+      if (visible(source)) return source;
+      return [$('#paletteBtnMobile'), $('#paletteBtn')].find(visible) || null;
+    };
+
+    const nativeShow = dialog.showModal.bind(dialog);
+    const nativeClose = dialog.close.bind(dialog);
+    let closing = false;
+
+    dialog.showModal = () => {
+      nativeShow();
+      closing = false;
+      morph.open(pickSource());
+    };
+
+    dialog.close = (...args) => {
+      if (!dialog.open || closing) return;
+      closing = true;
+      morph.close(pickSource(), () => { closing = false; source = null; nativeClose(...args); });
+    };
+
+    dialog.addEventListener('cancel', (e) => { e.preventDefault(); dialog.close(); });
+  }
+
+  /* ---- The phone menu ----
+     Opened and closed by the navigation block, which toggles .is-open and
+     then sets hidden 380ms after closing. The close spring is stiffer than
+     the open one so it is finished well inside that. */
+  const sheet = $('#mobileSheet');
+  const toggle = $('#navToggle');
+  if (sheet && toggle) {
+    const morph = createMorph(sheet, [...sheet.children], { kOpen: 300, cOpen: 31, kClose: 520, cClose: 43 });
+    let wasOpen = sheet.classList.contains('is-open');
+
+    new MutationObserver(() => {
+      const isOpen = sheet.classList.contains('is-open');
+      if (isOpen === wasOpen) return;
+      wasOpen = isOpen;
+      if (isOpen) {
+        // Its own slide is replaced, so hold it where it will end up.
+        sheet.style.transition = 'none';
+        sheet.style.transform = 'none';
+        morph.open(visible(toggle) ? toggle : null);
+      } else {
+        morph.close(visible(toggle) ? toggle : null, () => {
+          sheet.style.transform = '';
+          sheet.style.transition = '';
+        });
+      }
+    }).observe(sheet, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+
+/* --- Press, everywhere else ----------------------------------------------------
+   The rest of the controls respond the same way, simpler: compress a
+   percent and a half, a light under the pointer, spring back. CSS does the
+   springing; this says where and when. The bar handles its own. */
+(function liquidPress() {
+  const SEL = [
+    '.btn', '.filter-chip', '.pills button', '.contact a', '.card-repo',
+    '.chip', '.chip-clear', '.carousel-ctrl .icon-btn', '.sheet-cta', '.lb-btn',
+    'header.nav .icon-btn', 'header.nav a.cta', 'header.nav .brand', '.dock-fab .icon-btn',
+  ].join(',');
+
+  $$(SEL).forEach((el) => el.classList.add('lg-press'));
+
+  let active = null;
+  const release = () => {
+    if (!active) return;
+    active.classList.remove('lg-pressed');
+    active = null;
+  };
+
+  const press = (el, cx, cy) => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--lg-px', `${clamp(((cx - r.left) / r.width) * 100, 0, 100).toFixed(1)}%`);
+    el.style.setProperty('--lg-py', `${clamp(((cy - r.top) / r.height) * 100, 0, 100).toFixed(1)}%`);
+    release();
+    active = el;
+    el.classList.add('lg-pressed');
+  };
+
+  document.addEventListener('pointerdown', (e) => {
+    if (e.button > 0) return;
+    const el = e.target.closest?.(SEL);
+    if (el) press(el, e.clientX, e.clientY);
+  }, { passive: true });
+
+  ['pointerup', 'pointercancel', 'dragstart'].forEach((t) => addEventListener(t, release, { passive: true }));
+  addEventListener('blur', release);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.repeat || (e.key !== 'Enter' && e.key !== ' ')) return;
+    const el = document.activeElement?.closest?.(SEL);
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    press(el, r.left + r.width / 2, r.top + r.height / 2);
+  });
+  document.addEventListener('keyup', (e) => { if (e.key === 'Enter' || e.key === ' ') release(); });
+})();
+
+/* ==========================================================================
    Console greeting for the curious
    ========================================================================== */
 console.log(
