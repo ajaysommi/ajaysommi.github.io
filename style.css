@@ -2048,6 +2048,21 @@
     object-fit: contain;
   }
 
+  /* A sensible height before script has measured the card. Left at auto,
+     the photos laid out at their full pixel size for a moment, a strip
+     thousands of pixels wide, and Safari's snapping settled on a photo from
+     that layout. */
+  html.js .jc-media { height: 160px; }
+
+  /* With script, each photo's button carries the photo's aspect ratio, so
+     its width follows from the strip's height before the image has loaded,
+     and the image simply fills it. */
+  .jc-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   html:not(.js) .jc-media { height: 220px; }
   html:not(.js) .jc-media img { border: 1px solid var(--stroke); border-radius: var(--r-md); }
 

@@ -1262,21 +1262,29 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
 /* ==========================================================================
    Journey photos
-   The panel is a fixed height sized for the wordiest role, so shorter roles
-   leave a gap underneath and the photos expand into it. The height is set
-   here rather than left to flexbox because each photo sizes its own width
-   from its own aspect ratio, and that only works against a height the
-   browser already knows. Every role that has photos keeps them at every
-   viewport: the height has a floor, and a wordy role gives up a little of
-   its own slack rather than losing the photos.
+   Each role's photos sit in one row, all at one height, each as wide as its
+   own shape, and the row scrolls sideways when there are more than fit. The
+   height is whatever the role's text leaves free in the card, so the photos
+   always fill the card to its bottom edge, whatever the role and whatever
+   the screen.
+
+   It used to hide the photos that did not fit and shrink the rest until
+   they did, measuring the rendered row to find out. That measurement
+   depended on the images having loaded, so the same role came out full
+   size one time and as thumbnails the next. Nothing is measured from the
+   images now: each photo's shape comes from its width and height
+   attributes, set on its button as an aspect ratio, so the row lays out
+   the same before the images arrive as after.
+
+   The card's size is watched rather than sampled. When a phone's toolbar
+   slides in and the window gets shorter, the card gets shorter, and the
+   photos are resized on the next frame to fit it exactly.
    ========================================================================== */
 (function journeyPhotos() {
   if (!$('.jcard .jc-media')) return;
 
-  // Below this the photos stop reading as photos. The smallest phones get a
-  // lower floor because the panel there has almost nothing to spare.
-  const minH = () => (innerWidth <= 365 ? 74 : 88);
-  const MAX_H = 300;  // above this they start to dwarf the text
+  const MAX_H = 300;   // above this the photos start to dwarf the text
+  const FLOOR = 40;    // below this they stop reading as photos; the card scrolls instead
 
   // How tall a card's own content is, independent of the panel it sits in.
   // The children are all flex: 0 0 auto, so they measure the same whatever
@@ -1295,74 +1303,28 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     return h;
   };
 
-  // Re-queried each pass rather than captured once, so adding a photo to a
-  // card later needs no change here.
-  const fit = () => {
-    const MIN_H = minH();
-    $$('.jcard .jc-media').forEach((fig) => {
-      const card = fig.closest('.jcard');
-      if (!card) return;
-
-      fig.hidden = false;
-      // Measure the text, then hand the photos whatever it did not use.
-      const text = contentHeight(card, fig);
-      const figStyle = getComputedStyle(fig);
-      const gap = parseFloat(figStyle.marginTop) || 0;
-      // The 4px is slack against sub pixel rounding in the text measurement:
-      // without it a card can end up one or two pixels into a scrollbar.
-      const spare = card.clientHeight - text - gap - 4;
-      /* Take the leftover space as it is. Where there is barely any, the
-         photos still get a floor so they cannot vanish, but the floor is low
-         enough that the card does not grow a scrollbar to honour it. */
-      const ideal = Math.min(MAX_H, spare);
-      let h = ideal < MIN_H ? Math.max(36, ideal) : ideal;
-
-      /* A tall row is a wide row, so on a narrow card four uncropped photos
-         can only sit side by side by shrinking to thumbnails. Show as many as
-         hold a usable height instead and leave the remainder to the lightbox,
-         which still opens the whole set. */
-      const shots = $$('.jc-shot', fig);
-      const aspectOf = (el) => {
-        const im = $('img', el);
-        const w = Number(im?.getAttribute('width'));
-        const ih = Number(im?.getAttribute('height'));
-        return w > 0 && ih > 0 ? w / ih : 1;
-      };
-      const gapX = parseFloat(figStyle.columnGap) || 0;
-      const room = fig.clientWidth;
-      const GOOD = 92;  // the height below which a photo stops reading as one
-
-      shots.forEach((el) => { el.hidden = false; });
-      let shown = shots.length;
-      while (shown > 1 && room > 0) {
-        const sum = shots.slice(0, shown).reduce((a2, el) => a2 + aspectOf(el), 0);
-        if ((room - gapX * (shown - 1)) / sum >= Math.min(GOOD, h)) break;
-        shown -= 1;
-      }
-      for (let i = shown; i < shots.length; i += 1) shots[i].hidden = true;
-
-      /* Height is the only thing being decided: each photo is then as wide as
-         its own shape makes it. Nothing cropped, nothing stretched, nothing
-         stacked. */
-      h = Math.max(1, Math.floor(h));
-      fig.style.height = `${h}px`;
-
-      /* Then bring the row in until it fits the card. A tall row is a wide
-         row, so the roles carrying three or four photos were overrunning the
-         edge and leaving the last one half off the card until you scrolled
-         sideways to find it. Shrinking the height is what makes them all fit
-         at once. Measured rather than calculated: each photo's border adds a
-         couple of pixels the aspect ratio does not know about. */
-      for (let pass = 0; pass < 3; pass += 1) {
-        const slack = fig.scrollWidth - fig.clientWidth;
-        if (slack <= 1 || fig.scrollWidth <= 0) break;
-        h = Math.max(1, Math.floor(h * (fig.clientWidth / fig.scrollWidth)));
-        fig.style.height = `${h}px`;
-      }
-
-      markScroll(fig);
-    });
+  const aspectOf = (img) => {
+    const w = Number(img?.getAttribute('width'));
+    const h = Number(img?.getAttribute('height'));
+    return w > 0 && h > 0 ? w / h : 1;
   };
+
+  /* Each photo becomes a real button so it is reachable by keyboard and
+     announced as something you can act on, and the button carries the
+     photo's shape. Done here rather than in the markup so a photo added
+     later needs no extra wrapper. */
+  $$('.jcard .jc-media img').forEach((img) => {
+    let btn = img.parentElement;
+    if (!btn.classList.contains('jc-shot')) {
+      btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'jc-shot';
+      btn.setAttribute('aria-label', `Open photo: ${img.alt || 'journey photo'}`);
+      img.replaceWith(btn);
+      btn.appendChild(img);
+    }
+    btn.style.aspectRatio = String(aspectOf(img));
+  });
 
   /* The edge fade only earns its keep when there is something past the edge,
      and which edge depends on where the strip is scrolled to. */
@@ -1379,18 +1341,62 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     fig.classList.toggle('at-middle', !atEnd && !atStart);
   };
 
-  /* Each photo becomes a real button so it is reachable by keyboard and
-     announced as something you can act on. Done here rather than in the
-     markup so a photo added later needs no extra wrapper. */
-  $$('.jcard .jc-media img').forEach((img) => {
-    if (img.parentElement.classList.contains('jc-shot')) return;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'jc-shot';
-    btn.setAttribute('aria-label', `Open photo: ${img.alt || 'journey photo'}`);
-    img.replaceWith(btn);
-    btn.appendChild(img);
-  });
+  const setHeight = (fig, h) => {
+    const v = `${h}px`;
+    if (fig.style.height !== v) fig.style.height = v;
+    /* Tell each image how wide it is actually drawn, so the browser picks
+       the file for that size. The old fixed hints assumed thumbnails and
+       would have served the small file to a photo drawn three times larger. */
+    $$('.jc-shot img', fig).forEach((img) => {
+      const s = `${Math.ceil(h * aspectOf(img))}px`;
+      if (img.getAttribute('sizes') !== s) img.setAttribute('sizes', s);
+    });
+  };
+
+  /* Safari snaps a strip to one of its photos while the page is still
+     laying out, before the photos have their final size, and could leave a
+     role opening on its last photo. So the first fit starts every strip at
+     its first photo. Later fits leave the position alone: a strip resized
+     while you are looking at it keeps the photo you were looking at. */
+  let first = true;
+
+  // Re-queried each pass rather than captured once, so adding a photo to a
+  // card later needs no change here.
+  const fit = () => {
+    const reset = first;
+    first = false;
+    $$('.jcard .jc-media').forEach((fig) => {
+      const card = fig.closest('.jcard');
+      const imgs = $$('.jc-shot img', fig);
+      if (!card || !imgs.length) return;
+
+      /* Only the stacked cards have a fixed height to fill. Laid out as a
+         plain list (print), a card is as tall as its content, photos
+         included, so measuring what is left would feed back on itself. */
+      if (getComputedStyle(card).position !== 'absolute') {
+        setHeight(fig, 180);
+        markScroll(fig);
+        return;
+      }
+
+      const text = contentHeight(card, fig);
+      const gap = parseFloat(getComputedStyle(fig).marginTop) || 0;
+      // The 4px is slack against sub pixel rounding in the text measurement:
+      // without it a card can end up one or two pixels into a scrollbar.
+      const spare = card.clientHeight - text - gap - 4;
+
+      /* No single photo wider than the strip, so any one of them can be seen
+         whole by scrolling to it. On a phone this is usually what limits the
+         height; on a desktop it rarely comes into it. */
+      const room = fig.clientWidth;
+      const widest = Math.max(...imgs.map(aspectOf));
+      const cap = room > 0 ? Math.min(MAX_H, room / widest) : MAX_H;
+
+      setHeight(fig, Math.floor(Math.max(FLOOR, Math.min(cap, spare))));
+      if (reset) fig.scrollLeft = 0;
+      markScroll(fig);
+    });
+  };
 
   $$('.jcard .jc-media').forEach((fig) => {
     fig.addEventListener('scroll', () => markScroll(fig), { passive: true });
@@ -1428,11 +1434,26 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     readout.style.height = 'auto';
   };
 
+  // One pass per frame, however many things report a change in it.
+  let queued = 0;
+  const queue = () => {
+    if (!queued) queued = requestAnimationFrame(() => { queued = 0; sizeTile(); });
+  };
+
   sizeTile();
   document.addEventListener('journey:active', sizeTile);
-  addEventListener('resize', sizeTile, { passive: true });
+  addEventListener('resize', queue, { passive: true });
+  window.visualViewport?.addEventListener('resize', queue, { passive: true });
+  /* The card area follows the viewport height (dvh on phones), so this is
+     what catches a toolbar sliding in or out, a rotation, or the column
+     changing width, whether or not the window reports a resize. */
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(queue);
+    if (readout) ro.observe(readout);
+    if (cardsEl) ro.observe(cardsEl);
+  }
   // Fonts landing late changes how tall the text is, which changes the room.
-  if (document.fonts?.ready) document.fonts.ready.then(sizeTile).catch(() => {});
+  if (document.fonts?.ready) document.fonts.ready.then(queue).catch(() => {});
 })();
 
 /* ==========================================================================
