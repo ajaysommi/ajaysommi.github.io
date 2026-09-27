@@ -4445,6 +4445,57 @@
     .nav-pocket { height: 36px; }
   }
 
+  /* ---------- The Path, still --------------------------------------------
+
+     For visitors who have asked their device to reduce motion, script.js
+     puts .is-still on the section. The pinned, scroll driven board goes, and
+     so does the progress meter that tracked it; every role is laid out at
+     once as its own glass tile, text then photos, read top to bottom like
+     the rest of the page. Nobody else sees any of this. */
+  .journey-section.is-still .journey-scope { height: auto; }
+  .journey-section.is-still .journey-sticky {
+    position: static;
+    display: block;
+    height: auto;
+  }
+  .journey-section.is-still .journey-stage,
+  .journey-section.is-still .readout-meter { display: none; }
+
+  /* The column that held the active role is no longer a tile of its own:
+     each role is one now. */
+  .journey-section.is-still .journey-readout {
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .journey-section.is-still .journey-readout::before { content: none; }
+
+  /* minmax(0, 1fr), not 1fr: a plain 1fr column grows to its widest
+     content, and a row of photos laid end to end is very wide, so every
+     tile ran off the right of the page. */
+  html.js .journey-section.is-still .journey-cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    height: auto;
+  }
+  html.js .journey-section.is-still .jcard {
+    position: relative;
+    display: block;
+    padding: 18px 20px;
+    overflow: visible;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: none;
+  }
+  @media (max-width: 719px) {
+    html.js .journey-section.is-still .jcard { padding: 15px; }
+  }
+
   /* ---------- Reduced motion ---------------------------------------------
 
      The material stays; only the movement goes. No springing on press, and
