@@ -3548,7 +3548,8 @@
   .glass,
   .dock-fab,
   .mobile-sheet,
-  .palette {
+  .palette,
+  .loader-card {
     border-color: transparent;
     background: linear-gradient(180deg, var(--lg-fill-top), var(--lg-fill-bot));
     backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat)) brightness(var(--lg-bright));
@@ -3577,7 +3578,8 @@
   .glass::before,
   .dock-fab::before,
   .mobile-sheet::before,
-  .palette::before {
+  .palette::before,
+  .loader-card::before {
     content: "";
     position: absolute;
     /* 0, not -1px over the border: cards, the hero and the palette clip
@@ -3602,7 +3604,8 @@
   .glass::after,
   .dock-fab::after,
   .mobile-sheet::after,
-  .palette::after {
+  .palette::after,
+  .loader-card::after {
     content: "";
     position: absolute;
     inset: 0;

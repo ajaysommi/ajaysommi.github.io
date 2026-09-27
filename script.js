@@ -771,11 +771,14 @@ syncLogoTheme();
 
   const SPEED = 42;          // px per second of idle drift
   const STEP_MS = 16;        // drift tick, roughly a frame: 20fps read as steppy
+  const RUNWAY = 12000;      // px a flick can coast either way before it needs wrapping
   let setW = 0;              // width of one full set, including the trailing gap
+  let midSet = 1;            // which copy the strip is kept centred on
   let paused = false;        // explicit pause button
   let idle = true;           // nobody is touching it
   let dragging = false;
   let visible = true;        // section is on/near screen
+  let settling = false;      // a person just scrolled it and it may still be coasting
   let driftTimer = 0;
 
   /* ---------- Idle drift ----------
@@ -800,6 +803,16 @@ syncLogoTheme();
   let carry = 0;
   let lastT = 0;
 
+  /* Every move this script makes goes through here, and the position it
+     leaves is remembered. The scroll handler compares against it: a scroll
+     that lands somewhere else was made by a person, a finger or a trackpad,
+     possibly still coasting on its momentum. */
+  let expected = 0;
+  const setScroll = (x) => {
+    viewport.scrollLeft = x;
+    expected = viewport.scrollLeft;
+  };
+
   const tick = () => {
     const now = performance.now();
     /* Cap the delta so a stall does not teleport the strip. The cap is loose
@@ -814,13 +827,13 @@ syncLogoTheme();
     const step = Math.floor(carry);
     if (step >= 1) {
       carry -= step;
-      viewport.scrollLeft += step;
+      setScroll(viewport.scrollLeft + step);
     }
     wrap();
   };
 
   const syncDrift = () => {
-    const should = idle && !paused && !dragging && visible &&
+    const should = idle && !paused && !dragging && !settling && visible &&
                    document.visibilityState === 'visible' && !prefersReduced();
     if (should && !driftTimer) {
       lastT = performance.now();
@@ -837,9 +850,21 @@ syncLogoTheme();
      scrolling by hand eventually hit the end of the track and stopped dead.
      Now the strip is a real infinite scroller: scrollLeft is wrapped by one
      set width, which is invisible because the content repeats exactly. */
+  /* Every logo loads and decodes up front. They were lazy and decoded
+     asynchronously, which is right for most images but wrong here: a fast
+     flick brought copies into view before they had loaded, or before they
+     had decoded, and they showed blank until they caught up. Seven small
+     files, shared by every copy, so this costs next to nothing. */
+  const prepImages = (node) => node.querySelectorAll('img').forEach((img) => {
+    img.loading = 'eager';
+    img.decoding = 'sync';
+  });
+  originals.forEach(prepImages);
+
   const addSet = () => {
     originals.forEach((node) => {
       const copy = node.cloneNode(true);
+      prepImages(copy);
       copy.setAttribute('aria-hidden', 'true');
       copy.setAttribute('tabindex', '-1');
       copy.dataset.clone = 'true';
@@ -874,12 +899,17 @@ syncLogoTheme();
     setW = measure();
     if (setW <= 0) return;
 
-    const needed = Math.max(3, Math.ceil((w * 2) / setW) + 2);
+    /* Enough copies either side of the middle for a hard flick to coast to
+       a stop without reaching an end, so the strip never has to be wrapped
+       while a finger's momentum is still moving it. */
+    const side = Math.max(1, Math.ceil(RUNWAY / setW));
+    const needed = Math.max(3, Math.ceil((w * 2) / setW) + 2, side * 2 + 1);
     while (track.children.length / originals.length < needed) addSet();
+    midSet = Math.floor(track.children.length / originals.length / 2);
 
     if (!parked) {
       // Park in the middle copy so there is room to scroll both directions.
-      viewport.scrollLeft = setW;
+      setScroll(setW * midSet);
       parked = true;
     } else {
       // Already running: keep the reader's place, just pull it back in range.
@@ -904,12 +934,43 @@ syncLogoTheme();
   });
   if (document.fonts?.ready) document.fonts.ready.then(() => build(true)).catch(() => {});
 
-  /* Keep scrollLeft inside one set width of the middle copy. Because every
-     set is identical, the jump is invisible. */
+  /* Keep scrollLeft within half a set of the middle copy, stepping back by
+     whole sets. Because every set is identical, the jump is invisible, as
+     long as it is made while script is the one moving the strip: the drift,
+     a mouse drag, the wheel, the arrow buttons. */
   const wrap = () => {
     if (setW <= 0) return;
-    if (viewport.scrollLeft >= setW * 2) viewport.scrollLeft -= setW;
-    else if (viewport.scrollLeft < setW * 0.5) viewport.scrollLeft += setW;
+    const k = Math.round((viewport.scrollLeft - setW * midSet) / setW);
+    if (k !== 0) setScroll(viewport.scrollLeft - k * setW);
+  };
+
+  /* While a person is scrolling it, and while it coasts afterwards, script
+     keeps its hands off the position: no wrap and no drift. On a phone the
+     browser owns the scroll position during a flick, and a jump or a drift
+     step written from script mid flick stopped the flick dead and landed on
+     a stretch of strip it had not drawn yet, so the logos went blank for a
+     beat, often just as the flick came to rest and the drift took over.
+
+     Once the strip has been still for a quarter second it is safe again:
+     the wrap back to the middle copy is made then, where it is as invisible
+     as the drift's own, and the drift is allowed to resume. It still
+     resumes on its usual timer, 2.4s after the finger lifts; it only waits
+     longer if a hard flick is still coasting at that point. If a flick is
+     about to run out of strip, it wraps on the spot rather than stop at the
+     end. */
+  let touching = false;
+  let restTimer = 0;
+  const nearEdge = () => {
+    const max = viewport.scrollWidth - viewport.clientWidth;
+    return viewport.scrollLeft < setW * 0.5 || viewport.scrollLeft > max - setW * 0.5;
+  };
+  const settleSoon = () => {
+    clearTimeout(restTimer);
+    restTimer = setTimeout(() => {
+      settling = false;
+      if (!touching && !dragging) wrap();
+      syncDrift();
+    }, 250);
   };
 
   const goBusy = () => { idle = false; syncDrift(); };
@@ -931,9 +992,18 @@ syncLogoTheme();
   viewport.addEventListener('focusin', goBusy);
   viewport.addEventListener('focusout', (e) => { if (!viewport.contains(e.relatedTarget)) bumpIdle(600); });
 
-  viewport.addEventListener('scroll', () => { wrap(); }, { passive: true });
-  viewport.addEventListener('touchstart', () => bumpIdle(2400), { passive: true });
-  viewport.addEventListener('touchend', () => bumpIdle(2400), { passive: true });
+  viewport.addEventListener('scroll', () => {
+    if (setW <= 0 || Math.abs(viewport.scrollLeft - expected) <= 1) return;  // our own move
+    expected = viewport.scrollLeft;
+    // A person moved it, and it may still be coasting.
+    if (!settling) { settling = true; syncDrift(); }
+    if (nearEdge()) wrap();
+    settleSoon();
+  }, { passive: true });
+  viewport.addEventListener('touchstart', () => { touching = true; bumpIdle(2400); }, { passive: true });
+  const touchEnd = () => { touching = false; bumpIdle(2400); settleSoon(); };
+  viewport.addEventListener('touchend', touchEnd, { passive: true });
+  viewport.addEventListener('touchcancel', touchEnd, { passive: true });
 
   /* ---------- Pointer drag (desktop; touch uses native scrolling) ---------- */
   let startX = 0, startScroll = 0, moved = 0, lastX = 0, velocity = 0, glideRaf = 0;
@@ -972,7 +1042,7 @@ syncLogoTheme();
     moved = Math.abs(dx);
     velocity = e.clientX - lastX;
     lastX = e.clientX;
-    viewport.scrollLeft = startScroll - dx;
+    setScroll(startScroll - dx);
     wrap();
     // Re-base so wrapping mid-drag does not yank the strip.
     startScroll = viewport.scrollLeft + dx;
@@ -989,7 +1059,7 @@ syncLogoTheme();
     let v = velocity * 1.4;
     const glide = () => {
       if (Math.abs(v) < 0.4) { bumpIdle(400); return; }
-      viewport.scrollLeft -= v;
+      setScroll(viewport.scrollLeft - v);
       wrap();
       v *= 0.94;
       glideRaf = requestAnimationFrame(glide);
@@ -1016,7 +1086,7 @@ syncLogoTheme();
     const step = (now) => {
       const t = dur ? clamp((now - start) / dur, 0, 1) : 1;
       const eased = 1 - Math.pow(1 - t, 3);
-      viewport.scrollLeft = from + dist * eased;
+      setScroll(from + dist * eased);
       wrap();
       if (t < 1) glideRaf = requestAnimationFrame(step);
       else bumpIdle(1600);
@@ -1047,7 +1117,7 @@ syncLogoTheme();
     if (coarsePointer.matches) return;
     if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
     e.preventDefault();
-    viewport.scrollLeft += e.deltaY;
+    setScroll(viewport.scrollLeft + e.deltaY);
     wrap();
     bumpIdle();
   }, { passive: false });
@@ -1867,7 +1937,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
      single place to say the whole environment should sit a little further
      back, without touching seventy numbers and losing the balance between
      them. One number to turn, which is what it is for. */
-  const DIM = 0.60;
+  const DIM = 0.53;
 
   const mixed = new Float64Array(5 * 7);
   const last = { key: '', theme: '' };
