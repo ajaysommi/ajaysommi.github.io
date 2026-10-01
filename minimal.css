@@ -1,0 +1,1089 @@
+/* ==========================================================================
+   MINIMAL
+   Design experiment. A complete visual overhaul that leaves every feature,
+   behaviour and script exactly as it is: the same bar, dock, pocket,
+   palette, terminal, carousel, Path, filters and viewer, wearing a different
+   material.
+
+   Loaded after style.css as its own cascade layer. A layer that comes later
+   wins over every earlier one whatever the selector, so nothing here needs
+   specificity games or !important, and the experiment is this one file: drop
+   the link and the site is back as it was.
+
+   The idea, in order of how much it matters:
+
+   1. Less. No glow, no blur, no gradients, no shadows, no texture. Flat
+      planes of colour on a paper ground, separated by hairlines and space.
+   2. One voice. A single typeface, Geist, for everything, with its mono for
+      the small labels that used to be scattered across three families.
+   3. A small vocabulary of flat shapes, circle, half circle, quarter circle,
+      square and triangle, in one warm accent and one cool one. They are the
+      design's signature: each section is marked by its own shape, and the
+      hero has a small composition of them. Used sparingly, they carry the
+      personality the space theme used to.
+   ========================================================================== */
+
+@layer minimal {
+
+  /* ---------- Tokens ------------------------------------------------------ */
+
+  :root {
+    --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: var(--font-sans);
+    --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --font-serif: var(--font-sans);
+
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 18px;
+    --r-xl: 22px;
+  }
+
+  /* Paper. Warm off white, near black ink, and the two shape colours. */
+  [data-theme="daylight"] {
+    --bg: #f2f0eb;
+    --bg-2: #ebe8e1;
+    --ink: #141414;
+    --ink-2: #47443f;
+    --ink-3: #87837b;
+
+    --surface: #faf9f6;
+    --surface-solid: #faf9f6;
+    --surface-hi: #ffffff;
+    --stroke: rgba(20, 20, 20, .11);
+    --stroke-hi: rgba(20, 20, 20, .26);
+
+    --accent: #ff5a1f;
+    --accent-2: #ff5a1f;
+    --accent-ink: #141414;
+    --accent-soft: rgba(255, 90, 31, .14);
+
+    --m-blue: #2f4bff;
+    --m-fill: #e6e2d9;
+    --m-fill-2: #dcd7cc;
+    --m-field: #e7e3da;
+    --m-line: rgba(20, 20, 20, .1);
+    --m-mark: rgba(20, 20, 20, .3);
+    --m-dot: rgba(20, 20, 20, .2);
+
+    --glow: none;
+    --shadow: none;
+    --shadow-lg: none;
+    --glyphs: none;
+    --veil: transparent;
+  }
+
+  /* Ink. The same page with the lights down: charcoal, not black, so the
+     shapes and the type keep their weight. */
+  [data-theme="midnight"] {
+    --bg: #121212;
+    --bg-2: #171717;
+    --ink: #edebe6;
+    --ink-2: #b2afa8;
+    --ink-3: #7c7973;
+
+    --surface: #191919;
+    --surface-solid: #191919;
+    --surface-hi: #1f1f1f;
+    --stroke: rgba(237, 235, 230, .11);
+    --stroke-hi: rgba(237, 235, 230, .25);
+
+    --accent: #ff6b3d;
+    --accent-2: #ff6b3d;
+    --accent-ink: #121212;
+    --accent-soft: rgba(255, 107, 61, .16);
+
+    --m-blue: #5a72ff;
+    --m-fill: #222221;
+    --m-fill-2: #2b2b29;
+    --m-field: #1d1d1c;
+    --m-line: rgba(237, 235, 230, .12);
+    --m-mark: rgba(237, 235, 230, .34);
+    --m-dot: rgba(237, 235, 230, .2);
+
+    --glow: none;
+    --shadow: none;
+    --shadow-lg: none;
+    --glyphs: none;
+    --veil: transparent;
+  }
+
+  /* Terminal. Still the mono, green on black variant, just as flat. */
+  [data-theme="terminal"] {
+    --bg: #0b0d0b;
+    --bg-2: #0f120f;
+    --ink: #cdf5d6;
+    --ink-2: #8fc79e;
+    --ink-3: #5b8a67;
+
+    --surface: #101410;
+    --surface-solid: #101410;
+    --surface-hi: #141914;
+    --stroke: rgba(120, 255, 160, .13);
+    --stroke-hi: rgba(120, 255, 160, .3);
+
+    --accent: #3dff8f;
+    --accent-2: #3dff8f;
+    --accent-ink: #06140a;
+    --accent-soft: rgba(61, 255, 143, .14);
+
+    --m-blue: #1d8a4c;
+    --m-fill: #151b16;
+    --m-fill-2: #1b231c;
+    --m-field: #111611;
+    --m-line: rgba(120, 255, 160, .13);
+    --m-mark: rgba(120, 255, 160, .34);
+    --m-dot: rgba(120, 255, 160, .2);
+
+    --glow: none;
+    --shadow: none;
+    --shadow-lg: none;
+    --glyphs: none;
+    --veil: transparent;
+  }
+
+  /* ---------- Base -------------------------------------------------------- */
+
+  body {
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -.025em;
+  }
+  h1 { font-size: clamp(30px, 4.4vw, 48px); line-height: 1.06; }
+  h2 { font-size: clamp(24px, 3vw, 34px); line-height: 1.1; }
+  h3 { font-size: clamp(17px, 1.6vw, 19px); letter-spacing: -.015em; }
+
+  [data-theme="terminal"] h1,
+  [data-theme="terminal"] h2,
+  [data-theme="terminal"] h3 { font-family: var(--font-mono); letter-spacing: -.03em; }
+
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  kbd {
+    border: 0;
+    border-radius: 6px;
+    background: var(--m-fill);
+    box-shadow: none;
+    color: var(--ink-2);
+    font-family: var(--font-mono);
+  }
+
+  .skip-link {
+    border: 0;
+    background: var(--ink);
+    color: var(--bg);
+    box-shadow: none;
+  }
+
+  /* ---------- The ground ---------------------------------------------------
+
+     The ambient light field and the glyph texture go. In their place, a
+     field of flat abstract shapes fixed behind the whole page, in four
+     depths: a large ring and a quarter disc far back, a big disc with an
+     orbit round it in the middle, a patch of dots, and a few small marks up
+     front (a dot, a square, a plus, a triangle). They are low contrast, so
+     they never compete with the text, and they stay put while the page
+     scrolls over them.
+
+     minimal.js writes --mx and --my (where the cursor is, -1 to 1, eased)
+     and --sy (how far down the page you are, -1 to 1) onto .bg, and each
+     depth shifts by its own amount: the far ones barely, the near ones
+     most, which is what makes the field read as layered. Nothing here is
+     animated by CSS, so with reduced motion it simply stands still.
+
+     The same rules cover the resume page, whose ground has older children:
+     its first two take the middle and front layers. */
+  .bg {
+    --mx: 0;
+    --my: 0;
+    --sy: 0;
+    background-color: var(--bg);
+    background-image: none;
+  }
+  .bg .blob { display: none; }
+
+  .bg::before,
+  .bg::after,
+  .amb-a,
+  .amb-b,
+  .bg .b1,
+  .bg .b2,
+  .grid-veil {
+    position: absolute;
+    display: block;
+    pointer-events: none;
+    mix-blend-mode: normal;
+    animation: none;
+    transform: none;
+    opacity: 1;
+    filter: none;
+  }
+  .bg::before,
+  .bg::after { content: ""; }
+
+  /* Far: the ring, and the quarter disc. */
+  .bg::before {
+    top: -22vmax;
+    right: -18vmax;
+    width: 58vmax;
+    aspect-ratio: 1;
+    border: 1px solid var(--m-line);
+    border-radius: 50%;
+    translate: calc(var(--mx) * -6px) calc(var(--my) * -6px + var(--sy) * -10px);
+  }
+  .bg::after {
+    left: -14vmax;
+    bottom: -14vmax;
+    width: 34vmax;
+    aspect-ratio: 1;
+    border-radius: 0 100% 0 0;
+    background: var(--m-field);
+    translate: calc(var(--mx) * -8px) calc(var(--my) * -8px + var(--sy) * -12px);
+  }
+
+  /* Middle: a big disc off the right edge, an orbit round it, and a
+     second, smaller ring low on the left. */
+  .amb-a,
+  .bg .b2 {
+    inset: -6%;
+    background:
+      radial-gradient(circle 23vmax at 103% 60%, var(--m-field) calc(100% - 1px), transparent 100%),
+      radial-gradient(circle 31vmax at 103% 60%, transparent calc(100% - 1.5px), var(--m-line) calc(100% - 1px), var(--m-line) 100%, transparent calc(100% + .5px)),
+      radial-gradient(circle 9vmax at 14% 92%, transparent calc(100% - 1.5px), var(--m-line) calc(100% - 1px), var(--m-line) 100%, transparent calc(100% + .5px));
+    translate: calc(var(--mx) * -14px) calc(var(--my) * -14px + var(--sy) * -22px);
+  }
+
+  /* Front: four small marks, each in its own sized box. */
+  .amb-b,
+  .bg .b1 {
+    inset: -6%;
+    background:
+      radial-gradient(circle 7px, var(--accent) calc(100% - .8px), transparent 100%),
+      linear-gradient(var(--m-blue), var(--m-blue)),
+      linear-gradient(var(--m-mark), var(--m-mark)),
+      linear-gradient(var(--m-mark), var(--m-mark)),
+      linear-gradient(to top right, var(--m-mark) calc(50% - .5px), transparent calc(50% + .5px));
+    background-size: 14px 14px, 12px 12px, 18px 2px, 2px 18px, 22px 22px;
+    /* The plus is two bars placed by length, not percentage: a percentage
+       lines up a different point of each bar, and they would not cross. */
+    background-position:
+      6% 38%,
+      93% 84%,
+      91vw calc(25vh + 8px),
+      calc(91vw + 8px) 25vh,
+      4% 93%;
+    background-repeat: no-repeat;
+    translate: calc(var(--mx) * -26px) calc(var(--my) * -26px + var(--sy) * -36px);
+  }
+
+  /* The dots: a small matrix low on the left. */
+  .grid-veil {
+    inset: auto;
+    left: 3.5vw;
+    bottom: 16vh;
+    width: 128px;
+    height: 92px;
+    background-color: transparent;
+    background-image: radial-gradient(circle 1.6px, var(--m-dot) calc(100% - .6px), transparent 100%);
+    background-size: 18px 18px;
+    translate: calc(var(--mx) * -18px) calc(var(--my) * -18px + var(--sy) * -28px);
+  }
+
+  /* A phone has no margins for the small marks to sit in: wherever they go
+     they land on text. It keeps the big, quiet shapes and the hero's own
+     tiles, and drops the marks and the dots. */
+  @media (max-width: 719px) {
+    .amb-b,
+    .bg .b1,
+    .grid-veil { display: none; }
+  }
+
+  /* ---------- Section heads ------------------------------------------------
+
+     Solid ink, no gradient sweep and no underline. Each section is marked
+     instead by its own small flat shape set before the title, so the page
+     reads as a sequence: square, circle, half circle, triangle, quarter,
+     ring, diamond. */
+  .section-head { margin-bottom: 20px; }
+  .section-head h2 {
+    display: flex;
+    align-items: center;
+    gap: .42em;
+    background: none;
+    color: var(--ink);
+    -webkit-text-fill-color: currentColor;
+  }
+  .section-head h2::after { content: none; }
+  .section-head h2::before {
+    content: "";
+    flex: 0 0 auto;
+    width: .5em;
+    height: .5em;
+    background: var(--accent);
+  }
+  #logos .section-head h2::before { background: var(--m-blue); }
+  #experience .section-head h2::before { border-radius: 50%; }
+  #education .section-head h2::before {
+    height: .25em;
+    border-radius: .25em .25em 0 0;
+    background: var(--m-blue);
+  }
+  #projects .section-head h2::before {
+    clip-path: polygon(50% 4%, 100% 96%, 0 96%);
+  }
+  #skills .section-head h2::before {
+    border-radius: 0 100% 0 0;
+    background: var(--m-blue);
+  }
+  #recs .section-head h2::before {
+    box-sizing: border-box;
+    border: .1em solid var(--accent);
+    border-radius: 50%;
+    background: none;
+  }
+  #contact .section-head h2::before {
+    width: .4em;
+    height: .4em;
+    margin-inline: .05em;
+    transform: rotate(45deg);
+    background: var(--m-blue);
+  }
+
+  .section-lede {
+    max-width: 58ch;
+    margin: -6px 0 22px;
+    color: var(--ink-2);
+    font-size: 1rem;
+  }
+
+  /* ---------- Tiles: flat ----------------------------------------------- */
+
+  .glass,
+  .dock-fab,
+  .mobile-sheet,
+  .palette,
+  .loader-card {
+    border: 1px solid var(--stroke);
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+  .glass::before,
+  .glass::after,
+  .dock-fab::before,
+  .dock-fab::after,
+  .mobile-sheet::before,
+  .mobile-sheet::after,
+  .palette::before,
+  .palette::after,
+  .loader-card::before,
+  .loader-card::after { content: none; }
+
+  /* ---------- Controls: flat pills --------------------------------------- */
+
+  .btn,
+  .filter-chip,
+  .pills button,
+  .pills span,
+  .contact a,
+  .card-repo,
+  .card-tags span,
+  .jc-tags span,
+  .row-tags span,
+  .chip,
+  .chip-clear,
+  .carousel-ctrl .icon-btn,
+  .sheet-cta {
+    border: 1px solid var(--stroke-hi);
+    border-radius: var(--r-pill);
+    background: transparent;
+    box-shadow: none;
+    color: var(--ink);
+  }
+  .btn::after,
+  .pills button::after,
+  .pills span::after,
+  .contact a::after,
+  .card-repo::after,
+  .card-kind::after,
+  .sheet-cta::after,
+  .jc-impact::after { content: none; }
+
+  .btn:hover,
+  .filter-chip:hover,
+  .contact a:hover,
+  .card-repo:hover,
+  .carousel-ctrl .icon-btn:hover,
+  .chip:hover {
+    border-color: var(--ink);
+    background: transparent;
+    color: var(--ink);
+    transform: none;
+  }
+
+  /* The primary action is solid ink, and turns to the accent under the
+     pointer. Nothing else on the page is filled this strongly. */
+  .btn.solid,
+  .contact a.resume-btn,
+  .sheet-cta,
+  .filter-chip.is-active {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .btn.solid:hover,
+  .contact a.resume-btn:hover,
+  .sheet-cta:hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .filter-chip.is-active:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+  .btn.ghost { background: transparent; }
+
+  .btn { font-weight: 500; letter-spacing: -.005em; }
+
+  /* Tags are quieter than buttons: filled, borderless, in mono. */
+  .card-tags span,
+  .jc-tags span,
+  .row-tags span {
+    border-color: transparent;
+    background: var(--m-fill);
+    color: var(--ink-2);
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+  }
+
+  /* ---------- The bar and the dock ----------------------------------------
+
+     A plain bar on the paper with a hairline round it. The pocket that marks
+     where you are is a flat filled pill: same movement, no glass. */
+  header.nav,
+  header.nav.is-stuck,
+  header.nav.lg-bar-pressed {
+    border: 1px solid var(--stroke);
+    background: color-mix(in oklab, var(--bg) 92%, transparent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+  header.nav::before,
+  header.nav::after { content: none; }
+
+  .nav-pocket {
+    background: var(--m-fill);
+    box-shadow: none;
+  }
+
+  .nav-links a { color: var(--ink-2); font-weight: 500; }
+  .nav-links a:hover,
+  .nav-links a.is-current,
+  .nav-links a.is-pocketed { color: var(--ink); }
+
+  header.nav .icon-btn,
+  header.nav a.cta,
+  header.nav .brand-mark,
+  .dock-fab .icon-btn { color: var(--ink); }
+
+  .dock-fab { background: color-mix(in oklab, var(--bg) 92%, transparent); }
+
+  .burger i { background: var(--ink); }
+
+  /* ---------- Rail ---------------------------------------------------- */
+
+  .rail-line { background: var(--stroke); }
+  .rail-fill { background: var(--ink); box-shadow: none; }
+  .rail-dots button,
+  .rail-dots a,
+  .rail-dots span {
+    border-color: var(--stroke-hi);
+    background: transparent;
+    box-shadow: none;
+  }
+  .rail-dots .is-active,
+  .rail-dots .is-active button,
+  .rail-dots .is-active a {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: none;
+  }
+
+  /* ---------- Hero ---------------------------------------------------------
+
+     No card and no sky. The content sits straight on the paper, with a
+     small composition of flat shape tiles in its own column at the right.
+     The portrait is a circle with a flat disc offset behind it, the one
+     place the accent touches a photo. */
+  .hero-card,
+  [data-theme] .hero-card {
+    --sky-band: 0px;
+    padding: clamp(18px, 3vw, 30px) clamp(4px, 1vw, 10px);
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow: visible;
+  }
+  .hero-sky { display: none; }
+
+  /* These reuse the glass rim's pseudo elements, so everything that rule
+     set (inset 0, a padding, a ring shaped mask) is cleared first, or the
+     shapes are pinned to the top left corner and cut down to outlines. */
+  .hero-card::before,
+  .hero-card::after,
+  .section.quote::before {
+    content: "";
+    position: absolute;
+    inset: auto;
+    z-index: 0;
+    padding: 0;
+    -webkit-mask: none;
+            mask: none;
+    box-shadow: none;
+    opacity: 1;
+    pointer-events: none;
+  }
+  /* The text keeps a column of its own and the shapes get the rest, so
+     nothing is ever set over them. */
+  @media (min-width: 720px) {
+    .hero-card,
+    [data-theme] .hero-card { padding-right: clamp(190px, 27vw, 330px); }
+  }
+  /* The composition: a three by three grid of tiles, each holding one flat
+     shape (quarter disc, circle, half disc, square, triangle) in the
+     accent, the blue, ink or a neutral. Nothing overlaps, so there are no
+     blended colours where shapes cross, and it reads as one deliberate
+     object rather than shapes left lying about. It is one element, every
+     tile a hard edged gradient in its own cell, and it drifts a little
+     with the cursor, a shade less than the field behind it. */
+  .hero-card {
+    --t: clamp(42px, 5.4vw, 70px);
+    --mx: 0;
+    --my: 0;
+  }
+  .hero-card::before {
+    right: clamp(8px, 2.5vw, 34px);
+    top: 50%;
+    width: calc(var(--t) * 3);
+    height: calc(var(--t) * 3);
+    margin-top: calc(var(--t) * -1.5);
+    --c1: var(--accent);
+    --c2: var(--m-blue);
+    --c3: var(--ink);
+    --c4: var(--m-fill-2);
+    background:
+      radial-gradient(circle var(--t) at 100% 100%, var(--c1) calc(100% - .8px), transparent 100%),
+      radial-gradient(circle calc(var(--t) / 2) at 50% 50%, var(--c2) calc(100% - .8px), transparent 100%),
+      linear-gradient(var(--c4), var(--c4)),
+      radial-gradient(circle calc(var(--t) / 2) at 100% 50%, var(--c3) calc(100% - .8px), transparent 100%),
+      radial-gradient(circle var(--t) at 0 0, var(--c4) calc(100% - .8px), transparent 100%),
+      radial-gradient(circle calc(var(--t) / 2) at 50% 50%, var(--c1) calc(100% - .8px), transparent 100%),
+      linear-gradient(var(--c2), var(--c2)),
+      radial-gradient(circle calc(var(--t) / 2) at 50% 0, var(--c1) calc(100% - .8px), transparent 100%),
+      linear-gradient(to top right, var(--c3) calc(50% - .5px), transparent calc(50% + .5px));
+    background-size: var(--t) var(--t);
+    background-repeat: no-repeat;
+    background-position:
+      0 0, var(--t) 0, calc(var(--t) * 2) 0,
+      0 var(--t), var(--t) var(--t), calc(var(--t) * 2) var(--t),
+      0 calc(var(--t) * 2), var(--t) calc(var(--t) * 2), calc(var(--t) * 2) calc(var(--t) * 2);
+    translate: calc(var(--mx) * -9px) calc(var(--my) * -9px);
+  }
+  .hero-card::after { content: none; }
+
+  .hero-figure::before {
+    inset: auto;
+    left: 10px;
+    top: 10px;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--accent);
+    filter: none;
+  }
+  .hero-pic {
+    border-radius: 50%;
+    box-shadow: none;
+    outline: 0;
+  }
+
+  .hero-head h1 { margin-bottom: .5rem; }
+  .hero-role { color: var(--ink-2); font-family: var(--font-mono); }
+  .hero-role .prompt { color: var(--accent); }
+  .caret {
+    width: 2px;
+    background: var(--accent);
+    box-shadow: none;
+  }
+
+  .sub {
+    max-width: 58ch;
+    color: var(--ink-2);
+    font-size: clamp(16px, 1.25vw, 18px);
+    line-height: 1.65;
+  }
+
+  .chip { color: var(--ink); background: transparent; }
+
+  /* ---------- Logos --------------------------------------------------------
+
+     No box: the strip runs between two hairlines, and the logos are set in
+     greyscale, coming back into colour under the pointer. */
+  .logo-marquee {
+    border: 0;
+    border-block: 1px solid var(--stroke);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .logo,
+  [data-theme="daylight"] .logo {
+    opacity: .62;
+    filter: grayscale(1);
+  }
+  .logo-cell:hover .logo,
+  .logo-cell:focus-visible .logo {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .logo-tip {
+    border: 0;
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .marquee-hint { color: var(--ink-3); font-family: var(--font-mono); }
+
+  /* ---------- The Path -----------------------------------------------------
+
+     The circuit board is laid flat and seen from straight above: a single
+     line with a stop for every role, like a transit map. Same scroll, same
+     camera moving from stop to stop, same line drawing itself in as you go;
+     no tilt, no glow, no grid. */
+  .journey-stage,
+  [data-theme] .journey-stage {
+    --pitch: 0deg;
+    --tilt: 0deg;
+    --board-x: 0px;
+    --lift: 16px;
+    /* Where the camera parks the active stop. The old values put it where
+       the tilted board needed it; flat, on a phone, that was just below the
+       strip. These leave it about two fifths of the way down. */
+    --dolly: 260px;
+    perspective: none;
+    border-radius: 0;
+  }
+  @media (max-width: 900px) {
+    .journey-stage,
+    [data-theme] .journey-stage { --dolly: 80px; }
+  }
+  @media (max-width: 719px) {
+    .journey-stage,
+    [data-theme] .journey-stage { --dolly: 62px; }
+  }
+  .board {
+    background: none;
+    border-inline: 0;
+  }
+  .trace-bed {
+    stroke: var(--stroke-hi);
+    stroke-width: 2;
+  }
+  .trace-live {
+    stroke: var(--ink);
+    stroke-width: 2.5;
+    filter: none;
+  }
+  .node-pad,
+  .node[data-state="past"] .node-pad,
+  .node[data-state="active"] .node-pad {
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--stroke-hi);
+    border-radius: 50%;
+    background: var(--bg);
+    box-shadow: none;
+    animation: none;
+  }
+  .node-pad::before,
+  .node-pad::after { content: none; }
+  .node[data-state="past"] .node-pad {
+    border-color: var(--ink);
+    background: var(--ink);
+  }
+  .node[data-state="active"] .node-pad {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 0 5px var(--bg), 0 0 0 6.5px var(--accent);
+  }
+  .node-mast { display: none; }
+
+  /* The label sits beside its stop rather than on a card above it. */
+  .node-card,
+  .node[data-state="active"] .node-card {
+    left: 0;
+    bottom: auto;
+    top: 0;
+    width: max-content;
+    max-width: 200px;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    transform: translate(22px, -50%);
+  }
+  .node-card b {
+    font-family: var(--font-sans);
+    font-size: .86rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .node-card span { font-family: var(--font-mono); letter-spacing: .04em; }
+
+  .board-pulse {
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    background: var(--accent);
+    box-shadow: none;
+  }
+
+  .readout-count { font-family: var(--font-mono); color: var(--ink-3); }
+  .readout-count b { color: var(--ink); }
+  .readout-bar { background: var(--stroke); }
+  .readout-bar i { background: var(--ink); box-shadow: none; }
+
+  .jc-when {
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    letter-spacing: .04em;
+  }
+  .jcard h3 { color: var(--ink); }
+  .jc-org { color: var(--ink-2); }
+  .jc-built { color: var(--ink-2); }
+  .jc-learn span { color: var(--ink-3); font-family: var(--font-mono); }
+
+  .jc-impact {
+    border: 0;
+    border-left: 2px solid var(--accent);
+    border-radius: 0;
+    background: var(--m-fill);
+    box-shadow: none;
+  }
+  .jc-impact b {
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+
+  .jc-shot {
+    border: 0;
+    border-radius: var(--r-md);
+    background: var(--m-fill);
+    box-shadow: none;
+  }
+  .jc-shot::after { content: none; }
+  .jc-shot:hover,
+  .jc-shot:focus-visible {
+    border: 0;
+    box-shadow: 0 0 0 2px var(--ink);
+  }
+
+  /* On phones the role sat in a tile; it is a plain flat tile now. */
+  @media (max-width: 900px) {
+    .journey-readout {
+      border: 1px solid var(--stroke);
+      background: var(--surface);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+    .journey-readout::before { content: none; }
+  }
+  .stage-fade-top { background: linear-gradient(180deg, var(--bg), transparent); opacity: 1; }
+  .stage-fade-bottom { background: linear-gradient(0deg, var(--bg), transparent); opacity: 1; }
+
+  /* ---------- Education --------------------------------------------------- */
+
+  .timeline::before { background: var(--stroke-hi); opacity: 1; width: 1px; }
+  .when-dot {
+    border-color: var(--ink);
+    background: var(--bg);
+  }
+  .row:hover { transform: none; box-shadow: none; border-color: var(--stroke-hi); }
+  .when { color: var(--ink-3); font-family: var(--font-mono); font-weight: 400; letter-spacing: .02em; }
+  .what strong { font-weight: 600; letter-spacing: -.01em; }
+  .what p { color: var(--ink-2); }
+
+  /* ---------- Projects ---------------------------------------------------- */
+
+  .card { padding: 22px; }
+  .card:hover { border-color: var(--stroke-hi); box-shadow: none; transform: none; }
+  .card.is-lit,
+  .row.is-lit { border-color: var(--ink); box-shadow: none; }
+  .card.is-dim,
+  .row.is-dim { filter: none; }
+
+  /* The kind label is a line of mono with a small accent square. */
+  .card-kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    letter-spacing: .06em;
+  }
+  .card-kind::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background: var(--accent);
+  }
+  .card h3 { margin-top: 6px; }
+  .card p { color: var(--ink-2); }
+
+  /* ---------- Quote --------------------------------------------------------
+
+     No tile: one large line of plain type, with a single accent disc above
+     it. The words still light up as it crosses the screen. */
+  .section.quote {
+    position: relative;
+    border: 0;
+    background: none;
+    padding-top: clamp(54px, 7vw, 80px);
+  }
+  .section.quote::before {
+    left: 50%;
+    top: clamp(14px, 2vw, 24px);
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .section.quote::after { content: none; }
+  .section.quote blockquote {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-weight: 500;
+    font-size: clamp(22px, 3.2vw, 36px);
+    line-height: 1.25;
+    letter-spacing: -.025em;
+  }
+  .quote-words span { color: color-mix(in oklab, var(--ink) 24%, transparent); }
+  .quote-words span.lit { color: var(--ink); text-shadow: none; }
+
+  /* ---------- Skills ------------------------------------------------------ */
+
+  #skills h3 {
+    margin: 28px 0 12px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: .76rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+  }
+  .pills,
+  .pills.glass {
+    padding: 0;
+    border: 0;
+    background: none;
+    gap: 8px;
+  }
+  .pills button,
+  .pills span {
+    border-color: transparent;
+    background: var(--m-fill);
+    color: var(--ink);
+    font-weight: 450;
+  }
+  .pills button:hover {
+    border-color: transparent;
+    background: var(--m-fill-2);
+    color: var(--ink);
+  }
+  .pills button.is-active,
+  .pills button.is-active:hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  /* ---------- Recommendations ---------------------------------------------- */
+
+  .rec-avatar {
+    border: 0;
+    background: var(--ink);
+    box-shadow: none;
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+  .rec-bubble {
+    border: 0;
+    background: var(--m-fill);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .rec-bubble::before,
+  .rec:nth-child(even) .rec-bubble::before {
+    background: var(--m-fill);
+    box-shadow: none;
+  }
+  .thread blockquote { color: var(--ink); }
+  .thread cite { color: var(--ink); }
+  .thread cite span { color: var(--ink-3); }
+
+  /* ---------- Contact ----------------------------------------------------- */
+
+  .contact,
+  .contact.glass {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .contact a { font-weight: 500; }
+
+  /* Links in running text are ink, underlined in the accent. Orange text on
+     paper does not have the contrast to be read comfortably at body size. */
+  .note a,
+  .empty-state a,
+  .lb-cap a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+  .note { color: var(--ink-3); }
+  .linkish { border-color: var(--stroke-hi); color: var(--ink); }
+
+  /* ---------- Footer ---------------------------------------------------- */
+
+  .footer { color: var(--ink-3); }
+
+  /* ---------- Loader -------------------------------------------------------
+
+     The paper, a single accent disc breathing, and a line that fills. */
+  .page-loader { background: var(--bg); }
+  .loader-stars { display: none; }
+  .loader-card { border: 0; background: none; }
+  .loader-orb {
+    width: 26px;
+    height: 26px;
+    background: var(--accent);
+    box-shadow: none;
+  }
+  .loader-text { color: var(--ink-3); font-family: var(--font-mono); }
+  .loader-bar { background: var(--stroke); }
+  .loader-bar i { background: var(--ink); }
+
+  /* ---------- Menus and overlays ---------------------------------------- */
+
+  .sheet-scrim {
+    background: color-mix(in oklab, var(--bg) 60%, transparent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .mobile-sheet a { color: var(--ink); }
+  .mobile-sheet a.sheet-cta,
+  .mobile-sheet a.sheet-cta span { color: var(--bg); }
+  .mobile-sheet a.sheet-cta:hover,
+  .mobile-sheet a.sheet-cta:hover span { color: var(--accent-ink); }
+  .mobile-sheet a span { color: var(--ink-3); font-family: var(--font-mono); }
+  .sheet-grab { background: var(--stroke-hi); }
+
+  .palette {
+    border: 1px solid var(--stroke-hi);
+    background: var(--surface);
+  }
+  .palette-list li.is-selected button,
+  .palette-list button:hover { background: var(--m-fill); }
+  .palette::backdrop {
+    background: color-mix(in oklab, var(--bg) 55%, rgba(0, 0, 0, .25));
+    backdrop-filter: none;
+  }
+
+  .toast {
+    border: 0;
+    background: var(--ink);
+    color: var(--bg);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* The viewer keeps its dark frame so photos sit on black; the buttons are
+     flat ink circles. */
+  .lightbox {
+    border: 0;
+    background: #0e0e0e;
+    box-shadow: none;
+  }
+  .lightbox::backdrop {
+    background: rgba(0, 0, 0, .7);
+    backdrop-filter: none;
+  }
+  .lightbox .lb-btn {
+    border: 0;
+    background: rgba(18, 18, 18, .82);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .lightbox .lb-btn svg { filter: none; }
+  .lb-frame { background: #0e0e0e; }
+  .lb-cap { border-top: 1px solid rgba(255, 255, 255, .1); color: #a9a6a0; }
+
+  /* ---------- Phones -------------------------------------------------------- */
+
+  @media (max-width: 719px) {
+    h1 { font-size: clamp(25px, 7vw, 32px); }
+    .hero-head h1 { font-size: clamp(25px, 7vw, 32px); }
+
+    /* There is no spare column on a phone, so the composition shrinks to
+       one row of three of its tiles and moves into the one empty space the
+       hero has: beside the citizen pill. */
+    .hero-card::before { content: none; }
+    .hero-badges { align-items: center; }
+    .hero-badges::after {
+      content: "";
+      flex: 0 0 auto;
+      width: 90px;
+      height: 30px;
+      margin-left: auto;
+      background:
+        radial-gradient(circle 30px at 100% 100%, var(--accent) calc(100% - .8px), transparent 100%),
+        radial-gradient(circle 15px at 50% 50%, var(--m-blue) calc(100% - .8px), transparent 100%),
+        linear-gradient(to top right, var(--ink) calc(50% - .5px), transparent calc(50% + .5px));
+      background-size: 30px 30px;
+      background-repeat: no-repeat;
+      background-position: 0 0, 30px 0, 60px 0;
+    }
+    .hero-figure::before { left: 6px; top: 6px; }
+
+    .card { padding: 18px; }
+    .btn { min-height: 44px; }
+  }
+}
