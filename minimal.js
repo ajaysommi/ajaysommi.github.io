@@ -11,6 +11,9 @@
      data-scene   the section being read. minimal.css gives each one its own
                   arrangement and the shapes glide and morph between them.
 
+   And once, on arrival: the small marks wait in a cluster at the centre
+   while the loader is up, and burst out to their places as it lifts.
+
    Only the ground's and the hero's own small subtrees restyle when these
    change, never the whole page. The cursor loop stops as soon as it has
    settled, and the scene only changes when the section does. With reduced
@@ -23,6 +26,32 @@
   const hero = document.getElementById('heroCard');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(hover: hover) and (pointer: fine)');
+
+  /* ---- arrival ---------------------------------------------------------- */
+  const burst = [...ground.querySelectorAll('.m-dots, .m-dot, .m-square, .m-plus, .m-tri, .m-bit')];
+  if (!reduce.matches && burst.length) {
+    burst.forEach((el) => el.classList.add('m-burst'));
+    ground.classList.add('m-intro');
+    const go = () => {
+      if (!ground.classList.contains('m-intro')) return;
+      ground.classList.add('m-bursting');
+      ground.classList.remove('m-intro');
+      setTimeout(() => ground.classList.remove('m-bursting'), 1700);
+    };
+    const loader = document.getElementById('pageLoader');
+    if (loader && !loader.classList.contains('is-done')) {
+      // Fires the moment the loader starts to lift, so the burst is seen
+      // through its fade.
+      const mo = new MutationObserver(() => {
+        if (loader.classList.contains('is-done')) { mo.disconnect(); requestAnimationFrame(go); }
+      });
+      mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
+      setTimeout(go, 4600);   // the loader itself gives up at 4s
+    } else {
+      // No loader (the resume page): let the cluster be drawn once, then go.
+      requestAnimationFrame(() => requestAnimationFrame(go));
+    }
+  }
 
   /* ---- cursor --------------------------------------------------------- */
   let tx = 0, ty = 0, x = 0, y = 0, raf = 0;

@@ -197,8 +197,9 @@
      Three things move them, all written by minimal.js:
 
        --fade   0 at the top, 1 once you are past the hero. The whole field
-                fades back to well under half strength, so it sets the mood
-                on arrival and then gets out of the way of the content.
+                fades back to about a sixth of its strength, so it sets
+                the mood on arrival and then gets out of the way of the
+                content.
        scene    data-scene names the section you are reading. Every section
                 has its own arrangement, and moving into one, each shape
                 glides to its new place and changes form on the way: a
@@ -320,7 +321,7 @@
   .m-field {
     position: absolute;
     inset: 0;
-    opacity: calc(1 - var(--fade) * .64);
+    opacity: calc(1 - var(--fade) * .84);
   }
 
   .m-s {
@@ -404,15 +405,59 @@
     clip-path: var(--tri-clip);
   }
 
+  /* Six small bits that exist mostly for the arrival: they burst out of
+     the centre with the marks when the page loads and settle in the far
+     margins, where they stay as part of the field. Same place in every
+     scene. */
+  .m-bit { --d: 9; --r: 0deg; border-radius: 50%; }
+  .m-bit1 { --x: 2.6vw;  --y: 24vh; width: 8px; height: 8px; background: var(--accent); }
+  .m-bit2 { --x: 97.4vw; --y: 33vh; width: 7px; height: 7px; background: var(--m-blue); border-radius: 0; }
+  .m-bit3 { --x: 4.4vw;  --y: 57vh; width: 6px; height: 6px; background: var(--m-mark); }
+  .m-bit4 { --x: 95.6vw; --y: 61vh; --r: 45deg; width: 6px; height: 6px; background: var(--accent); border-radius: 0; }
+  .m-bit5 { --x: 3vw;    --y: 88vh; width: 6px; height: 6px; background: var(--m-blue); }
+  .m-bit6 { --x: 96.8vw; --y: 91vh; width: 5px; height: 5px; background: var(--m-mark); border-radius: 0; }
+
+  /* The arrival. While the loader is up the small marks wait in a tight
+     cluster at the centre of the screen, shrunk and invisible, with no
+     transition, so they jump there unseen. When it lifts, minimal.js swaps
+     m-intro for m-bursting and they fly out to their places on a fast,
+     hard braking curve with a spin, a few milliseconds apart, which reads
+     as one burst. m-bursting comes off once they have landed, and the slow
+     scene glide takes over again. */
+  .bg.m-intro .m-burst {
+    transform: translate(calc(50vw - 50% + var(--bx, 0px)), calc(50vh - 50% + var(--by, 0px))) rotate(-120deg) scale(.15);
+    opacity: 0;
+    transition: none;
+  }
+  .bg.m-bursting .m-burst {
+    transition:
+      transform 1.25s cubic-bezier(.12, .85, .18, 1) var(--bd, 0s),
+      opacity .35s ease-out var(--bd, 0s),
+      border-radius 1.25s ease var(--bd, 0s),
+      clip-path 1.25s ease var(--bd, 0s);
+  }
+  .m-dots   { --bx: -6px;  --by: 4px;  --bd: .02s; }
+  .m-dot    { --bx: -3px;  --by: -2px; --bd: 0s; }
+  .m-square { --bx: 3px;   --by: 2px;  --bd: .03s; }
+  .m-plus   { --bx: 4px;   --by: -4px; --bd: .05s; }
+  .m-tri    { --bx: -4px;  --by: 5px;  --bd: .04s; }
+  .m-bit1   { --bx: -2px;  --by: -5px; --bd: .01s; }
+  .m-bit2   { --bx: 5px;   --by: -1px; --bd: .02s; }
+  .m-bit3   { --bx: -5px;  --by: 1px;  --bd: .06s; }
+  .m-bit4   { --bx: 2px;   --by: 4px;  --bd: .03s; }
+  .m-bit5   { --bx: -1px;  --by: 6px;  --bd: .07s; }
+  .m-bit6   { --bx: 6px;   --by: 5px;  --bd: .05s; }
+
   /* A phone has no margins for the small marks to sit in: wherever they go
      they land on text. It keeps the big, quiet shapes and the hero's own
-     tiles, and drops the marks and the dots. */
+     tiles, and drops the marks, the bits and the dots. */
   @media (max-width: 719px) {
     .m-dots,
     .m-dot,
     .m-square,
     .m-plus,
-    .m-tri { display: none; }
+    .m-tri,
+    .m-bit { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1096,19 +1141,104 @@
 
   /* ---------- Loader -------------------------------------------------------
 
-     The paper, a single accent disc breathing, and a line that fills. */
+     The paper, and in the middle the hero's three by three grid of shape
+     tiles building itself one tile at a time, in a spiral from the centre,
+     each one popping in from nothing with a little overshoot. Under it the
+     name, the role in mono, and a hairline that fills. The old orb, the
+     three status lines and the star field are gone. When the page is
+     ready the whole thing lifts with the loader's own fade, and the field
+     behind bursts out of the centre (see The ground). */
   .page-loader { background: var(--bg); }
-  .loader-stars { display: none; }
-  .loader-card { border: 0; background: none; }
-  .loader-orb {
-    width: 26px;
-    height: 26px;
-    background: var(--accent);
-    box-shadow: none;
+  .loader-stars,
+  .loader-orb,
+  .loader-text,
+  .loader-bar { display: none; }
+  .loader-card {
+    padding: 0;
+    border: 0;
+    background: none;
+    animation: none;
   }
-  .loader-text { color: var(--ink-3); font-family: var(--font-mono); }
-  .loader-bar { background: var(--stroke); }
-  .loader-bar i { background: var(--ink); }
+
+  .m-load {
+    --lt: 22px;
+    display: grid;
+    justify-items: center;
+  }
+  .m-load-grid {
+    display: grid;
+    grid-template-columns: repeat(3, var(--lt));
+    grid-template-rows: repeat(3, var(--lt));
+    margin-bottom: 22px;
+  }
+  .m-load-grid i {
+    display: block;
+    background-repeat: no-repeat;
+    transform: scale(0);
+    animation: m-tile-in .5s cubic-bezier(.34, 1.56, .64, 1) forwards;
+  }
+  .m-load-grid i:nth-child(1) { background-image: radial-gradient(circle var(--lt) at 100% 100%, var(--accent) calc(100% - .6px), transparent 100%); animation-delay: .5s; }
+  .m-load-grid i:nth-child(2) { background-image: radial-gradient(circle calc(var(--lt) / 2) at 50% 50%, var(--m-blue) calc(100% - .6px), transparent 100%); animation-delay: .44s; }
+  .m-load-grid i:nth-child(3) { background-color: var(--m-fill-2); animation-delay: .38s; }
+  .m-load-grid i:nth-child(4) { background-image: radial-gradient(circle calc(var(--lt) / 2) at 100% 50%, var(--ink) calc(100% - .6px), transparent 100%); animation-delay: .56s; }
+  .m-load-grid i:nth-child(5) { background-image: radial-gradient(circle var(--lt) at 0 0, var(--m-fill-2) calc(100% - .6px), transparent 100%); animation-delay: .08s; }
+  .m-load-grid i:nth-child(6) { background-image: radial-gradient(circle calc(var(--lt) / 2) at 50% 50%, var(--accent) calc(100% - .6px), transparent 100%); animation-delay: .14s; }
+  .m-load-grid i:nth-child(7) { background-color: var(--m-blue); animation-delay: .62s; }
+  .m-load-grid i:nth-child(8) { background-image: radial-gradient(circle calc(var(--lt) / 2) at 50% 0, var(--accent) calc(100% - .6px), transparent 100%); animation-delay: .26s; }
+  .m-load-grid i:nth-child(9) { background-image: linear-gradient(to top right, var(--ink) calc(50% - .5px), transparent calc(50% + .5px)); animation-delay: .2s; }
+
+  .m-load-name {
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -.015em;
+    opacity: 0;
+    animation: m-fade-up .5s var(--ease) .3s forwards;
+  }
+  .m-load-role {
+    margin-top: 3px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: m-fade-up .5s var(--ease) .4s forwards;
+  }
+  .m-load-line {
+    position: relative;
+    width: 96px;
+    height: 2px;
+    margin-top: 18px;
+    overflow: hidden;
+    background: var(--stroke);
+  }
+  .m-load-line i {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: m-line-fill 1.05s cubic-bezier(.65, 0, .35, 1) .1s forwards;
+  }
+
+  /* As the loader fades, its grid grows a touch, as if it is what bursts. */
+  .page-loader.is-done .m-load-grid {
+    transform: scale(1.35);
+    opacity: 0;
+    transition: transform .6s cubic-bezier(.12, .85, .18, 1), opacity .35s ease;
+  }
+
+  @keyframes m-tile-in { to { transform: scale(1); } }
+  @keyframes m-fade-up { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  @keyframes m-line-fill { to { transform: scaleX(1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m-load-grid i,
+    .m-load-name,
+    .m-load-role,
+    .m-load-line i { animation: none; transform: none; opacity: 1; }
+  }
 
   /* ---------- Menus and overlays ---------------------------------------- */
 
