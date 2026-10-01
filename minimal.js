@@ -12,7 +12,8 @@
                   arrangement and the shapes glide and morph between them.
 
    And once, on arrival: the small marks wait a little way in from their
-   places while the loader is up, and spread out to them as it lifts.
+   places while the loader is up, and spread out to them as it lifts; the
+   coloured ones then fade away.
 
    Only the ground's and the hero's own small subtrees restyle when these
    change, never the whole page. The cursor loop stops as soon as it has
@@ -29,13 +30,19 @@
 
   /* ---- arrival ---------------------------------------------------------- */
   const burst = [...ground.querySelectorAll('.m-dots, .m-dot, .m-square, .m-plus, .m-tri, .m-bit')];
-  if (!reduce.matches && burst.length) {
+  if (reduce.matches) ground.classList.add('m-settled');
+  else if (burst.length) {
     burst.forEach((el) => el.classList.add('m-burst'));
     ground.classList.add('m-intro');
     const go = () => {
       if (!ground.classList.contains('m-intro')) return;
       ground.classList.add('m-bursting');
       ground.classList.remove('m-intro');
+      // Partway out, the coloured marks start their fade, so they are gone
+      // as the spread comes to rest. A running transition is not cut short
+      // by a change of timing, so the spread itself finishes undisturbed,
+      // and then the slow scene glide takes over.
+      setTimeout(() => ground.classList.add('m-settled'), 900);
       setTimeout(() => ground.classList.remove('m-bursting'), 2900);
     };
     const loader = document.getElementById('pageLoader');

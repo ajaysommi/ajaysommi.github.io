@@ -450,6 +450,21 @@
   .m-bit3   { --bd: .26s; }
   .m-bit6   { --bd: .3s; }
 
+  /* The coloured marks are only for the arrival. Partway through their
+     spread minimal.js adds m-settled and they fade away and stay gone, so
+     the only colour left on the page is in the content. The grey marks
+     stay. Reduced motion gets m-settled straight away, so they never show. */
+  .bg.m-settled :is(.m-dot, .m-square, .m-bit1, .m-bit2) {
+    opacity: 0;
+    transition:
+      opacity 2s ease,
+      transform 1.9s var(--m-ease) var(--delay, 0s),
+      border-radius 1.9s var(--m-ease) var(--delay, 0s);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg.m-settled :is(.m-dot, .m-square, .m-bit1, .m-bit2) { transition: none; }
+  }
+
   /* A phone has no margins for the small marks to sit in: wherever they go
      they land on text. It keeps the big, quiet shapes and the hero's own
      tiles, and drops the marks, the bits and the dots. */
