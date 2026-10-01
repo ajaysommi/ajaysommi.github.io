@@ -11,8 +11,8 @@
      data-scene   the section being read. minimal.css gives each one its own
                   arrangement and the shapes glide and morph between them.
 
-   And once, on arrival: the small marks wait in a cluster at the centre
-   while the loader is up, and burst out to their places as it lifts.
+   And once, on arrival: the small marks wait a little way in from their
+   places while the loader is up, and spread out to them as it lifts.
 
    Only the ground's and the hero's own small subtrees restyle when these
    change, never the whole page. The cursor loop stops as soon as it has
@@ -36,7 +36,7 @@
       if (!ground.classList.contains('m-intro')) return;
       ground.classList.add('m-bursting');
       ground.classList.remove('m-intro');
-      setTimeout(() => ground.classList.remove('m-bursting'), 1700);
+      setTimeout(() => ground.classList.remove('m-bursting'), 2900);
     };
     const loader = document.getElementById('pageLoader');
     if (loader && !loader.classList.contains('is-done')) {

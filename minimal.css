@@ -405,48 +405,50 @@
     clip-path: var(--tri-clip);
   }
 
-  /* Six small bits that exist mostly for the arrival: they burst out of
-     the centre with the marks when the page loads and settle in the far
-     margins, where they stay as part of the field. Same place in every
-     scene. */
+  /* Four small bits that exist mostly for the arrival: they spread out
+     with the marks when the page loads and settle in the far margins,
+     where they stay as part of the field. Same place in every scene. Two
+     carry colour; the other two are neutral, so the margins are not
+     dotted with accents. */
   .m-bit { --d: 9; --r: 0deg; border-radius: 50%; }
   .m-bit1 { --x: 2.6vw;  --y: 24vh; width: 8px; height: 8px; background: var(--accent); }
   .m-bit2 { --x: 97.4vw; --y: 33vh; width: 7px; height: 7px; background: var(--m-blue); border-radius: 0; }
   .m-bit3 { --x: 4.4vw;  --y: 57vh; width: 6px; height: 6px; background: var(--m-mark); }
-  .m-bit4 { --x: 95.6vw; --y: 61vh; --r: 45deg; width: 6px; height: 6px; background: var(--accent); border-radius: 0; }
-  .m-bit5 { --x: 3vw;    --y: 88vh; width: 6px; height: 6px; background: var(--m-blue); }
   .m-bit6 { --x: 96.8vw; --y: 91vh; width: 5px; height: 5px; background: var(--m-mark); border-radius: 0; }
 
-  /* The arrival. While the loader is up the small marks wait in a tight
-     cluster at the centre of the screen, shrunk and invisible, with no
-     transition, so they jump there unseen. When it lifts, minimal.js swaps
-     m-intro for m-bursting and they fly out to their places on a fast,
-     hard braking curve with a spin, a few milliseconds apart, which reads
-     as one burst. m-bursting comes off once they have landed, and the slow
-     scene glide takes over again. */
+  /* The arrival. A burst caught at its tail end: while the loader is up,
+     each small mark waits a fifth of the way back along the line from its
+     place toward the centre of the screen, a little smaller, turned a few
+     degrees and invisible, with no transition, so it gets there unseen.
+     When the loader lifts, minimal.js swaps m-intro for m-bursting and the
+     marks drift the rest of the way out, fading in as they go, on a long,
+     soft curve: the spread of something that was already almost done
+     travelling, not a pop. m-bursting comes off once they have landed, and
+     the slow scene glide takes over again. */
   .bg.m-intro .m-burst {
-    transform: translate(calc(50vw - 50% + var(--bx, 0px)), calc(50vh - 50% + var(--by, 0px))) rotate(-120deg) scale(.15);
+    transform:
+      translate(calc(var(--x) + (50vw - var(--x)) * .2 - 50%),
+                calc(var(--y) + (50vh - var(--y)) * .2 - 50%))
+      rotate(calc(var(--r, 0deg) - 18deg)) scale(.75);
     opacity: 0;
     transition: none;
   }
   .bg.m-bursting .m-burst {
     transition:
-      transform 1.25s cubic-bezier(.12, .85, .18, 1) var(--bd, 0s),
-      opacity .35s ease-out var(--bd, 0s),
-      border-radius 1.25s ease var(--bd, 0s),
-      clip-path 1.25s ease var(--bd, 0s);
+      transform 2.4s cubic-bezier(.22, .61, .36, 1) var(--bd, 0s),
+      opacity 1.4s ease-out var(--bd, 0s),
+      border-radius 2.4s ease var(--bd, 0s),
+      clip-path 2.4s ease var(--bd, 0s);
   }
-  .m-dots   { --bx: -6px;  --by: 4px;  --bd: .02s; }
-  .m-dot    { --bx: -3px;  --by: -2px; --bd: 0s; }
-  .m-square { --bx: 3px;   --by: 2px;  --bd: .03s; }
-  .m-plus   { --bx: 4px;   --by: -4px; --bd: .05s; }
-  .m-tri    { --bx: -4px;  --by: 5px;  --bd: .04s; }
-  .m-bit1   { --bx: -2px;  --by: -5px; --bd: .01s; }
-  .m-bit2   { --bx: 5px;   --by: -1px; --bd: .02s; }
-  .m-bit3   { --bx: -5px;  --by: 1px;  --bd: .06s; }
-  .m-bit4   { --bx: 2px;   --by: 4px;  --bd: .03s; }
-  .m-bit5   { --bx: -1px;  --by: 6px;  --bd: .07s; }
-  .m-bit6   { --bx: 6px;   --by: 5px;  --bd: .05s; }
+  .m-dots   { --bd: .1s; }
+  .m-dot    { --bd: 0s; }
+  .m-square { --bd: .14s; }
+  .m-plus   { --bd: .22s; }
+  .m-tri    { --bd: .18s; }
+  .m-bit1   { --bd: .06s; }
+  .m-bit2   { --bd: .12s; }
+  .m-bit3   { --bd: .26s; }
+  .m-bit6   { --bd: .3s; }
 
   /* A phone has no margins for the small marks to sit in: wherever they go
      they land on text. It keeps the big, quiet shapes and the hero's own
