@@ -321,8 +321,14 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
   const started = performance.now();
   const finish = () => setTimeout(dismiss, Math.max(0, minShow - (performance.now() - started)));
 
-  if (document.readyState === 'complete') finish();
-  else window.addEventListener('load', finish, { once: true });
+  /* Waits for the fonts as well as the page. The hero's text is measured in
+     its real fonts to reserve its space; revealed before a slow font
+     arrived, the card would still grow under the visitor's eyes when it did. */
+  const loaded = document.readyState === 'complete'
+    ? Promise.resolve()
+    : new Promise((r) => window.addEventListener('load', r, { once: true }));
+  const fonts = document.fonts?.ready?.catch(() => {}) || Promise.resolve();
+  Promise.all([loaded, fonts]).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
   setTimeout(dismiss, 4000);
@@ -632,6 +638,29 @@ syncLogoTheme();
     const finalText = heading.textContent;
     const glyphs = '!<>_\\/[]{}~=+*^?#01';
     let frame = 0;
+
+    /* The finished sentence stays in the heading the whole time, invisible,
+       and holds its space; the scramble is drawn over it. Letters not yet
+       reached are spaces, which collapse, so written straight into the
+       heading the scramble started as one short line and grew to three on a
+       phone, and the whole hero card grew with it. Screen readers get the
+       finished sentence throughout, never the noise. */
+    let live = null;
+    const begin = () => {
+      const hold = document.createElement('span');
+      hold.className = 'scr-hold';
+      hold.textContent = finalText;
+      live = document.createElement('span');
+      live.className = 'scr-live';
+      heading.setAttribute('aria-label', finalText);
+      hold.setAttribute('aria-hidden', 'true');
+      live.setAttribute('aria-hidden', 'true');
+      heading.replaceChildren(hold, live);
+    };
+    const finish = () => {
+      heading.textContent = finalText;
+      heading.removeAttribute('aria-label');
+    };
     const queue = Array.from(finalText).map((ch, i) => ({
       ch,
       start: Math.floor(i * 1.4),
@@ -648,13 +677,13 @@ syncLogoTheme();
         } else if (frame >= item.start) { output += item.ch; }
         else { output += ' '; }
       }
-      heading.textContent = output;
+      live.textContent = output;
       frame++;
       if (complete < queue.length) requestAnimationFrame(tick);
-      else heading.textContent = finalText;
+      else finish();
     };
     // Start after the loader clears so the effect is actually seen.
-    setTimeout(() => requestAnimationFrame(tick), 1300);
+    setTimeout(() => requestAnimationFrame(() => { begin(); tick(); }), 1300);
   }
 
   const typed = $('#typedRole');
