@@ -188,124 +188,235 @@
   /* ---------- The ground ---------------------------------------------------
 
      The ambient light field and the glyph texture go. In their place, a
-     field of flat abstract shapes fixed behind the whole page, in four
-     depths: a large ring and a quarter disc far back, a big disc with an
-     orbit round it in the middle, a patch of dots, and a few small marks up
-     front (a dot, a square, a plus, a triangle). They are low contrast, so
-     they never compete with the text, and they stay put while the page
-     scrolls over them.
+     field of flat abstract shapes fixed behind the whole page: a large ring
+     and a big quarter shape far back, a large disc and a smaller ring in
+     the middle, a patch of dots, and four small marks up front (a dot, a
+     square, a plus, a triangle). Low contrast, so they never compete with
+     the text, and they stay put while the page scrolls over them.
 
-     minimal.js writes --mx and --my (where the cursor is, -1 to 1, eased)
-     and --sy (how far down the page you are, -1 to 1) onto .bg, and each
-     depth shifts by its own amount: the far ones barely, the near ones
-     most, which is what makes the field read as layered. Nothing here is
-     animated by CSS, so with reduced motion it simply stands still.
+     Three things move them, all written by minimal.js:
 
-     The same rules cover the resume page, whose ground has older children:
-     its first two take the middle and front layers. */
+       --fade   0 at the top, 1 once you are past the hero. The whole field
+                fades back to well under half strength, so it sets the mood
+                on arrival and then gets out of the way of the content.
+       scene    data-scene names the section you are reading. Every section
+                has its own arrangement, and moving into one, each shape
+                glides to its new place and changes form on the way: a
+                quarter turns into a leaf or a corner, the disc into an arch
+                or a rounded square, the triangle into a square or a
+                diamond, the dot into a diamond. Shapes start a beat apart,
+                so the change reads as the field rearranging itself.
+       --mx/my  where the cursor is, eased. Each shape shifts a few pixels,
+                the near ones most, which is all the depth it needs.
+
+     Positions are each shape's centre, in viewport units, so an
+     arrangement holds its composition on any screen. */
   .bg {
     --mx: 0;
     --my: 0;
-    --sy: 0;
+    --fade: 0;
+    --m-ease: cubic-bezier(.65, .05, .25, 1);
     background-color: var(--bg);
     background-image: none;
   }
+  .bg::before,
+  .bg::after { content: none; }
+  .amb,
+  .grid-veil,
   .bg .blob { display: none; }
 
-  .bg::before,
-  .bg::after,
-  .amb-a,
-  .amb-b,
-  .bg .b1,
-  .bg .b2,
-  .grid-veil {
-    position: absolute;
-    display: block;
-    pointer-events: none;
-    mix-blend-mode: normal;
-    animation: none;
-    transform: none;
-    opacity: 1;
-    filter: none;
+  /* The hero arrangement is also the default, for the resume page and for
+     anyone with reduced motion, who keeps it throughout. */
+  .bg,
+  .bg[data-scene="hero"] {
+    --ring-x: 88vw; --ring-y: 6vh; --ring-k: 1;
+    --q-x: 4vw; --q-y: 104vh; --q-r: 0deg; --q-br: 0 100% 0 0;
+    --disc-x: 108vw; --disc-y: 64vh; --disc-r: 0deg; --disc-br: 50%;
+    --orbit-x: 14vw; --orbit-y: 94vh;
+    --dots-x: 9vw; --dots-y: 72vh;
+    --dot-x: 3vw; --dot-y: 40vh; --dot-br: 50%; --dot-r: 0deg;
+    --sq-x: 95vw; --sq-y: 84vh; --sq-br: 0; --sq-r: 0deg;
+    --plus-x: 88vw; --plus-y: 22vh; --plus-r: 0deg;
+    --tri-x: 5vw; --tri-y: 92vh; --tri-r: 0deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
   }
-  .bg::before,
-  .bg::after { content: ""; }
+  .bg[data-scene="logos"] {
+    --ring-x: 98vw; --ring-y: 34vh; --ring-k: 0.9;
+    --q-x: -2vw; --q-y: 22vh; --q-r: 90deg; --q-br: 100% 0 100% 0;
+    --disc-x: 104vw; --disc-y: 94vh; --disc-r: 12deg; --disc-br: 28%;
+    --orbit-x: 24vw; --orbit-y: 100vh;
+    --dots-x: 90vw; --dots-y: 78vh;
+    --dot-x: 4vw; --dot-y: 70vh; --dot-br: 0; --dot-r: 45deg;
+    --sq-x: 96vw; --sq-y: 20vh; --sq-br: 50%; --sq-r: 0deg;
+    --plus-x: 8vw; --plus-y: 16vh; --plus-r: 45deg;
+    --tri-x: 94vw; --tri-y: 60vh; --tri-r: 0deg; --tri-clip: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  .bg[data-scene="path"] {
+    --ring-x: -8vw; --ring-y: 52vh; --ring-k: 1.05;
+    --q-x: 100vw; --q-y: -2vh; --q-r: 0deg; --q-br: 0 0 0 100%;
+    --disc-x: 108vw; --disc-y: 50vh; --disc-r: 0deg; --disc-br: 50% 50% 0 0;
+    --orbit-x: 90vw; --orbit-y: 92vh;
+    --dots-x: 7vw; --dots-y: 14vh;
+    --dot-x: 96vw; --dot-y: 46vh; --dot-br: 50%; --dot-r: 0deg;
+    --sq-x: 3vw; --sq-y: 86vh; --sq-br: 0; --sq-r: 45deg;
+    --plus-x: 94vw; --plus-y: 80vh; --plus-r: 0deg;
+    --tri-x: 4vw; --tri-y: 30vh; --tri-r: 90deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
+  }
+  .bg[data-scene="education"] {
+    --ring-x: 78vw; --ring-y: 106vh; --ring-k: 1;
+    --q-x: 0vw; --q-y: 0vh; --q-r: 0deg; --q-br: 0 0 100% 0;
+    --disc-x: -10vw; --disc-y: 70vh; --disc-r: 0deg; --disc-br: 50%;
+    --orbit-x: 92vw; --orbit-y: 16vh;
+    --dots-x: 88vw; --dots-y: 62vh;
+    --dot-x: 95vw; --dot-y: 32vh; --dot-br: 0; --dot-r: 0deg;
+    --sq-x: 4vw; --sq-y: 52vh; --sq-br: 50%; --sq-r: 0deg;
+    --plus-x: 6vw; --plus-y: 86vh; --plus-r: 45deg;
+    --tri-x: 94vw; --tri-y: 88vh; --tri-r: 180deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
+  }
+  .bg[data-scene="projects"] {
+    --ring-x: 110vw; --ring-y: 48vh; --ring-k: 0.95;
+    --q-x: 100vw; --q-y: 100vh; --q-r: 0deg; --q-br: 100% 0 0 0;
+    --disc-x: -12vw; --disc-y: 22vh; --disc-r: -12deg; --disc-br: 28%;
+    --orbit-x: 8vw; --orbit-y: 88vh;
+    --dots-x: 90vw; --dots-y: 14vh;
+    --dot-x: 3vw; --dot-y: 60vh; --dot-br: 0; --dot-r: 45deg;
+    --sq-x: 96vw; --sq-y: 66vh; --sq-br: 50%; --sq-r: 0deg;
+    --plus-x: 94vw; --plus-y: 40vh; --plus-r: 0deg;
+    --tri-x: 6vw; --tri-y: 30vh; --tri-r: 0deg; --tri-clip: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+  .bg[data-scene="skills"] {
+    --ring-x: 10vw; --ring-y: -8vh; --ring-k: 1;
+    --q-x: -4vw; --q-y: 100vh; --q-r: 0deg; --q-br: 0 100% 0 0;
+    --disc-x: 106vw; --disc-y: 42vh; --disc-r: 0deg; --disc-br: 50%;
+    --orbit-x: 86vw; --orbit-y: 96vh;
+    --dots-x: 8vw; --dots-y: 62vh;
+    --dot-x: 95vw; --dot-y: 20vh; --dot-br: 50%; --dot-r: 0deg;
+    --sq-x: 3vw; --sq-y: 32vh; --sq-br: 0; --sq-r: 0deg;
+    --plus-x: 92vw; --plus-y: 74vh; --plus-r: 45deg;
+    --tri-x: 5vw; --tri-y: 88vh; --tri-r: 0deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
+  }
+  .bg[data-scene="recs"] {
+    --ring-x: 92vw; --ring-y: 102vh; --ring-k: 1.05;
+    --q-x: 100vw; --q-y: 0vh; --q-r: 0deg; --q-br: 0 0 0 100%;
+    --disc-x: -8vw; --disc-y: 50vh; --disc-r: 0deg; --disc-br: 0 50% 50% 0;
+    --orbit-x: 94vw; --orbit-y: 30vh;
+    --dots-x: 88vw; --dots-y: 70vh;
+    --dot-x: 4vw; --dot-y: 82vh; --dot-br: 50%; --dot-r: 0deg;
+    --sq-x: 96vw; --sq-y: 50vh; --sq-br: 0; --sq-r: 45deg;
+    --plus-x: 6vw; --plus-y: 22vh; --plus-r: 0deg;
+    --tri-x: 94vw; --tri-y: 12vh; --tri-r: -90deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
+  }
+  .bg[data-scene="contact"] {
+    --ring-x: 14vw; --ring-y: 98vh; --ring-k: 1;
+    --q-x: 100vw; --q-y: 4vh; --q-r: 0deg; --q-br: 0 0 0 100%;
+    --disc-x: -8vw; --disc-y: 28vh; --disc-r: 0deg; --disc-br: 50%;
+    --orbit-x: 88vw; --orbit-y: 10vh;
+    --dots-x: 90vw; --dots-y: 72vh;
+    --dot-x: 96vw; --dot-y: 40vh; --dot-br: 50%; --dot-r: 0deg;
+    --sq-x: 4vw; --sq-y: 70vh; --sq-br: 0; --sq-r: 0deg;
+    --plus-x: 10vw; --plus-y: 16vh; --plus-r: 45deg;
+    --tri-x: 92vw; --tri-y: 86vh; --tri-r: 0deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
+  }
 
-  /* Far: the ring, and the quarter disc. */
-  .bg::before {
-    top: -22vmax;
-    right: -18vmax;
-    width: 58vmax;
+  .m-field {
+    position: absolute;
+    inset: 0;
+    opacity: calc(1 - var(--fade) * .64);
+  }
+
+  .m-s {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    box-sizing: border-box;
+    transform:
+      translate(calc(var(--x) - 50%), calc(var(--y) - 50%))
+      rotate(var(--r, 0deg)) scale(var(--k, 1));
+    translate: calc(var(--mx) * var(--d) * -1px) calc(var(--my) * var(--d) * -1px);
+    transition:
+      transform 1.9s var(--m-ease) var(--delay, 0s),
+      border-radius 1.9s var(--m-ease) var(--delay, 0s),
+      clip-path 1.9s var(--m-ease) var(--delay, 0s);
+  }
+
+  .m-ring {
+    --x: var(--ring-x); --y: var(--ring-y); --k: var(--ring-k); --d: 2; --delay: 0s;
+    width: 60vmax;
     aspect-ratio: 1;
     border: 1px solid var(--m-line);
     border-radius: 50%;
-    translate: calc(var(--mx) * -6px) calc(var(--my) * -6px + var(--sy) * -10px);
   }
-  .bg::after {
-    left: -14vmax;
-    bottom: -14vmax;
+  .m-quarter {
+    --x: var(--q-x); --y: var(--q-y); --r: var(--q-r); --d: 2.5; --delay: .08s;
     width: 34vmax;
     aspect-ratio: 1;
-    border-radius: 0 100% 0 0;
+    border-radius: var(--q-br);
     background: var(--m-field);
-    translate: calc(var(--mx) * -8px) calc(var(--my) * -8px + var(--sy) * -12px);
   }
-
-  /* Middle: a big disc off the right edge, an orbit round it, and a
-     second, smaller ring low on the left. */
-  .amb-a,
-  .bg .b2 {
-    inset: -6%;
-    background:
-      radial-gradient(circle 23vmax at 103% 60%, var(--m-field) calc(100% - 1px), transparent 100%),
-      radial-gradient(circle 31vmax at 103% 60%, transparent calc(100% - 1.5px), var(--m-line) calc(100% - 1px), var(--m-line) 100%, transparent calc(100% + .5px)),
-      radial-gradient(circle 9vmax at 14% 92%, transparent calc(100% - 1.5px), var(--m-line) calc(100% - 1px), var(--m-line) 100%, transparent calc(100% + .5px));
-    translate: calc(var(--mx) * -14px) calc(var(--my) * -14px + var(--sy) * -22px);
+  .m-disc {
+    --x: var(--disc-x); --y: var(--disc-y); --r: var(--disc-r); --d: 3.5; --delay: .16s;
+    width: 44vmax;
+    aspect-ratio: 1;
+    border-radius: var(--disc-br);
+    background: var(--m-field);
   }
-
-  /* Front: four small marks, each in its own sized box. */
-  .amb-b,
-  .bg .b1 {
-    inset: -6%;
-    background:
-      radial-gradient(circle 7px, var(--accent) calc(100% - .8px), transparent 100%),
-      linear-gradient(var(--m-blue), var(--m-blue)),
-      linear-gradient(var(--m-mark), var(--m-mark)),
-      linear-gradient(var(--m-mark), var(--m-mark)),
-      linear-gradient(to top right, var(--m-mark) calc(50% - .5px), transparent calc(50% + .5px));
-    background-size: 14px 14px, 12px 12px, 18px 2px, 2px 18px, 22px 22px;
-    /* The plus is two bars placed by length, not percentage: a percentage
-       lines up a different point of each bar, and they would not cross. */
-    background-position:
-      6% 38%,
-      93% 84%,
-      91vw calc(25vh + 8px),
-      calc(91vw + 8px) 25vh,
-      4% 93%;
-    background-repeat: no-repeat;
-    translate: calc(var(--mx) * -26px) calc(var(--my) * -26px + var(--sy) * -36px);
+  .m-orbit {
+    --x: var(--orbit-x); --y: var(--orbit-y); --d: 4.5; --delay: .22s;
+    width: 18vmax;
+    aspect-ratio: 1;
+    border: 1px solid var(--m-line);
+    border-radius: 50%;
   }
-
-  /* The dots: a small matrix low on the left. */
-  .grid-veil {
-    inset: auto;
-    left: 3.5vw;
-    bottom: 16vh;
+  .m-dots {
+    --x: var(--dots-x); --y: var(--dots-y); --d: 5.5; --delay: .28s;
     width: 128px;
     height: 92px;
-    background-color: transparent;
     background-image: radial-gradient(circle 1.6px, var(--m-dot) calc(100% - .6px), transparent 100%);
     background-size: 18px 18px;
-    translate: calc(var(--mx) * -18px) calc(var(--my) * -18px + var(--sy) * -28px);
+  }
+  .m-dot {
+    --x: var(--dot-x); --y: var(--dot-y); --r: var(--dot-r); --d: 8; --delay: .34s;
+    width: 14px;
+    height: 14px;
+    border-radius: var(--dot-br);
+    background: var(--accent);
+  }
+  .m-square {
+    --x: var(--sq-x); --y: var(--sq-y); --r: var(--sq-r); --d: 8; --delay: .4s;
+    width: 12px;
+    height: 12px;
+    border-radius: var(--sq-br);
+    background: var(--m-blue);
+  }
+  .m-plus {
+    --x: var(--plus-x); --y: var(--plus-y); --r: var(--plus-r); --d: 8; --delay: .46s;
+    width: 18px;
+    height: 18px;
+    background:
+      linear-gradient(var(--m-mark), var(--m-mark)) center / 18px 2px no-repeat,
+      linear-gradient(var(--m-mark), var(--m-mark)) center / 2px 18px no-repeat;
+  }
+  .m-tri {
+    --x: var(--tri-x); --y: var(--tri-y); --r: var(--tri-r); --d: 8; --delay: .52s;
+    width: 22px;
+    height: 22px;
+    background: var(--m-mark);
+    clip-path: var(--tri-clip);
   }
 
   /* A phone has no margins for the small marks to sit in: wherever they go
      they land on text. It keeps the big, quiet shapes and the hero's own
      tiles, and drops the marks and the dots. */
   @media (max-width: 719px) {
-    .amb-b,
-    .bg .b1,
-    .grid-veil { display: none; }
+    .m-dots,
+    .m-dot,
+    .m-square,
+    .m-plus,
+    .m-tri { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m-s { transition: none; translate: none; }
   }
 
   /* ---------- Section heads ------------------------------------------------
@@ -567,8 +678,8 @@
      accent, the blue, ink or a neutral. Nothing overlaps, so there are no
      blended colours where shapes cross, and it reads as one deliberate
      object rather than shapes left lying about. It is one element, every
-     tile a hard edged gradient in its own cell, and it drifts a little
-     with the cursor, a shade less than the field behind it. */
+     tile a hard edged gradient in its own cell, and it drifts a few pixels
+     with the cursor, like the field behind it. */
   .hero-card {
     --t: clamp(42px, 5.4vw, 70px);
     --mx: 0;
@@ -600,7 +711,7 @@
       0 0, var(--t) 0, calc(var(--t) * 2) 0,
       0 var(--t), var(--t) var(--t), calc(var(--t) * 2) var(--t),
       0 calc(var(--t) * 2), var(--t) calc(var(--t) * 2), calc(var(--t) * 2) calc(var(--t) * 2);
-    translate: calc(var(--mx) * -9px) calc(var(--my) * -9px);
+    translate: calc(var(--mx) * -4px) calc(var(--my) * -4px);
   }
   .hero-card::after { content: none; }
 
