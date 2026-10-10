@@ -3328,42 +3328,46 @@ function gatorStorm(n = 12) {
 
 /* ==========================================================================
    Off the Clock: rolls of film
-   Every frame starts as a negative. With a mouse, hovering a frame develops
-   it. On a touch screen, or when the roll has been looked at long enough,
-   frames develop one after another as the roll scrolls into view. A
-   developed frame stays developed. Reduced motion shows them developed.
+   One frame of each roll is "on": it is highlighted and its note shows in
+   the caption under the strip. Hovering or focusing a frame puts it on;
+   on a touch screen, so does swiping the strip, which settles on the frame
+   nearest its left edge. Clicking a frame opens it in the viewer.
    ========================================================================== */
 (function filmRolls() {
-  const rolls = $$('.film');
-  if (!rolls.length) return;
-  // A frame's note sits in the row under the strip at the same index.
-  const develop = (f) => {
-    f.classList.add('is-developed');
-    const scroll = f.closest('.film-scroll');
-    const i = $$('.film-frame', scroll).indexOf(f);
-    $$('.film-note', scroll)[i]?.classList.add('is-developed');
-  };
-
-  if (prefersReduced()) { $$('.film-frame').forEach(develop); return; }
-  // Hovering a note develops its frame too.
-  $$('.film-scroll').forEach((sc) => $$('.film-note', sc).forEach((nEl, i) => nEl.addEventListener('pointerenter', () => { const f = $$('.film-frame', sc)[i]; if (f) develop(f); })));
-
-  rolls.forEach((film) => {
-    const frames = $$('.film-frame', film);
-    frames.forEach((f) => {
-      f.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') develop(f); });
-      f.addEventListener('focus', () => develop(f));
+  $$('.roll').forEach((roll) => {
+    const frames = $$('.film-frame', roll);
+    const notes = $$('.film-note', roll);
+    const scroller = $('.film-scroll', roll);
+    if (!frames.length) return;
+    let on = -1;
+    const set = (i) => {
+      if (i === on) return;
+      on = i;
+      frames.forEach((f, k) => f.classList.toggle('is-on', k === i));
+      notes.forEach((n, k) => n.classList.toggle('is-on', k === i));
+    };
+    set(0);
+    frames.forEach((f, i) => {
+      f.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') set(i); });
+      f.addEventListener('focus', () => set(i));
     });
-    if (!coarsePointer.matches || !('IntersectionObserver' in window)) return;
-    // Touch: develop the roll frame by frame once most of it is on screen.
-    const io = new IntersectionObserver((es) => {
-      if (!es.some((e) => e.isIntersecting)) return;
-      io.disconnect();
-      frames.forEach((f, i) => setTimeout(() => develop(f), 350 + i * 420));
-    }, { threshold: 0.6 });
-    // The scroller, not the strip: a strip wider than the screen is never
-    // mostly on screen.
-    io.observe(film.closest('.film-scroll') || film);
+    if (!scroller) return;
+    let t = 0;
+    scroller.addEventListener('scroll', () => {
+      if (!coarsePointer.matches) return;
+      cancelAnimationFrame(t);
+      t = requestAnimationFrame(() => {
+        const left = scroller.getBoundingClientRect().left + 14;
+        let best = 0, dist = Infinity;
+        frames.forEach((f, k) => {
+          const d = Math.abs(f.getBoundingClientRect().left - left);
+          if (d < dist) { dist = d; best = k; }
+        });
+        // At the very end of the strip, the last frame is the one in view.
+        if (scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 4) best = frames.length - 1;
+        set(best);
+      });
+    }, { passive: true });
   });
 })();
 

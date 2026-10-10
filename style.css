@@ -4589,32 +4589,42 @@
   .film-scroll::-webkit-scrollbar { display: none; }
   .film-scroll .film { max-width: none; }
   .film-track { display: flex; gap: 12px; padding: 0 14px; }
+  .film-scroll { scroll-snap-type: x proximity; scroll-padding-inline: 14px; }
+  .film-frame { scroll-snap-align: start; }
 
-  /* The notes: one per frame, written under it. Blurred until its frame is
-     developed, then they sharpen with it. */
+  /* The caption: one note at a time, for the frame you are on, in a single
+     panel under the strip. Every note shares the same grid cell so the
+     panel is always as tall as the longest one and never jumps. */
   .film-notes {
-    display: flex;
-    gap: 12px;
-    width: max-content;
-    margin: 10px 0 0;
-    padding: 0 14px;
+    display: grid;
+    max-width: 68ch;
+    margin: 12px 0 0;
+    padding: 0;
     list-style: none;
   }
   .film-note {
-    flex: 0 0 auto;
-    width: var(--frame-w);
+    grid-area: 1 / 1;
+    position: relative;
+    padding-left: 42px;
     color: var(--ink-2);
-    font-size: .84rem;
-    line-height: 1.45;
-    filter: blur(3.5px);
-    opacity: .45;
-    transition: filter .9s cubic-bezier(.2, .7, .2, 1), opacity .9s cubic-bezier(.2, .7, .2, 1);
+    font-size: .95rem;
+    line-height: 1.55;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
   }
-  .film-note.is-developed { filter: none; opacity: 1; }
+  .film-note.is-on { opacity: 1; visibility: visible; transform: none; }
+  .film-note strong { display: block; margin-bottom: 1px; color: var(--ink); font-weight: 600; }
   .film-note-n {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--accent) 16%, transparent);
     color: var(--accent);
-    font: 700 .7rem/1 var(--font-mono);
-    margin-right: 2px;
+    font: 700 .72rem/1.2 var(--font-mono);
   }
 
   .rolls { --frame-w: 220px; }
@@ -4635,11 +4645,12 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* The negative: inverted, with the warm orange base of colour film. */
-    filter: invert(1) sepia(.55) saturate(1.6) hue-rotate(-12deg) contrast(.92) brightness(.92);
-    transition: filter .9s cubic-bezier(.2, .7, .2, 1);
+    opacity: .55;
+    transition: opacity .3s var(--ease);
   }
-  .film-frame.is-developed img { filter: none; }
+  .film-frame.is-on img,
+  .film-frame:hover img { opacity: 1; }
+  .film-frame.is-on { box-shadow: 0 0 0 2px var(--accent); }
   /* Frame numbers in the edge, like the marks printed on real film. */
   .film-frame::before {
     content: attr(data-n);
@@ -4654,18 +4665,6 @@
   }
   .film-frame:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  .film-hint {
-    margin: 12px 0 0;
-    font-family: var(--font-mono);
-    font-size: .72rem;
-    letter-spacing: .04em;
-    color: var(--ink-3);
-  }
-  .film-hint .hint-touch { display: none; }
-  @media (hover: none) {
-    .film-hint .hint-hover { display: none; }
-    .film-hint .hint-touch { display: inline; }
-  }
 
   /* Contact, built around one photo: a printed snapshot from 2006, set at
      an angle beside the line and the links, as if left on the desk. */
@@ -4719,3 +4718,11 @@
 .film-frame::after { content: none; }
 .film-frame { position: relative; }
 @media (prefers-reduced-motion: reduce) { .film-frame img, .film-note { transition: none; } }
+
+/* Unlayered, so the glass layer's own shadow and image rules on photo
+   buttons do not cancel the film's: the frame you are on is lit and
+   outlined, the others sit back. */
+.film-frame img { opacity: .5; transition: opacity .3s ease; }
+.film-frame.is-on img,
+.film-frame:hover img { opacity: 1; }
+.film-frame.is-on { box-shadow: 0 0 0 2px var(--accent); }
