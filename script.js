@@ -1609,12 +1609,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   document.addEventListener('click', (e) => {
     const shot = e.target.closest('.jc-shot');
     if (!shot) return;
-    const fig = shot.closest('.jc-media, .ot-trail, .since');
+    const fig = shot.closest('.jc-media, .ot-stage, .since');
     // One entry per photo: a card's main photo can also be one of its steps.
     const seen = new Set();
-    const steps = $$('.ot-print img', fig);
-    const ordered = steps.length ? [...steps, ...$$('img', fig).filter((im) => !steps.includes(im))] : $$('img', fig);
-    group = ordered.filter((im) => !seen.has(im.getAttribute('src')) && seen.add(im.getAttribute('src')));
+    group = $$('img', fig).filter((im) => !seen.has(im.getAttribute('src')) && seen.add(im.getAttribute('src')));
     const mine = $('img', shot).getAttribute('src');
     show(Math.max(0, group.findIndex((im) => im.getAttribute('src') === mine)));
     dlg.showModal();
@@ -3326,6 +3324,53 @@ function gatorStorm(n = 12) {
     press(el, r.left + r.width / 2, r.top + r.height / 2);
   });
   document.addEventListener('keyup', (e) => { if (e.key === 'Enter' || e.key === ' ') release(); });
+})();
+
+/* ==========================================================================
+   Off the Clock: step through each story
+   Each log has a stage that shows one photo and a numbered list of steps.
+   Choosing a step puts its photo on the stage; the stage opens the photo
+   viewer at that step. Arrow keys move between steps.
+   ========================================================================== */
+(function offClock() {
+  $$('.ot-log').forEach((log) => {
+    const steps = $$('.ot-step', log);
+    const frames = $$('.ot-frame', log);
+    const count = $('.ot-count', log);
+    if (!steps.length || steps.length !== frames.length) return;
+    const total = String(steps.length).padStart(2, '0');
+    /* The frames waiting off stage are hidden, so lazy loading would never
+       fetch them and a step would open on an empty stage. They are fetched
+       together as the log comes near the screen instead. */
+    const warm = () => frames.forEach((f) => { const im = $('img', f); if (im) im.loading = 'eager'; });
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { warm(); io.disconnect(); } }, { rootMargin: '600px' });
+      io.observe(log);
+    } else warm();
+    const go = (i, focus = false) => {
+      steps.forEach((b, k) => {
+        b.classList.toggle('is-on', k === i);
+        b.setAttribute('aria-pressed', String(k === i));
+      });
+      frames.forEach((f, k) => {
+        f.classList.toggle('is-on', k === i);
+        f.tabIndex = k === i ? 0 : -1;
+      });
+      if (count) count.textContent = `${String(i + 1).padStart(2, '0')} / ${total}`;
+      // Keep the chosen step in view in a list that scrolls sideways (phones).
+      steps[i].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: prefersReduced() ? 'auto' : 'smooth' });
+      if (focus) steps[i].focus();
+    };
+    steps.forEach((b, i) => {
+      b.addEventListener('click', () => go(i));
+      b.addEventListener('keydown', (e) => {
+        const d = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        go((i + d + steps.length) % steps.length, true);
+      });
+    });
+  });
 })();
 
 /* ==========================================================================
