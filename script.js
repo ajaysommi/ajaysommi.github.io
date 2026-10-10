@@ -520,6 +520,7 @@ syncLogoTheme();
     ['experience', 'The Path'],
     ['education', 'Education'],
     ['projects', 'Projects'],
+    ['offclock', 'Off the Clock'],
     ['skills', 'Skills'],
     ['recs', 'Recommendations'],
     ['contact', 'Contact'],
@@ -1608,7 +1609,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   document.addEventListener('click', (e) => {
     const shot = e.target.closest('.jc-shot');
     if (!shot) return;
-    const fig = shot.closest('.jc-media');
+    const fig = shot.closest('.jc-media, .oc-gallery, .since');
     group = $$('img', fig);
     const me = $('img', shot);
     show(Math.max(0, group.indexOf(me)));
@@ -2282,6 +2283,7 @@ const palette = (() => {
     { icon: '≡', title: 'The Path',         sub: 'Career journey, role by role', kind: 'section', run: go('experience') },
     { icon: '⌁', title: 'Education',        kind: 'section', run: go('education') },
     { icon: '▤', title: 'Projects',         kind: 'section', run: go('projects') },
+    { icon: '⚙', title: 'Off the Clock',    kind: 'section', run: go('offclock') },
     { icon: '✦', title: 'Skills & Tools',   kind: 'section', run: go('skills') },
     { icon: '❞', title: 'Recommendations',  kind: 'section', run: go('recs') },
     { icon: '✉', title: 'Contact',          kind: 'section', run: go('contact') },

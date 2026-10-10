@@ -4520,3 +4520,98 @@
     .dock-fab .icon-btn { transition: none; scale: none; }
   }
 }
+
+/* ==========================================================================
+   OFF THE CLOCK, and the 2006 photo by Contact
+   Hobby cards in the site's glass: a main photo, a row of thumbnails that
+   open the same photo viewer as the Path, the year, a title and a story
+   line. Two columns on wide screens, one on phones.
+   ========================================================================== */
+@layer components {
+  .oc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .oc-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .oc-gallery { display: grid; gap: 8px; }
+  .oc-gallery .jc-shot {
+    display: block;
+    padding: 0;
+    border: 1px solid var(--stroke);
+    background: var(--surface);
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+  .oc-gallery .jc-shot img,
+  .since-pic img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .oc-main {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--r-md);
+  }
+  .oc-thumbs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .oc-thumbs::-webkit-scrollbar { display: none; }
+  .oc-thumb {
+    flex: 0 0 auto;
+    width: 64px;
+    aspect-ratio: 1;
+    border-radius: var(--r-sm);
+  }
+  .oc-gallery .jc-shot:hover,
+  .oc-gallery .jc-shot:focus-visible,
+  .since-pic:hover,
+  .since-pic:focus-visible { border-color: color-mix(in oklab, var(--accent) 55%, var(--stroke)); }
+  .oc-body { padding: 12px 4px 2px; }
+  .oc-when {
+    margin: 0 0 2px;
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    letter-spacing: .06em;
+    color: var(--ink-3);
+  }
+  .oc-body h3 { margin: 0 0 4px; }
+  .oc-story { margin: 0; color: var(--ink-2); font-size: .93rem; }
+  .oc-story:empty { display: none; }
+
+  .since {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 16px;
+  }
+  .since-pic {
+    flex: 0 0 auto;
+    width: 150px;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: 1px solid var(--stroke);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+  .since figcaption { font-size: 1.05rem; color: var(--ink-2); }
+  .since figcaption strong { display: block; color: var(--ink); font-size: 1.15rem; }
+
+  @media (max-width: 759px) {
+    .oc-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .oc-thumb { width: 58px; }
+    .since-pic { width: 120px; }
+  }
+}
