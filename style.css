@@ -4528,81 +4528,71 @@
    line. Two columns on wide screens, one on phones.
    ========================================================================== */
 @layer components {
-  .oc-grid {
+  /* Each project is a log entry: what it was on the left, and its photos
+     as a trail of small prints on the right, laid out in the order the
+     work happened, numbered, and joined by a dashed line. */
+  .ot-logs { display: grid; gap: 10px; }
+  .ot-log {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: center;
+    padding: 14px 0;
+    border-top: 1px solid var(--stroke);
   }
-  .oc-card {
-    display: flex;
-    flex-direction: column;
-    padding: 12px;
-    border-radius: var(--r-lg);
-    overflow: hidden;
-  }
-  .oc-gallery { display: grid; gap: 8px; }
-  .oc-gallery .jc-shot {
-    display: block;
-    padding: 0;
-    border: 1px solid var(--stroke);
-    background: var(--surface);
-    overflow: hidden;
-    cursor: zoom-in;
-  }
-  .oc-gallery .jc-shot img,
-  .since-pic img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .oc-main {
-    aspect-ratio: 4 / 3;
-    border-radius: var(--r-md);
-  }
-  .oc-thumbs {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .oc-thumbs::-webkit-scrollbar { display: none; }
-  .oc-thumb {
-    flex: 0 0 auto;
-    width: 64px;
-    aspect-ratio: 1;
-    border-radius: var(--r-sm);
-  }
-  .oc-gallery .jc-shot:hover,
-  .oc-gallery .jc-shot:focus-visible,
-  .since-pic:hover,
-  .since-pic:focus-visible { border-color: color-mix(in oklab, var(--accent) 55%, var(--stroke)); }
-  .oc-body { padding: 12px 4px 2px; }
-  .oc-when {
-    margin: 0 0 2px;
+  .ot-log:last-child { border-bottom: 1px solid var(--stroke); }
+  .ot-no {
+    margin: 0 0 4px;
     font-family: var(--font-mono);
-    font-size: .74rem;
+    font-size: .72rem;
     letter-spacing: .06em;
+    text-transform: uppercase;
     color: var(--ink-3);
   }
-  .oc-body h3 { margin: 0 0 4px; }
-  .oc-story { margin: 0; color: var(--ink-2); font-size: .93rem; }
-  .oc-story:empty { display: none; }
+  .ot-meta h3 { margin: 0; font-size: clamp(16px, 1.6vw, 19px); }
+  .ot-story { margin: 6px 0 0; color: var(--ink-2); font-size: .92rem; }
+  .ot-story:empty { display: none; }
 
-  /* The numbered steps: each thumbnail carries its place in the story. */
-  .oc-thumb { position: relative; }
-  .oc-thumb::after {
-    content: attr(data-step);
+  .ot-trail {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 6px 4px 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .ot-trail::-webkit-scrollbar { display: none; }
+  /* The line the steps sit on, under the photos. */
+  .ot-trail::before {
+    content: "";
     position: absolute;
     left: 4px;
-    bottom: 4px;
-    padding: 1px 4px;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, .62);
-    color: #fff;
-    font: 600 9.5px/1.3 var(--font-mono);
-    letter-spacing: .04em;
+    right: 4px;
+    bottom: 19px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 15%, var(--stroke)));
+    opacity: .7;
+    pointer-events: none;
   }
+  .ot-print {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    width: 132px;
+    aspect-ratio: 1;
+    padding: 4px;
+    border: 1px solid var(--stroke);
+    border-radius: var(--r-md);
+    background: var(--surface-solid);
+    cursor: zoom-in;
+    transition: border-color .2s var(--ease), translate .2s var(--ease);
+  }
+  .ot-print img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--r-md) - 4px); }
+  .ot-print:hover,
+  .ot-print:focus-visible { border-color: color-mix(in oklab, var(--accent) 60%, var(--stroke)); translate: 0 -3px; }
 
   /* Contact, built around one photo: a printed snapshot from 2006, set at
      an angle beside the line and the links, as if left on the desk. */
@@ -4623,8 +4613,8 @@
   [data-theme="daylight"] .since-print { box-shadow: 0 1px 2px rgba(16, 25, 43, .18), 0 14px 30px -12px rgba(16, 25, 43, .35); }
   .since-pic {
     display: block;
-    width: clamp(150px, 18vw, 210px);
-    aspect-ratio: 9 / 10;
+    width: clamp(220px, 26vw, 320px);
+    aspect-ratio: 600 / 430;
     padding: 0;
     border: 0;
     border-radius: 1px;
@@ -4641,27 +4631,33 @@
   .lb-cap { justify-content: flex-end; }
 
   @media (max-width: 759px) {
-    .oc-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-    .oc-thumb { width: 58px; }
+    .ot-log { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .ot-print { width: 112px; }
     .since { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 22px; }
     .since-print { margin: 4px 0 0; }
-    .since-pic { width: 170px; }
+    .since-pic { width: min(280px, 78vw); }
     .since-body { width: 100%; }
   }
 }
 
 /* Unlayered, so it outranks the glass edge light the liquid layer puts on
-   every photo button's ::after: on the step thumbnails that pseudo element
-   is the step number instead. */
-.oc-thumb::after {
+   every photo button's ::after: on the prints that pseudo element is the
+   step number, a small round pin at the top. */
+.ot-print { overflow: visible; }
+.ot-print::after {
   content: attr(data-step);
-  inset: auto auto 4px 4px;
-  padding: 1px 4px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, .62);
+  inset: auto auto -32px 50%;
+  translate: -50% 0;
+  min-width: 24px;
+  padding: 3px 5px;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  background: var(--bg);
   -webkit-mask: none;
   mask: none;
-  color: #fff;
-  font: 600 9.5px/1.3 var(--font-mono);
-  letter-spacing: .04em;
+  color: var(--ink);
+  font: 700 9.5px/1.2 var(--font-mono);
+  text-align: center;
+  box-shadow: none;
 }
+@media (prefers-reduced-motion: reduce) { .ot-print { transition: none; } }
