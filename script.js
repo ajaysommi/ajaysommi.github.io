@@ -3336,9 +3336,17 @@ function gatorStorm(n = 12) {
 (function filmRolls() {
   const rolls = $$('.film');
   if (!rolls.length) return;
-  const develop = (f) => f.classList.add('is-developed');
+  // A frame's note sits in the row under the strip at the same index.
+  const develop = (f) => {
+    f.classList.add('is-developed');
+    const scroll = f.closest('.film-scroll');
+    const i = $$('.film-frame', scroll).indexOf(f);
+    $$('.film-note', scroll)[i]?.classList.add('is-developed');
+  };
 
   if (prefersReduced()) { $$('.film-frame').forEach(develop); return; }
+  // Hovering a note develops its frame too.
+  $$('.film-scroll').forEach((sc) => $$('.film-note', sc).forEach((nEl, i) => nEl.addEventListener('pointerenter', () => { const f = $$('.film-frame', sc)[i]; if (f) develop(f); })));
 
   rolls.forEach((film) => {
     const frames = $$('.film-frame', film);
@@ -3353,7 +3361,9 @@ function gatorStorm(n = 12) {
       io.disconnect();
       frames.forEach((f, i) => setTimeout(() => develop(f), 350 + i * 420));
     }, { threshold: 0.6 });
-    io.observe(film);
+    // The scroller, not the strip: a strip wider than the screen is never
+    // mostly on screen.
+    io.observe(film.closest('.film-scroll') || film);
   });
 })();
 
