@@ -1609,7 +1609,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   document.addEventListener('click', (e) => {
     const shot = e.target.closest('.jc-shot');
     if (!shot) return;
-    const fig = shot.closest('.jc-media, .ot-stage, .since');
+    const fig = shot.closest('.jc-media, .film, .since');
     // One entry per photo: a card's main photo can also be one of its steps.
     const seen = new Set();
     group = $$('img', fig).filter((im) => !seen.has(im.getAttribute('src')) && seen.add(im.getAttribute('src')));
@@ -3327,49 +3327,33 @@ function gatorStorm(n = 12) {
 })();
 
 /* ==========================================================================
-   Off the Clock: step through each story
-   Each log has a stage that shows one photo and a numbered list of steps.
-   Choosing a step puts its photo on the stage; the stage opens the photo
-   viewer at that step. Arrow keys move between steps.
+   Off the Clock: rolls of film
+   Every frame starts as a negative. With a mouse, hovering a frame develops
+   it. On a touch screen, or when the roll has been looked at long enough,
+   frames develop one after another as the roll scrolls into view. A
+   developed frame stays developed. Reduced motion shows them developed.
    ========================================================================== */
-(function offClock() {
-  $$('.ot-log').forEach((log) => {
-    const steps = $$('.ot-step', log);
-    const frames = $$('.ot-frame', log);
-    const count = $('.ot-count', log);
-    if (!steps.length || steps.length !== frames.length) return;
-    const total = String(steps.length).padStart(2, '0');
-    /* The frames waiting off stage are hidden, so lazy loading would never
-       fetch them and a step would open on an empty stage. They are fetched
-       together as the log comes near the screen instead. */
-    const warm = () => frames.forEach((f) => { const im = $('img', f); if (im) im.loading = 'eager'; });
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { warm(); io.disconnect(); } }, { rootMargin: '600px' });
-      io.observe(log);
-    } else warm();
-    const go = (i, focus = false) => {
-      steps.forEach((b, k) => {
-        b.classList.toggle('is-on', k === i);
-        b.setAttribute('aria-pressed', String(k === i));
-      });
-      frames.forEach((f, k) => {
-        f.classList.toggle('is-on', k === i);
-        f.tabIndex = k === i ? 0 : -1;
-      });
-      if (count) count.textContent = `${String(i + 1).padStart(2, '0')} / ${total}`;
-      // Keep the chosen step in view in a list that scrolls sideways (phones).
-      steps[i].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: prefersReduced() ? 'auto' : 'smooth' });
-      if (focus) steps[i].focus();
-    };
-    steps.forEach((b, i) => {
-      b.addEventListener('click', () => go(i));
-      b.addEventListener('keydown', (e) => {
-        const d = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-        if (!d) return;
-        e.preventDefault();
-        go((i + d + steps.length) % steps.length, true);
-      });
+(function filmRolls() {
+  const rolls = $$('.film');
+  if (!rolls.length) return;
+  const develop = (f) => f.classList.add('is-developed');
+
+  if (prefersReduced()) { $$('.film-frame').forEach(develop); return; }
+
+  rolls.forEach((film) => {
+    const frames = $$('.film-frame', film);
+    frames.forEach((f) => {
+      f.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') develop(f); });
+      f.addEventListener('focus', () => develop(f));
     });
+    if (!coarsePointer.matches || !('IntersectionObserver' in window)) return;
+    // Touch: develop the roll frame by frame once most of it is on screen.
+    const io = new IntersectionObserver((es) => {
+      if (!es.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      frames.forEach((f, i) => setTimeout(() => develop(f), 350 + i * 420));
+    }, { threshold: 0.6 });
+    io.observe(film);
   });
 })();
 

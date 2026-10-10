@@ -4528,109 +4528,114 @@
    line. Two columns on wide screens, one on phones.
    ========================================================================== */
 @layer components {
-  /* Each project is a log you step through: what it was and its numbered
-     steps on the left, and a stage on the right that shows the step you
-     are on. Choosing a step changes the stage; the stage opens the viewer. */
-  .ot-logs { display: grid; gap: 14px; }
-  .ot-log {
-    display: grid;
-    grid-template-columns: minmax(220px, 290px) minmax(0, 1fr);
-    gap: clamp(16px, 3vw, 32px);
-    align-items: start;
-    padding: 20px 0;
-    border-top: 1px solid var(--stroke);
-  }
-  .ot-log:last-child { border-bottom: 1px solid var(--stroke); }
+  /* Each story is a roll of film: a dark strip with sprocket holes along
+     both edges, small frames printed as negatives, and the roll number in
+     the edge markings. Frames develop into the real photo on hover (or one
+     by one as the roll scrolls in, on phones) and open in the viewer. */
+  .rolls { display: grid; gap: 26px; }
+  .roll { display: grid; gap: 10px; }
+  .roll-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
   .ot-no {
-    margin: 0 0 4px;
+    margin: 0;
     font-family: var(--font-mono);
     font-size: .72rem;
     letter-spacing: .06em;
     text-transform: uppercase;
     color: var(--ink-3);
   }
-  .ot-meta h3 { margin: 0; font-size: clamp(16px, 1.6vw, 19px); }
-  .ot-story { margin: 6px 0 0; color: var(--ink-2); font-size: .92rem; }
+  .roll-meta h3 { margin: 0; font-size: clamp(16px, 1.6vw, 19px); }
+  .ot-story { flex-basis: 100%; margin: 2px 0 0; color: var(--ink-2); font-size: .92rem; }
   .ot-story:empty { display: none; }
 
-  /* The steps: a numbered list down a thin line, each with a small
-     thumbnail. The one on the stage is lit. */
-  .ot-steps {
+  .film {
+    --hole: rgba(255, 255, 255, .82);
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-    gap: 8px;
-    margin: 14px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .ot-step {
-    position: relative;
-    display: block;
-    width: 100%;
-    aspect-ratio: 1;
-    padding: 0;
-    border: 1px solid var(--stroke);
-    border-radius: var(--r-sm);
-    background: var(--surface-solid);
+    padding: 22px 0;
+    border-radius: 6px;
+    width: fit-content;
+    max-width: 100%;
+    background: var(--film, #15110d);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), 0 14px 30px -18px rgba(0, 0, 0, .7);
     overflow: hidden;
-    cursor: pointer;
-    opacity: .55;
-    transition: opacity .2s var(--ease), border-color .2s var(--ease);
   }
-  .ot-step img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .ot-num {
+  /* The sprocket holes, top and bottom. */
+  .film::before,
+  .film::after {
+    content: "";
     position: absolute;
-    left: 3px;
-    top: 3px;
-    padding: 1px 4px;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, .62);
-    color: #fff;
-    font: 700 9px/1.25 var(--font-mono);
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(90deg, transparent 0 7px, var(--film-hole, var(--bg)) 7px 17px, transparent 17px 24px);
+    -webkit-mask: linear-gradient(#000 0 0);
+    border-radius: 2px;
+    opacity: .9;
+    pointer-events: none;
   }
-  .ot-step:hover { opacity: .85; }
-  .ot-step.is-on {
-    opacity: 1;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent);
-  }
-  .ot-step.is-on .ot-num { background: var(--accent); color: var(--accent-ink); }
+  .film::before { top: 7px; }
+  .film::after { bottom: 7px; }
+  /* In the dark themes the page is as dark as the film, so the strip is a
+     shade lighter and the holes are lit, or neither would show. */
+  [data-theme="midnight"] .film,
+  [data-theme="terminal"] .film { --film: #221b15; --film-hole: rgba(255, 255, 255, .2); }
 
-  /* The stage. */
-  .ot-stage {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    max-width: 620px;
-    border: 1px solid var(--stroke);
-    border-radius: var(--r-lg);
-    background: var(--surface-solid);
-    overflow: hidden;
+  .film-track {
+    display: flex;
+    gap: 10px;
+    padding: 0 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
   }
-  .ot-frame {
-    position: absolute;
-    inset: 0;
+  .film-track::-webkit-scrollbar { display: none; }
+
+  .film-frame {
+    position: relative;
+    flex: 0 0 auto;
+    width: 150px;
+    aspect-ratio: 4 / 3;
     padding: 0;
     border: 0;
-    background: none;
+    border-radius: 2px;
+    background: #2a1a0e;
+    overflow: hidden;
     cursor: zoom-in;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .35s var(--ease), visibility .35s;
   }
-  .ot-frame.is-on { opacity: 1; visibility: visible; }
-  .ot-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .ot-count {
+  .film-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The negative: inverted, with the warm orange base of colour film. */
+    filter: invert(1) sepia(.55) saturate(1.6) hue-rotate(-12deg) contrast(.92) brightness(.92);
+    transition: filter .9s cubic-bezier(.2, .7, .2, 1);
+  }
+  .film-frame.is-developed img { filter: none; }
+  /* Frame numbers in the edge, like the marks printed on real film. */
+  .film-frame::before {
+    content: attr(data-n);
     position: absolute;
-    right: 10px;
-    bottom: 10px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, .58);
-    color: #fff;
-    font: 600 11px/1.3 var(--font-mono);
-    letter-spacing: .04em;
+    right: 4px;
+    top: 3px;
+    z-index: 1;
+    color: #ffb347;
+    font: 700 9.5px/1 var(--font-mono);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
     pointer-events: none;
+  }
+  .film-frame:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .film-hint {
+    margin: 12px 0 0;
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .04em;
+    color: var(--ink-3);
+  }
+  .film-hint .hint-touch { display: none; }
+  @media (hover: none) {
+    .film-hint .hint-hover { display: none; }
+    .film-hint .hint-touch { display: inline; }
   }
 
   /* Contact, built around one photo: a printed snapshot from 2006, set at
@@ -4670,20 +4675,7 @@
   .lb-cap { justify-content: flex-end; }
 
   @media (max-width: 759px) {
-    .ot-log { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 16px 0; }
-    .ot-meta { display: contents; }
-    .ot-no, .ot-meta h3, .ot-story { grid-column: 1; }
-    .ot-stage { order: 5; max-width: none; }
-    /* On phones the steps are one row under the stage that scrolls sideways. */
-    .ot-steps {
-      order: 6;
-      display: flex;
-      margin: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .ot-steps::-webkit-scrollbar { display: none; }
-    .ot-steps li { flex: 0 0 60px; }
+    .film-frame { width: 128px; }
     #contact { padding-bottom: 8px; }
     .footer { padding-top: 14px; }
     .since { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 22px; }
@@ -4694,7 +4686,7 @@
 }
 
 /* Unlayered, so it outranks the glass edge light the liquid layer puts on
-   every photo button's ::after; the stage photos do not need it. */
-.ot-frame::after { content: none; }
-.ot-frame { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-@media (prefers-reduced-motion: reduce) { .ot-frame, .ot-step { transition: none; } }
+   every photo button's ::after; the film frames do not want it. */
+.film-frame::after { content: none; }
+.film-frame { position: relative; }
+@media (prefers-reduced-motion: reduce) { .film-frame img { transition: none; } }
