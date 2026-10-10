@@ -1610,9 +1610,13 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     const shot = e.target.closest('.jc-shot');
     if (!shot) return;
     const fig = shot.closest('.jc-media, .oc-gallery, .since');
-    group = $$('img', fig);
-    const me = $('img', shot);
-    show(Math.max(0, group.indexOf(me)));
+    // One entry per photo: a card's main photo can also be one of its steps.
+    const seen = new Set();
+    const steps = $$('.oc-thumbs img', fig);
+    const ordered = steps.length ? [...steps, ...$$('img', fig).filter((im) => !steps.includes(im))] : $$('img', fig);
+    group = ordered.filter((im) => !seen.has(im.getAttribute('src')) && seen.add(im.getAttribute('src')));
+    const mine = $('img', shot).getAttribute('src');
+    show(Math.max(0, group.findIndex((im) => im.getAttribute('src') === mine)));
     dlg.showModal();
   });
 

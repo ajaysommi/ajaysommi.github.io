@@ -4589,29 +4589,79 @@
   .oc-story { margin: 0; color: var(--ink-2); font-size: .93rem; }
   .oc-story:empty { display: none; }
 
-  .since {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 0 0 16px;
+  /* The numbered steps: each thumbnail carries its place in the story. */
+  .oc-thumb { position: relative; }
+  .oc-thumb::after {
+    content: attr(data-step);
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, .62);
+    color: #fff;
+    font: 600 9.5px/1.3 var(--font-mono);
+    letter-spacing: .04em;
   }
+
+  /* Contact, built around one photo: a printed snapshot from 2006, set at
+     an angle beside the line and the links, as if left on the desk. */
+  .since {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(22px, 4vw, 48px);
+  }
+  .since-print {
+    margin: 6px 0 6px 6px;
+    padding: 9px 9px 30px;
+    background: #f6f3ec;
+    border-radius: 3px;
+    rotate: -4deg;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 14px 34px -10px rgba(0, 0, 0, .55);
+  }
+  [data-theme="daylight"] .since-print { box-shadow: 0 1px 2px rgba(16, 25, 43, .18), 0 14px 30px -12px rgba(16, 25, 43, .35); }
   .since-pic {
-    flex: 0 0 auto;
-    width: 150px;
-    aspect-ratio: 4 / 3;
+    display: block;
+    width: clamp(150px, 18vw, 210px);
+    aspect-ratio: 9 / 10;
     padding: 0;
-    border: 1px solid var(--stroke);
-    border-radius: var(--r-md);
-    background: var(--surface);
+    border: 0;
+    border-radius: 1px;
+    background: #ddd;
     overflow: hidden;
     cursor: zoom-in;
   }
-  .since figcaption { font-size: 1.05rem; color: var(--ink-2); }
-  .since figcaption strong { display: block; color: var(--ink); font-size: 1.15rem; }
+  .since-pic img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.9) contrast(1.02); }
+  .since-line { margin: 0 0 14px; font-size: clamp(17px, 1.8vw, 21px); color: var(--ink-2); }
+  .since-line strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: clamp(24px, 3vw, 34px); line-height: 1.12; letter-spacing: -.01em; }
+
+  /* The photo viewer shows the photos, not captions. */
+  #lbCap { display: none; }
+  .lb-cap { justify-content: flex-end; }
 
   @media (max-width: 759px) {
     .oc-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
     .oc-thumb { width: 58px; }
-    .since-pic { width: 120px; }
+    .since { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 22px; }
+    .since-print { margin: 4px 0 0; }
+    .since-pic { width: 170px; }
+    .since-body { width: 100%; }
   }
+}
+
+/* Unlayered, so it outranks the glass edge light the liquid layer puts on
+   every photo button's ::after: on the step thumbnails that pseudo element
+   is the step number instead. */
+.oc-thumb::after {
+  content: attr(data-step);
+  inset: auto auto 4px 4px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .62);
+  -webkit-mask: none;
+  mask: none;
+  color: #fff;
+  font: 600 9.5px/1.3 var(--font-mono);
+  letter-spacing: .04em;
 }
