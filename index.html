@@ -307,59 +307,69 @@
     <!-- THE PATH: scroll-driven career circuit -->
     <section id="experience" class="section journey-section" data-compact>
       <div class="section-head"><h2>The path so far</h2></div>
-      <p class="section-lede">Every role so far, from a robotics vision system in high school to identity infrastructure in the cloud. Tap a stop to open it.</p>
+      <p class="section-lede">Every role so far, from a robotics vision system in high school to identity infrastructure in the cloud. Tap a role to open it.</p>
 
-      <!-- Compact path: one stop per role. A stop opens its role below. -->
+      <!-- Compact path: a circuit trace with one node per role. A node opens
+           its role's tile right under it. -->
       <div class="pc" id="pathCompact">
+        <svg class="pc-trace" aria-hidden="true"><path class="pc-bed" d="" /><path class="pc-live" d="" /></svg>
         <ol class="pc-track" aria-label="Roles, oldest first">
-          <li><button type="button" class="pc-stop" data-i="0" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><span class="pc-initials" aria-hidden="true">RJ</span></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">Renaissance Jax</span>
-            <span class="pc-year">2019</span>
-          </button></li>
-          <li><button type="button" class="pc-stop" data-i="1" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><span class="pc-initials" aria-hidden="true">SR</span></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">Shiva Robotics</span>
-            <span class="pc-year">2020</span>
-          </button></li>
-          <li><button type="button" class="pc-stop" data-i="2" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><img src="assets/logos/opt/roboticsforall.webp" width="200" height="200" alt="" decoding="async" /></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">Robotics For All</span>
-            <span class="pc-year">2022</span>
-          </button></li>
-          <li><button type="button" class="pc-stop" data-i="3" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><img src="assets/logos/opt/fics.webp" data-dark-src="assets/logos/opt/fics.webp" data-light-src="assets/logos/opt/fics-light.webp" width="396" height="234" alt="" decoding="async" /></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">FICS @ UF</span>
-            <span class="pc-year">2023</span>
-          </button></li>
-          <li><button type="button" class="pc-stop" data-i="4" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><img src="assets/logos/opt/toyota.webp" data-dark-src="assets/logos/opt/toyota.webp" data-light-src="assets/logos/opt/toyota-light.webp" width="834" height="240" alt="" decoding="async" /></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">Toyota</span>
-            <span class="pc-year">2024</span>
-          </button></li>
-          <li><button type="button" class="pc-stop" data-i="5" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><img src="assets/logos/opt/jm-family.webp" data-dark-src="assets/logos/opt/jm-family.webp" data-light-src="assets/logos/opt/jm-family-light.webp" width="276" height="240" alt="" decoding="async" /></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">JM Family</span>
-            <span class="pc-year">2025</span>
-          </button></li>
-          <li><button type="button" class="pc-stop" data-i="6" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><img src="assets/logos/opt/hunter.webp" data-dark-src="assets/logos/opt/hunter.webp" data-light-src="assets/logos/opt/hunter-light.webp" width="632" height="170" alt="" decoding="async" /></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">Hunter Engineering</span>
-            <span class="pc-year">2026</span>
-          </button></li>
-          <li><button type="button" class="pc-stop" data-i="7" aria-expanded="false" aria-controls="journeyCards">
-            <span class="pc-mark"><img src="assets/logos/opt/adt.webp" width="240" height="240" alt="" decoding="async" /></span>
-            <span class="pc-dot" aria-hidden="true"></span>
-            <span class="pc-name">ADT</span>
-            <span class="pc-year">2026</span>
-          </button></li>
+          <li class="pc-row">
+            <button type="button" class="pc-stop" data-i="0" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2019</span><span class="pc-logo pc-logo-ini">RJ</span></span>
+              <span class="pc-label"><span class="pc-name">Renaissance Jax</span><span class="pc-role">Software Developer</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row is-alt">
+            <button type="button" class="pc-stop" data-i="1" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2020</span><span class="pc-logo pc-logo-ini">SR</span></span>
+              <span class="pc-label"><span class="pc-name">Shiva Robotics</span><span class="pc-role">SEO Analyst</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row">
+            <button type="button" class="pc-stop" data-i="2" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2022</span><span class="pc-logo"><img src="assets/logos/opt/roboticsforall.webp" width="200" height="200" alt="" decoding="async" /></span></span>
+              <span class="pc-label"><span class="pc-name">Robotics For All</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row is-alt">
+            <button type="button" class="pc-stop" data-i="3" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2023</span><span class="pc-logo"><img src="assets/logos/opt/fics-light.webp" width="396" height="234" alt="" decoding="async" /></span></span>
+              <span class="pc-label"><span class="pc-name">FICS @ UF</span><span class="pc-role">AI Cybersecurity Researcher</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row">
+            <button type="button" class="pc-stop" data-i="4" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2024</span><span class="pc-logo"><img src="assets/logos/opt/toyota-light.webp" width="834" height="240" alt="" decoding="async" /></span></span>
+              <span class="pc-label"><span class="pc-name">Toyota</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row is-alt">
+            <button type="button" class="pc-stop" data-i="5" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2025</span><span class="pc-logo"><img src="assets/logos/opt/jm-family-light.webp" width="276" height="240" alt="" decoding="async" /></span></span>
+              <span class="pc-label"><span class="pc-name">JM Family</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row">
+            <button type="button" class="pc-stop" data-i="6" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2026</span><span class="pc-logo"><img src="assets/logos/opt/hunter-light.webp" width="632" height="170" alt="" decoding="async" /></span></span>
+              <span class="pc-label"><span class="pc-name">Hunter Engineering</span><span class="pc-role">Software Engineering Co-op, R&amp;D</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row is-alt">
+            <button type="button" class="pc-stop" data-i="7" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2026</span><span class="pc-logo"><img src="assets/logos/opt/adt.webp" width="240" height="240" alt="" decoding="async" /></span></span>
+              <span class="pc-label"><span class="pc-name">ADT</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
         </ol>
       </div>
 
