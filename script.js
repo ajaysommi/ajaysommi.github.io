@@ -1360,9 +1360,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     const stops = $$('.pc-stop', compactSection);
     const slots = $$('.pc-slot', compactSection);
     const home = $('#journeyCards');
-    const bed = $('.pc-bed', pc), liveG = $('.pc-live', pc), svg = $('.pc-trace', pc);
-    const defs = $('defs', svg), NS = 'http://www.w3.org/2000/svg';
-    const tints = stops.map((b) => b.closest('.pc-row').style.getPropertyValue('--tint').trim() || 'var(--accent)');
+    const bed = $('.pc-bed', pc), liveP = $('.pc-live', pc), svg = $('.pc-trace', pc);
     cards.forEach((c) => c.classList.add('glass'));
     let openIdx = -1;
 
@@ -1389,34 +1387,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const pts = centres();
       svg.setAttribute('viewBox', `0 0 ${pc.clientWidth} ${pc.clientHeight}`);
       bed.setAttribute('d', pathTo(pts, pts.length));
-      /* The lit stretch, one run at a time, each blending from the colour
-         of the node it leaves to the colour of the node it reaches, with
-         the accent carrying the middle. */
-      const runs = openIdx > 0 ? openIdx : 0;
-      while (liveG.childElementCount < runs) {
-        const k = liveG.childElementCount;
-        const g = document.createElementNS(NS, 'linearGradient');
-        g.id = `pcRun${k}`;
-        g.setAttribute('gradientUnits', 'userSpaceOnUse');
-        [[0, tints[k]], [0.5, null], [1, tints[k + 1]]].forEach(([at, c]) => {
-          const st = document.createElementNS(NS, 'stop');
-          st.setAttribute('offset', String(at));
-          st.style.stopColor = c ? `color-mix(in oklab, ${c} 70%, var(--accent))` : 'var(--accent)';
-          g.append(st);
-        });
-        defs.append(g);
-        const p = document.createElementNS(NS, 'path');
-        p.setAttribute('stroke', `url(#pcRun${k})`);
-        liveG.append(p);
-      }
-      [...liveG.children].forEach((p, k) => {
-        if (k >= runs) { p.setAttribute('d', ''); return; }
-        const [x1, c1, r1] = pts[k], [x2, c2, r2] = pts[k + 1];
-        const g = defs.querySelector(`#pcRun${k}`);
-        g.setAttribute('x1', x1); g.setAttribute('y1', c1 + r1);
-        g.setAttribute('x2', x2); g.setAttribute('y2', c2 - r2);
-        p.setAttribute('d', pathTo(pts.slice(k, k + 2), 1));
-      });
+      liveP.setAttribute('d', openIdx > 0 ? pathTo(pts, openIdx) : '');
     };
 
     const open = (i, { scroll = false } = {}) => {

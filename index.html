@@ -312,7 +312,7 @@
       <!-- Compact path: a circuit trace with one node per role. A node opens
            its role's tile right under it. -->
       <div class="pc" id="pathCompact">
-        <svg class="pc-trace" aria-hidden="true"><defs><filter id="pcGlow" filterUnits="userSpaceOnUse" x="-100" y="-100" width="6000" height="40000"><feGaussianBlur stdDeviation="3.5" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs><path class="pc-bed" d="" /><g class="pc-live" filter="url(#pcGlow)"></g></svg>
+        <svg class="pc-trace" aria-hidden="true"><path class="pc-bed" d="" /><path class="pc-live" d="" /></svg>
         <ol class="pc-track" aria-label="Roles, oldest first">
           <li class="pc-row" data-c="0" data-pc="0" style="--tint:#2fae5a">
             <button type="button" class="pc-stop" data-i="0" aria-expanded="false">
