@@ -5069,12 +5069,10 @@
   fill: none;
 }
 .pc-bed { stroke: color-mix(in oklab, var(--ink) 21%, transparent); stroke-width: 2.5; stroke-linecap: round; }
-.pc-live {
-  stroke: var(--accent);
-  stroke-width: 3.25;
-  stroke-linecap: round;
-  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 55%, transparent));
-}
+/* The lit stretch: each run carries its own gradient (script.js), and the
+   glow is the run itself blurred, so it takes on the same colours. */
+.pc-live { fill: none; }
+.pc-live path { stroke-width: 3.25; stroke-linecap: round; }
 
 .pc-track {
   position: relative;
