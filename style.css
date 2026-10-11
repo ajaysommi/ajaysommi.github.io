@@ -5270,3 +5270,18 @@ html.js .pc-slot .jcard {
 @media (prefers-reduced-motion: reduce) {
   .story .st-btn, .story .st-close, .story .st-btn.lg-pressed, .story .st-close.lg-pressed { transition: none; scale: none; }
 }
+
+/* ==========================================================================
+   VIEWERS AND PINCH ZOOM
+   The photo and story viewers handle their own touch: the browser's page
+   pinch is off inside them (script.js zooms the photo layer instead), and
+   while either is open the busy page underneath stops animating, so
+   nothing behind the dialog keeps the phone redrawing.
+   ========================================================================== */
+.lightbox, .story { touch-action: none; overscroll-behavior: contain; }
+.lightbox #lbImg { touch-action: none; transform-origin: 50% 50%; will-change: transform; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.lightbox.is-zoomed .lb-prev, .lightbox.is-zoomed .lb-next { opacity: 0; pointer-events: none; }
+html:has(dialog[open]) .bg,
+html:has(dialog[open]) main *,
+html:has(dialog[open]) main *::before,
+html:has(dialog[open]) main *::after { animation-play-state: paused !important; }

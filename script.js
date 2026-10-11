@@ -1635,7 +1635,8 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   sizeTile();
   document.addEventListener('journey:active', sizeTile);
   addEventListener('resize', queue, { passive: true });
-  window.visualViewport?.addEventListener('resize', queue, { passive: true });
+  // Not while a viewer is open: a pinch there is not the page changing size.
+  window.visualViewport?.addEventListener('resize', () => { if (!document.querySelector('dialog[open]')) queue(); }, { passive: true });
   /* The card area follows the viewport height (dvh on phones), so this is
      what catches a toolbar sliding in or out, a rotation, or the column
      changing width, whether or not the window reports a resize. */
@@ -1713,8 +1714,61 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     if (e.target === dlg) dlg.close();
   });
 
+  /* Pinch to zoom inside the viewer, on the photo alone. Left to the
+     browser, a pinch zooms the whole page, and Safari redraws every layer
+     of it (blurred glass, the backdrop, the background) at the new scale on
+     every frame the fingers stay down; held long enough on an iPhone that
+     ran it out of memory and the tab reloaded. Scaling just the photo is
+     one layer and costs nothing. Double tap toggles a closer look. */
+  let z = 1, tx = 0, ty = 0, pinch = null, pan = null, lastTap = 0;
+  const pts = new Map();
+  const apply = (ease) => {
+    img.style.transition = ease ? 'transform .25s ease' : 'none';
+    img.style.transform = z === 1 ? '' : `translate3d(${tx}px, ${ty}px, 0) scale(${z})`;
+    dlg.classList.toggle('is-zoomed', z > 1);
+  };
+  const clampPan = () => {
+    const r = img.getBoundingClientRect(), w = r.width / z, h = r.height / z;
+    const mx = (w * z - w) / 2, my = (h * z - h) / 2;
+    tx = Math.max(-mx, Math.min(mx, tx)); ty = Math.max(-my, Math.min(my, ty));
+  };
+  const resetZoom = () => { z = 1; tx = ty = 0; pinch = pan = null; pts.clear(); apply(false); };
+  const dist = () => { const [a, b] = [...pts.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+  img.addEventListener('pointerdown', (e) => {
+    try { img.setPointerCapture(e.pointerId); } catch {}
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 2) { pinch = { d: dist(), z }; pan = null; }
+    else if (pts.size === 1 && z > 1) pan = { x: e.clientX - tx, y: e.clientY - ty };
+  });
+  img.addEventListener('pointermove', (e) => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch && pts.size === 2) { z = Math.max(1, Math.min(4, pinch.z * dist() / pinch.d)); clampPan(); apply(false); }
+    else if (pan) { tx = e.clientX - pan.x; ty = e.clientY - pan.y; clampPan(); apply(false); }
+  });
+  const lift = (e) => {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    if (!pts.size) {
+      pan = null;
+      if (z < 1.05) resetZoom();
+      const now = performance.now();
+      if (e.type === 'pointerup' && e.pointerType === 'touch' && now - lastTap < 280) {
+        if (z > 1) { z = 1; tx = ty = 0; } else z = 2.5;
+        apply(true); lastTap = 0;
+      } else lastTap = now;
+    }
+  };
+  ['pointerup', 'pointercancel'].forEach((t) => img.addEventListener(t, lift));
+  // Safari's own page pinch, kept off while any viewer is open.
+  const noPagePinch = (e) => { if (document.querySelector('dialog[open]')) e.preventDefault(); };
+  document.addEventListener('gesturestart', noPagePinch);
+  document.addEventListener('gesturechange', noPagePinch);
+  // Swiping between photos only when not zoomed in.
+  ['lbPrev', 'lbNext'].forEach((id) => $(`#${id}`)?.addEventListener('click', resetZoom, true));
+
   // Release the decoded image rather than holding the largest file in memory.
-  dlg.addEventListener('close', () => { img.removeAttribute('src'); });
+  dlg.addEventListener('close', () => { resetZoom(); img.removeAttribute('src'); });
 })();
 
 /* ==========================================================================
