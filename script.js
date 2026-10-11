@@ -3473,7 +3473,10 @@ function gatorStorm(n = 12) {
     sec?.addEventListener('pointerleave', () => { mx = my = -1e4; wake(); });
   }
 
-  const STEP_MS = 7000;
+  /* The opening step carries the intro as well, so it stays up a touch
+     longer; the rest move a touch quicker. */
+  const FIRST_MS = 8000, STEP_MS = 6500;
+  const stepMs = () => (step === 0 ? FIRST_MS : STEP_MS);
   const data = hls.map((hl) => {
     const box = $('.hl-data', hl);
     return {
@@ -3508,7 +3511,7 @@ function gatorStorm(n = 12) {
   const tick = (now) => {
     if (!paused) elapsed += now - start;
     start = now;
-    const k = Math.min(1, elapsed / STEP_MS);
+    const k = Math.min(1, elapsed / stepMs());
     fill(k);
     if (k >= 1) { next(); return; }
     raf = requestAnimationFrame(tick);
