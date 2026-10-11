@@ -1391,7 +1391,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 (function journeyPhotos() {
   if (!$('.jcard .jc-media')) return;
 
-  const MAX_H = 300;   // above this the photos start to dwarf the text
+  const MAX_H = 560;   // a ceiling for very tall windows, well past anything normal
   const FLOOR = 40;    // below this they stop reading as photos; the card scrolls instead
 
   // How tall a card's own content is, independent of the panel it sits in.
@@ -1455,8 +1455,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     /* Tell each image how wide it is actually drawn, so the browser picks
        the file for that size. The old fixed hints assumed thumbnails and
        would have served the small file to a photo drawn three times larger. */
+    const room = fig.clientWidth || Infinity;
     $$('.jc-shot img', fig).forEach((img) => {
-      const s = `${Math.ceil(h * aspectOf(img))}px`;
+      const s = `${Math.ceil(Math.min(room, h * aspectOf(img)))}px`;
       if (img.getAttribute('sizes') !== s) img.setAttribute('sizes', s);
     });
   };
@@ -1491,20 +1492,26 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
         return;
       }
 
+      fig.hidden = false;
       const text = contentHeight(card, fig);
       const gap = parseFloat(getComputedStyle(fig).marginTop) || 0;
       // The 4px is slack against sub pixel rounding in the text measurement:
       // without it a card can end up one or two pixels into a scrollbar.
       const spare = card.clientHeight - text - gap - 4;
 
-      /* No single photo wider than the strip, so any one of them can be seen
-         whole by scrolling to it. On a phone this is usually what limits the
-         height; on a desktop it rarely comes into it. */
-      const room = fig.clientWidth;
-      const widest = Math.max(...imgs.map(aspectOf));
-      const cap = room > 0 ? Math.min(MAX_H, room / widest) : MAX_H;
-
-      setHeight(fig, Math.floor(Math.max(FLOOR, Math.min(cap, spare))));
+      /* The strip takes all the height the text leaves, so the photos always
+         reach the bottom of the card and no role ends in a band of empty
+         space. It used to be capped so that no single photo could be wider
+         than the strip, which on a wide photo left a gap underneath; now a
+         photo that would be wider than the strip is drawn at the strip's
+         width instead, cropped a little at its sides (the viewer still opens
+         it whole). */
+      // Too little room for a photo to read as one (the smallest phones, on
+      // the wordiest roles): leave the strip out rather than squeeze it, and
+      // the viewer is still a tap away on every other screen.
+      fig.hidden = spare < FLOOR;
+      if (fig.hidden) return;
+      setHeight(fig, Math.floor(Math.min(MAX_H, spare)));
       if (reset) fig.scrollLeft = 0;
       markScroll(fig);
     });

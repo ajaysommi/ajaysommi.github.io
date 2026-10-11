@@ -4737,3 +4737,8 @@
   padding: clamp(16px, 2vw, 22px) clamp(28px, 4vw, 48px);
 }
 #offclock { padding-bottom: clamp(14px, 2.5vw, 26px); }
+
+/* A Path photo is never wider than its strip: one that would be (a wide
+   shot on a phone, say) is drawn at the strip's width and cropped at its
+   sides, so the strip can always take the card's full height. */
+.jc-media .jc-shot { max-width: 100%; }
