@@ -5078,12 +5078,19 @@
   transform: scale(1.06);
 }
 .pc-stop.is-past .pc-node { border-color: color-mix(in oklab, var(--tint) 75%, var(--stroke)); }
+/* The open role's node lights up solid in its company's colour, with the
+   year knocked out dark on top of it. */
 .pc-stop.is-on .pc-node {
-  border-color: var(--tint);
-  background: color-mix(in oklab, var(--tint) 24%, var(--surface-solid));
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--tint) 16%, transparent), 0 0 26px color-mix(in oklab, var(--tint) 45%, transparent);
+  border-color: color-mix(in oklab, var(--tint) 70%, #fff);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .35), transparent 65%),
+    color-mix(in oklab, var(--tint) 88%, #fff);
+  box-shadow:
+    0 0 0 5px color-mix(in oklab, var(--tint) 28%, transparent),
+    0 0 22px color-mix(in oklab, var(--tint) 75%, transparent),
+    0 0 48px color-mix(in oklab, var(--tint) 45%, transparent);
 }
-.pc-stop.is-on .pc-year { color: var(--ink); }
+.pc-stop.is-on .pc-year { color: #08090c; }
 
 /* The open role, full width under its node. */
 .pc-slot { position: relative; z-index: 1; min-width: 0; }
