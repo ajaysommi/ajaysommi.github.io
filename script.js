@@ -3437,6 +3437,42 @@ function gatorStorm(n = 12) {
   const hls = $$('.hl');
   if (!dlg || !hls.length || !dlg.showModal) return;
 
+  /* The circles notice the cursor: each one leans toward it (up to 14px)
+     and swells slightly as it comes within reach, its ring turning to
+     face it, then eases back when it leaves. Eased every frame and
+     stopped once everything has settled. */
+  if (!coarsePointer.matches && !prefersReduced()) {
+    const rings = hls.map((hl) => $('.hl-ring', hl));
+    const st = rings.map(() => ({ dx: 0, dy: 0, k: 1, tx: 0, ty: 0, tk: 1, spin: 210 }));
+    let mx = -1e4, my = -1e4, loop = 0;
+    const frame = () => {
+      loop = 0;
+      let moving = false;
+      rings.forEach((r, i) => {
+        const b = r.getBoundingClientRect();
+        const cx = b.left + b.width / 2 - st[i].dx, cy = b.top + b.height / 2 - st[i].dy;
+        const vx = mx - cx, vy = my - cy, d = Math.hypot(vx, vy);
+        const reach = 220, pull = Math.max(0, 1 - d / reach);
+        const s = st[i];
+        s.tx = d ? (vx / d) * 14 * pull : 0;
+        s.ty = d ? (vy / d) * 14 * pull : 0;
+        s.tk = 1 + 0.07 * pull;
+        if (pull > 0) s.spin = (Math.atan2(vy, vx) * 180) / Math.PI + 90;
+        s.dx += (s.tx - s.dx) * 0.16; s.dy += (s.ty - s.dy) * 0.16; s.k += (s.tk - s.k) * 0.16;
+        if (Math.abs(s.tx - s.dx) > 0.05 || Math.abs(s.ty - s.dy) > 0.05 || Math.abs(s.tk - s.k) > 0.001) moving = true;
+        r.style.setProperty('--dx', s.dx.toFixed(2));
+        r.style.setProperty('--dy', s.dy.toFixed(2));
+        r.style.setProperty('--k', s.k.toFixed(4));
+        r.style.setProperty('--spin', `${s.spin.toFixed(1)}deg`);
+      });
+      if (moving) loop = requestAnimationFrame(frame);
+    };
+    const wake = () => { if (!loop) loop = requestAnimationFrame(frame); };
+    const sec = $('#offclock');
+    sec?.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; wake(); }, { passive: true });
+    sec?.addEventListener('pointerleave', () => { mx = my = -1e4; wake(); });
+  }
+
   const STEP_MS = 7000;
   const data = hls.map((hl) => {
     const box = $('.hl-data', hl);
