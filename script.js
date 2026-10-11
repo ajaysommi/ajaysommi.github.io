@@ -3437,7 +3437,7 @@ function gatorStorm(n = 12) {
   const hls = $$('.hl');
   if (!dlg || !hls.length || !dlg.showModal) return;
 
-  /* The circles notice the cursor: each one leans toward it (up to 14px)
+  /* The circles notice the cursor: each one leans toward it (up to 5px)
      and swells slightly as it comes within reach, its ring turning to
      face it, then eases back when it leaves. Eased every frame and
      stopped once everything has settled. */
@@ -3452,13 +3452,13 @@ function gatorStorm(n = 12) {
         const b = r.getBoundingClientRect();
         const cx = b.left + b.width / 2 - st[i].dx, cy = b.top + b.height / 2 - st[i].dy;
         const vx = mx - cx, vy = my - cy, d = Math.hypot(vx, vy);
-        const reach = 220, pull = Math.max(0, 1 - d / reach);
+        const reach = 180, pull = Math.max(0, 1 - d / reach);
         const s = st[i];
-        s.tx = d ? (vx / d) * 14 * pull : 0;
-        s.ty = d ? (vy / d) * 14 * pull : 0;
-        s.tk = 1 + 0.07 * pull;
+        s.tx = d ? (vx / d) * 5 * pull : 0;
+        s.ty = d ? (vy / d) * 5 * pull : 0;
+        s.tk = 1 + 0.025 * pull;
         if (pull > 0) s.spin = (Math.atan2(vy, vx) * 180) / Math.PI + 90;
-        s.dx += (s.tx - s.dx) * 0.16; s.dy += (s.ty - s.dy) * 0.16; s.k += (s.tk - s.k) * 0.16;
+        s.dx += (s.tx - s.dx) * 0.1; s.dy += (s.ty - s.dy) * 0.1; s.k += (s.tk - s.k) * 0.1;
         if (Math.abs(s.tx - s.dx) > 0.05 || Math.abs(s.ty - s.dy) > 0.05 || Math.abs(s.tk - s.k) > 0.001) moving = true;
         r.style.setProperty('--dx', s.dx.toFixed(2));
         r.style.setProperty('--dy', s.dy.toFixed(2));

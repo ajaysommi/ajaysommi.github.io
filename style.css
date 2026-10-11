@@ -4794,7 +4794,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    transform: translate(calc(var(--dx, 0) * -.35px), calc(var(--dy, 0) * -.35px)) scale(1.14);
+    transform: translate(calc(var(--dx, 0) * -.5px), calc(var(--dy, 0) * -.5px)) scale(1.06);
     object-fit: cover;
   }
   .hl-btn:focus-visible .hl-ring { --k: 1.05; }
