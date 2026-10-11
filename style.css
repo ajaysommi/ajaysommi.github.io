@@ -5121,6 +5121,9 @@ html.js .pc-slot .jcard {
 @media (prefers-reduced-motion: reduce) {
   html.js .pc-slot .jcard { animation: none; }
   .pc-node { transition: none; }
+}
+
+/* ==========================================================================
    EDUCATION: a gator peering up out of the card's empty corner, desktop
    only. Drawn, not a logo: an outline of a head with its eye just over the
    waterline, in UF orange fading to blue, faint enough to read as texture.
