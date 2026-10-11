@@ -1349,7 +1349,45 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     if (barEl) barEl.style.width = `${p * 100}%`;
   };
 
-  if (prefersReduced()) {
+  const compactSection = scope.closest('.journey-section[data-compact]');
+  if (compactSection) {
+    /* Compact path: no pinned board. A row of stops, one per role, and the
+       role's full tile opens under the row when its stop is chosen. Only
+       one is open at a time; choosing the open one again closes it. */
+    compactSection.classList.add('is-compact');
+    const stops = $$('.pc-stop', compactSection);
+    cards.forEach((c) => c.classList.add('glass'));
+    const open = (i, { scroll = false } = {}) => {
+      const was = cards.findIndex((c) => c.classList.contains('is-active'));
+      const next = i === was ? -1 : i;
+      cards.forEach((c, k) => c.classList.toggle('is-active', k === next));
+      stops.forEach((b, k) => {
+        b.classList.toggle('is-on', k === next);
+        b.setAttribute('aria-expanded', String(k === next));
+        b.classList.toggle('is-past', next >= 0 && k < next);
+      });
+      compactSection.classList.toggle('has-open', next >= 0);
+      if (next >= 0) {
+        compactSection.style.setProperty('--pc-at', String(next));
+        // On a phone the row scrolls sideways; bring the chosen stop into it.
+        const row = $('.pc', compactSection);
+        if (row && row.scrollWidth > row.clientWidth) {
+          const b = stops[next];
+          row.scrollTo({ left: b.offsetLeft + b.offsetWidth / 2 - row.clientWidth / 2, behavior: prefersReduced() ? 'auto' : 'smooth' });
+        }
+        document.dispatchEvent(new CustomEvent('journey:active', { detail: { index: next } }));
+        if (scroll) cards[next].scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    };
+    stops.forEach((b, i) => b.addEventListener('click', () => open(i, { scroll: true })));
+    // Other parts of the page (a skill with no project) can ask for a role.
+    document.addEventListener('path:open', (e) => {
+      const i = e.detail?.index ?? -1;
+      if (i < 0) return;
+      if (!cards[i].classList.contains('is-active')) open(i);
+      compactSection.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'start' });
+    });
+  } else if (prefersReduced()) {
     /* No pinning and no scroll driven board: every role at once, as a list
        of glass tiles you read top to bottom. The stylesheet does the layout
        off .is-still; it had only ever been half done, so the eight roles sat
@@ -2243,6 +2281,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const showRole = (card) => {
     const scope = $('#journeyScope');
     const smooth = prefersReduced() ? 'auto' : 'smooth';
+    if (scope?.closest('.journey-section')?.classList.contains('is-compact')) {
+      document.dispatchEvent(new CustomEvent('path:open', { detail: { index: roles.indexOf(card) } }));
+      return;
+    }
     const still = scope?.closest('.journey-section')?.classList.contains('is-still');
     if (!scope || still || roles.length < 2) {
       card.scrollIntoView({ behavior: smooth, block: 'start' });

@@ -4907,3 +4907,168 @@
     .hl-name { max-width: 12ch; font-size: .86rem; }
   }
 }
+
+/* ==========================================================================
+   THE PATH, COMPACT (experiment)
+   A row of stops, one per role, with the company's mark above a small dot
+   on a line and the name and year under it. Choosing a stop opens that
+   role's full tile under the row; nothing is open to begin with.
+   ========================================================================== */
+@layer components {
+  .pc { display: none; }
+  .journey-section.is-compact .pc { display: block; }
+  .journey-section.is-compact .journey-scope { height: auto; }
+  .journey-section.is-compact .journey-sticky { position: static; display: block; height: auto; }
+  .journey-section.is-compact .journey-stage,
+  .journey-section.is-compact .readout-meter { display: none; }
+  .journey-section.is-compact .journey-readout {
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .journey-section.is-compact .journey-readout::before { content: none; }
+
+  .pc-track {
+    --stops: 8;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--stops), minmax(0, 1fr));
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* The line the stops sit on, at the height of the dots. */
+  .pc-track::before {
+    content: "";
+    position: absolute;
+    left: calc(50% / var(--stops));
+    right: calc(50% / var(--stops));
+    top: 49px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 55%, var(--stroke)), var(--stroke));
+  }
+  .pc-stop {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    width: 100%;
+    padding: 0 4px 6px;
+    border: 0;
+    background: none;
+    color: var(--ink-2);
+    font: inherit;
+    cursor: pointer;
+  }
+  .pc-mark {
+    display: grid;
+    place-items: center;
+    height: 36px;
+    width: 100%;
+    margin-bottom: 6px;
+    transition: transform .25s var(--ease), opacity .25s var(--ease);
+    opacity: .78;
+  }
+  .pc-mark img { max-width: min(88px, 92%); max-height: 30px; width: auto; height: auto; object-fit: contain; }
+  /* Roles with no logo yet get their initials in a small disc. */
+  .pc-initials {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--stroke-hi);
+    border-radius: 50%;
+    font-family: var(--font-mono);
+    font-size: .66rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--ink-2);
+  }
+  [data-theme="daylight"] .pc-mark img { filter: brightness(.86) contrast(1.1); }
+  [data-theme="daylight"] .pc-mark { opacity: .92; }
+  .pc-word {
+    font-family: var(--font-display);
+    font-size: .68rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: .02em;
+    text-align: center;
+    color: var(--ink-2);
+  }
+  .pc-dot {
+    position: relative;
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+    border: 2px solid color-mix(in oklab, var(--ink) 30%, transparent);
+    border-radius: 50%;
+    background: var(--bg);
+    transition: border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .pc-name { margin-top: 8px; font-size: .78rem; font-weight: 600; line-height: 1.2; text-align: center; }
+  .pc-year { margin-top: 2px; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em; color: var(--ink-3); }
+
+  .pc-stop:hover .pc-mark,
+  .pc-stop:focus-visible .pc-mark { opacity: 1; transform: translateY(-3px); }
+  .pc-stop:hover .pc-dot { border-color: var(--accent); }
+  .pc-stop.is-past .pc-dot { border-color: color-mix(in oklab, var(--accent) 60%, transparent); background: color-mix(in oklab, var(--accent) 35%, var(--bg)); }
+  .pc-stop.is-on { color: var(--ink); }
+  .pc-stop.is-on .pc-mark { opacity: 1; }
+  .pc-stop.is-on .pc-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--accent) 22%, transparent);
+  }
+
+  /* The open role: the existing tile, under the row, with a notch pointing
+     up at its stop. */
+  .journey-section.is-compact .journey-cards { position: relative; margin-top: 14px; }
+  html.js .journey-section.is-compact .jcard {
+    position: relative;
+    display: none;
+    padding: 20px 22px;
+    overflow: visible;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: none;
+  }
+  html.js .journey-section.is-compact .jcard.is-active {
+    display: block;
+    animation: pc-open .35s var(--ease);
+  }
+  .journey-section.is-compact.has-open .journey-cards::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -7px;
+    left: calc((var(--pc-at, 0) + .5) / 8 * 100%);
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    border-top: 1px solid var(--stroke);
+    border-left: 1px solid var(--stroke);
+    background: var(--surface-solid);
+    transform: rotate(45deg);
+  }
+  @keyframes pc-open {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (max-width: 719px) {
+    .pc { margin: 0 calc(var(--gutter) * -1); overflow-x: auto; scrollbar-width: none; }
+    .pc::-webkit-scrollbar { display: none; }
+    .pc-track { grid-template-columns: repeat(var(--stops), 86px); width: max-content; padding: 0 var(--gutter); }
+    .pc-track::before { left: calc(var(--gutter) + 43px); right: calc(var(--gutter) + 43px); }
+    .journey-section.is-compact.has-open .journey-cards::before { display: none; }
+    html.js .journey-section.is-compact .jcard { padding: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html.js .journey-section.is-compact .jcard.is-active { animation: none; }
+    .pc-mark, .pc-dot { transition: none; }
+  }
+}

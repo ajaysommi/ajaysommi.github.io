@@ -305,12 +305,63 @@
     </section>
 
     <!-- THE PATH: scroll-driven career circuit -->
-    <section id="experience" class="section journey-section">
+    <section id="experience" class="section journey-section" data-compact>
       <div class="section-head"><h2>The path so far</h2></div>
-      <p class="section-lede">
-        Every role is a node on the board. Scroll to send current through the trace and watch the
-        route light up, from a robotics vision system in high school to identity infrastructure in the cloud.
-      </p>
+      <p class="section-lede">Every role so far, from a robotics vision system in high school to identity infrastructure in the cloud. Tap a stop to open it.</p>
+
+      <!-- Compact path: one stop per role. A stop opens its role below. -->
+      <div class="pc" id="pathCompact">
+        <ol class="pc-track" aria-label="Roles, oldest first">
+          <li><button type="button" class="pc-stop" data-i="0" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><span class="pc-initials" aria-hidden="true">RJ</span></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">Renaissance Jax</span>
+            <span class="pc-year">2019</span>
+          </button></li>
+          <li><button type="button" class="pc-stop" data-i="1" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><span class="pc-initials" aria-hidden="true">SR</span></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">Shiva Robotics</span>
+            <span class="pc-year">2020</span>
+          </button></li>
+          <li><button type="button" class="pc-stop" data-i="2" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><img src="assets/logos/opt/roboticsforall.webp" width="200" height="200" alt="" decoding="async" /></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">Robotics For All</span>
+            <span class="pc-year">2022</span>
+          </button></li>
+          <li><button type="button" class="pc-stop" data-i="3" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><img src="assets/logos/opt/fics.webp" data-dark-src="assets/logos/opt/fics.webp" data-light-src="assets/logos/opt/fics-light.webp" width="396" height="234" alt="" decoding="async" /></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">FICS @ UF</span>
+            <span class="pc-year">2023</span>
+          </button></li>
+          <li><button type="button" class="pc-stop" data-i="4" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><img src="assets/logos/opt/toyota.webp" data-dark-src="assets/logos/opt/toyota.webp" data-light-src="assets/logos/opt/toyota-light.webp" width="834" height="240" alt="" decoding="async" /></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">Toyota</span>
+            <span class="pc-year">2024</span>
+          </button></li>
+          <li><button type="button" class="pc-stop" data-i="5" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><img src="assets/logos/opt/jm-family.webp" data-dark-src="assets/logos/opt/jm-family.webp" data-light-src="assets/logos/opt/jm-family-light.webp" width="276" height="240" alt="" decoding="async" /></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">JM Family</span>
+            <span class="pc-year">2025</span>
+          </button></li>
+          <li><button type="button" class="pc-stop" data-i="6" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><img src="assets/logos/opt/hunter.webp" data-dark-src="assets/logos/opt/hunter.webp" data-light-src="assets/logos/opt/hunter-light.webp" width="632" height="170" alt="" decoding="async" /></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">Hunter Engineering</span>
+            <span class="pc-year">2026</span>
+          </button></li>
+          <li><button type="button" class="pc-stop" data-i="7" aria-expanded="false" aria-controls="journeyCards">
+            <span class="pc-mark"><img src="assets/logos/opt/adt.webp" width="240" height="240" alt="" decoding="async" /></span>
+            <span class="pc-dot" aria-hidden="true"></span>
+            <span class="pc-name">ADT</span>
+            <span class="pc-year">2026</span>
+          </button></li>
+        </ol>
+      </div>
 
       <div class="journey-scope" id="journeyScope">
         <div class="journey-sticky">
