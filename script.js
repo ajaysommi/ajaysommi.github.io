@@ -1374,39 +1374,20 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
         return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top, r.height / 2];
       });
     };
-    /* Each run starts and ends on a solder pad just clear of the node's
-       halo, like a trace landing on a board. */
-    const PAD = 7;
-    const ends = (pts, k) => {
-      const [x1, c1, r1] = pts[k], [x2, c2, r2] = pts[k + 1];
-      return [x1, c1 + r1 + PAD, x2, c2 - r2 - PAD];
-    };
     const pathTo = (pts, upto) => {
       let d = '';
       for (let k = 0; k < Math.min(upto, pts.length - 1); k++) {
-        const [x1, y1, x2, y2] = ends(pts, k), pull = Math.min((y2 - y1) * 0.9, 160);
+        const [x1, c1, r1] = pts[k], [x2, c2, r2] = pts[k + 1];
+        const y1 = c1 + r1, y2 = c2 - r2, pull = Math.min((y2 - y1) * 0.9, 160);
         d += `M${x1} ${y1}C${x1} ${y1 + pull} ${x2} ${y2 - pull} ${x2} ${y2}`;
       }
       return d;
     };
-    const pads = $('.pc-pads', pc), NS = 'http://www.w3.org/2000/svg';
     const draw = () => {
       const pts = centres();
       svg.setAttribute('viewBox', `0 0 ${pc.clientWidth} ${pc.clientHeight}`);
       bed.setAttribute('d', pathTo(pts, pts.length));
       liveP.setAttribute('d', openIdx > 0 ? pathTo(pts, openIdx) : '');
-      const dots = [];
-      for (let k = 0; k < pts.length - 1; k++) {
-        const [x1, y1, x2, y2] = ends(pts, k), lit = k < openIdx;
-        dots.push([x1, y1, lit], [x2, y2, lit]);
-      }
-      while (pads.childElementCount < dots.length) pads.append(document.createElementNS(NS, 'circle'));
-      [...pads.children].forEach((c, j) => {
-        const [x, y, lit] = dots[j] || [];
-        if (x === undefined) { c.remove(); return; }
-        c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', '4');
-        c.classList.toggle('is-lit', lit);
-      });
     };
 
     const open = (i, { scroll = false } = {}) => {
