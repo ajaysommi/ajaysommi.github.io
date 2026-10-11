@@ -5209,3 +5209,53 @@ html.js .pc-slot .jcard {
   }
   [data-theme="daylight"] .edu-gator { opacity: .16; }
 }
+
+/* ==========================================================================
+   STORY VIEWER BUTTONS: the same smoked liquid glass as the photo viewer's
+   arrows (light under the pointer, a small spring on press via the shared
+   liquidPress engine), since they sit over photos in just the same way.
+   ========================================================================== */
+.story .st-btn,
+.story .st-close {
+  border: 0;
+  color: #fff;
+  background:
+    radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(255, 255, 255, var(--lg-press)), transparent 72%),
+    rgba(10, 14, 24, .58);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+          backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    0 10px 26px -8px rgba(0, 0, 0, .6),
+    0 2px 8px rgba(0, 0, 0, .35),
+    inset .3px 1px 0 rgba(255, 255, 255, .34),
+    inset -.3px -1px 0 rgba(255, 255, 255, .14),
+    inset 0 0 0 1px rgba(255, 255, 255, .07);
+  transition:
+    background-color .2s ease,
+    scale .5s cubic-bezier(.3, 1.2, .5, 1),
+    --lg-press .6s ease-out;
+}
+.story .st-btn svg,
+.story .st-close svg { filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .45)); }
+.story .st-btn:hover,
+.story .st-close:hover { background-color: rgba(10, 14, 24, .78); border-color: transparent; }
+.story .st-btn.lg-pressed,
+.story .st-close.lg-pressed {
+  transition:
+    background-color .2s ease,
+    scale .09s ease-out,
+    --lg-press .09s ease-out;
+}
+.story .st-close { width: 44px; height: 44px; }
+@media (min-width: 900px) {
+  .story .st-btn { width: 48px; height: 48px; }
+  .story .st-pause { width: 56px; height: 56px; }
+  .story .st-btn svg { width: 22px; height: 22px; }
+}
+@media (max-width: 899px) {
+  .story .st-btn { width: 38px; height: 38px; }
+  .story .st-btn svg { width: 18px; height: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story .st-btn, .story .st-close, .story .st-btn.lg-pressed, .story .st-close.lg-pressed { transition: none; scale: none; }
+}

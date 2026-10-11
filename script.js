@@ -3413,7 +3413,7 @@ function gatorStorm(n = 12) {
 (function liquidPress() {
   const SEL = [
     '.btn', '.filter-chip', '.pills button', '.contact a', '.card-repo',
-    '.chip', '.chip-clear', '.carousel-ctrl .icon-btn', '.sheet-cta', '.lb-btn',
+    '.chip', '.chip-clear', '.carousel-ctrl .icon-btn', '.sheet-cta', '.lb-btn', '.st-btn', '.st-close',
     'header.nav .icon-btn', 'header.nav a.cta', 'header.nav .brand', '.dock-fab .icon-btn',
   ].join(',');
 
