@@ -4726,3 +4726,14 @@
 .film-frame.is-on img,
 .film-frame:hover img { opacity: 1; }
 .film-frame.is-on { box-shadow: 0 0 0 2px var(--accent); }
+
+/* The quote is one short line now. The box was sized for a long sentence,
+   so it sat tall and wide with a lot of air around it. A snug pill sized
+   to the line, with even space above and below it. */
+.section.quote {
+  width: fit-content;
+  max-width: calc(100% - var(--gutter) * 2);
+  margin-block: clamp(4px, 1vw, 12px);
+  padding: clamp(16px, 2vw, 22px) clamp(28px, 4vw, 48px);
+}
+#offclock { padding-bottom: clamp(14px, 2.5vw, 26px); }
