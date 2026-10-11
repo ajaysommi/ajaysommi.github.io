@@ -4742,3 +4742,153 @@
    shot on a phone, say) is drawn at the strip's width and cropped at its
    sides, so the strip can always take the card's full height. */
 .jc-media .jc-shot { max-width: 100%; }
+
+/* ==========================================================================
+   OFF THE CLOCK, AS STORIES (experiment)
+   Three circles like story highlights; each opens a full screen story.
+   ========================================================================== */
+@layer components {
+  .hls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(18px, 5vw, 64px);
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hl-btn {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 6px;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .hl-ring {
+    position: relative;
+    display: block;
+    width: clamp(96px, 13vw, 132px);
+    aspect-ratio: 1;
+    padding: 4px;
+    border-radius: 50%;
+    background: conic-gradient(from 210deg, var(--accent), var(--accent-2), var(--accent));
+    transition: transform .25s var(--ease), filter .25s var(--ease);
+  }
+  .hl-ring img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 3px solid var(--bg);
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .hl-btn:hover .hl-ring,
+  .hl-btn:focus-visible .hl-ring { transform: scale(1.05); }
+  .hl.is-seen .hl-ring { background: var(--stroke-hi); }
+  .hl-name { margin-top: 4px; font-weight: 600; font-size: .98rem; }
+  .hl-count { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .06em; color: var(--ink-3); text-transform: uppercase; }
+
+  /* The viewer. */
+  .story {
+    width: min(560px, 100vw);
+    max-width: none;
+    height: min(92svh, 900px);
+    max-height: none;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-lg);
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+  }
+  .story::backdrop { background: rgba(0, 0, 0, .82); backdrop-filter: blur(8px); }
+  .st-frame { position: relative; display: flex; flex-direction: column; height: 100%; }
+  .st-bars {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 10px;
+    z-index: 3;
+    display: flex;
+    gap: 4px;
+  }
+  .st-bars span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .3); overflow: hidden; }
+  .st-bars i { display: block; height: 100%; background: #fff; transform-origin: left; transform: scaleX(0); }
+  .st-head {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 18px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px 0 14px;
+    font-weight: 600;
+    font-size: .92rem;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  }
+  .st-close {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .35);
+    color: #fff;
+    cursor: pointer;
+  }
+  .st-media { position: relative; flex: 1 1 auto; min-height: 0; background: #000; }
+  .st-media::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 110px;
+    background: linear-gradient(rgba(0, 0, 0, .55), transparent);
+    pointer-events: none;
+  }
+  .st-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .st-tap {
+    position: absolute;
+    top: 70px;
+    bottom: 40%;
+    z-index: 2;
+    width: 40%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .st-prev { left: 0; }
+  .st-next { right: 0; width: 60%; }
+  .st-text {
+    flex: 0 0 auto;
+    padding: 16px 18px 22px;
+    background: #0b0b0d;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+  }
+  .st-intro { margin: 0 0 12px; color: #c8c8cc; font-size: .9rem; line-height: 1.5; }
+  .st-step { margin: 0; color: #d9d9de; font-size: .95rem; line-height: 1.55; }
+  .st-n {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--accent) 22%, transparent);
+    color: var(--accent);
+    font: 700 .72rem/1.3 var(--font-mono);
+    vertical-align: 1px;
+  }
+  .st-lead { color: #fff; }
+  .story.is-paused .st-bars i { opacity: .7; }
+
+  @media (max-width: 719px) {
+    .story { width: 100vw; height: 100svh; border-radius: 0; }
+    .hl-ring { width: 96px; }
+    .hls { gap: 14px; justify-content: space-around; }
+  }
+}

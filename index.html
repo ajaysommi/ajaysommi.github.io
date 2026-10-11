@@ -679,107 +679,62 @@
     <!-- OFF THE CLOCK -->
     <section id="offclock" class="section">
       <div class="section-head"><h2>Off the Clock</h2></div>
-      <p class="section-lede">Repairs, teardowns and builds I've taken on outside of work.</p>
-      <div class="rolls">
-      <article class="roll" data-reveal>
-        <div class="roll-meta">
+      <p class="section-lede">Repairs, teardowns and builds I've taken on outside of work. Tap one to see how it went.</p>
+      <ul class="hls">
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="0" aria-haspopup="dialog">
+          <span class="hl-ring"><img src="assets/images/offclock/ard-tool-480.webp" width="3024" height="4032" alt="" loading="lazy" decoding="async" /></span>
+          <span class="hl-name">Electronics</span>
+          <span class="hl-count">5 steps</span>
+        </button>
+        <div class="hl-data" hidden>
           <h3>Learning electronics by building (and breaking)</h3>
-          <p class="ot-story">It started with one screen saying hello, and turned into a habit of opening things up to see how they work, including one lesson about heat I learned the hard way.</p>
+          <p>It started with one screen saying hello, and turned into a habit of opening things up to see how they work, including one lesson about heat I learned the hard way.</p>
+          <ol>
+          <li data-src="assets/images/offclock/ard-lcd-480.webp" data-srcset="assets/images/offclock/ard-lcd-480.webp 480w, assets/images/offclock/ard-lcd-960.webp 960w, assets/images/offclock/ard-lcd-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="LCD screen reading Greetings World wired to an Arduino"><strong>Hello, world.</strong> My first real Arduino circuit. Wired it up, flashed it, and the screen said hello back.</li>
+          <li data-src="assets/images/offclock/ard-tool-480.webp" data-srcset="assets/images/offclock/ard-tool-480.webp 480w, assets/images/offclock/ard-tool-960.webp 960w, assets/images/offclock/ard-tool-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="A homemade soldering iron built from a pencil, tape and wire"><strong>The homemade soldering iron.</strong> Trying to save an old hard drive with no soldering iron, I built one: pencil lead, an old phone charger and wrapped wire. It got hot. So did my fingers.</li>
+          <li data-src="assets/images/offclock/diag-humidifier-480.webp" data-srcset="assets/images/offclock/diag-humidifier-480.webp 480w, assets/images/offclock/diag-humidifier-960.webp 960w, assets/images/offclock/diag-humidifier-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="A dehumidifier opened up to show its cooling fins and wiring"><strong>Why did it stop?</strong> Our dehumidifier died, so I took it apart to find out how it actually works. A crash course in Peltier cooling and thermodynamics.</li>
+          <li data-src="assets/images/offclock/ard-desk-480.webp" data-srcset="assets/images/offclock/ard-desk-480.webp 480w, assets/images/offclock/ard-desk-960.webp 960w, assets/images/offclock/ard-desk-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="Laptop and breadboard circuits spread across a desk"><strong>The idea.</strong> College group project: pick an idea and build it. Ours was a toilet lid that opens on its own when you walk up.</li>
+          <li data-src="assets/images/offclock/ard-servo-480.webp" data-srcset="assets/images/offclock/ard-servo-480.webp 480w, assets/images/offclock/ard-servo-960.webp 960w, assets/images/offclock/ard-servo-1600.webp 1600w" data-w="2662" data-h="3703" data-alt="Arduino and breadboard wired to a motorized lid on a 3D printed bowl"><strong>The prototype.</strong> Our working prototype: walk up and the lid lifts, over a bowl we 3D printed.</li>
+          </ol>
         </div>
-        <div class="film-scroll">
-          <div class="film" data-roll="ROLL 01">
-            <div class="film-track">
-              <button type="button" class="jc-shot film-frame" data-n="1" aria-label="Open photo 1: LCD screen reading Greetings World wired to an Arduino">
-                <img src="assets/images/offclock/ard-lcd-480.webp" srcset="assets/images/offclock/ard-lcd-480.webp 480w, assets/images/offclock/ard-lcd-960.webp 960w, assets/images/offclock/ard-lcd-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="LCD screen reading Greetings World wired to an Arduino" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="2" aria-label="Open photo 2: A homemade soldering iron built from a pencil, tape and wire">
-                <img src="assets/images/offclock/ard-tool-480.webp" srcset="assets/images/offclock/ard-tool-480.webp 480w, assets/images/offclock/ard-tool-960.webp 960w, assets/images/offclock/ard-tool-1600.webp 1600w" sizes="220px" width="3024" height="4032" alt="A homemade soldering iron built from a pencil, tape and wire" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="3" aria-label="Open photo 3: A dehumidifier opened up to show its cooling fins and wiring">
-                <img src="assets/images/offclock/diag-humidifier-480.webp" srcset="assets/images/offclock/diag-humidifier-480.webp 480w, assets/images/offclock/diag-humidifier-960.webp 960w, assets/images/offclock/diag-humidifier-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="A dehumidifier opened up to show its cooling fins and wiring" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="4" aria-label="Open photo 4: Laptop and breadboard circuits spread across a desk">
-                <img src="assets/images/offclock/ard-desk-480.webp" srcset="assets/images/offclock/ard-desk-480.webp 480w, assets/images/offclock/ard-desk-960.webp 960w, assets/images/offclock/ard-desk-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="Laptop and breadboard circuits spread across a desk" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="5" aria-label="Open photo 5: Arduino and breadboard wired to a motorized lid on a 3D printed bowl">
-                <img src="assets/images/offclock/ard-servo-480.webp" srcset="assets/images/offclock/ard-servo-480.webp 480w, assets/images/offclock/ard-servo-960.webp 960w, assets/images/offclock/ard-servo-1600.webp 1600w" sizes="220px" width="2662" height="3703" alt="Arduino and breadboard wired to a motorized lid on a 3D printed bowl" loading="lazy" decoding="async" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <ol class="film-notes" aria-live="polite">
-          <li class="film-note"><span class="film-note-n">01</span><strong>Hello, world.</strong> My first real Arduino circuit. Wired it up, flashed it, and the screen said hello back.</li>
-          <li class="film-note"><span class="film-note-n">02</span><strong>The homemade soldering iron.</strong> Trying to save an old hard drive with no soldering iron, I built one: pencil lead, an old phone charger and wrapped wire. It got hot. So did my fingers.</li>
-          <li class="film-note"><span class="film-note-n">03</span><strong>Why did it stop?</strong> Our dehumidifier died, so I took it apart to find out how it actually works. A crash course in Peltier cooling and thermodynamics.</li>
-          <li class="film-note"><span class="film-note-n">04</span><strong>The idea.</strong> College group project: pick an idea and build it. Ours was a toilet lid that opens on its own when you walk up.</li>
-          <li class="film-note"><span class="film-note-n">05</span><strong>The prototype.</strong> Our working prototype: walk up and the lid lifts, over a bowl we 3D printed.</li>
-        </ol>
-      </article>
-      <article class="roll" data-reveal>
-        <div class="roll-meta">
+      </li>
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="1" aria-haspopup="dialog">
+          <span class="hl-ring"><img src="assets/images/offclock/mac-paste-480.webp" width="3024" height="4032" alt="" loading="lazy" decoding="async" /></span>
+          <span class="hl-name">The MacBook</span>
+          <span class="hl-count">4 steps</span>
+        </button>
+        <div class="hl-data" hidden>
           <h3>Opening up a MacBook to fix it</h3>
-          <p class="ot-story">I gutted a 2011 MacBook Pro, then tried something you are not supposed to: a 2012 logic board in a 2011 body. It needed a shaved down display connector and a power fault tracked down, and it came back to life as a 2012, with the faster graphics and memory to match.</p>
+          <p>I gutted a 2011 MacBook Pro, then tried something you are not supposed to: a 2012 logic board in a 2011 body. It needed a shaved down display connector and a power fault tracked down, and it came back to life as a 2012, with the faster graphics and memory to match.</p>
+          <ol>
+          <li data-src="assets/images/offclock/mac-open-480.webp" data-srcset="assets/images/offclock/mac-open-480.webp 480w, assets/images/offclock/mac-open-960.webp 960w, assets/images/offclock/mac-open-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="MacBook Pro opened up on a desk"><strong>Gutted.</strong> Everything out. The hard drive became an SSD and the battery was replaced.</li>
+          <li data-src="assets/images/offclock/mac-paste-480.webp" data-srcset="assets/images/offclock/mac-paste-480.webp 480w, assets/images/offclock/mac-paste-960.webp 960w, assets/images/offclock/mac-paste-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="MacBook heatsink lifted off the logic board"><strong>The heart of the swap.</strong> The logic board out of the case and the heatsink off. The old, dried out thermal paste came off and fresh paste went on.</li>
+          <li data-src="assets/images/offclock/mac-clean-480.webp" data-srcset="assets/images/offclock/mac-clean-480.webp 480w, assets/images/offclock/mac-clean-960.webp 960w, assets/images/offclock/mac-clean-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="MacBook logic board on a paper towel"><strong>Making it fit.</strong> The 2012 board's display connector didn't fit the 2011 body, so I carefully shaved its edges down until it did.</li>
+          <li data-src="assets/images/offclock/mac-boot-480.webp" data-srcset="assets/images/offclock/mac-boot-480.webp 480w, assets/images/offclock/mac-boot-960.webp 960w, assets/images/offclock/mac-boot-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="The MacBook Pro powered on at the setup screen"><strong>It boots.</strong> First attempt: no power. I debugged the fault, and then it booted up as a 2012.</li>
+          </ol>
         </div>
-        <div class="film-scroll">
-          <div class="film" data-roll="ROLL 02">
-            <div class="film-track">
-              <button type="button" class="jc-shot film-frame" data-n="1" aria-label="Open photo 1: MacBook Pro opened up on a desk">
-                <img src="assets/images/offclock/mac-open-480.webp" srcset="assets/images/offclock/mac-open-480.webp 480w, assets/images/offclock/mac-open-960.webp 960w, assets/images/offclock/mac-open-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="MacBook Pro opened up on a desk" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="2" aria-label="Open photo 2: MacBook heatsink lifted off the logic board">
-                <img src="assets/images/offclock/mac-paste-480.webp" srcset="assets/images/offclock/mac-paste-480.webp 480w, assets/images/offclock/mac-paste-960.webp 960w, assets/images/offclock/mac-paste-1600.webp 1600w" sizes="220px" width="3024" height="4032" alt="MacBook heatsink lifted off the logic board" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="3" aria-label="Open photo 3: MacBook logic board on a paper towel">
-                <img src="assets/images/offclock/mac-clean-480.webp" srcset="assets/images/offclock/mac-clean-480.webp 480w, assets/images/offclock/mac-clean-960.webp 960w, assets/images/offclock/mac-clean-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="MacBook logic board on a paper towel" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="4" aria-label="Open photo 4: The MacBook Pro powered on at the setup screen">
-                <img src="assets/images/offclock/mac-boot-480.webp" srcset="assets/images/offclock/mac-boot-480.webp 480w, assets/images/offclock/mac-boot-960.webp 960w, assets/images/offclock/mac-boot-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="The MacBook Pro powered on at the setup screen" loading="lazy" decoding="async" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <ol class="film-notes" aria-live="polite">
-          <li class="film-note"><span class="film-note-n">01</span><strong>Gutted.</strong> Everything out. The hard drive became an SSD and the battery was replaced.</li>
-          <li class="film-note"><span class="film-note-n">02</span><strong>The heart of the swap.</strong> The logic board out of the case and the heatsink off. The old, dried out thermal paste came off and fresh paste went on.</li>
-          <li class="film-note"><span class="film-note-n">03</span><strong>Making it fit.</strong> The 2012 board's display connector didn't fit the 2011 body, so I carefully shaved its edges down until it did.</li>
-          <li class="film-note"><span class="film-note-n">04</span><strong>It boots.</strong> First attempt: no power. I debugged the fault, and then it booted up as a 2012.</li>
-        </ol>
-      </article>
-      <article class="roll" data-reveal>
-        <div class="roll-meta">
+      </li>
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="2" aria-haspopup="dialog">
+          <span class="hl-ring"><img src="assets/images/offclock/diag-goggles-480.webp" width="3088" height="2320" alt="" loading="lazy" decoding="async" /></span>
+          <span class="hl-name">The Civic</span>
+          <span class="hl-count">5 steps</span>
+        </button>
+        <div class="hl-data" hidden>
           <h3>Working on my own car</h3>
-          <p class="ot-story">A 2007 Honda Civic closing in on 200,000 miles, and a habit of trying the fix myself before calling in a mechanic. Every repair started the same way: a symptom, hours of research and tutorials, then doing it myself until it worked.</p>
+          <p>A 2007 Honda Civic closing in on 200,000 miles, and a habit of trying the fix myself before calling in a mechanic. Every repair started the same way: a symptom, hours of research and tutorials, then doing it myself until it worked.</p>
+          <ol>
+          <li data-src="assets/images/offclock/diag-goggles-480.webp" data-srcset="assets/images/offclock/diag-goggles-480.webp 480w, assets/images/offclock/diag-goggles-960.webp 960w, assets/images/offclock/diag-goggles-1600.webp 1600w" data-w="3088" data-h="2320" data-alt="Ajay in goggles and a mask beside his car with the hood up"><strong>AC out, mid summer.</strong> The AC quit in the middle of summer. Ninety degree heat, a low pressure refrigerant gauge and an electrical check on the compressor clutch, working through it one tutorial at a time.</li>
+          <li data-src="assets/images/offclock/civic-plug-480.webp" data-srcset="assets/images/offclock/civic-plug-480.webp 480w, assets/images/offclock/civic-plug-960.webp 960w, assets/images/offclock/civic-plug-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="A spark plug held up in front of the engine bay"><strong>First engine work.</strong> My first time working inside an engine. This is what a spark plug looks like after almost 200,000 miles.</li>
+          <li data-src="assets/images/offclock/civic-throttle-480.webp" data-srcset="assets/images/offclock/civic-throttle-480.webp 480w, assets/images/offclock/civic-throttle-960.webp 960w, assets/images/offclock/civic-throttle-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="The throttle body in the engine bay"><strong>Running rough.</strong> The engine was running rough. Hours of troubleshooting, well past midnight, came down to a dirty throttle body. One careful cleaning later, it was running noticeably better.</li>
+          <li data-src="assets/images/offclock/civic-magnet-480.webp" data-srcset="assets/images/offclock/civic-magnet-480.webp 480w, assets/images/offclock/civic-magnet-960.webp 960w, assets/images/offclock/civic-magnet-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="The transmission drain plug magnet coated in black metal shavings on a paper towel"><strong>What 180,000 miles leaves behind.</strong> The transmission had never had its fluid changed. Grinding, violent shaking, jerky shifts and a transmission code. When the drain plug came out, its magnet was coated in burnt black sludge: raw metal shavings from inside the transmission.</li>
+          <li data-src="assets/images/offclock/civic-fluid-480.webp" data-srcset="assets/images/offclock/civic-fluid-480.webp 480w, assets/images/offclock/civic-fluid-960.webp 960w, assets/images/offclock/civic-fluid-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="Pouring automatic transmission fluid into the engine bay"><strong>Fresh fluid.</strong> After weeks of research, a drain and fill with fresh fluid. It shifted buttery smooth again, and I saved about $2,000.</li>
+          </ol>
         </div>
-        <div class="film-scroll">
-          <div class="film" data-roll="ROLL 03">
-            <div class="film-track">
-              <button type="button" class="jc-shot film-frame" data-n="1" aria-label="Open photo 1: Ajay in goggles and a mask beside his car with the hood up">
-                <img src="assets/images/offclock/diag-goggles-480.webp" srcset="assets/images/offclock/diag-goggles-480.webp 480w, assets/images/offclock/diag-goggles-960.webp 960w, assets/images/offclock/diag-goggles-1600.webp 1600w" sizes="220px" width="3088" height="2320" alt="Ajay in goggles and a mask beside his car with the hood up" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="2" aria-label="Open photo 2: A spark plug held up in front of the engine bay">
-                <img src="assets/images/offclock/civic-plug-480.webp" srcset="assets/images/offclock/civic-plug-480.webp 480w, assets/images/offclock/civic-plug-960.webp 960w, assets/images/offclock/civic-plug-1600.webp 1600w" sizes="220px" width="3024" height="4032" alt="A spark plug held up in front of the engine bay" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="3" aria-label="Open photo 3: The throttle body in the engine bay">
-                <img src="assets/images/offclock/civic-throttle-480.webp" srcset="assets/images/offclock/civic-throttle-480.webp 480w, assets/images/offclock/civic-throttle-960.webp 960w, assets/images/offclock/civic-throttle-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="The throttle body in the engine bay" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="4" aria-label="Open photo 4: The transmission drain plug magnet coated in black metal shavings on a paper towel">
-                <img src="assets/images/offclock/civic-magnet-480.webp" srcset="assets/images/offclock/civic-magnet-480.webp 480w, assets/images/offclock/civic-magnet-960.webp 960w, assets/images/offclock/civic-magnet-1600.webp 1600w" sizes="220px" width="3024" height="4032" alt="The transmission drain plug magnet coated in black metal shavings on a paper towel" loading="lazy" decoding="async" />
-              </button>
-              <button type="button" class="jc-shot film-frame" data-n="5" aria-label="Open photo 5: Pouring automatic transmission fluid into the engine bay">
-                <img src="assets/images/offclock/civic-fluid-480.webp" srcset="assets/images/offclock/civic-fluid-480.webp 480w, assets/images/offclock/civic-fluid-960.webp 960w, assets/images/offclock/civic-fluid-1600.webp 1600w" sizes="220px" width="4032" height="3024" alt="Pouring automatic transmission fluid into the engine bay" loading="lazy" decoding="async" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <ol class="film-notes" aria-live="polite">
-          <li class="film-note"><span class="film-note-n">01</span><strong>AC out, mid summer.</strong> The AC quit in the middle of summer. Ninety degree heat, a low pressure refrigerant gauge and an electrical check on the compressor clutch, working through it one tutorial at a time.</li>
-          <li class="film-note"><span class="film-note-n">02</span><strong>First engine work.</strong> My first time working inside an engine. This is what a spark plug looks like after almost 200,000 miles.</li>
-          <li class="film-note"><span class="film-note-n">03</span><strong>Running rough.</strong> The engine was running rough. Hours of troubleshooting, well past midnight, came down to a dirty throttle body. One careful cleaning later, it was running noticeably better.</li>
-          <li class="film-note"><span class="film-note-n">04</span><strong>What 180,000 miles leaves behind.</strong> The transmission had never had its fluid changed. Grinding, violent shaking, jerky shifts and a transmission code. When the drain plug came out, its magnet was coated in burnt black sludge: raw metal shavings from inside the transmission.</li>
-          <li class="film-note"><span class="film-note-n">05</span><strong>Fresh fluid.</strong> After weeks of research, a drain and fill with fresh fluid. It shifted buttery smooth again, and I saved about $2,000.</li>
-        </ol>
-      </article>
-      </div>
+      </li>
+      </ul>
     </section>
 
     <section class="section quote glass" data-reveal>
@@ -977,6 +932,23 @@
   </section>
 
   <!-- Photo viewer for the journey strips -->
+  <dialog class="story" id="storyView" aria-label="Story">
+    <div class="st-frame">
+      <div class="st-bars" aria-hidden="true"></div>
+      <header class="st-head">
+        <span class="st-title"></span>
+        <button type="button" class="st-close" aria-label="Close story"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></button>
+      </header>
+      <div class="st-media"><img class="st-img" alt="" /></div>
+      <button type="button" class="st-tap st-prev" aria-label="Previous"></button>
+      <button type="button" class="st-tap st-next" aria-label="Next"></button>
+      <div class="st-text" aria-live="polite">
+        <p class="st-intro"></p>
+        <p class="st-step"><span class="st-n"></span><strong class="st-lead"></strong><span class="st-body"></span></p>
+      </div>
+    </div>
+  </dialog>
+
   <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
     <figure class="lb-frame">
       <img id="lbImg" alt="" />

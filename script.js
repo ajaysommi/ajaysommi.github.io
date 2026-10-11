@@ -3423,6 +3423,132 @@ function gatorStorm(n = 12) {
 })();
 
 /* ==========================================================================
+   Off the Clock: stories
+   Three circles, like story highlights. Opening one plays its steps in a
+   full screen viewer, one photo and one short note at a time, with a bar
+   per step across the top that fills while it plays. Tap the right side
+   (or press the right arrow) for the next step, the left side for the
+   previous one, hold to pause. At the end of one story the next begins;
+   after the last, the viewer closes. A circle you have watched turns
+   grey. With reduced motion nothing plays on its own.
+   ========================================================================== */
+(function stories() {
+  const dlg = $('#storyView');
+  const hls = $$('.hl');
+  if (!dlg || !hls.length || !dlg.showModal) return;
+
+  const STEP_MS = 7000;
+  const data = hls.map((hl) => {
+    const box = $('.hl-data', hl);
+    return {
+      title: $('h3', box).textContent,
+      intro: $('p', box).textContent,
+      steps: $$('li', box).map((li) => ({
+        src: li.dataset.src, srcset: li.dataset.srcset, alt: li.dataset.alt,
+        lead: $('strong', li).textContent,
+        body: li.textContent.replace($('strong', li).textContent, '').trim(),
+      })),
+    };
+  });
+
+  const bars = $('.st-bars', dlg), img = $('.st-img', dlg), title = $('.st-title', dlg);
+  const intro = $('.st-intro', dlg), nEl = $('.st-n', dlg), lead = $('.st-lead', dlg), body = $('.st-body', dlg);
+  let story = 0, step = 0, start = 0, elapsed = 0, raf = 0, paused = false;
+  const auto = () => !prefersReduced();
+
+  const fill = (k) => $$('i', bars).forEach((b, j) => {
+    b.style.transform = `scaleX(${j < step ? 1 : j > step ? 0 : k})`;
+  });
+
+  const tick = (now) => {
+    if (!paused) elapsed += now - start;
+    start = now;
+    const k = Math.min(1, elapsed / STEP_MS);
+    fill(k);
+    if (k >= 1) { next(); return; }
+    raf = requestAnimationFrame(tick);
+  };
+  const play = () => {
+    cancelAnimationFrame(raf);
+    elapsed = 0;
+    fill(0);
+    if (!auto()) { fill(1); $$('i', bars).forEach((b, j) => { b.style.transform = `scaleX(${j <= step ? 1 : 0})`; }); return; }
+    start = performance.now();
+    raf = requestAnimationFrame(tick);
+  };
+
+  const show = () => {
+    const d = data[story], st = d.steps[step];
+    if (bars.children.length !== d.steps.length || bars.dataset.story !== String(story)) {
+      bars.replaceChildren(...d.steps.map(() => { const s = document.createElement('span'); s.append(document.createElement('i')); return s; }));
+      bars.dataset.story = String(story);
+    }
+    title.textContent = d.title;
+    img.srcset = st.srcset;
+    img.sizes = 'min(92vw, 560px)';
+    img.src = st.src;
+    img.alt = st.alt;
+    intro.textContent = step === 0 ? d.intro : '';
+    intro.hidden = step !== 0;
+    nEl.textContent = String(step + 1).padStart(2, '0');
+    lead.textContent = st.lead;
+    body.textContent = ' ' + st.body;
+    // Warm the next photo so it is there when the step changes.
+    const nx = d.steps[step + 1];
+    if (nx) { const pre = new Image(); pre.srcset = nx.srcset; pre.sizes = img.sizes; pre.src = nx.src; }
+    play();
+  };
+
+  const seen = (i) => hls[i].classList.add('is-seen');
+  function next() {
+    if (step < data[story].steps.length - 1) { step++; show(); return; }
+    seen(story);
+    if (story < data.length - 1) { story++; step = 0; show(); return; }
+    dlg.close();
+  }
+  function prev() {
+    if (step > 0) { step--; show(); return; }
+    if (story > 0) { story--; step = data[story].steps.length - 1; show(); return; }
+    show();
+  }
+
+  hls.forEach((hl, i) => $('.hl-btn', hl).addEventListener('click', () => {
+    story = i; step = 0; paused = false;
+    dlg.showModal();
+    show();
+  }));
+  $('.st-next', dlg).addEventListener('click', next);
+  $('.st-prev', dlg).addEventListener('click', prev);
+  $('.st-close', dlg).addEventListener('click', () => dlg.close());
+  dlg.addEventListener('close', () => { cancelAnimationFrame(raf); seen(story); });
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    if (e.key === ' ') { e.preventDefault(); paused = !paused; dlg.classList.toggle('is-paused', paused); }
+  });
+  // Hold to pause, on the photo or the tap zones.
+  const hold = (on) => { paused = on; dlg.classList.toggle('is-paused', on); };
+  let holdT = 0, held = false;
+  $$('.st-tap, .st-media', dlg).forEach((el) => {
+    el.addEventListener('pointerdown', () => { held = false; holdT = setTimeout(() => { held = true; hold(true); }, 220); });
+    const up = () => { clearTimeout(holdT); if (held) hold(false); };
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointerleave', up);
+    el.addEventListener('pointercancel', up);
+    // A hold should not also count as a tap.
+    el.addEventListener('click', (e) => { if (held) { e.stopImmediatePropagation(); held = false; } }, true);
+  });
+  // Swipe down to close on phones.
+  let y0 = null;
+  dlg.addEventListener('touchstart', (e) => { y0 = e.touches[0].clientY; }, { passive: true });
+  dlg.addEventListener('touchend', (e) => {
+    if (y0 !== null && e.changedTouches[0].clientY - y0 > 90) dlg.close();
+    y0 = null;
+  }, { passive: true });
+})();
+
+/* ==========================================================================
    Console greeting for the curious
    ========================================================================== */
 console.log(
