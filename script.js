@@ -3614,6 +3614,10 @@ function gatorStorm(n = 12) {
     img.src = st.src;
     img.alt = st.alt;
     // The same photo, blurred, fills whatever the frame has left around it.
+    // Same srcset and sizes as the photo itself, so both resolve to the one
+    // file and change together instead of the blur trailing behind.
+    blur.srcset = st.srcset;
+    blur.sizes = img.sizes;
     blur.src = st.src;
     count.textContent = `${step + 1} / ${d.steps.length}`;
     intro.textContent = step === 0 ? d.intro : '';
@@ -3658,18 +3662,23 @@ function gatorStorm(n = 12) {
     if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
     if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); setPaused(!userPaused); }
   });
-  // Hold to pause, on the photo or the tap zones.
+  // Hold anywhere to pause, like a story: lifting the finger carries on.
+  // The buttons are left out so a press on one is just a press.
   const hold = (on) => { paused = on || userPaused; dlg.classList.toggle('is-paused', paused); };
+  const frame = $('.st-frame', dlg);
+  const isButton = (t) => t.closest('.st-controls, .st-close');
   let holdT = 0, held = false;
-  $$('.st-tap, .st-media', dlg).forEach((el) => {
-    el.addEventListener('pointerdown', () => { held = false; holdT = setTimeout(() => { held = true; hold(true); }, 220); });
-    const up = () => { clearTimeout(holdT); if (held) hold(false); };
-    el.addEventListener('pointerup', up);
-    el.addEventListener('pointerleave', up);
-    el.addEventListener('pointercancel', up);
-    // A hold should not also count as a tap.
-    el.addEventListener('click', (e) => { if (held) { e.stopImmediatePropagation(); held = false; } }, true);
+  frame.addEventListener('pointerdown', (e) => {
+    if (isButton(e.target)) return;
+    held = false;
+    holdT = setTimeout(() => { held = true; hold(true); }, 220);
   });
+  const up = () => { clearTimeout(holdT); if (held) hold(false); };
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => frame.addEventListener(t, up));
+  // A hold should not also count as a tap, and should not raise the
+  // long press menu or select the text underneath.
+  frame.addEventListener('click', (e) => { if (held) { e.stopImmediatePropagation(); e.preventDefault(); held = false; } }, true);
+  frame.addEventListener('contextmenu', (e) => { if (!isButton(e.target)) e.preventDefault(); });
   // Swipe down to close on phones.
   let y0 = null;
   dlg.addEventListener('touchstart', (e) => { y0 = e.touches[0].clientY; }, { passive: true });

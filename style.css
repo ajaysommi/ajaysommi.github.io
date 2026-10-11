@@ -4770,8 +4770,13 @@
   .hl-ring {
     position: relative;
     display: block;
-    width: clamp(96px, 13vw, 132px);
-    aspect-ratio: 1;
+    /* A set width and height, not aspect-ratio: Safari let the photo's own
+       shape stretch the ring into an oval. */
+    --hl: clamp(96px, 13vw, 132px);
+    box-sizing: border-box;
+    width: var(--hl);
+    height: var(--hl);
+    min-height: 0;
     padding: 4px;
     border-radius: 50%;
     background: conic-gradient(from var(--spin, 210deg), var(--accent), var(--accent-2), var(--accent));
@@ -4783,7 +4788,9 @@
     transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px)) scale(var(--k, 1));
   }
   .hl-pic {
+    position: relative;
     display: block;
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
     border: 3px solid var(--bg);
@@ -4791,6 +4798,8 @@
     overflow: hidden;
   }
   .hl-ring img {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -4909,6 +4918,16 @@
   }
   .st-lead { color: #fff; }
   .story.is-paused .st-bars i { opacity: .7; }
+  /* Behaves like a story, not a page: a long press pauses rather than
+     selecting text or raising the callout. */
+  .story {
+    -webkit-user-select: none;
+            user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .st-frame { touch-action: none; }
+  .st-img, .st-blur { -webkit-user-drag: none; pointer-events: none; }
 
   /* Desktop: photo on the left, words and controls in a panel on the right,
      and real buttons, since there is no thumb to tap the sides with. */
@@ -4966,12 +4985,46 @@
     .st-count { margin-left: auto; font: 600 .78rem/1 var(--font-mono); letter-spacing: .06em; color: #9a9aa2; }
   }
 
+  @media (max-width: 899px) {
+    /* Phones and small windows: the whole left side goes back and the rest
+       goes forward, words included, and a small set of controls sits on
+       the photo's bottom right corner, just over the caption. */
+    .st-tap { top: 64px; bottom: 0; }
+    .st-text { position: relative; }
+    .st-controls {
+      position: absolute;
+      right: 12px;
+      bottom: calc(100% + 12px);
+      z-index: 4;
+      display: flex;
+      gap: 6px;
+    }
+    .st-count { display: none; }
+    .st-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, .45);
+      -webkit-backdrop-filter: blur(8px);
+              backdrop-filter: blur(8px);
+      color: #fff;
+      cursor: pointer;
+    }
+    .st-btn svg { width: 16px; height: 16px; }
+    .st-i-play { display: none; }
+    .story.is-paused .st-i-play { display: block; }
+    .story.is-paused .st-i-pause { display: none; }
+  }
   @media (max-width: 719px) {
     .story { width: 100vw; height: 100svh; border-radius: 0; }
     .hls { flex-wrap: nowrap; gap: 6px; justify-content: space-between; }
     .hl { flex: 1 1 0; min-width: 0; }
     .hl-btn { width: 100%; padding: 4px 0; }
-    .hl-ring { width: min(92px, 24vw); }
+    .hl-ring { --hl: min(92px, 24vw); }
     .hl-name { max-width: 12ch; font-size: .86rem; }
   }
 }
