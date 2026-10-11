@@ -3496,6 +3496,15 @@ function gatorStorm(n = 12) {
     b.style.transform = `scaleX(${j < step ? 1 : j > step ? 0 : k})`;
   });
 
+  const blur = $('.st-blur', dlg), count = $('.st-count', dlg), pauseBtn = $('.st-pause', dlg);
+  /* Paused from the button or the space bar, as opposed to held: a hold
+     ends when the finger lifts, a pause stays until it is undone. */
+  let userPaused = false;
+  const setPaused = (on) => {
+    userPaused = paused = on;
+    dlg.classList.toggle('is-paused', on);
+    pauseBtn.setAttribute('aria-label', on ? 'Play' : 'Pause');
+  };
   const tick = (now) => {
     if (!paused) elapsed += now - start;
     start = now;
@@ -3524,6 +3533,9 @@ function gatorStorm(n = 12) {
     img.sizes = 'min(92vw, 560px)';
     img.src = st.src;
     img.alt = st.alt;
+    // The same photo, blurred, fills whatever the frame has left around it.
+    blur.src = st.src;
+    count.textContent = `${step + 1} / ${d.steps.length}`;
     intro.textContent = step === 0 ? d.intro : '';
     intro.hidden = step !== 0;
     nEl.textContent = String(step + 1).padStart(2, '0');
@@ -3549,22 +3561,25 @@ function gatorStorm(n = 12) {
   }
 
   hls.forEach((hl, i) => $('.hl-btn', hl).addEventListener('click', () => {
-    story = i; step = 0; paused = false;
+    story = i; step = 0; setPaused(false);
     dlg.showModal();
     show();
   }));
   $('.st-next', dlg).addEventListener('click', next);
   $('.st-prev', dlg).addEventListener('click', prev);
+  $('.st-fwd', dlg).addEventListener('click', next);
+  $('.st-back', dlg).addEventListener('click', prev);
+  pauseBtn.addEventListener('click', () => setPaused(!userPaused));
   $('.st-close', dlg).addEventListener('click', () => dlg.close());
   dlg.addEventListener('close', () => { cancelAnimationFrame(raf); seen(story); });
   dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
   dlg.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-    if (e.key === ' ') { e.preventDefault(); paused = !paused; dlg.classList.toggle('is-paused', paused); }
+    if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); setPaused(!userPaused); }
   });
   // Hold to pause, on the photo or the tap zones.
-  const hold = (on) => { paused = on; dlg.classList.toggle('is-paused', on); };
+  const hold = (on) => { paused = on || userPaused; dlg.classList.toggle('is-paused', paused); };
   let holdT = 0, held = false;
   $$('.st-tap, .st-media', dlg).forEach((el) => {
     el.addEventListener('pointerdown', () => { held = false; holdT = setTimeout(() => { held = true; hold(true); }, 220); });

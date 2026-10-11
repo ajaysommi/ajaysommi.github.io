@@ -715,7 +715,7 @@
     </section>
 
     <section class="section quote glass" data-reveal>
-      <blockquote>"I never stopped asking why."</blockquote>
+      <blockquote>"I hope I never run out of things I don’t understand."</blockquote>
     </section>
 
     <!-- SKILLS -->
@@ -916,12 +916,18 @@
         <span class="st-title"></span>
         <button type="button" class="st-close" aria-label="Close story"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></button>
       </header>
-      <div class="st-media"><img class="st-img" alt="" /></div>
+      <div class="st-media"><img class="st-blur" alt="" aria-hidden="true" /><img class="st-img" alt="" /></div>
       <button type="button" class="st-tap st-prev" aria-label="Previous"></button>
       <button type="button" class="st-tap st-next" aria-label="Next"></button>
       <div class="st-text" aria-live="polite">
         <p class="st-intro"></p>
         <p class="st-step"><span class="st-n"></span><strong class="st-lead"></strong><span class="st-body"></span></p>
+        <div class="st-controls">
+          <button type="button" class="st-btn st-back" aria-label="Previous photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button type="button" class="st-btn st-pause" aria-label="Pause"><svg class="st-i-pause" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6.5v11M15 6.5v11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><svg class="st-i-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8.5 6.2v11.6L18 12z" fill="currentColor"/></svg></button>
+          <button type="button" class="st-btn st-fwd" aria-label="Next photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="st-count" aria-live="polite"></span>
+        </div>
       </div>
     </div>
   </dialog>

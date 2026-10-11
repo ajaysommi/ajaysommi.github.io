@@ -4863,7 +4863,19 @@
     background: linear-gradient(rgba(0, 0, 0, .55), transparent);
     pointer-events: none;
   }
-  .st-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .st-media { overflow: hidden; }
+  .st-img { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; }
+  /* The photo again behind itself, blown up and blurred, so a photo that
+     does not match the frame's shape sits in its own colours, not black. */
+  .st-blur {
+    position: absolute;
+    inset: -40px;
+    width: calc(100% + 80px);
+    height: calc(100% + 80px);
+    object-fit: cover;
+    filter: blur(36px) brightness(.55) saturate(1.2);
+  }
+  .st-controls { display: none; }
   .st-tap {
     position: absolute;
     top: 70px;
@@ -4897,6 +4909,62 @@
   }
   .st-lead { color: #fff; }
   .story.is-paused .st-bars i { opacity: .7; }
+
+  /* Desktop: photo on the left, words and controls in a panel on the right,
+     and real buttons, since there is no thumb to tap the sides with. */
+  @media (min-width: 900px) {
+    .story { width: min(1120px, 94vw); height: min(86svh, 760px); }
+    .st-frame { display: grid; grid-template-columns: minmax(0, 1fr) 380px; }
+    .st-media { grid-column: 1; grid-row: 1; }
+    .st-media::after { height: 90px; }
+    .st-bars { right: calc(380px + 12px); }
+    .st-head { padding-left: 16px; padding-right: 14px; }
+    .st-title { max-width: calc(100% - 440px); }
+    .st-tap { top: 64px; bottom: 0; }
+    .st-prev { width: calc((100% - 380px) * .4); }
+    .st-next { left: calc((100% - 380px) * .4); right: 380px; width: auto; }
+    .st-prev { cursor: w-resize; }
+    .st-next { cursor: e-resize; }
+    .st-text {
+      grid-column: 2;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 80px 28px 24px;
+      border-top: 0;
+      border-left: 1px solid rgba(255, 255, 255, .08);
+      overflow-y: auto;
+    }
+    .st-intro { font-size: .95rem; line-height: 1.6; margin-bottom: 18px; }
+    .st-step { font-size: 1.02rem; line-height: 1.6; }
+    .st-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+    .st-btn {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .06);
+      color: #fff;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .st-btn:hover { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .3); }
+    .st-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .st-pause { width: 52px; height: 52px; }
+    .st-i-play { display: none; }
+    .story.is-paused .st-i-play { display: block; }
+    .story.is-paused .st-i-pause { display: none; }
+    .st-count { margin-left: auto; font: 600 .78rem/1 var(--font-mono); letter-spacing: .06em; color: #9a9aa2; }
+  }
 
   @media (max-width: 719px) {
     .story { width: 100vw; height: 100svh; border-radius: 0; }
