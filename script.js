@@ -1364,8 +1364,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     cards.forEach((c) => c.classList.add('glass'));
     let openIdx = -1;
 
-    /* Right angle runs between node centres: down out of one node, across
-       at the midpoint, and down into the next, like a board trace. */
+    /* Smooth curves between node centres: each leaves its node heading
+       straight down and eases across into the next, so the trace sways
+       from side to side rather than turning corners. */
     const centres = () => {
       const box = pc.getBoundingClientRect();
       return stops.map((b) => {
@@ -1376,9 +1377,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     const pathTo = (pts, upto) => {
       let d = '';
       for (let k = 0; k < Math.min(upto, pts.length - 1); k++) {
-        const [x1, y1, r1] = pts[k], [x2, y2, r2] = pts[k + 1];
-        const midY = y1 + r1 + 14;
-        d += `M${x1} ${y1 + r1}V${midY}H${x2}V${y2 - r2}`;
+        const [x1, c1, r1] = pts[k], [x2, c2, r2] = pts[k + 1];
+        const y1 = c1 + r1, y2 = c2 - r2, pull = Math.min((y2 - y1) * 0.9, 160);
+        d += `M${x1} ${y1}C${x1} ${y1 + pull} ${x2} ${y2 - pull} ${x2} ${y2}`;
       }
       return d;
     };
@@ -1554,6 +1555,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
          on itself. They get a set height instead, still never so tall that
          one photo is wider than the strip. */
       if (getComputedStyle(card).position !== 'absolute') {
+        /* A card that moved here out of the board (the compact path) may
+           have been hidden there while it had no height to measure. */
+        fig.hidden = false;
         const room = fig.clientWidth;
         const widest = Math.max(...imgs.map(aspectOf));
         setHeight(fig, Math.floor(room > 0 ? Math.min(180, room / widest) : 180));

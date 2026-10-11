@@ -4910,16 +4910,17 @@
 
 /* ==========================================================================
    THE PATH, COMPACT (experiment)
-   A circuit trace running down the section with a node for each role, the
-   nodes stepping left and right so the trace turns corners between them
-   like a board. Each node is a circle with its year, with the company's
-   logo clipped to its edge, and the name and role beside it. Choosing a
-   node opens that role's tile right under it. Unlayered on purpose: the
-   board's own sizes live in the responsive layer, and this has to win
-   over them, or the pinned board's height stays as empty space.
+   A single trace that sways across the section with a node for each role.
+   The nodes sit on a wave (left, centre, right, centre, ...; just left and
+   right on phones) and the trace is drawn as smooth curves between them.
+   Each node is a circle with its year, tinted toward that company's colour,
+   with the name and role beside it. Choosing a node opens that role's tile
+   right under it. Unlayered on purpose: the board's own sizes live in the
+   responsive layer, and this has to win over them, or the pinned board's
+   height stays as empty space.
    ========================================================================== */
 .pc { display: none; }
-.journey-section.is-compact .pc { position: relative; display: block; max-width: 860px; margin: 8px auto 0; }
+.journey-section.is-compact .pc { position: relative; display: block; margin: 4px 0 0; }
 .journey-section.is-compact .journey-scope,
 .journey-section.is-compact .journey-sticky { height: auto !important; min-height: 0; }
 .journey-section.is-compact .journey-sticky { position: static; display: block; }
@@ -4935,120 +4936,121 @@
   pointer-events: none;
   fill: none;
 }
-.pc-bed { stroke: color-mix(in oklab, var(--ink) 18%, transparent); stroke-width: 2; stroke-linejoin: round; }
+.pc-bed { stroke: color-mix(in oklab, var(--ink) 16%, transparent); stroke-width: 2; stroke-linecap: round; }
 .pc-live {
   stroke: var(--accent);
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 5px color-mix(in oklab, var(--accent) 60%, transparent));
-  transition: d .4s ease;
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 55%, transparent));
 }
 
 .pc-track {
   position: relative;
   display: grid;
-  gap: 26px;
+  gap: 30px;
   margin: 0;
-  padding: 6px 0;
+  padding: 4px 0;
   list-style: none;
 }
-.pc-row { position: relative; }
+.pc-row { --tint: var(--accent); position: relative; display: grid; grid-template-columns: minmax(0, 1fr); }
 .pc-stop {
   position: relative;
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin-left: 0;
-  padding: 0;
+  gap: 16px;
+  width: max-content;
+  max-width: 100%;
+  padding: 6px;
   border: 0;
+  border-radius: 999px;
   background: none;
   color: var(--ink);
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
-.pc-row.is-alt .pc-stop { margin-left: clamp(110px, 44%, 400px); }
+/* The wave: --c is 0, 1 or 2 for left, centre and right. The centre stop
+   keeps its node on the midline, so the label hangs off to its right; the
+   right hand stop turns around so its label reads in toward the middle. */
+.pc-row[data-c="0"] .pc-stop { justify-self: start; }
+.pc-row[data-c="1"] .pc-stop { justify-self: start; margin-left: calc(50% - 38px); }
+.pc-row[data-c="2"] .pc-stop { justify-self: end; flex-direction: row-reverse; text-align: right; }
 
 .pc-node {
   position: relative;
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
-  border: 2px solid color-mix(in oklab, var(--accent) 45%, var(--stroke));
+  width: 64px;
+  height: 64px;
+  border: 1.5px solid color-mix(in oklab, var(--tint) 55%, var(--stroke));
   border-radius: 50%;
-  background: var(--surface-solid);
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--tint) 22%, transparent), transparent 70%),
+    color-mix(in oklab, var(--tint) 10%, var(--surface-solid));
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--tint) 7%, transparent), 0 6px 18px rgba(0, 0, 0, .22);
   transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
 }
-.pc-year { font-family: var(--font-mono); font-size: .72rem; font-weight: 700; letter-spacing: .02em; color: var(--ink-2); }
-/* The logo, clipped to the node's lower right edge like a badge. */
-.pc-logo {
-  position: absolute;
-  right: -16px;
-  bottom: -10px;
-  display: grid;
-  place-items: center;
-  min-width: 36px;
-  max-width: 96px;
-  height: 30px;
-  padding: 4px 8px;
-  border: 1px solid var(--stroke);
-  border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, .3);
-}
-.pc-logo img { display: block; max-width: 80px; max-height: 22px; width: auto; height: auto; object-fit: contain; }
-.pc-logo-ini {
-  background: var(--surface-solid);
-  color: var(--ink-2);
-  font: 700 .62rem/1 var(--font-mono);
-  letter-spacing: .05em;
+.pc-year {
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  color: color-mix(in oklab, var(--tint) 30%, var(--ink));
 }
 
-.pc-label { display: grid; gap: 2px; padding-left: 10px; }
-.pc-name { font-family: var(--font-display); font-weight: 700; font-size: .98rem; letter-spacing: .01em; }
+.pc-label { display: grid; gap: 3px; }
+.pc-name { font-family: var(--font-display); font-weight: 700; font-size: 1rem; letter-spacing: .01em; }
 .pc-role { font-size: .82rem; color: var(--ink-3); }
 
 .pc-stop:hover .pc-node,
-.pc-stop:focus-visible .pc-node { border-color: var(--accent); transform: scale(1.05); }
-.pc-stop.is-past .pc-node { border-color: var(--accent); }
+.pc-stop:focus-visible .pc-node {
+  border-color: color-mix(in oklab, var(--tint) 85%, var(--ink));
+  transform: scale(1.06);
+}
+.pc-stop.is-past .pc-node { border-color: color-mix(in oklab, var(--tint) 75%, var(--stroke)); }
 .pc-stop.is-on .pc-node {
-  border-color: var(--accent);
-  background: color-mix(in oklab, var(--accent) 18%, var(--surface-solid));
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 18%, transparent), 0 0 22px color-mix(in oklab, var(--accent) 40%, transparent);
+  border-color: var(--tint);
+  background: color-mix(in oklab, var(--tint) 24%, var(--surface-solid));
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--tint) 16%, transparent), 0 0 26px color-mix(in oklab, var(--tint) 45%, transparent);
 }
 .pc-stop.is-on .pc-year { color: var(--ink); }
 
 /* The open role, full width under its node. */
-.pc-slot { position: relative; z-index: 1; }
+.pc-slot { position: relative; z-index: 1; min-width: 0; }
 .pc-slot:empty { display: none; }
 html.js .pc-slot .jcard {
   position: relative;
   display: block;
-  margin-top: 16px;
+  margin: 8px 0 14px;
   padding: 20px 22px;
   overflow: visible;
   opacity: 1;
   visibility: visible;
   transform: none;
   transition: none;
+  background: color-mix(in oklab, var(--surface-solid) 88%, transparent);
   animation: pc-open .35s ease;
 }
 @keyframes pc-open { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
-[data-theme="daylight"] .pc-logo { border-color: rgba(16, 25, 43, .12); box-shadow: 0 3px 10px rgba(16, 25, 43, .12); }
+[data-theme="daylight"] .pc-node { box-shadow: 0 0 0 5px color-mix(in oklab, var(--tint) 8%, transparent), 0 6px 16px rgba(16, 25, 43, .1); }
+[data-theme="daylight"] .pc-year { color: color-mix(in oklab, var(--tint) 45%, var(--ink)); }
 
 @media (max-width: 719px) {
-  .pc-track { gap: 22px; }
-  .pc-row.is-alt .pc-stop { margin-left: 64px; }
-  .pc-node { width: 52px; height: 52px; }
+  .pc-track { gap: 26px; }
+  /* Phones: just left and right, off --pc. */
+  .pc-row .pc-stop { justify-self: start !important; margin-left: 0 !important; flex-direction: row !important; text-align: left !important; }
+  .pc-row[data-pc="1"] .pc-stop { justify-self: end !important; flex-direction: row-reverse !important; text-align: right !important; }
+  .pc-stop { gap: 12px; padding: 4px; max-width: 88%; }
+  .pc-node { width: 54px; height: 54px; }
+  .pc-year { font-size: .7rem; }
   .pc-name { font-size: .92rem; }
-  .pc-role { font-size: .78rem; }
+  .pc-role { font-size: .76rem; }
   html.js .pc-slot .jcard { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html.js .pc-slot .jcard { animation: none; }
-  .pc-node, .pc-live { transition: none; }
+  .pc-node { transition: none; }
 }
