@@ -4977,9 +4977,9 @@
 }
 
 /* ==========================================================================
-   EDUCATION: a gator peering up out of the card's empty corner, desktop
-   only. Drawn, not a logo: an outline of a head with its eye just over the
-   waterline, in UF orange fading to blue, faint enough to read as texture.
+   EDUCATION: the Gators logo peering in from the card's empty bottom left
+   corner, desktop only. Tipped back and cut off by the card's edge, and
+   faint enough to read as texture rather than a badge.
    ========================================================================== */
 .edu-gator { display: none; }
 @media (min-width: 900px) {
@@ -4987,21 +4987,18 @@
   .education-card > :not(.edu-gator) { position: relative; z-index: 1; }
   .edu-gator {
     position: absolute;
-    left: 14px;
-    bottom: -12px;
+    left: -46px;
+    bottom: -58px;
     z-index: 0;
     display: block;
-    width: 172px;
+    width: 260px;
     height: auto;
-    opacity: .2;
+    opacity: .14;
+    transform: rotate(-12deg);
     pointer-events: none;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    user-select: none;
+    -webkit-mask-image: radial-gradient(120% 120% at 0% 100%, #000 45%, transparent 85%);
+            mask-image: radial-gradient(120% 120% at 0% 100%, #000 45%, transparent 85%);
   }
-  .eg-head { fill: url(#gatorFade); fill-opacity: .35; stroke: #FA4616; stroke-width: 2.4; }
-  .eg-jaw { stroke: #FA4616; stroke-width: 1.8; }
-  .eg-eye { stroke: #FA4616; stroke-width: 2; }
-  .eg-pupil { fill: #FA4616; }
-  [data-theme="daylight"] .edu-gator { opacity: .2; }
+  [data-theme="daylight"] .edu-gator { opacity: .16; }
 }
