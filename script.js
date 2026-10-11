@@ -2217,6 +2217,40 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
   let current = 'all';
 
+  /* The most recent role in the Path whose tags include a skill, for the
+     skills no project uses (Apex, say, is ADT). Roles are listed oldest
+     first, so the last match is the latest. */
+  const roles = $$('.jcard');
+  const roleFor = (needle) => {
+    let found = null;
+    roles.forEach((r) => {
+      const tags = $$('.jc-tags span', r).map((t) => normalize(t.textContent));
+      if (tags.some((t) => containsWord(t, needle) || containsWord(needle, t))) found = r;
+    });
+    return found;
+  };
+
+  /* The Path is driven by scroll position: role i of N is on screen at
+     i / (N - 1) of the way through its pinned stretch. With reduced motion
+     it is a plain list, so the card itself is scrolled to. */
+  const showRole = (card) => {
+    const scope = $('#journeyScope');
+    const smooth = prefersReduced() ? 'auto' : 'smooth';
+    const still = scope?.closest('.journey-section')?.classList.contains('is-still');
+    if (!scope || still || roles.length < 2) {
+      card.scrollIntoView({ behavior: smooth, block: 'start' });
+      return;
+    }
+    const sticky = scope.firstElementChild;
+    const travel = scope.offsetHeight - (sticky?.offsetHeight || innerHeight);
+    const i = roles.indexOf(card);
+    const top = scope.getBoundingClientRect().top + scrollY;
+    // The last role sits at the very end of the pinned stretch, where the
+    // board starts to scroll away; stop a little short of it.
+    const at = Math.min(i, roles.length - 1.3) / (roles.length - 1);
+    scrollTo({ top: Math.round(top + travel * at) + 2, behavior: smooth });
+  };
+
   const apply = (raw, { scroll = false } = {}) => {
     const needle = raw === 'all' ? 'all' : normalize(raw);
     current = needle;
@@ -2256,8 +2290,18 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const needle = normalize(label);
       if (current === needle) { apply('all'); toast('Filter cleared'); return; }
 
+      const hits = cards.filter((c) => needle === 'all' || matches(c, needle)).length;
+      if (!hits) {
+        // No project uses it, but a role might: take them to it in the Path.
+        const role = roleFor(needle);
+        if (role) {
+          apply('all');
+          showRole(role);
+          toast(`${label}: used at ${role.dataset.company}`);
+          return;
+        }
+      }
       apply(label, { scroll: true });
-      const hits = cards.filter((c) => !c.classList.contains('is-hidden')).length;
       toast(hits ? `${hits} project${hits === 1 ? '' : 's'} using ${label}` : `No projects tagged ${label} yet`);
     });
   });
