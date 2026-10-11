@@ -5121,4 +5121,31 @@ html.js .pc-slot .jcard {
 @media (prefers-reduced-motion: reduce) {
   html.js .pc-slot .jcard { animation: none; }
   .pc-node { transition: none; }
+   EDUCATION: a gator peering up out of the card's empty corner, desktop
+   only. Drawn, not a logo: an outline of a head with its eye just over the
+   waterline, in UF orange fading to blue, faint enough to read as texture.
+   ========================================================================== */
+.edu-gator { display: none; }
+@media (min-width: 900px) {
+  .education-card { position: relative; overflow: hidden; isolation: isolate; }
+  .education-card > :not(.edu-gator) { position: relative; z-index: 1; }
+  .edu-gator {
+    position: absolute;
+    left: 14px;
+    bottom: -12px;
+    z-index: 0;
+    display: block;
+    width: 172px;
+    height: auto;
+    opacity: .2;
+    pointer-events: none;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .eg-head { fill: url(#gatorFade); fill-opacity: .35; stroke: #FA4616; stroke-width: 2.4; }
+  .eg-jaw { stroke: #FA4616; stroke-width: 1.8; }
+  .eg-eye { stroke: #FA4616; stroke-width: 2; }
+  .eg-pupil { fill: #FA4616; }
+  [data-theme="daylight"] .edu-gator { opacity: .2; }
 }
