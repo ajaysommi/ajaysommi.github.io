@@ -229,12 +229,22 @@
     color: var(--ink);
     font-size: .82rem;
     font-weight: 600;
-    box-shadow: var(--shadow);
-    transform: translateY(-180%);
-    transition: transform var(--dur) var(--ease);
+    /* Parked above the screen it still peeked out on iPhones, whose Safari
+       draws the page up under the status bar, its shadow reaching down
+       into view. So it is see through and shadowless until focused (not
+       hidden, which would also take it out of the tab order). */
+    box-shadow: none;
+    opacity: 0;
+    transform: translateY(-250%);
+    transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
   }
 
-  .skip-link:focus-visible { transform: translateY(0); }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    opacity: 1;
+    box-shadow: var(--shadow);
+  }
 
   .visually-hidden {
     position: absolute;
@@ -4825,7 +4835,8 @@
     color: #fff;
     overflow: hidden;
   }
-  .story::backdrop { background: rgba(0, 0, 0, .82); backdrop-filter: blur(8px); }
+  .story::backdrop { background: rgba(0, 0, 0, .82); backdrop-filter: blur(8px); opacity: calc(1 - var(--pull, 0) * 1.6); }
+  .story { will-change: transform; transform-origin: 50% 0;}
   .st-frame { position: relative; display: flex; flex-direction: column; height: 100%; }
   .st-bars {
     position: absolute;

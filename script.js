@@ -3679,13 +3679,66 @@ function gatorStorm(n = 12) {
   // long press menu or select the text underneath.
   frame.addEventListener('click', (e) => { if (held) { e.stopImmediatePropagation(); e.preventDefault(); held = false; } }, true);
   frame.addEventListener('contextmenu', (e) => { if (!isButton(e.target)) e.preventDefault(); });
-  // Swipe down to close on phones.
-  let y0 = null;
-  dlg.addEventListener('touchstart', (e) => { y0 = e.touches[0].clientY; }, { passive: true });
-  dlg.addEventListener('touchend', (e) => {
-    if (y0 !== null && e.changedTouches[0].clientY - y0 > 90) dlg.close();
-    y0 = null;
+  /* Swipe down to close on phones, the way a story does: the viewer
+     follows the finger down, shrinking a little and letting the page show
+     through, then either carries on off the bottom (pulled far enough, or
+     flicked) or springs back into place. */
+  let y0 = null, x0 = 0, t0 = 0, dragging = false, lastY = 0, lastT = 0, vel = 0;
+  const setPull = (dy) => {
+    const h = innerHeight, k = Math.min(1, Math.max(0, dy) / h);
+    dlg.style.transform = `translate3d(0, ${Math.max(0, dy)}px, 0) scale(${1 - k * 0.14})`;
+    dlg.style.borderRadius = `${Math.min(28, k * 120)}px`;
+    dlg.style.setProperty('--pull', k.toFixed(3));
+  };
+  const clearPull = () => {
+    dlg.style.transition = '';
+    dlg.style.transform = '';
+    dlg.style.borderRadius = '';
+    dlg.style.removeProperty('--pull');
+  };
+  dlg.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || isButton(e.target)) { y0 = null; return; }
+    y0 = lastY = e.touches[0].clientY; x0 = e.touches[0].clientX;
+    t0 = lastT = performance.now(); dragging = false; vel = 0;
+    dlg.style.transition = 'none';
   }, { passive: true });
+  dlg.addEventListener('touchmove', (e) => {
+    if (y0 === null) return;
+    const y = e.touches[0].clientY, dy = y - y0, dx = e.touches[0].clientX - x0;
+    if (!dragging) {
+      if (dy < 8 || Math.abs(dx) > dy) return;
+      // Committed to a pull: freeze the story and make sure lifting the
+      // finger is not read as a tap.
+      dragging = true; held = true; clearTimeout(holdT); hold(true);
+    }
+    const now = performance.now();
+    vel = (y - lastY) / Math.max(1, now - lastT);
+    lastY = y; lastT = now;
+    setPull(dy);
+  }, { passive: true });
+  const endPull = () => {
+    if (y0 === null) return;
+    const dy = lastY - y0;
+    y0 = null;
+    if (!dragging) { dlg.style.transition = ''; return; }
+    dragging = false;
+    if (dy > innerHeight * 0.22 || (vel > 0.6 && dy > 40)) {
+      // Carry on down at about the speed it was going, then close.
+      const ms = Math.round(Math.min(340, Math.max(180, (innerHeight - dy) / Math.max(vel, 1.4))));
+      dlg.style.transition = `transform ${ms}ms cubic-bezier(.2, .7, .3, 1), opacity ${ms}ms ease-out, border-radius ${ms}ms`;
+      dlg.style.opacity = '0';
+      setPull(innerHeight);
+      setTimeout(() => { dlg.close(); clearPull(); dlg.style.opacity = ''; }, ms);
+    } else {
+      dlg.style.transition = 'transform .42s cubic-bezier(.22, 1.25, .36, 1), border-radius .42s ease';
+      setPull(0);
+      dlg.style.setProperty('--pull', '0');
+      setTimeout(clearPull, 440);
+      hold(false);
+    }
+  };
+  dlg.addEventListener('touchend', endPull, { passive: true });
+  dlg.addEventListener('touchcancel', endPull, { passive: true });
 })();
 
 /* ==========================================================================
