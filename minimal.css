@@ -1470,3 +1470,10 @@
    Pressing a viewer button lights a soft glow under the finger on main;
    here it is only the press. */
 .lightbox .lb-btn { background-image: none; }
+
+/* A photo shown on its own (the 2006 snapshot, which only exists at 640px
+   wide) gets a viewer sized to it, rather than sitting small in the middle
+   of a frame built for full size shots. */
+.lightbox[data-single] { width: fit-content; max-width: 94vw; }
+/* With one photo and no caption, the bar under it would only say 1 / 1. */
+.lightbox[data-single] .lb-cap { display: none; }
