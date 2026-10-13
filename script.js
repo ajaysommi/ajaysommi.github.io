@@ -646,17 +646,45 @@ syncLogoTheme();
        heading the scramble started as one short line and grew to three on a
        phone, and the whole hero card grew with it. Screen readers get the
        finished sentence throughout, never the noise. */
-    let live = null;
+    /* The overlay is laid out word by word, each word a box locked to the
+       width of the finished word. The scramble glyphs are wider than most
+       letters, so drawn as plain text the overlay wrapped differently from
+       the sentence under it: near the end, with only a few glyphs left, a
+       word would tip onto a third line for a few frames and snap back,
+       which read as the headline jumping. With every word the width it will
+       end up, the lines break exactly where the finished ones do. */
+    let words = [];
     const begin = () => {
       const hold = document.createElement('span');
       hold.className = 'scr-hold';
-      hold.textContent = finalText;
-      live = document.createElement('span');
+      const live = document.createElement('span');
       live.className = 'scr-live';
+      const parts = finalText.split(/(\s+)/);
+      let at = 0;
+      const holdWords = [];
+      words = [];
+      for (const part of parts) {
+        if (!part) continue;
+        if (/^\s+$/.test(part)) {
+          hold.append(part);
+          live.append(part);
+        } else {
+          const h = document.createElement('span');
+          h.textContent = part;
+          hold.append(h);
+          const w = document.createElement('span');
+          w.className = 'scr-w';
+          live.append(w);
+          holdWords.push(h);
+          words.push({ el: w, from: at, to: at + part.length, text: '' });
+        }
+        at += part.length;
+      }
       heading.setAttribute('aria-label', finalText);
       hold.setAttribute('aria-hidden', 'true');
       live.setAttribute('aria-hidden', 'true');
       heading.replaceChildren(hold, live);
+      holdWords.forEach((h, i) => { words[i].el.style.width = `${h.getBoundingClientRect().width}px`; });
     };
     const finish = () => {
       heading.textContent = finalText;
@@ -669,16 +697,17 @@ syncLogoTheme();
     }));
 
     const tick = () => {
-      let output = '';
       let complete = 0;
-      for (const item of queue) {
-        if (frame >= item.end) { output += item.ch; complete++; }
-        else if (frame >= item.start && item.ch.trim()) {
-          output += glyphs[Math.floor(Math.random() * glyphs.length)];
-        } else if (frame >= item.start) { output += item.ch; }
-        else { output += ' '; }
+      const out = queue.map((item) => {
+        if (frame >= item.end) { complete++; return item.ch; }
+        if (frame >= item.start && item.ch.trim()) return glyphs[Math.floor(Math.random() * glyphs.length)];
+        if (frame >= item.start) return item.ch;
+        return '\u00a0';
+      });
+      for (const w of words) {
+        const text = out.slice(w.from, w.to).join('');
+        if (text !== w.text) { w.el.textContent = text; w.text = text; }
       }
-      live.textContent = output;
       frame++;
       if (complete < queue.length) requestAnimationFrame(tick);
       else finish();

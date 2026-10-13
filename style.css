@@ -1250,6 +1250,7 @@
   [data-scramble] { position: relative; }
   .scr-hold { visibility: hidden; }
   .scr-live { position: absolute; top: 0; left: 0; width: 100%; }
+  .scr-w { display: inline-block; white-space: pre; vertical-align: baseline; }
 
   /* Inline flow (not flex) so the caret stays glued to the last character
      when the line wraps on narrow screens. */
