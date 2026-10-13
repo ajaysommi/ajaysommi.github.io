@@ -849,9 +849,9 @@
   }
   /* JM Lexus is a long, wide wordmark, so at the shared width cap it reads
      a touch bigger than its neighbours. A hair narrower, on every screen
-     (the caps it replaces are 260px, and 52vw on phones; 250px on desktop
+     (the caps it replaces are 260px, and 52vw on phones; 255px on desktop
      sits between too big and too small). */
-  .logo[src*="jm-lexus"] { max-width: min(48vw, 250px); }
+  .logo[src*="jm-lexus"] { max-width: min(48vw, 255px); }
   .logo-tip {
     border: 0;
     background: var(--ink);
