@@ -5319,3 +5319,6 @@ html.is-modal main *,
 html.is-modal main *::before,
 html.is-modal main *::after { animation-play-state: paused !important; }
 
+
+/* The contact snapshot fades in more slowly than the rest. */
+.since-print[data-reveal] { transition-duration: 1.6s; }
