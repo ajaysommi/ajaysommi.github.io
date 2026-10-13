@@ -1135,6 +1135,7 @@ syncLogoTheme();
     startScroll = viewport.scrollLeft;
     velocity = 0;
     cancelAnimationFrame(glideRaf);
+    viewport.classList.remove('is-dragging');
     goBusy();
   });
 
@@ -1165,19 +1166,23 @@ syncLogoTheme();
     armed = false;
     if (!dragging) { bumpIdle(1200); return; }  // a click, not a drag
     dragging = false;
-    viewport.classList.remove('is-dragging');
     try { viewport.releasePointerCapture(e.pointerId); } catch {}
 
+    /* The logos stay out of hover reach (is-dragging) until the glide has
+       run out, as they are during the drag. Otherwise every logo sliding
+       under the resting pointer lit up and faded again on its way past,
+       each one a restyle and a repaint, a dozen per flick. A press during
+       the glide still stops it, as a tap stops a flick on a phone. */
     let v = velocity * 1.4;
     const glide = () => {
-      if (Math.abs(v) < 0.4) { bumpIdle(400); return; }
-      setScroll(viewport.scrollLeft - v);
-      wrap();
+      if (Math.abs(v) < 0.4) { viewport.classList.remove('is-dragging'); bumpIdle(400); return; }
+      setScroll(expected - v);
+      wrap(expected);
       v *= 0.94;
       glideRaf = requestAnimationFrame(glide);
     };
     if (!prefersReduced() && Math.abs(v) > 1) glideRaf = requestAnimationFrame(glide);
-    else bumpIdle(1200);
+    else { viewport.classList.remove('is-dragging'); bumpIdle(1200); }
   };
 
   viewport.addEventListener('pointerup', endDrag);
