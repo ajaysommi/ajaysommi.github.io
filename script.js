@@ -44,12 +44,15 @@ const onScrollFrame = (() => {
   addEventListener('scroll', request, { passive: true });
   addEventListener('resize', request, { passive: true });
 
-  return (job) => {
+  const add = (job) => {
     jobs.push(job);
     const w = job();
     if (typeof w === 'function') w();
     return request;
   };
+  // Shared with the design's own script (minimal.js), which is not a module.
+  window.onScrollFrame = add;
+  return add;
 })();
 
 /* ==========================================================================

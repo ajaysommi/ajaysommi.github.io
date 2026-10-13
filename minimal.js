@@ -64,13 +64,17 @@
   let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
   let lastX = '', lastY = '';
 
+  /* Two decimals is a twentieth of a pixel of drift, finer than anything
+     can be seen; at three, the slow tail of every glide wrote a new value
+     on every frame for a second or more, each one restyling the ground and
+     the hero. */
   const frame = () => {
     raf = 0;
     x += (tx - x) * 0.05;
     y += (ty - y) * 0.05;
-    if (Math.abs(tx - x) < 0.002) x = tx;
-    if (Math.abs(ty - y) < 0.002) y = ty;
-    const mx = x.toFixed(3), my = y.toFixed(3);
+    if (Math.abs(tx - x) < 0.005) x = tx;
+    if (Math.abs(ty - y) < 0.005) y = ty;
+    const mx = x.toFixed(2), my = y.toFixed(2);
     if (mx !== lastX) { ground.style.setProperty('--mx', mx); hero?.style.setProperty('--mx', mx); lastX = mx; }
     if (my !== lastY) { ground.style.setProperty('--my', my); hero?.style.setProperty('--my', my); lastY = my; }
     if (x !== tx || y !== ty) raf = requestAnimationFrame(frame);
@@ -101,32 +105,42 @@
     ['contact', '#contact'],
   ].map(([name, sel]) => [name, document.querySelector(sel)]).filter(([, el]) => el);
 
-  let lastFade = '', scene = '', ticking = false;
+  let lastFade = '', scene = '';
 
-  const onScroll = () => {
-    ticking = false;
+  /* Reads, then writes: run with the site's other scroll effects in one
+     pass per frame (reads first for all of them), so none of them makes
+     another lay the page out again mid frame. */
+  const job = () => {
+    const y = scrollY, vh = innerHeight;
     // Faded fully once the first screen has gone by.
-    const fade = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.85))).toFixed(3);
-    if (fade !== lastFade) { ground.style.setProperty('--fade', fade); lastFade = fade; }
-
-    if (reduce.matches || !scenes.length) return;
-    // The section whose top has passed the middle of the screen.
-    let now = scenes[0][0];
-    const mid = innerHeight * 0.5;
-    for (const [name, el] of scenes) {
-      if (el.getBoundingClientRect().top <= mid) now = name;
-      else break;
+    const fade = Math.min(1, Math.max(0, y / (vh * 0.85))).toFixed(3);
+    let now = scene;
+    if (!reduce.matches && scenes.length) {
+      // The section whose top has passed the middle of the screen.
+      now = scenes[0][0];
+      const mid = vh * 0.5;
+      for (const [name, el] of scenes) {
+        if (el.getBoundingClientRect().top <= mid) now = name;
+        else break;
+      }
+      // The last section is too short to reach the middle; the end of the
+      // page counts as arriving in it.
+      if (y >= document.documentElement.scrollHeight - vh - 4) now = scenes[scenes.length - 1][0];
     }
-    // The last section is too short to reach the middle; the end of the
-    // page counts as arriving in it.
-    if (scrollY >= document.documentElement.scrollHeight - innerHeight - 4) now = scenes[scenes.length - 1][0];
-    if (now !== scene) { scene = now; ground.dataset.scene = now; }
+    if (fade === lastFade && now === scene) return;
+    return () => {
+      if (fade !== lastFade) { ground.style.setProperty('--fade', fade); lastFade = fade; }
+      if (now !== scene) { scene = now; ground.dataset.scene = now; }
+    };
   };
 
-  const request = () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
-  };
-  addEventListener('scroll', request, { passive: true });
-  addEventListener('resize', request, { passive: true });
-  onScroll();
+  if (window.onScrollFrame) window.onScrollFrame(job);
+  else {
+    let ticking = false;
+    const run = () => { ticking = false; const w = job(); if (w) w(); };
+    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } };
+    addEventListener('scroll', request, { passive: true });
+    addEventListener('resize', request, { passive: true });
+    run();
+  }
 })();
