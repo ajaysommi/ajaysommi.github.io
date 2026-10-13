@@ -5321,15 +5321,20 @@ html.is-modal main *::after { animation-play-state: paused !important; }
 
 /* ==========================================================================
    CONTACT: the snapshot is pressed onto the page as you arrive
-   Drawn, while it moves, as a stack of thin strips, each hinged to the
-   bottom of the one above. The top strip is stuck down first and each one
-   below follows a beat later, so the print curls off the page and is
-   smoothed down onto it from the top, like a sheet of paper. Each strip is
-   shaded by how far it is turned away. script.js builds the strips, writes
-   --stick (0 to 1) from the scroll position and the strips' angles, and
-   hands back to the real print, sharp and clickable, once it is flat.
-   Transforms only. Without script, or with reduced motion, it just sits
-   there flat.
+   Drawn as a stack of thin strips, each hinged to the bottom of the one
+   above. The top strip is stuck down first and each one below follows a
+   beat later, so the print curls off the page and is smoothed down onto it
+   from the top, like a sheet of paper. Each strip is shaded by how far it
+   is turned away, and the print's shadow comes in as it lands. script.js
+   builds the strips and writes --stick (0 to 1) from the scroll position.
+
+   The strips stay as the print once it is flat, rather than handing back
+   to the real one: swapping between the two had to paint the real print's
+   photo and shadow for the first time on the spot, which dropped a frame
+   just as it landed. The real print stays underneath, invisible, so a tap
+   still opens the photo. Everything keeps its own layer, so the whole
+   thing only ever moves, never repaints. Without script, or with reduced
+   motion, the real print just sits there flat.
    ========================================================================== */
 .since-print {
   --lift: calc(1 - var(--stick, 1));
@@ -5337,20 +5342,32 @@ html.is-modal main *::after { animation-play-state: paused !important; }
   perspective: 1200px;
   transform: translateY(calc(var(--lift) * -24px));
   opacity: calc(1 - var(--lift) * .55);
+  will-change: transform, opacity;
 }
-.since-print .bend { display: none; }
-.since-print.is-bending .bend {
-  position: absolute;
-  inset: 0;
-  display: block;
-  transform-style: preserve-3d;
-  pointer-events: none;
-}
-.since-print.is-bending > :not(.bend) { opacity: 0; }
-.since-print.is-bending {
+.since-print.has-bend {
   border-color: transparent !important;
   background: transparent !important;
   box-shadow: none !important;
+}
+.since-print.has-bend > :not(.bend) { opacity: 0; }
+.bend {
+  position: absolute;
+  inset: calc(-1 * var(--bw, 0px));
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+/* The print's shadow on the page, there the whole way rather than
+   arriving at the end: while the paper is lifted it is cast wide, soft and
+   faint a little below it, and as the paper comes down it draws in under
+   the print and darkens into the shadow it rests with. Scaling the shadow
+   is what widens and softens it, so this too is transform and opacity. */
+.bend-shadow {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 30%;
+  transform: translateY(calc(var(--lift) * 26px)) scale(calc(1 + var(--lift) * .1));
+  opacity: calc(.3 + var(--stick, 1) * .7);
+  will-change: transform, opacity;
 }
 .bend-s {
   position: absolute;
@@ -5359,6 +5376,7 @@ html.is-modal main *::after { animation-play-state: paused !important; }
   top: 0;
   transform-origin: 50% 0;
   transform-style: preserve-3d;
+  will-change: transform;
 }
 .bend-s .bend-s { top: 100%; }
 .bend-f {
@@ -5366,14 +5384,14 @@ html.is-modal main *::after { animation-play-state: paused !important; }
   inset: 0 0 -1px;
   overflow: hidden;
 }
-.bend-f::after {
-  content: "";
+.bend-shade {
   position: absolute;
   inset: 0;
   background: #000;
-  opacity: var(--shade, 0);
+  opacity: 0;
+  will-change: opacity;
 }
-.bend-paper { position: absolute; left: 0; right: 0; }
+.bend-paper { position: absolute; left: 0; right: 0; box-sizing: border-box; }
 .bend-photo {
   position: absolute;
   background-size: cover;

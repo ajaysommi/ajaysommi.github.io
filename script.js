@@ -2440,40 +2440,51 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const bend = document.createElement('div');
   bend.className = 'bend';
   bend.setAttribute('aria-hidden', 'true');
-  print.append(bend);
   let strips = [];
 
-  /* One copy of the print per strip, each shifted up so its strip shows
-     its own band: the paper in the print's colour and corners, and the
-     photo where the real one sits, at its size. Rebuilt when the print
-     changes size or the theme changes its paper. */
+  /* One copy of the print per strip, each shifted up so its strip shows its
+     own band: the paper in the print's colour, border and corners, and the
+     photo where the real one sits, at its size. The print's own look is
+     read before it is hidden, and again when the theme changes its paper
+     or the print changes size. */
   const build = () => {
-    print.classList.remove('is-bending');
+    print.classList.remove('has-bend');
     const cs = getComputedStyle(print);
-    const H = print.clientHeight, h = H / N;
+    const bw = parseFloat(cs.borderTopWidth) || 0;
+    const H = print.offsetHeight, h = H / N;
     const src = photo.currentSrc || photo.src;
-    bend.replaceChildren();
+    const paperCss = `height:${H}px;background:${cs.backgroundColor};border:${cs.borderTopWidth} ${cs.borderTopStyle} ${cs.borderTopColor};border-radius:${cs.borderRadius}`;
+    const photoCss = `left:${pic.offsetLeft}px;top:${pic.offsetTop}px;width:${pic.offsetWidth}px;height:${pic.offsetHeight}px;background-image:url("${src}")`;
+    bend.style.setProperty('--bw', `${bw}px`);
+    const shadow = document.createElement('div');
+    shadow.className = 'bend-shadow';
+    shadow.style.cssText = `border-radius:${cs.borderRadius};box-shadow:${cs.boxShadow}`;
+    bend.replaceChildren(shadow);
     strips = [];
     let parent = bend;
     for (let i = 0; i < N; i++) {
-      const s = document.createElement('div');
-      s.className = 'bend-s';
-      s.style.height = `${h}px`;
+      const st = document.createElement('div');
+      st.className = 'bend-s';
+      st.style.height = `${h}px`;
       const f = document.createElement('div');
       f.className = 'bend-f';
       const paper = document.createElement('div');
       paper.className = 'bend-paper';
-      paper.style.cssText = `top:${-i * h}px;height:${H}px;background:${cs.backgroundColor};border-radius:${cs.borderRadius}`;
+      paper.style.cssText = `top:${-i * h}px;${paperCss}`;
       const ph = document.createElement('div');
       ph.className = 'bend-photo';
-      ph.style.cssText = `left:${pic.offsetLeft}px;top:${pic.offsetTop}px;width:${pic.offsetWidth}px;height:${pic.offsetHeight}px;background-image:url("${src}")`;
+      ph.style.cssText = photoCss;
+      const shade = document.createElement('div');
+      shade.className = 'bend-shade';
       paper.append(ph);
-      f.append(paper);
-      s.append(f);
-      parent.append(s);
-      parent = s;
-      strips.push({ s, f, was: '' });
+      f.append(paper, shade);
+      st.append(f);
+      parent.append(st);
+      parent = st;
+      strips.push({ st, shade, t: '', o: '' });
     }
+    if (!bend.isConnected) print.append(bend);
+    print.classList.add('has-bend');
     last = '';
     kick?.();
   };
@@ -2492,22 +2503,25 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     return () => {
       last = key;
       print.style.setProperty('--stick', key);
-      const bending = v < 0.999;
-      print.classList.toggle('is-bending', bending);
-      if (!bending) return;
       let total = 0;
       strips.forEach((st, i) => {
         const local = clamp((v - SPREAD * i / (N - 1)) / (1 - SPREAD), 0, 1);
         const a = (1 - local) * (i === 0 ? HINGE : CURL);
         total += a;
-        const t = `rotateX(${a.toFixed(2)}deg)`;
-        if (t !== st.was) { st.was = t; st.s.style.transform = t; }
-        st.f.style.setProperty('--shade', (Math.sin(Math.min(total, 90) * Math.PI / 180) * 0.22).toFixed(3));
+        const t = a < 0.01 ? 'none' : `rotateX(${a.toFixed(2)}deg)`;
+        if (t !== st.t) { st.t = t; st.st.style.transform = t; }
+        const o = (Math.sin(Math.min(total, 90) * Math.PI / 180) * 0.22).toFixed(3);
+        if (o !== st.o) { st.o = o; st.shade.style.opacity = o; }
       });
     };
   };
 
-  const ready = () => { build(); if (!kick) kick = onScrollFrame(frame); };
+  // The photo is decoded before the strips first paint it, so coming into
+  // view does not also have to decode it in that frame.
+  const ready = () => {
+    const go = () => { build(); if (!kick) kick = onScrollFrame(frame); };
+    (photo.decode ? photo.decode() : Promise.resolve()).then(go, go);
+  };
   if (photo.complete && photo.naturalWidth) ready();
   else { photo.loading = 'eager'; photo.addEventListener('load', ready, { once: true }); }
 
