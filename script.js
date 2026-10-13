@@ -2425,6 +2425,24 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
 })();
 
+/* The contact snapshot, pressed onto the page as it scrolls into view
+   (stylesheet: CONTACT). 0 as its top edge comes up from the foot of the
+   screen, 1 once that edge is a little under halfway up, eased so it lands
+   softly rather than stopping dead. */
+(function snapshotStick() {
+  const print = $('.since-print');
+  if (!print || prefersReduced()) return;
+  let was = '';
+  onScrollFrame(() => {
+    const r = print.getBoundingClientRect();
+    const h = innerHeight || 1;
+    const p = clamp((h - r.top) / (h * 0.58), 0, 1);
+    const v = (1 - (1 - p) ** 3).toFixed(3);
+    if (v === was) return;
+    return () => { was = v; print.style.setProperty('--stick', v); };
+  });
+})();
+
 /* ==========================================================================
    Skill + project filtering
    Clicking a skill pill spotlights matching projects and experience.
