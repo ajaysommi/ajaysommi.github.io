@@ -2023,7 +2023,10 @@
     overflow-anchor: none;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
+    /* No scroll snap. Snap points made a flick settle on the nearest photo,
+       which on an iPhone cut the momentum short after a photo or so; without
+       them the strip coasts and bounces at its ends the way the system does
+       everywhere else, like the logo strip. */
   }
 
   .jc-media::-webkit-scrollbar { display: none; }
@@ -2059,7 +2062,6 @@
     background: var(--surface);
     overflow: hidden;
     cursor: zoom-in;
-    scroll-snap-align: start;
     transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
   }
 

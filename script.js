@@ -2474,7 +2474,12 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const matches = (el, needle) =>
     tagsOf(el).some((t) => containsWord(t, needle) || containsWord(needle, t));
 
-  let current = 'all';
+  /* What is selected, needle to the label it was picked by, in the order
+     picked. Empty means everything. The chips above the grid toggle in and
+     out of it, so several can be on at once and the grid shows anything
+     matching any of them; a skill pill, being a spotlight, replaces it. */
+  let selected = new Map();
+  const only = (label) => new Map(label === 'all' ? [] : [[normalize(label), label]]);
 
   /* The most recent role in the Path whose tags include a skill, for the
      skills no project uses (Apex, say, is ADT). Roles are listed oldest
@@ -2514,24 +2519,30 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     scrollTo({ top: Math.round(top + travel * at) + 2, behavior: smooth });
   };
 
-  const apply = (raw, { scroll = false } = {}) => {
-    const needle = raw === 'all' ? 'all' : normalize(raw);
-    current = needle;
+  const apply = (sel, { scroll = false } = {}) => {
+    selected = sel;
+    const needles = [...selected.keys()];
+    const any = needles.length > 0;
 
     let visible = 0;
     cards.forEach((card) => {
-      const hit = needle === 'all' || matches(card, needle);
+      const hit = !any || needles.some((n) => matches(card, n));
       card.classList.toggle('is-hidden', !hit);
-      card.classList.toggle('is-lit', hit && needle !== 'all');
+      card.classList.toggle('is-lit', hit && any);
       if (hit) visible++;
     });
 
-    filterChips.forEach((c) => c.classList.toggle('is-active', normalize(c.dataset.filter) === needle));
-    skillButtons.forEach((b) => b.classList.toggle('is-active', needle !== 'all' && normalize(b.textContent) === needle));
+    filterChips.forEach((c) => {
+      const f = c.dataset.filter;
+      const on = f === 'all' ? !any : selected.has(normalize(f));
+      c.classList.toggle('is-active', on);
+      c.setAttribute('aria-pressed', String(on));
+    });
+    skillButtons.forEach((b) => b.classList.toggle('is-active', selected.has(normalize(b.textContent))));
 
     if (status && statusTag) {
-      status.hidden = needle === 'all';
-      statusTag.textContent = raw;
+      status.hidden = !any;
+      statusTag.textContent = [...selected.values()].join(', ');
     }
     if (empty) empty.hidden = visible !== 0;
 
@@ -2543,34 +2554,43 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     }
   };
 
+  // All clears; any other chip toggles itself in or out.
   filterChips.forEach((chip) => {
-    chip.addEventListener('click', () => apply(chip.dataset.filter));
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter;
+      if (f === 'all') { apply(only('all')); return; }
+      const next = new Map(selected);
+      const n = normalize(f);
+      if (next.has(n)) next.delete(n); else next.set(n, chip.textContent.trim());
+      apply(next);
+    });
   });
 
   skillButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const label = btn.textContent.trim();
       const needle = normalize(label);
-      if (current === needle) { apply('all'); toast('Filter cleared'); return; }
+      if (selected.size === 1 && selected.has(needle)) { apply(only('all')); toast('Filter cleared'); return; }
 
       const hits = cards.filter((c) => needle === 'all' || matches(c, needle)).length;
       if (!hits) {
         // No project uses it, but a role might: take them to it in the Path.
         const role = roleFor(needle);
         if (role) {
-          apply('all');
+          apply(only('all'));
           showRole(role);
           toast(`${label}: used at ${role.dataset.company}`);
           return;
         }
       }
-      apply(label, { scroll: true });
+      apply(only(label), { scroll: true });
       toast(hits ? `${hits} project${hits === 1 ? '' : 's'} using ${label}` : `No projects tagged ${label} yet`);
     });
   });
 
-  $('#filterClear')?.addEventListener('click', () => apply('all'));
-  $('[data-filter-reset]')?.addEventListener('click', () => apply('all'));
+  $('#filterClear')?.addEventListener('click', () => apply(only('all')));
+  $('[data-filter-reset]')?.addEventListener('click', () => apply(only('all')));
+  apply(only('all'));
 })();
 
 /* ==========================================================================
@@ -3804,7 +3824,7 @@ function gatorStorm(n = 12) {
     }
     title.textContent = d.title;
     img.srcset = st.srcset;
-    img.sizes = 'min(92vw, 560px)';
+    img.sizes = SIZES;
     img.src = st.src;
     img.alt = st.alt;
     // The same photo, blurred, fills whatever the frame has left around it.
@@ -3821,9 +3841,43 @@ function gatorStorm(n = 12) {
     body.textContent = ' ' + st.body;
     // Warm the next photo so it is there when the step changes.
     const nx = d.steps[step + 1];
-    if (nx) { const pre = new Image(); pre.srcset = nx.srcset; pre.sizes = img.sizes; pre.src = nx.src; }
+    if (nx) warm(nx);
     play();
   };
+
+  /* Photos are fetched and decoded before they are needed, at exactly the
+     size the viewer draws them (same srcset and sizes, so the viewer's own
+     request is a cache hit). Opening a story used to start its first photo
+     only then, and a phone showed the empty black frame until it arrived.
+     Now the first photo of every story is warmed as Off the Clock comes
+     near, a story is warmed the moment a finger touches its circle, and
+     each step warms the next. The handles are kept so nothing is dropped
+     before it lands. */
+  const SIZES = 'min(92vw, 560px)';
+  const warmed = new Map();
+  function warm(st) {
+    if (!st || warmed.has(st.src)) return;
+    const pre = new Image();
+    pre.decoding = 'async';
+    pre.srcset = st.srcset;
+    pre.sizes = SIZES;
+    pre.src = st.src;
+    pre.decode?.().catch(() => {});
+    warmed.set(st.src, pre);
+  }
+  const warmStory = (i, n = 1) => data[i]?.steps.slice(0, n).forEach(warm);
+  const section = hls[0]?.closest('section');
+  if (section && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      data.forEach((_, i) => warmStory(i));
+    }, { rootMargin: '900px 0px' });
+    io.observe(section);
+  } else {
+    data.forEach((_, i) => warmStory(i));
+  }
+  hls.forEach((hl, i) => $('.hl-btn', hl).addEventListener('pointerdown', () => warmStory(i, 2), { passive: true }));
 
   const seen = (i) => hls[i].classList.add('is-seen');
   function next() {
