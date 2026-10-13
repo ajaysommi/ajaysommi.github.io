@@ -808,10 +808,14 @@
     overflow: hidden;
   }
 
+  /* Full height, scaled down from the top by script.js: scaling is drawn
+     on the compositor, where growing a height relaid the rail every frame. */
   .rail-fill {
     position: absolute;
     inset: 0 0 auto;
-    height: 0;
+    height: 100%;
+    transform: scaleY(0);
+    transform-origin: 50% 0;
     border-radius: 2px;
     background: linear-gradient(180deg, var(--accent), var(--accent-2));
   }
@@ -5282,7 +5286,10 @@ html.js .pc-slot .jcard {
 .lightbox, .story { touch-action: none; overscroll-behavior: contain; }
 .lightbox #lbImg { touch-action: none; transform-origin: 50% 50%; will-change: transform; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .lightbox.is-zoomed .lb-prev, .lightbox.is-zoomed .lb-next { opacity: 0; pointer-events: none; }
-html:has(dialog[open]) .bg,
-html:has(dialog[open]) main *,
-html:has(dialog[open]) main *::before,
-html:has(dialog[open]) main *::after { animation-play-state: paused !important; }
+/* A class rather than html:has(dialog[open]): with :has on the root, every
+   text change anywhere (the typewriter writes one every few dozen ms) made
+   Chrome re-check the whole document, restyling all of main each time. */
+html.is-modal .bg,
+html.is-modal main *,
+html.is-modal main *::before,
+html.is-modal main *::after { animation-play-state: paused !important; }
