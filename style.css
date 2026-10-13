@@ -5153,6 +5153,14 @@
   border-color: color-mix(in oklab, var(--tint) 85%, var(--ink));
   transform: scale(1.06);
 }
+/* Only the circle answers a tap or a key. The button is the whole row,
+   circle and name, with pill corners, so the browser's own tap flash and
+   focus ring both drew a pill around all of it. The circle presses in
+   under a finger instead, and carries the focus ring. */
+.pc-stop { -webkit-tap-highlight-color: transparent; }
+.pc-stop:focus-visible { outline: none; }
+.pc-stop:focus-visible .pc-node { outline: 2px solid var(--ink); outline-offset: 3px; }
+.pc-stop:active .pc-node { transform: scale(.94); transition-duration: .08s; }
 .pc-stop.is-past .pc-node { border-color: color-mix(in oklab, var(--tint) 75%, var(--stroke)); }
 /* The open role's node lights up solid in its company's colour, with the
    year knocked out dark on top of it. */
