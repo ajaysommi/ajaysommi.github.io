@@ -787,26 +787,10 @@
     background: var(--accent);
     filter: none;
   }
-  /* The photo is a square crop with the face a little above centre, which
-     a circle shows as a face sitting high with a lot of shoulder below.
-     So the circle is cut by the picture element and the photo inside it is
-     drawn larger and nudged down, putting the face in the middle of the
-     circle and filling more of it. */
-  .hero-figure picture {
-    display: block;
-    border-radius: 50%;
-    overflow: hidden;
-    /* Safari only clips a transformed child to a rounded parent when the
-       parent has its own layer. */
-    isolation: isolate;
-    transform: translateZ(0);
-  }
   .hero-pic {
-    display: block;
-    border-radius: 0;
+    border-radius: 50%;
     box-shadow: none;
     outline: 0;
-    transform: translateY(12%) scale(1.3);
   }
 
   .hero-head h1 { margin-bottom: .5rem; }
