@@ -5422,16 +5422,3 @@ html.is-modal main *::after { animation-play-state: paused !important; }
   opacity: .28;
   pointer-events: none;
 }
-/* Phones: the bottom bar sits over the left of the print while it folds,
-   so the note moves to the right and stacks. */
-@media (max-width: 719px) {
-  .bend-note {
-    place-items: center end;
-    padding-right: 38px;
-    font-size: 8.5px;
-    max-width: none;
-    text-align: right;
-    line-height: 1.25;
-    white-space: pre-line;
-  }
-}
