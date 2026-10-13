@@ -2485,7 +2485,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       if (i === N - 1) {
         const note = document.createElement('div');
         note.className = 'bend-note';
-        note.textContent = 'you slowed down to look. so do i.';
+        note.textContent = matchMedia('(max-width: 719px)').matches ? 'you slowed down to look.\nso do i.' : 'you slowed down to look. so do i.';
         st.append(note);
       }
       parent.append(st);
