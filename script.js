@@ -1376,9 +1376,14 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     };
     const pathTo = (pts, upto) => {
       let d = '';
+      /* Each run starts and ends at the node centres, under the opaque
+         circles, so the bend out of one node and into the next happens out
+         of sight and the line meets each rim already at an easy angle.
+         Starting at the rims put the whole turn in a few visible pixels,
+         where it read as a hook. */
       for (let k = 0; k < Math.min(upto, pts.length - 1); k++) {
-        const [x1, c1, r1] = pts[k], [x2, c2, r2] = pts[k + 1];
-        const y1 = c1 + r1, y2 = c2 - r2, pull = Math.min((y2 - y1) * 0.9, 160);
+        const [x1, y1] = pts[k], [x2, y2] = pts[k + 1];
+        const pull = Math.min((y2 - y1) * 0.85, 220);
         d += `M${x1} ${y1}C${x1} ${y1 + pull} ${x2} ${y2 - pull} ${x2} ${y2}`;
       }
       return d;
