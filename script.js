@@ -2478,6 +2478,16 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       paper.append(ph);
       f.append(paper, shade);
       st.append(f);
+      /* On the back of the bottom strip, over the white margin, a note for
+         anyone scrolling slowly enough to see the back of the print. It
+         faces away from the front, so it only shows while that strip is
+         turned over. */
+      if (i === N - 1) {
+        const note = document.createElement('div');
+        note.className = 'bend-note';
+        note.textContent = 'you slowed down to look. so do i.';
+        st.append(note);
+      }
       parent.append(st);
       parent = st;
       strips.push({ st, shade, t: '', o: '' });

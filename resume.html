@@ -79,20 +79,33 @@
       border-radius: var(--r-lg);
     }
 
+    /* The warning mark: a flat circle in the accent with an exclamation
+       cut through it, in the site's shape language. */
     .pdf-fallback .pdf-mark {
-      display: grid;
-      place-items: center;
+      position: relative;
       width: 58px;
       height: 58px;
-      border: 1px solid var(--stroke);
-      border-radius: var(--r-md);
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-family: var(--font-mono);
-      font-size: .8rem;
-      font-weight: 700;
+      border-radius: 50%;
+      background: var(--accent);
     }
-
+    .pdf-fallback .pdf-mark::before,
+    .pdf-fallback .pdf-mark::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 6px;
+      margin-left: -3px;
+      border-radius: 3px;
+      background: var(--accent-ink, #141414);
+    }
+    .pdf-fallback .pdf-mark::before { top: 13px; height: 20px; }
+    .pdf-fallback .pdf-mark::after { top: 38px; height: 6px; }
+    /* With the fallback showing, its own buttons do the work: the head's
+       back link takes the place of the download/open pair. */
+    .resume-main.is-fallback .resume-head .btn,
+    .resume-main.is-fallback .resume-actions .btn { display: none; }
+    .resume-main.is-fallback .resume-actions .back { display: inline-flex; }
+    .resume-actions .back { display: none; }
     .pdf-fallback p { margin: 0; max-width: 42ch; color: var(--ink-3); font-size: .92rem; }
     .pdf-fallback .actions { justify-content: center; }
   </style>
@@ -155,6 +168,7 @@
     <div class="resume-actions">
       <a class="btn solid" href="./Ajay_Sommi_Resume.pdf" download="Ajay-Sommi-Resume.pdf">Download PDF</a>
       <a class="btn" href="./Ajay_Sommi_Resume.pdf" target="_blank" rel="noopener">Open in new tab</a>
+      <a class="btn back" href="index.html">← Back to portfolio</a>
     </div>
 
     <div class="embed glass" id="pdfEmbed">
@@ -162,7 +176,7 @@
     </div>
 
     <div class="pdf-fallback glass" id="pdfFallback" hidden>
-      <span class="pdf-mark" aria-hidden="true">PDF</span>
+      <span class="pdf-mark" aria-hidden="true"></span>
       <h2>Your browser can't show the PDF inline</h2>
       <p>Most mobile browsers won't render an embedded PDF. Open it in a new tab or download it instead. Same file either way.</p>
       <div class="actions">
@@ -208,6 +222,7 @@
       if (noInlinePdf) {
         embed.hidden = true;
         fallback.hidden = false;
+        embed.parentElement.classList.add('is-fallback');
       }
     })();
   </script>

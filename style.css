@@ -5405,3 +5405,20 @@ html.is-modal main *::after { animation-play-state: paused !important; }
   background-position: center;
   filter: saturate(.9) contrast(1.02);
 }
+
+/* The note on the back of the print (see snapshotStick): flipped so it
+   reads from the back, hidden from the front, and only just there. */
+.bend-note {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: rotateX(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  font: italic 500 10px/1 var(--font-mono);
+  letter-spacing: .04em;
+  color: #2a2620;
+  opacity: .28;
+  pointer-events: none;
+}
