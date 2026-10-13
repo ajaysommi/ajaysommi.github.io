@@ -1283,6 +1283,12 @@
   .mobile-sheet a.sheet-cta:hover span { color: var(--accent-ink); }
   .mobile-sheet a span { color: var(--ink-3); font-family: var(--font-mono); }
   .sheet-grab { background: var(--stroke-hi); }
+  /* The Contact button in the menu is a pill here, 56px tall, so the sheet
+     around it takes the pill's radius plus the 10px of padding and the
+     border between them (28 + 10 + 1) and the two curves run parallel,
+     like the bar below it. The rows light up as pills too when tapped. */
+  .mobile-sheet { border-radius: 39px; }
+  .mobile-sheet a { border-radius: var(--r-pill); }
 
   .palette {
     border: 1px solid var(--stroke-hi);
