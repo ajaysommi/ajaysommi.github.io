@@ -352,9 +352,17 @@
      colour painted: saturate(340%) used to swing hue as well as chroma, so
      an orange came out red and a blue came out cyan.
      -------------------------------------------------------------------- */
+  /* Pinned to the top and sized to the largest the viewport gets, plus a
+     margin, rather than pinned to the bottom too. iOS Safari draws the page
+     all the way down under its floating address bar but sets the bottom of
+     fixed boxes above it, so a bottom pinned background stopped short and
+     left a hard edge across the foot of the screen. Everything inside is
+     placed from the top, so the extra height only uncovers more of it. */
   .bg {
     position: fixed;
-    inset: 0;
+    inset: 0 0 auto;
+    height: calc(100vh + 80px);
+    height: calc(100lvh + 80px);
     z-index: -2;
     overflow: hidden;
     pointer-events: none;
