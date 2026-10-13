@@ -1398,6 +1398,9 @@
 }
 [data-theme] .pc-stop.is-on .pc-year { color: #0e0e0e; font-weight: 600; }
 .pc-name { font-weight: 600; letter-spacing: -.01em; }
+/* The open role's tile: a touch more solid than on main, so the trace and
+   the field's shapes behind it only just show through. */
+html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 95%, transparent); }
 .pc-role { font-family: var(--font-mono); font-size: .76rem; letter-spacing: .01em; }
 
 /* ---------- Off the Clock ------------------------------------------------
