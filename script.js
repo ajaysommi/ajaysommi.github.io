@@ -2458,7 +2458,6 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     bend.style.setProperty('--bw', `${bw}px`);
     const shadow = document.createElement('div');
     shadow.className = 'bend-shadow';
-    shadow.style.cssText = `border-radius:${cs.borderRadius};box-shadow:${cs.boxShadow}`;
     bend.replaceChildren(shadow);
     strips = [];
     let parent = bend;

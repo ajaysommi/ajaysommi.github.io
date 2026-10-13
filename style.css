@@ -5356,19 +5356,26 @@ html.is-modal main *::after { animation-play-state: paused !important; }
   transform-style: preserve-3d;
   pointer-events: none;
 }
-/* The print's shadow on the page, there the whole way rather than
-   arriving at the end: while the paper is lifted it is cast wide, soft and
-   faint a little below it, and as the paper comes down it draws in under
-   the print and darkens into the shadow it rests with. Scaling the shadow
-   is what widens and softens it, so this too is transform and opacity. */
+/* The print's shadow on the page: a soft dark patch under the print, not
+   a copy of its box-shadow. A box-shadow is drawn only outside its box, so
+   once the paper curled away the inside of the box showed as a bright
+   empty rectangle, hemmed by shadow. The patch is blurred once and then
+   only moved: while the paper is lifted it is cast wide, faint and a
+   little below it, and as the paper comes down it draws in under the
+   print and darkens into the shadow it rests with. */
 .bend-shadow {
   position: absolute;
-  inset: 0;
+  inset: 8% 5% 0 5%;
+  border-radius: 6px;
+  background: rgba(20, 20, 20, .26);
+  filter: blur(12px);
   transform-origin: 50% 30%;
-  transform: translateY(calc(var(--lift) * 26px)) scale(calc(1 + var(--lift) * .1));
-  opacity: calc(.3 + var(--stick, 1) * .7);
+  transform: translateY(calc(6px + var(--lift) * 26px)) scale(calc(1 + var(--lift) * .1));
+  opacity: calc(.35 + var(--stick, 1) * .65);
   will-change: transform, opacity;
 }
+[data-theme="midnight"] .bend-shadow,
+[data-theme="terminal"] .bend-shadow { background: rgba(0, 0, 0, .6); }
 .bend-s {
   position: absolute;
   left: 0;
