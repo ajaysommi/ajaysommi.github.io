@@ -2426,21 +2426,94 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* The contact snapshot, pressed onto the page as it scrolls into view
-   (stylesheet: CONTACT). 0 as its top edge comes up from the foot of the
-   screen, 1 once that edge is a little under halfway up, eased so it lands
-   softly rather than stopping dead. */
+   (stylesheet: CONTACT). */
 (function snapshotStick() {
   const print = $('.since-print');
-  if (!print || prefersReduced()) return;
-  let was = '';
-  onScrollFrame(() => {
+  const pic = print?.querySelector('.since-pic');
+  const photo = pic?.querySelector('img');
+  if (!print || !pic || !photo || prefersReduced()) return;
+
+  const N = 8;              // strips
+  const SPREAD = 0.5;       // how far behind the top strip the bottom one settles
+  const HINGE = 34;         // degrees the whole print is lifted at the start
+  const CURL = 14;          // and each strip further, relative to the one above
+  const bend = document.createElement('div');
+  bend.className = 'bend';
+  bend.setAttribute('aria-hidden', 'true');
+  print.append(bend);
+  let strips = [];
+
+  /* One copy of the print per strip, each shifted up so its strip shows
+     its own band: the paper in the print's colour and corners, and the
+     photo where the real one sits, at its size. Rebuilt when the print
+     changes size or the theme changes its paper. */
+  const build = () => {
+    print.classList.remove('is-bending');
+    const cs = getComputedStyle(print);
+    const H = print.clientHeight, h = H / N;
+    const src = photo.currentSrc || photo.src;
+    bend.replaceChildren();
+    strips = [];
+    let parent = bend;
+    for (let i = 0; i < N; i++) {
+      const s = document.createElement('div');
+      s.className = 'bend-s';
+      s.style.height = `${h}px`;
+      const f = document.createElement('div');
+      f.className = 'bend-f';
+      const paper = document.createElement('div');
+      paper.className = 'bend-paper';
+      paper.style.cssText = `top:${-i * h}px;height:${H}px;background:${cs.backgroundColor};border-radius:${cs.borderRadius}`;
+      const ph = document.createElement('div');
+      ph.className = 'bend-photo';
+      ph.style.cssText = `left:${pic.offsetLeft}px;top:${pic.offsetTop}px;width:${pic.offsetWidth}px;height:${pic.offsetHeight}px;background-image:url("${src}")`;
+      paper.append(ph);
+      f.append(paper);
+      s.append(f);
+      parent.append(s);
+      parent = s;
+      strips.push({ s, f, was: '' });
+    }
+    last = '';
+    kick?.();
+  };
+
+  let last = '', kick = null;
+  const frame = () => {
     const r = print.getBoundingClientRect();
     const h = innerHeight || 1;
-    const p = clamp((h - r.top) / (h * 0.58), 0, 1);
-    const v = (1 - (1 - p) ** 3).toFixed(3);
-    if (v === was) return;
-    return () => { was = v; print.style.setProperty('--stick', v); };
-  });
+    // From its top edge entering at the foot of the screen to its whole
+    // height being in view with a little room under it; smoothstep, so it
+    // eases out of the curl and into place.
+    const p = clamp((h - r.top) / (print.offsetHeight + h * 0.22), 0, 1);
+    const v = p * p * (3 - 2 * p);
+    const key = v.toFixed(3);
+    if (key === last) return;
+    return () => {
+      last = key;
+      print.style.setProperty('--stick', key);
+      const bending = v < 0.999;
+      print.classList.toggle('is-bending', bending);
+      if (!bending) return;
+      let total = 0;
+      strips.forEach((st, i) => {
+        const local = clamp((v - SPREAD * i / (N - 1)) / (1 - SPREAD), 0, 1);
+        const a = (1 - local) * (i === 0 ? HINGE : CURL);
+        total += a;
+        const t = `rotateX(${a.toFixed(2)}deg)`;
+        if (t !== st.was) { st.was = t; st.s.style.transform = t; }
+        st.f.style.setProperty('--shade', (Math.sin(Math.min(total, 90) * Math.PI / 180) * 0.22).toFixed(3));
+      });
+    };
+  };
+
+  const ready = () => { build(); if (!kick) kick = onScrollFrame(frame); };
+  if (photo.complete && photo.naturalWidth) ready();
+  else { photo.loading = 'eager'; photo.addEventListener('load', ready, { once: true }); }
+
+  let builtW = print.clientWidth;
+  if ('ResizeObserver' in window) new ResizeObserver(() => { if (print.clientWidth !== builtW && strips.length) { builtW = print.clientWidth; build(); } }).observe(print);
+  new MutationObserver(() => { if (strips.length) build(); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 
 /* ==========================================================================

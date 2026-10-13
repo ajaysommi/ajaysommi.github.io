@@ -5321,16 +5321,62 @@ html.is-modal main *::after { animation-play-state: paused !important; }
 
 /* ==========================================================================
    CONTACT: the snapshot is pressed onto the page as you arrive
-   Its top edge is pinned first, with the rest lifted off the page toward
-   you, and it lays down flat at its usual tilt over the stretch it takes
-   to scroll up into view. script.js writes --stick, 0 to 1, from the scroll
-   position, so it follows the scroll both ways. Transform only, so it is
-   drawn on the compositor. Without script, or with reduced motion, it just
-   sits flat.
+   Drawn, while it moves, as a stack of thin strips, each hinged to the
+   bottom of the one above. The top strip is stuck down first and each one
+   below follows a beat later, so the print curls off the page and is
+   smoothed down onto it from the top, like a sheet of paper. Each strip is
+   shaded by how far it is turned away. script.js builds the strips, writes
+   --stick (0 to 1) from the scroll position and the strips' angles, and
+   hands back to the real print, sharp and clickable, once it is flat.
+   Transforms only. Without script, or with reduced motion, it just sits
+   there flat.
    ========================================================================== */
 .since-print {
   --lift: calc(1 - var(--stick, 1));
+  position: relative;
+  perspective: 1200px;
+  transform: translateY(calc(var(--lift) * -24px));
+  opacity: calc(1 - var(--lift) * .55);
+}
+.since-print .bend { display: none; }
+.since-print.is-bending .bend {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.since-print.is-bending > :not(.bend) { opacity: 0; }
+.since-print.is-bending {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.bend-s {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
   transform-origin: 50% 0;
-  transform: perspective(1100px) translateY(calc(var(--lift) * -28px)) rotateX(calc(var(--lift) * 62deg));
-  opacity: calc(1 - var(--lift) * .6);
+  transform-style: preserve-3d;
+}
+.bend-s .bend-s { top: 100%; }
+.bend-f {
+  position: absolute;
+  inset: 0 0 -1px;
+  overflow: hidden;
+}
+.bend-f::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--shade, 0);
+}
+.bend-paper { position: absolute; left: 0; right: 0; }
+.bend-photo {
+  position: absolute;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(.9) contrast(1.02);
 }
