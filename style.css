@@ -4229,6 +4229,13 @@
     transition: box-shadow .3s ease;
   }
 
+  /* script.js writes these on the bar every frame the pointer is near or
+     the glass is settling, and only the bar and its edge light use them.
+     They would otherwise inherit into every link and icon inside it, each
+     one restyled on every write; set here, a change stops at the children. */
+  header.nav > *,
+  .dock-fab > * { --lg-env: 0, 0, 0; --lg-dim: 0; --lg-lift: 0; --lg-near: 0; }
+
   /* The edge light, brightening a touch as the pointer comes near. */
   header.nav::before,
   .dock-fab::before {
