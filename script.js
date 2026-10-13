@@ -16,6 +16,43 @@ const prefersReduced = () => reduceMotionQuery.matches;
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
 /* ==========================================================================
+   Shared scroll engine
+   One rAF-throttled scroll listener drives every scroll-linked effect, so
+   adding effects never adds listeners. A job does its reading and may
+   return a function that does its writing: every job reads before any job
+   writes, so one effect's write never makes the next effect's read lay the
+   page out again in the middle of the frame.
+   ========================================================================== */
+const onScrollFrame = (() => {
+  const jobs = [];
+  let ticking = false;
+
+  const run = () => {
+    ticking = false;
+    const writes = [];
+    for (const job of jobs) {
+      const w = job();
+      if (typeof w === 'function') writes.push(w);
+    }
+    for (const w of writes) w();
+  };
+
+  const request = () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(run); }
+  };
+
+  addEventListener('scroll', request, { passive: true });
+  addEventListener('resize', request, { passive: true });
+
+  return (job) => {
+    jobs.push(job);
+    const w = job();
+    if (typeof w === 'function') w();
+    return request;
+  };
+})();
+
+/* ==========================================================================
    Time of day: the greeting and the sky
 
    One reading of the clock drives both, so they can never disagree.
@@ -499,10 +536,13 @@ syncLogoTheme();
     if (e.key === 'Escape' && sheet?.classList.contains('is-open')) closeSheet();
   });
 
-  // Sticky shadow
-  const onScroll = () => nav?.classList.toggle('is-stuck', window.scrollY > 12);
-  onScroll();
-  addEventListener('scroll', onScroll, { passive: true });
+  // Sticky shadow, through the shared scroll frame and only on a change.
+  let stuck = null;
+  onScrollFrame(() => {
+    const now = scrollY > 12;
+    if (now === stuck) return;
+    return () => { stuck = now; nav?.classList.toggle('is-stuck', now); };
+  });
 })();
 
 /* ==========================================================================
@@ -546,30 +586,43 @@ syncLogoTheme();
 
   const dots = $$('button', list);
   const navLinks = $$('.nav-links a[href^="#"]');
-  let ticking = false;
 
-  const update = () => {
-    ticking = false;
-    const max = document.documentElement.scrollHeight - innerHeight;
-    fill.style.height = `${clamp(max > 0 ? (scrollY / max) * 100 : 0, 0, 100)}%`;
-
-    const line = scrollY + innerHeight * 0.32;
-    let active = 0;
-    sections.forEach(([id], i) => {
-      const el = document.getElementById(id);
-      if (el && el.getBoundingClientRect().top + scrollY <= line) active = i;
-    });
-
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
-    const activeId = sections[active]?.[0];
-    navLinks.forEach((a) => a.classList.toggle('is-current', a.getAttribute('href') === `#${activeId}`));
+  /* Where each section starts and how far the page scrolls, measured once
+     and again only when the layout changes size, rather than read back on
+     every frame of every scroll. */
+  const els = sections.map(([id]) => document.getElementById(id));
+  let tops = [], max = 0;
+  const measure = () => {
+    const y = scrollY;
+    tops = els.map((el) => el.getBoundingClientRect().top + y);
+    max = document.documentElement.scrollHeight - innerHeight;
   };
 
-  addEventListener('scroll', () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(update); }
-  }, { passive: true });
-  addEventListener('resize', update, { passive: true });
-  update();
+  // The fill scales rather than grows, so moving it never lays anything out.
+  let lastFill = '', active = -1;
+  const frame = () => {
+    const y = scrollY;
+    const fillV = clamp(max > 0 ? y / max : 0, 0, 1).toFixed(4);
+    const line = y + innerHeight * 0.32;
+    let now = 0;
+    for (let i = 0; i < tops.length; i++) if (tops[i] <= line) now = i;
+    if (fillV === lastFill && now === active) return;
+    return () => {
+      if (fillV !== lastFill) { lastFill = fillV; fill.style.transform = `scaleY(${fillV})`; }
+      if (now !== active) {
+        active = now;
+        dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
+        const activeId = sections[active]?.[0];
+        navLinks.forEach((a) => a.classList.toggle('is-current', a.getAttribute('href') === `#${activeId}`));
+      }
+    };
+  };
+
+  measure();
+  const kick = onScrollFrame(frame);
+  addEventListener('resize', measure, { passive: true });
+  if ('ResizeObserver' in window) new ResizeObserver(() => { measure(); kick(); }).observe(document.body);
+  document.fonts?.ready.then(() => { measure(); kick(); }).catch(() => {});
 })();
 
 /* ==========================================================================
@@ -697,41 +750,63 @@ syncLogoTheme();
     'B.S. Computer Science, University of Florida',
   ];
 
+  /* One text node, edited in place throughout: setting textContent swaps
+     the node out on every letter, which is a node removed and a node
+     inserted, each restyling and relaying the line. */
+  const text = document.createTextNode(typed.textContent);
+  typed.replaceChildren(text);
+
   /* Reserve exactly the height the longest role needs, measured rather than
      assumed: a fixed two line reservation left a visible blank line between
      this and the paragraph below, and a one line reservation would make the
-     paragraph jump on any width where a role wraps. */
+     paragraph jump on any width where a role wraps. Only a change of width
+     can change that, so a height only resize (a phone's toolbar sliding
+     away) does not measure again. */
   const line = typed.parentElement;
-  const reserve = () => {
-    const before = typed.textContent;
+  let measuredW = -1;
+  const reserve = (force) => {
+    const w = line.clientWidth;
+    if (force !== true && w === measuredW) return;
+    measuredW = w;
+    const before = text.data;
     line.style.minHeight = '0px';
     let tallest = 0;
     for (const role of roles) {
-      typed.textContent = role;
+      text.data = role;
       tallest = Math.max(tallest, line.getBoundingClientRect().height);
     }
-    typed.textContent = before;
+    text.data = before;
     line.style.minHeight = `${Math.ceil(tallest)}px`;
   };
 
-  reserve();
+  reserve(true);
   addEventListener('resize', reserve, { passive: true });
-  if (document.fonts?.ready) document.fonts.ready.then(reserve).catch(() => {});
+  if (document.fonts?.ready) document.fonts.ready.then(() => reserve(true)).catch(() => {});
 
-  if (prefersReduced()) { typed.textContent = roles[0]; return; }
+  if (prefersReduced()) { text.data = roles[0]; return; }
 
-  let r = 0, i = 0, deleting = false;
+  /* The loop rests while the hero is off screen or the tab is hidden, and
+     picks up where it left off. */
+  let r = 0, i = 0, deleting = false, timer = 0, onScreen = true;
+  const running = () => onScreen && document.visibilityState === 'visible';
   const loop = () => {
-    const text = roles[r];
+    timer = 0;
+    if (!running()) return;
+    const role = roles[r];
     i += deleting ? -1 : 1;
-    typed.textContent = text.slice(0, i);
+    text.data = role.slice(0, i);
 
     let delay = deleting ? 26 : 52;
-    if (!deleting && i === text.length) { delay = 1900; deleting = true; }
+    if (!deleting && i === role.length) { delay = 1900; deleting = true; }
     else if (deleting && i === 0) { deleting = false; r = (r + 1) % roles.length; delay = 340; }
-    setTimeout(loop, delay);
+    timer = setTimeout(loop, delay);
   };
-  setTimeout(loop, 1800);
+  const resume = () => { if (!timer && running()) timer = setTimeout(loop, 120); };
+  document.addEventListener('visibilitychange', resume);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; resume(); }).observe(line);
+  }
+  timer = setTimeout(loop, 1800);
 })();
 
 /* ==========================================================================
@@ -800,7 +875,6 @@ syncLogoTheme();
   if (!originals.length) return;
 
   const SPEED = 42;          // px per second of idle drift
-  const STEP_MS = 16;        // drift tick, roughly a frame: 20fps read as steppy
   const RUNWAY = 12000;      // px a flick can coast either way before it needs wrapping
   let setW = 0;              // width of one full set, including the trailing gap
   let midSet = 1;            // which copy the strip is kept centred on
@@ -809,7 +883,7 @@ syncLogoTheme();
   let dragging = false;
   let visible = true;        // section is on/near screen
   let settling = false;      // a person just scrolled it and it may still be coasting
-  let driftTimer = 0;
+  let driftRaf = 0;
 
   /* ---------- Idle drift ----------
      scrollLeft is deliberately the single source of truth for position here.
@@ -843,35 +917,43 @@ syncLogoTheme();
     expected = viewport.scrollLeft;
   };
 
-  const tick = () => {
-    const now = performance.now();
+  /* Stepped on the display's own frames rather than a 16ms timer: a timer
+     that drifts against the refresh lands two steps in some frames and none
+     in others, which is a stutter, and it kept ticking through frames the
+     browser was not drawing. The position is the one this script last set
+     (nobody else moves the strip while it drifts: a person's scroll stops
+     the drift first), so a step costs one write and no extra reads. */
+  const tick = (now) => {
+    driftRaf = requestAnimationFrame(tick);
     /* Cap the delta so a stall does not teleport the strip. The cap is loose
        enough that ordinary throttling (a busy main thread mid scroll) is
        still made up for: too tight a cap turns every slow tick into lost
        distance, which is the stutter it was meant to prevent. A backgrounded
-       tab is handled by pausing outright rather than by this cap. */
-    const dt = Math.min((now - lastT) / 1000, 0.25);
+       tab is handled by pausing outright rather than by this cap. A frame
+       stamped before the drift started counts as no time at all. */
+    const dt = clamp((now - lastT) / 1000, 0, 0.25);
     lastT = now;
 
     carry += SPEED * dt;
     const step = Math.floor(carry);
     if (step >= 1) {
       carry -= step;
-      setScroll(viewport.scrollLeft + step);
+      setScroll(expected + step);
     }
-    wrap();
+    wrap(expected);
   };
 
   const syncDrift = () => {
     const should = idle && !paused && !dragging && !settling && visible &&
                    document.visibilityState === 'visible' && !prefersReduced();
-    if (should && !driftTimer) {
+    if (should && !driftRaf) {
       lastT = performance.now();
       carry = 0;
-      driftTimer = setInterval(tick, STEP_MS);
-    } else if (!should && driftTimer) {
-      clearInterval(driftTimer);
-      driftTimer = 0;
+      expected = viewport.scrollLeft;
+      driftRaf = requestAnimationFrame(tick);
+    } else if (!should && driftRaf) {
+      cancelAnimationFrame(driftRaf);
+      driftRaf = 0;
     }
   };
 
@@ -968,10 +1050,10 @@ syncLogoTheme();
      whole sets. Because every set is identical, the jump is invisible, as
      long as it is made while script is the one moving the strip: the drift,
      a mouse drag, the wheel, the arrow buttons. */
-  const wrap = () => {
+  const wrap = (x = viewport.scrollLeft) => {
     if (setW <= 0) return;
-    const k = Math.round((viewport.scrollLeft - setW * midSet) / setW);
-    if (k !== 0) setScroll(viewport.scrollLeft - k * setW);
+    const k = Math.round((x - setW * midSet) / setW);
+    if (k !== 0) setScroll(x - k * setW);
   };
 
   /* While a person is scrolling it, and while it coasts afterwards, script
@@ -1164,33 +1246,6 @@ syncLogoTheme();
   }
 })();
 
-/* ==========================================================================
-   Shared scroll engine
-   One rAF-throttled scroll listener drives every scroll-linked effect, so
-   adding effects never adds listeners.
-   ========================================================================== */
-const onScrollFrame = (() => {
-  const jobs = [];
-  let ticking = false;
-
-  const run = () => {
-    ticking = false;
-    for (const job of jobs) job();
-  };
-
-  const request = () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(run); }
-  };
-
-  addEventListener('scroll', request, { passive: true });
-  addEventListener('resize', request, { passive: true });
-
-  return (job) => {
-    jobs.push(job);
-    job();
-    return request;
-  };
-})();
 
 /* Progress of an element through the viewport, 0 before it enters to 1 once
    it has fully passed. */
@@ -1416,7 +1471,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       stops[i].scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'start' });
     });
     draw();
-    addEventListener('resize', draw, { passive: true });
+    // The observer catches every change of the path's size; the window's
+    // resize only matters when it changes the width (not a toolbar sliding).
+    let drawnW = innerWidth;
+    addEventListener('resize', () => { if (innerWidth !== drawnW) { drawnW = innerWidth; draw(); } }, { passive: true });
     if ('ResizeObserver' in window) new ResizeObserver(draw).observe(pc);
     document.fonts?.ready.then(draw).catch(() => {});
   } else if (prefersReduced()) {
@@ -1525,10 +1583,14 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     /* Tell each image how wide it is actually drawn, so the browser picks
        the file for that size. The old fixed hints assumed thumbnails and
        would have served the small file to a photo drawn three times larger. */
+    /* Only ever raised. Every change of sizes makes the browser pick again,
+       and a smaller pick is a second download of a photo already showing at
+       a higher resolution. The markup starts each photo at the width the
+       Path draws it, so normally this never changes anything. */
     const room = fig.clientWidth || Infinity;
     $$('.jc-shot img', fig).forEach((img) => {
-      const s = `${Math.ceil(Math.min(room, h * aspectOf(img)))}px`;
-      if (img.getAttribute('sizes') !== s) img.setAttribute('sizes', s);
+      const want = Math.ceil(Math.min(room, h * aspectOf(img)));
+      if (want > (parseFloat(img.getAttribute('sizes')) || 0)) img.setAttribute('sizes', `${want}px`);
     });
   };
 
@@ -1636,7 +1698,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   document.addEventListener('journey:active', sizeTile);
   addEventListener('resize', queue, { passive: true });
   // Not while a viewer is open: a pinch there is not the page changing size.
-  window.visualViewport?.addEventListener('resize', () => { if (!document.querySelector('dialog[open]')) queue(); }, { passive: true });
+  window.visualViewport?.addEventListener('resize', () => { if (!root.classList.contains('is-modal')) queue(); }, { passive: true });
   /* The card area follows the viewport height (dvh on phones), so this is
      what catches a toolbar sliding in or out, a rotation, or the column
      changing width, whether or not the window reports a resize. */
@@ -1654,6 +1716,17 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
    The strips are deliberately small, so every photo opens full size on click.
    A <dialog> carries the focus trap, the backdrop and Escape for free.
    ========================================================================== */
+/* html.is-modal while any dialog is open, for the stylesheet to pause the
+   page behind it. Watching the open attribute catches every way a dialog
+   opens or closes (showModal, close, Escape) without touching their code. */
+(function modalFlag() {
+  const dialogs = $$('dialog');
+  if (!dialogs.length) return;
+  const sync = () => root.classList.toggle('is-modal', dialogs.some((d) => d.open));
+  const mo = new MutationObserver(sync);
+  dialogs.forEach((d) => mo.observe(d, { attributes: true, attributeFilter: ['open'] }));
+})();
+
 (function lightbox() {
   const dlg = $('#lightbox');
   const img = $('#lbImg');
@@ -1761,7 +1834,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   };
   ['pointerup', 'pointercancel'].forEach((t) => img.addEventListener(t, lift));
   // Safari's own page pinch, kept off while any viewer is open.
-  const noPagePinch = (e) => { if (document.querySelector('dialog[open]')) e.preventDefault(); };
+  const noPagePinch = (e) => { if (root.classList.contains('is-modal')) e.preventDefault(); };
   document.addEventListener('gesturestart', noPagePinch);
   document.addEventListener('gesturechange', noPagePinch);
   // Swiping between photos only when not zoomed in.
@@ -2120,7 +2193,15 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const mixed = new Float64Array(5 * 7);
   const last = { key: '', theme: '' };
 
-  function paint(force) {
+  /* Quantised so the paint does not run on every frame of every scroll.
+     Three hundred steps across the whole story is still a change too small
+     to see between one step and the next (every field is at a fifth of full
+     strength or less), and it is a few hundred repaints across an entire
+     page rather than one per frame. It was five hundred; each repaint is
+     two screen sized gradient layers, which a phone feels. */
+  const STEPS = 300;
+  const wrote = {};
+  function paint(force, y = scrollY) {
     if (!spans.length) return;
 
     const vh = innerHeight;
@@ -2133,7 +2214,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
        needed here. The closing section's span runs to the end of the
        document, and the line can never leave it, because at full scroll the
        line sits half a screen above the bottom. */
-    const line = scrollY + vh * 0.5;
+    const line = y + vh * 0.5;
 
     /* Weight per chapter: fully on inside its own span, crossfading across
        each boundary. The two ramps at a shared boundary are complements of
@@ -2155,14 +2236,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     }
     if (wsum <= 0) return;
 
-    /* Quantised so the paint does not run on every frame of every scroll.
-       Five hundred steps across the whole story is a change too small to
-       see between one step and the next, and a few hundred repaints across
-       an entire page rather than one per frame. */
     const theme = root.dataset.theme || '';
-    const key = Math.round((progress / Math.max(spans.length - 1, 1)) * 500) + '|' + theme;
+    const key = Math.round((progress / Math.max(spans.length - 1, 1)) * STEPS) + '|' + theme;
     if (!force && key === last.key + '|' + last.theme) return;
-    last.key = String(Math.round((progress / Math.max(spans.length - 1, 1)) * 500));
+    last.key = String(Math.round((progress / Math.max(spans.length - 1, 1)) * STEPS));
     last.theme = theme;
 
     const table = theme === 'daylight' ? LIGHT : DARK;
@@ -2197,6 +2274,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     }
 
     const style = field.style;
+    /* Only what moved is written. Within a crossfade the positions and
+       radii of most fields barely change from one step to the next, and
+       every write restyles the field and repaints it. */
+    const put = (prop, v) => { if (wrote[prop] !== v) { wrote[prop] = v; style.setProperty(prop, v); } };
 
     const toward = (c) => phosphor
       ? [Math.round(c[0] + (PHOSPHOR[0] - c[0]) * PHOSPHOR_PULL),
@@ -2206,10 +2287,10 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
     if (baseA > 0.0005) {
       const c = toward([Math.round(baseR / baseA), Math.round(baseG / baseA), Math.round(baseB / baseA)]);
-      style.setProperty('--amb-base',
+      put('--amb-base',
         `radial-gradient(130% 92% at 50% 0%, rgba(${c[0]},${c[1]},${c[2]},${baseA.toFixed(3)}) 0%, transparent 72%)`);
     } else {
-      style.setProperty('--amb-base', 'transparent');
+      put('--amb-base', 'transparent');
     }
 
     for (let f = 0; f < 5; f++) {
@@ -2218,22 +2299,26 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const n = f + 1;
       if (a > 0.0005) {
         const c = toward([Math.round(mixed[o] / a), Math.round(mixed[o + 1] / a), Math.round(mixed[o + 2] / a)]);
-        style.setProperty(`--f${n}c`, `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`);
+        put(`--f${n}c`, `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`);
       } else {
-        style.setProperty(`--f${n}c`, 'transparent');
+        put(`--f${n}c`, 'transparent');
       }
-      style.setProperty(`--f${n}x`, mixed[o + 4].toFixed(1) + '%');
-      style.setProperty(`--f${n}y`, mixed[o + 5].toFixed(1) + '%');
-      style.setProperty(`--f${n}r`, mixed[o + 6].toFixed(1) + 'vmin');
+      put(`--f${n}x`, mixed[o + 4].toFixed(1) + '%');
+      put(`--f${n}y`, mixed[o + 5].toFixed(1) + '%');
+      put(`--f${n}r`, mixed[o + 6].toFixed(1) + 'vmin');
     }
   }
 
   measure();
   paint(true);
 
-  onScrollFrame(() => paint(false));
+  // Read the position with the other scroll effects, paint with them after.
+  onScrollFrame(() => { const y = scrollY; return () => paint(false, y); });
 
-  addEventListener('resize', () => { measure(); paint(true); }, { passive: true });
+  /* A resize re-measures, but only repaints if the colours actually move:
+     a phone fires one every time its toolbar slides in or out mid scroll,
+     and a forced repaint there redrew two screen sized layers for nothing. */
+  addEventListener('resize', () => { measure(); paint(false); }, { passive: true });
   if (document.fonts?.ready) document.fonts.ready.then(() => { measure(); paint(true); }).catch(() => {});
 
   /* A theme swap has to repaint from the same place in the story rather than
@@ -2274,27 +2359,25 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     });
 
     const spans = $$('span', quote);
+    let litNow = -1;
     onScrollFrame(() => {
       const p = viewportProgress(quote, { start: 0.9, end: 0.45 });
       const lit = Math.round(p * spans.length);
-      spans.forEach((s, i) => s.classList.toggle('lit', i < lit));
+      if (lit === litNow) return;
+      return () => { litNow = lit; spans.forEach((s, i) => s.classList.toggle('lit', i < lit)); };
     });
   }
-
-  /* --- Section progress for lift / drift effects --- */
-  const track = (el, opts) => {
-    onScrollFrame(() => {
-      el.style.setProperty('--sp', viewportProgress(el, opts).toFixed(3));
-    });
-  };
 
   // The recommendations are a thread now: the bubbles carry their own
   // side-entry reveal, so there is no parallax drift to drive here.
 
   /* --- Heading gradient sweep --- */
   $$('.section-head h2').forEach((h) => {
+    let was = '';
     onScrollFrame(() => {
-      h.style.setProperty('--sweep', viewportProgress(h, { start: 0.95, end: 0.6 }).toFixed(3));
+      const v = viewportProgress(h, { start: 0.95, end: 0.6 }).toFixed(3);
+      if (v === was) return;
+      return () => { was = v; h.style.setProperty('--sweep', v); };
     });
   });
 
@@ -2901,6 +2984,19 @@ function gatorStorm(n = 12) {
   const fab = $('.dock-fab');
   const reduced = prefersReduced;
   const clamp01 = (v) => clamp(v, 0, 1);
+  /* Inline style writes that skip a value already there. The loop runs every
+     frame while anything is settling, and most of what it writes on most
+     frames has not moved; each write would still restyle the bar and re-run
+     its backdrop filter. */
+  const written = new WeakMap();
+  const put = (el, prop, v) => {
+    let m = written.get(el);
+    if (!m) written.set(el, (m = {}));
+    if (m[prop] === v) return;
+    m[prop] = v;
+    if (prop.startsWith('--')) el.style.setProperty(prop, v);
+    else el.style[prop] = v;
+  };
 
   /* ------------------------------------------------------------------------
      Environment
@@ -2993,9 +3089,11 @@ function gatorStorm(n = 12) {
   let envTimer = 0, envLast = 0;
   const queueEnv = () => {
     const now = performance.now();
-    if (now - envLast > 110) { envLast = now; sampleEnv(); return; }
+    // At most every 180ms while the page moves, and once more when it stops;
+    // the estimate eases toward each sample, so the spacing never shows.
+    if (now - envLast > 180) { envLast = now; sampleEnv(); return; }
     clearTimeout(envTimer);
-    envTimer = setTimeout(() => { envLast = performance.now(); sampleEnv(); }, 120);
+    envTimer = setTimeout(() => { envLast = performance.now(); sampleEnv(); }, 190);
   };
 
   /* ------------------------------------------------------------------------
@@ -3093,13 +3191,13 @@ function gatorStorm(n = 12) {
     if (!rm) busy = spring('dx', 240, 30, dt) || busy;
     else S.dx = 0;
 
-    bar.style.setProperty('--lg-near', clamp01(S.near).toFixed(3));
+    put(bar, '--lg-near', clamp01(S.near).toFixed(3));
     /* A tiny lean toward the pointer, a pixel or so, on the independent
        translate and scale properties so it composes with the transform that
        centres the bar. Sideways only: any vertical give read as the bar
        bobbing up and down under the pointer. */
-    bar.style.translate = rm ? '' : `${S.dx.toFixed(2)}px 0`;
-    bar.style.scale = rm ? '' : `${(1 + clamp01(S.near) * 0.0025 - clamp01(S.press) * 0.004).toFixed(4)} 1`;
+    put(bar, 'translate', rm ? '' : `${S.dx.toFixed(2)}px 0`);
+    put(bar, 'scale', rm ? '' : `${(1 + clamp01(S.near) * 0.0025 - clamp01(S.press) * 0.004).toFixed(4)} 1`);
 
     // Pocket.
     const dir = Math.sign((S.tL + S.tR) - (S.L + S.R));
@@ -3131,7 +3229,7 @@ function gatorStorm(n = 12) {
   function renderPocket() {
     const w = Math.max(0, S.R - S.L);
     const op = clamp01(S.op);
-    pocket.style.opacity = op.toFixed(3);
+    put(pocket, 'opacity', op.toFixed(3));
     if (op < 0.005) return;
 
     /* It stretches and settles sideways only. It used to pinch in at the
@@ -3139,8 +3237,8 @@ function gatorStorm(n = 12) {
        together they read as the bubble billowing up and down as it moved
        between tabs. Its height never changes now. */
     const pressK = 1 - clamp01(S.press) * 0.018;
-    pocket.style.width = `${w.toFixed(2)}px`;
-    pocket.style.transform = `translate3d(${S.L.toFixed(2)}px, -50%, 0) scale(${pressK.toFixed(4)}, 1)`;
+    put(pocket, 'width', `${w.toFixed(2)}px`);
+    put(pocket, 'transform', `translate3d(${S.L.toFixed(2)}px, -50%, 0) scale(${pressK.toFixed(4)}, 1)`);
   }
 
   /* ------------------------------------------------------------------------
