@@ -37,6 +37,11 @@
       margin-inline: auto;
       padding: calc(var(--nav-h) + 28px) var(--gutter) 40px;
     }
+    /* Phones carry the bar at the bottom, so the top only needs the same
+       plain safe-area gap the portfolio's main gets there. */
+    @media (max-width: 719px) {
+      .resume-main { padding-top: max(18px, env(safe-area-inset-top)); }
+    }
 
     .resume-head {
       display: flex;
