@@ -1345,3 +1345,126 @@
     .btn { min-height: 44px; }
   }
 }
+
+/* ==========================================================================
+   MINIMAL, FOR WHAT CAME IN FROM MAIN
+   The compact Path, Off the Clock as stories, the contact snapshot, the
+   Gators mark and the viewers' glass buttons all arrived after this
+   experiment was drawn. Most of their rules in style.css are unlayered, and
+   an unlayered rule outranks every layer, so these sit outside the minimal
+   layer too, later in the cascade, to win on equal footing. Same ideas as
+   above: flat planes, hairlines, the ink and the two shape colours, no
+   glow, gradient or shadow.
+   ========================================================================== */
+
+/* ---------- The Path, compact --------------------------------------------
+   A transit line again: a plain hairline between stops, the stretch you
+   have travelled in ink. Each stop keeps its company's colour, as a flat
+   wash with a fine rim; the open one is filled solid and ringed the way
+   the original Path marked its active stop. */
+.pc-bed { stroke: var(--stroke-hi); stroke-width: 2; }
+.pc-live { stroke: var(--ink); stroke-width: 2.5; filter: none; }
+[data-theme] .pc-node {
+  border: 1.5px solid color-mix(in oklab, var(--tint) 55%, var(--stroke-hi));
+  background: color-mix(in oklab, var(--tint) 13%, var(--bg));
+  box-shadow: none;
+}
+[data-theme] .pc-year { color: color-mix(in oklab, var(--tint) 40%, var(--ink)); font-weight: 500; }
+[data-theme] .pc-stop:hover .pc-node,
+[data-theme] .pc-stop:focus-visible .pc-node { border-color: var(--tint); }
+[data-theme] .pc-stop.is-past .pc-node { border-color: color-mix(in oklab, var(--tint) 80%, var(--ink)); }
+[data-theme] .pc-stop.is-on .pc-node {
+  border-color: var(--tint);
+  background: var(--tint);
+  box-shadow: 0 0 0 5px var(--bg), 0 0 0 6.5px var(--tint);
+}
+[data-theme] .pc-stop.is-on .pc-year { color: #0e0e0e; font-weight: 600; }
+.pc-name { font-weight: 600; letter-spacing: -.01em; }
+.pc-role { font-family: var(--font-mono); font-size: .76rem; letter-spacing: .01em; }
+
+/* ---------- Off the Clock ------------------------------------------------
+   Its own mark in the sequence of section shapes: a play triangle, since
+   each circle opens a story. The rings are a flat band of the accent, and
+   go to a hairline grey once seen. */
+#offclock .section-head h2::before {
+  border-radius: 0;
+  background: var(--accent);
+  clip-path: polygon(10% 0, 100% 50%, 10% 100%);
+}
+.hls .hl-ring { padding: 3px; background: var(--accent); }
+.hls .hl.is-seen .hl-ring { background: var(--stroke-hi); }
+.hl-name { font-weight: 500; letter-spacing: -.01em; }
+
+/* The story viewer keeps a dark frame, like the photo viewer, so photos
+   sit on near black. Its panel and buttons are flat. */
+.story,
+.story .st-text { background: #0e0e0e; }
+.story .st-text { border-color: rgba(255, 255, 255, .1); }
+.story::backdrop {
+  background: rgba(0, 0, 0, .7);
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+}
+.story .st-btn,
+.story .st-close {
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(14, 14, 14, .72);
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  box-shadow: none;
+}
+.story .st-btn:hover,
+.story .st-close:hover { border-color: rgba(255, 255, 255, .4); background-color: rgba(14, 14, 14, .9); }
+.story .st-btn svg,
+.story .st-close svg { filter: none; }
+.st-n { border-radius: 4px; background: var(--accent); color: #0e0e0e; }
+
+/* ---------- Quote --------------------------------------------------------
+   The snug pill from main is not a tile here, so it only needs the room
+   above it for the accent disc. */
+.section.quote { padding-top: clamp(54px, 7vw, 80px); }
+
+/* ---------- Contact ------------------------------------------------------
+   The snapshot is laid flat: no paper, tilt or shadow, a rounded photo
+   with a flat block of the blue offset behind it, the way the portrait up
+   top has its disc of the accent. */
+[data-theme] .since-print {
+  position: relative;
+  margin: 0 10px 10px 0;
+  padding: 0;
+  border-radius: var(--r-lg);
+  background: none;
+  rotate: none;
+  box-shadow: none;
+}
+.since-print::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-lg);
+  background: var(--m-blue);
+  translate: 10px 10px;
+}
+.since-pic {
+  position: relative;
+  border-radius: var(--r-lg);
+  background: var(--m-fill);
+}
+.since-pic img { filter: none; }
+.since-line { color: var(--ink-2); }
+.since-line strong { font-weight: 600; letter-spacing: -.025em; }
+@media (max-width: 759px) {
+  [data-theme] .since-print { margin: 4px 10px 10px 0; }
+}
+
+/* ---------- Education ----------------------------------------------------
+   On paper the full colour mark reads stronger than it did on the dark
+   ground, so it sits back a little further. */
+@media (min-width: 900px) {
+  [data-theme="daylight"] .edu-gator { opacity: .11; }
+}
+
+/* ---------- Photo viewer -------------------------------------------------
+   Pressing a viewer button lights a soft glow under the finger on main;
+   here it is only the press. */
+.lightbox .lb-btn { background-image: none; }
