@@ -520,6 +520,7 @@ syncLogoTheme();
     ['experience', 'The Path'],
     ['education', 'Education'],
     ['projects', 'Projects'],
+    ['offclock', 'Off the Clock'],
     ['skills', 'Skills'],
     ['recs', 'Recommendations'],
     ['contact', 'Contact'],
@@ -1348,7 +1349,77 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     if (barEl) barEl.style.width = `${p * 100}%`;
   };
 
-  if (prefersReduced()) {
+  const compactSection = scope.closest('.journey-section[data-compact]');
+  if (compactSection) {
+    /* Compact path: a circuit trace with a node per role, no pinned board.
+       Choosing a node moves that role's tile into the slot under it (one
+       open at a time; choosing it again closes it), and the trace lights
+       up from the first node to the open one. */
+    compactSection.classList.add('is-compact');
+    const pc = $('#pathCompact');
+    const stops = $$('.pc-stop', compactSection);
+    const slots = $$('.pc-slot', compactSection);
+    const home = $('#journeyCards');
+    const bed = $('.pc-bed', pc), liveP = $('.pc-live', pc), svg = $('.pc-trace', pc);
+    cards.forEach((c) => c.classList.add('glass'));
+    let openIdx = -1;
+
+    /* Smooth curves between node centres: each leaves its node heading
+       straight down and eases across into the next, so the trace sways
+       from side to side rather than turning corners. */
+    const centres = () => {
+      const box = pc.getBoundingClientRect();
+      return stops.map((b) => {
+        const r = $('.pc-node', b).getBoundingClientRect();
+        return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top, r.height / 2];
+      });
+    };
+    const pathTo = (pts, upto) => {
+      let d = '';
+      for (let k = 0; k < Math.min(upto, pts.length - 1); k++) {
+        const [x1, c1, r1] = pts[k], [x2, c2, r2] = pts[k + 1];
+        const y1 = c1 + r1, y2 = c2 - r2, pull = Math.min((y2 - y1) * 0.9, 160);
+        d += `M${x1} ${y1}C${x1} ${y1 + pull} ${x2} ${y2 - pull} ${x2} ${y2}`;
+      }
+      return d;
+    };
+    const draw = () => {
+      const pts = centres();
+      svg.setAttribute('viewBox', `0 0 ${pc.clientWidth} ${pc.clientHeight}`);
+      bed.setAttribute('d', pathTo(pts, pts.length));
+      liveP.setAttribute('d', openIdx > 0 ? pathTo(pts, openIdx) : '');
+    };
+
+    const open = (i, { scroll = false } = {}) => {
+      const next = i === openIdx ? -1 : i;
+      if (openIdx >= 0) home.append(cards[openIdx]);
+      cards.forEach((c, k) => c.classList.toggle('is-active', k === next));
+      if (next >= 0) slots[next].append(cards[next]);
+      openIdx = next;
+      stops.forEach((b, k) => {
+        b.classList.toggle('is-on', k === next);
+        b.classList.toggle('is-past', next >= 0 && k < next);
+        b.setAttribute('aria-expanded', String(k === next));
+      });
+      draw();
+      if (next >= 0) {
+        document.dispatchEvent(new CustomEvent('journey:active', { detail: { index: next } }));
+        requestAnimationFrame(draw);
+        if (scroll) stops[next].scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    };
+    stops.forEach((b, i) => b.addEventListener('click', () => open(i, { scroll: true })));
+    document.addEventListener('path:open', (e) => {
+      const i = e.detail?.index ?? -1;
+      if (i < 0) return;
+      if (openIdx !== i) open(i);
+      stops[i].scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'start' });
+    });
+    draw();
+    addEventListener('resize', draw, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(draw).observe(pc);
+    document.fonts?.ready.then(draw).catch(() => {});
+  } else if (prefersReduced()) {
     /* No pinning and no scroll driven board: every role at once, as a list
        of glass tiles you read top to bottom. The stylesheet does the layout
        off .is-still; it had only ever been half done, so the eight roles sat
@@ -1390,7 +1461,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 (function journeyPhotos() {
   if (!$('.jcard .jc-media')) return;
 
-  const MAX_H = 300;   // above this the photos start to dwarf the text
+  const MAX_H = 560;   // a ceiling for very tall windows, well past anything normal
   const FLOOR = 40;    // below this they stop reading as photos; the card scrolls instead
 
   // How tall a card's own content is, independent of the panel it sits in.
@@ -1454,8 +1525,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     /* Tell each image how wide it is actually drawn, so the browser picks
        the file for that size. The old fixed hints assumed thumbnails and
        would have served the small file to a photo drawn three times larger. */
+    const room = fig.clientWidth || Infinity;
     $$('.jc-shot img', fig).forEach((img) => {
-      const s = `${Math.ceil(h * aspectOf(img))}px`;
+      const s = `${Math.ceil(Math.min(room, h * aspectOf(img)))}px`;
       if (img.getAttribute('sizes') !== s) img.setAttribute('sizes', s);
     });
   };
@@ -1483,6 +1555,9 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
          on itself. They get a set height instead, still never so tall that
          one photo is wider than the strip. */
       if (getComputedStyle(card).position !== 'absolute') {
+        /* A card that moved here out of the board (the compact path) may
+           have been hidden there while it had no height to measure. */
+        fig.hidden = false;
         const room = fig.clientWidth;
         const widest = Math.max(...imgs.map(aspectOf));
         setHeight(fig, Math.floor(room > 0 ? Math.min(180, room / widest) : 180));
@@ -1490,20 +1565,26 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
         return;
       }
 
+      fig.hidden = false;
       const text = contentHeight(card, fig);
       const gap = parseFloat(getComputedStyle(fig).marginTop) || 0;
       // The 4px is slack against sub pixel rounding in the text measurement:
       // without it a card can end up one or two pixels into a scrollbar.
       const spare = card.clientHeight - text - gap - 4;
 
-      /* No single photo wider than the strip, so any one of them can be seen
-         whole by scrolling to it. On a phone this is usually what limits the
-         height; on a desktop it rarely comes into it. */
-      const room = fig.clientWidth;
-      const widest = Math.max(...imgs.map(aspectOf));
-      const cap = room > 0 ? Math.min(MAX_H, room / widest) : MAX_H;
-
-      setHeight(fig, Math.floor(Math.max(FLOOR, Math.min(cap, spare))));
+      /* The strip takes all the height the text leaves, so the photos always
+         reach the bottom of the card and no role ends in a band of empty
+         space. It used to be capped so that no single photo could be wider
+         than the strip, which on a wide photo left a gap underneath; now a
+         photo that would be wider than the strip is drawn at the strip's
+         width instead, cropped a little at its sides (the viewer still opens
+         it whole). */
+      // Too little room for a photo to read as one (the smallest phones, on
+      // the wordiest roles): leave the strip out rather than squeeze it, and
+      // the viewer is still a tap away on every other screen.
+      fig.hidden = spare < FLOOR;
+      if (fig.hidden) return;
+      setHeight(fig, Math.floor(Math.min(MAX_H, spare)));
       if (reset) fig.scrollLeft = 0;
       markScroll(fig);
     });
@@ -1554,7 +1635,8 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   sizeTile();
   document.addEventListener('journey:active', sizeTile);
   addEventListener('resize', queue, { passive: true });
-  window.visualViewport?.addEventListener('resize', queue, { passive: true });
+  // Not while a viewer is open: a pinch there is not the page changing size.
+  window.visualViewport?.addEventListener('resize', () => { if (!document.querySelector('dialog[open]')) queue(); }, { passive: true });
   /* The card area follows the viewport height (dvh on phones), so this is
      what catches a toolbar sliding in or out, a rotation, or the column
      changing width, whether or not the window reports a resize. */
@@ -1608,10 +1690,12 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   document.addEventListener('click', (e) => {
     const shot = e.target.closest('.jc-shot');
     if (!shot) return;
-    const fig = shot.closest('.jc-media');
-    group = $$('img', fig);
-    const me = $('img', shot);
-    show(Math.max(0, group.indexOf(me)));
+    const fig = shot.closest('.jc-media, .film, .since');
+    // One entry per photo: a card's main photo can also be one of its steps.
+    const seen = new Set();
+    group = $$('img', fig).filter((im) => !seen.has(im.getAttribute('src')) && seen.add(im.getAttribute('src')));
+    const mine = $('img', shot).getAttribute('src');
+    show(Math.max(0, group.findIndex((im) => im.getAttribute('src') === mine)));
     dlg.showModal();
   });
 
@@ -1630,8 +1714,61 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     if (e.target === dlg) dlg.close();
   });
 
+  /* Pinch to zoom inside the viewer, on the photo alone. Left to the
+     browser, a pinch zooms the whole page, and Safari redraws every layer
+     of it (blurred glass, the backdrop, the background) at the new scale on
+     every frame the fingers stay down; held long enough on an iPhone that
+     ran it out of memory and the tab reloaded. Scaling just the photo is
+     one layer and costs nothing. Double tap toggles a closer look. */
+  let z = 1, tx = 0, ty = 0, pinch = null, pan = null, lastTap = 0;
+  const pts = new Map();
+  const apply = (ease) => {
+    img.style.transition = ease ? 'transform .25s ease' : 'none';
+    img.style.transform = z === 1 ? '' : `translate3d(${tx}px, ${ty}px, 0) scale(${z})`;
+    dlg.classList.toggle('is-zoomed', z > 1);
+  };
+  const clampPan = () => {
+    const r = img.getBoundingClientRect(), w = r.width / z, h = r.height / z;
+    const mx = (w * z - w) / 2, my = (h * z - h) / 2;
+    tx = Math.max(-mx, Math.min(mx, tx)); ty = Math.max(-my, Math.min(my, ty));
+  };
+  const resetZoom = () => { z = 1; tx = ty = 0; pinch = pan = null; pts.clear(); apply(false); };
+  const dist = () => { const [a, b] = [...pts.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+  img.addEventListener('pointerdown', (e) => {
+    try { img.setPointerCapture(e.pointerId); } catch {}
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 2) { pinch = { d: dist(), z }; pan = null; }
+    else if (pts.size === 1 && z > 1) pan = { x: e.clientX - tx, y: e.clientY - ty };
+  });
+  img.addEventListener('pointermove', (e) => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch && pts.size === 2) { z = Math.max(1, Math.min(4, pinch.z * dist() / pinch.d)); clampPan(); apply(false); }
+    else if (pan) { tx = e.clientX - pan.x; ty = e.clientY - pan.y; clampPan(); apply(false); }
+  });
+  const lift = (e) => {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    if (!pts.size) {
+      pan = null;
+      if (z < 1.05) resetZoom();
+      const now = performance.now();
+      if (e.type === 'pointerup' && e.pointerType === 'touch' && now - lastTap < 280) {
+        if (z > 1) { z = 1; tx = ty = 0; } else z = 2.5;
+        apply(true); lastTap = 0;
+      } else lastTap = now;
+    }
+  };
+  ['pointerup', 'pointercancel'].forEach((t) => img.addEventListener(t, lift));
+  // Safari's own page pinch, kept off while any viewer is open.
+  const noPagePinch = (e) => { if (document.querySelector('dialog[open]')) e.preventDefault(); };
+  document.addEventListener('gesturestart', noPagePinch);
+  document.addEventListener('gesturechange', noPagePinch);
+  // Swiping between photos only when not zoomed in.
+  ['lbPrev', 'lbNext'].forEach((id) => $(`#${id}`)?.addEventListener('click', resetZoom, true));
+
   // Release the decoded image rather than holding the largest file in memory.
-  dlg.addEventListener('close', () => { img.removeAttribute('src'); });
+  dlg.addEventListener('close', () => { resetZoom(); img.removeAttribute('src'); });
 })();
 
 /* ==========================================================================
@@ -2214,6 +2351,44 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
   let current = 'all';
 
+  /* The most recent role in the Path whose tags include a skill, for the
+     skills no project uses (Apex, say, is ADT). Roles are listed oldest
+     first, so the last match is the latest. */
+  const roles = $$('.jcard');
+  const roleFor = (needle) => {
+    let found = null;
+    roles.forEach((r) => {
+      const tags = $$('.jc-tags span', r).map((t) => normalize(t.textContent));
+      if (tags.some((t) => containsWord(t, needle) || containsWord(needle, t))) found = r;
+    });
+    return found;
+  };
+
+  /* The Path is driven by scroll position: role i of N is on screen at
+     i / (N - 1) of the way through its pinned stretch. With reduced motion
+     it is a plain list, so the card itself is scrolled to. */
+  const showRole = (card) => {
+    const scope = $('#journeyScope');
+    const smooth = prefersReduced() ? 'auto' : 'smooth';
+    if (scope?.closest('.journey-section')?.classList.contains('is-compact')) {
+      document.dispatchEvent(new CustomEvent('path:open', { detail: { index: roles.indexOf(card) } }));
+      return;
+    }
+    const still = scope?.closest('.journey-section')?.classList.contains('is-still');
+    if (!scope || still || roles.length < 2) {
+      card.scrollIntoView({ behavior: smooth, block: 'start' });
+      return;
+    }
+    const sticky = scope.firstElementChild;
+    const travel = scope.offsetHeight - (sticky?.offsetHeight || innerHeight);
+    const i = roles.indexOf(card);
+    const top = scope.getBoundingClientRect().top + scrollY;
+    // The last role sits at the very end of the pinned stretch, where the
+    // board starts to scroll away; stop a little short of it.
+    const at = Math.min(i, roles.length - 1.3) / (roles.length - 1);
+    scrollTo({ top: Math.round(top + travel * at) + 2, behavior: smooth });
+  };
+
   const apply = (raw, { scroll = false } = {}) => {
     const needle = raw === 'all' ? 'all' : normalize(raw);
     current = needle;
@@ -2253,8 +2428,18 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       const needle = normalize(label);
       if (current === needle) { apply('all'); toast('Filter cleared'); return; }
 
+      const hits = cards.filter((c) => needle === 'all' || matches(c, needle)).length;
+      if (!hits) {
+        // No project uses it, but a role might: take them to it in the Path.
+        const role = roleFor(needle);
+        if (role) {
+          apply('all');
+          showRole(role);
+          toast(`${label}: used at ${role.dataset.company}`);
+          return;
+        }
+      }
       apply(label, { scroll: true });
-      const hits = cards.filter((c) => !c.classList.contains('is-hidden')).length;
       toast(hits ? `${hits} project${hits === 1 ? '' : 's'} using ${label}` : `No projects tagged ${label} yet`);
     });
   });
@@ -2282,6 +2467,7 @@ const palette = (() => {
     { icon: '≡', title: 'The Path',         sub: 'Career journey, role by role', kind: 'section', run: go('experience') },
     { icon: '⌁', title: 'Education',        kind: 'section', run: go('education') },
     { icon: '▤', title: 'Projects',         kind: 'section', run: go('projects') },
+    { icon: '⚙', title: 'Off the Clock',    kind: 'section', run: go('offclock') },
     { icon: '✦', title: 'Skills & Tools',   kind: 'section', run: go('skills') },
     { icon: '❞', title: 'Recommendations',  kind: 'section', run: go('recs') },
     { icon: '✉', title: 'Contact',          kind: 'section', run: go('contact') },
@@ -3281,7 +3467,7 @@ function gatorStorm(n = 12) {
 (function liquidPress() {
   const SEL = [
     '.btn', '.filter-chip', '.pills button', '.contact a', '.card-repo',
-    '.chip', '.chip-clear', '.carousel-ctrl .icon-btn', '.sheet-cta', '.lb-btn',
+    '.chip', '.chip-clear', '.carousel-ctrl .icon-btn', '.sheet-cta', '.lb-btn', '.st-btn', '.st-close',
     'header.nav .icon-btn', 'header.nav a.cta', 'header.nav .brand', '.dock-fab .icon-btn',
   ].join(',');
 
@@ -3320,6 +3506,293 @@ function gatorStorm(n = 12) {
     press(el, r.left + r.width / 2, r.top + r.height / 2);
   });
   document.addEventListener('keyup', (e) => { if (e.key === 'Enter' || e.key === ' ') release(); });
+})();
+
+/* ==========================================================================
+   Off the Clock: rolls of film
+   One frame of each roll is "on": it is highlighted and its note shows in
+   the caption under the strip. Hovering or focusing a frame puts it on;
+   on a touch screen, so does swiping the strip, which settles on the frame
+   nearest its left edge. Clicking a frame opens it in the viewer.
+   ========================================================================== */
+(function filmRolls() {
+  $$('.roll').forEach((roll) => {
+    const frames = $$('.film-frame', roll);
+    const notes = $$('.film-note', roll);
+    const scroller = $('.film-scroll', roll);
+    if (!frames.length) return;
+    let on = -1;
+    const set = (i) => {
+      if (i === on) return;
+      on = i;
+      frames.forEach((f, k) => f.classList.toggle('is-on', k === i));
+      notes.forEach((n, k) => n.classList.toggle('is-on', k === i));
+    };
+    set(0);
+    frames.forEach((f, i) => {
+      f.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') set(i); });
+      f.addEventListener('focus', () => set(i));
+    });
+    if (!scroller) return;
+    let t = 0;
+    scroller.addEventListener('scroll', () => {
+      if (!coarsePointer.matches) return;
+      cancelAnimationFrame(t);
+      t = requestAnimationFrame(() => {
+        const left = scroller.getBoundingClientRect().left + 14;
+        let best = 0, dist = Infinity;
+        frames.forEach((f, k) => {
+          const d = Math.abs(f.getBoundingClientRect().left - left);
+          if (d < dist) { dist = d; best = k; }
+        });
+        // At the very end of the strip, the last frame is the one in view.
+        if (scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 4) best = frames.length - 1;
+        set(best);
+      });
+    }, { passive: true });
+  });
+})();
+
+/* ==========================================================================
+   Off the Clock: stories
+   Three circles, like story highlights. Opening one plays its steps in a
+   full screen viewer, one photo and one short note at a time, with a bar
+   per step across the top that fills while it plays. Tap the right side
+   (or press the right arrow) for the next step, the left side for the
+   previous one, hold to pause. At the end of one story the next begins;
+   after the last, the viewer closes. A circle you have watched turns
+   grey. With reduced motion nothing plays on its own.
+   ========================================================================== */
+(function stories() {
+  const dlg = $('#storyView');
+  const hls = $$('.hl');
+  if (!dlg || !hls.length || !dlg.showModal) return;
+
+  /* The circles notice the cursor: each one leans toward it (up to 5px)
+     and swells slightly as it comes within reach, its ring turning to
+     face it, then eases back when it leaves. Eased every frame and
+     stopped once everything has settled. */
+  if (!coarsePointer.matches && !prefersReduced()) {
+    const rings = hls.map((hl) => $('.hl-ring', hl));
+    const st = rings.map(() => ({ dx: 0, dy: 0, k: 1, tx: 0, ty: 0, tk: 1, spin: 210 }));
+    let mx = -1e4, my = -1e4, loop = 0;
+    const frame = () => {
+      loop = 0;
+      let moving = false;
+      rings.forEach((r, i) => {
+        const b = r.getBoundingClientRect();
+        const cx = b.left + b.width / 2 - st[i].dx, cy = b.top + b.height / 2 - st[i].dy;
+        const vx = mx - cx, vy = my - cy, d = Math.hypot(vx, vy);
+        const reach = 180, pull = Math.max(0, 1 - d / reach);
+        const s = st[i];
+        s.tx = d ? (vx / d) * 5 * pull : 0;
+        s.ty = d ? (vy / d) * 5 * pull : 0;
+        s.tk = 1 + 0.025 * pull;
+        if (pull > 0) s.spin = (Math.atan2(vy, vx) * 180) / Math.PI + 90;
+        s.dx += (s.tx - s.dx) * 0.1; s.dy += (s.ty - s.dy) * 0.1; s.k += (s.tk - s.k) * 0.1;
+        if (Math.abs(s.tx - s.dx) > 0.05 || Math.abs(s.ty - s.dy) > 0.05 || Math.abs(s.tk - s.k) > 0.001) moving = true;
+        r.style.setProperty('--dx', s.dx.toFixed(2));
+        r.style.setProperty('--dy', s.dy.toFixed(2));
+        r.style.setProperty('--k', s.k.toFixed(4));
+        r.style.setProperty('--spin', `${s.spin.toFixed(1)}deg`);
+      });
+      if (moving) loop = requestAnimationFrame(frame);
+    };
+    const wake = () => { if (!loop) loop = requestAnimationFrame(frame); };
+    const sec = $('#offclock');
+    sec?.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; wake(); }, { passive: true });
+    sec?.addEventListener('pointerleave', () => { mx = my = -1e4; wake(); });
+  }
+
+  /* The opening step carries the intro as well, so it stays up a touch
+     longer; the rest move a touch quicker. */
+  const FIRST_MS = 8000, STEP_MS = 6500;
+  const stepMs = () => (step === 0 ? FIRST_MS : STEP_MS);
+  const data = hls.map((hl) => {
+    const box = $('.hl-data', hl);
+    return {
+      title: $('h3', box).textContent,
+      intro: $('p', box).textContent,
+      steps: $$('li', box).map((li) => ({
+        src: li.dataset.src, srcset: li.dataset.srcset, alt: li.dataset.alt,
+        lead: $('strong', li).textContent,
+        body: li.textContent.replace($('strong', li).textContent, '').trim(),
+      })),
+    };
+  });
+
+  const bars = $('.st-bars', dlg), img = $('.st-img', dlg), title = $('.st-title', dlg);
+  const intro = $('.st-intro', dlg), nEl = $('.st-n', dlg), lead = $('.st-lead', dlg), body = $('.st-body', dlg);
+  let story = 0, step = 0, start = 0, elapsed = 0, raf = 0, paused = false;
+  const auto = () => !prefersReduced();
+
+  const fill = (k) => $$('i', bars).forEach((b, j) => {
+    b.style.transform = `scaleX(${j < step ? 1 : j > step ? 0 : k})`;
+  });
+
+  const blur = $('.st-blur', dlg), count = $('.st-count', dlg), pauseBtn = $('.st-pause', dlg);
+  /* Paused from the button or the space bar, as opposed to held: a hold
+     ends when the finger lifts, a pause stays until it is undone. */
+  let userPaused = false;
+  const setPaused = (on) => {
+    userPaused = paused = on;
+    dlg.classList.toggle('is-paused', on);
+    pauseBtn.setAttribute('aria-label', on ? 'Play' : 'Pause');
+  };
+  const tick = (now) => {
+    if (!paused) elapsed += now - start;
+    start = now;
+    const k = Math.min(1, elapsed / stepMs());
+    fill(k);
+    if (k >= 1) { next(); return; }
+    raf = requestAnimationFrame(tick);
+  };
+  const play = () => {
+    cancelAnimationFrame(raf);
+    elapsed = 0;
+    fill(0);
+    if (!auto()) { fill(1); $$('i', bars).forEach((b, j) => { b.style.transform = `scaleX(${j <= step ? 1 : 0})`; }); return; }
+    start = performance.now();
+    raf = requestAnimationFrame(tick);
+  };
+
+  const show = () => {
+    const d = data[story], st = d.steps[step];
+    if (bars.children.length !== d.steps.length || bars.dataset.story !== String(story)) {
+      bars.replaceChildren(...d.steps.map(() => { const s = document.createElement('span'); s.append(document.createElement('i')); return s; }));
+      bars.dataset.story = String(story);
+    }
+    title.textContent = d.title;
+    img.srcset = st.srcset;
+    img.sizes = 'min(92vw, 560px)';
+    img.src = st.src;
+    img.alt = st.alt;
+    // The same photo, blurred, fills whatever the frame has left around it.
+    // Same srcset and sizes as the photo itself, so both resolve to the one
+    // file and change together instead of the blur trailing behind.
+    blur.srcset = st.srcset;
+    blur.sizes = img.sizes;
+    blur.src = st.src;
+    count.textContent = `${step + 1} / ${d.steps.length}`;
+    intro.textContent = step === 0 ? d.intro : '';
+    intro.hidden = step !== 0;
+    nEl.textContent = String(step + 1).padStart(2, '0');
+    lead.textContent = st.lead;
+    body.textContent = ' ' + st.body;
+    // Warm the next photo so it is there when the step changes.
+    const nx = d.steps[step + 1];
+    if (nx) { const pre = new Image(); pre.srcset = nx.srcset; pre.sizes = img.sizes; pre.src = nx.src; }
+    play();
+  };
+
+  const seen = (i) => hls[i].classList.add('is-seen');
+  function next() {
+    if (step < data[story].steps.length - 1) { step++; show(); return; }
+    seen(story);
+    if (story < data.length - 1) { story++; step = 0; show(); return; }
+    dlg.close();
+  }
+  function prev() {
+    if (step > 0) { step--; show(); return; }
+    if (story > 0) { story--; step = data[story].steps.length - 1; show(); return; }
+    show();
+  }
+
+  hls.forEach((hl, i) => $('.hl-btn', hl).addEventListener('click', () => {
+    story = i; step = 0; setPaused(false);
+    dlg.showModal();
+    show();
+  }));
+  $('.st-next', dlg).addEventListener('click', next);
+  $('.st-prev', dlg).addEventListener('click', prev);
+  $('.st-fwd', dlg).addEventListener('click', next);
+  $('.st-back', dlg).addEventListener('click', prev);
+  pauseBtn.addEventListener('click', () => setPaused(!userPaused));
+  $('.st-close', dlg).addEventListener('click', () => dlg.close());
+  dlg.addEventListener('close', () => { cancelAnimationFrame(raf); seen(story); });
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); setPaused(!userPaused); }
+  });
+  // Hold anywhere to pause, like a story: lifting the finger carries on.
+  // The buttons are left out so a press on one is just a press.
+  const hold = (on) => { paused = on || userPaused; dlg.classList.toggle('is-paused', paused); };
+  const frame = $('.st-frame', dlg);
+  const isButton = (t) => t.closest('.st-controls, .st-close');
+  let holdT = 0, held = false;
+  frame.addEventListener('pointerdown', (e) => {
+    if (isButton(e.target)) return;
+    held = false;
+    holdT = setTimeout(() => { held = true; hold(true); }, 220);
+  });
+  const up = () => { clearTimeout(holdT); if (held) hold(false); };
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => frame.addEventListener(t, up));
+  // A hold should not also count as a tap, and should not raise the
+  // long press menu or select the text underneath.
+  frame.addEventListener('click', (e) => { if (held) { e.stopImmediatePropagation(); e.preventDefault(); held = false; } }, true);
+  frame.addEventListener('contextmenu', (e) => { if (!isButton(e.target)) e.preventDefault(); });
+  /* Swipe down to close on phones, the way a story does: the viewer
+     follows the finger down, shrinking a little and letting the page show
+     through, then either carries on off the bottom (pulled far enough, or
+     flicked) or springs back into place. */
+  let y0 = null, x0 = 0, t0 = 0, dragging = false, lastY = 0, lastT = 0, vel = 0;
+  const setPull = (dy) => {
+    const h = innerHeight, k = Math.min(1, Math.max(0, dy) / h);
+    dlg.style.transform = `translate3d(0, ${Math.max(0, dy)}px, 0) scale(${1 - k * 0.14})`;
+    dlg.style.borderRadius = `${Math.min(28, k * 120)}px`;
+    dlg.style.setProperty('--pull', k.toFixed(3));
+  };
+  const clearPull = () => {
+    dlg.style.transition = '';
+    dlg.style.transform = '';
+    dlg.style.borderRadius = '';
+    dlg.style.removeProperty('--pull');
+  };
+  dlg.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || isButton(e.target)) { y0 = null; return; }
+    y0 = lastY = e.touches[0].clientY; x0 = e.touches[0].clientX;
+    t0 = lastT = performance.now(); dragging = false; vel = 0;
+    dlg.style.transition = 'none';
+  }, { passive: true });
+  dlg.addEventListener('touchmove', (e) => {
+    if (y0 === null) return;
+    const y = e.touches[0].clientY, dy = y - y0, dx = e.touches[0].clientX - x0;
+    if (!dragging) {
+      if (dy < 8 || Math.abs(dx) > dy) return;
+      // Committed to a pull: freeze the story and make sure lifting the
+      // finger is not read as a tap.
+      dragging = true; held = true; clearTimeout(holdT); hold(true);
+    }
+    const now = performance.now();
+    vel = (y - lastY) / Math.max(1, now - lastT);
+    lastY = y; lastT = now;
+    setPull(dy);
+  }, { passive: true });
+  const endPull = () => {
+    if (y0 === null) return;
+    const dy = lastY - y0;
+    y0 = null;
+    if (!dragging) { dlg.style.transition = ''; return; }
+    dragging = false;
+    if (dy > innerHeight * 0.22 || (vel > 0.6 && dy > 40)) {
+      // Carry on down at about the speed it was going, then close.
+      const ms = Math.round(Math.min(340, Math.max(180, (innerHeight - dy) / Math.max(vel, 1.4))));
+      dlg.style.transition = `transform ${ms}ms cubic-bezier(.2, .7, .3, 1), opacity ${ms}ms ease-out, border-radius ${ms}ms`;
+      dlg.style.opacity = '0';
+      setPull(innerHeight);
+      setTimeout(() => { dlg.close(); clearPull(); dlg.style.opacity = ''; }, ms);
+    } else {
+      dlg.style.transition = 'transform .42s cubic-bezier(.22, 1.25, .36, 1), border-radius .42s ease';
+      setPull(0);
+      dlg.style.setProperty('--pull', '0');
+      setTimeout(clearPull, 440);
+      hold(false);
+    }
+  };
+  dlg.addEventListener('touchend', endPull, { passive: true });
+  dlg.addEventListener('touchcancel', endPull, { passive: true });
 })();
 
 /* ==========================================================================

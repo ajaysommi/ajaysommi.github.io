@@ -206,8 +206,7 @@
                     srcset="assets/images/opt/hero-320.webp 320w,
                             assets/images/opt/hero-480.webp 480w,
                             assets/images/opt/hero-640.webp 640w,
-                            assets/images/opt/hero-960.webp 960w,
-                            assets/images/opt/hero-1280.webp 1280w"
+                            assets/images/opt/hero-960.webp 960w"
                     sizes="(max-width: 719px) 42vw, 360px" />
             <img src="assets/images/opt/hero-640.jpg"
                  srcset="assets/images/opt/hero-320.jpg 320w,
@@ -215,8 +214,8 @@
                          assets/images/opt/hero-640.jpg 640w,
                          assets/images/opt/hero-960.jpg 960w"
                  sizes="(max-width: 719px) 42vw, 360px"
-                 width="1375" height="1376"
-                 alt="Ajay Sommi" class="hero-pic"
+                 width="890" height="890"
+                 alt="Ajay Sommi outdoors in front of green hills" class="hero-pic"
                  fetchpriority="high" decoding="async" />
           </picture>
         </figure>
@@ -319,12 +318,73 @@
     </section>
 
     <!-- THE PATH: scroll-driven career circuit -->
-    <section id="experience" class="section journey-section">
+    <section id="experience" class="section journey-section" data-compact>
       <div class="section-head"><h2>The path so far</h2></div>
-      <p class="section-lede">
-        Every role is a node on the board. Scroll to send current through the trace and watch the
-        route light up, from a robotics vision system in high school to identity infrastructure in the cloud.
-      </p>
+      <p class="section-lede">Every role so far, from a robotics vision system in high school to identity infrastructure in the cloud. Tap a role to open it.</p>
+
+      <!-- Compact path: a circuit trace with one node per role. A node opens
+           its role's tile right under it. -->
+      <div class="pc" id="pathCompact">
+        <svg class="pc-trace" aria-hidden="true"><path class="pc-bed" d="" /><path class="pc-live" d="" /></svg>
+        <ol class="pc-track" aria-label="Roles, oldest first">
+          <li class="pc-row" data-c="0" data-pc="0" style="--tint:#2fae5a">
+            <button type="button" class="pc-stop" data-i="0" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2019</span></span>
+              <span class="pc-label"><span class="pc-name">Renaissance Jax</span><span class="pc-role">Software Developer</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#f39c12">
+            <button type="button" class="pc-stop" data-i="1" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2020</span></span>
+              <span class="pc-label"><span class="pc-name">Shiva Robotics</span><span class="pc-role">SEO Analyst</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="2" data-pc="0" style="--tint:#f2b705">
+            <button type="button" class="pc-stop" data-i="2" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2022</span></span>
+              <span class="pc-label"><span class="pc-name">Robotics For All</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#fa4616">
+            <button type="button" class="pc-stop" data-i="3" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2023</span></span>
+              <span class="pc-label"><span class="pc-name">FICS @ UF</span><span class="pc-role">AI Cybersecurity Researcher</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="0" data-pc="0" style="--tint:#eb0a1e">
+            <button type="button" class="pc-stop" data-i="4" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2024</span></span>
+              <span class="pc-label"><span class="pc-name">Toyota</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#00857c">
+            <button type="button" class="pc-stop" data-i="5" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2025</span></span>
+              <span class="pc-label"><span class="pc-name">JM Family</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="2" data-pc="0" style="--tint:#b5121b">
+            <button type="button" class="pc-stop" data-i="6" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2026</span></span>
+              <span class="pc-label"><span class="pc-name">Hunter Engineering</span><span class="pc-role">Software Engineering Co-op, R&amp;D</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#1f6fd1">
+            <button type="button" class="pc-stop" data-i="7" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2026</span></span>
+              <span class="pc-label"><span class="pc-name">ADT</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+        </ol>
+      </div>
 
       <div class="journey-scope" id="journeyScope">
         <div class="journey-sticky">
@@ -357,8 +417,7 @@
                 <p class="jc-when">Sep 2019 to Feb 2020 · Jacksonville, FL</p>
                 <h3>Software Developer</h3>
                 <p class="jc-org">Renaissance Jax</p>
-                <p class="jc-built">Wrote the code that let a competition robot see. It picked targets out of the scene by color as the match was happening, so the robot could line itself up on the field on its own, and I spent the season keeping the cameras, the wiring, and the software all agreeing with each other.</p>
-                <p class="jc-learn"><span>Took away</span> Hardware and software have to be debugged together, and version control is how a team stays sane.</p>
+                <p class="jc-built">Wrote the vision code for a competition robot. It found targets by color during the match so the robot could line itself up on the field, and I kept the cameras, wiring and software working together through the season.</p>
                 <div class="jc-tags"><span>C++</span><span>Computer Vision</span><span>Git</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/renaissance-jax-480.webp"
@@ -368,6 +427,20 @@
                        width="1170" height="1146"
                        alt="Ajay at a Renaissance Jax build session, wiring a sensor board next to a laptop and a color calibration strip"
                        loading="lazy" decoding="async" />
+                  <img src="assets/images/journey/rjax-sensor-480.webp"
+                       srcset="assets/images/journey/rjax-sensor-480.webp 480w,
+                               assets/images/journey/rjax-sensor-960.webp 960w"
+                       sizes="(min-width: 901px) 240px, 50vw"
+                       width="4032" height="3024"
+                       alt="The robot's color sensor lit green over a strip of blue, green, red and yellow"
+                       loading="lazy" decoding="async" />
+                  <img src="assets/images/journey/rjax-code-480.webp"
+                       srcset="assets/images/journey/rjax-code-480.webp 480w,
+                               assets/images/journey/rjax-code-960.webp 960w"
+                       sizes="(min-width: 901px) 140px, 30vw"
+                       width="3024" height="4032"
+                       alt="Color detection code open on a laptop beside the FRC Driver Station"
+                       loading="lazy" decoding="async" />
                 </figure>
               </li>
 
@@ -375,8 +448,7 @@
                 <p class="jc-when">Jun 2020 to Jul 2020 · Remote</p>
                 <h3>SEO Analyst</h3>
                 <p class="jc-org">Shiva Robotics Academy</p>
-                <p class="jc-built">My first taste of making a number move on purpose. I dug into how families were actually finding the academy online, rewrote the parts of the site that search engines read, and watched the analytics week over week to see which changes were real and which were noise. Visits from search were up 20% by the end of the summer.</p>
-                <p class="jc-learn"><span>Took away</span> Measure first. The 20% only counted because it was instrumented before anything changed.</p>
+                <p class="jc-built">Improved how families found the academy online. I looked at search traffic, rewrote the parts of the site search engines read, and tracked the results each week. Search visits were up 20% by the end of the summer.</p>
                 <div class="jc-tags"><span>Analytics</span><span>SEO</span></div>
               </li>
 
@@ -384,8 +456,7 @@
                 <p class="jc-when">Mar 2022 to Jan 2023 · Palo Alto, CA</p>
                 <h3>Software Engineering Intern</h3>
                 <p class="jc-org">Robotics For All</p>
-                <p class="jc-built">The team was moving sign up information between forms and spreadsheets by hand every week, so I wrote the scripts that did it for them. Parent and student details now file themselves in the right place and the matching confirmation emails go out on their own, which handed the volunteers their evenings back and quietly killed the typos nobody was catching.</p>
-                <p class="jc-learn"><span>Took away</span> The unglamorous automation is often the highest leverage thing on the board.</p>
+                <p class="jc-built">Volunteers were copying sign up information between forms and spreadsheets by hand every week. I wrote scripts that filed parent and student details automatically and sent the confirmation emails, saving hours and cutting out typos.</p>
                 <div class="jc-tags"><span>JavaScript</span><span>Google Apps Script</span><span>Automation</span></div>
               </li>
 
@@ -393,8 +464,7 @@
                 <p class="jc-when">May 2023 to May 2024 · Gainesville, FL</p>
                 <h3>AI Cybersecurity Researcher</h3>
                 <p class="jc-org">Florida Institute for Cybersecurity Research</p>
-                <p class="jc-built">Spent a year trying to break language models on purpose. I built plug ins that poked at ChatGPT to find the inputs that made it misbehave, kept a catalogue of the failures we could reproduce on demand, and then worked on ways to catch and shut down those same tricks. Half the job was reading papers that were weeks old and turning them into something we could actually run.</p>
-                <p class="jc-learn"><span>Took away</span> You have to be able to attack a system to defend it, and reading papers is an engineering skill.</p>
+                <p class="jc-built">Researched how language models can be broken. I built plugins that tested ChatGPT for inputs that made it misbehave, kept a catalogue of reproducible failures, and worked on ways to detect and block them.</p>
                 <div class="jc-tags"><span>Python</span><span>LLM Security</span><span>Research</span></div>
               </li>
 
@@ -402,13 +472,12 @@
                 <p class="jc-when">Jun 2024 to Aug 2024 · Jacksonville, FL</p>
                 <h3>Software Engineering Intern</h3>
                 <p class="jc-org">Southeast Toyota Distributors</p>
-                <p class="jc-built">Cars come back with tire problems and nobody had a quick way to see the pattern. I wrote a Python job that moved a thousand plus files from Azure storage into SharePoint on its own, worth about 350 hours a year, then turned tire records for 51,000 Toyota and Lexus vehicles into 21 reports and replaced a hand typed spreadsheet with a form feeding a live Power BI dashboard.</p>
+                <p class="jc-built">Wrote a Python job that moved over a thousand files from Azure storage into SharePoint automatically, saving about 350 hours a year. I also turned tire records for 51,000 vehicles into 21 reports and replaced a manual spreadsheet with a form feeding a live Power BI dashboard.</p>
                 <ul class="jc-impact">
                   <li><b>20%</b> fewer warranty claims</li>
                   <li><b>$150k</b> saved on prevented tire recalls</li>
                   <li><b>5×</b> faster data entry</li>
                 </ul>
-                <p class="jc-learn"><span>Took away</span> The dashboard is the deliverable, not the query.</p>
                 <div class="jc-tags"><span>Python</span><span>SQL</span><span>Azure Blob</span><span>Amazon RDS</span><span>Power BI</span><span>VBA</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/toyota-sign-400.webp"
@@ -439,8 +508,7 @@
                 <p class="jc-when">May 2025 to Nov 2025 · Deerfield Beach, FL</p>
                 <h3>Software Engineering Intern</h3>
                 <p class="jc-org">JM Family Enterprises</p>
-                <p class="jc-built">A company this size ends up with the same person recorded three different ways in three different systems. I built a workflow on Azure Functions that read identities out of Microsoft Graph, Salesforce, and MuleSoft, lined them up field by field, and reported anything that disagreed. I also built a C#/.NET service that pulled 100k plus events out of the JM Lexus and Toyota dealership systems, with guards so two jobs running at once could not trip over each other, and helped stand up GPT agents that could answer questions about all of it.</p>
-                <p class="jc-learn"><span>Took away</span> Identity is the hardest part of enterprise integration, and race conditions hide inside the happy path.</p>
+                <p class="jc-built">Built an Azure Functions workflow that compared employee identities across Microsoft Graph, Salesforce and MuleSoft and flagged mismatches. I also built a C#/.NET service that pulled 100k+ events from dealership systems, and helped set up GPT agents that answered questions about the data.</p>
                 <div class="jc-tags"><span>Azure Functions</span><span>C#/.NET</span><span>Microsoft Graph</span><span>Salesforce</span><span>MuleSoft</span><span>App Insights</span><span>MCP</span><span>RAG</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/jm-campus-400.webp"
@@ -471,12 +539,11 @@
                 <p class="jc-when">Jan 2026 to May 2026 · St. Louis, MO</p>
                 <h3>Software Engineering Co-op, R&amp;D</h3>
                 <p class="jc-org">Hunter Engineering Company</p>
-                <p class="jc-built">Hunter's alignment and ADAS machines sit in repair shops worldwide, and every so often one has to be wiped and started over. I built the secure path for that: a C#/.NET and Blazor workflow on Azure IoT Hub that signs a machine out and brings it back through an API instead of a service visit, across 100,000 plus units. The rest went to chasing race conditions and null crashes, and moving the test suite off Moq.</p>
+                <p class="jc-built">Built a secure way to reset Hunter's alignment and ADAS machines remotely: a C#/.NET and Blazor workflow on Azure IoT Hub that replaced a service visit for over 100,000 units. I also fixed race conditions and null crashes, and moved the test suite from Moq to NSubstitute.</p>
                 <ul class="jc-impact">
                   <li><b>100,000+</b> units reachable worldwide</li>
                   <li><b>Moq to NSubstitute</b> across an enterprise codebase</li>
                 </ul>
-                <p class="jc-learn"><span>Took away</span> At six figures of deployed devices, reliability is the feature.</p>
                 <div class="jc-tags"><span>C#/.NET</span><span>Blazor</span><span>Azure IoT Hub</span><span>IoT Edge</span><span>NSubstitute</span><span>Docker</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/hunter-sign-400.webp"
@@ -514,13 +581,12 @@
                 <p class="jc-when">May 2026 to Oct 2026 · Boca Raton, FL</p>
                 <h3>Software Engineering Intern</h3>
                 <p class="jc-org">ADT</p>
-                <p class="jc-built">Worked inside ADT's Salesforce platform, where a false alarm meant a squad car sent to an empty house. I pitched a concept that used AI to sanity check a dispatch before it went out, and the rest of my time went to the data model underneath and the test coverage that decided whether a release shipped.</p>
+                <p class="jc-built">Worked on ADT's Salesforce platform. I pitched an AI check to catch false alarms before a dispatch went out, and worked on the data model and the test coverage needed for releases to ship.</p>
                 <ul class="jc-impact">
                   <li><b>False alarms</b> AI dispatch check, pitched to leadership</li>
                   <li><b>Under the cap</b> metadata folded into Custom Objects</li>
                   <li><b>Coverage</b> Apex tests back above the deploy bar</li>
                 </ul>
-                <p class="jc-learn"><span>Took away</span> AI tooling is how you get productive in an unfamiliar enterprise codebase fast.</p>
                 <div class="jc-tags"><span>Salesforce</span><span>Apex</span><span>Custom Objects</span><span>Cursor</span><span>Claude + MCP</span><span>AI</span></div>
                 <figure class="jc-media">
                   <img src="assets/images/journey/adt-hq-400.webp"
@@ -572,6 +638,7 @@
       <div class="section-head"><h2>Education</h2></div>
       <div class="timeline">
         <article class="row glass education-card" data-reveal>
+          <img class="edu-gator" src="assets/images/uf-gator-320.webp" srcset="assets/images/uf-gator-320.webp 320w, assets/images/uf-gator-640.webp 640w" sizes="260px" width="640" height="426" alt="" aria-hidden="true" loading="lazy" decoding="async" />
           <div class="when"><span class="when-dot" aria-hidden="true"></span>December 2026</div>
           <div class="what">
             <strong>University of Florida, B.S. in Computer Science, Herbert Wertheim College of Engineering</strong>
@@ -598,8 +665,6 @@
         <button type="button" class="filter-chip" data-filter="c++">C++</button>
         <button type="button" class="filter-chip" data-filter="java">Java</button>
         <button type="button" class="filter-chip" data-filter="react">React</button>
-        <button type="button" class="filter-chip" data-filter="azure">Azure</button>
-        <button type="button" class="filter-chip" data-filter=".net">.NET</button>
       </div>
 
       <div class="grid" id="projectGrid">
@@ -627,19 +692,7 @@
           <div class="card-tags"><span>MongoDB</span><span>Express</span><span>React</span><span>Node</span></div>
         </article>
 
-        <article class="card glass tilt" data-reveal data-tags="python,azure,rest apis">
-          <div class="card-top"><span class="card-kind">Pipeline</span></div>
-          <h3>Tire &amp; Wheel Data Pipeline</h3>
-          <p>Automated REST API pipeline that processed Hunter tire balance reports into Toyota/Lexus VPC systems, streamlining workflows for new vehicles.</p>
-          <div class="card-tags"><span>Python</span><span>REST API</span><span>Azure</span></div>
-        </article>
 
-        <article class="card glass tilt" data-reveal data-tags=".net,azure,sql,cosmosdb">
-          <div class="card-top"><span class="card-kind">Cloud ETL</span></div>
-          <h3>CosmosDB ➝ Azure SQL ETL</h3>
-          <p>Cloud-based ETL pipeline transforming raw JSON in CosmosDB into relational models in Azure SQL, enabling faster analytics and cleaner queries.</p>
-          <div class="card-tags"><span>.NET</span><span>Azure SQL</span><span>CosmosDB</span></div>
-        </article>
 
         <article class="card glass tilt" data-reveal data-tags="python,pandas,data science">
           <div class="card-top">
@@ -653,12 +706,6 @@
           <div class="card-tags"><span>Python</span><span>Pandas</span><span>Visualization</span></div>
         </article>
 
-        <article class="card glass tilt" data-reveal data-tags="react,rest apis,data visualization">
-          <div class="card-top"><span class="card-kind">Dashboard</span></div>
-          <h3>VehicleInsightHub</h3>
-          <p>Dashboard for live vehicle monitoring, from fuel efficiency to tire pressure, turning raw telemetry into clear, actionable insights.</p>
-          <div class="card-tags"><span>React</span><span>APIs</span><span>Data Visualization</span></div>
-        </article>
 
         <article class="card glass tilt" data-reveal data-tags="c++,data structures">
           <div class="card-top">
@@ -684,8 +731,66 @@
     </section>
 
     <!-- QUOTE -->
+    <!-- OFF THE CLOCK -->
+    <section id="offclock" class="section">
+      <div class="section-head"><h2>Off the Clock</h2></div>
+      <p class="section-lede">Repairs, teardowns and builds I've taken on outside of work. Tap one to see how it went.</p>
+      <ul class="hls">
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="0" aria-haspopup="dialog">
+          <span class="hl-ring"><span class="hl-pic"><img src="assets/images/offclock/ard-tool-480.webp" width="3024" height="4032" alt="" loading="lazy" decoding="async" /></span></span>
+          <span class="hl-name">Learning electronics by building (and breaking)</span>
+        </button>
+        <div class="hl-data" hidden>
+          <h3>Learning electronics by building (and breaking)</h3>
+          <p>It started with one screen saying hello, and turned into a habit of opening things up to see how they work, including one lesson about heat I learned the hard way.</p>
+          <ol>
+          <li data-src="assets/images/offclock/ard-lcd-480.webp" data-srcset="assets/images/offclock/ard-lcd-480.webp 480w, assets/images/offclock/ard-lcd-960.webp 960w, assets/images/offclock/ard-lcd-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="LCD screen reading Greetings World wired to an Arduino"><strong>Hello, world.</strong> My first real Arduino circuit. Wired it up, flashed it, and the screen said hello back.</li>
+          <li data-src="assets/images/offclock/ard-tool-480.webp" data-srcset="assets/images/offclock/ard-tool-480.webp 480w, assets/images/offclock/ard-tool-960.webp 960w, assets/images/offclock/ard-tool-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="A homemade soldering iron built from a pencil, tape and wire"><strong>The homemade soldering iron.</strong> Trying to save an old hard drive with no soldering iron, I built one: pencil lead, an old phone charger and wrapped wire. It got hot. So did my fingers.</li>
+          <li data-src="assets/images/offclock/diag-humidifier-480.webp" data-srcset="assets/images/offclock/diag-humidifier-480.webp 480w, assets/images/offclock/diag-humidifier-960.webp 960w, assets/images/offclock/diag-humidifier-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="A dehumidifier opened up to show its cooling fins and wiring"><strong>Why did it stop?</strong> Our dehumidifier died, so I took it apart to find out how it actually works. A crash course in Peltier cooling and thermodynamics.</li>
+          <li data-src="assets/images/offclock/ard-desk-480.webp" data-srcset="assets/images/offclock/ard-desk-480.webp 480w, assets/images/offclock/ard-desk-960.webp 960w, assets/images/offclock/ard-desk-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="Laptop and breadboard circuits spread across a desk"><strong>The idea.</strong> College group project: pick an idea and build it. Ours was a toilet lid that opens on its own when you walk up.</li>
+          <li data-src="assets/images/offclock/ard-servo-480.webp" data-srcset="assets/images/offclock/ard-servo-480.webp 480w, assets/images/offclock/ard-servo-960.webp 960w, assets/images/offclock/ard-servo-1600.webp 1600w" data-w="2662" data-h="3703" data-alt="Arduino and breadboard wired to a motorized lid on a 3D printed bowl"><strong>The prototype.</strong> Our working prototype: walk up and the lid lifts, over a bowl we 3D printed.</li>
+          </ol>
+        </div>
+      </li>
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="1" aria-haspopup="dialog">
+          <span class="hl-ring"><span class="hl-pic"><img src="assets/images/offclock/mac-paste-480.webp" width="3024" height="4032" alt="" loading="lazy" decoding="async" /></span></span>
+          <span class="hl-name">Opening up a MacBook to fix it</span>
+        </button>
+        <div class="hl-data" hidden>
+          <h3>Opening up a MacBook to fix it</h3>
+          <p>I gutted a 2011 MacBook Pro, then tried something you are not supposed to: a 2012 logic board in a 2011 body. It needed a shaved down display connector and a power fault tracked down, and it came back to life as a 2012, with the faster graphics and memory to match.</p>
+          <ol>
+          <li data-src="assets/images/offclock/mac-open-480.webp" data-srcset="assets/images/offclock/mac-open-480.webp 480w, assets/images/offclock/mac-open-960.webp 960w, assets/images/offclock/mac-open-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="MacBook Pro opened up on a desk"><strong>Gutted.</strong> Everything out. The hard drive became an SSD and the battery was replaced.</li>
+          <li data-src="assets/images/offclock/mac-paste-480.webp" data-srcset="assets/images/offclock/mac-paste-480.webp 480w, assets/images/offclock/mac-paste-960.webp 960w, assets/images/offclock/mac-paste-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="MacBook heatsink lifted off the logic board"><strong>The heart of the swap.</strong> The logic board out of the case and the heatsink off. The old, dried out thermal paste came off and fresh paste went on.</li>
+          <li data-src="assets/images/offclock/mac-clean-480.webp" data-srcset="assets/images/offclock/mac-clean-480.webp 480w, assets/images/offclock/mac-clean-960.webp 960w, assets/images/offclock/mac-clean-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="MacBook logic board on a paper towel"><strong>Making it fit.</strong> The 2012 board's display connector didn't fit the 2011 body, so I carefully shaved its edges down until it did.</li>
+          <li data-src="assets/images/offclock/mac-boot-480.webp" data-srcset="assets/images/offclock/mac-boot-480.webp 480w, assets/images/offclock/mac-boot-960.webp 960w, assets/images/offclock/mac-boot-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="The MacBook Pro powered on at the setup screen"><strong>It boots.</strong> First attempt: no power. I debugged the fault, and then it booted up as a 2012.</li>
+          </ol>
+        </div>
+      </li>
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="2" aria-haspopup="dialog">
+          <span class="hl-ring"><span class="hl-pic"><img src="assets/images/offclock/diag-goggles-480.webp" width="3088" height="2320" alt="" loading="lazy" decoding="async" /></span></span>
+          <span class="hl-name">Working on my own car</span>
+        </button>
+        <div class="hl-data" hidden>
+          <h3>Working on my own car</h3>
+          <p>A 2007 Honda Civic closing in on 200,000 miles, and a habit of trying the fix myself before calling in a mechanic. Every repair started the same way: a symptom, hours of research and tutorials, then doing it myself until it worked.</p>
+          <ol>
+          <li data-src="assets/images/offclock/diag-goggles-480.webp" data-srcset="assets/images/offclock/diag-goggles-480.webp 480w, assets/images/offclock/diag-goggles-960.webp 960w, assets/images/offclock/diag-goggles-1600.webp 1600w" data-w="3088" data-h="2320" data-alt="Ajay in goggles and a mask beside his car with the hood up"><strong>AC out, mid summer.</strong> The AC quit in the middle of summer. Ninety degree heat, a low pressure refrigerant gauge and an electrical check on the compressor clutch, working through it one tutorial at a time.</li>
+          <li data-src="assets/images/offclock/civic-plug-480.webp" data-srcset="assets/images/offclock/civic-plug-480.webp 480w, assets/images/offclock/civic-plug-960.webp 960w, assets/images/offclock/civic-plug-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="A spark plug held up in front of the engine bay"><strong>First engine work.</strong> My first time working inside an engine. This is what a spark plug looks like after almost 200,000 miles.</li>
+          <li data-src="assets/images/offclock/civic-throttle-480.webp" data-srcset="assets/images/offclock/civic-throttle-480.webp 480w, assets/images/offclock/civic-throttle-960.webp 960w, assets/images/offclock/civic-throttle-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="The throttle body in the engine bay"><strong>Running rough.</strong> The engine was running rough. Hours of troubleshooting, well past midnight, came down to a dirty throttle body. One careful cleaning later, it was running noticeably better.</li>
+          <li data-src="assets/images/offclock/civic-magnet-480.webp" data-srcset="assets/images/offclock/civic-magnet-480.webp 480w, assets/images/offclock/civic-magnet-960.webp 960w, assets/images/offclock/civic-magnet-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="The transmission drain plug magnet coated in black metal shavings on a paper towel"><strong>What 180,000 miles leaves behind.</strong> The transmission had never had its fluid changed. Grinding, violent shaking, jerky shifts and a transmission code. When the drain plug came out, its magnet was coated in burnt black sludge: raw metal shavings from inside the transmission.</li>
+          <li data-src="assets/images/offclock/civic-fluid-480.webp" data-srcset="assets/images/offclock/civic-fluid-480.webp 480w, assets/images/offclock/civic-fluid-960.webp 960w, assets/images/offclock/civic-fluid-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="Pouring automatic transmission fluid into the engine bay"><strong>Fresh fluid.</strong> After weeks of research, a drain and fill with fresh fluid. It shifted buttery smooth again, and I saved about $2,000.</li>
+          </ol>
+        </div>
+      </li>
+      </ul>
+    </section>
+
     <section class="section quote glass" data-reveal>
-      <blockquote>"Reliability in software isn't a feature, it's the foundation."</blockquote>
+      <blockquote>"I hope I never run out of things I don’t understand."</blockquote>
     </section>
 
     <!-- SKILLS -->
@@ -807,6 +912,15 @@
     <!-- CONTACT -->
     <section id="contact" class="section">
       <div class="section-head"><h2>Contact</h2></div>
+      <div class="since">
+        <figure class="since-print">
+          <button type="button" class="jc-shot since-pic" aria-label="Open photo: Ajay as a young kid at a family computer, 2006">
+            <img src="assets/images/offclock/kid-2006-crop.webp" width="600" height="430"
+                 alt="Ajay as a young kid typing at the family computer, 2006" loading="lazy" decoding="async" />
+          </button>
+        </figure>
+        <div class="since-body">
+          <p class="since-line"><strong>20+ years of experience.</strong> Get in touch.</p>
       <div class="contact glass">
         <a href="mailto:ajaysommi7@gmail.com" data-magnetic>
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 6h18v12H3z M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
@@ -821,6 +935,8 @@
           LinkedIn
         </a>
         <a href="resume.html" class="resume-btn" data-magnetic>Open Resume</a>
+      </div>
+        </div>
       </div>
     </section>
   </main>
@@ -868,6 +984,29 @@
   </section>
 
   <!-- Photo viewer for the journey strips -->
+  <dialog class="story" id="storyView" aria-label="Story">
+    <div class="st-frame">
+      <div class="st-bars" aria-hidden="true"></div>
+      <header class="st-head">
+        <span class="st-title"></span>
+        <button type="button" class="st-close" aria-label="Close story"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></button>
+      </header>
+      <div class="st-media"><img class="st-blur" alt="" aria-hidden="true" /><img class="st-img" alt="" /></div>
+      <button type="button" class="st-tap st-prev" aria-label="Previous"></button>
+      <button type="button" class="st-tap st-next" aria-label="Next"></button>
+      <div class="st-text" aria-live="polite">
+        <p class="st-intro"></p>
+        <p class="st-step"><span class="st-n"></span><strong class="st-lead"></strong><span class="st-body"></span></p>
+        <div class="st-controls">
+          <button type="button" class="st-btn st-back" aria-label="Previous photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button type="button" class="st-btn st-pause" aria-label="Pause"><svg class="st-i-pause" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6.5v11M15 6.5v11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><svg class="st-i-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8.5 6.2v11.6L18 12z" fill="currentColor"/></svg></button>
+          <button type="button" class="st-btn st-fwd" aria-label="Next photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="st-count" aria-live="polite"></span>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
   <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
     <figure class="lb-frame">
       <img id="lbImg" alt="" />

@@ -229,12 +229,22 @@
     color: var(--ink);
     font-size: .82rem;
     font-weight: 600;
-    box-shadow: var(--shadow);
-    transform: translateY(-180%);
-    transition: transform var(--dur) var(--ease);
+    /* Parked above the screen it still peeked out on iPhones, whose Safari
+       draws the page up under the status bar, its shadow reaching down
+       into view. So it is see through and shadowless until focused (not
+       hidden, which would also take it out of the tab order). */
+    box-shadow: none;
+    opacity: 0;
+    transform: translateY(-250%);
+    transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
   }
 
-  .skip-link:focus-visible { transform: translateY(0); }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    opacity: 1;
+    box-shadow: var(--shadow);
+  }
 
   .visually-hidden {
     position: absolute;
@@ -4520,3 +4530,758 @@
     .dock-fab .icon-btn { transition: none; scale: none; }
   }
 }
+
+/* ==========================================================================
+   OFF THE CLOCK, and the 2006 photo by Contact
+   Hobby cards in the site's glass: a main photo, a row of thumbnails that
+   open the same photo viewer as the Path, the year, a title and a story
+   line. Two columns on wide screens, one on phones.
+   ========================================================================== */
+@layer components {
+  /* Each story is a roll of film: a dark strip with sprocket holes along
+     both edges, small frames printed as negatives, and the roll number in
+     the edge markings. Frames develop into the real photo on hover (or one
+     by one as the roll scrolls in, on phones) and open in the viewer. */
+  .rolls { display: grid; gap: 26px; }
+  .roll { display: grid; gap: 10px; }
+  .roll-meta { display: grid; gap: 3px; }
+  .ot-no {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .roll-meta h3 { margin: 0; font-size: clamp(16px, 1.6vw, 19px); }
+  .ot-story { flex-basis: 100%; max-width: 70ch; margin: 2px 0 0; color: var(--ink-2); font-size: .95rem; }
+  .ot-story:empty { display: none; }
+
+  .film {
+    --hole: rgba(255, 255, 255, .82);
+    position: relative;
+    padding: 22px 0;
+    border-radius: 6px;
+    width: fit-content;
+    max-width: 100%;
+    background: var(--film, #15110d);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), 0 14px 30px -18px rgba(0, 0, 0, .7);
+    overflow: hidden;
+  }
+  /* The sprocket holes, top and bottom. */
+  .film::before,
+  .film::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(90deg, transparent 0 7px, var(--film-hole, var(--bg)) 7px 17px, transparent 17px 24px);
+    -webkit-mask: linear-gradient(#000 0 0);
+    border-radius: 2px;
+    opacity: .9;
+    pointer-events: none;
+  }
+  .film::before { top: 7px; }
+  .film::after { bottom: 7px; }
+  /* In the dark themes the page is as dark as the film, so the strip is a
+     shade lighter and the holes are lit, or neither would show. */
+  [data-theme="midnight"] .film,
+  [data-theme="terminal"] .film { --film: #221b15; --film-hole: rgba(255, 255, 255, .2); }
+
+  /* The strip and the notes under it scroll sideways together, so each
+     note stays under its frame. */
+  .film-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .film-scroll::-webkit-scrollbar { display: none; }
+  .film-scroll .film { max-width: none; }
+  .film-track { display: flex; gap: 12px; padding: 0 14px; }
+  .film-scroll { scroll-snap-type: x proximity; scroll-padding-inline: 14px; }
+  .film-frame { scroll-snap-align: start; }
+
+  /* The caption: one note at a time, for the frame you are on, in a single
+     panel under the strip. Every note shares the same grid cell so the
+     panel is always as tall as the longest one and never jumps. */
+  .film-notes {
+    display: grid;
+    max-width: 68ch;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .film-note {
+    grid-area: 1 / 1;
+    position: relative;
+    padding-left: 42px;
+    color: var(--ink-2);
+    font-size: .95rem;
+    line-height: 1.55;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
+  }
+  .film-note.is-on { opacity: 1; visibility: visible; transform: none; }
+  .film-note strong { display: block; margin-bottom: 1px; color: var(--ink); font-weight: 600; }
+  .film-note-n {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--accent) 16%, transparent);
+    color: var(--accent);
+    font: 700 .72rem/1.2 var(--font-mono);
+  }
+
+  .rolls { --frame-w: 220px; }
+  .film-frame {
+    position: relative;
+    flex: 0 0 auto;
+    width: var(--frame-w);
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: #2a1a0e;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+  .film-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: .55;
+    transition: opacity .3s var(--ease);
+  }
+  .film-frame.is-on img,
+  .film-frame:hover img { opacity: 1; }
+  .film-frame.is-on { box-shadow: 0 0 0 2px var(--accent); }
+  /* Frame numbers in the edge, like the marks printed on real film. */
+  .film-frame::before {
+    content: attr(data-n);
+    position: absolute;
+    right: 4px;
+    top: 3px;
+    z-index: 1;
+    color: #ffb347;
+    font: 700 9.5px/1 var(--font-mono);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
+    pointer-events: none;
+  }
+  .film-frame:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+
+  /* Contact, built around one photo: a printed snapshot from 2006, set at
+     an angle beside the line and the links, as if left on the desk. */
+  .since {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(22px, 4vw, 48px);
+  }
+  .since-print {
+    margin: 6px 0 6px 6px;
+    padding: 9px 9px 30px;
+    background: #f6f3ec;
+    border-radius: 3px;
+    rotate: -4deg;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 14px 34px -10px rgba(0, 0, 0, .55);
+  }
+  [data-theme="daylight"] .since-print { box-shadow: 0 1px 2px rgba(16, 25, 43, .18), 0 14px 30px -12px rgba(16, 25, 43, .35); }
+  .since-pic {
+    display: block;
+    width: clamp(220px, 26vw, 320px);
+    aspect-ratio: 600 / 430;
+    padding: 0;
+    border: 0;
+    border-radius: 1px;
+    background: #ddd;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+  .since-pic img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.9) contrast(1.02); }
+  .since-line { margin: 0 0 14px; font-size: clamp(17px, 1.8vw, 21px); color: var(--ink-2); }
+  .since-line strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: clamp(24px, 3vw, 34px); line-height: 1.12; letter-spacing: -.01em; }
+
+  /* The photo viewer shows the photos, not captions. */
+  #lbCap { display: none; }
+  .lb-cap { justify-content: flex-end; }
+
+  @media (max-width: 759px) {
+    .rolls { --frame-w: 190px; }
+    #contact { padding-bottom: 8px; }
+    .footer { padding-top: 14px; }
+    .since { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 22px; }
+    .since-print { margin: 4px 0 0; }
+    .since-pic { width: min(280px, 78vw); }
+    .since-body { width: 100%; }
+  }
+}
+
+/* Unlayered, so it outranks the glass edge light the liquid layer puts on
+   every photo button's ::after; the film frames do not want it. */
+.film-frame::after { content: none; }
+.film-frame { position: relative; }
+@media (prefers-reduced-motion: reduce) { .film-frame img, .film-note { transition: none; } }
+
+/* Unlayered, so the glass layer's own shadow and image rules on photo
+   buttons do not cancel the film's: the frame you are on is lit and
+   outlined, the others sit back. */
+.film-frame img { opacity: .5; transition: opacity .3s ease; }
+.film-frame.is-on img,
+.film-frame:hover img { opacity: 1; }
+.film-frame.is-on { box-shadow: 0 0 0 2px var(--accent); }
+
+/* The quote is one short line now. The box was sized for a long sentence,
+   so it sat tall and wide with a lot of air around it. A snug pill sized
+   to the line, with even space above and below it. */
+.section.quote {
+  width: fit-content;
+  max-width: calc(100% - var(--gutter) * 2);
+  margin-block: clamp(4px, 1vw, 12px);
+  padding: clamp(16px, 2vw, 22px) clamp(28px, 4vw, 48px);
+}
+#offclock { padding-bottom: clamp(14px, 2.5vw, 26px); }
+
+/* A Path photo is never wider than its strip: one that would be (a wide
+   shot on a phone, say) is drawn at the strip's width and cropped at its
+   sides, so the strip can always take the card's full height. */
+.jc-media .jc-shot { max-width: 100%; }
+
+/* ==========================================================================
+   OFF THE CLOCK, AS STORIES (experiment)
+   Three circles like story highlights; each opens a full screen story.
+   ========================================================================== */
+@layer components {
+  .hls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(18px, 5vw, 64px);
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hl-btn {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 6px;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .hl-ring {
+    position: relative;
+    display: block;
+    /* A set width and height, not aspect-ratio: Safari let the photo's own
+       shape stretch the ring into an oval. */
+    --hl: clamp(96px, 13vw, 132px);
+    box-sizing: border-box;
+    width: var(--hl);
+    height: var(--hl);
+    min-height: 0;
+    padding: 4px;
+    border-radius: 50%;
+    background: conic-gradient(from var(--spin, 210deg), var(--accent), var(--accent-2), var(--accent));
+    /* script.js leans each circle toward a nearby cursor (--dx, --dy),
+       swells it a touch as the cursor closes in (--k), turns the ring's
+       gradient to face it (--spin) and slides the photo a little the
+       other way inside its frame, so it reads as a window you look
+       through. */
+    transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px)) scale(var(--k, 1));
+  }
+  .hl-pic {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    border: 3px solid var(--bg);
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .hl-ring img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: translate(calc(var(--dx, 0) * -.5px), calc(var(--dy, 0) * -.5px)) scale(1.06);
+    object-fit: cover;
+  }
+  .hl-btn:focus-visible .hl-ring { --k: 1.05; }
+  .hl-btn { transition: none; }
+  .hl.is-seen .hl-ring { background: var(--stroke-hi); }
+  .hl-name { max-width: 15ch; margin-top: 6px; font-weight: 600; font-size: .98rem; line-height: 1.3; text-align: center; text-wrap: balance; }
+  .hl-count { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .06em; color: var(--ink-3); text-transform: uppercase; }
+
+  /* The viewer. */
+  .story {
+    width: min(560px, 100vw);
+    max-width: none;
+    height: min(92svh, 900px);
+    max-height: none;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-lg);
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+  }
+  .story::backdrop { background: rgba(0, 0, 0, .82); backdrop-filter: blur(8px); opacity: calc(1 - var(--pull, 0) * 1.6); }
+  .story { will-change: transform; transform-origin: 50% 0;}
+  .st-frame { position: relative; display: flex; flex-direction: column; height: 100%; }
+  .st-bars {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 10px;
+    z-index: 3;
+    display: flex;
+    gap: 4px;
+  }
+  .st-bars span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .3); overflow: hidden; }
+  .st-bars i { display: block; height: 100%; background: #fff; transform-origin: left; transform: scaleX(0); }
+  .st-head {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 18px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px 0 14px;
+    font-weight: 600;
+    font-size: .92rem;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  }
+  .st-close {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .35);
+    color: #fff;
+    cursor: pointer;
+  }
+  .st-media { position: relative; flex: 1 1 auto; min-height: 0; background: #000; }
+  .st-media::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 110px;
+    background: linear-gradient(rgba(0, 0, 0, .55), transparent);
+    pointer-events: none;
+  }
+  .st-media { overflow: hidden; }
+  .st-img { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; }
+  /* The photo again behind itself, blown up and blurred, so a photo that
+     does not match the frame's shape sits in its own colours, not black. */
+  .st-blur {
+    position: absolute;
+    inset: -40px;
+    width: calc(100% + 80px);
+    height: calc(100% + 80px);
+    object-fit: cover;
+    filter: blur(36px) brightness(.55) saturate(1.2);
+  }
+  .st-controls { display: none; }
+  .st-tap {
+    position: absolute;
+    top: 70px;
+    bottom: 40%;
+    z-index: 2;
+    width: 40%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .st-prev { left: 0; }
+  .st-next { right: 0; width: 60%; }
+  .st-text {
+    flex: 0 0 auto;
+    padding: 16px 18px 22px;
+    background: #0b0b0d;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+  }
+  .st-intro { margin: 0 0 12px; color: #c8c8cc; font-size: .9rem; line-height: 1.5; }
+  .st-step { margin: 0; color: #d9d9de; font-size: .95rem; line-height: 1.55; }
+  .st-n {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--accent) 22%, transparent);
+    color: var(--accent);
+    font: 700 .72rem/1.3 var(--font-mono);
+    vertical-align: 1px;
+  }
+  .st-lead { color: #fff; }
+  .story.is-paused .st-bars i { opacity: .7; }
+  /* Behaves like a story, not a page: a long press pauses rather than
+     selecting text or raising the callout. */
+  .story {
+    -webkit-user-select: none;
+            user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .st-frame { touch-action: none; }
+  .st-img, .st-blur { -webkit-user-drag: none; pointer-events: none; }
+
+  /* Desktop: photo on the left, words and controls in a panel on the right,
+     and real buttons, since there is no thumb to tap the sides with. */
+  @media (min-width: 900px) {
+    .story { width: min(1120px, 94vw); height: min(86svh, 760px); }
+    .st-frame { display: grid; grid-template-columns: minmax(0, 1fr) 380px; }
+    .st-media { grid-column: 1; grid-row: 1; }
+    .st-media::after { height: 90px; }
+    .st-bars { right: calc(380px + 12px); }
+    .st-head { padding-left: 16px; padding-right: 14px; }
+    .st-title { max-width: calc(100% - 440px); }
+    .st-tap { top: 64px; bottom: 0; }
+    .st-prev { width: calc((100% - 380px) * .4); }
+    .st-next { left: calc((100% - 380px) * .4); right: 380px; width: auto; }
+    .st-prev { cursor: w-resize; }
+    .st-next { cursor: e-resize; }
+    .st-text {
+      grid-column: 2;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 80px 28px 24px;
+      border-top: 0;
+      border-left: 1px solid rgba(255, 255, 255, .08);
+      overflow-y: auto;
+    }
+    .st-intro { font-size: .95rem; line-height: 1.6; margin-bottom: 18px; }
+    .st-step { font-size: 1.02rem; line-height: 1.6; }
+    .st-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+    .st-btn {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .06);
+      color: #fff;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .st-btn:hover { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .3); }
+    .st-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .st-pause { width: 52px; height: 52px; }
+    .st-i-play { display: none; }
+    .story.is-paused .st-i-play { display: block; }
+    .story.is-paused .st-i-pause { display: none; }
+    .st-count { margin-left: auto; font: 600 .78rem/1 var(--font-mono); letter-spacing: .06em; color: #9a9aa2; }
+  }
+
+  @media (max-width: 899px) {
+    /* Phones and small windows: the whole left side goes back and the rest
+       goes forward, words included, and a small set of controls sits on
+       the photo's bottom right corner, just over the caption. */
+    .st-tap { top: 64px; bottom: 0; }
+    .st-text { position: relative; }
+    .st-controls {
+      position: absolute;
+      right: 12px;
+      bottom: calc(100% + 12px);
+      z-index: 4;
+      display: flex;
+      gap: 6px;
+    }
+    .st-count { display: none; }
+    .st-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, .45);
+      -webkit-backdrop-filter: blur(8px);
+              backdrop-filter: blur(8px);
+      color: #fff;
+      cursor: pointer;
+    }
+    .st-btn svg { width: 16px; height: 16px; }
+    .st-i-play { display: none; }
+    .story.is-paused .st-i-play { display: block; }
+    .story.is-paused .st-i-pause { display: none; }
+  }
+  @media (max-width: 719px) {
+    .story { width: 100vw; height: 100svh; border-radius: 0; }
+    .hls { flex-wrap: nowrap; gap: 6px; justify-content: space-between; }
+    .hl { flex: 1 1 0; min-width: 0; }
+    .hl-btn { width: 100%; padding: 4px 0; }
+    .hl-ring { --hl: min(92px, 24vw); }
+    .hl-name { max-width: 12ch; font-size: .86rem; }
+  }
+}
+
+/* ==========================================================================
+   THE PATH, COMPACT (experiment)
+   A single trace that sways across the section with a node for each role.
+   The nodes sit on a wave (left, centre, right, centre, ...; just left and
+   right on phones) and the trace is drawn as smooth curves between them.
+   Each node is a circle with its year, tinted toward that company's colour,
+   with the name and role beside it. Choosing a node opens that role's tile
+   right under it. Unlayered on purpose: the board's own sizes live in the
+   responsive layer, and this has to win over them, or the pinned board's
+   height stays as empty space.
+   ========================================================================== */
+.pc { display: none; }
+.journey-section.is-compact .pc { position: relative; display: block; margin: 4px 0 0; }
+.journey-section.is-compact .journey-scope,
+.journey-section.is-compact .journey-sticky { height: auto !important; min-height: 0; }
+.journey-section.is-compact .journey-sticky { position: static; display: block; }
+.journey-section.is-compact .journey-stage,
+.journey-section.is-compact .journey-readout { display: none; }
+
+.pc-trace {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+}
+.pc-bed { stroke: color-mix(in oklab, var(--ink) 21%, transparent); stroke-width: 2.5; stroke-linecap: round; }
+.pc-live {
+  stroke: var(--accent);
+  stroke-width: 3.25;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 55%, transparent));
+}
+
+.pc-track {
+  position: relative;
+  display: grid;
+  gap: 30px;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+}
+.pc-row { --tint: var(--accent); position: relative; display: grid; grid-template-columns: minmax(0, 1fr); }
+.pc-stop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: max-content;
+  max-width: 100%;
+  padding: 6px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+/* The wave: --c is 0, 1 or 2 for left, centre and right. The centre stop
+   keeps its node on the midline, so the label hangs off to its right; the
+   right hand stop turns around so its label reads in toward the middle. */
+.pc-row[data-c="0"] .pc-stop { justify-self: start; }
+.pc-row[data-c="1"] .pc-stop { justify-self: start; margin-left: calc(50% - 38px); }
+.pc-row[data-c="2"] .pc-stop { justify-self: end; flex-direction: row-reverse; text-align: right; }
+
+.pc-node {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 1.5px solid color-mix(in oklab, var(--tint) 55%, var(--stroke));
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--tint) 22%, transparent), transparent 70%),
+    color-mix(in oklab, var(--tint) 10%, var(--surface-solid));
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--tint) 7%, transparent), 0 6px 18px rgba(0, 0, 0, .22);
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+.pc-year {
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  color: color-mix(in oklab, var(--tint) 30%, var(--ink));
+}
+
+.pc-label { display: grid; gap: 3px; }
+.pc-name { font-family: var(--font-display); font-weight: 700; font-size: 1rem; letter-spacing: .01em; }
+.pc-role { font-size: .82rem; color: var(--ink-3); }
+
+.pc-stop:hover .pc-node,
+.pc-stop:focus-visible .pc-node {
+  border-color: color-mix(in oklab, var(--tint) 85%, var(--ink));
+  transform: scale(1.06);
+}
+.pc-stop.is-past .pc-node { border-color: color-mix(in oklab, var(--tint) 75%, var(--stroke)); }
+/* The open role's node lights up solid in its company's colour, with the
+   year knocked out dark on top of it. */
+.pc-stop.is-on .pc-node {
+  border-color: color-mix(in oklab, var(--tint) 70%, #fff);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .35), transparent 65%),
+    color-mix(in oklab, var(--tint) 88%, #fff);
+  box-shadow:
+    0 0 0 5px color-mix(in oklab, var(--tint) 28%, transparent),
+    0 0 22px color-mix(in oklab, var(--tint) 75%, transparent),
+    0 0 48px color-mix(in oklab, var(--tint) 45%, transparent);
+}
+.pc-stop.is-on .pc-year { color: #08090c; }
+
+/* The open role, full width under its node. */
+.pc-slot { position: relative; z-index: 1; min-width: 0; }
+.pc-slot:empty { display: none; }
+html.js .pc-slot .jcard {
+  position: relative;
+  display: block;
+  margin: 8px 0 14px;
+  padding: 20px 22px;
+  overflow: visible;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: none;
+  background: color-mix(in oklab, var(--surface-solid) 88%, transparent);
+  animation: pc-open .35s ease;
+}
+@keyframes pc-open { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+[data-theme="daylight"] .pc-node { box-shadow: 0 0 0 5px color-mix(in oklab, var(--tint) 8%, transparent), 0 6px 16px rgba(16, 25, 43, .1); }
+[data-theme="daylight"] .pc-year { color: color-mix(in oklab, var(--tint) 45%, var(--ink)); }
+
+@media (max-width: 719px) {
+  .pc-track { gap: 26px; }
+  /* Phones: just left and right, off --pc. */
+  .pc-row .pc-stop { justify-self: start !important; margin-left: 0 !important; flex-direction: row !important; text-align: left !important; }
+  .pc-row[data-pc="1"] .pc-stop { justify-self: end !important; flex-direction: row-reverse !important; text-align: right !important; }
+  .pc-stop { gap: 12px; padding: 4px; max-width: 88%; }
+  .pc-node { width: 54px; height: 54px; }
+  .pc-year { font-size: .7rem; }
+  .pc-name { font-size: .92rem; }
+  .pc-role { font-size: .76rem; }
+  html.js .pc-slot .jcard { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .pc-slot .jcard { animation: none; }
+  .pc-node { transition: none; }
+}
+
+/* ==========================================================================
+   EDUCATION: the Gators logo peering in from the card's empty bottom left
+   corner, desktop only. Tipped back and cut off by the card's edge, and
+   faint enough to read as texture rather than a badge.
+   ========================================================================== */
+.edu-gator { display: none; }
+@media (min-width: 900px) {
+  .education-card { position: relative; overflow: hidden; isolation: isolate; }
+  .education-card > :not(.edu-gator) { position: relative; z-index: 1; }
+  .edu-gator {
+    position: absolute;
+    left: -46px;
+    bottom: -58px;
+    z-index: 0;
+    display: block;
+    width: 260px;
+    height: auto;
+    opacity: .14;
+    transform: rotate(-12deg);
+    pointer-events: none;
+    user-select: none;
+    -webkit-mask-image: radial-gradient(120% 120% at 0% 100%, #000 45%, transparent 85%);
+            mask-image: radial-gradient(120% 120% at 0% 100%, #000 45%, transparent 85%);
+  }
+  [data-theme="daylight"] .edu-gator { opacity: .16; }
+}
+
+/* ==========================================================================
+   STORY VIEWER BUTTONS: the same smoked liquid glass as the photo viewer's
+   arrows (light under the pointer, a small spring on press via the shared
+   liquidPress engine), since they sit over photos in just the same way.
+   ========================================================================== */
+.story .st-btn,
+.story .st-close {
+  border: 0;
+  color: #fff;
+  background:
+    radial-gradient(circle 70px at var(--lg-px) var(--lg-py), rgba(255, 255, 255, var(--lg-press)), transparent 72%),
+    rgba(10, 14, 24, .58);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+          backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    0 10px 26px -8px rgba(0, 0, 0, .6),
+    0 2px 8px rgba(0, 0, 0, .35),
+    inset .3px 1px 0 rgba(255, 255, 255, .34),
+    inset -.3px -1px 0 rgba(255, 255, 255, .14),
+    inset 0 0 0 1px rgba(255, 255, 255, .07);
+  transition:
+    background-color .2s ease,
+    scale .5s cubic-bezier(.3, 1.2, .5, 1),
+    --lg-press .6s ease-out;
+}
+.story .st-btn svg,
+.story .st-close svg { filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .45)); }
+.story .st-btn:hover,
+.story .st-close:hover { background-color: rgba(10, 14, 24, .78); border-color: transparent; }
+.story .st-btn.lg-pressed,
+.story .st-close.lg-pressed {
+  transition:
+    background-color .2s ease,
+    scale .09s ease-out,
+    --lg-press .09s ease-out;
+}
+.story .st-close { width: 44px; height: 44px; }
+@media (min-width: 900px) {
+  .story .st-btn { width: 48px; height: 48px; }
+  .story .st-pause { width: 56px; height: 56px; }
+  .story .st-btn svg { width: 22px; height: 22px; }
+}
+@media (max-width: 899px) {
+  .story .st-btn { width: 38px; height: 38px; }
+  .story .st-btn svg { width: 18px; height: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story .st-btn, .story .st-close, .story .st-btn.lg-pressed, .story .st-close.lg-pressed { transition: none; scale: none; }
+}
+
+/* ==========================================================================
+   VIEWERS AND PINCH ZOOM
+   The photo and story viewers handle their own touch: the browser's page
+   pinch is off inside them (script.js zooms the photo layer instead), and
+   while either is open the busy page underneath stops animating, so
+   nothing behind the dialog keeps the phone redrawing.
+   ========================================================================== */
+.lightbox, .story { touch-action: none; overscroll-behavior: contain; }
+.lightbox #lbImg { touch-action: none; transform-origin: 50% 50%; will-change: transform; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.lightbox.is-zoomed .lb-prev, .lightbox.is-zoomed .lb-next { opacity: 0; pointer-events: none; }
+html:has(dialog[open]) .bg,
+html:has(dialog[open]) main *,
+html:has(dialog[open]) main *::before,
+html:has(dialog[open]) main *::after { animation-play-state: paused !important; }
