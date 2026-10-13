@@ -671,6 +671,21 @@
 
   .dock-fab { background: color-mix(in oklab, var(--bg) 92%, transparent); }
 
+  /* On phones the bar and the search button float over the page at the
+     bottom, where text scrolls right under them: a touch more solid there,
+     with a light frost, so what little shows through is softened rather
+     than legible. */
+  @media (max-width: 719px) {
+    header.nav,
+    header.nav.is-stuck,
+    header.nav.lg-bar-pressed,
+    .dock-fab {
+      background: color-mix(in oklab, var(--bg) 96%, transparent);
+      -webkit-backdrop-filter: blur(10px) saturate(115%);
+              backdrop-filter: blur(10px) saturate(115%);
+    }
+  }
+
   .burger i { background: var(--ink); }
 
   /* ---------- Rail ---------------------------------------------------- */
