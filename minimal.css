@@ -1437,37 +1437,27 @@
 .section.quote { padding-top: clamp(54px, 7vw, 80px); }
 
 /* ---------- Contact ------------------------------------------------------
-   The snapshot is laid flat: no paper, tilt or shadow, a rounded photo
-   with a flat block of the blue offset behind it, the way the portrait up
-   top has its disc of the accent. */
-[data-theme] .since-print {
-  position: relative;
-  margin: 0 10px 10px 0;
-  padding: 0;
-  border-radius: var(--r-lg);
-  background: none;
-  rotate: none;
-  box-shadow: none;
-}
-.since-print::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: var(--r-lg);
-  background: var(--m-blue);
-  translate: 10px 10px;
-}
-.since-pic {
-  position: relative;
-  border-radius: var(--r-lg);
-  background: var(--m-fill);
-}
-.since-pic img { filter: none; }
+   The snapshot stays the one thing on the page that is not flat: an old
+   instant print, as on main, tipped on the desk. Its paper is a shade
+   whiter than this page's, with a hairline and a soft shadow, or it would
+   melt into the paper ground. */
 .since-line { color: var(--ink-2); }
 .since-line strong { font-weight: 600; letter-spacing: -.025em; }
-@media (max-width: 759px) {
-  [data-theme] .since-print { margin: 4px 10px 10px 0; }
+[data-theme] .since-print {
+  padding: 10px 10px 34px;
+  border: 1px solid rgba(20, 20, 20, .08);
+  border-radius: 3px;
+  background: #fdfcf9;
+  rotate: -4deg;
+  box-shadow: 0 1px 2px rgba(20, 20, 20, .12), 0 14px 30px -14px rgba(20, 20, 20, .35);
 }
+[data-theme="midnight"] .since-print,
+[data-theme="terminal"] .since-print {
+  border-color: transparent;
+  background: #f4f1ea;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 16px 34px -12px rgba(0, 0, 0, .6);
+}
+.since-pic { border-radius: 1px; }
 
 /* ---------- Education ----------------------------------------------------
    On paper the full colour mark reads stronger than it did on the dark
