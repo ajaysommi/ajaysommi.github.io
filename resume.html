@@ -23,8 +23,8 @@
     (function () {
       var root = document.documentElement;
       var saved = null;
-      try { saved = localStorage.getItem('as-theme'); } catch (e) {}
-      root.dataset.theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'daylight' : 'midnight');
+      try { localStorage.removeItem('as-theme'); saved = sessionStorage.getItem('as-theme'); } catch (e) {}
+      root.dataset.theme = saved === 'daylight' || saved === 'midnight' ? saved : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'daylight' : 'midnight');
       root.classList.add('js');
     })();
   </script>
@@ -42,6 +42,11 @@
     @media (max-width: 719px) {
       .resume-main { padding-top: max(18px, env(safe-area-inset-top)); }
     }
+    /* The page fills the screen, so a short page (the fallback card on a
+       phone) still has its footer at the bottom, above the bar, rather than
+       floating halfway down. */
+    body.resume-page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+    body.resume-page .resume-main { flex: 1 0 auto; width: 100%; box-sizing: border-box; }
 
     .resume-head {
       display: flex;
@@ -144,7 +149,6 @@
       <button class="icon-btn" id="themeBtn" type="button" aria-label="Change theme" title="Change theme">
         <svg class="ico-midnight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg>
         <svg class="ico-daylight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-        <svg class="ico-terminal" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 4h18v16H3V4Zm3 4 3.5 3.5L6 15m6 1h6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <!-- Same two children the portfolio's nav has. The stylesheet hides the
            label and shows the icon above 720px, so a bare text link here left
@@ -193,17 +197,18 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // Theme cycling, matching the main page.
+    // Theme: follows the system live; the button flips it for this visit.
     (function () {
-      var THEMES = ['midnight', 'daylight', 'terminal'];
       var root = document.documentElement;
+      var mq = window.matchMedia('(prefers-color-scheme: light)');
+      var set = function (name, remember) {
+        root.dataset.theme = name;
+        try { if (remember) sessionStorage.setItem('as-theme', name); else sessionStorage.removeItem('as-theme'); } catch (e) {}
+      };
+      var follow = function () { set(mq.matches ? 'daylight' : 'midnight', false); };
+      if (mq.addEventListener) mq.addEventListener('change', follow); else mq.addListener(follow);
       var btn = document.getElementById('themeBtn');
-      if (!btn) return;
-      btn.addEventListener('click', function () {
-        var next = THEMES[(THEMES.indexOf(root.dataset.theme) + 1) % THEMES.length];
-        root.dataset.theme = next;
-        try { localStorage.setItem('as-theme', next); } catch (e) {}
-      });
+      if (btn) btn.addEventListener('click', function () { set(root.dataset.theme === 'daylight' ? 'midnight' : 'daylight', true); });
     })();
 
     /* Inline PDF viewing is unsupported on iOS and most mobile browsers, and

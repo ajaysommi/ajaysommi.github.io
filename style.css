@@ -4859,6 +4859,25 @@
   }
   .story::backdrop { background: rgba(0, 0, 0, .82); backdrop-filter: blur(8px); opacity: calc(1 - var(--pull, 0) * 1.6); }
   .story { will-change: transform; transform-origin: 50% 0;}
+  /* Opening eases the story in instead of switching it on: it rises and
+     settles from just below while the backdrop fades up behind it. Closing
+     runs the same motion back. On phones it rises a little further, like a
+     sheet coming up from the bottom of the screen. */
+  .story[open] { animation: st-in .34s cubic-bezier(.2, .8, .2, 1); }
+  .story[open]::backdrop { animation: st-fade .34s ease; }
+  .story.is-closing { animation: st-out .22s cubic-bezier(.4, 0, 1, 1) forwards; }
+  .story.is-closing::backdrop { animation: st-fade-out .22s ease forwards; }
+  @keyframes st-in { from { opacity: 0; transform: translateY(14px) scale(.965); } }
+  @keyframes st-out { to { opacity: 0; transform: translateY(10px) scale(.97); } }
+  @keyframes st-fade { from { opacity: 0; } }
+  @keyframes st-fade-out { to { opacity: 0; } }
+  @media (max-width: 719px) {
+    @keyframes st-in { from { opacity: 0; transform: translateY(8%); } }
+    @keyframes st-out { to { opacity: 0; transform: translateY(6%); } }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .story[open], .story[open]::backdrop, .story.is-closing, .story.is-closing::backdrop { animation: none; }
+  }
   .st-frame { position: relative; display: flex; flex-direction: column; height: 100%; }
   .st-bars {
     position: absolute;
@@ -5053,7 +5072,15 @@
     .story.is-paused .st-i-pause { display: none; }
   }
   @media (max-width: 719px) {
-    .story { width: 100vw; height: 100svh; border-radius: 0; }
+    /* Phones: the story fills the whole screen, edge to edge, the way a
+       story does in a social app. Pinned to all four edges of the screen
+       rather than sized in svh, which on iOS is the screen with its
+       toolbars showing and left a band top and bottom. The bars, title and
+       caption clear the notch and the home indicator instead. */
+    .story { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border-radius: 0; }
+    .st-bars { top: calc(10px + env(safe-area-inset-top)); }
+    .st-head { top: calc(18px + env(safe-area-inset-top)); }
+    .st-text { padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
     .hls { flex-wrap: nowrap; gap: 6px; justify-content: space-between; }
     .hl { flex: 1 1 0; min-width: 0; }
     .hl-btn { width: 100%; padding: 4px 0; }
@@ -5322,3 +5349,18 @@ html.is-modal main *::after { animation-play-state: paused !important; }
 
 /* The contact snapshot fades in more slowly than the rest. */
 .since-print[data-reveal] { transition-duration: 1.6s; }
+
+/* The logo strip's previous / pause / next buttons are hidden at every
+   size; the strip is still dragged, flicked, scrolled and wheeled exactly
+   as before. They stay in the page for keyboard and screen reader users and
+   come into view only while one of them has keyboard focus, so the drift
+   can still be paused by anyone who needs to. */
+.carousel-ctrl:not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

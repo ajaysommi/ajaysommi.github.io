@@ -420,9 +420,9 @@ const toast = (() => {
 })();
 
 /* ==========================================================================
-   Theme cycling: midnight → daylight → terminal
+   Theme: light or dark, following the system setting
    ========================================================================== */
-const THEMES = ['midnight', 'daylight', 'terminal'];
+const THEMES = ['midnight', 'daylight'];
 
 /* A few partner logos (Hunter, JM Family, Toyota, FICS) are white-on-dark
    assets: legible on midnight/terminal, invisible on daylight's light
@@ -441,10 +441,13 @@ function syncLogoTheme() {
   });
 }
 
-function setTheme(name, announce = true) {
+/* remember: a choice made with the button holds for the rest of the visit.
+   Following the system never remembers anything, so the next system change
+   (or the next visit) is followed again. */
+function setTheme(name, announce = true, remember = true) {
   if (!THEMES.includes(name)) return;
   root.dataset.theme = name;
-  try { localStorage.setItem('as-theme', name); } catch {}
+  try { if (remember) sessionStorage.setItem('as-theme', name); else sessionStorage.removeItem('as-theme'); } catch {}
   const meta = document.querySelector('meta[name="theme-color"]:not([media])');
   if (meta) meta.content = name === 'daylight' ? '#eef2f8' : '#050814';
   syncLogoTheme();
@@ -452,6 +455,18 @@ function setTheme(name, announce = true) {
 }
 
 syncLogoTheme();
+
+/* The moment the system switches between light and dark, so does the site,
+   even mid visit and even if the button was used: the system wins. */
+(function followSystem() {
+  const mq = matchMedia('(prefers-color-scheme: light)');
+  const follow = () => {
+    const next = mq.matches ? 'daylight' : 'midnight';
+    if (root.dataset.theme === next) { try { sessionStorage.removeItem('as-theme'); } catch {} return; }
+    setTheme(next, false, false);
+  };
+  if (mq.addEventListener) mq.addEventListener('change', follow); else mq.addListener(follow);
+})();
 
 (function themeToggle() {
   const btn = $('#themeBtn');
@@ -2632,7 +2647,6 @@ const palette = (() => {
 
     { icon: '◐', title: 'Theme: Midnight',  kind: 'theme', run: () => setTheme('midnight') },
     { icon: '☀', title: 'Theme: Daylight',  kind: 'theme', run: () => setTheme('daylight') },
-    { icon: '▮', title: 'Theme: Terminal',  kind: 'theme', run: () => setTheme('terminal') },
     { icon: '▸', title: 'Open terminal',    sub: 'Try `help`', kind: 'easter egg', run: () => terminal.open() },
     { icon: '🐊', title: 'Release the gators', kind: 'easter egg', run: () => gatorStorm(18) },
   ];
@@ -2772,7 +2786,7 @@ const terminal = (() => {
       `  <span class="t-key">education</span>   degree + coursework\n` +
       `  <span class="t-key">contact</span>     how to reach me\n` +
       `  <span class="t-key">resume</span>      open the resume\n` +
-      `  <span class="t-key">theme</span>       [midnight|daylight|terminal]\n` +
+      `  <span class="t-key">theme</span>       [midnight|daylight]\n` +
       `  <span class="t-key">goto</span>        jump to a section\n` +
       `  <span class="t-key">gator</span>       chomp\n` +
       `  <span class="t-key">clear</span>       wipe the scrollback\n` +
@@ -2851,8 +2865,8 @@ const terminal = (() => {
     resume: () => { write(`<span class="t-dim">opening resume…</span>`); setTimeout(() => { location.href = 'resume.html'; }, 500); },
 
     theme: (arg) => {
-      if (!arg) { write(`current: <span class="t-key">${root.dataset.theme}</span>  <span class="t-dim">usage: theme [midnight|daylight|terminal]</span>`); return; }
-      if (!THEMES.includes(arg)) { write(`<span class="t-warn">unknown theme "${esc(arg)}"</span>. Try midnight, daylight or terminal`); return; }
+      if (!arg) { write(`current: <span class="t-key">${root.dataset.theme}</span>  <span class="t-dim">usage: theme [midnight|daylight]</span>`); return; }
+      if (!THEMES.includes(arg)) { write(`<span class="t-warn">unknown theme "${esc(arg)}"</span>. Try midnight or daylight`); return; }
       setTheme(arg, false);
       write(`theme → <span class="t-key">${arg}</span>`);
     },
@@ -3880,11 +3894,20 @@ function gatorStorm(n = 12) {
   hls.forEach((hl, i) => $('.hl-btn', hl).addEventListener('pointerdown', () => warmStory(i, 2), { passive: true }));
 
   const seen = (i) => hls[i].classList.add('is-seen');
+  /* Closing plays the opening motion backwards (style.css), then closes. */
+  let closing = 0;
+  function closeStory() {
+    if (!dlg.open || closing) return;
+    cancelAnimationFrame(raf);
+    if (prefersReduced()) { dlg.close(); return; }
+    dlg.classList.add('is-closing');
+    closing = setTimeout(() => { closing = 0; dlg.close(); dlg.classList.remove('is-closing'); }, 220);
+  }
   function next() {
     if (step < data[story].steps.length - 1) { step++; show(); return; }
     seen(story);
     if (story < data.length - 1) { story++; step = 0; show(); return; }
-    dlg.close();
+    closeStory();
   }
   function prev() {
     if (step > 0) { step--; show(); return; }
@@ -3902,9 +3925,11 @@ function gatorStorm(n = 12) {
   $('.st-fwd', dlg).addEventListener('click', next);
   $('.st-back', dlg).addEventListener('click', prev);
   pauseBtn.addEventListener('click', () => setPaused(!userPaused));
-  $('.st-close', dlg).addEventListener('click', () => dlg.close());
+  $('.st-close', dlg).addEventListener('click', closeStory);
+  // Escape closes with the same motion instead of snapping shut.
+  dlg.addEventListener('cancel', (e) => { e.preventDefault(); closeStory(); });
   dlg.addEventListener('close', () => { cancelAnimationFrame(raf); seen(story); });
-  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) closeStory(); });
   dlg.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
