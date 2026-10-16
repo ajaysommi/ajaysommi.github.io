@@ -1,20 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Ajay Sommi">
   <!--
-    The site's mark, in its own vocabulary: the flat shapes of the hero
-    composition on a paper tile. An accent quarter disc, a blue circle and an
-    ink triangle, nothing overlapping, so it reads at 16px. The tile turns to
-    charcoal when the system is dark, like the site.
+    "Aj" in the site's flat shape language: the A as a solid ink chevron,
+    the j as a blue dot over a blue stem, finished by an orange hook. The
+    tile follows the system theme, charcoal in dark and paper in light, and
+    the A flips with it.
   -->
   <style>
     .tile { fill: #f2f0eb; }
     .ink { fill: #141414; }
     @media (prefers-color-scheme: dark) {
-      .tile { fill: #1a1a1a; }
-      .ink { fill: #edebe6; }
+      .tile { fill: #121212; }
+      .ink { fill: #f1efea; }
     }
   </style>
   <rect class="tile" width="64" height="64" rx="15"/>
-  <path d="M9 55V27A28 28 0 0 1 37 55Z" fill="#ff5a1f"/>
-  <circle cx="44" cy="20" r="11" fill="#2f4bff"/>
-  <path class="ink" d="M41 55h14V41Z"/>
+  <path class="ink" d="M10.29 44.57 L30.86 9.90 L40.76 28.19 L40.76 36.04 L36.19 36.04 L30.86 26.67 L20.19 44.57Z"/>
+  <circle cx="46.48" cy="16.15" r="6.32" fill="#3d68ff"/>
+  <defs><clipPath id="hook"><rect width="64" height="36.19"/><circle cx="39.41" cy="36.19" r="13.16"/></clipPath></defs>
+  <rect x="41.37" y="23.47" width="11.20" height="20.34" fill="#3d68ff" clip-path="url(#hook)"/>
+  <path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.66 36.19 A4.42 4.42 0 0 1 34.82 36.19Z" fill="#ff6b35"/>
 </svg>
