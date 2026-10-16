@@ -14,9 +14,8 @@
     }
   </style>
   <rect class="tile" width="64" height="64" rx="15"/>
-  <path class="ink" d="M10.29 44.57 L30.86 9.90 L40.76 28.19 L40.76 36.04 L36.19 36.04 L30.86 26.67 L20.19 44.57Z"/>
-  <circle cx="46.48" cy="16.15" r="6.32" fill="#3d68ff"/>
-  <defs><clipPath id="hook"><rect width="64" height="36.19"/><circle cx="39.41" cy="36.19" r="13.16"/></clipPath></defs>
-  <rect x="41.37" y="23.47" width="11.20" height="20.34" fill="#3d68ff" clip-path="url(#hook)"/>
-  <path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.66 36.19 A4.42 4.42 0 0 1 34.82 36.19Z" fill="#ff6b35"/>
+  <path class="ink" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/>
+  <circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/>
+  <rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/>
+  <path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/>
 </svg>
