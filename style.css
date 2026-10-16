@@ -5364,3 +5364,19 @@ html.is-modal main *::after { animation-play-state: paused !important; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* ==========================================================================
+   THE AJ MARK AS THE BRAND
+   On desktop the home button in the bar is the Aj mark rather than a house;
+   phones keep the house, where the bar is an app style dock. The footer is
+   signed with a small copy of the mark. The A follows the theme (ink), the
+   blue and orange stay as they are.
+   ========================================================================== */
+.brand-aj .am-a, .footer-mark .am-a { fill: var(--ink); }
+.brand-aj { display: none; }
+@media (min-width: 720px) {
+  header.nav .brand-mark svg.brand-house { display: none; }
+  header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px; }
+}
+.footer-sign { display: inline-flex; align-items: center; gap: 8px; }
+.footer-mark { display: block; width: 18px; height: 17px; flex: 0 0 auto; }
