@@ -357,18 +357,24 @@ const onScrollFrame = (() => {
     setTimeout(() => el.remove(), 900);
   };
 
-  const minShow = prefersReduced() ? 220 : 1150;
+  const minShow = prefersReduced() ? 220 : 700;
   const started = performance.now();
   const finish = () => setTimeout(dismiss, Math.max(0, minShow - (performance.now() - started)));
 
-  /* Waits for the fonts as well as the page. The hero's text is measured in
-     its real fonts to reserve its space; revealed before a slow font
-     arrived, the card would still grow under the visitor's eyes when it did. */
-  const loaded = document.readyState === 'complete'
-    ? Promise.resolve()
-    : new Promise((r) => window.addEventListener('load', r, { once: true }));
-  const fonts = document.fonts?.ready?.catch(() => {}) || Promise.resolve();
-  Promise.all([loaded, fonts]).then(finish);
+  /* Lifts once the page is built and its fonts are in, without waiting for
+     every image: photos keep arriving behind it, but nothing the visitor
+     sees on arrival changes size once it is shown. The fonts are asked for
+     by name, every face the page uses, because document.fonts.ready alone
+     can resolve before a face has even been requested, which would let the
+     text appear in a fallback font and jump when Geist arrived. */
+  const faces = ['400 1em Geist', '500 1em Geist', '600 1em Geist', '700 1em Geist', '400 1em "Geist Mono"', '500 1em "Geist Mono"'];
+  const fonts = document.fonts?.load
+    ? Promise.all(faces.map((f) => document.fonts.load(f).catch(() => {}))).then(() => document.fonts.ready).catch(() => {})
+    : Promise.resolve();
+  const built = document.readyState === 'loading'
+    ? new Promise((r) => document.addEventListener('DOMContentLoaded', r, { once: true }))
+    : Promise.resolve();
+  Promise.all([built, fonts]).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
   setTimeout(dismiss, 4000);
@@ -1014,7 +1020,10 @@ syncLogoTheme();
      flick brought copies into view before they had loaded, or before they
      had decoded, and they showed blank until they caught up. Seven small
      files, shared by every copy, so this costs next to nothing. */
+  /* Low priority, though: they still all load before anyone can flick
+     the strip, but the fonts the loading screen waits on come first. */
   const prepImages = (node) => node.querySelectorAll('img').forEach((img) => {
+    img.fetchPriority = 'low';
     img.loading = 'eager';
     img.decoding = 'sync';
   });
@@ -1575,6 +1584,30 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
    ========================================================================== */
 (function journeyPhotos() {
   if (!$('.jcard .jc-media')) return;
+
+  /* The photos are in the markup without their addresses (data-src), so
+     none of the twenty download until somebody opens that role: they sit in
+     a hidden panel, where browsers ignore loading="lazy" and fetch them
+     all up front, holding up the whole first load. A role's photos are
+     given their addresses when it opens, or a moment before, when a finger
+     or pointer lands on its node. Wherever every role is shown at once (the
+     reduced motion list, the pinned board), they are all filled in. */
+  const hydrate = (card) => card?.querySelectorAll('img[data-src]').forEach((img) => {
+    if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+    img.src = img.dataset.src;
+    img.removeAttribute('data-src');
+    img.removeAttribute('data-srcset');
+  });
+  const allCards = $$('.jcard');
+  const compact = $('.journey-section.is-compact');
+  if (!compact) allCards.forEach(hydrate);
+  document.addEventListener('journey:active', (e) => hydrate(allCards[e.detail?.index]));
+  $$('.pc-stop').forEach((stop, i) => {
+    const early = () => hydrate(allCards[i]);
+    stop.addEventListener('pointerenter', early, { once: true });
+    stop.addEventListener('pointerdown', early, { once: true });
+    stop.addEventListener('focus', early, { once: true });
+  });
 
   const MAX_H = 560;   // a ceiling for very tall windows, well past anything normal
   const FLOOR = 40;    // below this they stop reading as photos; the card scrolls instead
