@@ -5381,3 +5381,12 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 }
 .footer-sign { display: inline-flex; align-items: center; gap: 8px; }
 .footer-mark { display: block; width: 18px; height: 17px; flex: 0 0 auto; }
+
+/* The hero intro in two lengths: the full one, and a shorter one for
+   phones, where the full text pushed everything below the fold. Kept side
+   by side in index.html so an edit to one is easy to carry to the other. */
+.sub-short { display: none; }
+@media (max-width: 719px) {
+  .sub-long { display: none; }
+  .sub-short { display: inline; }
+}
