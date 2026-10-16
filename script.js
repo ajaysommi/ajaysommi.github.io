@@ -357,7 +357,7 @@ const onScrollFrame = (() => {
     setTimeout(() => el.remove(), 900);
   };
 
-  const minShow = prefersReduced() ? 220 : 700;
+  const minShow = prefersReduced() ? 220 : 1050;
   const started = performance.now();
   const finish = () => setTimeout(dismiss, Math.max(0, minShow - (performance.now() - started)));
 
