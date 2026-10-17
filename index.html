@@ -876,6 +876,7 @@
     <!-- RECOMMENDATIONS -->
     <section id="recs" class="section">
       <div class="section-head"><h2>What folks have to say</h2></div>
+      <div class="thread-wrap" id="recThread">
       <ol class="thread" aria-label="Recommendations">
         <li class="rec" data-reveal>
           <span class="rec-avatar" aria-hidden="true">BR</span>
@@ -885,11 +886,11 @@
           <cite>Barbara Russo<span>JM Family</span></cite>
         </li>
         <li class="rec" data-reveal>
-          <span class="rec-avatar" aria-hidden="true">SN</span>
+          <span class="rec-avatar" aria-hidden="true">BM</span>
           <div class="rec-bubble">
-            <blockquote>I had the pleasure of mentoring Ajay during his internship at JM Family, and he consistently impressed me with his strong work ethic and eagerness to learn … Any team would be fortunate to have him!</blockquote>
+            <blockquote>Ajay has done a wonderful job at Hunter Engineering as a co-op. He did a full design of a feature to implementation with minimal guidance and excelled at every task given to him. He was instrumental in delivering value to our team and exceeded expectations of a co-op.</blockquote>
           </div>
-          <cite>Saleem Nashawaty<span>JM Family</span></cite>
+          <cite>Branden Martinelli<span>Hunter Engineering</span></cite>
         </li>
         <li class="rec" data-reveal>
           <span class="rec-avatar" aria-hidden="true">DD</span>
@@ -899,18 +900,18 @@
           <cite>Daniel Donaldson<span>Southeast Toyota</span></cite>
         </li>
         <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">SN</span>
+          <div class="rec-bubble">
+            <blockquote>I had the pleasure of mentoring Ajay during his internship at JM Family, and he consistently impressed me with his strong work ethic and eagerness to learn … Any team would be fortunate to have him!</blockquote>
+          </div>
+          <cite>Saleem Nashawaty<span>JM Family</span></cite>
+        </li>
+        <li class="rec" data-reveal>
           <span class="rec-avatar" aria-hidden="true">NG</span>
           <div class="rec-bubble">
             <blockquote>Ajay consistently demonstrated enthusiasm, determination, and strong data skills. His grasp of data structures and proficiency with Microsoft Power Suite significantly contributed to our project's success.</blockquote>
           </div>
           <cite>Naman Goyal<span>Southeast Toyota</span></cite>
-        </li>
-        <li class="rec" data-reveal>
-          <span class="rec-avatar" aria-hidden="true">BM</span>
-          <div class="rec-bubble">
-            <blockquote>Ajay has done a wonderful job at Hunter Engineering as a co-op. He did a full design of a feature to implementation with minimal guidance and excelled at every task given to him. He was instrumental in delivering value to our team and exceeded expectations of a co-op.</blockquote>
-          </div>
-          <cite>Branden Martinelli<span>Hunter Engineering</span></cite>
         </li>
         <li class="rec" data-reveal>
           <span class="rec-avatar" aria-hidden="true">PM</span>
@@ -941,6 +942,10 @@
           <cite>Valeria Pinatelli<span>Robotics For All</span></cite>
         </li>
       </ol>
+      </div>
+      <div class="recs-more-row">
+        <button type="button" class="btn ghost recs-more" aria-expanded="false" aria-controls="recThread" hidden>Show more</button>
+      </div>
       <p class="note">More on <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>.</p>
     </section>
 
@@ -1019,7 +1024,7 @@
   </section>
 
   <!-- Photo viewer for the journey strips -->
-  <dialog class="story" id="storyView" aria-label="Story">
+  <dialog class="story" id="storyView" aria-label="Story" tabindex="-1">
     <div class="st-frame">
       <div class="st-bars" aria-hidden="true"></div>
       <header class="st-head">

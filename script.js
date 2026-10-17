@@ -638,6 +638,9 @@ syncLogoTheme();
     const line = y + innerHeight * 0.32;
     let now = 0;
     for (let i = 0; i < tops.length; i++) if (tops[i] <= line) now = i;
+    // The last section is too short to ever reach the line; at the very
+    // bottom of the page it is the one being read.
+    if (max > 0 && y >= max - 4) now = tops.length - 1;
     if (fillV === lastFill && now === active) return;
     return () => {
       if (fillV !== lastFill) { lastFill = fillV; fill.style.transform = `scaleY(${fillV})`; }
@@ -788,13 +791,20 @@ syncLogoTheme();
       heading.textContent = finalText;
       heading.removeAttribute('aria-label');
     };
+    /* Timed in milliseconds, not frames: counted in frames it ran twice as
+       fast on a 120Hz screen as on a 60Hz one. Each letter starts 15ms
+       after the one before and settles after 150 to 270ms of noise, so the
+       whole line resolves in about a second. */
     const queue = Array.from(finalText).map((ch, i) => ({
       ch,
-      start: Math.floor(i * 1.4),
-      end: Math.floor(i * 1.4) + 14 + Math.floor(Math.random() * 12),
+      start: i * 15,
+      end: i * 15 + 150 + Math.floor(Math.random() * 120),
     }));
 
-    const tick = () => {
+    let t0 = 0;
+    const tick = (now) => {
+      if (!t0) t0 = now;
+      frame = now - t0;
       let complete = 0;
       const out = queue.map((item) => {
         if (frame >= item.end) { complete++; return item.ch; }
@@ -806,12 +816,20 @@ syncLogoTheme();
         const text = out.slice(w.from, w.to).join('');
         if (text !== w.text) { w.el.textContent = text; w.text = text; }
       }
-      frame++;
       if (complete < queue.length) requestAnimationFrame(tick);
       else finish();
     };
-    // Start after the loader clears so the effect is actually seen.
-    setTimeout(() => requestAnimationFrame(() => { begin(); tick(); }), 1300);
+    /* Starts as the loading screen begins to lift, so it is seen from its
+       first letter, whenever that turns out to be. */
+    let started = false;
+    const go = () => { if (started) return; started = true; requestAnimationFrame(() => { begin(); requestAnimationFrame(tick); }); };
+    const loaderEl = $('#pageLoader');
+    if (!loaderEl || loaderEl.classList.contains('is-done')) go();
+    else {
+      new MutationObserver((_, mo) => { if (loaderEl.classList.contains('is-done')) { mo.disconnect(); go(); } })
+        .observe(loaderEl, { attributes: true, attributeFilter: ['class'] });
+      setTimeout(go, 4200);
+    }
   }
 
   const typed = $('#typedRole');
@@ -948,7 +966,8 @@ syncLogoTheme();
   const originals = Array.from(track.children);
   if (!originals.length) return;
 
-  const SPEED = 42;          // px per second of idle drift
+  // px per second of idle drift: a little quicker on desktop, unchanged on phones
+  const SPEED = matchMedia('(hover: hover) and (pointer: fine)').matches ? 50 : 42;
   const RUNWAY = 12000;      // px a flick can coast either way before it needs wrapping
   let setW = 0;              // width of one full set, including the trailing gap
   let midSet = 1;            // which copy the strip is kept centred on
@@ -3975,6 +3994,10 @@ function gatorStorm(n = 12) {
   hls.forEach((hl, i) => $('.hl-btn', hl).addEventListener('click', () => {
     story = i; step = 0; setPaused(false);
     dlg.showModal();
+    /* The dialog itself takes focus, not its first button (the close):
+       with the close focused, Space, which pauses a story, pressed the
+       close instead. Tab still reaches every button. */
+    dlg.focus({ preventScroll: true });
     show();
   }));
   $('.st-next', dlg).addEventListener('click', next);
@@ -4079,3 +4102,62 @@ console.log(
   'font-size:20px;font-weight:700;color:#71FFE9',
   'color:#9fb2c4;font-family:monospace;line-height:1.6'
 );
+
+/* ==========================================================================
+   Recommendations preview
+   Shows the first three and a peek of the fourth; the button opens the
+   rest in place and closes them again. The height animates between the
+   two, and closing brings the section's top back into view so the reader
+   is not left far below where the thread now ends.
+   ========================================================================== */
+(function recsPreview() {
+  const wrap = $('#recThread');
+  const btn = $('.recs-more');
+  if (!wrap || !btn) return;
+  const items = $$('.rec', wrap);
+  const SHOW = 3;
+  if (items.length <= SHOW + 1) return;
+
+  let open = false;
+  const label = () => { btn.textContent = open ? 'Show less' : 'Show more'; };
+  // Down to the end of the third, plus the top of the fourth as a peek.
+  // Layout positions, not on-screen ones, so the reveal's slide-in offset
+  // does not move the cut.
+  const offTop = (el) => { let y = 0; for (let n = el; n && n !== wrap; n = n.offsetParent) y += n.offsetTop; return y; };
+  const collapsedH = () => {
+    const peek = items[SHOW];
+    return Math.round(offTop(peek) + Math.min(90, peek.offsetHeight * .5));
+  };
+
+  wrap.classList.add('is-collapsible');
+  wrap.style.height = `${collapsedH()}px`;
+  btn.hidden = false;
+  label();
+
+  // Keeps the preview's cut in the right place as the text reflows.
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => { if (!open) wrap.style.height = `${collapsedH()}px`; }).observe(wrap.firstElementChild);
+  }
+
+  wrap.addEventListener('transitionend', (e) => {
+    if (e.target === wrap && e.propertyName === 'height' && open) wrap.style.height = 'auto';
+  });
+
+  btn.addEventListener('click', () => {
+    open = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    wrap.classList.toggle('is-open', open);
+    label();
+    if (open) {
+      wrap.style.height = `${wrap.scrollHeight}px`;
+      if (prefersReduced()) wrap.style.height = 'auto';
+    } else {
+      wrap.style.height = `${wrap.scrollHeight}px`;
+      void wrap.offsetHeight;
+      wrap.style.height = `${collapsedH()}px`;
+      const sec = wrap.closest('section');
+      const r = sec?.getBoundingClientRect();
+      if (r && r.top < 0) scrollTo({ top: scrollY + r.top - 80, behavior: prefersReduced() ? 'auto' : 'smooth' });
+    }
+  });
+})();

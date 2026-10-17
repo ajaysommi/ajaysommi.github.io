@@ -1647,3 +1647,30 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
    padding nudged it too. */
 .story .st-close,
 .story .st-btn { flex: none; padding: 0; aspect-ratio: 1; }
+
+/* The story takes focus itself when it opens (so Space pauses rather than
+   pressing the close button); it needs no ring around the whole viewer. */
+.story:focus { outline: none; }
+
+/* ---------- Recommendations preview ---------------------------------------
+   Nine is a lot to scroll past on a phone, so the thread opens as a
+   preview: the first three, and the top of the fourth fading into the page
+   as a hint there is more. "Show more" opens the rest in place. Without
+   script every one shows, as before. */
+.thread-wrap.is-collapsible {
+  position: relative;
+  overflow: hidden;
+  transition: height .6s cubic-bezier(.22, 1, .36, 1);
+}
+.thread-wrap.is-collapsible:not(.is-open) {
+  /* Fades the bubbles themselves, not a painted band over them, so the
+     page's background shows through untouched. */
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 150px), transparent);
+          mask-image: linear-gradient(#000 calc(100% - 150px), transparent);
+}
+.recs-more-row { display: flex; justify-content: center; margin-top: 4px; }
+.recs-more { position: relative; z-index: 1; }
+.recs-more[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .thread-wrap.is-collapsible { transition: none; }
+}
