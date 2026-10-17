@@ -5390,3 +5390,59 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   .sub-long { display: none; }
   .sub-short { display: inline; }
 }
+
+/* Phones: a project card's title and description sit right under its
+   label, and the spare room goes below the description, above the tags. */
+@media (max-width: 719px) {
+  .card .card-top { margin-bottom: 4px; }
+  .card h3 { margin-top: 0; margin-bottom: 6px; }
+  .card p { margin-bottom: 18px; }
+}
+
+/* The bar between phone and full desktop widths: the six links shrink a
+   little (tighter padding, slightly smaller type) so they never run under
+   the search, theme and contact buttons on a narrow or oddly shaped
+   window. At full width nothing changes. */
+@media (min-width: 720px) and (max-width: 1100px) {
+  header.nav .nav-links a {
+    padding-inline: clamp(6px, 1.6vw - 3px, 13px);
+    font-size: clamp(.8rem, .55rem + .5vw, .93rem);
+  }
+}
+
+/* Story viewer on a phone held sideways: the screen is wide but short, so
+   instead of the stacked phone layout (a sliver of photo over a block of
+   words) or the desktop card (shrunk to fit a short window), it fills the
+   screen with the photo on the left and the words and controls in a
+   narrower panel on the right, clear of the notch and home indicator. */
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse), (orientation: landscape) and (max-height: 460px) {
+  .story { --stw: min(42%, 360px); position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border-radius: 0; }
+  .st-frame { display: grid; grid-template-columns: minmax(0, 1fr) var(--stw); }
+  .st-media { grid-column: 1; grid-row: 1; }
+  .st-media::after { height: 72px; }
+  .st-bars { top: 8px; left: calc(12px + env(safe-area-inset-left)); right: calc(var(--stw) + 12px); }
+  .st-head { top: 14px; padding-left: calc(14px + env(safe-area-inset-left)); padding-right: calc(10px + env(safe-area-inset-right)); }
+  .st-title { max-width: calc(100% - var(--stw) - 40px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st-tap { top: 52px; bottom: 0; }
+  .st-prev { width: calc((100% - var(--stw)) * .4); }
+  .st-next { left: calc((100% - var(--stw)) * .4); right: var(--stw); width: auto; }
+  .st-text {
+    position: static;
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 62px calc(20px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) 20px;
+    border-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, .08);
+    overflow-y: auto;
+  }
+  .st-intro { font-size: .84rem; line-height: 1.5; margin-bottom: 10px; }
+  .st-step { font-size: .9rem; line-height: 1.5; }
+  .st-controls { position: static; display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 14px; }
+  .story .st-btn { width: 38px; height: 38px; }
+  .story .st-pause { width: 42px; height: 42px; }
+  .story .st-btn svg { width: 17px; height: 17px; }
+  .story .st-close { width: 38px; height: 38px; }
+}

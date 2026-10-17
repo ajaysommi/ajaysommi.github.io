@@ -374,7 +374,15 @@ const onScrollFrame = (() => {
   const built = document.readyState === 'loading'
     ? new Promise((r) => document.addEventListener('DOMContentLoaded', r, { once: true }))
     : Promise.resolve();
-  Promise.all([built, fonts]).then(finish);
+  /* And for the mark to finish assembling, plus a beat to be seen whole,
+     so it is never cut off partway on a fast first load. */
+  const markDone = new Promise((r) => {
+    const dot = el.querySelector('.mk-dot');
+    if (!dot || prefersReduced()) { r(); return; }
+    dot.addEventListener('animationend', () => setTimeout(r, 260), { once: true });
+    setTimeout(r, 2600);
+  });
+  Promise.all([built, fonts, markDone]).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
   setTimeout(dismiss, 4000);
@@ -677,7 +685,20 @@ syncLogoTheme();
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
 
-  items.forEach((el) => io.observe(el));
+  /* Anything already on screen when the page opens is simply there, with
+     no fade: it is revealed behind the loading screen. Waiting for the
+     observer left whatever sat at the very foot of the screen (behind the
+     iPhone's tab bar, inside the observer's bottom margin) blank until the
+     visitor scrolled or a second passed. */
+  const vh = innerHeight;
+  items.forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.top < vh && r.bottom > 0) {
+      el.style.transition = 'none';
+      el.classList.add('is-in');
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = ''; }));
+    } else io.observe(el);
+  });
 
   /* Safety net for anything the observer never got to sample. A fast flick,
      or a nav link that jumps straight to a later section, can carry an
