@@ -971,8 +971,8 @@ syncLogoTheme();
      window), where the same speed reads as rushing. Follows the window as
      it is resized. */
   const wideDesktop = matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)');
-  let SPEED = wideDesktop.matches ? 66 : 42;
-  const setSpeed = () => { SPEED = wideDesktop.matches ? 66 : 42; };
+  let SPEED = wideDesktop.matches ? 60 : 44;
+  const setSpeed = () => { SPEED = wideDesktop.matches ? 60 : 44; };
   if (wideDesktop.addEventListener) wideDesktop.addEventListener('change', setSpeed); else wideDesktop.addListener(setSpeed);
   const RUNWAY = 12000;      // px a flick can coast either way before it needs wrapping
   let setW = 0;              // width of one full set, including the trailing gap
