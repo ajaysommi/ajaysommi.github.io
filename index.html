@@ -104,7 +104,7 @@
   <script>
     /* Start the loading animation once the loader has actually been drawn,
        two frames in, so none of it is spent before the first paint. */
-    (function () { var l = document.getElementById('pageLoader'); if (l) requestAnimationFrame(function () { requestAnimationFrame(function () { l.classList.add('is-go'); }); }); })();
+    (function () { var l = document.getElementById('pageLoader'); if (l && location.hash) l.classList.add('is-fixed'); if (l) requestAnimationFrame(function () { requestAnimationFrame(function () { l.classList.add('is-go'); }); }); })();
   </script>
 
   <!-- Ambient field. One environment under the whole page whose lighting

@@ -1525,19 +1525,17 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
    In the light theme the story follows the page: paper behind the photo and
    under the words, ink text, and a soft wash of the photo's own colours
    instead of a darkened one. The round buttons sitting on the photo keep
-   their glass, lightened to match. */
+   their glass, lightened to match. The title and progress bars stay white
+   on a dark wash at the top of the photo, in either theme: dark text over
+   a photo clashed with whatever the picture had in it. */
 [data-theme="daylight"] .story,
 [data-theme="daylight"] .story .st-text,
 [data-theme="daylight"] .story .st-media { background: var(--bg); color: var(--ink); }
 [data-theme="daylight"] .story .st-text { border-color: var(--stroke); }
 [data-theme="daylight"] .story::backdrop { background: rgba(20, 20, 20, .4); }
 [data-theme="daylight"] .story .st-blur { filter: blur(36px) saturate(1.15); opacity: .45; }
-[data-theme="daylight"] .story .st-media::after {
-  background: linear-gradient(color-mix(in oklab, var(--bg) 88%, transparent), transparent);
-}
-[data-theme="daylight"] .story .st-head { color: var(--ink); text-shadow: none; }
-[data-theme="daylight"] .story .st-bars span { background: color-mix(in oklab, var(--ink) 18%, transparent); }
-[data-theme="daylight"] .story .st-bars i { background: var(--ink); }
+[data-theme="daylight"] .story .st-head { color: #fff; }
+[data-theme="daylight"] .story .st-media::after { background: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .25) 55%, transparent); }
 [data-theme="daylight"] .story .st-intro { color: var(--ink-2); }
 [data-theme="daylight"] .story .st-step { color: var(--ink); }
 [data-theme="daylight"] .story .st-lead { color: var(--ink); }
@@ -1551,3 +1549,14 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 [data-theme="daylight"] .story .st-btn:hover,
 [data-theme="daylight"] .story .st-close:hover { background-color: var(--bg); border-color: color-mix(in oklab, var(--ink) 35%, transparent); }
 [data-theme="daylight"] .st-n { color: #fff; }
+
+/* ---------- Loading screen and Safari's toolbar ---------------------------
+   On recent iPhones Safari tints the area behind its bottom toolbar to
+   match a fixed element touching the bottom of the screen. The loading
+   screen was one, so as it faded out the strip at the bottom stayed solid
+   until it was removed, hiding whatever was under it for a second. It now
+   sits at the top of the page instead of being fixed to the screen, which
+   looks the same (the page always opens at the top) and gives Safari
+   nothing to match. Arriving on a #link, where the page may open further
+   down, it stays fixed. */
+.page-loader:not(.is-fixed) { position: absolute; inset: 0 0 auto; height: 100vh; height: 100lvh; }
