@@ -3849,7 +3849,7 @@ function gatorStorm(n = 12) {
     };
   });
 
-  const bars = $('.st-bars', dlg), img = $('.st-img', dlg), title = $('.st-title', dlg);
+  const bars = $('.st-bars', dlg), img = $('.st-img', dlg), titles = $$('.st-title', dlg), avatar = $('.st-avatar', dlg);
   const intro = $('.st-intro', dlg), nEl = $('.st-n', dlg), lead = $('.st-lead', dlg), body = $('.st-body', dlg);
   let story = 0, step = 0, start = 0, elapsed = 0, raf = 0, paused = false;
   const auto = () => !prefersReduced();
@@ -3890,7 +3890,10 @@ function gatorStorm(n = 12) {
       bars.replaceChildren(...d.steps.map(() => { const s = document.createElement('span'); s.append(document.createElement('i')); return s; }));
       bars.dataset.story = String(story);
     }
-    title.textContent = d.title;
+    titles.forEach((t) => { t.textContent = d.title; });
+    // The story's own cover, as the round picture beside its name on phones.
+    const cover = $(`.hl-btn[data-story="${story}"] img`);
+    if (avatar && cover) avatar.src = cover.currentSrc || cover.src;
     img.srcset = st.srcset;
     img.sizes = SIZES;
     img.src = st.src;

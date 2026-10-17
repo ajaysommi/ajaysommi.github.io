@@ -1565,7 +1565,6 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
    photo keeps only the progress bars and the close button, and on desktop
    the title fills the space beside the close button that used to sit
    empty above the words. */
-.story .st-head { justify-content: flex-end; }
 .story .st-title {
   margin: 0 0 10px;
   color: inherit;
@@ -1583,3 +1582,57 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
   .story .st-text { padding-top: 22px; }
   .story .st-title { max-width: none; margin-bottom: 8px; padding-right: 48px; overflow: visible; white-space: normal; font-size: 1rem; }
 }
+
+/* Phones held upright read like a story in a social app: the cover photo
+   in a small circle and the title beside it, top left over the photo, just
+   under the progress bars. White, with a soft shadow, on a dark fade down
+   from the top, in either theme, so it reads over the brightest picture.
+   The panel's own heading is the desktop and sideways layout's. */
+.st-who { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.st-avatar {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, .9), 0 1px 4px rgba(0, 0, 0, .35);
+  background: rgba(255, 255, 255, .15);
+}
+.story .st-title-top {
+  margin: 0;
+  overflow: hidden;
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .55), 0 0 12px rgba(0, 0, 0, .3);
+}
+.story .st-head { color: #fff; gap: 12px; padding-right: 10px; }
+.story .st-text .st-title { display: none; }
+.story .st-media::after,
+[data-theme="daylight"] .story .st-media::after {
+  height: 150px;
+  background: linear-gradient(rgba(0, 0, 0, .62), rgba(0, 0, 0, .28) 55%, transparent);
+}
+@media (min-width: 900px) {
+  .st-who { display: none; }
+  .story .st-head { justify-content: flex-end; }
+  .story .st-text .st-title { display: block; }
+  .story .st-media::after,
+  [data-theme="daylight"] .story .st-media::after { height: 70px; background: linear-gradient(rgba(0, 0, 0, .35), transparent); }
+}
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse), (orientation: landscape) and (max-height: 460px) {
+  .st-who { display: none; }
+  .story .st-head { justify-content: flex-end; }
+  .story .st-text .st-title { display: block; }
+  .story .st-media::after,
+  [data-theme="daylight"] .story .st-media::after { height: 60px; background: linear-gradient(rgba(0, 0, 0, .35), transparent); }
+}
+
+/* The round story buttons stay round: a long title beside the close button
+   squeezed it narrower than it was tall, and the browser's own button
+   padding nudged it too. */
+.story .st-close,
+.story .st-btn { flex: none; padding: 0; aspect-ratio: 1; }
