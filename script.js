@@ -966,8 +966,14 @@ syncLogoTheme();
   const originals = Array.from(track.children);
   if (!originals.length) return;
 
-  // px per second of idle drift: a little quicker on desktop, unchanged on phones
-  const SPEED = matchMedia('(hover: hover) and (pointer: fine)').matches ? 66 : 42;
+  /* px per second of idle drift: quicker on a full width desktop window, and
+     the original pace anywhere the layout is compact (a phone, or a narrow
+     window), where the same speed reads as rushing. Follows the window as
+     it is resized. */
+  const wideDesktop = matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)');
+  let SPEED = wideDesktop.matches ? 66 : 42;
+  const setSpeed = () => { SPEED = wideDesktop.matches ? 66 : 42; };
+  if (wideDesktop.addEventListener) wideDesktop.addEventListener('change', setSpeed); else wideDesktop.addListener(setSpeed);
   const RUNWAY = 12000;      // px a flick can coast either way before it needs wrapping
   let setW = 0;              // width of one full set, including the trailing gap
   let midSet = 1;            // which copy the strip is kept centred on
