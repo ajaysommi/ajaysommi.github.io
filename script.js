@@ -967,7 +967,7 @@ syncLogoTheme();
   if (!originals.length) return;
 
   // px per second of idle drift: a little quicker on desktop, unchanged on phones
-  const SPEED = matchMedia('(hover: hover) and (pointer: fine)').matches ? 58 : 42;
+  const SPEED = matchMedia('(hover: hover) and (pointer: fine)').matches ? 66 : 42;
   const RUNWAY = 12000;      // px a flick can coast either way before it needs wrapping
   let setW = 0;              // width of one full set, including the trailing gap
   let midSet = 1;            // which copy the strip is kept centred on
