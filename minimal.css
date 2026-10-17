@@ -1655,7 +1655,7 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 /* ---------- Recommendations preview ---------------------------------------
    Nine is a lot to scroll past on a phone, so the thread opens as a
    preview: the first three, and the top of the fourth fading into the page
-   as a hint there is more. "Show more" opens the rest in place. Without
+   as a hint there is more. "Show more" opens the rest in place, for good. Without
    script every one shows, as before. */
 .thread-wrap.is-collapsible {
   position: relative;
@@ -1671,6 +1671,9 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 .recs-more-row { display: flex; justify-content: center; margin-top: 4px; }
 .recs-more { position: relative; z-index: 1; }
 .recs-more[hidden] { display: none; }
+.recs-more-row { transition: opacity .25s ease; }
+.recs-more-row.is-gone { opacity: 0; pointer-events: none; }
+.recs-more-row[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .thread-wrap.is-collapsible { transition: none; }
 }

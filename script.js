@@ -967,7 +967,7 @@ syncLogoTheme();
   if (!originals.length) return;
 
   // px per second of idle drift: a little quicker on desktop, unchanged on phones
-  const SPEED = matchMedia('(hover: hover) and (pointer: fine)').matches ? 50 : 42;
+  const SPEED = matchMedia('(hover: hover) and (pointer: fine)').matches ? 58 : 42;
   const RUNWAY = 12000;      // px a flick can coast either way before it needs wrapping
   let setW = 0;              // width of one full set, including the trailing gap
   let midSet = 1;            // which copy the strip is kept centred on
@@ -4106,9 +4106,7 @@ console.log(
 /* ==========================================================================
    Recommendations preview
    Shows the first three and a peek of the fourth; the button opens the
-   rest in place and closes them again. The height animates between the
-   two, and closing brings the section's top back into view so the reader
-   is not left far below where the thread now ends.
+   rest in place, with the height animating open, and then goes away.
    ========================================================================== */
 (function recsPreview() {
   const wrap = $('#recThread');
@@ -4119,7 +4117,6 @@ console.log(
   if (items.length <= SHOW + 1) return;
 
   let open = false;
-  const label = () => { btn.textContent = open ? 'Show less' : 'Show more'; };
   // Down to the end of the third, plus the top of the fourth as a peek.
   // Layout positions, not on-screen ones, so the reveal's slide-in offset
   // does not move the cut.
@@ -4132,7 +4129,6 @@ console.log(
   wrap.classList.add('is-collapsible');
   wrap.style.height = `${collapsedH()}px`;
   btn.hidden = false;
-  label();
 
   // Keeps the preview's cut in the right place as the text reflows.
   if ('ResizeObserver' in window) {
@@ -4143,21 +4139,24 @@ console.log(
     if (e.target === wrap && e.propertyName === 'height' && open) wrap.style.height = 'auto';
   });
 
+  /* One way only: once opened, everything stays open and the button goes
+     away. A "Show less" that folded the thread back and scrolled up to the
+     section's top felt like the page bouncing. A reload starts collapsed. */
   btn.addEventListener('click', () => {
-    open = !open;
-    btn.setAttribute('aria-expanded', String(open));
-    wrap.classList.toggle('is-open', open);
-    label();
-    if (open) {
-      wrap.style.height = `${wrap.scrollHeight}px`;
-      if (prefersReduced()) wrap.style.height = 'auto';
-    } else {
-      wrap.style.height = `${wrap.scrollHeight}px`;
-      void wrap.offsetHeight;
-      wrap.style.height = `${collapsedH()}px`;
-      const sec = wrap.closest('section');
-      const r = sec?.getBoundingClientRect();
-      if (r && r.top < 0) scrollTo({ top: scrollY + r.top - 80, behavior: prefersReduced() ? 'auto' : 'smooth' });
+    if (open) return;
+    open = true;
+    btn.setAttribute('aria-expanded', 'true');
+    wrap.classList.add('is-open');
+    wrap.style.height = `${wrap.scrollHeight}px`;
+    if (prefersReduced()) wrap.style.height = 'auto';
+    const row = btn.closest('.recs-more-row') || btn;
+    row.classList.add('is-gone');
+    setTimeout(() => { row.hidden = true; }, prefersReduced() ? 0 : 300);
+    // Keyboard focus moves on to the first recommendation that just opened.
+    if (document.activeElement === btn) {
+      const first = items[SHOW];
+      first.setAttribute('tabindex', '-1');
+      first.focus({ preventScroll: true });
     }
-  });
+  }, { once: true });
 })();
