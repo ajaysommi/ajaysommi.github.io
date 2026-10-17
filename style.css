@@ -4863,11 +4863,11 @@
      settles from just below while the backdrop fades up behind it. Closing
      runs the same motion back. On phones it rises a little further, like a
      sheet coming up from the bottom of the screen. */
-  .story[open] { animation: st-in .34s cubic-bezier(.2, .8, .2, 1); }
-  .story[open]::backdrop { animation: st-fade .34s ease; }
+  .story[open] { animation: st-in .52s cubic-bezier(.16, 1, .3, 1); }
+  .story[open]::backdrop { animation: st-fade .45s ease-out; }
   .story.is-closing { animation: st-out .22s cubic-bezier(.4, 0, 1, 1) forwards; }
   .story.is-closing::backdrop { animation: st-fade-out .22s ease forwards; }
-  @keyframes st-in { from { opacity: 0; transform: translateY(14px) scale(.965); } }
+  @keyframes st-in { from { opacity: 0; transform: translateY(18px) scale(.96); } }
   @keyframes st-out { to { opacity: 0; transform: translateY(10px) scale(.97); } }
   @keyframes st-fade { from { opacity: 0; } }
   @keyframes st-fade-out { to { opacity: 0; } }
