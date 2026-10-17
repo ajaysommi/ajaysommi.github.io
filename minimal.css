@@ -1525,17 +1525,15 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
    In the light theme the story follows the page: paper behind the photo and
    under the words, ink text, and a soft wash of the photo's own colours
    instead of a darkened one. The round buttons sitting on the photo keep
-   their glass, lightened to match. The title and progress bars stay white
-   on a dark wash at the top of the photo, in either theme: dark text over
-   a photo clashed with whatever the picture had in it. */
+   their glass, lightened to match. The progress bars stay white on a
+   light dark wash at the top of the photo, in either theme. */
 [data-theme="daylight"] .story,
 [data-theme="daylight"] .story .st-text,
 [data-theme="daylight"] .story .st-media { background: var(--bg); color: var(--ink); }
 [data-theme="daylight"] .story .st-text { border-color: var(--stroke); }
 [data-theme="daylight"] .story::backdrop { background: rgba(20, 20, 20, .4); }
 [data-theme="daylight"] .story .st-blur { filter: blur(36px) saturate(1.15); opacity: .45; }
-[data-theme="daylight"] .story .st-head { color: #fff; }
-[data-theme="daylight"] .story .st-media::after { background: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .25) 55%, transparent); }
+[data-theme="daylight"] .story .st-media::after { height: 70px; background: linear-gradient(rgba(0, 0, 0, .35), transparent); }
 [data-theme="daylight"] .story .st-intro { color: var(--ink-2); }
 [data-theme="daylight"] .story .st-step { color: var(--ink); }
 [data-theme="daylight"] .story .st-lead { color: var(--ink); }
@@ -1560,3 +1558,28 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
    nothing to match. Arriving on a #link, where the page may open further
    down, it stays fixed. */
 .page-loader:not(.is-fixed) { position: absolute; inset: 0 0 auto; height: 100vh; height: 100lvh; }
+
+/* ---------- Story title ----------------------------------------------------
+   The title lives at the top of the words panel as its heading, not over
+   the photo, where no colour of text read well against every picture. The
+   photo keeps only the progress bars and the close button, and on desktop
+   the title fills the space beside the close button that used to sit
+   empty above the words. */
+.story .st-head { justify-content: flex-end; }
+.story .st-title {
+  margin: 0 0 10px;
+  color: inherit;
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.015em;
+  text-shadow: none;
+}
+@media (min-width: 900px) {
+  .story .st-text { padding-top: 34px; }
+  .story .st-title { max-width: none; margin-bottom: 16px; padding-right: 56px; font-size: 1.3rem; }
+}
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse), (orientation: landscape) and (max-height: 460px) {
+  .story .st-text { padding-top: 22px; }
+  .story .st-title { max-width: none; margin-bottom: 8px; padding-right: 48px; overflow: visible; white-space: normal; font-size: 1rem; }
+}
