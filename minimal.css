@@ -1557,7 +1557,18 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
    looks the same (the page always opens at the top) and gives Safari
    nothing to match. Arriving on a #link, where the page may open further
    down, it stays fixed. */
-.page-loader:not(.is-fixed) { position: absolute; inset: 0 0 auto; height: 100vh; height: 100lvh; }
+/* Its paper runs on well past the bottom of the screen: on an iPhone the
+   page shows through under Safari's toolbar, below where even 100lvh ends,
+   and a strip of text peeked out there. The extra is padding, so the mark
+   stays centred on the screen itself. */
+.page-loader:not(.is-fixed) {
+  position: absolute;
+  inset: 0 0 auto;
+  box-sizing: content-box;
+  height: 100vh;
+  height: 100lvh;
+  padding-bottom: 40vh;
+}
 
 /* ---------- Story title ----------------------------------------------------
    The title lives at the top of the words panel as its heading, not over
