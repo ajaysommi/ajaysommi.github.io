@@ -6,8 +6,9 @@
      --mx, --my   where the cursor is, -1 to 1 across the window, eased
                   slowly so the field drifts after the pointer. Also written
                   onto the hero, whose shape tiles drift with it.
-     --fade       0 at the top, 1 once the hero has scrolled away, so the
-                  field steps back behind the content.
+     fade         the field's opacity, full at the top and down to about a
+                  sixth once the hero has scrolled away, so the field steps
+                  back behind the content.
      data-scene   the section being read. minimal.css gives each one its own
                   arrangement and the shapes glide and morph between them.
 
@@ -106,6 +107,11 @@
   ].map(([name, sel]) => [name, document.querySelector(sel)]).filter(([, el]) => el);
 
   let lastFade = '', scene = '';
+  /* The fade is written straight onto the field's opacity, not as a
+     variable on the ground: a variable there made every shape's style be
+     worked out again on every frame of a scroll, which on a phone was most
+     of what made the field stutter. Opacity alone is the compositor's job. */
+  const field = ground.querySelector('.m-field');
 
   /* Reads, then writes: run with the site's other scroll effects in one
      pass per frame (reads first for all of them), so none of them makes
@@ -129,7 +135,7 @@
     }
     if (fade === lastFade && now === scene) return;
     return () => {
-      if (fade !== lastFade) { ground.style.setProperty('--fade', fade); lastFade = fade; }
+      if (fade !== lastFade) { if (field) field.style.opacity = (1 - fade * .84).toFixed(3); lastFade = fade; }
       if (now !== scene) { scene = now; ground.dataset.scene = now; }
     };
   };

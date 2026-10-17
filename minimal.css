@@ -196,8 +196,8 @@
 
      Three things move them, all written by minimal.js:
 
-       --fade   0 at the top, 1 once you are past the hero. The whole field
-                fades back to about a sixth of its strength, so it sets
+       fade     full at the top, and once you are past the hero the whole
+                field fades back to about a sixth of its strength, so it sets
                 the mood on arrival and then gets out of the way of the
                 content.
        scene    data-scene names the section you are reading. Every section
@@ -215,7 +215,6 @@
   .bg {
     --mx: 0;
     --my: 0;
-    --fade: 0;
     --m-ease: cubic-bezier(.65, .05, .25, 1);
     background-color: var(--bg);
     background-image: none;
@@ -318,10 +317,10 @@
     --tri-x: 92vw; --tri-y: 86vh; --tri-r: 0deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
   }
 
+  /* Its opacity (the fade as the hero scrolls away) is set by minimal.js. */
   .m-field {
     position: absolute;
     inset: 0;
-    opacity: calc(1 - var(--fade) * .84);
   }
 
   .m-s {
@@ -475,6 +474,21 @@
     .m-plus,
     .m-tri,
     .m-bit { display: none; }
+  }
+
+  /* Phones, tablets and narrow windows: the shapes glide between scenes
+     but keep their form. Morphing a corner or a clip means repainting the
+     largest shapes on every frame for two seconds, which a phone could not
+     keep up with while it was also scrolling, so the field stuttered. A
+     glide alone is a transform, which the compositor runs by itself; each
+     shape gets its own layer for it. The forms are the opening scene's. */
+  @media (hover: none), (max-width: 899px) {
+    .m-s {
+      will-change: transform;
+      transition: transform 1.9s var(--m-ease) var(--delay, 0s);
+    }
+    .m-quarter { border-radius: 0 100% 0 0; }
+    .m-disc { border-radius: 50%; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1677,3 +1691,9 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 @media (prefers-reduced-motion: reduce) {
   .thread-wrap.is-collapsible { transition: none; }
 }
+
+/* The field runs on well past the bottom of the screen. On an iPhone the
+   page shows through under Safari's floating toolbar, below where even
+   100lvh ends, and the shapes were cut off in a straight line there. The
+   shapes are placed from the top, so the extra only adds room below. */
+.bg { height: calc(100vh + 40vh); height: calc(100lvh + 40vh); }
