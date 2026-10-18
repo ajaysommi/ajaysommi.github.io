@@ -2226,8 +2226,8 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 html:has(#pageLoader:not(.is-done)),
 html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior: none; }
 
-/* The Path's stops: larger, and no rim, just the company's colour as a
-   flat wash (solid for the open one). The middle column's stop is moved
+/* The Path's stops: larger, the company's colour as a flat wash with a
+   fine rim (solid and ringed for the open one). The middle column's stop is moved
    over by half the larger stop so its node stays on the midline. */
 [data-theme] .pc-node,
 [data-theme] .pc-stop.is-past .pc-node,
@@ -2243,7 +2243,13 @@ html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior
    white reads best on its colour (--on-tint, from script.js). */
 [data-theme] .pc-stop.is-on .pc-node { box-shadow: 0 0 0 5px var(--bg), 0 0 0 7px var(--tint); }
 [data-theme] .pc-stop.is-on .pc-year { color: var(--on-tint, #0e0e0e); }
-[data-theme] .pc-stop:hover .pc-node { background: color-mix(in oklab, var(--tint) 22%, var(--bg)); }
+/* A fine rim in the stop's colour, drawn inside the circle so its size
+   does not change; it sharpens on hover. */
+[data-theme] .pc-node { box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--tint) 60%, var(--stroke-hi)); }
+[data-theme] .pc-stop:hover .pc-node {
+  background: color-mix(in oklab, var(--tint) 22%, var(--bg));
+  box-shadow: inset 0 0 0 1.5px var(--tint);
+}
 [data-theme] .pc-stop.is-on:hover .pc-node { background: var(--tint); }
 @media (max-width: 719px) {
   .pc-node { width: 66px; height: 66px; }
