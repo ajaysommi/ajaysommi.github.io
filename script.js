@@ -550,18 +550,17 @@ syncLogoTheme();
   });
   scrim?.addEventListener('click', closeSheet);
 
-  /* The home mark travels with you. The class is cleared on animationend so
-     a second click replays it rather than doing nothing. */
+  /* Pressing the home mark plays the loading screen's assembly again: the
+     A rises, the hook swings in, the stem grows and the dot drops on. The
+     class comes off when the dot lands, so a second press replays it. */
   const brandMark = $('.brand .brand-mark');
   $('.brand')?.addEventListener('click', () => {
     if (!brandMark || prefersReduced()) return;
-    brandMark.classList.remove('is-travelling');
+    brandMark.classList.remove('is-assembling');
     void brandMark.offsetWidth;   // restart the animation from the top
-    brandMark.classList.add('is-travelling');
-  });
-
-  brandMark?.addEventListener('animationend', () => {
-    brandMark.classList.remove('is-travelling');
+    brandMark.classList.add('is-assembling');
+    const dot = brandMark.querySelector('.brand-aj circle');
+    dot?.addEventListener('animationend', () => brandMark.classList.remove('is-assembling'), { once: true });
   });
 
   // Delegated smooth scrolling for every in-page link.
