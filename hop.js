@@ -18,13 +18,14 @@
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DANCE = 1000;    // ms of the plain hops
-  const RESUME = 2100;   // ms of the resume scene, if it ran to the end
+  const RESUME = 1990;   // ms of the resume scene
   const SOFT = 1300;     // the resume scene without the throw
   // Moments in the resume scene: the sheet hits the glass and spreads flat,
   // and the batter has run and faded by the time the page changes.
-  const K = RESUME / 2600;
-  const HIT = Math.round(1557 * K), SPLAT = Math.round(1602 * K), SAG = Math.round(SPLAT + (RESUME - SPLAT) * 0.6);
+  const HIT = 1165, SPLAT = 1205;
   const LIFE = RESUME - SPLAT - 20;
+  // The resume scene's keyframes are written in ms from its start.
+  const P = (ms) => `${(ms / RESUME * 100).toFixed(2)}%`;
   let going = false;
 
   // Rising slows to the top, falling speeds up: gravity.
@@ -193,31 +194,31 @@
     .hop-sheet .l5 { animation: hop-write5 ${RESUME}ms linear both; }
 
     @keyframes hop-tap {
-      0%   { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: ${SNAP}; }
-      2.77%   { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.07, .93); animation-timing-function: ${UP}; }
-      5.54%   { transform: perspective(360px) translate(-6px, -16px) rotate(-5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      8.31%  { transform: perspective(360px) translate(-8px, 0) rotate(-2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
-      11.77%  { transform: perspective(360px) translate(4px, -15px) rotate(5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      15.23%  { transform: perspective(360px) translate(8px, 0) rotate(2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
-      18.69%  { transform: perspective(360px) translate(-4px, -15px) rotate(-5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      22.15%  { transform: perspective(360px) translate(-8px, 0) rotate(-2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
-      25.61%  { transform: perspective(360px) translate(4px, -15px) rotate(5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      29.07%  { transform: perspective(360px) translate(8px, 0) rotate(2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${SNAP}; }
-      31.16%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.02, .98); animation-timing-function: ${SNAP}; }
-      33.23%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.16, .82); animation-timing-function: ${UP}; }
-      35.31%  { transform: perspective(360px) translate(0, -26px) rotate(-2deg) rotateY(0deg) scale(.9, 1.12); animation-timing-function: ${UP}; }
-      40.15%  { transform: perspective(360px) translate(0, -92px) rotate(-7deg) rotateY(0deg) scale(1, 1); animation-timing-function: ${DOWN}; }
-      44.3%  { transform: perspective(360px) translate(0, 0) rotate(-1deg) rotateY(0deg) scale(.95, 1.06); animation-timing-function: ${SNAP}; }
-      46.39%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.17, .83); animation-timing-function: ${UP}; }
-      48.46%  { transform: perspective(360px) translate(0, -9px) rotate(0) rotateY(0deg) scale(.97, 1.03); animation-timing-function: ${DOWN}; }
-      50.54%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(7deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
-      54.7%  { transform: perspective(360px) translate(7px, 3px) rotate(11deg) rotateY(32deg) scale(1.08, .9); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
-      55.38%  { transform: perspective(360px) translate(7.5px, 3.5px) rotate(12deg) rotateY(34deg) scale(1.09, .89); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
-      57.46%  { transform: perspective(360px) translate(-5px, -11px) rotate(-9deg) rotateY(-18deg) scale(.93, 1.09); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      60.23%  { opacity: 1; transform: perspective(360px) translate(-1px, 0) rotate(4deg) rotateY(10deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      63%  { transform: perspective(360px) translate(0, -2px) rotate(-1.5deg) rotateY(-3.5deg) scale(.99, 1.01); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      71%  { opacity: 0; }
-      100% { opacity: 0; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(.98, .98); }
+      0%       { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: ${SNAP}; }
+      ${P(60)}   { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.07, 0.93); animation-timing-function: ${UP}; }
+      ${P(130)}  { transform: perspective(360px) translate(-6px, -16px) rotate(-5deg) rotateY(0deg) scale(0.97, 1.04); animation-timing-function: ${DOWN}; }
+      ${P(200)}  { transform: perspective(360px) translate(-8px, 0) rotate(-2deg) rotateY(0deg) scale(1.09, 0.91); animation-timing-function: ${UP}; }
+      ${P(280)}  { transform: perspective(360px) translate(4px, -15px) rotate(5deg) rotateY(0deg) scale(0.97, 1.04); animation-timing-function: ${DOWN}; }
+      ${P(360)}  { transform: perspective(360px) translate(8px, 0) rotate(2deg) rotateY(0deg) scale(1.09, 0.91); animation-timing-function: ${SNAP}; }
+      ${P(420)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.02, 0.98); animation-timing-function: ${SNAP}; }
+      ${P(470)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.16, 0.82); animation-timing-function: ${UP}; }
+      ${P(520)}  { transform: perspective(360px) translate(0, -26px) rotate(-2deg) rotateY(0deg) scale(0.9, 1.12); animation-timing-function: ${UP}; }
+      ${P(640)}  { transform: perspective(360px) translate(0, -92px) rotate(-7deg) rotateY(0deg) scale(1, 1); animation-timing-function: ${DOWN}; }
+      ${P(750)}  { transform: perspective(360px) translate(0, 0) rotate(-1deg) rotateY(0deg) scale(0.95, 1.06); animation-timing-function: ${SNAP}; }
+      /* The landing squash runs straight into the wind-up: the body coils
+         back like a rubber band being drawn, turning away and sinking low,
+         holds at full stretch, then lets go in a whip and recoils, the
+         stretch running out of it in smaller and smaller swings. */
+      ${P(790)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.17, 0.83); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
+      ${P(1010)} { transform: perspective(360px) translate(12px, 4px) rotate(18deg) rotateY(52deg) scale(1.1, 0.86); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      ${P(1065)} { transform: perspective(360px) translate(13px, 5px) rotate(19.5deg) rotateY(55deg) scale(1.11, 0.85); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
+      ${P(1125)} { transform: perspective(360px) translate(-9px, -15px) rotate(-15deg) rotateY(-28deg) scale(0.9, 1.12); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1200)} { transform: perspective(360px) translate(3px, 0) rotate(7deg) rotateY(15deg) scale(1.05, 0.95); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1275)} { transform: perspective(360px) translate(-1px, -2px) rotate(-3deg) rotateY(-6deg) scale(0.99, 1.01); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1300)} { opacity: 1; }
+      ${P(1345)} { transform: perspective(360px) translate(0, 0) rotate(1deg) rotateY(2deg) scale(1, 1); }
+      ${P(1440)} { opacity: 0; }
+      100%     { opacity: 0; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); }
     }
     @keyframes hop-tap-soft {
       0%   { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: ${SNAP}; }
@@ -286,58 +287,53 @@
     }
     /* Swings against the sideways motion, a beat behind it. */
     @keyframes hop-tap-hook {
-      0%, 2.77% { transform: rotate(0); }
-      6.23% { transform: rotate(6deg); } 9% { transform: rotate(1deg); }
-      12.46% { transform: rotate(-6deg); } 15.92% { transform: rotate(-1deg); }
-      19.39% { transform: rotate(6deg); } 22.85% { transform: rotate(1deg); }
-      26.31% { transform: rotate(-6deg); } 29.77% { transform: rotate(-1deg); }
-      33.92% { transform: rotate(3deg); } 38.08% { transform: rotate(-3deg); }
-      42.23% { transform: rotate(2deg); } 47.08% { transform: rotate(-6deg); }
-      50.54% { transform: rotate(2deg); } 54.7% { transform: rotate(-5deg); }
-      58.16% { transform: rotate(7deg); } 62.31% { transform: rotate(-2deg); }
-      100% { transform: rotate(0); }
+      0%, ${P(60)} { transform: rotate(0); }
+      ${P(150)} { transform: rotate(6deg); } ${P(220)} { transform: rotate(1deg); }
+      ${P(300)} { transform: rotate(-6deg); } ${P(380)} { transform: rotate(-1deg); }
+      ${P(470)} { transform: rotate(3deg); } ${P(560)} { transform: rotate(-3deg); }
+      ${P(650)} { transform: rotate(2deg); } ${P(760)} { transform: rotate(-6deg); }
+      ${P(830)} { transform: rotate(2deg); } ${P(1010)} { transform: rotate(-8deg); }
+      ${P(1065)} { transform: rotate(-9deg); } ${P(1135)} { transform: rotate(10deg); }
+      ${P(1210)} { transform: rotate(-4deg); } ${P(1290)} { transform: rotate(2deg); }
+      ${P(1360)}, 100% { transform: rotate(0); }
     }
     /* Looks right at the sheet throughout (+1.5); on top of that it trails
        the body: down as it lifts, up as it drops, a settle after landing. */
     @keyframes hop-tap-eye {
       0%   { transform: translate(0, 0) scale(1); }
-      2.77%   { transform: translate(1.2px, .6px) scale(1.04, .96); }
-      5.54%   { transform: translate(2.8px, 1.8px) scale(1); }
-      8.31%  { transform: translate(.6px, -.8px) scale(1.08, .92); }
-      11.77%  { transform: translate(.2px, 1.8px) scale(1); }
-      15.23%  { transform: translate(2.4px, -.8px) scale(1.08, .92); }
-      18.69%  { transform: translate(2.8px, 1.8px) scale(1); }
-      22.15%  { transform: translate(.6px, -.8px) scale(1.08, .92); }
-      25.61%  { transform: translate(.2px, 1.8px) scale(1); }
-      29.07%  { transform: translate(2.4px, -.8px) scale(1.08, .92); }
-      31.16%  { transform: translate(1.5px, 0) scale(1); }
-      33.23%  { transform: translate(1.5px, .9px) scale(1.06, .94); }
-      35.31%  { transform: translate(1.5px, 2.6px) scale(.96, 1.05); }
-      40.15%  { transform: translate(1.5px, -2.2px) scale(1); }
-      44.3%  { transform: translate(1.5px, -1.4px) scale(.98, 1.02); }
-      46.39%  { transform: translate(1.5px, 1.8px) scale(1.16, .84); }
-      49.15%  { transform: translate(1.5px, -.4px) scale(1); }
-      54.7%  { transform: translate(2.8px, 1px) scale(1); }
-      57.46%  { transform: translate(-.6px, -1.6px) scale(1.05); }
-      60.92%  { transform: translate(0, .5px) scale(1); }
-      63%  { transform: translate(0, .9px) scale(1.12, .12); }
-      65.08%, 100% { transform: translate(0, 0) scale(1); }
+      ${P(60)}   { transform: translate(1.2px, .6px) scale(1.04, .96); }
+      ${P(130)}  { transform: translate(2.8px, 1.8px) scale(1); }
+      ${P(200)}  { transform: translate(.6px, -.8px) scale(1.08, .92); }
+      ${P(280)}  { transform: translate(.2px, 1.8px) scale(1); }
+      ${P(360)}  { transform: translate(2.4px, -.8px) scale(1.08, .92); }
+      ${P(420)}  { transform: translate(1.5px, 0) scale(1); }
+      ${P(470)}  { transform: translate(1.5px, .9px) scale(1.06, .94); }
+      ${P(520)}  { transform: translate(1.5px, 2.6px) scale(.96, 1.05); }
+      ${P(640)}  { transform: translate(1.5px, -2.2px) scale(1); }
+      ${P(750)}  { transform: translate(1.5px, -1.4px) scale(.98, 1.02); }
+      ${P(790)}  { transform: translate(1.5px, 1.8px) scale(1.16, .84); }
+      ${P(1010)} { transform: translate(3.2px, 1.2px) scale(1); }
+      ${P(1065)} { transform: translate(3.4px, 1.3px) scale(1); }
+      ${P(1125)} { transform: translate(-.8px, -1.8px) scale(1.05); }
+      ${P(1200)} { transform: translate(.4px, .6px) scale(1); }
+      ${P(1240)} { transform: translate(0, .9px) scale(1.12, .12); }
+      ${P(1280)}, 100% { transform: translate(0, 0) scale(1); }
     }
     /* The sheet rises into place and settles, sits still while it is
        written, lifts a touch as the mark jumps, then glides over to the
        middle as it is handed across; then the whole scene fades out to the
        page's paper, and the resume fades in from the same paper. */
     @keyframes hop-sheet {
-      0%, 4.15% { opacity: 0; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 14px)) rotate(-4deg) scale(calc(var(--sx) * 0.9), calc(var(--sy) * 0.9)); animation-timing-function: ${UP}; }
-      8.31% { opacity: 1; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -3px)) rotate(1.5deg) scale(calc(var(--sx) * 1.01), calc(var(--sy) * 1.01)); animation-timing-function: ${SNAP}; }
-      11.08% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); }
-      33.23% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${UP}; }
-      38.08% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -5px)) rotate(-1.5deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${SNAP}; }
-      42.93%, 50.54% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
-      55.38% { transform: translate(calc(var(--dx) + -9px), calc(var(--dy) + 6px)) rotate(14deg) scale(calc(var(--sx) * .95), calc(var(--sy) * .95)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-      57.46% { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
-      59.88% { transform: translate(0px, 6px) rotate(-1deg) scale(.96, .96); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
-      61.62% { transform: translate(0px, -6px) rotate(0deg) scale(1.12, 1.1); animation-timing-function: cubic-bezier(.25, .55, .3, 1); }
+      0%, ${P(60)} { opacity: 0; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 14px)) rotate(-4deg) scale(calc(var(--sx) * 0.9), calc(var(--sy) * 0.9)); animation-timing-function: ${UP}; }
+      ${P(160)} { opacity: 1; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -3px)) rotate(1.5deg) scale(calc(var(--sx) * 1.01), calc(var(--sy) * 1.01)); animation-timing-function: ${SNAP}; }
+      ${P(220)}, ${P(470)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${UP}; }
+      ${P(560)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -5px)) rotate(-1.5deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${SNAP}; }
+      ${P(680)}, ${P(790)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
+      ${P(1010)} { transform: translate(calc(var(--dx) + -14px), calc(var(--dy) + 8px)) rotate(20deg) scale(calc(var(--sx) * 0.93), calc(var(--sy) * 0.93)); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      ${P(1065)} { transform: translate(calc(var(--dx) + -16px), calc(var(--dy) + 9px)) rotate(22deg) scale(calc(var(--sx) * 0.92), calc(var(--sy) * 0.92)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+      ${P(1110)} { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
+      ${P(HIT)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
+      ${P(SPLAT)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
       100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* As the wind-up starts, the drawing gives way to a plain page in the
@@ -346,13 +342,13 @@
        screen like a pancake on a window: flattens out big the instant it
        lands, then slowly draws in and slides down a touch to sit exactly
        on the document, which the resume page then dissolves it to show. */
-    @keyframes hop-detail-out { 0%, 50.54% { opacity: 1; } 54%, 100% { opacity: 0; } }
-    @keyframes hop-blank-in { 0%, 49.85% { opacity: 0; } 53.31%, 100% { opacity: 1; } }
-    @keyframes hop-write1 { 0%, 12.46% { transform: scaleX(0); animation-timing-function: ${UP}; } 15.23%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write2 { 0%, 16.62% { transform: scaleX(0); animation-timing-function: ${UP}; } 19.39%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write3 { 0%, 20.77% { transform: scaleX(0); animation-timing-function: ${UP}; } 23.54%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write4 { 0%, 24.92% { transform: scaleX(0); animation-timing-function: ${UP}; } 27.69%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write5 { 0%, 28.39% { transform: scale(0); animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); } 31.16%, 100% { transform: scale(1); } }`;
+    @keyframes hop-detail-out { 0%, ${P(900)} { opacity: 1; } ${P(970)}, 100% { opacity: 0; } }
+    @keyframes hop-blank-in { 0%, ${P(880)} { opacity: 0; } ${P(950)}, 100% { opacity: 1; } }
+    @keyframes hop-write1 { 0%, ${P(100)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(160)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write2 { 0%, ${P(165)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(225)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write3 { 0%, ${P(230)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(290)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write4 { 0%, ${P(295)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(355)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write5 { 0%, ${P(355)} { transform: scale(0); animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); } ${P(415)}, 100% { transform: scale(1); } }`;
 
   // The mark, with a margin of room around the drawing (viewBox padded by 6).
   const mark = `<span class="hop-mark"><svg viewBox="3 2.5 57 54" aria-hidden="true" focusable="false">
@@ -469,17 +465,16 @@
     const seed = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
     const wave = (dist) => {
       const a = dist / per * Math.PI * 2;
-      return 14 * Math.sin(a * 5 + seed[0]) + 9 * Math.sin(a * 9 + seed[1]) + 6 * Math.sin(a * 14 + seed[2]) + 8;
+      return 12 * Math.sin(a * 5 + seed[0]) + 7.5 * Math.sin(a * 9 + seed[1]) + 5 * Math.sin(a * 14 + seed[2]) + 6.5;
     };
     const toU = ([x, y]) => [2 + x * 40 / W, 2 + y * 56 / H];
     const f3 = (v) => v.toFixed(3);
-    const path = (push, sag = false) => {
+    const path = (push) => {
       const K = ds.length, pts = [], tan = [];
       ds.forEach((dist) => {
         const [p, n] = at(dist);
-        const o = push ? wave(dist) * (sag ? 0.7 : 1) : 0;
-        const drop = sag ? Math.max(0, n[1]) * 10 + (p[1] / H) * 6 : 0;   // the batter sags as it runs
-        pts.push([p[0] + n[0] * o, p[1] + n[1] * o + drop]);
+        const o = push ? wave(dist) : 0;
+        pts.push([p[0] + n[0] * o, p[1] + n[1] * o]);
         tan.push([-n[1], n[0]]);   // along the outline, clockwise
       });
       let d = `M${toU(pts[0]).map(f3).join(' ')}`;
@@ -502,17 +497,19 @@
       }
       return d + 'Z';
     };
-    const clean = path(false), ragged = path(true), sagging = path(true, true);
+    const clean = path(false), ragged = path(true);
     blank.setAttribute('d', clean);
     const anim = blank.querySelector('animate');
     if (!anim) return;
-    // Clean until impact, ragged at full splat, sagging as the batter runs,
-    // and clean again by the end (when the resume page takes over).
+    // Clean until impact, ragged at full splat, then one long settle back
+    // to clean, quick at first and slowing all the way, as batter pulls
+    // itself together (two stages here made it lurch near the end). The
+    // sheet's own draw-in uses the same curve.
     const T = (ms) => (ms / RESUME).toFixed(4);
     anim.setAttribute('dur', `${RESUME}ms`);
-    anim.setAttribute('values', `${clean};${clean};${ragged};${sagging};${clean}`);
-    anim.setAttribute('keyTimes', `0;${T(HIT)};${T(SPLAT)};${T(SAG)};1`);
-    anim.setAttribute('keySplines', '0 0 1 1;.1 .8 .25 1;.3 0 .7 .7;.3 .3 .3 1');
+    anim.setAttribute('values', `${clean};${clean};${ragged};${clean}`);
+    anim.setAttribute('keyTimes', `0;${T(HIT)};${T(SPLAT)};1`);
+    anim.setAttribute('keySplines', '0 0 1 1;.1 .8 .25 1;.2 .6 .3 1');
 
   };
 
@@ -529,19 +526,19 @@
   const splatter = (veil, t) => {
     const life = LIFE;
     const cx = t.left + t.width / 2, cy = t.top + t.height / 2;
-    const hw = t.width * 0.56, hh = t.height * 0.55;   // the splat's spread
+    const hw = t.width * 0.545, hh = t.height * 0.535;   // the splat's spread
     const frag = document.createDocumentFragment();
-    for (let i = 0; i < 26; i++) {
+    for (let i = 0; i < 22; i++) {
       // A point on the splat's edge, then out from it.
       const a = Math.random() * Math.PI * 2;
       const ex = Math.cos(a), ey = Math.sin(a);
       const k = 1 / Math.max(Math.abs(ex) / hw, Math.abs(ey) / hh);
       const px = cx + ex * k, py = cy + ey * k;
-      const out = 10 + Math.pow(Math.random(), 1.4) * 90;
+      const out = 10 + Math.pow(Math.random(), 1.4) * 75;
       const x = px + ex * out, y = py + ey * out;
       const d = document.createElement('i');
       d.className = 'hop-drop';
-      const sz = 5 + Math.pow(Math.random(), 1.8) * 22 * (1 - out / 140);   // bigger close in, fine spray further out
+      const sz = 4.5 + Math.pow(Math.random(), 1.8) * 19 * (1 - out / 130);   // bigger close in, fine spray further out
       d.style.cssText = `--x:${x.toFixed(1)}px;--y:${y.toFixed(1)}px;--s:${sz.toFixed(1)}px;--k:${(0.8 + Math.random() * 0.45).toFixed(2)};`
         + `--fx:${(-ex * out).toFixed(1)}px;--fy:${(-ey * out).toFixed(1)}px;--slide:${(4 + Math.random() * 14).toFixed(1)}px;`
         + `--delay:${SPLAT - 10 + Math.round(Math.random() * 40)}ms;--life:${life}ms`;
@@ -550,9 +547,9 @@
     [[-1, 0.22], [1, 0.3], [-1, 0.48], [1, 0.56]].forEach(([side, f], i) => {
       const r = document.createElement('i');
       r.className = 'hop-run';
-      const w = 9 + Math.random() * 7;
+      const w = 8 + Math.random() * 6;
       const x = cx + side * (hw - w * 0.15), y = t.top + t.height * (f + (Math.random() - 0.5) * 0.08);
-      r.style.cssText = `--x:${x.toFixed(1)}px;--y:${y.toFixed(1)}px;--w:${w.toFixed(1)}px;--len:${(60 + Math.random() * 70).toFixed(0)}px;`
+      r.style.cssText = `--x:${x.toFixed(1)}px;--y:${y.toFixed(1)}px;--w:${w.toFixed(1)}px;--len:${(50 + Math.random() * 60).toFixed(0)}px;`
         + `--drop:${(30 + Math.random() * 50).toFixed(0)}px;--delay:${SPLAT + 30 + i * 40}ms;--life:${life - i * 40}ms`;
       frag.appendChild(r);
     });
