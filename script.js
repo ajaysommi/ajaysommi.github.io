@@ -2457,6 +2457,30 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
+   Featured Work's punch cards
+   Each card's strip of holes spells its own title, a column per letter
+   and a hole wherever the letter's code has a bit set in its lowest three,
+   the way a punch card carried a line of code. Spaces come out blank, so
+   the words show as gaps. Hovering a card reads it, left to right (CSS).
+   ========================================================================== */
+(function punchCards() {
+  const MAX = 30;   // columns the strip has room for
+  $$('.work-item').forEach((item) => {
+    const strip = $('.pc-holes', item);
+    const title = $('.work-title', item)?.textContent.trim();
+    if (!strip || !title) return;
+    let html = '';
+    [...title.slice(0, MAX)].forEach((ch, i) => {
+      const c = ch.charCodeAt(0);
+      for (let r = 0; r < 3; r++) {
+        if ((c >> r) & 1) html += `<i style="grid-column:${i + 1};grid-row:${r + 1};--i:${i}"></i>`;
+      }
+    });
+    strip.innerHTML = html;
+  });
+})();
+
+/* ==========================================================================
    Skill + project filtering
    Tapping a skill spotlights matching projects and experience.
    ========================================================================== */
@@ -2793,13 +2817,21 @@ const palette = (() => {
     requestAnimationFrame(() => input.focus());
   };
 
-  // A short fade and settle out, then the dialog really closes.
+  /* A short fade and settle out, then the dialog really closes. Closing
+     hands focus back to the search button that opened it, which would
+     then sit there lit up; let go of it instead. */
+  const shut = () => {
+    dialog.classList.remove('is-closing');
+    dialog.close();
+    const a = document.activeElement;
+    if (a?.closest?.('#paletteBtn, #paletteBtnMobile')) a.blur();
+  };
   const close = () => {
     if (!dialog.open || dialog.classList.contains('is-closing')) return;
     stopTyping();
-    if (prefersReduced()) { dialog.close(); return; }
+    if (prefersReduced()) { shut(); return; }
     dialog.classList.add('is-closing');
-    setTimeout(() => { dialog.classList.remove('is-closing'); dialog.close(); }, 150);
+    setTimeout(shut, 150);
   };
   dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
 
