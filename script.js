@@ -379,7 +379,7 @@ const onScrollFrame = (() => {
   const markDone = new Promise((r) => {
     const dot = el.querySelector('.mk-dot');
     if (!dot || prefersReduced()) { r(); return; }
-    dot.addEventListener('animationend', () => setTimeout(r, 260), { once: true });
+    dot.addEventListener('animationend', () => setTimeout(r, 380), { once: true });
     setTimeout(r, 2600);
   });
   Promise.all([built, fonts, markDone]).then(finish);

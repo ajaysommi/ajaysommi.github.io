@@ -1247,6 +1247,7 @@
   .mk-stem { fill: #3d68ff; transform-origin: 83.75% 67.6%; transform: scaleY(0); animation: mk-grow .36s cubic-bezier(.34, 1.56, .64, 1) .32s forwards; }
   .mk-dot { fill: #3d68ff; transform-origin: 83.75% 35.7%; opacity: 0; transform: translateY(-44px) scale(.6); animation: mk-drop .45s .44s forwards; }
   .page-loader:not(.is-go) .mk,
+  .page-loader:not(.is-go) .m-load-line,
   .page-loader:not(.is-go) .m-load-line i { animation-play-state: paused; }
   @keyframes mk-rise { to { transform: none; } }
   @keyframes mk-swing { to { transform: none; } }
@@ -1278,8 +1279,11 @@
     border-radius: inherit;
     background: var(--ink);
     clip-path: inset(0 100% 0 0 round 999px);
-    animation: m-line-fill 1.05s cubic-bezier(.65, 0, .35, 1) .1s forwards;
+    animation: m-line-fill 1.15s .1s forwards;
   }
+  /* The fill speeds up as it nears the end, hits it, recoils a little and
+     settles; the bar gives a small squash at the moment of impact. */
+  .m-load-line { animation: m-line-hit 1.15s .1s both; }
 
   /* As the loader fades, the mark grows a touch, as if it is what bursts. */
   .page-loader.is-done .m-load-mark {
@@ -1289,11 +1293,23 @@
   }
 
   @keyframes m-tile-in { to { transform: scale(1); } }
-  @keyframes m-line-fill { to { clip-path: inset(0 0 0 0 round 999px); } }
+  @keyframes m-line-fill {
+    0%   { clip-path: inset(0 100% 0 0 round 999px); animation-timing-function: cubic-bezier(.5, 0, .95, .45); }
+    74%  { clip-path: inset(0 0 0 0 round 999px); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+    86%  { clip-path: inset(0 9% 0 0 round 999px); animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+    100% { clip-path: inset(0 0 0 0 round 999px); }
+  }
+  @keyframes m-line-hit {
+    0%, 72% { transform: none; }
+    78%  { transform: scale(1.035, .72); }
+    88%  { transform: scale(.995, 1.08); }
+    100% { transform: none; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .mk { animation: none; transform: none; opacity: 1; }
     .m-load-line i { animation: none; clip-path: none; }
+    .m-load-line { animation: none; }
   }
 
   /* ---------- Menus and overlays ---------------------------------------- */
