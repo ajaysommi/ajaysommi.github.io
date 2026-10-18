@@ -1865,7 +1865,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    it. A clip cannot carry a border, so it is drawn this way, and the
    corner cut on the card itself is a little shorter so the line along the
    cut is as thick as the rest. */
-.pc-edge {
+.punch-edge {
   flex: 1;
   display: flex;
   padding: 1px;
@@ -1873,7 +1873,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   background: var(--stroke-hi);
   clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut));
 }
-.pc {
+.punch {
   position: relative;
   flex: 1;
   display: flex;
@@ -1881,10 +1881,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   min-width: 0;
   padding: 20px 22px 18px;
   border-radius: 11px;
-  background: var(--surface-hi);
+  background: var(--surface);
   clip-path: polygon(calc(var(--cut) - .586px) 0, 100% 0, 100% 100%, 0 100%, 0 calc(var(--cut) - .586px));
 }
-.pc-top { display: flex; align-items: center; justify-content: space-between; min-height: 18px; margin: 0 0 18px 14px; }
+.punch-top { display: flex; align-items: center; justify-content: space-between; min-height: 18px; margin: 0 0 18px 14px; }
 .work-no {
   font: 12px/1 var(--font-mono);
   letter-spacing: .06em;
@@ -1913,7 +1913,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 
 /* The punched strip: holes in the page's own colour, so they read as
    punched through. */
-.pc-holes {
+.punch-holes {
   display: grid;
   grid-template-columns: repeat(30, 1fr);
   grid-template-rows: repeat(3, 8px);
@@ -1921,7 +1921,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   padding-top: 14px;
   border-top: 1px dashed var(--stroke);
 }
-.pc-holes i {
+.punch-holes i {
   justify-self: center;
   width: 4px;
   height: 8px;
@@ -1931,15 +1931,16 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   transition: background-color .25s ease;
   transition-delay: calc(var(--i, 0) * 14ms);
 }
-[data-theme="daylight"] .pc-holes i { background: var(--m-fill-2); }
+[data-theme="daylight"] .punch-holes i { background: var(--m-fill-2); }
+[data-theme="midnight"] .punch-holes i { background: color-mix(in oklab, var(--bg) 60%, #000); }
 
 .work-item.has-link:hover { transform: translateY(-4px); filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .08)); }
-.work-item:hover .pc-holes i { background: var(--accent); }
+.work-item:hover .punch-holes i { background: var(--accent); }
 .work-item.has-link:hover .work-no,
 .work-item.is-lit .work-no { color: var(--accent); }
 .work-item.has-link:hover .work-go { color: var(--ink); transform: translate(2px, -2px); }
-.work-item:focus-within .pc-edge { background: var(--ink); }
-.work-item.is-lit .pc-edge { background: var(--accent); }
+.work-item:focus-within .punch-edge { background: var(--ink); }
+.work-item.is-lit .punch-edge { background: var(--accent); }
 
 @media (max-width: 1023px) {
   .work { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1947,10 +1948,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 @media (max-width: 639px) {
   .work-filter { gap: 6px 18px; }
   .work { grid-template-columns: 1fr; gap: 14px; }
-  .pc { padding: 18px 18px 16px; }
+  .punch { padding: 18px 18px 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .work-item, .pc-holes i { transition: none; }
+  .work-item, .punch-holes i { transition: none; }
 }
 
 /* ==========================================================================

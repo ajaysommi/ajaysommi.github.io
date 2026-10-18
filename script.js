@@ -2466,7 +2466,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 (function punchCards() {
   const MAX = 30;   // columns the strip has room for
   $$('.work-item').forEach((item) => {
-    const strip = $('.pc-holes', item);
+    const strip = $('.punch-holes', item);
     const title = $('.work-title', item)?.textContent.trim();
     if (!strip || !title) return;
     let html = '';
@@ -2688,8 +2688,8 @@ const palette = (() => {
     { title: 'Recommendations',  group: 0, keys: 'recs', run: go('recs') },
     { title: 'Contact',          group: 0, run: go('contact') },
 
-    { title: 'BetAI Marketplace', group: 1, out: true, keys: 'ai sports betting nfl picks', run: ext('https://github.com/CVelez21/betai-marketplace') },
     { title: 'SommiScript',      group: 1, out: true, keys: 'language java interpreter', run: ext('https://github.com/ajaysommi/SommiScript') },
+    { title: 'BetAI Marketplace', group: 1, keys: 'ai sports betting nfl picks', run: go('projects') },
     { title: 'GatorGoods',       group: 1, out: true, keys: 'mern marketplace react', run: ext('https://github.com/ajaysommi/GatorGoods') },
     { title: 'Crash Fatality Analysis', group: 1, out: true, keys: 'python pandas data', run: ext('https://github.com/ajaysommi/Car-Crash-Analyzation-Tool') },
     { title: 'BalanceTree',      group: 1, out: true, keys: 'avl c++', run: ext('https://github.com/ajaysommi/BalanceTree') },
