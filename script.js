@@ -4132,6 +4132,11 @@ console.log(
     return Math.round(offTop(peek) + Math.min(90, peek.offsetHeight * .5));
   };
 
+  // The "More on LinkedIn" line belongs under the full list, so it waits
+  // until the list has been opened.
+  const note = wrap.closest('section')?.querySelector('.note');
+  if (note) note.hidden = true;
+
   wrap.classList.add('is-collapsible');
   wrap.style.height = `${collapsedH()}px`;
   btn.hidden = false;
@@ -4155,6 +4160,11 @@ console.log(
     wrap.classList.add('is-open');
     wrap.style.height = `${wrap.scrollHeight}px`;
     if (prefersReduced()) wrap.style.height = 'auto';
+    if (note) {
+      note.hidden = false;
+      note.classList.add('is-arriving');
+      requestAnimationFrame(() => requestAnimationFrame(() => note.classList.remove('is-arriving')));
+    }
     const row = btn.closest('.recs-more-row') || btn;
     row.classList.add('is-gone');
     setTimeout(() => { row.hidden = true; }, prefersReduced() ? 0 : 300);
