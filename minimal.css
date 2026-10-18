@@ -1926,10 +1926,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 
 /* Under the pointer the card stays put, but reads: its holes light up left
    to right like a card reader passing over them. The GitHub mark is its
-   own small link above the card's, and leans toward its corner only when
-   the pointer is on it. */
+   own small link above the card's, and lifts a hair only when the pointer
+   is on it. */
 .work-item:hover .punch-holes i { background: var(--accent); }
-.work-go:hover { color: var(--ink); transform: translate(2px, -2px); }
+.work-go:hover { color: var(--ink); transform: translateY(-1px); }
 @media (prefers-reduced-motion: reduce) {
   .punch-holes i { transition: none; }
 }
