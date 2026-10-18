@@ -836,10 +836,10 @@ syncLogoTheme();
   if (!typed) return;
 
   const roles = [
-    'software engineer who adapts to the problem',
-    'C#/.NET · Python · SQL · React · Apex',
-    'shipping things that hold up in production',
-    'B.S. Computer Science, University of Florida',
+    'curious about how things work, and why they break',
+    "if it confuses the user, it isn't done yet",
+    'fixing the cause, not just the symptom',
+    'leaving things better than I found them',
   ];
 
   /* One text node, edited in place throughout: setting textContent swaps
