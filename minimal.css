@@ -1717,8 +1717,26 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 @media (max-width: 719px) {
   .m-load-mark { width: 86px; height: 75px; }
   .m-load-line { --lw: 120px; height: 7px; margin-top: 25px; }
-  /* A short bar filled in the same time looked like it raced across, so on
-     phones it takes a little longer. */
-  .m-load-line,
-  .m-load-line i { animation-duration: 1.7s; }
+  /* Phones get their own, livelier version: it sets off steadily, races
+     into the end, and the impact is bigger, a stretch of the right end with
+     a squash and swell of the bar, a deeper rebound and a second, smaller
+     wobble before it settles. The left end still stays put. */
+  .m-load-line { animation: m-line-hit-m 1.4s .1s both; }
+  .m-load-line i { animation: m-line-fill-m 1.4s .1s forwards; }
+  @keyframes m-line-fill-m {
+    0%   { transform: translateX(-100%); animation-timing-function: cubic-bezier(.35, .15, .97, .3); }
+    64%  { transform: translateX(0); animation-timing-function: cubic-bezier(.15, .75, .35, 1); }
+    76%  { transform: translateX(-16%); animation-timing-function: cubic-bezier(.55, 0, .45, 1); }
+    86%  { transform: translateX(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+    93%  { transform: translateX(-4%); animation-timing-function: cubic-bezier(.5, 0, .5, 1); }
+    100% { transform: translateX(0); }
+  }
+  @keyframes m-line-hit-m {
+    0%, 63% { transform: none; }
+    68%  { transform: translateX(calc(var(--lw) * .05)) scale(1.1, .62); }
+    76%  { transform: translateX(calc(var(--lw) * -.015)) scale(.97, 1.22); }
+    85%  { transform: translateX(calc(var(--lw) * .02)) scale(1.04, .9); }
+    93%  { transform: translateX(calc(var(--lw) * -.004)) scale(.992, 1.04); }
+    100% { transform: none; }
+  }
 }
