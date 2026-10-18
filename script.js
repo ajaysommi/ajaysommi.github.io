@@ -2487,7 +2487,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
    Each card's strip of holes spells its own title, a column per letter
    and a hole wherever the letter's code has a bit set in its lowest three,
    the way a punch card carried a line of code. Spaces come out blank, so
-   the words show as gaps. Hovering a card reads it, left to right (CSS).
+   the words show as gaps. Opening a card's link reads it, left to right.
    ========================================================================== */
 (function punchCards() {
   const MAX = 30;   // columns the strip has room for
@@ -2503,6 +2503,18 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
       }
     });
     strip.innerHTML = html;
+
+    // Read the card when its link is opened; only cards with one.
+    if (!item.classList.contains('has-link')) return;
+    let t = 0;
+    item.addEventListener('click', (e) => {
+      if (!e.target.closest('a')) return;
+      item.classList.remove('is-reading');
+      void item.offsetWidth;   // start the read again from the left
+      item.classList.add('is-reading');
+      clearTimeout(t);
+      t = setTimeout(() => item.classList.remove('is-reading'), 1400);
+    });
   });
 })();
 

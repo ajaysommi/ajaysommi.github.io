@@ -1931,11 +1931,13 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 [data-theme="daylight"] .punch-holes i { background: var(--m-fill-2); }
 [data-theme="midnight"] .punch-holes i { background: color-mix(in oklab, var(--bg) 60%, #000); }
 
-/* Under the pointer the card stays put, but reads: its holes light up left
-   to right like a card reader passing over them. The GitHub mark is its
-   own small link above the card's, and lifts a hair only when the pointer
-   is on it. */
-.work-item:hover .punch-holes i { background: var(--accent); }
+/* Opening a card that links somewhere reads it: its holes light up left to
+   right like a card reader passing over them (.is-reading, set by script.js
+   on the click, for a moment). Nothing lights up on hover, on any device:
+   a phone treated a scroll that brushed a card as a hover. The GitHub mark
+   is its own small link above the card's, and lifts a hair only when the
+   pointer is on it. */
+.work-item.is-reading .punch-holes i { background: var(--accent); }
 .work-go:hover { color: var(--ink); transform: translate3d(0, -1px, 0); }
 @media (prefers-reduced-motion: reduce) {
   .punch-holes i { transition: none; }
