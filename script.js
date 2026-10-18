@@ -2503,6 +2503,61 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
+   Skills & Tools: a row of groups, each opening a small floating card of
+   its skills just under it. One open at a time; a tap outside, Escape, or
+   picking a skill closes it.
+   ========================================================================== */
+(function skillGroups() {
+  const wrap = $('#skillGroups');
+  if (!wrap) return;
+  const cats = $$('.skx-cat', wrap);
+  const row = $('.skx-row', wrap);
+  let open = null;
+
+  const place = (btn, pop) => {
+    const w = wrap.getBoundingClientRect(), b = btn.getBoundingClientRect();
+    pop.style.top = `${Math.round(row.offsetTop + row.offsetHeight + 12)}px`;
+    if (innerWidth < 640) { pop.style.left = '0px'; pop.style.right = '0px'; }
+    else {
+      pop.style.right = 'auto';
+      const left = clamp(b.left - w.left - 18, 0, Math.max(0, w.width - pop.offsetWidth));
+      pop.style.left = `${Math.round(left)}px`;
+    }
+    const caret = clamp(b.left + b.width / 2 - (w.left + pop.offsetLeft), 22, pop.offsetWidth - 22);
+    pop.style.setProperty('--caret', `${Math.round(caret)}px`);
+  };
+
+  const close = () => {
+    if (!open) return;
+    const [btn, pop] = open;
+    btn.setAttribute('aria-expanded', 'false');
+    pop.hidden = true;
+    open = null;
+  };
+
+  cats.forEach((btn) => {
+    const pop = document.getElementById(btn.getAttribute('aria-controls'));
+    btn.addEventListener('click', () => {
+      const same = open && open[0] === btn;
+      close();
+      if (same) return;
+      pop.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      open = [btn, pop];
+      place(btn, pop);
+    });
+    // Choosing a skill does its spotlight (see filtering) and puts the card away.
+    $$('button', pop).forEach((b) => b.addEventListener('click', close));
+  });
+
+  document.addEventListener('pointerdown', (e) => { if (open && !wrap.contains(e.target)) close(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && open) { const btn = open[0]; close(); btn.focus(); }
+  });
+  addEventListener('resize', () => { if (open) place(open[0], open[1]); }, { passive: true });
+})();
+
+/* ==========================================================================
    Skill + project filtering
    Tapping a skill spotlights matching projects and experience.
    ========================================================================== */
@@ -2512,7 +2567,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
   const cards = $$('.work-item', grid);
   const filterChips = $$('#projectFilters .wf[data-filter]');
-  const skillButtons = $$('#skills .sk button');
+  const skillButtons = $$('#skills .skx-pop button');
   const status = $('#filterStatus');
   const statusTag = $('#filterTag');
   const empty = $('#emptyState');
