@@ -1941,8 +1941,8 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    skills in columns under it, the way ls does; tapping one spotlights
    where it was used.
    ========================================================================== */
-.skt { --row: 44px; max-width: 900px; font-family: var(--font-mono); }
-.skt-root { margin: 0 0 2px; font: 500 15px/1.6 var(--font-mono); color: var(--ink); }
+.skt { --row: 44px; max-width: 900px; }
+.skt-root { margin: 0 0 2px; font: 600 16px/1.6 var(--font-sans); color: var(--ink); }
 .skt-tree { margin: 0; padding: 0; list-style: none; }
 /* flow-root keeps the listing's bottom margin inside the folder, so the
    trunk runs unbroken past it. */
@@ -1969,7 +1969,8 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   border: 0;
   background: none;
   color: var(--ink-2);
-  font: 500 16px/1 var(--font-mono);
+  font: 500 17px/1 var(--font-sans);
+  letter-spacing: -.005em;
   text-align: left;
   cursor: pointer;
   transition: color .2s ease;
@@ -1982,7 +1983,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   clip-path: polygon(0 0, 100% 50%, 0 100%);
   transition: transform .25s cubic-bezier(.22, 1, .36, 1);
 }
-.skt-n { margin-left: auto; font-size: 12px; color: var(--ink-3); }
+.skt-n { margin-left: auto; font: 12px/1 var(--font-mono); color: var(--ink-3); }
 .skt-name:hover,
 .skt-name[aria-expanded="true"] { color: var(--ink); }
 .skt-name[aria-expanded="true"] .skt-caret { transform: rotate(90deg); color: var(--accent); }
@@ -2003,7 +2004,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 .skt-ls > * {
   justify-self: start;
   padding: 3px 0;
-  font: 400 15px/1.45 var(--font-mono);
+  font: 400 16px/1.45 var(--font-sans);
   color: var(--ink);
 }
 .skt-ls button {
@@ -2019,9 +2020,9 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 
 @media (max-width: 639px) {
   .skt { --row: 42px; }
-  .skt-name { font-size: 15px; }
+  .skt-name { font-size: 16px; }
   .skt-ls { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 2px 14px; }
-  .skt-ls > * { font-size: 14px; }
+  .skt-ls > * { font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .skt-ls { animation: none; }
