@@ -205,15 +205,17 @@
       48% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${UP}; }
       55% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -5px)) rotate(-1.5deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${SNAP}; }
       62%, 73% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
-      80% { transform: translate(calc(var(--dx) + -9px), calc(var(--dy) + 6px)) rotate(14deg) scale(calc(var(--sx) * 0.95), calc(var(--sy) * 0.95)); animation-timing-function: cubic-bezier(.15, .6, .35, 1); }
-      84% { transform: translate(calc(var(--dx) * .78), calc(var(--dy) * .78 - 26px)) rotate(-5deg) scale(calc(var(--sx) + (1 - var(--sx)) * .14), calc(var(--sy) + (1 - var(--sy)) * .14)); animation-timing-function: cubic-bezier(.25, .45, .35, 1); }
-      93%, 100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
+      80% { transform: translate(calc(var(--dx) + -9px), calc(var(--dy) + 6px)) rotate(14deg) scale(calc(var(--sx) * .95), calc(var(--sy) * .95)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+      83% { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
+      92% { transform: translate(0px, 0px) rotate(0deg) scale(1.015, 1.015); animation-timing-function: cubic-bezier(.3, 0, .4, 1); }
+      96%, 100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
-    /* In flight the drawing gives way to a plain page in the same colour,
-       which is what lands on the document (and what the resume page then
-       dissolves to show the real one). */
-    @keyframes hop-detail-out { 0%, 82% { opacity: 1; } 90%, 100% { opacity: 0; } }
-    @keyframes hop-blank-in { 0%, 82% { opacity: 0; } 89%, 100% { opacity: 1; } }
+    /* As the wind-up starts, the drawing gives way to a plain page in the
+       same colour; only the blank page is thrown (so nothing on it is seen
+       stretching), speeding up as it comes at the viewer, and it lands on
+       the document, which the resume page then dissolves it to show. */
+    @keyframes hop-detail-out { 0%, 73% { opacity: 1; } 78%, 100% { opacity: 0; } }
+    @keyframes hop-blank-in { 0%, 72% { opacity: 0; } 77%, 100% { opacity: 1; } }
     @keyframes hop-write1 { 0%, 18% { transform: scaleX(0); animation-timing-function: ${UP}; } 22%, 100% { transform: scaleX(1); } }
     @keyframes hop-write2 { 0%, 24% { transform: scaleX(0); animation-timing-function: ${UP}; } 28%, 100% { transform: scaleX(1); } }
     @keyframes hop-write3 { 0%, 30% { transform: scaleX(0); animation-timing-function: ${UP}; } 34%, 100% { transform: scaleX(1); } }

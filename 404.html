@@ -14,20 +14,13 @@
   <style>
     /* A page of its own, served by GitHub Pages for any address that does
        not exist, at any depth, so everything it needs is inline or linked
-       from the site root. It follows the system's light or dark setting.
-
-       The mark is the focus: sad, swaying and glancing about, a tear falling
-       now and then, a frown under it. Behind and below, barely there, the
-       curve of an empty little planet, with a tumbleweed rolling across it
-       every so often: nothing here, nobody around. */
+       from the site root. It follows the system's light or dark setting. */
     :root {
       --bg: #f2f0eb;
       --ink: #141414;
       --ink-2: #47443f;
       --ink-3: #87837b;
-      --ground: #ece9e2;
-      --line: rgba(20, 20, 20, .08);
-      --weed: rgba(20, 20, 20, .28);
+      --stroke: rgba(20, 20, 20, .14);
       --tear: #8fb0ff;
       color-scheme: light;
     }
@@ -37,9 +30,7 @@
         --ink: #edebe6;
         --ink-2: #b2afa8;
         --ink-3: #7c7973;
-        --ground: #171716;
-        --line: rgba(237, 235, 230, .09);
-        --weed: rgba(237, 235, 230, .3);
+        --stroke: rgba(237, 235, 230, .16);
         --tear: #9db9ff;
         color-scheme: dark;
       }
@@ -50,68 +41,20 @@
       margin: 0;
       display: grid;
       place-items: center;
-      padding: 24px 16px 18vh;
-      overflow: hidden;
+      padding: 24px 16px;
       background: var(--bg);
       color: var(--ink);
       font-family: Geist, system-ui, -apple-system, sans-serif;
       text-align: center;
       -webkit-font-smoothing: antialiased;
     }
-
-    /* ---- the planet, barely there ---- */
-    .planet {
-      position: fixed;
-      left: 50%;
-      top: 84vh;
-      width: 360vmax;
-      height: 360vmax;
-      translate: -50% 0;
-      border-radius: 50%;
-      background: var(--ground);
-      box-shadow: inset 0 1px 0 var(--line);
-      pointer-events: none;
-      z-index: -1;
-    }
-    /* A tumbleweed that rolls in from one side, bouncing a little as it
-       goes, and away off the other; then the field is empty again for a
-       while. */
-    .weed {
-      position: fixed;
-      left: 0;
-      top: 84vh;
-      width: 38px;
-      height: 38px;
-      translate: 0 -100%;
-      pointer-events: none;
-      z-index: -1;
-      animation: roll 14s linear 1.5s infinite;
-    }
-    .weed svg { display: block; width: 100%; height: 100%; overflow: visible; animation: hop 14s linear 1.5s infinite; }
-    .weed .spin { transform-box: view-box; transform-origin: 50% 50%; animation: spin 14s linear 1.5s infinite; }
-    .weed path { fill: none; stroke: var(--weed); stroke-width: 1.3; stroke-linecap: round; }
-    @keyframes roll {
-      0%   { transform: translateX(-60px); }
-      55%  { transform: translateX(calc(100vw + 60px)); }
-      100% { transform: translateX(calc(100vw + 60px)); }
-    }
-    @keyframes spin { 0% { transform: rotate(0); } 55%, 100% { transform: rotate(1080deg); } }
-    @keyframes hop {
-      0%, 55%, 100% { transform: translateY(0); }
-      6%  { transform: translateY(-10px); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
-      11% { transform: translateY(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-      19% { transform: translateY(-16px); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
-      26% { transform: translateY(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-      32% { transform: translateY(-8px); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
-      37% { transform: translateY(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-      46% { transform: translateY(-13px); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
-      52% { transform: translateY(0); }
-    }
-
-    /* ---- the mark, the focus ---- */
     main { display: grid; justify-items: center; gap: 14px; max-width: 420px; }
+
+    /* Little Aj, lost: he sways a little and glances one way and then the
+       other, looking for the page, with a frown under him, and every so
+       often a tear wells up at the corner of his eye and falls. */
     .lost { display: grid; justify-items: center; gap: 12px; margin-bottom: 10px; }
-    .lost svg.aj { width: 120px; height: 114px; overflow: visible; }
+    .lost svg.aj { width: 104px; height: 98px; overflow: visible; }
     .aj .am-a { fill: var(--ink); }
     .aj .body { transform-box: view-box; transform-origin: 50% 100%; animation: sway 5.2s ease-in-out infinite; }
     .aj .eye { transform-box: fill-box; transform-origin: 50% 50%; animation: glance 5.2s ease-in-out infinite; }
@@ -137,9 +80,8 @@
       100% { opacity: 0; transform: translateY(30px) scale(.8, 1.1); }
     }
 
-    .code { margin: 0; font-family: "Geist Mono", ui-monospace, monospace; font-size: .8rem; letter-spacing: .14em; color: var(--ink-3); }
+    .code { margin: 0; font-family: "Geist Mono", ui-monospace, monospace; font-size: .8rem; letter-spacing: .12em; color: var(--ink-3); }
     h1 { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); font-weight: 600; letter-spacing: -.02em; }
-    p.say { margin: 0; color: var(--ink-2); font-size: 1rem; line-height: 1.5; }
     .home {
       display: inline-flex;
       align-items: center;
@@ -151,49 +93,35 @@
       color: var(--bg);
       font-weight: 500;
       text-decoration: none;
-      transition: transform .2s ease;
+      transition: transform .2s ease, opacity .2s ease;
     }
     .home:hover { transform: translateY(-1px); }
     .home:active { transform: scale(.97); }
     .home:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
-    @media (max-height: 600px) {
-      body { padding-bottom: 12vh; }
-      .planet, .weed { top: 90vh; }
-    }
     @media (prefers-reduced-motion: reduce) {
-      .aj .body, .aj .eye, .weed, .weed svg, .weed .spin { animation: none; }
-      .weed { left: 72vw; }
+      .aj .body, .aj .eye { animation: none; }
       .aj .tear { animation: none; opacity: 1; transform: translateY(6px); }
     }
   </style>
 </head>
 <body>
-  <span class="planet" aria-hidden="true"></span>
-  <span class="weed" aria-hidden="true">
-    <svg viewBox="0 0 30 30" focusable="false"><g class="spin">
-      <path d="M15 3.5c6.5 0 11.5 5 11.5 11.5S21.5 26.5 15 26.5 3.5 21.5 3.5 15 8.5 3.5 15 3.5Z"/>
-      <path d="M6 10c5 4 12 2 18 6M5.5 18c6-3 11 2 19-1M9 5.5c3 6 1 13 5 20M20 5c-4 5-1 12-6 21M8 23c4-6 10-9 16-12"/>
-      <path d="M11 8c5 1 9 5 11 11M7.5 14c4 1 7 4 8 9"/>
-    </g></svg>
-  </span>
-
   <main>
     <div class="lost" aria-hidden="true">
-      <svg class="aj" viewBox="3 2.5 57 54" focusable="false">
+      <svg class="aj" viewBox="9 8.5 45 42" focusable="false">
         <g class="body">
           <path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/>
           <path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/>
           <rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/>
           <circle class="eye" cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/>
+          <!-- a tear at the outer corner of the eye -->
           <path class="tear" d="M54.6 19.6 C54.6 19.6 52.9 22.3 52.9 23.4 A1.7 1.7 0 0 0 56.3 23.4 C56.3 22.3 54.6 19.6 54.6 19.6Z"/>
         </g>
       </svg>
       <svg class="frown" viewBox="0 0 96 22" focusable="false"><path d="M5 19 Q48 -7 91 19"/></svg>
     </div>
     <p class="code">404</p>
-    <h1>There's nothing out here</h1>
-    <p class="say">This page doesn't exist.</p>
+    <h1>This page doesn't exist</h1>
     <a class="home" href="/">
       <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4.4 10.6 12 4.4l7.6 6.2v8.4a.6.6 0 0 1-.6.6H5a.6.6 0 0 1-.6-.6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Take me home
