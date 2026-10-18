@@ -1140,7 +1140,11 @@ syncLogoTheme();
   // A hidden tab throttles timers hard, so stop rather than crawl.
   document.addEventListener('visibilitychange', syncDrift);
 
-  viewport.addEventListener('focusin', goBusy);
+  /* Only keyboard focus holds it still. Chrome also focuses a logo when it
+     is clicked, and that focus comes back when you return from the tab the
+     logo opened, long after anything would set the strip going again, so
+     treating it as busy left the strip stopped for good. */
+  viewport.addEventListener('focusin', (e) => { if (e.target.matches?.(':focus-visible')) goBusy(); });
   viewport.addEventListener('focusout', (e) => { if (!viewport.contains(e.relatedTarget)) bumpIdle(600); });
 
   viewport.addEventListener('scroll', () => {
@@ -2503,9 +2507,8 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
-   Skills & Tools, as a file tree: a folder per group, one open at a time,
-   its skills listed in columns under it like ls. Opening another folder
-   closes the one that was open; opening the open one closes it.
+   Skills & Tools, as a file tree: a folder per group, each opening and
+   closing on its own, its skills listed in columns under it like ls.
    ========================================================================== */
 (function skillTree() {
   const tree = $('#skillGroups');
@@ -2513,9 +2516,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   const dirs = $$('.skt-name', tree).map((btn) => [btn, document.getElementById(btn.getAttribute('aria-controls'))]);
   const set = (btn, ls, on) => { btn.setAttribute('aria-expanded', String(on)); ls.hidden = !on; };
   dirs.forEach(([btn, ls]) => btn.addEventListener('click', () => {
-    const on = btn.getAttribute('aria-expanded') !== 'true';
-    dirs.forEach(([b, l]) => set(b, l, false));
-    set(btn, ls, on);
+    set(btn, ls, btn.getAttribute('aria-expanded') !== 'true');
   }));
 })();
 

@@ -1880,7 +1880,14 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   background: var(--surface);
   clip-path: polygon(calc(var(--cut) - .586px) 0, 100% 0, 100% 100%, 0 100%, 0 calc(var(--cut) - .586px));
 }
-.work-go { position: absolute; z-index: 1; top: 18px; right: 18px; color: var(--ink-3); transition: color .2s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+/* Its own layer, so the small lift glides on sub pixels instead of
+   snapping a whole pixel at a time. */
+.work-go {
+  position: absolute; z-index: 1; top: 18px; right: 18px;
+  color: var(--ink-3);
+  will-change: transform;
+  transition: color .3s ease, transform .5s cubic-bezier(.25, .8, .3, 1);
+}
 .work-go svg { display: block; }
 
 .work-title {
@@ -1929,7 +1936,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    own small link above the card's, and lifts a hair only when the pointer
    is on it. */
 .work-item:hover .punch-holes i { background: var(--accent); }
-.work-go:hover { color: var(--ink); transform: translateY(-1px); }
+.work-go:hover { color: var(--ink); transform: translate3d(0, -1px, 0); }
 @media (prefers-reduced-motion: reduce) {
   .punch-holes i { transition: none; }
 }
