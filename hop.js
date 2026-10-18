@@ -426,7 +426,7 @@
      across the document). */
   const shapeBlank = (blank, W, H) => {
     const rad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r-lg')) || 18;
-    const N = 72;
+    const N = 88;
     const per = 2 * (W + H - 4 * rad) + 2 * Math.PI * rad;
     const at = (d) => {   // point and outward normal at distance d around the rounded rectangle
       const segs = [
@@ -451,27 +451,54 @@
       }
       return [[rad, 0], [0, -1]];
     };
+    /* Where the points sit around the outline: four on each corner, so
+       the settled shape keeps true round corners (spread evenly, a corner
+       only got one point and came out lumpy, then snapped round when the
+       real card took over), and the rest spread along the sides. */
+    const sides = [W - 2 * rad, H - 2 * rad, W - 2 * rad, H - 2 * rad];
+    const arc = Math.PI * rad / 2, CP = 4, M = N - 4 * CP;
+    const ds = [];
+    let d0 = 0;
+    sides.forEach((len) => {
+      const m = Math.max(1, Math.round(M * len / (2 * (W + H - 4 * rad))));
+      for (let i = 0; i < m; i++) ds.push(d0 + len * i / m);
+      d0 += len;
+      for (let i = 0; i < CP; i++) ds.push(d0 + arc * i / CP);
+      d0 += arc;
+    });
     const seed = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
-    const wave = (k) => {
-      const a = k / N * Math.PI * 2;
+    const wave = (dist) => {
+      const a = dist / per * Math.PI * 2;
       return 14 * Math.sin(a * 5 + seed[0]) + 9 * Math.sin(a * 9 + seed[1]) + 6 * Math.sin(a * 14 + seed[2]) + 8;
     };
     const toU = ([x, y]) => [2 + x * 40 / W, 2 + y * 56 / H];
+    const f3 = (v) => v.toFixed(3);
     const path = (push, sag = false) => {
-      const pts = [];
-      for (let k = 0; k < N; k++) {
-        const [p, n] = at(per * k / N);
-        const o = push ? wave(k) * (sag ? 0.7 : 1) : 0;
+      const K = ds.length, pts = [], tan = [];
+      ds.forEach((dist) => {
+        const [p, n] = at(dist);
+        const o = push ? wave(dist) * (sag ? 0.7 : 1) : 0;
         const drop = sag ? Math.max(0, n[1]) * 10 + (p[1] / H) * 6 : 0;   // the batter sags as it runs
-        pts.push(toU([p[0] + n[0] * o, p[1] + n[1] * o + drop]));
-      }
-      // A smooth closed curve through the points (Catmull-Rom as cubic Beziers).
-      let d = `M${pts[0][0].toFixed(3)} ${pts[0][1].toFixed(3)}`;
-      for (let i = 0; i < N; i++) {
-        const p0 = pts[(i - 1 + N) % N], p1 = pts[i], p2 = pts[(i + 1) % N], p3 = pts[(i + 2) % N];
-        const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
-        const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-        d += `C${c1[0].toFixed(3)} ${c1[1].toFixed(3)} ${c2[0].toFixed(3)} ${c2[1].toFixed(3)} ${p2[0].toFixed(3)} ${p2[1].toFixed(3)}`;
+        pts.push([p[0] + n[0] * o, p[1] + n[1] * o + drop]);
+        tan.push([-n[1], n[0]]);   // along the outline, clockwise
+      });
+      let d = `M${toU(pts[0]).map(f3).join(' ')}`;
+      for (let i = 0; i < K; i++) {
+        const j = (i + 1) % K, p1 = pts[i], p2 = pts[j];
+        let c1, c2;
+        if (!push) {
+          // The settled card: handles along the true tangent, a third of the
+          // way, which traces the straight sides and round corners exactly.
+          const h = (((ds[j] - ds[i]) + per) % per) / 3;
+          c1 = [p1[0] + tan[i][0] * h, p1[1] + tan[i][1] * h];
+          c2 = [p2[0] - tan[j][0] * h, p2[1] - tan[j][1] * h];
+        } else {
+          // The splat: a smooth curve through the points (Catmull-Rom).
+          const p0 = pts[(i - 1 + K) % K], p3 = pts[(i + 2) % K];
+          c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+          c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        }
+        d += `C${[...toU(c1), ...toU(c2), ...toU(p2)].map(f3).join(' ')}`;
       }
       return d + 'Z';
     };
