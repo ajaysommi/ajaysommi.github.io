@@ -1788,3 +1788,10 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 /* The home mark draws past its own box, so its eye is never clipped when it
    looks toward the pointer or drops in. */
 header.nav .brand-mark svg.brand-aj { overflow: visible; }
+
+/* The 2006 snapshot opens a touch larger than its own 600px, still within
+   the window (it only exists at 640px, so not much more). */
+.lightbox[data-single] .lb-frame img {
+  width: min(690px, 90vw, calc((92svh - 62px) * 600 / 430));
+  height: auto;
+}
