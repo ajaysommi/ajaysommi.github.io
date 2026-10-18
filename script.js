@@ -3199,7 +3199,9 @@ function gatorStorm(n = 12) {
   pocket.setAttribute('aria-hidden', 'true');
   bar.prepend(pocket);
 
-  const ITEM_SEL = '.nav-links a, header.nav .brand, header.nav .icon-btn, header.nav a.cta';
+  // The home mark is left out: it stands on its own, with no pocket behind
+  // it, so nothing frames it or crowds it as it moves.
+  const ITEM_SEL = '.nav-links a, header.nav .icon-btn, header.nav a.cta';
   let items = [];
   let barRect = null, border = 1;
 

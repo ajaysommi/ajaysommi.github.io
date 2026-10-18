@@ -1784,3 +1784,7 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
   header.nav .brand-mark.has-eye.is-pressed { scale: .86; }
   header.nav .brand-mark.has-eye.is-pressed .brand-aj circle { scale: 1 .08; }
 }
+
+/* The home mark draws past its own box, so its eye is never clipped when it
+   looks toward the pointer or drops in. */
+header.nav .brand-mark svg.brand-aj { overflow: visible; }
