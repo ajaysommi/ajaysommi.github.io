@@ -1959,7 +1959,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    skills in columns under it, the way ls does; tapping one spotlights
    where it was used.
    ========================================================================== */
-.skt { --row: 44px; max-width: 900px; }
+.skt { --row: 44px; }
 .skt-root { margin: 0 0 2px; font: 600 16px/1.6 var(--font-sans); color: var(--ink); }
 .skt-tree { margin: 0; padding: 0; list-style: none; }
 /* flow-root keeps the listing's bottom margin inside the folder, so the
