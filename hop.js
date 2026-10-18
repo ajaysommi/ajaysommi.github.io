@@ -18,8 +18,8 @@
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DANCE = 1200;    // ms of the plain hops
-  const RESUME = 2000;   // ms of the resume scene
-  const SOFT = 1700;     // the resume scene without the throw
+  const RESUME = 1800;   // ms of the resume scene
+  const SOFT = 1550;     // the resume scene without the throw
   let going = false;
 
   // Rising slows to the top, falling speeds up: gravity.
