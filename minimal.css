@@ -1799,9 +1799,8 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 /* ==========================================================================
    Featured Work, as punch cards
    Each project is a card cut like the punch cards code was once written
-   on: square-shouldered paper with the one clipped corner, its number in
-   type at the head, and along the foot a strip of holes punched through
-   to the page, spelling the project's own title (script.js). Hovering a
+   on: square-shouldered paper with the one clipped corner, and along the
+   foot a strip of holes punched through to the page, spelling the project's own title (script.js). Hovering a
    card that links somewhere lifts it and reads it, the holes lighting up
    left to right like a card reader passing over them. The filters are
    plain words with a count of what each would show.
@@ -1879,19 +1878,12 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 20px 22px 18px;
+  padding: 24px 22px 18px;
   border-radius: 11px;
   background: var(--surface);
   clip-path: polygon(calc(var(--cut) - .586px) 0, 100% 0, 100% 100%, 0 100%, 0 calc(var(--cut) - .586px));
 }
-.punch-top { display: flex; align-items: center; justify-content: space-between; min-height: 18px; margin: 0 0 18px 14px; }
-.work-no {
-  font: 12px/1 var(--font-mono);
-  letter-spacing: .06em;
-  color: var(--ink-3);
-  transition: color .3s ease;
-}
-.work-go { color: var(--ink-3); transition: color .2s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+.work-go { position: absolute; top: 18px; right: 18px; color: var(--ink-3); transition: color .2s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
 .work-go svg { display: block; }
 
 .work-title {
@@ -1899,6 +1891,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   font-size: 19px;
   font-weight: 600;
   line-height: 1.25;
+  padding-right: 24px;
   letter-spacing: -.012em;
 }
 .work-title a { color: inherit; text-decoration: none; }
@@ -1936,8 +1929,6 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 
 .work-item.has-link:hover { transform: translateY(-4px); filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .08)); }
 .work-item:hover .punch-holes i { background: var(--accent); }
-.work-item.has-link:hover .work-no,
-.work-item.is-lit .work-no { color: var(--accent); }
 .work-item.has-link:hover .work-go { color: var(--ink); transform: translate(2px, -2px); }
 .work-item:focus-within .punch-edge { background: var(--ink); }
 .work-item.is-lit .punch-edge { background: var(--accent); }
@@ -2197,12 +2188,43 @@ html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior
 [data-theme] .pc-stop:hover .pc-node,
 [data-theme] .pc-stop:focus-visible .pc-node { border: 0; }
 .pc-node { width: 84px; height: 84px; }
-.pc-year { font-size: .86rem; }
+.pc-year { font-size: 1rem; }
 .pc-row[data-c="1"] .pc-stop { margin-left: calc(50% - 48px); }
-[data-theme] .pc-stop.is-on .pc-node { box-shadow: none; }
+/* Closer together: the stops alternate sides, so they can sit tighter. */
+.pc-track { gap: 10px; }
+/* The open stop is solid and ringed, with its year in whichever of ink or
+   white reads best on its colour (--on-tint, from script.js). */
+[data-theme] .pc-stop.is-on .pc-node { box-shadow: 0 0 0 5px var(--bg), 0 0 0 7px var(--tint); }
+[data-theme] .pc-stop.is-on .pc-year { color: var(--on-tint, #0e0e0e); }
 [data-theme] .pc-stop:hover .pc-node { background: color-mix(in oklab, var(--tint) 22%, var(--bg)); }
 [data-theme] .pc-stop.is-on:hover .pc-node { background: var(--tint); }
 @media (max-width: 719px) {
   .pc-node { width: 66px; height: 66px; }
-  .pc-year { font-size: .76rem; }
+  .pc-year { font-size: .84rem; }
+  .pc-track { gap: 18px; }
+}
+
+/* The shapes drifting behind the page, a shade quieter. */
+.bg .m-field { opacity: .82; }
+
+/* The top bar, a size up on desktop: 42px items in a 60px bar (the pocket
+   still concentric with the bar's ends), glyphs scaled to match. */
+@media (min-width: 720px) {
+  header.nav { width: min(calc(100% - 20px), 1140px); }
+  header.nav .icon-btn,
+  header.nav a.cta,
+  header.nav .brand-mark { width: 42px; min-width: 42px; height: 42px; }
+  header.nav .nav-links a { height: 42px; padding: 0 15px; font-size: 1rem; }
+  header.nav .nav-pocket { height: 42px; }
+  header.nav .brand-mark svg { width: 33px; height: 33px; }
+  header.nav #themeBtn .ico-midnight { width: 29px; height: 29px; }
+  header.nav #themeBtn .ico-daylight { width: 21px; height: 21px; }
+  header.nav .cta-ico { width: 30px; height: 30px; }
+  header.nav #paletteBtn svg { width: 31px; height: 31px; }
+}
+@media (min-width: 720px) and (max-width: 1100px) {
+  header.nav .nav-links a {
+    padding-inline: clamp(6px, 1.7vw - 3px, 14px);
+    font-size: clamp(.85rem, .6rem + .5vw, 1rem);
+  }
 }

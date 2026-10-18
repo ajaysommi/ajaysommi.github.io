@@ -18,14 +18,16 @@
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DANCE = 1000;    // ms of the plain hops
-  const RESUME = 1990;   // ms of the resume scene
+  // The resume scene's keyframes are written in ms on a 1990ms timeline,
+  // played back a touch faster by PACE.
+  const PACE = 0.9;
+  const RESUME = Math.round(1990 * PACE);   // ms of the resume scene
   const SOFT = 1300;     // the resume scene without the throw
   // Moments in the resume scene: the sheet hits the glass and spreads flat,
   // and the batter has run and faded by the time the page changes.
-  const HIT = 1165, SPLAT = 1205;
+  const HIT = Math.round(1165 * PACE), SPLAT = Math.round(1205 * PACE);
   const LIFE = RESUME - SPLAT - 20;
-  // The resume scene's keyframes are written in ms from its start.
-  const P = (ms) => `${(ms / RESUME * 100).toFixed(2)}%`;
+  const P = (ms) => `${(ms * PACE / RESUME * 100).toFixed(2)}%`;
   let going = false;
 
   // Rising slows to the top, falling speeds up: gravity.
@@ -332,8 +334,8 @@
       ${P(1010)} { transform: translate(calc(var(--dx) + -14px), calc(var(--dy) + 8px)) rotate(20deg) scale(calc(var(--sx) * 0.93), calc(var(--sy) * 0.93)); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
       ${P(1065)} { transform: translate(calc(var(--dx) + -16px), calc(var(--dy) + 9px)) rotate(22deg) scale(calc(var(--sx) * 0.92), calc(var(--sy) * 0.92)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
       ${P(1110)} { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
-      ${P(HIT)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
-      ${P(SPLAT)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
+      ${P(1165)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
+      ${P(1205)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
       100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* As the wind-up starts, the drawing gives way to a plain page in the

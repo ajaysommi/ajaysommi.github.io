@@ -2457,6 +2457,28 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
+   The Path's open stop is filled with its company's colour; its year goes
+   in whichever of ink or white has more contrast against that colour.
+   ========================================================================== */
+(function pathYearInk() {
+  const lum = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    const ch = [n >> 16, (n >> 8) & 255, n & 255].map((v) => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+  };
+  $$('.pc-row').forEach((row) => {
+    const tint = row.style.getPropertyValue('--tint').trim();
+    if (!/^#[0-9a-f]{6}$/i.test(tint)) return;
+    const L = lum(tint);
+    const onInk = (L + 0.05) / (lum('#0e0e0e') + 0.05), onWhite = 1.05 / (L + 0.05);
+    row.style.setProperty('--on-tint', onInk >= onWhite ? '#0e0e0e' : '#ffffff');
+  });
+})();
+
+/* ==========================================================================
    Featured Work's punch cards
    Each card's strip of holes spells its own title, a column per letter
    and a hole wherever the letter's code has a bit set in its lowest three,
