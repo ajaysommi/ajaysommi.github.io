@@ -2187,3 +2187,22 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    the loader starts to lift. */
 html:has(#pageLoader:not(.is-done)),
 html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior: none; }
+
+/* The Path's stops: larger, and no rim, just the company's colour as a
+   flat wash (solid for the open one). The middle column's stop is moved
+   over by half the larger stop so its node stays on the midline. */
+[data-theme] .pc-node,
+[data-theme] .pc-stop.is-past .pc-node,
+[data-theme] .pc-stop.is-on .pc-node,
+[data-theme] .pc-stop:hover .pc-node,
+[data-theme] .pc-stop:focus-visible .pc-node { border: 0; }
+.pc-node { width: 84px; height: 84px; }
+.pc-year { font-size: .86rem; }
+.pc-row[data-c="1"] .pc-stop { margin-left: calc(50% - 48px); }
+[data-theme] .pc-stop.is-on .pc-node { box-shadow: none; }
+[data-theme] .pc-stop:hover .pc-node { background: color-mix(in oklab, var(--tint) 22%, var(--bg)); }
+[data-theme] .pc-stop.is-on:hover .pc-node { background: var(--tint); }
+@media (max-width: 719px) {
+  .pc-node { width: 66px; height: 66px; }
+  .pc-year { font-size: .76rem; }
+}
