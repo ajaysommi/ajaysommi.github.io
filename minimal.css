@@ -1261,9 +1261,11 @@
   }
 
   /* The bar under the mark: a thick, rounded track in a faint tint of the
-     ink, filling with the ink itself, so it reads in either theme. It fills
-     by unclipping rather than by stretching, so its rounded ends stay
-     round the whole way. */
+     ink, filling with the ink itself, so it reads in either theme. The fill
+     is a full length bar that slides in from the left inside the track, so
+     its rounded end stays round the whole way and the motion is a plain
+     transform. (It used to unclip a rounded inset, which Safari does not
+     animate: on an iPhone the bar went from empty to full in one step.) */
   .m-load-line {
     position: relative;
     width: 152px;
@@ -1271,6 +1273,9 @@
     margin-top: 30px;
     border-radius: 999px;
     overflow: hidden;
+    /* Keeps Safari clipping the sliding fill to the rounded track. */
+    isolation: isolate;
+    -webkit-mask-image: linear-gradient(#000, #000);
     background: color-mix(in oklab, var(--ink) 13%, transparent);
   }
   .m-load-line i {
@@ -1278,7 +1283,7 @@
     inset: 0;
     border-radius: inherit;
     background: var(--ink);
-    clip-path: inset(0 100% 0 0 round 999px);
+    transform: translateX(-100%);
     animation: m-line-fill 1.15s .1s forwards;
   }
   /* The fill speeds up as it nears the end, hits it, recoils a little and
@@ -1295,10 +1300,10 @@
 
   @keyframes m-tile-in { to { transform: scale(1); } }
   @keyframes m-line-fill {
-    0%   { clip-path: inset(0 100% 0 0 round 999px); animation-timing-function: cubic-bezier(.5, 0, .95, .45); }
-    74%  { clip-path: inset(0 0 0 0 round 999px); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
-    86%  { clip-path: inset(0 9% 0 0 round 999px); animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
-    100% { clip-path: inset(0 0 0 0 round 999px); }
+    0%   { transform: translateX(-100%); animation-timing-function: cubic-bezier(.3, .2, .8, .5); }
+    74%  { transform: translateX(0); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+    86%  { transform: translateX(-9%); animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+    100% { transform: translateX(0); }
   }
   @keyframes m-line-hit {
     0%, 73% { transform: none; }
@@ -1309,7 +1314,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .mk { animation: none; transform: none; opacity: 1; }
-    .m-load-line i { animation: none; clip-path: none; }
+    .m-load-line i { animation: none; transform: none; }
     .m-load-line { animation: none; }
   }
 
