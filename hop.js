@@ -318,6 +318,16 @@
     el.style.setProperty('--sy', (ph / t.height).toFixed(5));
     el.style.setProperty('--dx', `${(px + pw / 2 - (t.left + t.width / 2)).toFixed(1)}px`);
     el.style.setProperty('--dy', `${(py + ph - (t.top + t.height)).toFixed(1)}px`);
+    /* The blank page lands with the document card's own corners (--r-lg,
+       18px). The sheet's drawing is stretched to the document's shape, so
+       the corner radius is set separately across and down to come out
+       round, not squashed. */
+    const blank = el.querySelector('.blank');
+    if (blank) {
+      const rad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r-lg')) || 18;
+      blank.setAttribute('rx', (rad * pw / t.width).toFixed(3));
+      blank.setAttribute('ry', (rad * ph / t.height).toFixed(3));
+    }
   };
 
   // The same test the resume page uses to swap the embedded PDF for a card.
