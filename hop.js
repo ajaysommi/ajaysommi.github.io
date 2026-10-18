@@ -37,7 +37,7 @@
     .hop.is-on { opacity: 1; }
     .hop svg { display: block; overflow: visible; }
     .hop .am-a { fill: var(--ink, #edebe6); }
-    .hop .hop-mark { display: block; transform-origin: 50% 92%; will-change: transform; }
+    .hop .hop-mark { display: block; transform-origin: 50% 92%; will-change: transform; backface-visibility: hidden; }
     .hop .hop-mark svg { width: 122px; height: 115px; }
     .hop .hop-hook { transform-box: fill-box; transform-origin: 50% 0; }
     .hop .hop-eye { transform-box: fill-box; transform-origin: 50% 100%; }
@@ -99,8 +99,19 @@
     .hop-r .hop-mark { animation: hop-tap ${RESUME}ms linear both; }
     .hop-r .hop-hook { animation: hop-tap-hook ${RESUME}ms linear both; }
     .hop-r .hop-eye { animation: hop-tap-eye ${RESUME}ms linear both; }
-    .hop .hop-sheet { display: block; margin-bottom: 12px; transform-origin: 50% 100%; will-change: transform; animation: hop-sheet ${RESUME}ms linear both; }
-    .hop .hop-sheet svg { width: 58px; height: 70px; }
+    /* The sheet is drawn at the size of the real document, right where it
+       will land, and shrunk down beside the mark for most of the scene, so
+       the throw grows it back to its true size and it stays sharp (drawn
+       small and blown up, it went soft). An empty slot keeps its place in
+       the row beside the mark. */
+    .hop .hop-slot { display: block; width: 58px; height: 70px; margin-bottom: 12px; }
+    .hop .hop-sheet {
+      position: fixed;
+      left: var(--tl); top: var(--tt); width: var(--tw); height: var(--th);
+      transform-origin: 50% 100%;
+      animation: hop-sheet ${RESUME}ms linear both;
+    }
+    .hop .hop-sheet svg { width: 100%; height: 100%; }
     /* Paper in the page's own colours: a sheet a shade off the page with a
        fine outline, grey lines of text, a blue title and an orange dot. */
     .hop-sheet .paper { fill: color-mix(in oklab, var(--ink, #edebe6) 5%, var(--bg, #121212)); stroke: color-mix(in oklab, var(--ink, #edebe6) 42%, transparent); stroke-width: 1.6; stroke-linejoin: round; }
@@ -119,30 +130,30 @@
     .hop-sheet .l5 { animation: hop-write5 ${RESUME}ms linear both; }
 
     @keyframes hop-tap {
-      0%   { opacity: 1; transform: translate(0, 0) rotate(0) scale(1, 1); animation-timing-function: ${SNAP}; }
-      4%   { transform: translate(0, 0) rotate(0) scale(1.07, .93); animation-timing-function: ${UP}; }
-      8%   { transform: translate(-6px, -16px) rotate(-5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      12%  { transform: translate(-8px, 0) rotate(-2deg) scale(1.09, .91); animation-timing-function: ${UP}; }
-      17%  { transform: translate(4px, -15px) rotate(5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      22%  { transform: translate(8px, 0) rotate(2deg) scale(1.09, .91); animation-timing-function: ${UP}; }
-      27%  { transform: translate(-4px, -15px) rotate(-5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      32%  { transform: translate(-8px, 0) rotate(-2deg) scale(1.09, .91); animation-timing-function: ${UP}; }
-      37%  { transform: translate(4px, -15px) rotate(5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
-      42%  { transform: translate(8px, 0) rotate(2deg) scale(1.09, .91); animation-timing-function: ${SNAP}; }
-      45%  { transform: translate(0, 0) rotate(0) scale(1.02, .98); animation-timing-function: ${SNAP}; }
-      48%  { transform: translate(0, 0) rotate(0) scale(1.16, .82); animation-timing-function: ${UP}; }
-      51%  { transform: translate(0, -26px) rotate(-2deg) scale(.9, 1.12); animation-timing-function: ${UP}; }
-      58%  { transform: translate(0, -92px) rotate(-7deg) scale(1, 1); animation-timing-function: ${DOWN}; }
-      64%  { transform: translate(0, 0) rotate(-1deg) scale(.95, 1.06); animation-timing-function: ${SNAP}; }
-      67%  { transform: translate(0, 0) rotate(0) scale(1.17, .83); animation-timing-function: ${UP}; }
-      70%  { transform: translate(0, -9px) rotate(0) scale(.97, 1.03); animation-timing-function: ${DOWN}; }
-      73%  { transform: translate(0, 0) rotate(0) scale(1.04, .96); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
-      79%  { transform: translate(7px, 3px) rotate(11deg) scale(1.08, .9); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
-      80%  { transform: translate(7.5px, 3.5px) rotate(12deg) scale(1.09, .89); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
-      83%  { transform: translate(-5px, -11px) rotate(-9deg) scale(.93, 1.09); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      87%  { opacity: 1; transform: translate(-1px, 0) rotate(4deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      91%  { transform: translate(0, -2px) rotate(-1.5deg) scale(.99, 1.01); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      100% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.98, .98); }
+      0%   { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: ${SNAP}; }
+      4%   { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.07, .93); animation-timing-function: ${UP}; }
+      8%   { transform: perspective(360px) translate(-6px, -16px) rotate(-5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      12%  { transform: perspective(360px) translate(-8px, 0) rotate(-2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      17%  { transform: perspective(360px) translate(4px, -15px) rotate(5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      22%  { transform: perspective(360px) translate(8px, 0) rotate(2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      27%  { transform: perspective(360px) translate(-4px, -15px) rotate(-5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      32%  { transform: perspective(360px) translate(-8px, 0) rotate(-2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      37%  { transform: perspective(360px) translate(4px, -15px) rotate(5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      42%  { transform: perspective(360px) translate(8px, 0) rotate(2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${SNAP}; }
+      45%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.02, .98); animation-timing-function: ${SNAP}; }
+      48%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.16, .82); animation-timing-function: ${UP}; }
+      51%  { transform: perspective(360px) translate(0, -26px) rotate(-2deg) rotateY(0deg) scale(.9, 1.12); animation-timing-function: ${UP}; }
+      58%  { transform: perspective(360px) translate(0, -92px) rotate(-7deg) rotateY(0deg) scale(1, 1); animation-timing-function: ${DOWN}; }
+      64%  { transform: perspective(360px) translate(0, 0) rotate(-1deg) rotateY(0deg) scale(.95, 1.06); animation-timing-function: ${SNAP}; }
+      67%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.17, .83); animation-timing-function: ${UP}; }
+      70%  { transform: perspective(360px) translate(0, -9px) rotate(0) rotateY(0deg) scale(.97, 1.03); animation-timing-function: ${DOWN}; }
+      73%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(7deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      79%  { transform: perspective(360px) translate(7px, 3px) rotate(11deg) rotateY(32deg) scale(1.08, .9); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      80%  { transform: perspective(360px) translate(7.5px, 3.5px) rotate(12deg) rotateY(34deg) scale(1.09, .89); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
+      83%  { transform: perspective(360px) translate(-5px, -11px) rotate(-9deg) rotateY(-18deg) scale(.93, 1.09); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      87%  { opacity: 1; transform: perspective(360px) translate(-1px, 0) rotate(4deg) rotateY(10deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      91%  { transform: perspective(360px) translate(0, -2px) rotate(-1.5deg) rotateY(-3.5deg) scale(.99, 1.01); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      100% { opacity: 0; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(.98, .98); }
     }
     /* Swings against the sideways motion, a beat behind it. */
     @keyframes hop-tap-hook {
@@ -188,15 +199,15 @@
        middle as it is handed across; then the whole scene fades out to the
        page's paper, and the resume fades in from the same paper. */
     @keyframes hop-sheet {
-      0%, 6% { opacity: 0; transform: translate(0, 14px) rotate(-4deg) scale(.9); animation-timing-function: ${UP}; }
-      12%  { opacity: 1; transform: translate(0, -3px) rotate(1.5deg) scale(1.01); animation-timing-function: ${SNAP}; }
-      16%  { transform: translate(0, 0) rotate(0) scale(1); }
-      48%  { transform: translate(0, 0) rotate(0) scale(1); animation-timing-function: ${UP}; }
-      55%  { transform: translate(0, -5px) rotate(-1.5deg) scale(1); animation-timing-function: ${SNAP}; }
-      62%, 73% { transform: translate(0, 0) rotate(0) scale(1); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
-      80%  { transform: translate(-9px, 6px) rotate(14deg) scale(.95); animation-timing-function: cubic-bezier(.15, .6, .35, 1); }
-      84%  { transform: translate(calc(var(--fx, 0px) * .22), calc(var(--fy, 0px) * .22 - 26px)) rotate(-5deg) scale(calc(1 + (var(--fsx, 1) - 1) * .14), calc(1 + (var(--fsy, 1) - 1) * .14)); animation-timing-function: cubic-bezier(.25, .45, .35, 1); }
-      93%, 100% { transform: translate(var(--fx, 0px), var(--fy, 0px)) rotate(0) scale(var(--fsx, 1), var(--fsy, 1)); }
+      0%, 6% { opacity: 0; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 14px)) rotate(-4deg) scale(calc(var(--sx) * 0.9), calc(var(--sy) * 0.9)); animation-timing-function: ${UP}; }
+      12% { opacity: 1; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -3px)) rotate(1.5deg) scale(calc(var(--sx) * 1.01), calc(var(--sy) * 1.01)); animation-timing-function: ${SNAP}; }
+      16% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); }
+      48% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${UP}; }
+      55% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -5px)) rotate(-1.5deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${SNAP}; }
+      62%, 73% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      80% { transform: translate(calc(var(--dx) + -9px), calc(var(--dy) + 6px)) rotate(14deg) scale(calc(var(--sx) * 0.95), calc(var(--sy) * 0.95)); animation-timing-function: cubic-bezier(.15, .6, .35, 1); }
+      84% { transform: translate(calc(var(--dx) * .78), calc(var(--dy) * .78 - 26px)) rotate(-5deg) scale(calc(var(--sx) + (1 - var(--sx)) * .14), calc(var(--sy) + (1 - var(--sy)) * .14)); animation-timing-function: cubic-bezier(.25, .45, .35, 1); }
+      93%, 100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* In flight the drawing gives way to a plain page in the same colour,
        which is what lands on the document (and what the resume page then
@@ -219,7 +230,7 @@
 
   // A flat sheet in the mark's own colours: no outline or shading, a folded
   // corner, a blue title, lines that get written in, and an orange dot.
-  const sheet = `<span class="hop-sheet"><svg viewBox="-6 -6 58 70" aria-hidden="true" focusable="false">
+  const sheet = `<span class="hop-sheet"><svg viewBox="2 2 40 56" preserveAspectRatio="none" aria-hidden="true" focusable="false">
       <g class="detail">
         <path class="paper" d="M5 2h24l13 13v40a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Z"/>
         <path class="fold" d="M29 2v10a3 3 0 0 0 3 3h10Z"/>
@@ -246,22 +257,22 @@
     const w = vw - 40, h = Math.min(w * 11 / 8.5, vh * 0.66);
     return { left: (vw - (h * 8.5 / 11 < w ? h * 8.5 / 11 : w)) / 2, top: (vh - h) / 2, width: Math.min(w, h * 8.5 / 11), height: h };
   };
-  // Works out the translate and scale that carry the sheet's paper from
-  // where it rests beside the mark onto that rectangle (about the sheet's
-  // own transform origin, its bottom centre).
-  const aimSheet = (el) => {
-    if (!el) return;
-    const paper = el.querySelector('.paper');
-    el.style.animation = 'none';
-    const box = el.getBoundingClientRect(), pr = paper.getBoundingClientRect();
-    el.style.animation = '';
+  // Places the full size sheet on the document's rectangle, then works out
+  // the translate and scale (about its bottom centre) that shrink it onto
+  // the small paper beside the mark, where it spends most of the scene.
+  const aimSheet = (el, slot) => {
+    if (!el || !slot) return;
     const t = docRect();
-    const ox = box.left + box.width / 2, oy = box.top + box.height;
-    const sx = t.width / pr.width, sy = t.height / pr.height;
-    el.style.setProperty('--fsx', sx.toFixed(4));
-    el.style.setProperty('--fsy', sy.toFixed(4));
-    el.style.setProperty('--fx', `${(t.left - ox - sx * (pr.left - ox)).toFixed(1)}px`);
-    el.style.setProperty('--fy', `${(t.top - oy - sy * (pr.top - oy)).toFixed(1)}px`);
+    el.style.setProperty('--tl', `${t.left}px`);
+    el.style.setProperty('--tt', `${t.top}px`);
+    el.style.setProperty('--tw', `${t.width}px`);
+    el.style.setProperty('--th', `${t.height}px`);
+    const r = slot.getBoundingClientRect();
+    const pw = 40, ph = 56, px = r.left + 8, py = r.top + 8;   // the paper within the slot
+    el.style.setProperty('--sx', (pw / t.width).toFixed(5));
+    el.style.setProperty('--sy', (ph / t.height).toFixed(5));
+    el.style.setProperty('--dx', `${(px + pw / 2 - (t.left + t.width / 2)).toFixed(1)}px`);
+    el.style.setProperty('--dy', `${(py + ph - (t.top + t.height)).toFixed(1)}px`);
   };
 
   const go = (url) => {
@@ -278,9 +289,9 @@
     const veil = document.createElement('div');
     veil.className = `hop ${forResume ? 'hop-r' : 'hop-p'}`;
     veil.setAttribute('aria-hidden', 'true');
-    veil.innerHTML = forResume ? `<span class="hop-stage">${mark}${sheet}</span>` : mark;
+    veil.innerHTML = forResume ? `<span class="hop-stage">${mark}<span class="hop-slot"></span></span>${sheet}` : mark;
     document.body.appendChild(veil);
-    if (forResume) aimSheet(veil.querySelector('.hop-sheet'));
+    if (forResume) aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
     requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('is-on')));
     // The next page fades in from the paper rather than cutting in.
     try { sessionStorage.setItem('hop-arrive', '1'); } catch {}
