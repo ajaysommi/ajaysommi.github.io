@@ -1685,3 +1685,9 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 @media (max-width: 719px) {
   .footer-mark { display: none; }
 }
+
+/* The loading screen on phones: the mark and its bar a size down. */
+@media (max-width: 719px) {
+  .m-load-mark { width: 96px; height: 84px; }
+  .m-load-line { width: 132px; height: 8px; margin-top: 28px; }
+}
