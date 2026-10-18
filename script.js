@@ -382,7 +382,14 @@ const onScrollFrame = (() => {
     dot.addEventListener('animationend', () => setTimeout(r, 380), { once: true });
     setTimeout(r, 2600);
   });
-  Promise.all([built, fonts, markDone]).then(finish);
+  // And for the bar to finish filling and bouncing (it takes longer on phones).
+  const barDone = new Promise((r) => {
+    const bar = el.querySelector('.m-load-line');
+    if (!bar || prefersReduced()) { r(); return; }
+    bar.addEventListener('animationend', (e) => { if (e.target === bar) setTimeout(r, 60); });
+    setTimeout(r, 2800);
+  });
+  Promise.all([built, fonts, markDone, barDone]).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
   setTimeout(dismiss, 4000);

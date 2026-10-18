@@ -1282,8 +1282,9 @@
     animation: m-line-fill 1.15s .1s forwards;
   }
   /* The fill speeds up as it nears the end, hits it, recoils a little and
-     settles; the bar gives a small squash at the moment of impact. */
-  .m-load-line { animation: m-line-hit 1.15s .1s both; }
+     settles. At the moment of impact the bar's right end gives, stretching
+     out a touch and springing back; its left end stays put. */
+  .m-load-line { transform-origin: left center; animation: m-line-hit 1.15s .1s both; }
 
   /* As the loader fades, the mark grows a touch, as if it is what bursts. */
   .page-loader.is-done .m-load-mark {
@@ -1300,9 +1301,9 @@
     100% { clip-path: inset(0 0 0 0 round 999px); }
   }
   @keyframes m-line-hit {
-    0%, 72% { transform: none; }
-    78%  { transform: scale(1.035, .72); }
-    88%  { transform: scale(.995, 1.08); }
+    0%, 73% { transform: none; }
+    79%  { transform: scaleX(1.045); }
+    89%  { transform: scaleX(.99); }
     100% { transform: none; }
   }
 
@@ -1706,4 +1707,8 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 @media (max-width: 719px) {
   .m-load-mark { width: 86px; height: 75px; }
   .m-load-line { width: 120px; height: 7px; margin-top: 25px; }
+  /* A short bar filled in the same time looked like it raced across, so on
+     phones it takes a little longer. */
+  .m-load-line,
+  .m-load-line i { animation-duration: 1.7s; }
 }
