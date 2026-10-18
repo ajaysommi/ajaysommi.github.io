@@ -1,7 +1,7 @@
 /* ==========================================================================
    Page hop
    Going from one page of the site to another (the resume, say), the page
-   fades to its own paper and the Aj mark does a little happy dance for
+   fades to its own paper and the Aj mark does a couple of happy hops for
    about a second before the next page opens. Links back to the home page
    are left alone, since it has its own loading screen; so are new tabs,
    downloads, mail links and anything on another site. With reduced motion
@@ -9,7 +9,7 @@
    ========================================================================== */
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const DANCE = 1000;   // ms the mark dances before the next page opens
+  const DANCE = 1200;   // ms the mark dances before the next page opens
   let going = false;
 
   const css = `
@@ -23,34 +23,53 @@
     .hop.is-on { opacity: 1; }
     .hop svg { width: 96px; height: 90px; overflow: visible; }
     .hop .am-a { fill: var(--ink, #edebe6); }
-    .hop .hop-body { transform-box: view-box; transform-origin: 50% 100%; animation: hop-dance ${DANCE}ms cubic-bezier(.4, 0, .3, 1) both; }
-    .hop .hop-hook { transform-box: fill-box; transform-origin: 50% 0; animation: hop-swing ${DANCE}ms ease-in-out both; }
-    .hop .hop-eye { transform-box: fill-box; transform-origin: 50% 100%; animation: hop-eye ${DANCE}ms ease-in-out both; }
-    @keyframes hop-dance {
-      0%   { transform: translateY(0) scale(1, 1) rotate(0); }
-      10%  { transform: translateY(0) scale(1.1, .86) rotate(0); }
-      24%  { transform: translateY(-26px) scale(.94, 1.08) rotate(-9deg); }
-      36%  { transform: translateY(0) scale(1.12, .84) rotate(0); }
-      50%  { transform: translateY(-20px) scale(.95, 1.06) rotate(9deg); }
-      62%  { transform: translateY(0) scale(1.1, .88) rotate(0); }
-      74%  { transform: translateY(-9px) scale(.98, 1.03) rotate(-4deg); }
-      86%  { transform: translateY(0) scale(1.04, .96) rotate(0); }
-      100% { transform: translateY(0) scale(1, 1) rotate(0); }
+    .hop .hop-body { transform-box: view-box; transform-origin: 50% 100%; animation: hop-jump ${DANCE}ms linear both; }
+    .hop .hop-hook { transform-box: fill-box; transform-origin: 50% 0; animation: hop-hook ${DANCE}ms linear both; }
+    .hop .hop-eye { transform-box: fill-box; transform-origin: 50% 100%; animation: hop-eye ${DANCE}ms linear both; }
+    /* Two happy hops with real weight: a crouch to gather, a launch that
+       stretches, a rise that slows to the top (with a playful tilt) and a
+       fall that speeds up, a squash on landing; then a smaller hop tilting
+       the other way, another squash, and a blink of the eye to finish. The
+       eye and the hook trail the body a moment, so it has some give. */
+    @keyframes hop-jump {
+      0%   { transform: translateY(0) rotate(0) scale(1, 1); animation-timing-function: cubic-bezier(.3, 0, .6, 1); }
+      10%  { transform: translateY(0) rotate(0) scale(1.14, .82); animation-timing-function: cubic-bezier(.2, .8, .4, 1); }
+      16%  { transform: translateY(-7px) rotate(-3deg) scale(.9, 1.14); animation-timing-function: cubic-bezier(.25, .6, .5, 1); }
+      33%  { transform: translateY(-34px) rotate(-11deg) scale(1, 1); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
+      48%  { transform: translateY(0) rotate(-2deg) scale(.94, 1.08); animation-timing-function: cubic-bezier(.2, .8, .4, 1); }
+      52%  { transform: translateY(0) rotate(0) scale(1.2, .76); animation-timing-function: cubic-bezier(.2, .8, .4, 1); }
+      57%  { transform: translateY(-5px) rotate(2deg) scale(.92, 1.1); animation-timing-function: cubic-bezier(.25, .6, .5, 1); }
+      69%  { transform: translateY(-19px) rotate(9deg) scale(1, 1); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
+      79%  { transform: translateY(0) rotate(1deg) scale(.96, 1.05); animation-timing-function: cubic-bezier(.2, .8, .4, 1); }
+      83%  { transform: translateY(0) rotate(0) scale(1.13, .85); animation-timing-function: cubic-bezier(.3, 0, .5, 1); }
+      91%  { transform: translateY(-2px) rotate(0) scale(.98, 1.03); animation-timing-function: cubic-bezier(.3, 0, .5, 1); }
+      100% { transform: translateY(0) rotate(0) scale(1, 1); }
     }
-    @keyframes hop-swing {
-      0%, 100% { transform: rotate(0); }
-      24% { transform: rotate(10deg); }
-      50% { transform: rotate(-10deg); }
-      74% { transform: rotate(5deg); }
+    @keyframes hop-hook {
+      0%, 10% { transform: rotate(0); }
+      18%  { transform: rotate(-6deg); }
+      33%  { transform: rotate(4deg); }
+      52%  { transform: rotate(-7deg); }
+      60%  { transform: rotate(5deg); }
+      69%  { transform: rotate(-3deg); }
+      83%  { transform: rotate(-5deg); }
+      92%  { transform: rotate(2deg); }
+      100% { transform: rotate(0); }
     }
     @keyframes hop-eye {
-      0%, 100% { transform: translateY(0) scale(1); }
-      20% { transform: translateY(-7px) scale(1.12); }
-      36% { transform: translateY(1px) scale(1.15, .8); }
-      46% { transform: translateY(-6px) scale(1.1); }
-      62% { transform: translateY(1px) scale(1.12, .84); }
-      76% { transform: translateY(-3px); }
-      88% { transform: translateY(0) scale(1.04, .96); }
+      0%   { transform: translateY(0) scale(1); }
+      10%  { transform: translateY(1px) scale(1.06, .9); }
+      17%  { transform: translateY(2.5px) scale(.94, 1.08); }
+      33%  { transform: translateY(-3px) scale(1); }
+      48%  { transform: translateY(-1.5px) scale(.96, 1.05); }
+      53%  { transform: translateY(1.5px) scale(1.22, .8); }
+      58%  { transform: translateY(2px) scale(.95, 1.06); }
+      69%  { transform: translateY(-2px) scale(1); }
+      84%  { transform: translateY(1.2px) scale(1.15, .85); }
+      89%  { transform: translateY(0) scale(1); }
+      93%  { transform: translateY(1px) scale(1.12, .12); }
+      97%  { transform: translateY(0) scale(1); }
+      100% { transform: translateY(0) scale(1); }
     }`;
 
   const mark = `<svg viewBox="9 8.5 45 42" aria-hidden="true" focusable="false"><g class="hop-body">
