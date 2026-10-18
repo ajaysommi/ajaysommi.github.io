@@ -288,7 +288,7 @@
         <rect class="ln l4" x="8" y="42" width="22" height="4" rx="2"/>
         <circle class="ln dot l5" cx="34" cy="26" r="3.2"/>
       </g>
-      <rect class="blank" x="2" y="2" width="40" height="56" rx="1"/>
+      <path class="blank" d="M2 2H42V58H2Z"><animate class="splat" attributeName="d" begin="indefinite" fill="freeze" calcMode="spline"/></path>
     </svg></span>`;
 
   /* Where the resume document sits on the resume page, so the thrown sheet
@@ -326,11 +326,77 @@
        the corner radius is set separately across and down to come out
        round, not squashed. */
     const blank = el.querySelector('.blank');
-    if (blank) {
-      const rad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r-lg')) || 18;
-      blank.setAttribute('rx', (rad * pw / t.width).toFixed(3));
-      blank.setAttribute('ry', (rad * ph / t.height).toFixed(3));
-    }
+    if (blank) shapeBlank(blank, t.width, t.height);
+  };
+
+  /* The blank page's outline, worked out for the document's real size so
+     its corners and wobbles come out round at any window size: the clean
+     shape is the document card's own (18px corners); the splat is the same
+     outline pushed out and in by an uneven wave, the ragged edge of a
+     pancake spreading on glass. Both are drawn from the same points, so one
+     can turn into the other, which an SVG animation does on impact: clean
+     in flight, ragged the instant it hits, smoothing back to clean as it
+     draws in. Coordinates are in the sheet's own stretched units (40 by 56
+     across the document). */
+  const shapeBlank = (blank, W, H) => {
+    const rad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r-lg')) || 18;
+    const N = 72;
+    const per = 2 * (W + H - 4 * rad) + 2 * Math.PI * rad;
+    const at = (d) => {   // point and outward normal at distance d around the rounded rectangle
+      const segs = [
+        [W - 2 * rad, (u) => [rad + u, 0], [0, -1]],
+        [Math.PI * rad / 2, (u) => { const a = -Math.PI / 2 + u / rad; return [W - rad + rad * Math.cos(a), rad + rad * Math.sin(a)]; }, null],
+        [H - 2 * rad, (u) => [W, rad + u], [1, 0]],
+        [Math.PI * rad / 2, (u) => { const a = u / rad; return [W - rad + rad * Math.cos(a), H - rad + rad * Math.sin(a)]; }, null],
+        [W - 2 * rad, (u) => [W - rad - u, H], [0, 1]],
+        [Math.PI * rad / 2, (u) => { const a = Math.PI / 2 + u / rad; return [rad + rad * Math.cos(a), H - rad + rad * Math.sin(a)]; }, null],
+        [H - 2 * rad, (u) => [0, H - rad - u], [-1, 0]],
+        [Math.PI * rad / 2, (u) => { const a = Math.PI + u / rad; return [rad + rad * Math.cos(a), rad + rad * Math.sin(a)]; }, null],
+      ];
+      for (const [len, f, n] of segs) {
+        if (d <= len) {
+          const p = f(d);
+          if (n) return [p, n];
+          const cx = p[0] < W / 2 ? rad : W - rad, cy = p[1] < H / 2 ? rad : H - rad;
+          const l = Math.hypot(p[0] - cx, p[1] - cy) || 1;
+          return [p, [(p[0] - cx) / l, (p[1] - cy) / l]];
+        }
+        d -= len;
+      }
+      return [[rad, 0], [0, -1]];
+    };
+    const seed = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
+    const wave = (k) => {
+      const a = k / N * Math.PI * 2;
+      return 14 * Math.sin(a * 5 + seed[0]) + 9 * Math.sin(a * 9 + seed[1]) + 6 * Math.sin(a * 14 + seed[2]) + 8;
+    };
+    const toU = ([x, y]) => [2 + x * 40 / W, 2 + y * 56 / H];
+    const path = (push) => {
+      const pts = [];
+      for (let k = 0; k < N; k++) {
+        const [p, n] = at(per * k / N);
+        const o = push ? wave(k) : 0;
+        pts.push(toU([p[0] + n[0] * o, p[1] + n[1] * o]));
+      }
+      // A smooth closed curve through the points (Catmull-Rom as cubic Beziers).
+      let d = `M${pts[0][0].toFixed(3)} ${pts[0][1].toFixed(3)}`;
+      for (let i = 0; i < N; i++) {
+        const p0 = pts[(i - 1 + N) % N], p1 = pts[i], p2 = pts[(i + 1) % N], p3 = pts[(i + 2) % N];
+        const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+        const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        d += `C${c1[0].toFixed(3)} ${c1[1].toFixed(3)} ${c2[0].toFixed(3)} ${c2[1].toFixed(3)} ${p2[0].toFixed(3)} ${p2[1].toFixed(3)}`;
+      }
+      return d + 'Z';
+    };
+    const clean = path(false), ragged = path(true);
+    blank.setAttribute('d', clean);
+    const anim = blank.querySelector('animate');
+    if (!anim) return;
+    // Clean until impact (86.5% of the scene), ragged at full splat (89%), clean again by the end.
+    anim.setAttribute('dur', `${RESUME}ms`);
+    anim.setAttribute('values', `${clean};${clean};${ragged};${clean}`);
+    anim.setAttribute('keyTimes', '0;0.865;0.89;1');
+    anim.setAttribute('keySplines', '0 0 1 1;.1 .8 .25 1;.25 .55 .3 1');
   };
 
   // The same test the resume page uses to swap the embedded PDF for a card.
@@ -359,7 +425,12 @@
       : soft ? `<span class="hop-stage">${mark}${sheet.replace('viewBox="2 2 40 56" preserveAspectRatio="none"', 'viewBox="-6 -6 58 70"')}</span>`
       : `<span class="hop-stage">${mark}<span class="hop-slot"></span></span>${sheet}`;
     document.body.appendChild(veil);
-    if (forResume && !soft) aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
+    if (forResume && !soft) {
+      aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
+      // The outline's animation starts with the scene, so the two stay in step.
+      const splat = veil.querySelector('.hop-sheet .splat');
+      if (splat && typeof splat.beginElement === 'function') splat.beginElement();
+    }
     requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('is-on')));
     // The next page fades in from the paper rather than cutting in.
     try { sessionStorage.setItem('hop-arrive', soft ? 'soft' : '1'); } catch {}
