@@ -396,7 +396,7 @@ const onScrollFrame = (() => {
     if (!anim || typeof anim.beginElement !== 'function' || prefersReduced()) { r(); return; }
     el.classList.add('is-smiling');
     anim.beginElement();
-    setTimeout(r, 720);
+    setTimeout(r, 950);
   });
   Promise.all([built, fonts, markDone, barDone]).then(smile).then(finish);
 
