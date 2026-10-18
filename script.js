@@ -2483,7 +2483,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
    Each card's strip of holes spells its own title, a column per letter
    and a hole wherever the letter's code has a bit set in its lowest three,
    the way a punch card carried a line of code. Spaces come out blank, so
-   the words show as gaps. Hovering a card reads it, left to right (CSS).
+   the words show as gaps.
    ========================================================================== */
 (function punchCards() {
   const MAX = 30;   // columns the strip has room for
@@ -2495,7 +2495,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     [...title.slice(0, MAX)].forEach((ch, i) => {
       const c = ch.charCodeAt(0);
       for (let r = 0; r < 3; r++) {
-        if ((c >> r) & 1) html += `<i style="grid-column:${i + 1};grid-row:${r + 1};--i:${i}"></i>`;
+        if ((c >> r) & 1) html += `<i style="grid-column:${i + 1};grid-row:${r + 1}"></i>`;
       }
     });
     strip.innerHTML = html;
@@ -2503,58 +2503,20 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
-   Skills & Tools: a row of groups, each opening a small floating card of
-   its skills just under it. One open at a time; a tap outside, Escape, or
-   picking a skill closes it.
+   Skills & Tools, as a file tree: a folder per group, one open at a time,
+   its skills listed in columns under it like ls. Opening another folder
+   closes the one that was open; opening the open one closes it.
    ========================================================================== */
-(function skillGroups() {
-  const wrap = $('#skillGroups');
-  if (!wrap) return;
-  const cats = $$('.skx-cat', wrap);
-  const row = $('.skx-row', wrap);
-  let open = null;
-
-  const place = (btn, pop) => {
-    const w = wrap.getBoundingClientRect(), b = btn.getBoundingClientRect();
-    pop.style.top = `${Math.round(row.offsetTop + row.offsetHeight + 12)}px`;
-    if (innerWidth < 640) { pop.style.left = '0px'; pop.style.right = '0px'; }
-    else {
-      pop.style.right = 'auto';
-      const left = clamp(b.left - w.left - 18, 0, Math.max(0, w.width - pop.offsetWidth));
-      pop.style.left = `${Math.round(left)}px`;
-    }
-    const caret = clamp(b.left + b.width / 2 - (w.left + pop.offsetLeft), 22, pop.offsetWidth - 22);
-    pop.style.setProperty('--caret', `${Math.round(caret)}px`);
-  };
-
-  const close = () => {
-    if (!open) return;
-    const [btn, pop] = open;
-    btn.setAttribute('aria-expanded', 'false');
-    pop.hidden = true;
-    open = null;
-  };
-
-  cats.forEach((btn) => {
-    const pop = document.getElementById(btn.getAttribute('aria-controls'));
-    btn.addEventListener('click', () => {
-      const same = open && open[0] === btn;
-      close();
-      if (same) return;
-      pop.hidden = false;
-      btn.setAttribute('aria-expanded', 'true');
-      open = [btn, pop];
-      place(btn, pop);
-    });
-    // Choosing a skill does its spotlight (see filtering) and puts the card away.
-    $$('button', pop).forEach((b) => b.addEventListener('click', close));
-  });
-
-  document.addEventListener('pointerdown', (e) => { if (open && !wrap.contains(e.target)) close(); });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && open) { const btn = open[0]; close(); btn.focus(); }
-  });
-  addEventListener('resize', () => { if (open) place(open[0], open[1]); }, { passive: true });
+(function skillTree() {
+  const tree = $('#skillGroups');
+  if (!tree) return;
+  const dirs = $$('.skt-name', tree).map((btn) => [btn, document.getElementById(btn.getAttribute('aria-controls'))]);
+  const set = (btn, ls, on) => { btn.setAttribute('aria-expanded', String(on)); ls.hidden = !on; };
+  dirs.forEach(([btn, ls]) => btn.addEventListener('click', () => {
+    const on = btn.getAttribute('aria-expanded') !== 'true';
+    dirs.forEach(([b, l]) => set(b, l, false));
+    set(btn, ls, on);
+  }));
 })();
 
 /* ==========================================================================
@@ -2567,7 +2529,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
   const cards = $$('.work-item', grid);
   const filterChips = $$('#projectFilters .wf[data-filter]');
-  const skillButtons = $$('#skills .skx-pop button');
+  const skillButtons = $$('#skills .skt-ls button');
   const status = $('#filterStatus');
   const statusTag = $('#filterTag');
   const empty = $('#emptyState');

@@ -1800,10 +1800,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    Featured Work, as punch cards
    Each project is a card cut like the punch cards code was once written
    on: square-shouldered paper with the one clipped corner, and along the
-   foot a strip of holes punched through to the page, spelling the project's own title (script.js). Hovering a
-   card that links somewhere lifts it and reads it, the holes lighting up
-   left to right like a card reader passing over them. The filters are
-   plain words with a count of what each would show.
+   foot a strip of holes punched through to the page, spelling the
+   project's own title (script.js). The cards stay still under the
+   pointer; the whole card is the link. The filters are plain words with a
+   count of what each would show.
    ========================================================================== */
 .work-filter {
   display: flex;
@@ -1855,10 +1855,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   padding: 0;
   list-style: none;
 }
-.work-item {
-  display: flex;
-  transition: transform .35s cubic-bezier(.22, 1, .36, 1), filter .35s ease;
-}
+.work-item { display: flex; }
 .work-item.is-hidden { display: none; }
 /* The edge is the card's outline: the same shape a pixel larger, behind
    it. A clip cannot carry a border, so it is drawn this way, and the
@@ -1883,7 +1880,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   background: var(--surface);
   clip-path: polygon(calc(var(--cut) - .586px) 0, 100% 0, 100% 100%, 0 100%, 0 calc(var(--cut) - .586px));
 }
-.work-go { position: absolute; top: 18px; right: 18px; color: var(--ink-3); transition: color .2s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+.work-go { position: absolute; top: 18px; right: 18px; color: var(--ink-3); }
 .work-go svg { display: block; }
 
 .work-title {
@@ -1921,15 +1918,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   border-radius: 1.5px;
   background: var(--bg);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .08);
-  transition: background-color .25s ease;
-  transition-delay: calc(var(--i, 0) * 14ms);
 }
 [data-theme="daylight"] .punch-holes i { background: var(--m-fill-2); }
 [data-theme="midnight"] .punch-holes i { background: color-mix(in oklab, var(--bg) 60%, #000); }
 
-.work-item.has-link:hover { transform: translateY(-4px); filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .08)); }
-.work-item:hover .punch-holes i { background: var(--accent); }
-.work-item.has-link:hover .work-go { color: var(--ink); transform: translate(2px, -2px); }
 .work-item:focus-within .punch-edge { background: var(--ink); }
 .work-item.is-lit .punch-edge { background: var(--accent); }
 
@@ -1941,137 +1933,98 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   .work { grid-template-columns: 1fr; gap: 14px; }
   .punch { padding: 18px 18px 16px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .work-item, .punch-holes i { transition: none; }
-}
 
 /* ==========================================================================
-   Skills & Tools, as groups that open
-   One row of group names, each with how many skills it holds, in the same
-   plain style as the Featured Work filters. A group opens a small card of
-   its skills floating just under it, its notch pointing back at the name;
-   the skills are words split by slashes, and tapping one spotlights where
-   it was used. The section stays a line or two tall.
+   Skills & Tools, as a file tree
+   A skills/ root and a folder per group, joined by the branch lines a tree
+   listing draws, each with how many it holds. The open folder lists its
+   skills in columns under it, the way ls does; tapping one spotlights
+   where it was used.
    ========================================================================== */
-.skx { position: relative; }
-.skx-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  padding: 18px 0 14px;
-  border-top: 1px solid var(--stroke);
-  border-bottom: 1px solid var(--stroke);
+.skt { --row: 44px; max-width: 900px; font-family: var(--font-mono); }
+.skt-root { margin: 0 0 2px; font: 500 15px/1.6 var(--font-mono); color: var(--ink); }
+.skt-tree { margin: 0; padding: 0; list-style: none; }
+/* flow-root keeps the listing's bottom margin inside the folder, so the
+   trunk runs unbroken past it. */
+.skt-dir { position: relative; display: flow-root; padding-left: 30px; }
+/* The trunk runs past every folder but stops at the last one's branch. */
+.skt-dir::before,
+.skt-dir::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  background: var(--stroke-hi);
 }
-.skx-cat {
-  position: relative;
-  padding: 6px 0;
+.skt-dir::before { top: 0; bottom: 0; width: 1px; }
+.skt-dir:last-child::before { bottom: auto; height: calc(var(--row) / 2); }
+.skt-dir::after { top: calc(var(--row) / 2); width: 18px; height: 1px; }
+
+.skt-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: var(--row);
+  padding: 0;
   border: 0;
   background: none;
   color: var(--ink-2);
-  font: 500 18px/1.2 var(--font-sans);
-  letter-spacing: -.01em;
+  font: 500 16px/1 var(--font-mono);
+  text-align: left;
   cursor: pointer;
   transition: color .2s ease;
 }
-.skx-cat sup {
-  margin-left: 3px;
-  font: 11px/1 var(--font-mono);
-  letter-spacing: 0;
-  color: var(--ink-3);
-  transition: color .2s ease;
+.skt-caret {
+  flex: none;
+  width: 7px;
+  height: 9px;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transition: transform .25s cubic-bezier(.22, 1, .36, 1);
 }
-.skx-cat::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  transition: transform .32s cubic-bezier(.22, 1, .36, 1);
-}
-.skx-cat:hover,
-.skx-cat[aria-expanded="true"] { color: var(--ink); }
-.skx-cat[aria-expanded="true"]::after { transform: scaleX(1); }
-.skx-cat[aria-expanded="true"] sup { color: var(--accent); }
-.skx-cat:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
+.skt-n { margin-left: auto; font-size: 12px; color: var(--ink-3); }
+.skt-name:hover,
+.skt-name[aria-expanded="true"] { color: var(--ink); }
+.skt-name[aria-expanded="true"] .skt-caret { transform: rotate(90deg); color: var(--accent); }
+.skt-name:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
 
-.skx-pop {
-  --caret: 40px;
-  position: absolute;
-  z-index: 20;
-  width: max-content;
-  max-width: min(560px, 100%);
-  padding: 14px 20px;
-  border: 1px solid var(--stroke);
-  border-radius: 18px;
-  background: var(--surface-hi);
-  box-shadow: 0 18px 40px -14px rgba(0, 0, 0, .22), 0 2px 8px -3px rgba(0, 0, 0, .08);
-  transform-origin: var(--caret) 0;
-  animation: skx-in .26s cubic-bezier(.22, 1, .36, 1) both;
+/* The open folder's listing, in columns like ls. */
+.skt-ls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 4px 18px;
+  margin: 0 0 14px 3px;
+  padding: 4px 0 6px 18px;
+  border-left: 1px dashed var(--stroke-hi);
+  animation: skt-in .28s cubic-bezier(.22, 1, .36, 1) both;
 }
-.skx-pop[hidden] { display: none; }
-/* The notch: a small square turned on its corner, sharing the card's edge. */
-.skx-pop::before {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: calc(var(--caret) - 6px);
-  width: 11px;
-  height: 11px;
-  border-top: 1px solid var(--stroke);
-  border-left: 1px solid var(--stroke);
-  border-top-left-radius: 3px;
-  background: var(--surface-hi);
-  transform: rotate(45deg);
-}
-@keyframes skx-in { from { opacity: 0; transform: translateY(-6px) scale(.97); } }
-
-/* Every word carries its slash in the space before it; the line starts a
-   word's width of space early and clips that strip, so a line never opens
-   on a slash. */
-.skx-words {
-  margin: 0 0 0 -1em;
-  clip-path: inset(-10px -10px -10px 1em);
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1.85;
-  letter-spacing: -.008em;
+.skt-ls[hidden] { display: none; }
+@keyframes skt-in { from { opacity: 0; transform: translateY(-4px); } }
+.skt-ls > * {
+  justify-self: start;
+  padding: 3px 0;
+  font: 400 15px/1.45 var(--font-mono);
   color: var(--ink);
 }
-.skx-words > * { position: relative; display: inline-block; margin-left: 1em; white-space: nowrap; }
-.skx-words > *::before {
-  content: "/";
-  position: absolute;
-  left: -.68em;
-  font-weight: 300;
-  color: var(--stroke-hi);
-  pointer-events: none;
-}
-.skx-words button {
-  padding: 0;
+.skt-ls button {
   border: 0;
-  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat;
-  color: inherit;
-  font: inherit;
-  line-height: 1.25;
-  letter-spacing: inherit;
+  background: linear-gradient(currentColor, currentColor) 0 calc(100% - 2px) / 0 1px no-repeat;
+  text-align: left;
   cursor: pointer;
   transition: background-size .3s cubic-bezier(.22, 1, .36, 1), color .2s ease;
 }
-.skx-words button:hover { background-size: 100% 1.5px; }
-.skx-words button.is-active { color: var(--accent); background-size: 100% 1.5px; }
-.skx-words button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 3px; }
+.skt-ls button:hover { background-size: 100% 1px; }
+.skt-ls button.is-active { color: var(--accent); background-size: 100% 1px; }
+.skt-ls button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 3px; }
 
 @media (max-width: 639px) {
-  .skx-row { gap: 4px 20px; padding: 14px 0 12px; }
-  .skx-cat { font-size: 17px; }
-  .skx-pop { max-width: none; width: auto; padding: 12px 16px; }
-  .skx-words { font-size: 16px; }
+  .skt { --row: 42px; }
+  .skt-name { font-size: 15px; }
+  .skt-ls { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 2px 14px; }
+  .skt-ls > * { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .skx-pop { animation: none; }
+  .skt-ls { animation: none; }
 }
 
 /* ==========================================================================
