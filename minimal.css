@@ -1240,59 +1240,44 @@
      busy the page is with setting itself up underneath. Animations wait for
      .is-go (set two frames after the loader is first drawn) so nothing is
      lost before the first paint. */
-  .m-load-mark { position: relative; display: block; width: 76px; height: 66px; margin-bottom: 20px; }
+  .m-load-mark { position: relative; display: block; width: 124px; height: 108px; }
   .mk { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; will-change: transform, opacity; }
   .mk-a { fill: var(--ink); transform-origin: 39.1% 87.1%; transform: scale(.2, 0); animation: mk-rise .5s cubic-bezier(.34, 1.56, .64, 1) .05s forwards; }
   .mk-j { fill: #ff6b35; transform-origin: 65.4% 67.1%; transform: scale(0) rotate(-40deg); animation: mk-swing .5s cubic-bezier(.34, 1.56, .64, 1) .2s forwards; }
   .mk-stem { fill: #3d68ff; transform-origin: 83.75% 67.6%; transform: scaleY(0); animation: mk-grow .36s cubic-bezier(.34, 1.56, .64, 1) .32s forwards; }
-  .mk-dot { fill: #3d68ff; transform-origin: 83.75% 35.7%; opacity: 0; transform: translateY(-28px) scale(.6); animation: mk-drop .45s .44s forwards; }
+  .mk-dot { fill: #3d68ff; transform-origin: 83.75% 35.7%; opacity: 0; transform: translateY(-44px) scale(.6); animation: mk-drop .45s .44s forwards; }
   .page-loader:not(.is-go) .mk,
-  .page-loader:not(.is-go) .m-load-name,
-  .page-loader:not(.is-go) .m-load-role,
   .page-loader:not(.is-go) .m-load-line i { animation-play-state: paused; }
   @keyframes mk-rise { to { transform: none; } }
   @keyframes mk-swing { to { transform: none; } }
   @keyframes mk-grow { to { transform: none; } }
   @keyframes mk-drop {
-    0%   { opacity: 0; transform: translateY(-28px) scale(.6); animation-timing-function: cubic-bezier(.5, 0, 1, .6); }
+    0%   { opacity: 0; transform: translateY(-44px) scale(.6); animation-timing-function: cubic-bezier(.5, 0, 1, .6); }
     45%  { opacity: 1; transform: translateY(0) scale(1.18, .78); animation-timing-function: cubic-bezier(0, .4, .5, 1); }
-    70%  { transform: translateY(-5px) scale(.94, 1.06); animation-timing-function: cubic-bezier(.5, 0, 1, .6); }
+    70%  { transform: translateY(-8px) scale(.94, 1.06); animation-timing-function: cubic-bezier(.5, 0, 1, .6); }
     86%  { transform: translateY(0) scale(1.06, .94); }
     100% { opacity: 1; transform: none; }
   }
 
-  .m-load-name {
-    color: var(--ink);
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -.015em;
-    opacity: 0;
-    animation: m-fade-up .5s var(--ease) .3s forwards;
-  }
-  .m-load-role {
-    margin-top: 3px;
-    color: var(--ink-3);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    opacity: 0;
-    animation: m-fade-up .5s var(--ease) .4s forwards;
-  }
+  /* The bar under the mark: a thick, rounded track in a faint tint of the
+     ink, filling with the ink itself, so it reads in either theme. It fills
+     by unclipping rather than by stretching, so its rounded ends stay
+     round the whole way. */
   .m-load-line {
     position: relative;
-    width: 96px;
-    height: 2px;
-    margin-top: 18px;
+    width: 168px;
+    height: 10px;
+    margin-top: 34px;
+    border-radius: 999px;
     overflow: hidden;
-    background: var(--stroke);
+    background: color-mix(in oklab, var(--ink) 13%, transparent);
   }
   .m-load-line i {
     position: absolute;
     inset: 0;
+    border-radius: inherit;
     background: var(--ink);
-    transform-origin: left;
-    transform: scaleX(0);
+    clip-path: inset(0 100% 0 0 round 999px);
     animation: m-line-fill 1.05s cubic-bezier(.65, 0, .35, 1) .1s forwards;
   }
 
@@ -1304,14 +1289,11 @@
   }
 
   @keyframes m-tile-in { to { transform: scale(1); } }
-  @keyframes m-fade-up { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-  @keyframes m-line-fill { to { transform: scaleX(1); } }
+  @keyframes m-line-fill { to { clip-path: inset(0 0 0 0 round 999px); } }
 
   @media (prefers-reduced-motion: reduce) {
-    .mk,
-    .m-load-name,
-    .m-load-role,
-    .m-load-line i { animation: none; transform: none; opacity: 1; }
+    .mk { animation: none; transform: none; opacity: 1; }
+    .m-load-line i { animation: none; clip-path: none; }
   }
 
   /* ---------- Menus and overlays ---------------------------------------- */
