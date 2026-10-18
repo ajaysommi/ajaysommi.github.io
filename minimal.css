@@ -2250,7 +2250,14 @@ html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior
   background: color-mix(in oklab, var(--tint) 22%, var(--bg));
   box-shadow: inset 0 0 0 1.5px var(--tint);
 }
-[data-theme] .pc-stop.is-on:hover .pc-node { background: var(--tint); }
+/* The open stop keeps its solid fill and outer ring under the pointer
+   too (the hover rim above would otherwise replace the ring while the
+   pointer is still on it right after the click). */
+[data-theme] .pc-stop.is-on:hover .pc-node,
+[data-theme] .pc-stop.is-on:focus-visible .pc-node {
+  background: var(--tint);
+  box-shadow: 0 0 0 5px var(--bg), 0 0 0 7px var(--tint);
+}
 @media (max-width: 719px) {
   .pc-node { width: 66px; height: 66px; }
   .pc-year { font-size: .84rem; }
