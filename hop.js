@@ -197,16 +197,16 @@
 
     @keyframes hop-tap {
       0%       { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: ${SNAP}; }
-      ${P(60)}   { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.05, 0.95); animation-timing-function: cubic-bezier(.3, .55, .45, 1); }
-      ${P(130)}  { transform: perspective(360px) translate(-4px, -9px) rotate(-3deg) rotateY(0deg) scale(0.98, 1.03); animation-timing-function: cubic-bezier(.55, 0, .7, .45); }
-      ${P(200)}  { transform: perspective(360px) translate(-5px, 0) rotate(-1deg) rotateY(0deg) scale(1.06, 0.94); animation-timing-function: cubic-bezier(.3, .55, .45, 1); }
-      ${P(280)}  { transform: perspective(360px) translate(3px, -9px) rotate(3deg) rotateY(0deg) scale(0.98, 1.03); animation-timing-function: cubic-bezier(.55, 0, .7, .45); }
-      ${P(360)}  { transform: perspective(360px) translate(5px, 0) rotate(1deg) rotateY(0deg) scale(1.06, 0.94); animation-timing-function: ${SNAP}; }
+      ${P(60)}   { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.08, 0.92); animation-timing-function: cubic-bezier(.2, .62, .35, 1); }
+      ${P(130)}  { transform: perspective(360px) translate(-5px, -15px) rotate(-3.5deg) rotateY(0deg) scale(0.97, 1.04); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
+      ${P(200)}  { transform: perspective(360px) translate(-6px, 0) rotate(-1deg) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: cubic-bezier(.2, .62, .35, 1); }
+      ${P(280)}  { transform: perspective(360px) translate(4px, -15px) rotate(3.5deg) rotateY(0deg) scale(0.97, 1.04); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
+      ${P(360)}  { transform: perspective(360px) translate(6px, 0) rotate(1deg) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: ${SNAP}; }
       /* The landing squash runs straight into the wind-up: the body coils
          back like a rubber band being drawn, turning away and sinking low,
          holds at full stretch, then lets go in a whip and recoils, the
          stretch running out of it in smaller and smaller swings. */
-      ${P(420)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.12, 0.88); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
+      ${P(420)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.14, 0.86); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
       ${P(640)} { transform: perspective(360px) translate(12px, 4px) rotate(18deg) rotateY(52deg) scale(1.1, 0.86); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
       ${P(695)} { transform: perspective(360px) translate(13px, 5px) rotate(19.5deg) rotateY(55deg) scale(1.11, 0.85); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
       ${P(755)} { transform: perspective(360px) translate(-9px, -15px) rotate(-15deg) rotateY(-28deg) scale(0.9, 1.12); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
@@ -285,8 +285,8 @@
     /* Swings against the sideways motion, a beat behind it. */
     @keyframes hop-tap-hook {
       0%, ${P(60)} { transform: rotate(0); }
-      ${P(150)} { transform: rotate(4deg); } ${P(220)} { transform: rotate(1deg); }
-      ${P(300)} { transform: rotate(-4deg); } ${P(380)} { transform: rotate(-1deg); }
+      ${P(150)} { transform: rotate(5deg); } ${P(220)} { transform: rotate(1deg); }
+      ${P(300)} { transform: rotate(-5deg); } ${P(380)} { transform: rotate(-1deg); }
       ${P(460)} { transform: rotate(2deg); } ${P(640)} { transform: rotate(-8deg); }
       ${P(695)} { transform: rotate(-9deg); } ${P(765)} { transform: rotate(10deg); }
       ${P(840)} { transform: rotate(-3deg); } ${P(920)} { transform: rotate(1deg); }
@@ -297,10 +297,10 @@
     @keyframes hop-tap-eye {
       0%   { transform: translate(0, 0) scale(1); }
       ${P(60)}   { transform: translate(1.1px, .4px) scale(1.03, .97); }
-      ${P(130)}  { transform: translate(2.2px, 1.1px) scale(1); }
-      ${P(200)}  { transform: translate(1px, -.5px) scale(1.05, .95); }
-      ${P(280)}  { transform: translate(.8px, 1.1px) scale(1); }
-      ${P(360)}  { transform: translate(2px, -.5px) scale(1.05, .95); }
+      ${P(130)}  { transform: translate(2.6px, 1.6px) scale(1); }
+      ${P(200)}  { transform: translate(.8px, -.8px) scale(1.07, .93); }
+      ${P(280)}  { transform: translate(.4px, 1.6px) scale(1); }
+      ${P(360)}  { transform: translate(2.2px, -.8px) scale(1.07, .93); }
       ${P(420)}  { transform: translate(1.5px, 1.2px) scale(1.1, .9); }
       ${P(640)} { transform: translate(3.2px, 1.2px) scale(1); }
       ${P(695)} { transform: translate(3.4px, 1.3px) scale(1); }
