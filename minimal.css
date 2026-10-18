@@ -1285,12 +1285,13 @@
     border-radius: inherit;
     background: var(--ink);
     transform: translateX(-100%);
-    animation: m-line-fill 1.15s .1s forwards;
+    animation: m-line-fill 1.3s .1s forwards;
   }
-  /* The fill speeds up as it nears the end, hits it, recoils a little and
-     settles. At the moment of impact the bar's right end gives, stretching
-     out a touch and springing back; its left end stays put. */
-  .m-load-line { animation: m-line-hit 1.15s .1s both; }
+  /* The fill sets off steadily and races into the end. At the impact the
+     bar's right end stretches out as the bar squashes, then it swells, the
+     fill rebounds, and a second, smaller wobble follows before it settles.
+     The left end stays put throughout. */
+  .m-load-line { animation: m-line-hit 1.3s .1s both; }
 
   /* As the loader fades, the mark grows a touch, as if it is what bursts. */
   .page-loader.is-done .m-load-mark {
@@ -1301,9 +1302,11 @@
 
   @keyframes m-tile-in { to { transform: scale(1); } }
   @keyframes m-line-fill {
-    0%   { transform: translateX(-100%); animation-timing-function: cubic-bezier(.3, .2, .8, .5); }
-    74%  { transform: translateX(0); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
-    86%  { transform: translateX(-9%); animation-timing-function: cubic-bezier(.6, 0, .4, 1); }
+    0%   { transform: translateX(-100%); animation-timing-function: cubic-bezier(.35, .15, .97, .3); }
+    64%  { transform: translateX(0); animation-timing-function: cubic-bezier(.15, .75, .35, 1); }
+    76%  { transform: translateX(-16%); animation-timing-function: cubic-bezier(.55, 0, .45, 1); }
+    86%  { transform: translateX(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+    93%  { transform: translateX(-4%); animation-timing-function: cubic-bezier(.5, 0, .5, 1); }
     100% { transform: translateX(0); }
   }
   /* The stretch is taken from the centre and slid right by half of what it
@@ -1311,9 +1314,11 @@
      moves. (Anchoring it with transform-origin instead was ignored by
      Safari, which stretched both ends.) */
   @keyframes m-line-hit {
-    0%, 73% { transform: none; }
-    79%  { transform: translateX(calc(var(--lw) * .0225)) scaleX(1.045); }
-    89%  { transform: translateX(calc(var(--lw) * -.005)) scaleX(.99); }
+    0%, 63% { transform: none; }
+    68%  { transform: translateX(calc(var(--lw) * .05)) scale(1.1, .62); }
+    76%  { transform: translateX(calc(var(--lw) * -.015)) scale(.97, 1.22); }
+    85%  { transform: translateX(calc(var(--lw) * .02)) scale(1.04, .9); }
+    93%  { transform: translateX(calc(var(--lw) * -.004)) scale(.992, 1.04); }
     100% { transform: none; }
   }
 
@@ -1717,26 +1722,7 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 @media (max-width: 719px) {
   .m-load-mark { width: 86px; height: 75px; }
   .m-load-line { --lw: 120px; height: 7px; margin-top: 25px; }
-  /* Phones get their own, livelier version: it sets off steadily, races
-     into the end, and the impact is bigger, a stretch of the right end with
-     a squash and swell of the bar, a deeper rebound and a second, smaller
-     wobble before it settles. The left end still stays put. */
-  .m-load-line { animation: m-line-hit-m 1.4s .1s both; }
-  .m-load-line i { animation: m-line-fill-m 1.4s .1s forwards; }
-  @keyframes m-line-fill-m {
-    0%   { transform: translateX(-100%); animation-timing-function: cubic-bezier(.35, .15, .97, .3); }
-    64%  { transform: translateX(0); animation-timing-function: cubic-bezier(.15, .75, .35, 1); }
-    76%  { transform: translateX(-16%); animation-timing-function: cubic-bezier(.55, 0, .45, 1); }
-    86%  { transform: translateX(0); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-    93%  { transform: translateX(-4%); animation-timing-function: cubic-bezier(.5, 0, .5, 1); }
-    100% { transform: translateX(0); }
-  }
-  @keyframes m-line-hit-m {
-    0%, 63% { transform: none; }
-    68%  { transform: translateX(calc(var(--lw) * .05)) scale(1.1, .62); }
-    76%  { transform: translateX(calc(var(--lw) * -.015)) scale(.97, 1.22); }
-    85%  { transform: translateX(calc(var(--lw) * .02)) scale(1.04, .9); }
-    93%  { transform: translateX(calc(var(--lw) * -.004)) scale(.992, 1.04); }
-    100% { transform: none; }
-  }
+  /* The phone bar is shorter, so the same motion runs a touch longer. */
+  .m-load-line,
+  .m-load-line i { animation-duration: 1.4s; }
 }
