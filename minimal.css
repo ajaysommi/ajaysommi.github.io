@@ -841,8 +841,6 @@
   }
 
   .hero-head h1 { margin-bottom: .5rem; }
-  .hero-role { color: var(--ink-2); font-family: var(--font-mono); }
-  .hero-role .prompt { color: var(--accent); }
   .caret {
     width: 2px;
     background: var(--accent);

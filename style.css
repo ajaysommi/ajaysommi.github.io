@@ -1264,32 +1264,6 @@
   .scr-live { position: absolute; top: 0; left: 0; width: 100%; }
   .scr-w { display: inline-block; white-space: pre; vertical-align: baseline; }
 
-  /* Inline flow (not flex) so the caret stays glued to the last character
-     when the line wraps on narrow screens. */
-  .hero-role {
-    margin: 0;
-    /* One line by default. script.js raises this to whatever the longest role
-       string actually needs at the current width, so the line neither jumps
-       while typing nor leaves a blank reserved line above the paragraph. */
-    min-height: 1.45em;
-    font-family: var(--font-mono);
-    font-size: clamp(.75rem, 2.3vw, .95rem);
-    line-height: 1.45;
-    color: var(--ink-3);
-  }
-
-  .hero-role .prompt { margin-right: 6px; color: var(--accent); font-weight: 700; }
-
-  .hero-role .caret {
-    display: inline-block;
-    width: 7px;
-    height: 1em;
-    margin-left: 3px;
-    background: var(--accent);
-    vertical-align: -.13em;
-    animation: blink 1.05s steps(2, start) infinite;
-  }
-
   .hero-badges {
     display: flex;
     flex-wrap: wrap;
@@ -3078,8 +3052,7 @@
     .amb,
     .loader-stars,
     .loader-orb,
-    .loader-bar i,
-    .hero-role .caret {
+    .loader-bar i {
       animation: none !important;
     }
 

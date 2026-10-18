@@ -732,7 +732,7 @@ syncLogoTheme();
 
 
 /* ==========================================================================
-   Hero: scramble headline + role typewriter
+   Hero: scramble headline
    ========================================================================== */
 (function heroText() {
   const heading = $('[data-scramble]');
@@ -831,74 +831,6 @@ syncLogoTheme();
       setTimeout(go, 4200);
     }
   }
-
-  const typed = $('#typedRole');
-  if (!typed) return;
-
-  const roles = [
-    'curious about how things work, and why they break',
-    "if it confuses the user, it isn't done yet",
-    'fixing the cause, not just the symptom',
-    'leaving things better than I found them',
-  ];
-
-  /* One text node, edited in place throughout: setting textContent swaps
-     the node out on every letter, which is a node removed and a node
-     inserted, each restyling and relaying the line. */
-  const text = document.createTextNode(typed.textContent);
-  typed.replaceChildren(text);
-
-  /* Reserve exactly the height the longest role needs, measured rather than
-     assumed: a fixed two line reservation left a visible blank line between
-     this and the paragraph below, and a one line reservation would make the
-     paragraph jump on any width where a role wraps. Only a change of width
-     can change that, so a height only resize (a phone's toolbar sliding
-     away) does not measure again. */
-  const line = typed.parentElement;
-  let measuredW = -1;
-  const reserve = (force) => {
-    const w = line.clientWidth;
-    if (force !== true && w === measuredW) return;
-    measuredW = w;
-    const before = text.data;
-    line.style.minHeight = '0px';
-    let tallest = 0;
-    for (const role of roles) {
-      text.data = role;
-      tallest = Math.max(tallest, line.getBoundingClientRect().height);
-    }
-    text.data = before;
-    line.style.minHeight = `${Math.ceil(tallest)}px`;
-  };
-
-  reserve(true);
-  addEventListener('resize', reserve, { passive: true });
-  if (document.fonts?.ready) document.fonts.ready.then(() => reserve(true)).catch(() => {});
-
-  if (prefersReduced()) { text.data = roles[0]; return; }
-
-  /* The loop rests while the hero is off screen or the tab is hidden, and
-     picks up where it left off. */
-  let r = 0, i = 0, deleting = false, timer = 0, onScreen = true;
-  const running = () => onScreen && document.visibilityState === 'visible';
-  const loop = () => {
-    timer = 0;
-    if (!running()) return;
-    const role = roles[r];
-    i += deleting ? -1 : 1;
-    text.data = role.slice(0, i);
-
-    let delay = deleting ? 26 : 52;
-    if (!deleting && i === role.length) { delay = 1900; deleting = true; }
-    else if (deleting && i === 0) { deleting = false; r = (r + 1) % roles.length; delay = 340; }
-    timer = setTimeout(loop, delay);
-  };
-  const resume = () => { if (!timer && running()) timer = setTimeout(loop, 120); };
-  document.addEventListener('visibilitychange', resume);
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; resume(); }).observe(line);
-  }
-  timer = setTimeout(loop, 1800);
 })();
 
 /* ==========================================================================
