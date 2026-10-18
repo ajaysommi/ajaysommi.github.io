@@ -250,18 +250,16 @@
       62%, 73% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
       80% { transform: translate(calc(var(--dx) + -9px), calc(var(--dy) + 6px)) rotate(14deg) scale(calc(var(--sx) * .95), calc(var(--sy) * .95)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
       83% { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
-      88% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.15, .75, .35, 1); }
-      91.5% { transform: translate(0px, 0px) rotate(0deg) scale(1.06, 1.045); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
-      95% { transform: translate(0px, 0px) rotate(0deg) scale(.975, .985); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
-      97.6% { transform: translate(0px, 0px) rotate(0deg) scale(1.012, 1.008); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      86.5% { transform: translate(0px, 6px) rotate(-1deg) scale(.96, .96); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
+      89% { transform: translate(0px, -6px) rotate(0deg) scale(1.12, 1.1); animation-timing-function: cubic-bezier(.25, .55, .3, 1); }
       100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* As the wind-up starts, the drawing gives way to a plain page in the
        same colour; only the blank page is thrown (so nothing on it is seen
        stretching), speeding up as it comes at the viewer. It hits the
-       screen over the document with an elastic give, stretching out, then
-       springing back under and settling, and the resume page then
-       dissolves it to show the document. */
+       screen like a pancake on a window: flattens out big the instant it
+       lands, then slowly draws in and slides down a touch to sit exactly
+       on the document, which the resume page then dissolves it to show. */
     @keyframes hop-detail-out { 0%, 73% { opacity: 1; } 78%, 100% { opacity: 0; } }
     @keyframes hop-blank-in { 0%, 72% { opacity: 0; } 77%, 100% { opacity: 1; } }
     @keyframes hop-write1 { 0%, 18% { transform: scaleX(0); animation-timing-function: ${UP}; } 22%, 100% { transform: scaleX(1); } }
