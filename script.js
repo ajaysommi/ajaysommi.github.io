@@ -2458,15 +2458,15 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 
 /* ==========================================================================
    Skill + project filtering
-   Clicking a skill pill spotlights matching projects and experience.
+   Tapping a skill spotlights matching projects and experience.
    ========================================================================== */
 (function filtering() {
   const grid = $('#projectGrid');
   if (!grid) return;
 
-  const cards = $$('.card', grid);
-  const filterChips = $$('#projectFilters .filter-chip');
-  const skillButtons = $$('#skills .pills button');
+  const cards = $$('.work-item', grid);
+  const filterChips = $$('#projectFilters .wf[data-filter]');
+  const skillButtons = $$('#skills .sk button');
   const status = $('#filterStatus');
   const statusTag = $('#filterTag');
   const empty = $('#emptyState');
@@ -2550,6 +2550,12 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     scrollTo({ top: Math.round(top + travel * at) + 2, behavior: smooth });
   };
 
+  // Each filter carries how many projects it would show.
+  filterChips.forEach((c) => {
+    const f = c.dataset.filter, sup = $('sup', c);
+    if (sup) sup.textContent = f === 'all' ? cards.length : cards.filter((card) => matches(card, normalize(f))).length;
+  });
+
   const apply = (sel, { scroll = false } = {}) => {
     selected = sel;
     const needles = [...selected.keys()];
@@ -2571,9 +2577,13 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     });
     skillButtons.forEach((b) => b.classList.toggle('is-active', selected.has(normalize(b.textContent))));
 
+    /* A skill with no filter of its own (Pandas, say) shows as one more
+       filter at the end of the row, which clears it. */
     if (status && statusTag) {
-      status.hidden = !any;
-      statusTag.textContent = [...selected.values()].join(', ');
+      const chipKeys = filterChips.map((c) => normalize(c.dataset.filter));
+      const extra = [...selected].filter(([k]) => !chipKeys.includes(k)).map(([, v]) => v);
+      status.hidden = !extra.length;
+      statusTag.textContent = extra.join(', ');
     }
     if (empty) empty.hidden = visible !== 0;
 
@@ -2619,7 +2629,7 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
     });
   });
 
-  $('#filterClear')?.addEventListener('click', () => apply(only('all')));
+  status?.addEventListener('click', () => apply(only('all')));
   $('[data-filter-reset]')?.addEventListener('click', () => apply(only('all')));
   apply(only('all'));
 })();
@@ -2638,40 +2648,45 @@ const palette = (() => {
     block: 'start',
   });
 
+  /* With nothing typed it lists just the sections, short enough to see at
+     a glance; projects, links and the rest turn up once something is
+     typed, best match first. ↗ marks the ones that
+     leave the site. Keys are extra words a search can find a row by. */
+  const ext = (url) => () => window.open(url, '_blank', 'noopener');
   const commands = [
-    { icon: '⌂', title: 'Top',              kind: 'section', run: go('top') },
-    { icon: '≡', title: 'The Path',         sub: 'Career journey, role by role', kind: 'section', run: go('experience') },
-    { icon: '⌁', title: 'Education',        kind: 'section', run: go('education') },
-    { icon: '▤', title: 'Projects',         kind: 'section', run: go('projects') },
-    { icon: '⚙', title: 'Off the Clock',    kind: 'section', run: go('offclock') },
-    { icon: '✦', title: 'Skills & Tools',   kind: 'section', run: go('skills') },
-    { icon: '❞', title: 'Recommendations',  kind: 'section', run: go('recs') },
-    { icon: '✉', title: 'Contact',          kind: 'section', run: go('contact') },
+    { title: 'Top',              group: 0, run: go('top') },
+    { title: 'The Path',         group: 0, keys: 'career journey roles experience', run: go('experience') },
+    { title: 'Education',        group: 0, keys: 'uf school', run: go('education') },
+    { title: 'Projects',         group: 0, keys: 'featured work', run: go('projects') },
+    { title: 'Off the Clock',    group: 0, keys: 'repairs builds', run: go('offclock') },
+    { title: 'Skills & Tools',   group: 0, run: go('skills') },
+    { title: 'Recommendations',  group: 0, keys: 'recs', run: go('recs') },
+    { title: 'Contact',          group: 0, run: go('contact') },
 
-    { icon: '↗', title: 'SommiScript',      sub: 'Custom language + Java interpreter', kind: 'project', run: () => window.open('https://github.com/ajaysommi/SommiScript', '_blank', 'noopener') },
-    { icon: '↗', title: 'GatorGoods',       sub: 'MERN marketplace for UF students',   kind: 'project', run: () => window.open('https://github.com/ajaysommi/GatorGoods', '_blank', 'noopener') },
-    { icon: '↗', title: 'BalanceTree',      sub: 'Self-balancing AVL tree in C++',     kind: 'project', run: () => window.open('https://github.com/ajaysommi/BalanceTree', '_blank', 'noopener') },
-    { icon: '↗', title: 'Crash Fatality Analysis', sub: 'Vehicle safety data, 1996 to 2022', kind: 'project', run: () => window.open('https://github.com/ajaysommi/Car-Crash-Analyzation-Tool', '_blank', 'noopener') },
+    { title: 'BetAI Marketplace', group: 1, out: true, keys: 'ai sports betting nfl picks', run: ext('https://github.com/CVelez21/betai-marketplace') },
+    { title: 'SommiScript',      group: 1, out: true, keys: 'language java interpreter', run: ext('https://github.com/ajaysommi/SommiScript') },
+    { title: 'GatorGoods',       group: 1, out: true, keys: 'mern marketplace react', run: ext('https://github.com/ajaysommi/GatorGoods') },
+    { title: 'Crash Fatality Analysis', group: 1, out: true, keys: 'python pandas data', run: ext('https://github.com/ajaysommi/Car-Crash-Analyzation-Tool') },
+    { title: 'BalanceTree',      group: 1, out: true, keys: 'avl c++', run: ext('https://github.com/ajaysommi/BalanceTree') },
 
-    { icon: '⎘', title: 'Copy email',       sub: 'ajaysommi7@gmail.com', kind: 'action', run: async () => {
+    { title: 'Resume',           group: 2, keys: 'cv pdf', run: () => { (window.hopTo ? window.hopTo('resume.html') : (location.href = 'resume.html')); } },
+    { title: 'Copy email',       group: 2, keys: 'mail contact', run: async () => {
         try { await navigator.clipboard.writeText('ajaysommi7@gmail.com'); toast('Copied ajaysommi7@gmail.com'); }
         catch { location.href = 'mailto:ajaysommi7@gmail.com'; }
       } },
-    { icon: '⇩', title: 'Open resume',      sub: 'PDF + inline viewer', kind: 'action', run: () => { (window.hopTo ? window.hopTo('resume.html') : (location.href = 'resume.html')); } },
-    { icon: '⌘', title: 'GitHub profile',   kind: 'action', run: () => window.open('https://github.com/ajaysommi', '_blank', 'noopener') },
-    { icon: 'in', title: 'LinkedIn profile', kind: 'action', run: () => window.open('https://www.linkedin.com/in/ajay-sommi/', '_blank', 'noopener') },
+    { title: 'GitHub',           group: 2, out: true, run: ext('https://github.com/ajaysommi') },
+    { title: 'LinkedIn',         group: 2, out: true, run: ext('https://www.linkedin.com/in/ajay-sommi/') },
 
-    { icon: '◐', title: 'Theme: Midnight',  kind: 'theme', run: () => setTheme('midnight') },
-    { icon: '☀', title: 'Theme: Daylight',  kind: 'theme', run: () => setTheme('daylight') },
-    { icon: '▸', title: 'Open terminal',    sub: 'Try `help`', kind: 'easter egg', run: () => terminal.open() },
-    { icon: '🐊', title: 'Release the gators', kind: 'easter egg', run: () => gatorStorm(18) },
+    { title: 'Midnight',         group: 3, keys: 'theme dark', run: () => setTheme('midnight') },
+    { title: 'Daylight',         group: 3, keys: 'theme light', run: () => setTheme('daylight') },
+    { title: 'Release the gators', group: 3, keys: 'easter egg', run: () => gatorStorm(18) },
   ];
 
   let results = commands.slice();
   let selected = 0;
 
   const score = (cmd, q) => {
-    const hay = `${cmd.title} ${cmd.sub || ''} ${cmd.kind}`.toLowerCase();
+    const hay = `${cmd.title} ${cmd.keys || ''}`.toLowerCase();
     if (!q) return 1;
     if (hay.startsWith(q)) return 100;
     if (cmd.title.toLowerCase().includes(q)) return 60;
@@ -2699,18 +2714,26 @@ const palette = (() => {
 
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.innerHTML =
-        `<span class="pal-icon"></span>` +
-        `<span class="pal-text"><b></b>${cmd.sub ? '<small></small>' : ''}</span>` +
-        `<span class="pal-kind"></span>`;
-      btn.querySelector('.pal-icon').textContent = cmd.icon;
-      btn.querySelector('b').textContent = cmd.title;
-      if (cmd.sub) btn.querySelector('small').textContent = cmd.sub;
-      btn.querySelector('.pal-kind').textContent = cmd.kind;
-
+      btn.textContent = cmd.title;
+      if (cmd.out) {
+        const arrow = document.createElement('span');
+        arrow.className = 'pal-out';
+        arrow.setAttribute('aria-hidden', 'true');
+        arrow.textContent = '↗';
+        btn.appendChild(arrow);
+      }
       btn.addEventListener('click', (e) => { e.preventDefault(); execute(cmd); });
+      btn.addEventListener('pointermove', () => { if (selected !== i) { selected = i; mark(); } });
       li.appendChild(btn);
       list.appendChild(li);
+    });
+  };
+
+  // Moves the selection without rebuilding the list.
+  const mark = () => {
+    [...list.children].forEach((li, i) => {
+      li.classList.toggle('is-selected', i === selected);
+      li.setAttribute('aria-selected', String(i === selected));
     });
   };
 
@@ -2721,9 +2744,11 @@ const palette = (() => {
 
   const filter = () => {
     const q = input.value.trim().toLowerCase();
-    results = commands
-      .map((c) => ({ c, s: score(c, q) }))
-      .filter((x) => x.s > 0)
+    const scored = commands.map((c) => ({ c, s: score(c, q) }));
+    // Loose matches only when nothing matches properly.
+    const floor = scored.some((x) => x.s > 10) ? 11 : 1;
+    results = scored
+      .filter((x) => (q || x.c.group === 0) && x.s >= floor)
       .sort((a, b) => b.s - a.s)
       .map((x) => x.c);
     selected = 0;
@@ -2746,12 +2771,12 @@ const palette = (() => {
     if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
       e.preventDefault();
       selected = (selected + 1) % Math.max(results.length, 1);
-      render();
+      mark();
       list.children[selected]?.scrollIntoView({ block: 'nearest' });
     } else if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
       e.preventDefault();
       selected = (selected - 1 + Math.max(results.length, 1)) % Math.max(results.length, 1);
-      render();
+      mark();
       list.children[selected]?.scrollIntoView({ block: 'nearest' });
     } else if (e.key === 'Enter') {
       e.preventDefault();

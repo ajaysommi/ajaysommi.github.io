@@ -443,7 +443,7 @@ const prefersReduced = () => reduceMotionQuery.matches;
    springing; this says where and when. The bar handles its own. */
 (function liquidPress() {
   const SEL = [
-    '.btn', '.filter-chip', '.pills button', '.contact a', '.card-repo',
+    '.btn', '.contact a',
     '.chip', '.chip-clear', '.carousel-ctrl .icon-btn', '.sheet-cta', '.lb-btn', '.st-btn', '.st-close',
     'header.nav .icon-btn', 'header.nav a.cta', 'header.nav .brand', '.dock-fab .icon-btn',
   ].join(',');

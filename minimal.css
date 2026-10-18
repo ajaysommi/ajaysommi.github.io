@@ -1795,3 +1795,238 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   width: min(690px, 90vw, calc((92svh - 62px) * 600 / 430));
   height: auto;
 }
+
+/* ==========================================================================
+   Featured Work, as a numbered catalogue
+   One row per project across the full width: its own shape from the mark
+   and its number, then the title and what it is, then what kind of work it
+   was and what it was built with. A row that links somewhere lifts into a
+   tile under the pointer and its shape turns over. The filters are plain
+   words with a count of what each would show.
+   ========================================================================== */
+.work-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  margin: 0 0 20px;
+}
+.wf {
+  position: relative;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  font: 500 15px/1.2 var(--font-sans);
+  cursor: pointer;
+  transition: color .2s ease;
+}
+.wf sup {
+  margin-left: 3px;
+  font: 11px/1 var(--font-mono);
+  color: var(--ink-3);
+  transition: color .2s ease;
+}
+.wf::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform .32s cubic-bezier(.22, 1, .36, 1);
+}
+.wf:hover,
+.wf.is-active { color: var(--ink); }
+.wf.is-active::after { transform: scaleX(1); }
+.wf.is-active sup { color: var(--accent); }
+.wf-extra { color: var(--ink); }
+.wf-extra::after { background: var(--accent); transform: scaleX(1); }
+.wf:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
+
+.work {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--stroke);
+}
+.work-item {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) minmax(170px, 240px) 24px;
+  gap: 0 32px;
+  align-items: start;
+  padding: 30px 4px;
+  border-bottom: 1px solid var(--stroke);
+}
+.work-item::before {
+  content: "";
+  position: absolute;
+  inset: -1px -20px;
+  z-index: -1;
+  border-radius: var(--r-lg);
+  background: var(--surface-hi);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.work-item.is-hidden { display: none; }
+
+.work-mark { display: flex; align-items: center; gap: 12px; padding-top: 7px; }
+.work-no {
+  font: 13px/1 var(--font-mono);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+  transition: color .3s ease;
+}
+.work-shape {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background: var(--accent);
+  transition: transform .55s cubic-bezier(.34, 1.56, .64, 1);
+}
+.work-shape[data-shape="quarter"] { border-radius: 100% 0 0 0; }
+.work-shape[data-shape="disc"] { border-radius: 50%; background: var(--m-blue); }
+.work-shape[data-shape="tri"] { clip-path: polygon(0 100%, 100% 100%, 0 0); }
+.work-shape[data-shape="square"] { border-radius: 2px; background: var(--m-blue); }
+.work-shape[data-shape="half"] { height: 9px; margin-top: 9px; border-radius: 9px 9px 0 0; }
+.work-shape[data-shape="stem"] { width: 9px; margin: 0 4.5px; border-radius: 1px; background: var(--m-blue); }
+
+.work-title {
+  margin: 0 0 8px;
+  font-size: clamp(20px, 2vw, 24px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+}
+.work-title a { color: inherit; text-decoration: none; }
+/* The whole row is the link. */
+.work-title a::after { content: ""; position: absolute; inset: 0; }
+.work-title a:focus-visible { outline: none; }
+.work-desc { margin: 0; max-width: 62ch; color: var(--ink-2); font-size: 15.5px; line-height: 1.6; }
+
+.work-spec { display: grid; gap: 6px; margin: 0; padding-top: 6px; }
+.work-kind { font-size: 14px; font-weight: 500; color: var(--ink); }
+.work-stack { font: 12.5px/1.6 var(--font-mono); color: var(--ink-3); }
+
+.work-go { padding-top: 7px; color: var(--ink-3); transition: color .2s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+.work-go svg { display: block; }
+
+.work-item.has-link:hover::before,
+.work-item.has-link:focus-within::before { opacity: 1; }
+.work-item.has-link:focus-within::before { outline: 2px solid var(--ink); outline-offset: -2px; }
+.work-item.has-link:hover .work-no,
+.work-item.is-lit .work-no { color: var(--accent); }
+.work-item.has-link:hover .work-shape,
+.work-item.is-lit .work-shape { transform: rotate(90deg) scale(1.08); }
+.work-item.has-link:hover .work-go { color: var(--ink); transform: translate(2px, -2px); }
+
+@media (max-width: 719px) {
+  .work-filter { gap: 6px 18px; }
+  .work-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 12px;
+    padding: 22px 2px;
+  }
+  .work-item::before { inset: -1px -10px; }
+  .work-mark { grid-column: 1; grid-row: 1; padding: 0; }
+  .work-go { grid-column: 2; grid-row: 1; padding: 0; }
+  .work-main { grid-column: 1 / -1; }
+  .work-title { font-size: 20px; }
+  .work-desc { font-size: 15px; }
+  .work-spec { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 0; }
+}
+
+/* ==========================================================================
+   Skills & Tools, as a typeset index
+   Each group is a line of large words split by slashes rather than a wall
+   of pills; tapping one still spotlights where it was used.
+   ========================================================================== */
+.sk { margin: 4px 0 0; border-top: 1px solid var(--stroke); }
+.sk-row {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 0 32px;
+  align-items: baseline;
+  padding: 22px 4px;
+  border-bottom: 1px solid var(--stroke);
+}
+.sk dt { font-size: 14px; font-weight: 500; color: var(--ink-3); }
+.sk dd {
+  /* Every word carries its slash in the space before it; the dd starts a
+     word's width of space early and clips that strip, so a line never
+     opens on a slash. */
+  margin: 0 0 0 -1em;
+  clip-path: inset(-12px -12px -12px 1em);
+  font-size: clamp(19px, 1.75vw, 23px);
+  font-weight: 500;
+  line-height: 1.75;
+  letter-spacing: -.012em;
+  color: var(--ink);
+}
+.sk dd > * { position: relative; display: inline-block; margin-left: 1em; white-space: nowrap; }
+.sk dd > *::before {
+  content: "/";
+  position: absolute;
+  left: -.7em;
+  font-weight: 300;
+  color: var(--stroke-hi);
+  pointer-events: none;
+}
+.sk button {
+  padding: 0;
+  border: 0;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
+  color: inherit;
+  font: inherit;
+  line-height: 1.2;
+  letter-spacing: inherit;
+  cursor: pointer;
+  transition: background-size .32s cubic-bezier(.22, 1, .36, 1), color .2s ease;
+}
+.sk button:hover { background-size: 100% 2px; }
+.sk button.is-active { color: var(--accent); background-size: 100% 2px; }
+.sk button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 3px; }
+.sk-soft dd { color: var(--ink-3); }
+
+@media (max-width: 719px) {
+  .sk-row { grid-template-columns: 1fr; gap: 6px; padding: 18px 2px; }
+  .sk dd { font-size: 19px; line-height: 1.7; }
+}
+
+/* ==========================================================================
+   Command palette
+   Plain rows, a small bar marking the selected one, and an arrow on the
+   ones that leave the site. Nothing else.
+   ========================================================================== */
+.palette-search { padding: 14px 18px; }
+.palette-search input { font-size: 16px; }
+.palette-list { padding: 6px; }
+.palette-list li { position: relative; }
+.palette-list button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 10px 24px;
+  border-radius: 12px;
+  color: var(--ink-2);
+  font: 500 15px/1.3 var(--font-sans);
+}
+.palette-list button::before {
+  content: "";
+  position: absolute;
+  left: 11px; top: 50%;
+  width: 3px; height: 14px;
+  margin-top: -7px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform .22s cubic-bezier(.22, 1, .36, 1);
+}
+.palette-list button:hover { background: transparent; }
+.palette-list li.is-selected button { color: var(--ink); background: var(--m-fill); }
+.palette-list li.is-selected button::before { transform: scaleY(1); }
+.pal-out { margin-left: auto; font-size: 13px; color: var(--ink-3); }

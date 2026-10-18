@@ -689,79 +689,72 @@
     <section id="projects" class="section">
       <div class="section-head">
         <h2>Featured Work</h2>
-        <div class="filter-status" id="filterStatus" hidden>
-          <span>Filtering by <b id="filterTag"></b></span>
-          <button type="button" id="filterClear" class="chip-clear" aria-label="Clear filter">Clear ✕</button>
-        </div>
       </div>
 
-      <div class="filters" id="projectFilters" role="group" aria-label="Filter projects by technology">
-        <button type="button" class="filter-chip is-active" data-filter="all">All</button>
-        <button type="button" class="filter-chip" data-filter="python">Python</button>
-        <button type="button" class="filter-chip" data-filter="c++">C++</button>
-        <button type="button" class="filter-chip" data-filter="java">Java</button>
-        <button type="button" class="filter-chip" data-filter="react">React</button>
+      <div class="work-filter" id="projectFilters" role="group" aria-label="Filter projects by technology">
+        <button type="button" class="wf" data-filter="all">All<sup></sup></button>
+        <button type="button" class="wf" data-filter="python">Python<sup></sup></button>
+        <button type="button" class="wf" data-filter="c++">C++<sup></sup></button>
+        <button type="button" class="wf" data-filter="java">Java<sup></sup></button>
+        <button type="button" class="wf" data-filter="react">React<sup></sup></button>
+        <button type="button" class="wf wf-extra" id="filterStatus" hidden aria-label="Clear filter"><span id="filterTag"></span> ✕</button>
       </div>
 
-      <div class="grid" id="projectGrid">
-        <article class="card glass tilt" data-reveal data-tags="java,language design,interpreters">
-          <div class="card-top">
-            <span class="card-kind">Language</span>
-            <a class="card-repo" href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer" aria-label="SommiScript on GitHub">
-              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-            </a>
+      <ol class="work" id="projectGrid">
+        <li class="work-item has-link" data-reveal data-tags="python,fastapi,typescript,next.js,react,postgres,supabase,ai">
+          <span class="work-mark" aria-hidden="true"><i class="work-shape" data-shape="stem"></i><span class="work-no">01</span></span>
+          <div class="work-main">
+            <h3 class="work-title"><a href="https://github.com/CVelez21/betai-marketplace" target="_blank" rel="noopener noreferrer">BetAI Marketplace</a></h3>
+            <p class="work-desc">AI sports betting platform built on an NFL betting model, being turned into a marketplace where users build their own models, prove them against historical data, and sell access to their live picks.</p>
           </div>
-          <h3><a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript: Lightweight Programming Language</a></h3>
-          <p>Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
-          <div class="card-tags"><span>Java</span><span>Language Design</span><span>Interpreters</span></div>
-        </article>
-
-        <article class="card glass tilt" data-reveal data-tags="react,node,mongodb,express,javascript">
-          <div class="card-top">
-            <span class="card-kind">Full-stack</span>
-            <a class="card-repo" href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer" aria-label="GatorGoods on GitHub">
-              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-            </a>
+          <p class="work-spec"><span class="work-kind">AI platform</span><span class="work-stack">Python&nbsp;/ FastAPI&nbsp;/ Next.js&nbsp;/ Supabase</span></p>
+          <span class="work-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span>
+        </li>
+        <li class="work-item has-link" data-reveal data-tags="java,language design,interpreters">
+          <span class="work-mark" aria-hidden="true"><i class="work-shape" data-shape="quarter"></i><span class="work-no">02</span></span>
+          <div class="work-main">
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript: Lightweight Programming Language</a></h3>
+            <p class="work-desc">Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
           </div>
-          <h3><a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a></h3>
-          <p>Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
-          <div class="card-tags"><span>MongoDB</span><span>Express</span><span>React</span><span>Node</span></div>
-        </article>
-
-
-
-        <article class="card glass tilt" data-reveal data-tags="python,pandas,data science">
-          <div class="card-top">
-            <span class="card-kind">Data science</span>
-            <a class="card-repo" href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer" aria-label="Crash Fatality Analysis on GitHub">
-              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-            </a>
+          <p class="work-spec"><span class="work-kind">Language</span><span class="work-stack">Java&nbsp;/ Language Design&nbsp;/ Interpreters</span></p>
+          <span class="work-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span>
+        </li>
+        <li class="work-item has-link" data-reveal data-tags="react,node,mongodb,express,javascript">
+          <span class="work-mark" aria-hidden="true"><i class="work-shape" data-shape="disc"></i><span class="work-no">03</span></span>
+          <div class="work-main">
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a></h3>
+            <p class="work-desc">Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
           </div>
-          <h3><a href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer">Crash Fatality Analysis</a></h3>
-          <p>Interactive analysis of vehicle fatality data (1996 to 2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.</p>
-          <div class="card-tags"><span>Python</span><span>Pandas</span><span>Visualization</span></div>
-        </article>
-
-
-        <article class="card glass tilt" data-reveal data-tags="c++,data structures">
-          <div class="card-top">
-            <span class="card-kind">Algorithms</span>
-            <a class="card-repo" href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer" aria-label="BalanceTree on GitHub">
-              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-            </a>
+          <p class="work-spec"><span class="work-kind">Full-stack</span><span class="work-stack">MongoDB&nbsp;/ Express&nbsp;/ React&nbsp;/ Node</span></p>
+          <span class="work-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span>
+        </li>
+        <li class="work-item has-link" data-reveal data-tags="python,pandas,data science">
+          <span class="work-mark" aria-hidden="true"><i class="work-shape" data-shape="tri"></i><span class="work-no">04</span></span>
+          <div class="work-main">
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer">Crash Fatality Analysis</a></h3>
+            <p class="work-desc">Interactive analysis of vehicle fatality data (1996 to 2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.</p>
           </div>
-          <h3><a href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer">BalanceTree (AVL)</a></h3>
-          <p>Self-balancing AVL tree with insert, delete, and lookup operations, optimized for performance and correctness.</p>
-          <div class="card-tags"><span>C++</span><span>Data Structures</span></div>
-        </article>
-
-        <article class="card glass tilt" data-reveal data-tags="c++,file systems,operating systems">
-          <div class="card-top"><span class="card-kind">Systems</span></div>
-          <h3>Custom WAD File System with FUSE Integration</h3>
-          <p>Implemented a file system in C++ from scratch, supporting directories and files inside WAD archives. Integrated with FUSE so it can be mounted and browsed like a real OS file system.</p>
-          <div class="card-tags"><span>C++</span><span>FUSE</span><span>File Systems</span></div>
-        </article>
-      </div>
+          <p class="work-spec"><span class="work-kind">Data science</span><span class="work-stack">Python&nbsp;/ Pandas&nbsp;/ Visualization</span></p>
+          <span class="work-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span>
+        </li>
+        <li class="work-item has-link" data-reveal data-tags="c++,data structures">
+          <span class="work-mark" aria-hidden="true"><i class="work-shape" data-shape="square"></i><span class="work-no">05</span></span>
+          <div class="work-main">
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer">BalanceTree (AVL)</a></h3>
+            <p class="work-desc">Self-balancing AVL tree with insert, delete, and lookup operations, optimized for performance and correctness.</p>
+          </div>
+          <p class="work-spec"><span class="work-kind">Algorithms</span><span class="work-stack">C++&nbsp;/ Data Structures</span></p>
+          <span class="work-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span>
+        </li>
+        <li class="work-item" data-reveal data-tags="c++,file systems,operating systems">
+          <span class="work-mark" aria-hidden="true"><i class="work-shape" data-shape="half"></i><span class="work-no">06</span></span>
+          <div class="work-main">
+            <h3 class="work-title">Custom WAD File System with FUSE Integration</h3>
+            <p class="work-desc">Implemented a file system in C++ from scratch, supporting directories and files inside WAD archives. Integrated with FUSE so it can be mounted and browsed like a real OS file system.</p>
+          </div>
+          <p class="work-spec"><span class="work-kind">Systems</span><span class="work-stack">C++&nbsp;/ FUSE&nbsp;/ File Systems</span></p>
+        </li>
+      </ol>
 
       <p class="empty-state" id="emptyState" hidden>No projects match that filter yet. <button type="button" class="linkish" data-filter-reset>show everything</button>.</p>
     </section>
@@ -835,46 +828,15 @@
     <!-- SKILLS -->
     <section id="skills" class="section">
       <div class="section-head"><h2>Skills &amp; Tools</h2></div>
-      <p class="section-lede">Tap any skill to spotlight where I've used it.</p>
-
-      <h3>Programming</h3>
-      <div class="pills glass">
-        <button type="button">C#</button><button type="button">C++</button><button type="button">Python</button>
-        <button type="button">Java</button><button type="button">JavaScript</button><button type="button">TypeScript</button>
-        <button type="button">SQL</button><button type="button">HTML &amp; CSS</button><button type="button">ARM Assembly</button>
-        <button type="button">VBA</button><button type="button">DAX</button>
-      </div>
-
-      <h3>Cloud, Data &amp; Databases</h3>
-      <div class="pills glass">
-        <button type="button">Microsoft Azure</button><button type="button">Azure Blob Storage</button><button type="button">Amazon RDS</button>
-        <button type="button">Oracle</button><button type="button">Pandas</button><button type="button">TensorFlow</button>
-        <button type="button">KQL</button><button type="button">Power BI</button>
-      </div>
-
-      <h3>Frameworks &amp; Libraries</h3>
-      <div class="pills glass">
-        <button type="button">.NET</button><button type="button">React</button><button type="button">Next.js</button>
-        <button type="button">Node.js</button><button type="button">Chart.js</button><button type="button">Tkinter</button>
-      </div>
-
-      <h3>APIs &amp; Integration</h3>
-      <div class="pills glass">
-        <button type="button">REST APIs</button><button type="button">JSON</button><button type="button">Salesforce (Apex/LWC)</button>
-      </div>
-
-      <h3>DevOps &amp; Tooling</h3>
-      <div class="pills glass">
-        <button type="button">Git</button><button type="button">Azure DevOps</button><button type="button">Containerization</button>
-        <button type="button">Docker</button><button type="button">GitHub Actions</button><button type="button">JetBrains IDEs</button>
-        <button type="button">GDB</button><button type="button">Google Apps Script</button>
-      </div>
-
-      <h3>Soft Skills</h3>
-      <div class="pills glass pills-static">
-        <span>Agile</span><span>Problem-solving</span><span>Teamwork</span>
-        <span>Communication</span><span>Time management</span><span>Precision</span>
-      </div>
+      <p class="section-lede">Tap one to see where I've used it.</p>
+      <dl class="sk">
+        <div class="sk-row"><dt>Programming</dt><dd><button type="button">C#</button><button type="button">C++</button><button type="button">Python</button><button type="button">Java</button><button type="button">JavaScript</button><button type="button">TypeScript</button><button type="button">SQL</button><button type="button">HTML &amp; CSS</button><button type="button">ARM Assembly</button><button type="button">VBA</button><button type="button">DAX</button></dd></div>
+        <div class="sk-row"><dt>Cloud, Data &amp; Databases</dt><dd><button type="button">Microsoft Azure</button><button type="button">Azure Blob Storage</button><button type="button">Amazon RDS</button><button type="button">Oracle</button><button type="button">Pandas</button><button type="button">TensorFlow</button><button type="button">KQL</button><button type="button">Power BI</button></dd></div>
+        <div class="sk-row"><dt>Frameworks &amp; Libraries</dt><dd><button type="button">.NET</button><button type="button">React</button><button type="button">Next.js</button><button type="button">Node.js</button><button type="button">Chart.js</button><button type="button">Tkinter</button></dd></div>
+        <div class="sk-row"><dt>APIs &amp; Integration</dt><dd><button type="button">REST APIs</button><button type="button">JSON</button><button type="button">Salesforce (Apex/LWC)</button></dd></div>
+        <div class="sk-row"><dt>DevOps &amp; Tooling</dt><dd><button type="button">Git</button><button type="button">Azure DevOps</button><button type="button">Containerization</button><button type="button">Docker</button><button type="button">GitHub Actions</button><button type="button">JetBrains IDEs</button><button type="button">GDB</button><button type="button">Google Apps Script</button></dd></div>
+        <div class="sk-row sk-soft"><dt>Soft Skills</dt><dd><span>Agile</span><span>Problem-solving</span><span>Teamwork</span><span>Communication</span><span>Time management</span><span>Precision</span></dd></div>
+      </dl>
     </section>
 
     <!-- RECOMMENDATIONS -->
@@ -996,15 +958,9 @@
     <form method="dialog" class="palette-inner">
       <div class="palette-search">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M11 3a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 11 3Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z" fill="currentColor"/></svg>
-        <input type="search" id="paletteInput" placeholder="Jump to a section, project or action…" autocomplete="off" aria-label="Search commands" />
-        <kbd>esc</kbd>
+        <input type="search" id="paletteInput" placeholder="Go to…" autocomplete="off" aria-label="Search" />
       </div>
       <ul class="palette-list" id="paletteList" role="listbox" aria-label="Results"></ul>
-      <div class="palette-foot">
-        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
-        <span><kbd>↵</kbd> open</span>
-        <span><kbd>esc</kbd> close</span>
-      </div>
     </form>
   </dialog>
 
