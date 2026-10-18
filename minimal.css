@@ -1268,10 +1268,10 @@
      animate: on an iPhone the bar went from empty to full in one step.) */
   .m-load-line {
     position: relative;
+    display: block;
     --lw: 152px;
     width: var(--lw);
     height: 9px;
-    margin-top: 30px;
     border-radius: 999px;
     overflow: hidden;
     /* Keeps Safari clipping the sliding fill to the rounded track. */
@@ -1292,6 +1292,28 @@
      fill rebounds, and a second, smaller wobble follows before it settles.
      The left end stays put throughout. */
   .m-load-line { animation: m-line-hit 1.3s .1s both; }
+
+  /* Once the bar has settled it turns into a smile: a curved line drawn in
+     the same ink and thickness, sitting exactly over the full bar, takes its
+     place and bends, its ends staying where the bar's ends were. A plain bar
+     cannot bend, so the swap is what lets it. script.js starts the bend
+     (an SVG animation, which every browser runs) just before the loader
+     lifts. */
+  .m-load-bar { position: relative; display: block; margin-top: 30px; }
+  .m-load-smile {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 9;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+  .page-loader.is-smiling .m-load-smile { opacity: 1; }
+  .page-loader.is-smiling .m-load-line { opacity: 0; }
 
   /* As the loader fades, the mark grows a touch, as if it is what bursts. */
   .page-loader.is-done .m-load-mark {
@@ -1721,7 +1743,8 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 /* The loading screen on phones: the mark and its bar a size down. */
 @media (max-width: 719px) {
   .m-load-mark { width: 86px; height: 75px; }
-  .m-load-line { --lw: 120px; height: 7px; margin-top: 25px; }
+  .m-load-line { --lw: 120px; height: 7px; }
+  .m-load-bar { margin-top: 25px; }
   /* The phone bar is shorter, so the same motion runs a touch longer. */
   .m-load-line,
   .m-load-line i { animation-duration: 1.4s; }

@@ -389,7 +389,16 @@ const onScrollFrame = (() => {
     bar.addEventListener('animationend', (e) => { if (e.target === bar) setTimeout(r, 60); });
     setTimeout(r, 2800);
   });
-  Promise.all([built, fonts, markDone, barDone]).then(finish);
+  /* The full bar then bends into a smile, held for a beat, before the
+     loader lifts. */
+  const smile = () => new Promise((r) => {
+    const anim = el.querySelector('.m-load-smile animate');
+    if (!anim || typeof anim.beginElement !== 'function' || prefersReduced()) { r(); return; }
+    el.classList.add('is-smiling');
+    anim.beginElement();
+    setTimeout(r, 720);
+  });
+  Promise.all([built, fonts, markDone, barDone]).then(smile).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
   setTimeout(dismiss, 4000);
