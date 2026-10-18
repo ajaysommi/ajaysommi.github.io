@@ -1997,28 +1997,133 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 }
 
 /* ==========================================================================
-   Command palette
-   Plain rows, a small bar marking the selected one, and an arrow on the
-   ones that leave the site. Nothing else.
+   Search, like Spotlight
+   A pill to type in and round shortcuts beside it, each its own floating
+   piece of paper, near the top of the window. Typing folds the shortcuts
+   away and the pill takes the full width, and the matches drop down below
+   it on a panel of their own.
    ========================================================================== */
-.palette-search { padding: 14px 18px; }
-.palette-search input { font-size: 16px; }
-.palette-list { padding: 6px; }
+.palette,
+.palette[open] {
+  width: min(660px, calc(100vw - 24px));
+  max-height: none;
+  margin: 16vh auto auto;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  animation: none;
+}
+.palette::before,
+.palette::after { content: none; }
+.palette::backdrop {
+  background: color-mix(in oklab, var(--bg) 35%, rgba(0, 0, 0, .22));
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.palette-inner { display: block; }
+.pal-bar { display: flex; align-items: center; }
+
+.palette-search,
+.pal-quick button,
+.palette-list {
+  border: 1px solid var(--stroke);
+  background: var(--surface-hi);
+  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, .22), 0 2px 6px -2px rgba(0, 0, 0, .08);
+}
+.palette-search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 60px;
+  padding: 0 22px;
+  border-radius: 999px;
+  color: var(--ink-3);
+  transition: border-color .2s ease;
+}
+.palette-search:focus-within { border-color: var(--stroke-hi); }
+.palette-search svg { flex: none; }
+.palette-search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 20px/1 var(--font-sans);
+  letter-spacing: -.01em;
+  outline: none;
+  caret-color: var(--accent);
+}
+.palette-search input:focus,
+.palette-search input:focus-visible { outline: none; box-shadow: none; }
+.palette-search input::placeholder { color: var(--ink-3); opacity: 1; }
+.palette-search input::-webkit-search-cancel-button { display: none; }
+
+/* The shortcuts fold away to the right as soon as anything is typed. */
+.pal-quick {
+  display: flex;
+  gap: 10px;
+  max-width: 300px;
+  margin-left: 12px;
+  transition: max-width .38s cubic-bezier(.22, 1, .36, 1), margin-left .38s cubic-bezier(.22, 1, .36, 1);
+}
+.pal-quick button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), opacity .2s ease, color .2s ease, border-color .2s ease;
+}
+.pal-quick button:hover { color: var(--ink); border-color: var(--stroke-hi); transform: translateY(-2px); }
+.pal-quick button:active { transform: scale(.94); }
+.pal-quick button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.palette.has-query .pal-quick { max-width: 0; margin-left: 0; }
+.palette.has-query .pal-quick button { opacity: 0; transform: scale(.6); pointer-events: none; }
+
+/* The matches. */
+.palette-list {
+  display: none;
+  max-height: min(50svh, 360px);
+  margin: 10px 0 0;
+  padding: 6px;
+  overflow-y: auto;
+  border-radius: 24px;
+  list-style: none;
+}
+.palette.has-query .palette-list { display: block; animation: pal-drop .26s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes pal-drop { from { opacity: 0; transform: translateY(-8px) scale(.985); } }
 .palette-list li { position: relative; }
 .palette-list button {
   position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px 10px 24px;
-  border-radius: 12px;
+  width: 100%;
+  padding: 11px 16px 11px 26px;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
   color: var(--ink-2);
-  font: 500 15px/1.3 var(--font-sans);
+  font: 500 16px/1.3 var(--font-sans);
+  text-align: left;
+  cursor: pointer;
 }
 .palette-list button::before {
   content: "";
   position: absolute;
-  left: 11px; top: 50%;
+  left: 12px; top: 50%;
   width: 3px; height: 14px;
   margin-top: -7px;
   border-radius: 2px;
@@ -2030,3 +2135,31 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 .palette-list li.is-selected button { color: var(--ink); background: var(--m-fill); }
 .palette-list li.is-selected button::before { transform: scaleY(1); }
 .pal-out { margin-left: auto; font-size: 13px; color: var(--ink-3); }
+.palette-empty { padding: 14px 16px; color: var(--ink-3); font-size: 15px; }
+
+/* In: the pill settles down into place and the shortcuts pop in after it,
+   one by one. Out: everything lifts away together. */
+.palette[open] .palette-search { animation: pal-in .36s cubic-bezier(.22, 1, .36, 1) backwards; }
+.palette[open] .pal-quick button { animation: pal-pop .42s cubic-bezier(.34, 1.56, .64, 1) backwards; }
+.palette[open] .pal-quick button:nth-child(1) { animation-delay: .05s; }
+.palette[open] .pal-quick button:nth-child(2) { animation-delay: .09s; }
+.palette[open] .pal-quick button:nth-child(3) { animation-delay: .13s; }
+.palette[open] .pal-quick button:nth-child(4) { animation-delay: .17s; }
+@keyframes pal-in { from { opacity: 0; transform: translateY(-10px) scale(.97); } }
+@keyframes pal-pop { from { opacity: 0; transform: scale(.5); } }
+.palette.is-closing .pal-bar,
+.palette.is-closing .palette-list { opacity: 0; transform: translateY(-6px) scale(.98); transition: opacity .14s ease, transform .14s ease; }
+
+@media (max-width: 560px) {
+  .palette, .palette[open] { margin-top: 10svh; padding: 6px; }
+  .palette-search { height: 52px; padding: 0 16px; gap: 10px; }
+  .palette-search input { font-size: 18px; }
+  .pal-quick { gap: 8px; margin-left: 8px; }
+  .pal-quick button { width: 52px; height: 52px; }
+  .pal-quick button:nth-child(4) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .palette[open] .palette-search,
+  .palette[open] .pal-quick button,
+  .palette.has-query .palette-list { animation: none; }
+}

@@ -2648,10 +2648,11 @@ const palette = (() => {
     block: 'start',
   });
 
-  /* With nothing typed it lists just the sections, short enough to see at
-     a glance; projects, links and the rest turn up once something is
-     typed, best match first. ↗ marks the ones that
-     leave the site. Keys are extra words a search can find a row by. */
+  /* Like Spotlight: a search pill with a few round shortcuts beside it.
+     Typing folds the shortcuts away and drops the matches down below,
+     best match first; ↗ marks the ones that leave the site. Keys are
+     extra words a search can find a row by. While the pill is empty its
+     placeholder types out things worth searching for. */
   const ext = (url) => () => window.open(url, '_blank', 'noopener');
   const commands = [
     { title: 'Top',              group: 0, run: go('top') },
@@ -2744,30 +2745,73 @@ const palette = (() => {
 
   const filter = () => {
     const q = input.value.trim().toLowerCase();
+    dialog.classList.toggle('has-query', !!q);
+    if (!q) { results = []; selected = 0; list.innerHTML = ''; return; }
     const scored = commands.map((c) => ({ c, s: score(c, q) }));
     // Loose matches only when nothing matches properly.
     const floor = scored.some((x) => x.s > 10) ? 11 : 1;
     results = scored
-      .filter((x) => (q || x.c.group === 0) && x.s >= floor)
+      .filter((x) => x.s >= floor)
       .sort((a, b) => b.s - a.s)
+      .slice(0, 6)
       .map((x) => x.c);
     selected = 0;
     render();
+  };
+
+  const EXAMPLES = ['Projects', 'Resume', 'BetAI', 'Skills', 'The Path', 'Contact'];
+  let typer = 0;
+  const stopTyping = () => { clearTimeout(typer); typer = 0; };
+  const startTyping = () => {
+    stopTyping();
+    if (prefersReduced()) { input.placeholder = 'Search'; return; }
+    let w = 0, n = 0, back = false;
+    const tick = () => {
+      const word = EXAMPLES[w];
+      input.placeholder = word.slice(0, n);
+      let wait;
+      if (!back) {
+        n++;
+        if (n > word.length) { back = true; n = word.length; wait = 1300; } else wait = 70 + Math.random() * 50;
+      } else {
+        n--;
+        if (n < 0) { back = false; n = 0; w = (w + 1) % EXAMPLES.length; wait = 280; } else wait = 38;
+      }
+      typer = setTimeout(tick, wait);
+    };
+    input.placeholder = '';
+    typer = setTimeout(tick, 420);
   };
 
   const open = () => {
     if (dialog.open) return;
     input.value = '';
     filter();
+    dialog.classList.remove('is-closing');
     dialog.showModal();
+    startTyping();
     requestAnimationFrame(() => input.focus());
   };
 
-  const close = () => { if (dialog.open) dialog.close(); };
+  // A short fade and settle out, then the dialog really closes.
+  const close = () => {
+    if (!dialog.open || dialog.classList.contains('is-closing')) return;
+    stopTyping();
+    if (prefersReduced()) { dialog.close(); return; }
+    dialog.classList.add('is-closing');
+    setTimeout(() => { dialog.classList.remove('is-closing'); dialog.close(); }, 150);
+  };
+  dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
+
+  $$('.pal-quick button', dialog).forEach((b) => b.addEventListener('click', () => {
+    const cmd = commands.find((c) => c.title === b.dataset.cmd);
+    if (cmd) execute(cmd);
+  }));
 
   input.addEventListener('input', filter);
 
   dialog.addEventListener('keydown', (e) => {
+    if (!results.length && e.key !== 'Enter') return;
     if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
       e.preventDefault();
       selected = (selected + 1) % Math.max(results.length, 1);
@@ -3083,11 +3127,10 @@ function gatorStorm(n = 12) {
 })();
 
 
-/* --- Menus grow out of what opened them --------------------------------------
-   The command palette and the phone menu do not appear on their own. They
-   start as the glass of the control that opened them, stretch out toward
-   where they are going, and only show their contents once there is enough
-   surface for them. Closing runs the other way and merges back into the
+/* --- The phone menu grows out of what opened it ------------------------------
+   The phone menu does not appear on its own. It starts as the glass of
+   the control that opened it, stretches out toward where it is going, and
+   only shows its contents once there is enough surface for them. Closing runs the other way and merges back into the
    control, so what you are looking at is one object changing shape rather
    than a new thing arriving.
 
@@ -3096,11 +3139,10 @@ function gatorStorm(n = 12) {
    text and the radii are never stretched, and the menu's own glass and
    blur are what grow, since clip-path clips the backdrop as well.
 
-   Both the palette and the sheet are opened and closed by code elsewhere.
-   Rather than rewiring that, this watches for the state change and takes
-   over the motion: the palette's showModal and close are wrapped on the
-   instance, and Escape's native cancel is intercepted, because it would
-   otherwise close the dialog without going through close() at all. */
+   The sheet is opened and closed by code elsewhere. Rather than rewiring
+   that, this watches for the state change and takes over the motion. (The
+   search palette used to grow this way too; it is separate floating
+   pieces now and makes its own entrance.) */
 (function liquidMorph() {
   const lerp = (a, b, t) => a + (b - a) * t;
   const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
@@ -3201,43 +3243,6 @@ function gatorStorm(n = 12) {
         run(0, () => { clear(); cb?.(); });
       },
     };
-  }
-
-  /* ---- The palette ---- */
-  const dialog = $('#palette');
-  const inner = dialog?.querySelector('.palette-inner');
-  if (dialog && inner && dialog.showModal) {
-    const morph = createMorph(dialog, inner);
-    let source = null;
-
-    // Whichever search control opened it; ⌘K has no pointer, so it uses
-    // whichever of the two is on screen.
-    document.addEventListener('pointerdown', (e) => {
-      const b = e.target.closest?.('#paletteBtn, #paletteBtnMobile');
-      if (b) source = b;
-    }, { capture: true, passive: true });
-    const pickSource = () => {
-      if (visible(source)) return source;
-      return [$('#paletteBtnMobile'), $('#paletteBtn')].find(visible) || null;
-    };
-
-    const nativeShow = dialog.showModal.bind(dialog);
-    const nativeClose = dialog.close.bind(dialog);
-    let closing = false;
-
-    dialog.showModal = () => {
-      nativeShow();
-      closing = false;
-      morph.open(pickSource());
-    };
-
-    dialog.close = (...args) => {
-      if (!dialog.open || closing) return;
-      closing = true;
-      morph.close(pickSource(), () => { closing = false; source = null; nativeClose(...args); });
-    };
-
-    dialog.addEventListener('cancel', (e) => { e.preventDefault(); dialog.close(); });
   }
 
   /* ---- The phone menu ----
