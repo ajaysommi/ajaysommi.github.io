@@ -545,10 +545,25 @@
     veil.appendChild(frag);
   };
 
+  /* Nothing scrolls while a scene plays: wheel, touch and the scroll keys
+     are held off until the next page opens (or the page comes back from
+     the cache, below). Held off rather than hiding the scrollbar, so the
+     page does not shift sideways as the scene starts. */
+  const SCROLL_KEYS = new Set([' ', 'PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+  const hold = (e) => { if (e.cancelable) e.preventDefault(); };
+  const holdKeys = (e) => { if (SCROLL_KEYS.has(e.key)) e.preventDefault(); };
+  const lock = (on) => {
+    const f = on ? addEventListener : removeEventListener;
+    f('wheel', hold, { passive: false });
+    f('touchmove', hold, { passive: false });
+    f('keydown', holdKeys);
+  };
+
   const go = (url) => {
     if (going) return;
     if (reduce.matches) { location.href = url; return; }
     going = true;
+    lock(true);
     if (!document.getElementById('hopStyle')) {
       const st = document.createElement('style');
       st.id = 'hopStyle';
@@ -590,6 +605,7 @@
   addEventListener('pageshow', (e) => {
     if (!e.persisted) return;
     going = false;
+    lock(false);
     document.querySelectorAll('.hop').forEach((n) => n.remove());
   });
 

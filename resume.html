@@ -31,14 +31,36 @@
          cutting in. */
       try {
         var arrive = sessionStorage.getItem('hop-arrive');
-        if (arrive && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add(arrive === 'soft' ? 'hop-arriving-soft' : 'hop-arriving');
+        var arriving = arrive && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (arriving) root.classList.add(arrive === 'soft' ? 'hop-arriving-soft' : 'hop-arriving');
         sessionStorage.removeItem('hop-arrive');
+        /* Still no scrolling while the page fades in from the scene, so the
+           sheet standing in for the document stays exactly over it. */
+        var keys = { ' ': 1, PageUp: 1, PageDown: 1, Home: 1, End: 1, ArrowUp: 1, ArrowDown: 1, ArrowLeft: 1, ArrowRight: 1 };
+        var hold = function (e) { if (e.cancelable) e.preventDefault(); };
+        var holdKeys = function (e) { if (keys[e.key]) e.preventDefault(); };
+        var unlock = function () {
+          removeEventListener('wheel', hold, { passive: false });
+          removeEventListener('touchmove', hold, { passive: false });
+          removeEventListener('keydown', holdKeys);
+        };
+        if (arriving) {
+          addEventListener('wheel', hold, { passive: false });
+          addEventListener('touchmove', hold, { passive: false });
+          addEventListener('keydown', holdKeys);
+          if (arrive === 'soft') setTimeout(unlock, 700);
+          setTimeout(unlock, 2300);   // whatever happens, never longer than this
+        }
         /* The sheet waits over the document until it has loaded and the
            viewer has had a moment to paint it (or a second and a half at
            most), so it dissolves straight into the resume, never into an
            empty viewer. */
         if (arrive === '1') {
-          var ready = function () { root.classList.add('hop-doc-ready'); };
+          var ready = function () {
+            if (root.classList.contains('hop-doc-ready')) return;
+            root.classList.add('hop-doc-ready');
+            setTimeout(unlock, 600);   // once the sheet has dissolved
+          };
           setTimeout(ready, 1500);
           document.addEventListener('DOMContentLoaded', function () {
             var f = document.querySelector('iframe');
@@ -53,11 +75,14 @@
        with the plain sheet the scene threw sitting exactly over the
        document. The paper lifts away first, then the sheet dissolves and the
        real document shows through where it landed. */
+    /* Both take the pointer while they show, so nothing under them (the
+       PDF's own frame included, which would scroll the page past any
+       script) can be scrolled until they have gone. */
     html.hop-arriving::after,
     html.hop-arriving::before {
       content: "";
       position: fixed;
-      pointer-events: none;
+      pointer-events: auto;
     }
     html.hop-arriving::after {
       inset: 0;
@@ -94,7 +119,7 @@
       inset: 0;
       z-index: 2147483600;
       background: var(--bg);
-      pointer-events: none;
+      pointer-events: auto;
       animation: hop-arrive .6s cubic-bezier(.4, 0, .2, 1) .05s forwards;
     }
     @keyframes hop-arrive { to { opacity: 0; visibility: hidden; } }

@@ -2227,6 +2227,9 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    the loader starts to lift. */
 html:has(#pageLoader:not(.is-done)),
 html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior: none; }
+/* And nothing under it takes a touch or a click either (the logo strip
+   could still be flicked through it), until it starts to lift. */
+.page-loader:not(.is-done) { pointer-events: auto; touch-action: none; }
 
 /* The Path's stops: larger, the company's colour as a flat wash with a
    fine rim (solid and ringed for the open one). The middle column's stop is moved
