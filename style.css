@@ -5446,3 +5446,16 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   .story .st-btn svg { width: 17px; height: 17px; }
   .story .st-close { width: 38px; height: 38px; }
 }
+
+/* Project cards, every size: the title and description hang right under
+   the label, at the same height on every card, and any spare room goes
+   below the description, above the tags (those are pushed to the bottom).
+   The GitHub button no longer sets the label row's height: it was taller
+   than the label, so cards with one put their title lower than cards
+   without. It sits in the top corner on its own, the same distance from
+   the top and the side. */
+.card { position: relative; }
+.card .card-top { min-height: 0; margin-bottom: 8px; }
+.card .card-repo { position: absolute; top: 16px; right: 16px; margin: 0; }
+.card h3 { margin-top: 0; margin-bottom: 8px; padding-right: 38px; }
+.card p { margin-bottom: 18px; }
