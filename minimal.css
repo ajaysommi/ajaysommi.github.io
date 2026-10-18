@@ -1271,7 +1271,7 @@
     display: block;
     --lw: 152px;
     width: var(--lw);
-    height: 9px;
+    height: 11px;
     border-radius: 999px;
     overflow: hidden;
     /* Keeps Safari clipping the sliding fill to the rounded track. */
@@ -1308,7 +1308,7 @@
     overflow: visible;
     fill: none;
     stroke: var(--ink);
-    stroke-width: 9;
+    stroke-width: 11;
     stroke-linecap: round;
     opacity: 0;
   }
@@ -1743,7 +1743,7 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 /* The loading screen on phones: the mark and its bar a size down. */
 @media (max-width: 719px) {
   .m-load-mark { width: 86px; height: 75px; }
-  .m-load-line { --lw: 120px; height: 7px; }
+  .m-load-line { --lw: 120px; height: 9px; }
   .m-load-bar { margin-top: 25px; }
   /* The phone bar is shorter, so the same motion runs a touch longer. */
   .m-load-line,
