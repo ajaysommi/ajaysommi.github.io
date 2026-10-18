@@ -1070,7 +1070,9 @@ syncLogoTheme();
 
     if (!parked) {
       // Park in the middle copy so there is room to scroll both directions.
-      setScroll(setW * midSet);
+      // A little short of the set's start, so the logos open a bit further
+      // to the right.
+      setScroll(setW * midSet - 70);
       parked = true;
     } else {
       // Already running: keep the reader's place, just pull it back in range.
