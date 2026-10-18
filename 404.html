@@ -14,14 +14,25 @@
   <style>
     /* A page of its own, served by GitHub Pages for any address that does
        not exist, at any depth, so everything it needs is inline or linked
-       from the site root. It follows the system's light or dark setting. */
+       from the site root. It follows the system's light or dark setting.
+
+       The scene: a vast, empty field under an empty sky, drawn in the same
+       quiet shapes as the field behind the portfolio (rings, a disc, a few
+       small marks, a patch of dots). Far out in the middle of it stands the
+       mark, small, swaying and glancing about, a tear falling now and then:
+       lost, with nothing anywhere around it. */
     :root {
       --bg: #f2f0eb;
       --ink: #141414;
       --ink-2: #47443f;
       --ink-3: #87837b;
-      --stroke: rgba(20, 20, 20, .14);
+      --field: #e7e3da;
+      --field-2: #dfdad0;
+      --line: rgba(20, 20, 20, .1);
+      --mark: rgba(20, 20, 20, .26);
+      --dot: rgba(20, 20, 20, .18);
       --tear: #8fb0ff;
+      --horizon: 58vh;
       color-scheme: light;
     }
     @media (prefers-color-scheme: dark) {
@@ -30,7 +41,11 @@
         --ink: #edebe6;
         --ink-2: #b2afa8;
         --ink-3: #7c7973;
-        --stroke: rgba(237, 235, 230, .16);
+        --field: #1b1b1a;
+        --field-2: #222220;
+        --line: rgba(237, 235, 230, .11);
+        --mark: rgba(237, 235, 230, .3);
+        --dot: rgba(237, 235, 230, .18);
         --tear: #9db9ff;
         color-scheme: dark;
       }
@@ -39,27 +54,103 @@
     html, body { height: 100%; }
     body {
       margin: 0;
-      display: grid;
-      place-items: center;
-      padding: 24px 16px;
+      overflow: hidden;
       background: var(--bg);
       color: var(--ink);
       font-family: Geist, system-ui, -apple-system, sans-serif;
       text-align: center;
       -webkit-font-smoothing: antialiased;
     }
-    main { display: grid; justify-items: center; gap: 14px; max-width: 420px; }
 
-    /* Little Aj, lost: he sways a little and glances one way and then the
-       other, looking for the page, with a frown under him, and every so
-       often a tear wells up at the corner of his eye and falls. */
-    .lost { display: grid; justify-items: center; gap: 12px; margin-bottom: 10px; }
-    .lost svg.aj { width: 104px; height: 98px; overflow: visible; }
+    /* ---- the land ---- */
+    .land { position: fixed; inset: 0; pointer-events: none; }
+    .land > * { position: absolute; }
+    /* The ground: the top of an enormous circle, so the horizon curves away
+       a little at both ends, like the edge of a whole world. */
+    .ground {
+      left: 50%;
+      top: var(--horizon);
+      width: 420vmax;
+      height: 420vmax;
+      translate: -50% 0;
+      border-radius: 50%;
+      background: var(--field);
+      box-shadow: inset 0 1px 0 var(--line);
+    }
+    /* Faint furrows across the field, smaller and closer together toward
+       the horizon, the only sign of distance in all that emptiness. */
+    .furrows {
+      left: 0; right: 0; top: var(--horizon); bottom: 0;
+      /* kept to the sides, so none of them runs through the words */
+      -webkit-mask-image: linear-gradient(90deg, #000 0 22%, transparent 34% 66%, #000 78%);
+              mask-image: linear-gradient(90deg, #000 0 22%, transparent 34% 66%, #000 78%);
+    }
+    .furrows i {
+      position: absolute;
+      left: 50%;
+      height: 1px;
+      translate: -50% 0;
+      background: var(--line);
+      border-radius: 1px;
+    }
+    .sky-ring {
+      left: 72vw; top: -26vmax;
+      width: 64vmax; height: 64vmax;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+    }
+    .sky-orbit {
+      left: 6vw; top: 12vh;
+      width: 18vmax; height: 18vmax;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+    }
+    .sky-disc {
+      right: -9vmax; top: 30vh;
+      width: 30vmax; height: 30vmax;
+      border-radius: 50%;
+      background: var(--field-2);
+      opacity: .55;
+    }
+    .plus { width: 16px; height: 16px; background:
+      linear-gradient(var(--mark), var(--mark)) center / 16px 1.6px no-repeat,
+      linear-gradient(var(--mark), var(--mark)) center / 1.6px 16px no-repeat; }
+    .p1 { left: 18vw; top: 26vh; }
+    .p2 { right: 16vw; top: 14vh; transform: rotate(45deg); }
+    .tri { left: 84vw; top: 47vh; width: 14px; height: 14px; background: var(--mark); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+    .dots {
+      left: 9vw; top: 40vh; width: 108px; height: 72px;
+      background-image: radial-gradient(circle 1.4px, var(--dot) calc(100% - .5px), transparent 100%);
+      background-size: 18px 18px;
+    }
+
+    /* ---- the mark, far off on the horizon ---- */
+    .lost {
+      position: fixed;
+      left: 50%;
+      top: var(--horizon);
+      translate: -50% -100%;
+      display: grid;
+      justify-items: center;
+    }
+    .lost svg.aj { width: 74px; height: 70px; overflow: visible; display: block; }
     .aj .am-a { fill: var(--ink); }
     .aj .body { transform-box: view-box; transform-origin: 50% 100%; animation: sway 5.2s ease-in-out infinite; }
     .aj .eye { transform-box: fill-box; transform-origin: 50% 50%; animation: glance 5.2s ease-in-out infinite; }
-    .aj .tear { fill: var(--tear); transform-box: fill-box; transform-origin: 50% 0; opacity: 0; animation: tear 2.6s ease-in .8s infinite; }
-    .frown { width: 96px; height: 22px; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
+    .aj .tear { fill: var(--tear); transform-box: fill-box; transform-origin: 50% 0; opacity: 0; animation: tear 2.8s ease-in .8s infinite; }
+    /* its shadow on the ground, alone in the field */
+    .lost::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -4px;
+      width: 64px;
+      height: 8px;
+      translate: -50% 0;
+      border-radius: 50%;
+      background: var(--line);
+      filter: blur(1.5px);
+    }
     @keyframes sway {
       0%, 100% { transform: rotate(0); }
       25% { transform: rotate(-4deg); }
@@ -76,29 +167,45 @@
       0%   { opacity: 0; transform: translateY(0) scale(.2); }
       18%  { opacity: 1; transform: translateY(0) scale(1); }
       34%  { opacity: 1; transform: translateY(.6px) scale(1, 1.08); animation-timing-function: cubic-bezier(.5, 0, 1, .5); }
-      78%  { opacity: 1; transform: translateY(22px) scale(.9, 1.1); }
-      100% { opacity: 0; transform: translateY(30px) scale(.8, 1.1); }
+      78%  { opacity: 1; transform: translateY(20px) scale(.9, 1.1); }
+      100% { opacity: 0; transform: translateY(27px) scale(.8, 1.1); }
     }
 
-    .code { margin: 0; font-family: "Geist Mono", ui-monospace, monospace; font-size: .8rem; letter-spacing: .12em; color: var(--ink-3); }
-    h1 { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); font-weight: 600; letter-spacing: -.02em; }
+    /* ---- the words, on the field below ---- */
+    main {
+      position: fixed;
+      left: 50%;
+      top: calc(var(--horizon) + 9vh);
+      translate: -50% 0;
+      width: min(440px, calc(100vw - 32px));
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+    }
+    .code { margin: 0; font-family: "Geist Mono", ui-monospace, monospace; font-size: .8rem; letter-spacing: .14em; color: var(--ink-3); }
+    h1 { margin: 0; font-size: clamp(1.5rem, 5.6vw, 2.05rem); font-weight: 600; letter-spacing: -.02em; }
+    p.say { margin: 0; color: var(--ink-2); font-size: .98rem; line-height: 1.5; }
     .home {
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      margin-top: 12px;
+      margin-top: 10px;
       padding: 13px 24px;
       border-radius: 999px;
       background: var(--ink);
       color: var(--bg);
       font-weight: 500;
       text-decoration: none;
-      transition: transform .2s ease, opacity .2s ease;
+      transition: transform .2s ease;
     }
     .home:hover { transform: translateY(-1px); }
     .home:active { transform: scale(.97); }
     .home:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
+    @media (max-height: 560px) {
+      :root { --horizon: 52vh; }
+      main { top: calc(var(--horizon) + 5vh); gap: 8px; }
+    }
     @media (prefers-reduced-motion: reduce) {
       .aj .body, .aj .eye { animation: none; }
       .aj .tear { animation: none; opacity: 1; transform: translateY(6px); }
@@ -106,22 +213,41 @@
   </style>
 </head>
 <body>
+  <div class="land" aria-hidden="true">
+    <span class="sky-ring"></span>
+    <span class="sky-orbit"></span>
+    <span class="sky-disc"></span>
+    <span class="plus p1"></span>
+    <span class="plus p2"></span>
+    <span class="dots"></span>
+    <span class="tri"></span>
+    <span class="ground"></span>
+    <span class="furrows">
+      <i style="top: 5%; width: 22vw; opacity: .55"></i>
+      <i style="top: 12%; width: 34vw; opacity: .7; margin-left: -9vw"></i>
+      <i style="top: 22%; width: 48vw; opacity: .8; margin-left: 12vw"></i>
+      <i style="top: 36%; width: 66vw; margin-left: -6vw"></i>
+      <i style="top: 55%; width: 88vw; margin-left: 8vw"></i>
+      <i style="top: 80%; width: 120vw"></i>
+    </span>
+  </div>
+
+  <div class="lost" aria-hidden="true">
+    <svg class="aj" viewBox="3 2.5 57 54" focusable="false">
+      <g class="body">
+        <path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/>
+        <path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/>
+        <rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/>
+        <circle class="eye" cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/>
+        <path class="tear" d="M54.6 19.6 C54.6 19.6 52.9 22.3 52.9 23.4 A1.7 1.7 0 0 0 56.3 23.4 C56.3 22.3 54.6 19.6 54.6 19.6Z"/>
+      </g>
+    </svg>
+  </div>
+
   <main>
-    <div class="lost" aria-hidden="true">
-      <svg class="aj" viewBox="9 8.5 45 42" focusable="false">
-        <g class="body">
-          <path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/>
-          <path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/>
-          <rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/>
-          <circle class="eye" cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/>
-          <!-- a tear at the outer corner of the eye -->
-          <path class="tear" d="M54.6 19.6 C54.6 19.6 52.9 22.3 52.9 23.4 A1.7 1.7 0 0 0 56.3 23.4 C56.3 22.3 54.6 19.6 54.6 19.6Z"/>
-        </g>
-      </svg>
-      <svg class="frown" viewBox="0 0 96 22" focusable="false"><path d="M5 19 Q48 -7 91 19"/></svg>
-    </div>
     <p class="code">404</p>
-    <h1>This page doesn't exist</h1>
+    <h1>There's nothing out here</h1>
+    <p class="say">This page doesn't exist.</p>
     <a class="home" href="/">
       <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4.4 10.6 12 4.4l7.6 6.2v8.4a.6.6 0 0 1-.6.6H5a.6.6 0 0 1-.6-.6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Take me home
