@@ -890,7 +890,6 @@
     background: var(--ink);
     color: var(--bg);
   }
-  .marquee-hint { color: var(--ink-3); font-family: var(--font-mono); }
 
   /* ---------- The Path -----------------------------------------------------
 

@@ -1532,18 +1532,11 @@
   .logo-cell:hover .logo-tip,
   .logo-cell:focus-visible .logo-tip { opacity: 1; transform: translate(-50%, 0); }
 
-  .marquee-hint {
-    margin: 10px 0 0;
-    font-family: var(--font-mono);
-    font-size: .74rem;
-    color: var(--ink-3);
-    text-align: center;
-    opacity: .75;
-  }
-
   /* The logos section and the one after it both carry full .section padding,
-     which stacked into a noticeably dead gap. Trim the touching edges only. */
-  #logos.section { padding-bottom: clamp(14px, 2.4vw, 22px); }
+     which stacked into a noticeably dead gap. Trim the touching edges only.
+     (With no hint line under the strip any more, a little of it comes back
+     so the strip does not crowd the next heading.) */
+  #logos.section { padding-bottom: clamp(30px, 3vw, 42px); }
 
   /* ==========================================================================
      THE PATH: scroll-driven career circuit board
@@ -3422,7 +3415,7 @@
   @media print {
     .bg, .rail, header.nav, .mobile-sheet, .sheet-scrim,
     .page-loader, .terminal, .palette, .toast-host,
-    .carousel-ctrl, .marquee-hint, .footer-hint { display: none !important; }
+    .carousel-ctrl, .footer-hint { display: none !important; }
 
     body { color: #000; background: #fff; }
     .glass { border: 1px solid #ccc; box-shadow: none; background: #fff; }
