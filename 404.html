@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Page not found · Ajay Sommi</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f2f0eb" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..600&family=Geist+Mono:wght@400&display=swap" />
+  <style>
+    /* A page of its own, served by GitHub Pages for any address that does
+       not exist, at any depth, so everything it needs is inline or linked
+       from the site root. It follows the system's light or dark setting. */
+    :root {
+      --bg: #f2f0eb;
+      --ink: #141414;
+      --ink-2: #47443f;
+      --ink-3: #87837b;
+      --stroke: rgba(20, 20, 20, .14);
+      --tear: #8fb0ff;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --ink: #edebe6;
+        --ink-2: #b2afa8;
+        --ink-3: #7c7973;
+        --stroke: rgba(237, 235, 230, .16);
+        --tear: #9db9ff;
+        color-scheme: dark;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Geist, system-ui, -apple-system, sans-serif;
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+    }
+    main { display: grid; justify-items: center; gap: 14px; max-width: 420px; }
+
+    /* Little Aj, lost: he sways a little and glances one way and then the
+       other, looking for the page, with a frown under him, and every so
+       often a tear wells up at the corner of his eye and falls. */
+    .lost { display: grid; justify-items: center; gap: 12px; margin-bottom: 10px; }
+    .lost svg.aj { width: 104px; height: 98px; overflow: visible; }
+    .aj .am-a { fill: var(--ink); }
+    .aj .body { transform-box: view-box; transform-origin: 50% 100%; animation: sway 5.2s ease-in-out infinite; }
+    .aj .eye { transform-box: fill-box; transform-origin: 50% 50%; animation: glance 5.2s ease-in-out infinite; }
+    .aj .tear { fill: var(--tear); transform-box: fill-box; transform-origin: 50% 0; opacity: 0; animation: tear 2.6s ease-in .8s infinite; }
+    .frown { width: 96px; height: 22px; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
+    @keyframes sway {
+      0%, 100% { transform: rotate(0); }
+      25% { transform: rotate(-4deg); }
+      55% { transform: rotate(3.5deg); }
+      78% { transform: rotate(-1deg); }
+    }
+    @keyframes glance {
+      0%, 12%, 100% { transform: translate(0, 0); }
+      22%, 38% { transform: translate(-1.6px, .4px); }
+      50%, 68% { transform: translate(1.8px, .4px); }
+      80% { transform: translate(0, 0); }
+    }
+    @keyframes tear {
+      0%   { opacity: 0; transform: translateY(0) scale(.2); }
+      18%  { opacity: 1; transform: translateY(0) scale(1); }
+      34%  { opacity: 1; transform: translateY(.6px) scale(1, 1.08); animation-timing-function: cubic-bezier(.5, 0, 1, .5); }
+      78%  { opacity: 1; transform: translateY(22px) scale(.9, 1.1); }
+      100% { opacity: 0; transform: translateY(30px) scale(.8, 1.1); }
+    }
+
+    .code { margin: 0; font-family: "Geist Mono", ui-monospace, monospace; font-size: .8rem; letter-spacing: .12em; color: var(--ink-3); }
+    h1 { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); font-weight: 600; letter-spacing: -.02em; }
+    .home {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 12px;
+      padding: 13px 24px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 500;
+      text-decoration: none;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+    .home:hover { transform: translateY(-1px); }
+    .home:active { transform: scale(.97); }
+    .home:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .aj .body, .aj .eye { animation: none; }
+      .aj .tear { animation: none; opacity: 1; transform: translateY(6px); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="lost" aria-hidden="true">
+      <svg class="aj" viewBox="9 8.5 45 42" focusable="false">
+        <g class="body">
+          <path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/>
+          <path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/>
+          <rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/>
+          <circle class="eye" cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/>
+          <!-- a tear at the outer corner of the eye -->
+          <path class="tear" d="M54.6 19.6 C54.6 19.6 52.9 22.3 52.9 23.4 A1.7 1.7 0 0 0 56.3 23.4 C56.3 22.3 54.6 19.6 54.6 19.6Z"/>
+        </g>
+      </svg>
+      <svg class="frown" viewBox="0 0 96 22" focusable="false"><path d="M5 19 Q48 -7 91 19"/></svg>
+    </div>
+    <p class="code">404</p>
+    <h1>This page doesn't exist</h1>
+    <a class="home" href="/">
+      <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4.4 10.6 12 4.4l7.6 6.2v8.4a.6.6 0 0 1-.6.6H5a.6.6 0 0 1-.6-.6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Take me home
+    </a>
+  </main>
+</body>
+</html>

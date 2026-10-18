@@ -550,18 +550,6 @@ syncLogoTheme();
   });
   scrim?.addEventListener('click', closeSheet);
 
-  /* Pressing the home mark plays the loading screen's assembly again: the
-     A rises, the hook swings in, the stem grows and the dot drops on. The
-     class comes off when the dot lands, so a second press replays it. */
-  const brandMark = $('.brand .brand-mark');
-  $('.brand')?.addEventListener('click', () => {
-    if (!brandMark || prefersReduced()) return;
-    brandMark.classList.remove('is-assembling');
-    void brandMark.offsetWidth;   // restart the animation from the top
-    brandMark.classList.add('is-assembling');
-    const dot = brandMark.querySelector('.brand-aj circle');
-    dot?.addEventListener('animationend', () => brandMark.classList.remove('is-assembling'), { once: true });
-  });
 
   // Delegated smooth scrolling for every in-page link.
   document.addEventListener('click', (e) => {
@@ -2669,7 +2657,7 @@ const palette = (() => {
         try { await navigator.clipboard.writeText('ajaysommi7@gmail.com'); toast('Copied ajaysommi7@gmail.com'); }
         catch { location.href = 'mailto:ajaysommi7@gmail.com'; }
       } },
-    { icon: '⇩', title: 'Open resume',      sub: 'PDF + inline viewer', kind: 'action', run: () => { location.href = 'resume.html'; } },
+    { icon: '⇩', title: 'Open resume',      sub: 'PDF + inline viewer', kind: 'action', run: () => { (window.hopTo ? window.hopTo('resume.html') : (location.href = 'resume.html')); } },
     { icon: '⌘', title: 'GitHub profile',   kind: 'action', run: () => window.open('https://github.com/ajaysommi', '_blank', 'noopener') },
     { icon: 'in', title: 'LinkedIn profile', kind: 'action', run: () => window.open('https://www.linkedin.com/in/ajay-sommi/', '_blank', 'noopener') },
 
@@ -2890,7 +2878,7 @@ const terminal = (() => {
       `linkedin  <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noopener">in/ajay-sommi</a>`
     ),
 
-    resume: () => { write(`<span class="t-dim">opening resume…</span>`); setTimeout(() => { location.href = 'resume.html'; }, 500); },
+    resume: () => { write(`<span class="t-dim">opening resume…</span>`); setTimeout(() => { (window.hopTo ? window.hopTo('resume.html') : (location.href = 'resume.html')); }, 500); },
 
     theme: (arg) => {
       if (!arg) { write(`current: <span class="t-key">${root.dataset.theme}</span>  <span class="t-dim">usage: theme [midnight|daylight]</span>`); return; }

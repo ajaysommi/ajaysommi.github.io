@@ -91,7 +91,7 @@
         <span class="m-load-bar">
           <span class="m-load-line"><i></i></span>
           <!-- Takes over from the full bar, matching it exactly, and bends into a smile. -->
-          <svg class="m-load-smile" viewBox="0 0 152 11" preserveAspectRatio="none" aria-hidden="true"><path d="M5.5 5.5 Q76 5.5 146.5 5.5"><animate attributeName="d" begin="indefinite" dur="0.8s" fill="freeze" calcMode="spline" values="M5.5 5.5 Q76 5.5 146.5 5.5;M5.5 5.5 Q76 60 146.5 5.5;M5.5 5.5 Q76 47 146.5 5.5;M5.5 5.5 Q76 53.5 146.5 5.5;M5.5 5.5 Q76 51 146.5 5.5" keyTimes="0;0.34;0.58;0.8;1" keySplines=".3 0 .25 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"/></path></svg>
+          <svg class="m-load-smile" viewBox="0 0 152 11" preserveAspectRatio="none" aria-hidden="true"><path d="M5.5 5.5 Q76 5.5 146.5 5.5"><animate attributeName="d" begin="indefinite" dur="0.8s" fill="freeze" calcMode="spline" values="M5.5 5.5 Q76 5.5 146.5 5.5;M5.5 -7.5 Q76 51 146.5 -7.5;M5.5 -5 Q76 38 146.5 -5;M5.5 -6.8 Q76 44.5 146.5 -6.8;M5.5 -6 Q76 42 146.5 -6" keyTimes="0;0.34;0.58;0.8;1" keySplines=".3 0 .25 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"/></path></svg>
         </span>
       </div>
       <div class="loader-orb"></div>
@@ -560,6 +560,13 @@
                        sizes="240px"
                        width="2000" height="1500"
                        alt="A JM Family business jet on the tarmac, with two people stepping off it"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/jm-axe-400.webp"
+                       data-srcset="assets/images/journey/jm-axe-400.webp 400w,
+                               assets/images/journey/jm-axe-800.webp 800w"
+                       sizes="180px"
+                       width="1500" height="2000"
+                       alt="Ajay holding an axe on a giant wooden throne at an axe throwing outing with JM Family"
                        loading="lazy" decoding="async" />
                 </figure>
               </li>
@@ -1057,6 +1064,8 @@
 
   <script type="module" src="script.js"></script>
   <script src="haptics.js" defer></script>
+  <script src="hop.js" defer></script>
+  <script src="brand.js" defer></script>
   <script src="minimal.js" defer></script>
 </body>
 </html>

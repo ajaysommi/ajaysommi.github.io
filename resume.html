@@ -84,27 +84,25 @@
       border-radius: var(--r-lg);
     }
 
-    /* The warning mark: a flat circle in the accent with an exclamation
-       cut through it, in the site's shape language. */
-    .pdf-fallback .pdf-mark {
-      position: relative;
-      width: 58px;
-      height: 58px;
+    /* A sad little Aj: the mark with a frown under it, the loading
+       screen's smile turned upside down. */
+    .pdf-fallback .sad-aj { display: grid; justify-items: center; gap: 10px; margin-bottom: 4px; }
+    .pdf-fallback .sad-aj .aj { width: 66px; height: 62px; }
+    .pdf-fallback .sad-aj .aj .am-a { fill: var(--ink); }
+    .pdf-fallback .sad-aj .frown { width: 82px; height: 20px; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; }
+    .pdf-fallback h2 { margin: 6px 0 0; }
+    .pdf-fallback .actions { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .pdf-fallback .open-tab { gap: 9px; min-width: 210px; justify-content: center; }
+    .pdf-fallback .dl {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
       border-radius: 50%;
-      background: var(--accent);
     }
-    .pdf-fallback .pdf-mark::before,
-    .pdf-fallback .pdf-mark::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      width: 6px;
-      margin-left: -3px;
-      border-radius: 3px;
-      background: var(--accent-ink, #141414);
-    }
-    .pdf-fallback .pdf-mark::before { top: 13px; height: 20px; }
-    .pdf-fallback .pdf-mark::after { top: 38px; height: 6px; }
+    .pdf-fallback .actions svg { flex: none; }
     /* With the fallback showing, its own buttons do the work: the head's
        back link takes the place of the download/open pair. */
     .resume-main.is-fallback .resume-head .btn,
@@ -180,12 +178,20 @@
     </div>
 
     <div class="pdf-fallback glass" id="pdfFallback" hidden>
-      <span class="pdf-mark" aria-hidden="true"></span>
-      <h2>Your browser can't show the PDF inline</h2>
-      <p>Most mobile browsers won't render an embedded PDF. Open it in a new tab or download it instead. Same file either way.</p>
+      <span class="sad-aj" aria-hidden="true">
+        <svg class="aj" viewBox="9 8.5 45 42" focusable="false"><path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg>
+        <svg class="frown" viewBox="0 0 82 20" focusable="false"><path d="M4 17 Q41 -6 78 17"/></svg>
+      </span>
+      <h2>Your browser can't show the PDF here</h2>
+      <p>Most phone browsers can't display a PDF inside a page. It opens fine in its own tab, or you can download it.</p>
       <div class="actions">
-        <a class="btn solid" href="./Ajay_Sommi_Resume.pdf" target="_blank" rel="noopener">Open resume</a>
-        <a class="btn" href="./Ajay_Sommi_Resume.pdf" download="Ajay-Sommi-Resume.pdf">Download</a>
+        <a class="btn solid open-tab" href="./Ajay_Sommi_Resume.pdf" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M14 4.5h5.5V10M19.5 4.5 11 13M17.5 13.5v5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Open in new tab
+        </a>
+        <a class="btn dl" href="./Ajay_Sommi_Resume.pdf" download="Ajay-Sommi-Resume.pdf" aria-label="Download the resume PDF" title="Download PDF">
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
     </div>
   </main>
@@ -232,6 +238,8 @@
     })();
   </script>
   <script src="haptics.js" defer></script>
+  <script src="hop.js" defer></script>
+  <script src="brand.js" defer></script>
   <script src="minimal.js" defer></script>
 </body>
 </html>

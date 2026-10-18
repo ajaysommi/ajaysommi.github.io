@@ -1767,3 +1767,20 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
   86%  { transform: translateY(0) scale(1.06, .94); }
   100% { opacity: 1; transform: none; }
 }
+
+/* The home mark on desktop (see script.js): it leans toward the pointer,
+   its eye looks further, and a press pushes it in with the eye shut. */
+@media (hover: hover) and (pointer: fine) {
+  header.nav .brand-mark.has-eye {
+    translate: var(--lean-x, 0) var(--lean-y, 0);
+    transition: translate .35s cubic-bezier(.22, 1, .36, 1), scale .18s ease;
+  }
+  header.nav .brand-mark.has-eye .brand-aj circle {
+    translate: var(--eye-x, 0) var(--eye-y, 0);
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    transition: translate .3s cubic-bezier(.22, 1, .36, 1), scale .12s ease;
+  }
+  header.nav .brand-mark.has-eye.is-pressed { scale: .86; }
+  header.nav .brand-mark.has-eye.is-pressed .brand-aj circle { scale: 1 .08; }
+}
