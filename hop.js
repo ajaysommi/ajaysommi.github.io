@@ -122,7 +122,7 @@
     .hop .hop-sheet {
       position: fixed;
       left: var(--tl); top: var(--tt); width: var(--tw); height: var(--th);
-      transform-origin: 50% 100%;
+      transform-origin: 50% 50%;
       animation: hop-sheet ${RESUME}ms linear both;
     }
     .hop .hop-sheet svg { width: 100%; height: 100%; }
@@ -250,13 +250,18 @@
       62%, 73% { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
       80% { transform: translate(calc(var(--dx) + -9px), calc(var(--dy) + 6px)) rotate(14deg) scale(calc(var(--sx) * .95), calc(var(--sy) * .95)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
       83% { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
-      92% { transform: translate(0px, 0px) rotate(0deg) scale(1.015, 1.015); animation-timing-function: cubic-bezier(.3, 0, .4, 1); }
-      96%, 100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
+      88% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.15, .75, .35, 1); }
+      91.5% { transform: translate(0px, 0px) rotate(0deg) scale(1.06, 1.045); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      95% { transform: translate(0px, 0px) rotate(0deg) scale(.975, .985); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      97.6% { transform: translate(0px, 0px) rotate(0deg) scale(1.012, 1.008); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* As the wind-up starts, the drawing gives way to a plain page in the
        same colour; only the blank page is thrown (so nothing on it is seen
-       stretching), speeding up as it comes at the viewer, and it lands on
-       the document, which the resume page then dissolves it to show. */
+       stretching), speeding up as it comes at the viewer. It hits the
+       screen over the document with an elastic give, stretching out, then
+       springing back under and settling, and the resume page then
+       dissolves it to show the document. */
     @keyframes hop-detail-out { 0%, 73% { opacity: 1; } 78%, 100% { opacity: 0; } }
     @keyframes hop-blank-in { 0%, 72% { opacity: 0; } 77%, 100% { opacity: 1; } }
     @keyframes hop-write1 { 0%, 18% { transform: scaleX(0); animation-timing-function: ${UP}; } 22%, 100% { transform: scaleX(1); } }
@@ -303,7 +308,7 @@
     return { left: (vw - (h * 8.5 / 11 < w ? h * 8.5 / 11 : w)) / 2, top: (vh - h) / 2, width: Math.min(w, h * 8.5 / 11), height: h };
   };
   // Places the full size sheet on the document's rectangle, then works out
-  // the translate and scale (about its bottom centre) that shrink it onto
+  // the translate and scale (about its centre) that shrink it onto
   // the small paper beside the mark, where it spends most of the scene.
   const aimSheet = (el, slot) => {
     if (!el || !slot) return;
@@ -317,7 +322,7 @@
     el.style.setProperty('--sx', (pw / t.width).toFixed(5));
     el.style.setProperty('--sy', (ph / t.height).toFixed(5));
     el.style.setProperty('--dx', `${(px + pw / 2 - (t.left + t.width / 2)).toFixed(1)}px`);
-    el.style.setProperty('--dy', `${(py + ph - (t.top + t.height)).toFixed(1)}px`);
+    el.style.setProperty('--dy', `${(py + ph / 2 - (t.top + t.height / 2)).toFixed(1)}px`);
     /* The blank page lands with the document card's own corners (--r-lg,
        18px). The sheet's drawing is stretched to the document's shape, so
        the corner radius is set separately across and down to come out
