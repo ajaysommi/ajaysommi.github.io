@@ -1240,7 +1240,7 @@
      busy the page is with setting itself up underneath. Animations wait for
      .is-go (set two frames after the loader is first drawn) so nothing is
      lost before the first paint. */
-  .m-load-mark { position: relative; display: block; width: 124px; height: 108px; }
+  .m-load-mark { position: relative; display: block; width: 112px; height: 97px; }
   .mk { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; will-change: transform, opacity; }
   .mk-a { fill: var(--ink); transform-origin: 39.1% 87.1%; transform: scale(.2, 0); animation: mk-rise .5s cubic-bezier(.34, 1.56, .64, 1) .05s forwards; }
   .mk-j { fill: #ff6b35; transform-origin: 65.4% 67.1%; transform: scale(0) rotate(-40deg); animation: mk-swing .5s cubic-bezier(.34, 1.56, .64, 1) .2s forwards; }
@@ -1265,9 +1265,9 @@
      round the whole way. */
   .m-load-line {
     position: relative;
-    width: 168px;
-    height: 10px;
-    margin-top: 34px;
+    width: 152px;
+    height: 9px;
+    margin-top: 30px;
     border-radius: 999px;
     overflow: hidden;
     background: color-mix(in oklab, var(--ink) 13%, transparent);
@@ -1688,6 +1688,6 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 
 /* The loading screen on phones: the mark and its bar a size down. */
 @media (max-width: 719px) {
-  .m-load-mark { width: 96px; height: 84px; }
-  .m-load-line { width: 132px; height: 8px; margin-top: 28px; }
+  .m-load-mark { width: 86px; height: 75px; }
+  .m-load-line { width: 120px; height: 7px; margin-top: 25px; }
 }
