@@ -33,6 +33,18 @@
         var arrive = sessionStorage.getItem('hop-arrive');
         if (arrive && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add(arrive === 'soft' ? 'hop-arriving-soft' : 'hop-arriving');
         sessionStorage.removeItem('hop-arrive');
+        /* The sheet waits over the document until it has loaded and the
+           viewer has had a moment to paint it (or a second and a half at
+           most), so it dissolves straight into the resume, never into an
+           empty viewer. */
+        if (arrive === '1') {
+          var ready = function () { root.classList.add('hop-doc-ready'); };
+          setTimeout(ready, 1500);
+          document.addEventListener('DOMContentLoaded', function () {
+            var f = document.querySelector('iframe');
+            if (f) f.addEventListener('load', function () { setTimeout(ready, 350); });
+          });
+        }
       } catch (e) {}
     })();
   </script>
@@ -62,9 +74,10 @@
       translate: -50% 0;
       border-radius: var(--r-lg);
       background: color-mix(in oklab, var(--ink) 5%, var(--bg));
-      animation: hop-arrive .65s cubic-bezier(.4, 0, .2, 1) .12s forwards;
+      animation: hop-arrive .55s cubic-bezier(.4, 0, .2, 1) forwards paused;
     }
     html.hop-arriving[data-theme="daylight"]::before { background: #fff; }
+    html.hop-arriving.hop-doc-ready::before { animation-play-state: running; }
     @media (max-width: 719px) {
       html.hop-arriving::before {
         top: 50%;

@@ -17,9 +17,9 @@
    ========================================================================== */
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const DANCE = 1100;    // ms of the plain hops
-  const RESUME = 2300;   // ms of the resume scene, if it ran to the end
-  const SOFT = 1400;     // the resume scene without the throw
+  const DANCE = 1000;    // ms of the plain hops
+  const RESUME = 2100;   // ms of the resume scene, if it ran to the end
+  const SOFT = 1300;     // the resume scene without the throw
   // Moments in the resume scene: the sheet hits the glass and spreads flat,
   // and the batter has run and faded by the time the page changes.
   const K = RESUME / 2600;
@@ -155,28 +155,33 @@
       width: var(--s); height: calc(var(--s) * var(--k, 1));
       margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
       border-radius: 50%;
-      animation: hop-drop var(--life) linear var(--delay) both;
+      animation: hop-drop var(--life) linear var(--delay) both, hop-fade var(--life) linear var(--delay) both;
     }
     .hop-run {
       width: var(--w); height: var(--len);
       margin-left: calc(var(--w) / -2);
       border-radius: 50% 50% 50% 50% / 18% 18% 82% 82%;
       transform-origin: 50% 0;
-      animation: hop-run var(--life) linear var(--delay) both;
+      animation: hop-run var(--life) linear var(--delay) both, hop-fade var(--life) linear var(--delay) both;
     }
+    /* Motion and fade run on their own curves, so neither jolts the
+       other: a drop flies out, squashes flat on the glass, recovers, then
+       slides down in one easing; the fade starts gently partway through. */
     @keyframes hop-drop {
-      0%   { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(.35); animation-timing-function: cubic-bezier(.1, .8, .3, 1); }
-      1%   { opacity: 1; }
-      9%   { opacity: 1; transform: translate(0, 0) scale(1.18, .82); animation-timing-function: cubic-bezier(.3, 0, .5, 1); }
-      16%  { transform: translate(0, 0) scale(1, 1); animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
-      75%  { opacity: 1; transform: translate(0, var(--slide)) scale(.94, 1.12); }
-      100% { opacity: 0; transform: translate(0, calc(var(--slide) * 1.5)) scale(.9, 1.18); }
+      0%   { transform: translate(var(--fx), var(--fy)) scale(.35); animation-timing-function: cubic-bezier(.1, .8, .3, 1); }
+      10%  { transform: translate(0, 0) scale(1.16, .84); animation-timing-function: cubic-bezier(.35, 0, .45, 1); }
+      20%  { transform: translate(0, 0) scale(1, 1); animation-timing-function: cubic-bezier(.4, 0, .5, 1); }
+      100% { transform: translate(0, calc(var(--slide) * 1.4)) scale(.92, 1.16); }
     }
     @keyframes hop-run {
-      0%   { opacity: 0; transform: translateY(0) scaleY(.06); }
-      5%   { opacity: 1; transform: translateY(0) scaleY(.16); animation-timing-function: cubic-bezier(.5, 0, .85, .4); }
-      78%  { opacity: 1; transform: translateY(var(--drop)) scaleY(1); }
-      100% { opacity: 0; transform: translateY(calc(var(--drop) * 1.25)) scaleY(1.06); }
+      0%   { transform: translateY(0) scaleY(.1); animation-timing-function: cubic-bezier(.4, 0, .45, 1); }
+      100% { transform: translateY(var(--drop)) scaleY(1); }
+    }
+    @keyframes hop-fade {
+      0%   { opacity: 0; animation-timing-function: ease-out; }
+      3%   { opacity: 1; }
+      35%  { opacity: 1; animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      100% { opacity: 0; }
     }
     .hop-sheet .ln { fill: color-mix(in oklab, var(--ink, #edebe6) 38%, transparent); transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(0); }
     .hop-sheet .ln.title { fill: #3d68ff; }
@@ -480,7 +485,7 @@
     anim.setAttribute('dur', `${RESUME}ms`);
     anim.setAttribute('values', `${clean};${clean};${ragged};${sagging};${clean}`);
     anim.setAttribute('keyTimes', `0;${T(HIT)};${T(SPLAT)};${T(SAG)};1`);
-    anim.setAttribute('keySplines', '0 0 1 1;.1 .8 .25 1;.4 0 .6 1;.45 0 .4 1');
+    anim.setAttribute('keySplines', '0 0 1 1;.1 .8 .25 1;.3 0 .7 .7;.3 .3 .3 1');
 
   };
 
