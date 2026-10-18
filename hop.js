@@ -18,7 +18,7 @@
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DANCE = 1200;    // ms of the plain hops
-  const RESUME = 2200;   // ms of the resume scene
+  const RESUME = 2000;   // ms of the resume scene
   let going = false;
 
   // Rising slows to the top, falling speeds up: gravity.
@@ -85,7 +85,11 @@
        and its lines get written in one after another while the mark shifts
        its weight from foot to foot, a quick tap to the left, then to the
        right, eye on the work. Then one big jump, and the sheet is handed
-       over to the middle of the screen as the page changes.
+       over in a throw: the mark turns toward the sheet and loads up, then
+       springs it forward. The sheet flies at the screen, its drawing giving
+       way to a plain page that lands exactly where the real document will
+       be; the resume page opens with that page in place and dissolves it,
+       so the document fades in underneath.
        The parts carry their own inertia: the eye trails the body (it sinks
        as the body lifts, rises as it drops and settles a beat after each
        landing, and lags behind each sideways shift), and the hook swings
@@ -97,9 +101,15 @@
     .hop-r .hop-eye { animation: hop-tap-eye ${RESUME}ms linear both; }
     .hop .hop-sheet { display: block; margin-bottom: 12px; transform-origin: 50% 100%; will-change: transform; animation: hop-sheet ${RESUME}ms linear both; }
     .hop .hop-sheet svg { width: 58px; height: 70px; }
-    .hop-sheet .paper { fill: var(--ink, #edebe6); }
-    .hop-sheet .fold { fill: color-mix(in oklab, var(--ink, #edebe6) 55%, var(--bg, #121212)); }
-    .hop-sheet .ln { fill: var(--bg, #121212); transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(0); }
+    /* Paper in the page's own colours: a sheet a shade off the page with a
+       fine outline, grey lines of text, a blue title and an orange dot. */
+    .hop-sheet .paper { fill: color-mix(in oklab, var(--ink, #edebe6) 5%, var(--bg, #121212)); stroke: color-mix(in oklab, var(--ink, #edebe6) 42%, transparent); stroke-width: 1.6; stroke-linejoin: round; }
+    [data-theme="daylight"] .hop-sheet .paper { fill: #fff; }
+    .hop-sheet .fold { fill: color-mix(in oklab, var(--ink, #edebe6) 14%, var(--bg, #121212)); stroke: color-mix(in oklab, var(--ink, #edebe6) 42%, transparent); stroke-width: 1.6; stroke-linejoin: round; }
+    .hop-sheet .detail { animation: hop-detail-out ${RESUME}ms linear both; }
+    .hop-sheet .blank { fill: color-mix(in oklab, var(--ink, #edebe6) 5%, var(--bg, #121212)); opacity: 0; animation: hop-blank-in ${RESUME}ms linear both; }
+    [data-theme="daylight"] .hop-sheet .blank { fill: #fff; }
+    .hop-sheet .ln { fill: color-mix(in oklab, var(--ink, #edebe6) 38%, transparent); transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(0); }
     .hop-sheet .ln.title { fill: #3d68ff; }
     .hop-sheet .ln.dot { fill: #ff6b35; transform-origin: 50% 50%; transform: scale(0); }
     .hop-sheet .l1 { animation: hop-write1 ${RESUME}ms linear both; }
@@ -109,76 +119,95 @@
     .hop-sheet .l5 { animation: hop-write5 ${RESUME}ms linear both; }
 
     @keyframes hop-tap {
-      0%   { transform: translate(0, 0) rotate(0) scale(1, 1); animation-timing-function: ${SNAP}; }
-      5%   { transform: translate(0, 0) rotate(0) scale(1.05, .95); animation-timing-function: ${UP}; }
-      10%  { transform: translate(-5px, -12px) rotate(-4deg) scale(.985, 1.02); animation-timing-function: ${DOWN}; }
-      15%  { transform: translate(-7px, 0) rotate(-2deg) scale(1.05, .95); animation-timing-function: ${UP}; }
-      21%  { transform: translate(3px, -11px) rotate(4deg) scale(.985, 1.02); animation-timing-function: ${DOWN}; }
-      27%  { transform: translate(7px, 0) rotate(2deg) scale(1.05, .95); animation-timing-function: ${UP}; }
-      33%  { transform: translate(-3px, -11px) rotate(-4deg) scale(.985, 1.02); animation-timing-function: ${DOWN}; }
-      39%  { transform: translate(-7px, 0) rotate(-2deg) scale(1.05, .95); animation-timing-function: ${UP}; }
-      45%  { transform: translate(3px, -11px) rotate(4deg) scale(.985, 1.02); animation-timing-function: ${DOWN}; }
-      51%  { transform: translate(7px, 0) rotate(2deg) scale(1.05, .95); animation-timing-function: ${SNAP}; }
-      57%  { transform: translate(0, 0) rotate(0) scale(1.01, .99); animation-timing-function: ${SNAP}; }
-      62%  { transform: translate(0, 0) rotate(0) scale(1.12, .86); animation-timing-function: ${UP}; }
-      66%  { transform: translate(0, -22px) rotate(-2deg) scale(.93, 1.08); animation-timing-function: ${UP}; }
-      75%  { transform: translate(0, -80px) rotate(-6deg) scale(1, 1); animation-timing-function: ${DOWN}; }
-      84%  { transform: translate(0, 0) rotate(-1deg) scale(.97, 1.04); animation-timing-function: ${SNAP}; }
-      87%  { transform: translate(0, 0) rotate(0) scale(1.13, .87); animation-timing-function: ${UP}; }
-      92%  { transform: translate(0, -8px) rotate(0) scale(.985, 1.015); animation-timing-function: ${DOWN}; }
-      96%  { transform: translate(0, 0) rotate(0) scale(1.025, .975); animation-timing-function: ${SNAP}; }
-      100% { transform: translate(0, 0) rotate(0) scale(1, 1); }
+      0%   { opacity: 1; transform: translate(0, 0) rotate(0) scale(1, 1); animation-timing-function: ${SNAP}; }
+      4%   { transform: translate(0, 0) rotate(0) scale(1.07, .93); animation-timing-function: ${UP}; }
+      8%   { transform: translate(-6px, -16px) rotate(-5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      12%  { transform: translate(-8px, 0) rotate(-2deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      17%  { transform: translate(4px, -15px) rotate(5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      22%  { transform: translate(8px, 0) rotate(2deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      27%  { transform: translate(-4px, -15px) rotate(-5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      32%  { transform: translate(-8px, 0) rotate(-2deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      37%  { transform: translate(4px, -15px) rotate(5deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      42%  { transform: translate(8px, 0) rotate(2deg) scale(1.09, .91); animation-timing-function: ${SNAP}; }
+      45%  { transform: translate(0, 0) rotate(0) scale(1.02, .98); animation-timing-function: ${SNAP}; }
+      48%  { transform: translate(0, 0) rotate(0) scale(1.16, .82); animation-timing-function: ${UP}; }
+      51%  { transform: translate(0, -26px) rotate(-2deg) scale(.9, 1.12); animation-timing-function: ${UP}; }
+      58%  { transform: translate(0, -92px) rotate(-7deg) scale(1, 1); animation-timing-function: ${DOWN}; }
+      64%  { transform: translate(0, 0) rotate(-1deg) scale(.95, 1.06); animation-timing-function: ${SNAP}; }
+      67%  { transform: translate(0, 0) rotate(0) scale(1.17, .83); animation-timing-function: ${UP}; }
+      70%  { transform: translate(0, -9px) rotate(0) scale(.97, 1.03); animation-timing-function: ${DOWN}; }
+      73%  { transform: translate(0, 0) rotate(0) scale(1.04, .96); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      79%  { transform: translate(7px, 3px) rotate(11deg) scale(1.08, .9); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      80%  { transform: translate(7.5px, 3.5px) rotate(12deg) scale(1.09, .89); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
+      83%  { transform: translate(-5px, -11px) rotate(-9deg) scale(.93, 1.09); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      87%  { opacity: 1; transform: translate(-1px, 0) rotate(4deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      91%  { transform: translate(0, -2px) rotate(-1.5deg) scale(.99, 1.01); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      100% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.98, .98); }
     }
     /* Swings against the sideways motion, a beat behind it. */
     @keyframes hop-tap-hook {
-      0%, 5% { transform: rotate(0); }
-      12% { transform: rotate(5deg); } 18% { transform: rotate(1deg); }
-      24% { transform: rotate(-5deg); } 30% { transform: rotate(-1deg); }
-      36% { transform: rotate(5deg); } 42% { transform: rotate(1deg); }
-      48% { transform: rotate(-5deg); } 54% { transform: rotate(-1deg); }
-      60% { transform: rotate(2deg); } 68% { transform: rotate(-3deg); }
-      78% { transform: rotate(2deg); } 88% { transform: rotate(-4deg); }
-      94% { transform: rotate(1.5deg); } 100% { transform: rotate(0); }
+      0%, 4% { transform: rotate(0); }
+      9% { transform: rotate(6deg); } 13% { transform: rotate(1deg); }
+      18% { transform: rotate(-6deg); } 23% { transform: rotate(-1deg); }
+      28% { transform: rotate(6deg); } 33% { transform: rotate(1deg); }
+      38% { transform: rotate(-6deg); } 43% { transform: rotate(-1deg); }
+      49% { transform: rotate(3deg); } 55% { transform: rotate(-3deg); }
+      61% { transform: rotate(2deg); } 68% { transform: rotate(-6deg); }
+      73% { transform: rotate(2deg); } 79% { transform: rotate(-5deg); }
+      84% { transform: rotate(7deg); } 90% { transform: rotate(-2deg); }
+      100% { transform: rotate(0); }
     }
     /* Looks right at the sheet throughout (+1.5); on top of that it trails
        the body: down as it lifts, up as it drops, a settle after landing. */
     @keyframes hop-tap-eye {
       0%   { transform: translate(0, 0) scale(1); }
-      5%   { transform: translate(1.2px, .6px) scale(1.03, .97); }
-      10%  { transform: translate(2.6px, 1.4px) scale(1); }
-      15%  { transform: translate(.8px, -.6px) scale(1.06, .94); }
-      21%  { transform: translate(.4px, 1.4px) scale(1); }
-      27%  { transform: translate(2.2px, -.6px) scale(1.06, .94); }
-      33%  { transform: translate(2.6px, 1.4px) scale(1); }
-      39%  { transform: translate(.8px, -.6px) scale(1.06, .94); }
-      45%  { transform: translate(.4px, 1.4px) scale(1); }
-      51%  { transform: translate(2.2px, -.6px) scale(1.06, .94); }
-      57%  { transform: translate(1.5px, 0) scale(1); }
-      62%  { transform: translate(1.5px, .8px) scale(1.05, .95); }
-      66%  { transform: translate(1.5px, 2.2px) scale(.97, 1.04); }
-      75%  { transform: translate(1.5px, -1.8px) scale(1); }
-      84%  { transform: translate(1.5px, -1.2px) scale(.98, 1.02); }
-      87%  { transform: translate(1.5px, 1.4px) scale(1.12, .88); }
-      91%  { transform: translate(1.5px, -.4px) scale(1); }
-      94%  { transform: translate(1.5px, .9px) scale(1.12, .12); }
-      97%, 100% { transform: translate(1px, 0) scale(1); }
+      4%   { transform: translate(1.2px, .6px) scale(1.04, .96); }
+      8%   { transform: translate(2.8px, 1.8px) scale(1); }
+      12%  { transform: translate(.6px, -.8px) scale(1.08, .92); }
+      17%  { transform: translate(.2px, 1.8px) scale(1); }
+      22%  { transform: translate(2.4px, -.8px) scale(1.08, .92); }
+      27%  { transform: translate(2.8px, 1.8px) scale(1); }
+      32%  { transform: translate(.6px, -.8px) scale(1.08, .92); }
+      37%  { transform: translate(.2px, 1.8px) scale(1); }
+      42%  { transform: translate(2.4px, -.8px) scale(1.08, .92); }
+      45%  { transform: translate(1.5px, 0) scale(1); }
+      48%  { transform: translate(1.5px, .9px) scale(1.06, .94); }
+      51%  { transform: translate(1.5px, 2.6px) scale(.96, 1.05); }
+      58%  { transform: translate(1.5px, -2.2px) scale(1); }
+      64%  { transform: translate(1.5px, -1.4px) scale(.98, 1.02); }
+      67%  { transform: translate(1.5px, 1.8px) scale(1.16, .84); }
+      71%  { transform: translate(1.5px, -.4px) scale(1); }
+      79%  { transform: translate(2.8px, 1px) scale(1); }
+      83%  { transform: translate(-.6px, -1.6px) scale(1.05); }
+      88%  { transform: translate(0, .5px) scale(1); }
+      91%  { transform: translate(0, .9px) scale(1.12, .12); }
+      94%, 100% { transform: translate(0, 0) scale(1); }
     }
+    /* The sheet rises into place and settles, sits still while it is
+       written, lifts a touch as the mark jumps, then glides over to the
+       middle as it is handed across; then the whole scene fades out to the
+       page's paper, and the resume fades in from the same paper. */
     @keyframes hop-sheet {
-      0%, 9% { opacity: 0; transform: translate(0, 8px) rotate(-12deg) scale(.1); }
-      15%  { opacity: 1; transform: translate(0, -6px) rotate(4deg) scale(1.1); animation-timing-function: ${SNAP}; }
-      20%  { transform: translate(0, 2px) rotate(-2deg) scale(.97); animation-timing-function: ${SNAP}; }
-      25%  { transform: translate(0, 0) rotate(.5deg) scale(1.01); }
-      30%, 57% { transform: translate(0, 0) rotate(0) scale(1); }
-      62%  { transform: translate(0, 1px) rotate(0) scale(1.02, .98); }
-      75%  { transform: translate(0, -5px) rotate(-2deg) scale(1); }
-      86%  { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); animation-timing-function: cubic-bezier(.5, 0, .2, 1); }
-      100% { opacity: 1; transform: translate(-64px, -40px) rotate(0) scale(2.3); }
+      0%, 6% { opacity: 0; transform: translate(0, 14px) rotate(-4deg) scale(.9); animation-timing-function: ${UP}; }
+      12%  { opacity: 1; transform: translate(0, -3px) rotate(1.5deg) scale(1.01); animation-timing-function: ${SNAP}; }
+      16%  { transform: translate(0, 0) rotate(0) scale(1); }
+      48%  { transform: translate(0, 0) rotate(0) scale(1); animation-timing-function: ${UP}; }
+      55%  { transform: translate(0, -5px) rotate(-1.5deg) scale(1); animation-timing-function: ${SNAP}; }
+      62%, 73% { transform: translate(0, 0) rotate(0) scale(1); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      80%  { transform: translate(-9px, 6px) rotate(14deg) scale(.95); animation-timing-function: cubic-bezier(.15, .6, .35, 1); }
+      84%  { transform: translate(calc(var(--fx, 0px) * .22), calc(var(--fy, 0px) * .22 - 26px)) rotate(-5deg) scale(calc(1 + (var(--fsx, 1) - 1) * .14), calc(1 + (var(--fsy, 1) - 1) * .14)); animation-timing-function: cubic-bezier(.25, .45, .35, 1); }
+      93%, 100% { transform: translate(var(--fx, 0px), var(--fy, 0px)) rotate(0) scale(var(--fsx, 1), var(--fsy, 1)); }
     }
-    @keyframes hop-write1 { 0%, 24% { transform: scaleX(0); animation-timing-function: ${UP}; } 29%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write2 { 0%, 31% { transform: scaleX(0); animation-timing-function: ${UP}; } 36%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write3 { 0%, 38% { transform: scaleX(0); animation-timing-function: ${UP}; } 44%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write4 { 0%, 45% { transform: scaleX(0); animation-timing-function: ${UP}; } 50%, 100% { transform: scaleX(1); } }
-    @keyframes hop-write5 { 0%, 51% { transform: scale(0); animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); } 56%, 100% { transform: scale(1); } }`;
+    /* In flight the drawing gives way to a plain page in the same colour,
+       which is what lands on the document (and what the resume page then
+       dissolves to show the real one). */
+    @keyframes hop-detail-out { 0%, 82% { opacity: 1; } 90%, 100% { opacity: 0; } }
+    @keyframes hop-blank-in { 0%, 82% { opacity: 0; } 89%, 100% { opacity: 1; } }
+    @keyframes hop-write1 { 0%, 18% { transform: scaleX(0); animation-timing-function: ${UP}; } 22%, 100% { transform: scaleX(1); } }
+    @keyframes hop-write2 { 0%, 24% { transform: scaleX(0); animation-timing-function: ${UP}; } 28%, 100% { transform: scaleX(1); } }
+    @keyframes hop-write3 { 0%, 30% { transform: scaleX(0); animation-timing-function: ${UP}; } 34%, 100% { transform: scaleX(1); } }
+    @keyframes hop-write4 { 0%, 36% { transform: scaleX(0); animation-timing-function: ${UP}; } 40%, 100% { transform: scaleX(1); } }
+    @keyframes hop-write5 { 0%, 41% { transform: scale(0); animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); } 45%, 100% { transform: scale(1); } }`;
 
   // The mark, with a margin of room around the drawing (viewBox padded by 6).
   const mark = `<span class="hop-mark"><svg viewBox="3 2.5 57 54" aria-hidden="true" focusable="false">
@@ -191,14 +220,49 @@
   // A flat sheet in the mark's own colours: no outline or shading, a folded
   // corner, a blue title, lines that get written in, and an orange dot.
   const sheet = `<span class="hop-sheet"><svg viewBox="-6 -6 58 70" aria-hidden="true" focusable="false">
-      <path class="paper" d="M5 2h24l13 13v40a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Z"/>
-      <path class="fold" d="M29 2v10a3 3 0 0 0 3 3h10Z"/>
-      <rect class="ln title l1" x="8" y="10" width="15" height="5" rx="2.5"/>
-      <rect class="ln l2" x="8" y="24" width="20" height="4" rx="2"/>
-      <rect class="ln l3" x="8" y="33" width="28" height="4" rx="2"/>
-      <rect class="ln l4" x="8" y="42" width="22" height="4" rx="2"/>
-      <circle class="ln dot l5" cx="34" cy="26" r="3.2"/>
+      <g class="detail">
+        <path class="paper" d="M5 2h24l13 13v40a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Z"/>
+        <path class="fold" d="M29 2v10a3 3 0 0 0 3 3h10Z"/>
+        <rect class="ln title l1" x="8" y="10" width="15" height="5" rx="2.5"/>
+        <rect class="ln l2" x="8" y="24" width="20" height="4" rx="2"/>
+        <rect class="ln l3" x="8" y="33" width="28" height="4" rx="2"/>
+        <rect class="ln l4" x="8" y="42" width="22" height="4" rx="2"/>
+        <circle class="ln dot l5" cx="34" cy="26" r="3.2"/>
+      </g>
+      <rect class="blank" x="2" y="2" width="40" height="56" rx="1"/>
     </svg></span>`;
+
+  /* Where the resume document sits on the resume page, so the thrown sheet
+     lands right on it: on desktop the embedded PDF (centred, 944px at most,
+     letter shaped, at most 78% of the window tall, 229px from the top); on
+     phones, which show a card instead, a centred page. */
+  const docRect = () => {
+    const vw = innerWidth, vh = innerHeight;
+    const phone = vw < 720 || /iPad|iPhone|iPod|Android/.test(navigator.userAgent);
+    if (!phone) {
+      const w = Math.min(944, vw - 56), h = Math.min(w * 11 / 8.5, vh * 0.78);
+      return { left: (vw - w) / 2, top: 229, width: w, height: h };
+    }
+    const w = vw - 40, h = Math.min(w * 11 / 8.5, vh * 0.66);
+    return { left: (vw - (h * 8.5 / 11 < w ? h * 8.5 / 11 : w)) / 2, top: (vh - h) / 2, width: Math.min(w, h * 8.5 / 11), height: h };
+  };
+  // Works out the translate and scale that carry the sheet's paper from
+  // where it rests beside the mark onto that rectangle (about the sheet's
+  // own transform origin, its bottom centre).
+  const aimSheet = (el) => {
+    if (!el) return;
+    const paper = el.querySelector('.paper');
+    el.style.animation = 'none';
+    const box = el.getBoundingClientRect(), pr = paper.getBoundingClientRect();
+    el.style.animation = '';
+    const t = docRect();
+    const ox = box.left + box.width / 2, oy = box.top + box.height;
+    const sx = t.width / pr.width, sy = t.height / pr.height;
+    el.style.setProperty('--fsx', sx.toFixed(4));
+    el.style.setProperty('--fsy', sy.toFixed(4));
+    el.style.setProperty('--fx', `${(t.left - ox - sx * (pr.left - ox)).toFixed(1)}px`);
+    el.style.setProperty('--fy', `${(t.top - oy - sy * (pr.top - oy)).toFixed(1)}px`);
+  };
 
   const go = (url) => {
     if (going) return;
@@ -216,6 +280,7 @@
     veil.setAttribute('aria-hidden', 'true');
     veil.innerHTML = forResume ? `<span class="hop-stage">${mark}${sheet}</span>` : mark;
     document.body.appendChild(veil);
+    if (forResume) aimSheet(veil.querySelector('.hop-sheet'));
     requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('is-on')));
     // The next page fades in from the paper rather than cutting in.
     try { sessionStorage.setItem('hop-arrive', '1'); } catch {}
