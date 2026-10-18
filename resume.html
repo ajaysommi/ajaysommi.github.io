@@ -26,8 +26,27 @@
       try { localStorage.removeItem('as-theme'); saved = sessionStorage.getItem('as-theme'); } catch (e) {}
       root.dataset.theme = saved === 'daylight' || saved === 'midnight' ? saved : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'daylight' : 'midnight');
       root.classList.add('js');
+      /* Arriving from the little scene on the portfolio (hop.js), the page
+         starts under the same paper and fades in from it, rather than
+         cutting in. */
+      try {
+        if (sessionStorage.getItem('hop-arrive') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('hop-arriving');
+        sessionStorage.removeItem('hop-arrive');
+      } catch (e) {}
     })();
   </script>
+  <style>
+    html.hop-arriving::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 2147483600;
+      background: var(--bg);
+      pointer-events: none;
+      animation: hop-arrive .5s ease .05s forwards;
+    }
+    @keyframes hop-arrive { to { opacity: 0; visibility: hidden; } }
+  </style>
 
   <style>
     /* Must clear the fixed nav: a bare `padding: 0 ...` here overrides the
