@@ -30,7 +30,8 @@
          starts under the same paper and fades in from it, rather than
          cutting in. */
       try {
-        if (sessionStorage.getItem('hop-arrive') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('hop-arriving');
+        var arrive = sessionStorage.getItem('hop-arrive');
+        if (arrive && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add(arrive === 'soft' ? 'hop-arriving-soft' : 'hop-arriving');
         sessionStorage.removeItem('hop-arrive');
       } catch (e) {}
     })();
@@ -71,6 +72,17 @@
         width: min(calc(100vw - 40px), calc(66vh * 8.5 / 11));
         translate: -50% -50%;
       }
+    }
+    /* No document to land on (the card is showing): just the paper,
+       lifting away. */
+    html.hop-arriving-soft::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 2147483600;
+      background: var(--bg);
+      pointer-events: none;
+      animation: hop-arrive .6s cubic-bezier(.4, 0, .2, 1) .05s forwards;
     }
     @keyframes hop-arrive { to { opacity: 0; visibility: hidden; } }
   </style>

@@ -19,6 +19,7 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DANCE = 1200;    // ms of the plain hops
   const RESUME = 2000;   // ms of the resume scene
+  const SOFT = 1700;     // the resume scene without the throw
   let going = false;
 
   // Rising slows to the top, falling speeds up: gravity.
@@ -97,6 +98,19 @@
        the size a real hop would make, not a cartoon's. */
     .hop-stage { position: relative; display: flex; align-items: flex-end; gap: 6px; translate: -10px 0; }
     .hop-r .hop-mark { animation: hop-tap ${RESUME}ms linear both; }
+    /* Where the browser cannot show the PDF inline, the resume page shows a
+       card instead, so there is nothing for the sheet to land on: the scene
+       keeps the writing, the taps and the jump, and then the mark and its
+       sheet simply fade away into the page. */
+    .hop-soft .hop-mark { animation: hop-tap-soft ${SOFT}ms linear both; }
+    .hop-soft .hop-hook { animation-duration: ${SOFT}ms; }
+    .hop-soft .hop-eye { animation-duration: ${SOFT}ms; }
+    .hop-soft .hop-stage { animation: hop-soft-out ${SOFT}ms linear both; }
+    .hop.hop-soft .hop-sheet { position: static; display: block; width: auto; height: auto; margin-bottom: 12px; animation: hop-sheet-soft ${SOFT}ms linear both; }
+    .hop.hop-soft .hop-sheet svg { width: 58px; height: 70px; }
+    .hop.hop-soft .hop-sheet .ln { animation-duration: ${SOFT}ms; }
+    .hop.hop-soft .hop-sheet .detail { animation: none; }
+    .hop.hop-soft .hop-sheet .blank { display: none; }
     .hop-r .hop-hook { animation: hop-tap-hook ${RESUME}ms linear both; }
     .hop-r .hop-eye { animation: hop-tap-eye ${RESUME}ms linear both; }
     /* The sheet is drawn at the size of the real document, right where it
@@ -154,6 +168,35 @@
       87%  { opacity: 1; transform: perspective(360px) translate(-1px, 0) rotate(4deg) rotateY(10deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
       91%  { transform: perspective(360px) translate(0, -2px) rotate(-1.5deg) rotateY(-3.5deg) scale(.99, 1.01); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
       100% { opacity: 0; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(.98, .98); }
+    }
+    @keyframes hop-tap-soft {
+      0%   { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: ${SNAP}; }
+      4%   { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.07, .93); animation-timing-function: ${UP}; }
+      8%   { transform: perspective(360px) translate(-6px, -16px) rotate(-5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      12%  { transform: perspective(360px) translate(-8px, 0) rotate(-2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      17%  { transform: perspective(360px) translate(4px, -15px) rotate(5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      22%  { transform: perspective(360px) translate(8px, 0) rotate(2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      27%  { transform: perspective(360px) translate(-4px, -15px) rotate(-5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      32%  { transform: perspective(360px) translate(-8px, 0) rotate(-2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${UP}; }
+      37%  { transform: perspective(360px) translate(4px, -15px) rotate(5deg) rotateY(0deg) scale(.97, 1.04); animation-timing-function: ${DOWN}; }
+      42%  { transform: perspective(360px) translate(8px, 0) rotate(2deg) rotateY(0deg) scale(1.09, .91); animation-timing-function: ${SNAP}; }
+      45%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.02, .98); animation-timing-function: ${SNAP}; }
+      48%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.16, .82); animation-timing-function: ${UP}; }
+      51%  { transform: perspective(360px) translate(0, -26px) rotate(-2deg) rotateY(0deg) scale(.9, 1.12); animation-timing-function: ${UP}; }
+      58%  { transform: perspective(360px) translate(0, -92px) rotate(-7deg) rotateY(0deg) scale(1, 1); animation-timing-function: ${DOWN}; }
+      64%  { transform: perspective(360px) translate(0, 0) rotate(-1deg) rotateY(0deg) scale(.95, 1.06); animation-timing-function: ${SNAP}; }
+      67%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.17, .83); animation-timing-function: ${UP}; }
+      70%  { transform: perspective(360px) translate(0, -9px) rotate(0) rotateY(0deg) scale(.97, 1.03); animation-timing-function: ${DOWN}; }
+      73%  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(7deg) scale(1.04, .96); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+      80%, 100% { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); }
+    }
+    @keyframes hop-soft-out { 0%, 74% { opacity: 1; scale: 1; animation-timing-function: cubic-bezier(.4, 0, .2, 1); } 100% { opacity: 0; scale: .97; } }
+    @keyframes hop-sheet-soft {
+      0%, 6% { opacity: 0; transform: translate(0, 14px) rotate(-4deg) scale(.9); animation-timing-function: ${UP}; }
+      12% { opacity: 1; transform: translate(0, -3px) rotate(1.5deg) scale(1.01); animation-timing-function: ${SNAP}; }
+      16%, 48% { transform: translate(0, 0) rotate(0) scale(1); animation-timing-function: ${UP}; }
+      55% { transform: translate(0, -5px) rotate(-1.5deg) scale(1); animation-timing-function: ${SNAP}; }
+      62%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
     }
     /* Swings against the sideways motion, a beat behind it. */
     @keyframes hop-tap-hook {
@@ -277,6 +320,13 @@
     el.style.setProperty('--dy', `${(py + ph - (t.top + t.height)).toFixed(1)}px`);
   };
 
+  // The same test the resume page uses to swap the embedded PDF for a card.
+  const noInlinePdf = () => {
+    const ua = navigator.userAgent;
+    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    return ios || /Android/.test(ua) || navigator.pdfViewerEnabled === false;
+  };
+
   const go = (url) => {
     if (going) return;
     if (reduce.matches) { location.href = url; return; }
@@ -288,16 +338,19 @@
       document.head.appendChild(st);
     }
     const forResume = /resume\.html$/i.test(new URL(url, location.href).pathname);
+    const soft = forResume && noInlinePdf();
     const veil = document.createElement('div');
-    veil.className = `hop ${forResume ? 'hop-r' : 'hop-p'}`;
+    veil.className = `hop ${forResume ? 'hop-r' : 'hop-p'}${soft ? ' hop-soft' : ''}`;
     veil.setAttribute('aria-hidden', 'true');
-    veil.innerHTML = forResume ? `<span class="hop-stage">${mark}<span class="hop-slot"></span></span>${sheet}` : mark;
+    veil.innerHTML = !forResume ? mark
+      : soft ? `<span class="hop-stage">${mark}${sheet.replace('viewBox="2 2 40 56" preserveAspectRatio="none"', 'viewBox="-6 -6 58 70"')}</span>`
+      : `<span class="hop-stage">${mark}<span class="hop-slot"></span></span>${sheet}`;
     document.body.appendChild(veil);
-    if (forResume) aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
+    if (forResume && !soft) aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
     requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('is-on')));
     // The next page fades in from the paper rather than cutting in.
-    try { sessionStorage.setItem('hop-arrive', '1'); } catch {}
-    setTimeout(() => { location.href = url; }, (forResume ? RESUME : DANCE) + 60);
+    try { sessionStorage.setItem('hop-arrive', soft ? 'soft' : '1'); } catch {}
+    setTimeout(() => { location.href = url; }, (soft ? SOFT : forResume ? RESUME : DANCE) + 60);
   };
   window.hopTo = go;
 
