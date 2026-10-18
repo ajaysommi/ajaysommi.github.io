@@ -1801,7 +1801,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    Each project is a card cut like the punch cards code was once written
    on: square-shouldered paper with the one clipped corner, and along the
    foot a strip of holes punched through to the page, spelling the
-   project's own title (script.js). The cards stay still under the
+   project's own title (script.js). The cards do not lift under the
    pointer; the whole card is the link. The filters are plain words with a
    count of what each would show.
    ========================================================================== */
@@ -1880,7 +1880,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   background: var(--surface);
   clip-path: polygon(calc(var(--cut) - .586px) 0, 100% 0, 100% 100%, 0 100%, 0 calc(var(--cut) - .586px));
 }
-.work-go { position: absolute; top: 18px; right: 18px; color: var(--ink-3); }
+.work-go { position: absolute; top: 18px; right: 18px; color: var(--ink-3); transition: color .2s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
 .work-go svg { display: block; }
 
 .work-title {
@@ -1918,10 +1918,20 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   border-radius: 1.5px;
   background: var(--bg);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .08);
+  transition: background-color .25s ease;
+  transition-delay: calc(var(--i, 0) * 14ms);
 }
 [data-theme="daylight"] .punch-holes i { background: var(--m-fill-2); }
 [data-theme="midnight"] .punch-holes i { background: color-mix(in oklab, var(--bg) 60%, #000); }
 
+/* Under the pointer the card stays put, but reads: its holes light up left
+   to right like a card reader passing over them, and the GitHub mark leans
+   toward its corner. */
+.work-item:hover .punch-holes i { background: var(--accent); }
+.work-item.has-link:hover .work-go { color: var(--ink); transform: translate(2px, -2px); }
+@media (prefers-reduced-motion: reduce) {
+  .punch-holes i { transition: none; }
+}
 .work-item:focus-within .punch-edge { background: var(--ink); }
 .work-item.is-lit .punch-edge { background: var(--accent); }
 
@@ -1937,7 +1947,7 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 /* ==========================================================================
    Skills & Tools, as a file tree
    A skills/ root and a folder per group, joined by the branch lines a tree
-   listing draws, each with how many it holds. The open folder lists its
+   listing draws. The open folder lists its
    skills in columns under it, the way ls does; tapping one spotlights
    where it was used.
    ========================================================================== */
@@ -1983,11 +1993,13 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   clip-path: polygon(0 0, 100% 50%, 0 100%);
   transition: transform .25s cubic-bezier(.22, 1, .36, 1);
 }
-.skt-n { margin-left: auto; font: 12px/1 var(--font-mono); color: var(--ink-3); }
 .skt-name:hover,
 .skt-name[aria-expanded="true"] { color: var(--ink); }
 .skt-name[aria-expanded="true"] .skt-caret { transform: rotate(90deg); color: var(--accent); }
-.skt-name:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+/* No box on focus; the keyboard's place shows in the name itself. */
+.skt-name:focus,
+.skt-name:focus-visible { outline: none; }
+.skt-name:focus-visible { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
 
 /* The open folder's listing, in columns like ls. */
 .skt-ls {
@@ -2231,8 +2243,6 @@ html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior
   .pc-track { gap: 18px; }
 }
 
-/* The shapes drifting behind the page, a shade quieter. */
-.bg .m-field { opacity: .82; }
 
 /* The top bar, a size up on desktop: 42px items in a 60px bar (the pocket
    still concentric with the bar's ends), glyphs scaled to match. */

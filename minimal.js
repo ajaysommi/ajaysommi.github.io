@@ -112,6 +112,8 @@
      worked out again on every frame of a scroll, which on a phone was most
      of what made the field stutter. Opacity alone is the compositor's job. */
   const field = ground.querySelector('.m-field');
+  // How strong the field is at its strongest, at the top of the page.
+  const PEAK = 0.7;
 
   /* Reads, then writes: run with the site's other scroll effects in one
      pass per frame (reads first for all of them), so none of them makes
@@ -135,7 +137,7 @@
     }
     if (fade === lastFade && now === scene) return;
     return () => {
-      if (fade !== lastFade) { if (field) field.style.opacity = (1 - fade * .84).toFixed(3); lastFade = fade; }
+      if (fade !== lastFade) { if (field) field.style.opacity = (PEAK * (1 - fade * .84)).toFixed(3); lastFade = fade; }
       if (now !== scene) { scene = now; ground.dataset.scene = now; }
     };
   };
