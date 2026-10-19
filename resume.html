@@ -45,6 +45,7 @@
     /* Paper over the page from its very first paint, until hop.js puts the
        scene up in the same colour. It takes the pointer, so nothing under
        it can be touched or scrolled. */
+    html.hop-scene #pdfEmbed iframe { visibility: hidden; }
     html.hop-scene::after {
       content: "";
       position: fixed;

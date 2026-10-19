@@ -18,14 +18,14 @@
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DANCE = 1000;    // ms of the plain hops
-  // The resume scene's keyframes are written in ms on a 1620ms timeline,
+  // The resume scene's keyframes are written in ms on a 1900ms timeline,
   // played back a touch faster by PACE.
   const PACE = 0.9;
-  const RESUME = Math.round(1620 * PACE);   // ms of the resume scene
+  const RESUME = Math.round(1900 * PACE);   // ms of the resume scene
   const SOFT = 1300;     // the resume scene without the throw
   // Moments in the resume scene: the sheet hits the glass and spreads flat,
   // and the batter has run and faded by the time the page changes.
-  const HIT = Math.round(795 * PACE), SPLAT = Math.round(835 * PACE);
+  const HIT = Math.round(1075 * PACE), SPLAT = Math.round(1115 * PACE);
   const LIFE = RESUME - SPLAT - 20;
   const P = (ms) => `${(ms * PACE / RESUME * 100).toFixed(2)}%`;
   let going = false;
@@ -56,8 +56,12 @@
     /* Done: the paper lifts away first, then the sheet and batter dissolve
        and the real document shows through where it landed. */
     .hop.is-lifting { pointer-events: none; }
-    .hop.is-lifting::before { opacity: 0; }
-    .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .65s cubic-bezier(.4, 0, .2, 1) .12s; }
+    .hop.is-lifting::before { opacity: 0; transition-duration: .3s; }
+    .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .42s cubic-bezier(.4, 0, .2, 1); }
+    /* Safari draws the PDF's own controls above everything on the page, a
+       veil included, so the frame is kept out of sight until the scene is
+       ready to hand over to it. */
+    html.hop-scening #pdfEmbed iframe { visibility: hidden; }
     .hop svg { display: block; overflow: visible; }
     .hop .am-a { fill: var(--ink, #edebe6); }
     .hop .hop-mark { display: block; transform-origin: 50% 92%; will-change: transform; backface-visibility: hidden; }
@@ -210,26 +214,31 @@
     .hop-sheet .l5 { animation: hop-write5 ${RESUME}ms linear both; }
 
     @keyframes hop-tap {
-      0%       { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      ${P(90)}  { transform: perspective(360px) translate(0, 1px) rotate(0) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
-      ${P(150)}  { transform: perspective(360px) translate(-3px, -9px) rotate(-2deg) rotateY(0deg) scale(0.95, 1.08); animation-timing-function: cubic-bezier(.25, .6, .4, 1); }
-      ${P(225)}  { transform: perspective(360px) translate(-5px, -22px) rotate(-3.5deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, 0, .8, .4); }
-      ${P(300)}  { transform: perspective(360px) translate(-4px, 0) rotate(-1.5deg) rotateY(0deg) scale(1.15, 0.85); animation-timing-function: cubic-bezier(.2, .65, .35, 1); }
-      ${P(350)}  { transform: perspective(360px) translate(-2px, -6px) rotate(-.5deg) rotateY(0deg) scale(0.98, 1.03); animation-timing-function: cubic-bezier(.55, 0, .8, .4); }
-      ${P(392)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.07, 0.94); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
+      0%       { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.3, 0, .4, 1); }
+      /* A hop with weight. A crouch to push off, a stretch as it leaves,
+         then a real arc: slowing on the way up (OUT), speeding on the way
+         down (IN), a deep squash on landing, and a rebound a third as
+         high that lands softer. */
+      ${P(110)}  { transform: perspective(360px) translate(0, 3px) rotate(0) rotateY(0deg) scale(1.15, 0.85); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+      ${P(135)}  { transform: perspective(360px) translate(-2px, -16px) rotate(-1.5deg) rotateY(0deg) scale(0.92, 1.13); animation-timing-function: cubic-bezier(.25, .46, .45, .94); }
+      ${P(290)}  { transform: perspective(360px) translate(-9px, -70px) rotate(-6deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, .085, .68, .53); }
+      ${P(470)}  { transform: perspective(360px) translate(-9px, 2px) rotate(-1.5deg) rotateY(0deg) scale(1.22, 0.78); animation-timing-function: cubic-bezier(.2, .65, .35, 1); }
+      ${P(495)}  { transform: perspective(360px) translate(-7px, -5px) rotate(-1deg) rotateY(0deg) scale(0.95, 1.08); animation-timing-function: cubic-bezier(.25, .46, .45, .94); }
+      ${P(590)}  { transform: perspective(360px) translate(-5px, -22px) rotate(-3deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, .085, .68, .53); }
+      ${P(690)}  { transform: perspective(360px) translate(-3px, 0) rotate(0) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
       /* The landing squash runs straight into the wind-up: the body coils
          back like a rubber band being drawn, turning away and sinking low,
          holds at full stretch, then lets go in a whip and recoils, the
          stretch running out of it in smaller and smaller swings. */
-      ${P(420)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.14, 0.86); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
-      ${P(640)} { transform: perspective(360px) translate(12px, 4px) rotate(18deg) rotateY(52deg) scale(1.1, 0.86); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
-      ${P(695)} { transform: perspective(360px) translate(13px, 5px) rotate(19.5deg) rotateY(55deg) scale(1.11, 0.85); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
-      ${P(755)} { transform: perspective(360px) translate(-9px, -15px) rotate(-15deg) rotateY(-28deg) scale(0.9, 1.12); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      ${P(830)} { transform: perspective(360px) translate(2px, 0) rotate(4deg) rotateY(8deg) scale(1.03, 0.97); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      ${P(905)} { transform: perspective(360px) translate(0, -1px) rotate(-1.5deg) rotateY(-3deg) scale(1, 1); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      ${P(930)} { opacity: 1; }
-      ${P(975)} { transform: perspective(360px) translate(0, 0) rotate(1deg) rotateY(2deg) scale(1, 1); }
-      ${P(1070)} { opacity: 0; }
+      ${P(700)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.14, 0.86); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
+      ${P(920)} { transform: perspective(360px) translate(12px, 4px) rotate(18deg) rotateY(52deg) scale(1.1, 0.86); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      ${P(975)} { transform: perspective(360px) translate(13px, 5px) rotate(19.5deg) rotateY(55deg) scale(1.11, 0.85); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
+      ${P(1035)} { transform: perspective(360px) translate(-9px, -15px) rotate(-15deg) rotateY(-28deg) scale(0.9, 1.12); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1110)} { transform: perspective(360px) translate(2px, 0) rotate(4deg) rotateY(8deg) scale(1.03, 0.97); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1185)} { transform: perspective(360px) translate(0, -1px) rotate(-1.5deg) rotateY(-3deg) scale(1, 1); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1210)} { opacity: 1; }
+      ${P(1255)} { transform: perspective(360px) translate(0, 0) rotate(1deg) rotateY(2deg) scale(1, 1); }
+      ${P(1350)} { opacity: 0; }
       100%     { opacity: 0; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); }
     }
     @keyframes hop-tap-soft {
@@ -299,31 +308,34 @@
     }
     /* Swings against the sideways motion, a beat behind it. */
     @keyframes hop-tap-hook {
-      0%, ${P(90)} { transform: rotate(0); }
-      ${P(150)} { transform: rotate(4deg); } ${P(225)} { transform: rotate(-3deg); }
-      ${P(300)} { transform: rotate(5deg); } ${P(350)} { transform: rotate(-2deg); }
-      ${P(392)} { transform: rotate(2deg); } ${P(460)} { transform: rotate(2deg); } ${P(640)} { transform: rotate(-8deg); }
-      ${P(695)} { transform: rotate(-9deg); } ${P(765)} { transform: rotate(10deg); }
-      ${P(840)} { transform: rotate(-3deg); } ${P(920)} { transform: rotate(1deg); }
-      ${P(990)}, 100% { transform: rotate(0); }
+      0%, ${P(110)} { transform: rotate(0); }
+      ${P(150)} { transform: rotate(8deg); } ${P(290)} { transform: rotate(-6deg); }
+      ${P(380)} { transform: rotate(-1deg); } ${P(470)} { transform: rotate(10deg); }
+      ${P(540)} { transform: rotate(-5deg); } ${P(590)} { transform: rotate(4deg); }
+      ${P(690)} { transform: rotate(-3deg); } ${P(740)} { transform: rotate(2deg); } ${P(920)} { transform: rotate(-8deg); }
+      ${P(975)} { transform: rotate(-9deg); } ${P(1045)} { transform: rotate(10deg); }
+      ${P(1120)} { transform: rotate(-3deg); } ${P(1200)} { transform: rotate(1deg); }
+      ${P(1270)}, 100% { transform: rotate(0); }
     }
     /* Looks right at the sheet throughout (+1.5); on top of that it trails
        the body: down as it lifts, up as it drops, a settle after landing. */
     @keyframes hop-tap-eye {
       0%   { transform: translate(0, 0) scale(1); }
-      ${P(90)}   { transform: translate(1.2px, .8px) scale(1.04, .96); }
-      ${P(150)}  { transform: translate(2.2px, -1.2px) scale(.96, 1.06); }
-      ${P(225)}  { transform: translate(1.8px, -2px) scale(1); }
-      ${P(300)}  { transform: translate(1px, 1.6px) scale(1.08, .92); }
-      ${P(350)}  { transform: translate(1.5px, -.8px) scale(1); }
-      ${P(392)}  { transform: translate(1.5px, 1px) scale(1.04, .96); }
-      ${P(420)}  { transform: translate(1.5px, 1.2px) scale(1.1, .9); }
-      ${P(640)} { transform: translate(3.2px, 1.2px) scale(1); }
-      ${P(695)} { transform: translate(3.4px, 1.3px) scale(1); }
-      ${P(755)} { transform: translate(-.8px, -1.8px) scale(1.05); }
-      ${P(830)} { transform: translate(.4px, .6px) scale(1); }
-      ${P(870)} { transform: translate(0, .9px) scale(1.12, .12); }
-      ${P(910)}, 100% { transform: translate(0, 0) scale(1); }
+      ${P(110)}  { transform: translate(1.2px, 1.6px) scale(1.07, .93); }
+      ${P(135)}  { transform: translate(2.4px, -1.6px) scale(.94, 1.08); }
+      ${P(290)}  { transform: translate(1.8px, -2.6px) scale(1); }
+      ${P(380)}  { transform: translate(1.5px, .6px) scale(1); }
+      ${P(470)}  { transform: translate(1px, 2.4px) scale(1.14, .86); }
+      ${P(495)}  { transform: translate(1.8px, -1.6px) scale(.96, 1.05); }
+      ${P(590)}  { transform: translate(1.8px, -2.2px) scale(1); }
+      ${P(690)}  { transform: translate(1.5px, 1.6px) scale(1.07, .93); }
+      ${P(700)}  { transform: translate(1.5px, 1.2px) scale(1.1, .9); }
+      ${P(920)} { transform: translate(3.2px, 1.2px) scale(1); }
+      ${P(975)} { transform: translate(3.4px, 1.3px) scale(1); }
+      ${P(1035)} { transform: translate(-.8px, -1.8px) scale(1.05); }
+      ${P(1110)} { transform: translate(.4px, .6px) scale(1); }
+      ${P(1150)} { transform: translate(0, .9px) scale(1.12, .12); }
+      ${P(1190)}, 100% { transform: translate(0, 0) scale(1); }
     }
     /* The sheet rises into place and settles, sits still while it is
        written, is drawn back with the wind-up, then flies over to the
@@ -333,12 +345,15 @@
       0%, ${P(60)} { opacity: 0; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 14px)) rotate(-4deg) scale(calc(var(--sx) * 0.9), calc(var(--sy) * 0.9)); animation-timing-function: ${UP}; }
       ${P(160)} { opacity: 1; transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -3px)) rotate(1.5deg) scale(calc(var(--sx) * 1.01), calc(var(--sy) * 1.01)); animation-timing-function: ${SNAP}; }
       ${P(220)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${UP}; }
-      ${P(420)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
-      ${P(640)} { transform: translate(calc(var(--dx) + -14px), calc(var(--dy) + 8px)) rotate(20deg) scale(calc(var(--sx) * 0.93), calc(var(--sy) * 0.93)); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
-      ${P(695)} { transform: translate(calc(var(--dx) + -16px), calc(var(--dy) + 9px)) rotate(22deg) scale(calc(var(--sx) * 0.92), calc(var(--sy) * 0.92)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-      ${P(740)} { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
-      ${P(795)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
-      ${P(835)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
+      ${P(465)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${UP}; }
+      ${P(490)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -4px)) rotate(1.5deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${DOWN}; }
+      ${P(570)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); }
+      ${P(700)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
+      ${P(920)} { transform: translate(calc(var(--dx) + -14px), calc(var(--dy) + 8px)) rotate(20deg) scale(calc(var(--sx) * 0.93), calc(var(--sy) * 0.93)); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      ${P(975)} { transform: translate(calc(var(--dx) + -16px), calc(var(--dy) + 9px)) rotate(22deg) scale(calc(var(--sx) * 0.92), calc(var(--sy) * 0.92)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+      ${P(1020)} { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
+      ${P(1075)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
+      ${P(1115)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
       100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* As the wind-up starts, the drawing gives way to a plain page in the
@@ -347,13 +362,13 @@
        screen like a pancake on a window: flattens out big the instant it
        lands, then slowly draws in and slides down a touch to sit exactly
        on the document, which the resume page then dissolves it to show. */
-    @keyframes hop-detail-out { 0%, ${P(530)} { opacity: 1; } ${P(600)}, 100% { opacity: 0; } }
-    @keyframes hop-blank-in { 0%, ${P(510)} { opacity: 0; } ${P(580)}, 100% { opacity: 1; } }
-    @keyframes hop-write1 { 0%, ${P(100)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(160)}, 100% { transform: scaleX(1); } }
-    @keyframes hop-write2 { 0%, ${P(165)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(225)}, 100% { transform: scaleX(1); } }
-    @keyframes hop-write3 { 0%, ${P(230)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(290)}, 100% { transform: scaleX(1); } }
-    @keyframes hop-write4 { 0%, ${P(295)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(355)}, 100% { transform: scaleX(1); } }
-    @keyframes hop-write5 { 0%, ${P(355)} { transform: scale(0); animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); } ${P(415)}, 100% { transform: scale(1); } }`;
+    @keyframes hop-detail-out { 0%, ${P(810)} { opacity: 1; } ${P(880)}, 100% { opacity: 0; } }
+    @keyframes hop-blank-in { 0%, ${P(790)} { opacity: 0; } ${P(860)}, 100% { opacity: 1; } }
+    @keyframes hop-write1 { 0%, ${P(120)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(190)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write2 { 0%, ${P(205)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(275)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write3 { 0%, ${P(290)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(360)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write4 { 0%, ${P(375)} { transform: scaleX(0); animation-timing-function: ${UP}; } ${P(445)}, 100% { transform: scaleX(1); } }
+    @keyframes hop-write5 { 0%, ${P(455)} { transform: scale(0); animation-timing-function: cubic-bezier(.34, 1.56, .64, 1); } ${P(515)}, 100% { transform: scale(1); } }`;
 
   // The mark, with a margin of room around the drawing (viewBox padded by 6).
   const mark = `<span class="hop-mark"><svg viewBox="3 2.5 57 54" aria-hidden="true" focusable="false">
@@ -638,6 +653,9 @@
     injectCss();
     scrollTo(0, 0);
     const soft = noInlinePdf();
+    const html = document.documentElement;
+    html.classList.add('hop-scening');
+    setTimeout(() => html.classList.remove('hop-scening'), 9000);   // never stuck out of sight
     const veil = document.createElement('div');
     veil.className = `hop hop-r hop-live${soft ? ' hop-soft' : ''}`;
     veil.setAttribute('aria-hidden', 'true');
@@ -660,10 +678,17 @@
       if (frame.dataset.loaded === '1') painted(); else frame.addEventListener('load', painted, { once: true });
       setTimeout(done, 4500);   // never hold the page hostage
     });
-    const played = new Promise((r) => setTimeout(r, soft ? SOFT : RESUME));
+    /* The hand over: a little before the scene runs out, the document is
+       let out from behind the sheet (it has long since loaded), and a beat
+       later the paper lifts and the sheet and batter dissolve over it, so
+       the resume is already there while they go. */
+    const played = new Promise((r) => setTimeout(r, soft ? SOFT : RESUME - 360));
     Promise.all([played, docReady]).then(() => {
-      veil.classList.add('is-lifting');
-      setTimeout(() => { veil.remove(); lock(false); going = false; }, 950);
+      html.classList.remove('hop-scening');
+      setTimeout(() => {
+        veil.classList.add('is-lifting');
+        setTimeout(() => { veil.remove(); lock(false); going = false; }, 700);
+      }, soft ? 0 : 140);
     });
   };
 
