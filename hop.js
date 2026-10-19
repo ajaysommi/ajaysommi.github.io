@@ -25,7 +25,7 @@
   const SOFT = 1300;     // the resume scene without the throw
   // Moments in the resume scene: the sheet hits the glass and spreads flat,
   // and the batter has run and faded by the time the page changes.
-  const HIT = Math.round(1105 * PACE), SPLAT = Math.round(1145 * PACE);
+  const HIT = Math.round(1105 * PACE), SPLAT = Math.round(1145 * PACE), SETTLED = Math.round(1650 * PACE);
   const LIFE = RESUME - SPLAT - 20;
   const P = (ms) => `${(ms * PACE / RESUME * 100).toFixed(2)}%`;
   let going = false;
@@ -52,12 +52,12 @@
     /* On the resume page the scene is already up when the page shows. */
     .hop.hop-live { opacity: 1; transition: none; }
     /* The sheet and the batter, together, so they can dissolve as one. */
-    .hop-fx { position: fixed; inset: 0; pointer-events: none; }
+    .hop-fx { position: fixed; inset: 0; pointer-events: none; will-change: opacity; }
     /* Done: the paper lifts away first, then the sheet and batter dissolve
        and the real document shows through where it landed. */
     .hop.is-lifting { pointer-events: none; }
-    .hop.is-lifting::before { opacity: 0; transition-duration: .6s; }
-    .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .5s cubic-bezier(.45, 0, .25, 1); }
+    .hop.is-lifting::before { opacity: 0; transition-duration: .85s; }
+    .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .95s cubic-bezier(.4, 0, .2, 1); }
     .hop svg { display: block; overflow: visible; }
     .hop .am-a { fill: var(--ink, #edebe6); }
     .hop .hop-mark { display: block; transform-origin: 50% 92%; will-change: transform; backface-visibility: hidden; }
@@ -353,6 +353,9 @@
       ${P(1020)} { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
       ${P(1105)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
       ${P(1145)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
+      /* Back to exactly the document's own size by the time the hand over
+         begins, and held there, so the edges meet its outline one to one. */
+      ${P(1650)} { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
       100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* As the wind-up starts, the drawing gives way to a plain page in the
@@ -389,7 +392,7 @@
         <rect class="ln l4" x="8" y="42" width="22" height="4" rx="2"/>
         <circle class="ln dot l5" cx="34" cy="26" r="3.2"/>
       </g>
-      <path class="blank" d="M2 2H42V58H2Z"><animate class="splat" attributeName="d" begin="indefinite" fill="freeze" calcMode="spline"/></path>
+      <path class="blank" d="M2 2H42V58H2Z"><animate class="splat" attributeName="d" begin="0s" fill="freeze" calcMode="spline"/></path>
     </svg></span>`;
 
   /* Where the resume document sits on the resume page, so the thrown sheet
@@ -527,9 +530,9 @@
     // sheet's own draw-in uses the same curve.
     const T = (ms) => (ms / RESUME).toFixed(4);
     anim.setAttribute('dur', `${RESUME}ms`);
-    anim.setAttribute('values', `${clean};${clean};${ragged};${clean}`);
-    anim.setAttribute('keyTimes', `0;${T(HIT)};${T(SPLAT)};1`);
-    anim.setAttribute('keySplines', '0 0 1 1;.1 .8 .25 1;.2 .6 .3 1');
+    anim.setAttribute('values', `${clean};${clean};${ragged};${clean};${clean}`);
+    anim.setAttribute('keyTimes', `0;${T(HIT)};${T(SPLAT)};${T(SETTLED)};1`);
+    anim.setAttribute('keySplines', '0 0 1 1;.1 .8 .25 1;.2 .6 .3 1;0 0 1 1');
 
   };
 
@@ -660,9 +663,47 @@
       : `<span class="hop-stage">${mark}<span class="hop-slot"></span></span><div class="hop-fx">${sheet}</div>`;
     document.body.appendChild(veil);
     if (!soft) {
-      aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
-      veil.querySelectorAll('.hop-sheet animate').forEach((a) => { if (typeof a.beginElement === 'function') a.beginElement(); });
+      const sheetEl = veil.querySelector('.hop-sheet');
+      const slotEl = veil.querySelector('.hop-slot');
+      aimSheet(sheetEl, slotEl);
       splatter(veil, docRect());
+      /* The sheet lands on wherever the document actually is, not where it
+         was when the scene began: a window resized meanwhile, a scrollbar
+         arriving, a late font moving the heading, and the box has moved or
+         changed size. So it is measured again as the scene runs, and the
+         sheet re-aimed whenever it has shifted. */
+      let fitted = docRect();
+      const refit = () => {
+        const r = docRect();
+        if (Math.abs(r.left - fitted.left) > 0.25 || Math.abs(r.top - fitted.top) > 0.25 ||
+            Math.abs(r.width - fitted.width) > 0.25 || Math.abs(r.height - fitted.height) > 0.25) {
+          fitted = r;
+          aimSheet(sheetEl, slotEl);
+        }
+      };
+      addEventListener('resize', refit);
+      veil.__refit = refit;
+      /* The wobbly outline is an SVG animation, and each browser starts its
+         clock at its own moment: Firefox a fifth of a second after the CSS
+         one, Chrome a touch before it. So it is not left to run by itself:
+         its time is set, every frame, from the sheet's own CSS animation, so
+         the two cannot drift apart and the outline lands in step with the
+         sheet's size in every browser. */
+      const svg = sheetEl.querySelector('svg');
+      if (svg && svg.pauseAnimations && svg.setCurrentTime) {
+        svg.pauseAnimations();
+        svg.setCurrentTime(0);
+        const began = performance.now();
+        let frameNo = 0;
+        const drive = () => {
+          const a = sheetEl.getAnimations && sheetEl.getAnimations().find((x) => x.animationName === 'hop-sheet');
+          const t = a && typeof a.currentTime === 'number' ? a.currentTime : performance.now() - began;
+          svg.setCurrentTime(Math.min(t, RESUME + 60) / 1000);
+          if ((frameNo++ & 7) === 0) refit();
+          if (t < RESUME + 30 && veil.isConnected) requestAnimationFrame(drive);
+        };
+        requestAnimationFrame(drive);
+      }
     }
     // The page's own paper hands over to the scene's, the same colour.
     requestAnimationFrame(() => document.documentElement.classList.remove('hop-scene'));
@@ -693,8 +734,9 @@
        and drawn, so the resume is simply visible as they go. */
     const played = new Promise((r) => setTimeout(r, soft ? SOFT : RESUME - 250));
     Promise.all([played, docReady]).then(() => {
+      if (veil.__refit) veil.__refit();   // one last look before the hand over
       veil.classList.add('is-lifting');
-      setTimeout(() => { veil.remove(); lock(false); going = false; }, 800);
+      setTimeout(() => { if (veil.__refit) removeEventListener('resize', veil.__refit); veil.remove(); lock(false); going = false; }, 1050);
     });
   };
 
