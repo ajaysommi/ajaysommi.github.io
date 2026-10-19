@@ -18,14 +18,14 @@
 (function hop() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const DANCE = 1000;    // ms of the plain hops
-  // The resume scene's keyframes are written in ms on a 1900ms timeline,
+  // The resume scene's keyframes are written in ms on a 1930ms timeline,
   // played back a touch faster by PACE.
   const PACE = 0.9;
-  const RESUME = Math.round(1900 * PACE);   // ms of the resume scene
+  const RESUME = Math.round(1930 * PACE);   // ms of the resume scene
   const SOFT = 1300;     // the resume scene without the throw
   // Moments in the resume scene: the sheet hits the glass and spreads flat,
   // and the batter has run and faded by the time the page changes.
-  const HIT = Math.round(1075 * PACE), SPLAT = Math.round(1115 * PACE);
+  const HIT = Math.round(1105 * PACE), SPLAT = Math.round(1145 * PACE);
   const LIFE = RESUME - SPLAT - 20;
   const P = (ms) => `${(ms * PACE / RESUME * 100).toFixed(2)}%`;
   let going = false;
@@ -56,12 +56,8 @@
     /* Done: the paper lifts away first, then the sheet and batter dissolve
        and the real document shows through where it landed. */
     .hop.is-lifting { pointer-events: none; }
-    .hop.is-lifting::before { opacity: 0; transition-duration: .3s; }
-    .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .42s cubic-bezier(.4, 0, .2, 1); }
-    /* Safari draws the PDF's own controls above everything on the page, a
-       veil included, so the frame is kept out of sight until the scene is
-       ready to hand over to it. */
-    html.hop-scening #pdfEmbed iframe { visibility: hidden; }
+    .hop.is-lifting::before { opacity: 0; transition-duration: .6s; }
+    .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .5s cubic-bezier(.45, 0, .25, 1); }
     .hop svg { display: block; overflow: visible; }
     .hop .am-a { fill: var(--ink, #edebe6); }
     .hop .hop-mark { display: block; transform-origin: 50% 92%; will-change: transform; backface-visibility: hidden; }
@@ -122,7 +118,7 @@
        landing, and lags behind each sideways shift), and the hook swings
        like a pendulum against the sideways motion. Squashes are small,
        the size a real hop would make, not a cartoon's. */
-    .hop-stage { position: relative; display: flex; align-items: flex-end; gap: 6px; translate: -10px 0; }
+    .hop-stage { position: relative; display: flex; align-items: flex-end; gap: 18px; translate: 10px 0; }
     .hop-r .hop-mark { animation: hop-tap ${RESUME}ms linear both; }
     /* Where the browser cannot show the PDF inline, the resume page shows a
        card instead, so there is nothing for the sheet to land on: the scene
@@ -219,26 +215,27 @@
          then a real arc: slowing on the way up (OUT), speeding on the way
          down (IN), a deep squash on landing, and a rebound a third as
          high that lands softer. */
-      ${P(110)}  { transform: perspective(360px) translate(0, 3px) rotate(0) rotateY(0deg) scale(1.15, 0.85); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
-      ${P(135)}  { transform: perspective(360px) translate(-2px, -16px) rotate(-1.5deg) rotateY(0deg) scale(0.92, 1.13); animation-timing-function: cubic-bezier(.25, .46, .45, .94); }
-      ${P(290)}  { transform: perspective(360px) translate(-9px, -70px) rotate(-6deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, .085, .68, .53); }
-      ${P(470)}  { transform: perspective(360px) translate(-9px, 2px) rotate(-1.5deg) rotateY(0deg) scale(1.22, 0.78); animation-timing-function: cubic-bezier(.2, .65, .35, 1); }
+      ${P(110)}  { transform: perspective(360px) translate(0, 3px) rotate(0) rotateY(0deg) scale(1.13, 0.87); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+      ${P(135)}  { transform: perspective(360px) translate(-2px, -14px) rotate(-1.5deg) rotateY(0deg) scale(0.93, 1.11); animation-timing-function: cubic-bezier(.25, .46, .45, .94); }
+      ${P(290)}  { transform: perspective(360px) translate(-8px, -60px) rotate(-5deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, .085, .68, .53); }
+      ${P(470)}  { transform: perspective(360px) translate(-8px, 2px) rotate(-1.5deg) rotateY(0deg) scale(1.2, 0.8); animation-timing-function: cubic-bezier(.2, .65, .35, 1); }
       ${P(495)}  { transform: perspective(360px) translate(-7px, -5px) rotate(-1deg) rotateY(0deg) scale(0.95, 1.08); animation-timing-function: cubic-bezier(.25, .46, .45, .94); }
-      ${P(590)}  { transform: perspective(360px) translate(-5px, -22px) rotate(-3deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, .085, .68, .53); }
+      ${P(590)}  { transform: perspective(360px) translate(-5px, -19px) rotate(-3deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, .085, .68, .53); }
       ${P(690)}  { transform: perspective(360px) translate(-3px, 0) rotate(0) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
       /* The landing squash runs straight into the wind-up: the body coils
          back like a rubber band being drawn, turning away and sinking low,
          holds at full stretch, then lets go in a whip and recoils, the
          stretch running out of it in smaller and smaller swings. */
       ${P(700)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.14, 0.86); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
-      ${P(920)} { transform: perspective(360px) translate(12px, 4px) rotate(18deg) rotateY(52deg) scale(1.1, 0.86); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
-      ${P(975)} { transform: perspective(360px) translate(13px, 5px) rotate(19.5deg) rotateY(55deg) scale(1.11, 0.85); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
-      ${P(1035)} { transform: perspective(360px) translate(-9px, -15px) rotate(-15deg) rotateY(-28deg) scale(0.9, 1.12); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      ${P(1110)} { transform: perspective(360px) translate(2px, 0) rotate(4deg) rotateY(8deg) scale(1.03, 0.97); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      ${P(1185)} { transform: perspective(360px) translate(0, -1px) rotate(-1.5deg) rotateY(-3deg) scale(1, 1); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-      ${P(1210)} { opacity: 1; }
-      ${P(1255)} { transform: perspective(360px) translate(0, 0) rotate(1deg) rotateY(2deg) scale(1, 1); }
-      ${P(1350)} { opacity: 0; }
+      ${P(790)} { transform: perspective(360px) translate(-5px, 2px) rotate(-5deg) rotateY(-16deg) scale(1.1, 0.9); animation-timing-function: cubic-bezier(.45, 0, .35, 1); }
+      ${P(930)} { transform: perspective(360px) translate(16px, 6px) rotate(25deg) rotateY(62deg) scale(1.12, 0.82); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      ${P(1000)} { transform: perspective(360px) translate(17px, 7px) rotate(27deg) rotateY(66deg) scale(1.13, 0.8); animation-timing-function: cubic-bezier(.1, .7, .3, 1); }
+      ${P(1065)} { transform: perspective(360px) translate(-9px, -15px) rotate(-15deg) rotateY(-28deg) scale(0.9, 1.12); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1140)} { transform: perspective(360px) translate(2px, 0) rotate(4deg) rotateY(8deg) scale(1.03, 0.97); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1215)} { transform: perspective(360px) translate(0, -1px) rotate(-1.5deg) rotateY(-3deg) scale(1, 1); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(1240)} { opacity: 1; }
+      ${P(1285)} { transform: perspective(360px) translate(0, 0) rotate(1deg) rotateY(2deg) scale(1, 1); }
+      ${P(1380)} { opacity: 0; }
       100%     { opacity: 0; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); }
     }
     @keyframes hop-tap-soft {
@@ -312,10 +309,10 @@
       ${P(150)} { transform: rotate(8deg); } ${P(290)} { transform: rotate(-6deg); }
       ${P(380)} { transform: rotate(-1deg); } ${P(470)} { transform: rotate(10deg); }
       ${P(540)} { transform: rotate(-5deg); } ${P(590)} { transform: rotate(4deg); }
-      ${P(690)} { transform: rotate(-3deg); } ${P(740)} { transform: rotate(2deg); } ${P(920)} { transform: rotate(-8deg); }
-      ${P(975)} { transform: rotate(-9deg); } ${P(1045)} { transform: rotate(10deg); }
-      ${P(1120)} { transform: rotate(-3deg); } ${P(1200)} { transform: rotate(1deg); }
-      ${P(1270)}, 100% { transform: rotate(0); }
+      ${P(690)} { transform: rotate(-3deg); } ${P(740)} { transform: rotate(2deg); } ${P(790)} { transform: rotate(6deg); } ${P(930)} { transform: rotate(-11deg); }
+      ${P(1000)} { transform: rotate(-12deg); } ${P(1075)} { transform: rotate(10deg); }
+      ${P(1150)} { transform: rotate(-3deg); } ${P(1230)} { transform: rotate(1deg); }
+      ${P(1300)}, 100% { transform: rotate(0); }
     }
     /* Looks right at the sheet throughout (+1.5); on top of that it trails
        the body: down as it lifts, up as it drops, a settle after landing. */
@@ -330,12 +327,13 @@
       ${P(590)}  { transform: translate(1.8px, -2.2px) scale(1); }
       ${P(690)}  { transform: translate(1.5px, 1.6px) scale(1.07, .93); }
       ${P(700)}  { transform: translate(1.5px, 1.2px) scale(1.1, .9); }
-      ${P(920)} { transform: translate(3.2px, 1.2px) scale(1); }
-      ${P(975)} { transform: translate(3.4px, 1.3px) scale(1); }
-      ${P(1035)} { transform: translate(-.8px, -1.8px) scale(1.05); }
-      ${P(1110)} { transform: translate(.4px, .6px) scale(1); }
-      ${P(1150)} { transform: translate(0, .9px) scale(1.12, .12); }
-      ${P(1190)}, 100% { transform: translate(0, 0) scale(1); }
+      ${P(790)} { transform: translate(.4px, 1.8px) scale(1.04, .96); }
+      ${P(930)} { transform: translate(3.2px, 1.2px) scale(1); }
+      ${P(1000)} { transform: translate(3.4px, 1.3px) scale(1); }
+      ${P(1065)} { transform: translate(-.8px, -1.8px) scale(1.05); }
+      ${P(1140)} { transform: translate(.4px, .6px) scale(1); }
+      ${P(1180)} { transform: translate(0, .9px) scale(1.12, .12); }
+      ${P(1220)}, 100% { transform: translate(0, 0) scale(1); }
     }
     /* The sheet rises into place and settles, sits still while it is
        written, is drawn back with the wind-up, then flies over to the
@@ -349,11 +347,12 @@
       ${P(490)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + -4px)) rotate(1.5deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: ${DOWN}; }
       ${P(570)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); }
       ${P(700)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
-      ${P(920)} { transform: translate(calc(var(--dx) + -14px), calc(var(--dy) + 8px)) rotate(20deg) scale(calc(var(--sx) * 0.93), calc(var(--sy) * 0.93)); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
-      ${P(975)} { transform: translate(calc(var(--dx) + -16px), calc(var(--dy) + 9px)) rotate(22deg) scale(calc(var(--sx) * 0.92), calc(var(--sy) * 0.92)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+      ${P(800)} { transform: translate(calc(var(--dx) + 0px), calc(var(--dy) + 0px)) rotate(0deg) scale(calc(var(--sx) * 1), calc(var(--sy) * 1)); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      ${P(930)} { transform: translate(calc(var(--dx) + -19px), calc(var(--dy) + 10px)) rotate(27deg) scale(calc(var(--sx) * 0.92), calc(var(--sy) * 0.93)); animation-timing-function: cubic-bezier(.5, 0, .75, .3); }
+      ${P(1000)} { transform: translate(calc(var(--dx) + -21px), calc(var(--dy) + 11px)) rotate(30deg) scale(calc(var(--sx) * 0.91), calc(var(--sy) * 0.92)); animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
       ${P(1020)} { transform: translate(calc(var(--dx) * .9), calc(var(--dy) * .9 - 22px)) rotate(-6deg) scale(calc(var(--sx) * 1.3), calc(var(--sy) * 1.3)); animation-timing-function: cubic-bezier(.55, 0, .9, .45); }
-      ${P(1075)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
-      ${P(1115)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
+      ${P(1105)} { transform: translate(0px, 5px) rotate(-1deg) scale(.97, .97); animation-timing-function: cubic-bezier(.1, .8, .25, 1); }
+      ${P(1145)} { transform: translate(0px, -4px) rotate(0deg) scale(1.085, 1.07); animation-timing-function: cubic-bezier(.2, .6, .3, 1); }
       100% { transform: translate(0px, 0px) rotate(0deg) scale(1, 1); }
     }
     /* As the wind-up starts, the drawing gives way to a plain page in the
@@ -653,9 +652,6 @@
     injectCss();
     scrollTo(0, 0);
     const soft = noInlinePdf();
-    const html = document.documentElement;
-    html.classList.add('hop-scening');
-    setTimeout(() => html.classList.remove('hop-scening'), 9000);   // never stuck out of sight
     const veil = document.createElement('div');
     veil.className = `hop hop-r hop-live${soft ? ' hop-soft' : ''}`;
     veil.setAttribute('aria-hidden', 'true');
@@ -671,24 +667,34 @@
     // The page's own paper hands over to the scene's, the same colour.
     requestAnimationFrame(() => document.documentElement.classList.remove('hop-scene'));
 
-    // The document: loaded, and a beat for the viewer to paint it.
+    /* The document: loaded, and a beat for the viewer to paint it. In
+       Chrome and Firefox the frame has been loading since the page began,
+       behind the paper, and is long since ready. (It is left visible: Firefox
+       does not load a PDF in a frame that is hidden.) Safari draws the PDF's
+       own controls above everything on the page, a veil included, so there
+       the frame is only created a little before it is wanted, and those
+       controls turn up with the document rather than over the scene. */
     const frame = document.querySelector('#pdfEmbed iframe');
+    const ua = navigator.userAgent;
+    const webkit = /Safari\//.test(ua) && !/(Chrome|Chromium|CriOS|FxiOS|Edg|OPR|Android)/.test(ua);
+    const late = !!frame && !soft && webkit && !frame.getAttribute('src');
     const docReady = soft || !frame ? Promise.resolve() : new Promise((done) => {
-      const painted = () => setTimeout(done, 750);
-      if (frame.dataset.loaded === '1') painted(); else frame.addEventListener('load', painted, { once: true });
-      setTimeout(done, 4500);   // never hold the page hostage
+      const arm = () => frame.addEventListener('load', () => setTimeout(done, 500), { once: true });
+      if (late) {
+        // A frame with no address reports a load of its own (a blank page),
+        // which is not the document; only the load after the address counts.
+        setTimeout(() => { frame.dataset.loaded = ''; arm(); frame.src = frame.dataset.src; }, Math.max(0, RESUME - 750));
+      } else if (frame.dataset.loaded === '1') setTimeout(done, 500);
+      else arm();
+      setTimeout(done, 6000);   // never hold the page hostage
     });
-    /* The hand over: a little before the scene runs out, the document is
-       let out from behind the sheet (it has long since loaded), and a beat
-       later the paper lifts and the sheet and batter dissolve over it, so
-       the resume is already there while they go. */
-    const played = new Promise((r) => setTimeout(r, soft ? SOFT : RESUME - 360));
+    /* The hand over: as the splat settles, the paper starts to lift and the
+       sheet and batter dissolve over the document, which is already there
+       and drawn, so the resume is simply visible as they go. */
+    const played = new Promise((r) => setTimeout(r, soft ? SOFT : RESUME - 250));
     Promise.all([played, docReady]).then(() => {
-      html.classList.remove('hop-scening');
-      setTimeout(() => {
-        veil.classList.add('is-lifting');
-        setTimeout(() => { veil.remove(); lock(false); going = false; }, 700);
-      }, soft ? 0 : 140);
+      veil.classList.add('is-lifting');
+      setTimeout(() => { veil.remove(); lock(false); going = false; }, 800);
     });
   };
 

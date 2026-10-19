@@ -45,7 +45,6 @@
     /* Paper over the page from its very first paint, until hop.js puts the
        scene up in the same colour. It takes the pointer, so nothing under
        it can be touched or scrolled. */
-    html.hop-scene #pdfEmbed iframe { visibility: hidden; }
     html.hop-scene::after {
       content: "";
       position: fixed;
@@ -201,7 +200,8 @@
     </div>
 
     <div class="embed glass" id="pdfEmbed">
-      <iframe src="./Ajay_Sommi_Resume.pdf" title="Ajay Sommi Resume" onload="this.dataset.loaded='1'"></iframe>
+      <iframe data-src="./Ajay_Sommi_Resume.pdf" title="Ajay Sommi Resume" onload="this.dataset.loaded='1'"></iframe>
+      <noscript><iframe src="./Ajay_Sommi_Resume.pdf" title="Ajay Sommi Resume"></iframe></noscript>
     </div>
 
     <div class="pdf-fallback glass" id="pdfFallback" hidden>
@@ -229,6 +229,17 @@
 
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
+
+    /* The PDF frame gets its address here. In Safari, during the little
+       scene, hop.js gives it later (see there), so that Safari's own PDF
+       controls do not turn up over the scene. */
+    (function () {
+      var f = document.querySelector('#pdfEmbed iframe[data-src]');
+      if (!f) return;
+      var ua = navigator.userAgent;
+      var safari = /Safari\//.test(ua) && !/(Chrome|Chromium|CriOS|FxiOS|Edg|OPR|Android)/.test(ua);
+      if (!(window.__hopScene && safari)) f.src = f.getAttribute('data-src');
+    })();
 
     // Theme: follows the system live; the button flips it for this visit.
     (function () {
