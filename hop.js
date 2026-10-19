@@ -39,11 +39,25 @@
     .hop {
       position: fixed; inset: 0; z-index: 2147483600;
       display: grid; place-items: center;
-      background: var(--bg, #121212);
+      isolation: isolate;
       opacity: 0; transition: opacity .16s ease;
       pointer-events: all;
     }
+    .hop::before {
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background: var(--bg, #121212);
+      transition: opacity .45s cubic-bezier(.4, 0, .2, 1);
+    }
     .hop.is-on { opacity: 1; }
+    /* On the resume page the scene is already up when the page shows. */
+    .hop.hop-live { opacity: 1; transition: none; }
+    /* The sheet and the batter, together, so they can dissolve as one. */
+    .hop-fx { position: fixed; inset: 0; pointer-events: none; }
+    /* Done: the paper lifts away first, then the sheet and batter dissolve
+       and the real document shows through where it landed. */
+    .hop.is-lifting { pointer-events: none; }
+    .hop.is-lifting::before { opacity: 0; }
+    .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .65s cubic-bezier(.4, 0, .2, 1) .12s; }
     .hop svg { display: block; overflow: visible; }
     .hop .am-a { fill: var(--ink, #edebe6); }
     .hop .hop-mark { display: block; transform-origin: 50% 92%; will-change: transform; backface-visibility: hidden; }
@@ -196,12 +210,13 @@
     .hop-sheet .l5 { animation: hop-write5 ${RESUME}ms linear both; }
 
     @keyframes hop-tap {
-      0%       { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: ${SNAP}; }
-      ${P(60)}   { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.08, 0.92); animation-timing-function: cubic-bezier(.2, .62, .35, 1); }
-      ${P(130)}  { transform: perspective(360px) translate(-5px, -15px) rotate(-3.5deg) rotateY(0deg) scale(0.97, 1.04); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
-      ${P(200)}  { transform: perspective(360px) translate(-6px, 0) rotate(-1deg) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: cubic-bezier(.2, .62, .35, 1); }
-      ${P(280)}  { transform: perspective(360px) translate(4px, -15px) rotate(3.5deg) rotateY(0deg) scale(0.97, 1.04); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
-      ${P(360)}  { transform: perspective(360px) translate(6px, 0) rotate(1deg) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: ${SNAP}; }
+      0%       { opacity: 1; transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+      ${P(90)}  { transform: perspective(360px) translate(0, 1px) rotate(0) rotateY(0deg) scale(1.1, 0.9); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
+      ${P(150)}  { transform: perspective(360px) translate(-3px, -9px) rotate(-2deg) rotateY(0deg) scale(0.95, 1.08); animation-timing-function: cubic-bezier(.25, .6, .4, 1); }
+      ${P(225)}  { transform: perspective(360px) translate(-5px, -22px) rotate(-3.5deg) rotateY(0deg) scale(1, 1); animation-timing-function: cubic-bezier(.55, 0, .8, .4); }
+      ${P(300)}  { transform: perspective(360px) translate(-4px, 0) rotate(-1.5deg) rotateY(0deg) scale(1.15, 0.85); animation-timing-function: cubic-bezier(.2, .65, .35, 1); }
+      ${P(350)}  { transform: perspective(360px) translate(-2px, -6px) rotate(-.5deg) rotateY(0deg) scale(0.98, 1.03); animation-timing-function: cubic-bezier(.55, 0, .8, .4); }
+      ${P(392)}  { transform: perspective(360px) translate(0, 0) rotate(0) rotateY(0deg) scale(1.07, 0.94); animation-timing-function: cubic-bezier(.45, 0, .4, 1); }
       /* The landing squash runs straight into the wind-up: the body coils
          back like a rubber band being drawn, turning away and sinking low,
          holds at full stretch, then lets go in a whip and recoils, the
@@ -284,10 +299,10 @@
     }
     /* Swings against the sideways motion, a beat behind it. */
     @keyframes hop-tap-hook {
-      0%, ${P(60)} { transform: rotate(0); }
-      ${P(150)} { transform: rotate(5deg); } ${P(220)} { transform: rotate(1deg); }
-      ${P(300)} { transform: rotate(-5deg); } ${P(380)} { transform: rotate(-1deg); }
-      ${P(460)} { transform: rotate(2deg); } ${P(640)} { transform: rotate(-8deg); }
+      0%, ${P(90)} { transform: rotate(0); }
+      ${P(150)} { transform: rotate(4deg); } ${P(225)} { transform: rotate(-3deg); }
+      ${P(300)} { transform: rotate(5deg); } ${P(350)} { transform: rotate(-2deg); }
+      ${P(392)} { transform: rotate(2deg); } ${P(460)} { transform: rotate(2deg); } ${P(640)} { transform: rotate(-8deg); }
       ${P(695)} { transform: rotate(-9deg); } ${P(765)} { transform: rotate(10deg); }
       ${P(840)} { transform: rotate(-3deg); } ${P(920)} { transform: rotate(1deg); }
       ${P(990)}, 100% { transform: rotate(0); }
@@ -296,11 +311,12 @@
        the body: down as it lifts, up as it drops, a settle after landing. */
     @keyframes hop-tap-eye {
       0%   { transform: translate(0, 0) scale(1); }
-      ${P(60)}   { transform: translate(1.1px, .4px) scale(1.03, .97); }
-      ${P(130)}  { transform: translate(2.6px, 1.6px) scale(1); }
-      ${P(200)}  { transform: translate(.8px, -.8px) scale(1.07, .93); }
-      ${P(280)}  { transform: translate(.4px, 1.6px) scale(1); }
-      ${P(360)}  { transform: translate(2.2px, -.8px) scale(1.07, .93); }
+      ${P(90)}   { transform: translate(1.2px, .8px) scale(1.04, .96); }
+      ${P(150)}  { transform: translate(2.2px, -1.2px) scale(.96, 1.06); }
+      ${P(225)}  { transform: translate(1.8px, -2px) scale(1); }
+      ${P(300)}  { transform: translate(1px, 1.6px) scale(1.08, .92); }
+      ${P(350)}  { transform: translate(1.5px, -.8px) scale(1); }
+      ${P(392)}  { transform: translate(1.5px, 1px) scale(1.04, .96); }
       ${P(420)}  { transform: translate(1.5px, 1.2px) scale(1.1, .9); }
       ${P(640)} { transform: translate(3.2px, 1.2px) scale(1); }
       ${P(695)} { transform: translate(3.4px, 1.3px) scale(1); }
@@ -367,14 +383,15 @@
      letter shaped, at most 78% of the window tall, 229px from the top); on
      phones, which show a card instead, a centred page. */
   const docRect = () => {
-    const vw = innerWidth, vh = innerHeight;
-    const phone = vw < 720 || /iPad|iPhone|iPod|Android/.test(navigator.userAgent);
-    if (!phone) {
-      const w = Math.min(944, vw - 56), h = Math.min(w * 11 / 8.5, vh * 0.78);
-      return { left: (vw - w) / 2, top: 229, width: w, height: h };
+    // On the resume page, the document's real box, wherever the layout puts it.
+    const box = document.getElementById('pdfEmbed');
+    if (box && box.offsetWidth) {
+      const r = box.getBoundingClientRect();
+      return { left: r.left, top: r.top, width: r.width, height: r.height };
     }
-    const w = vw - 40, h = Math.min(w * 11 / 8.5, vh * 0.66);
-    return { left: (vw - (h * 8.5 / 11 < w ? h * 8.5 / 11 : w)) / 2, top: (vh - h) / 2, width: Math.min(w, h * 8.5 / 11), height: h };
+    const vw = innerWidth, vh = innerHeight;
+    const w = Math.min(944, vw - 56), h = Math.min(w * 11 / 8.5, vh * 0.78);
+    return { left: (vw - w) / 2, top: 229, width: w, height: h };
   };
   // Places the full size sheet on the document's rectangle, then works out
   // the translate and scale (about its centre) that shrink it onto
@@ -542,7 +559,7 @@
         + `--drop:${(30 + Math.random() * 50).toFixed(0)}px;--delay:${SPLAT + 30 + i * 40}ms;--life:${life - i * 40}ms`;
       frag.appendChild(r);
     });
-    veil.appendChild(frag);
+    (veil.querySelector('.hop-fx') || veil).appendChild(frag);
   };
 
   /* Nothing scrolls while a scene plays: wheel, touch and the scroll keys
@@ -559,45 +576,97 @@
     f('keydown', holdKeys);
   };
 
-  const go = (url) => {
-    if (going) return;
-    if (reduce.matches) { location.href = url; return; }
-    going = true;
-    lock(true);
-    if (!document.getElementById('hopStyle')) {
-      const st = document.createElement('style');
-      st.id = 'hopStyle';
-      st.textContent = css;
-      document.head.appendChild(st);
-    }
-    const forResume = /resume\.html$/i.test(new URL(url, location.href).pathname);
-    const soft = forResume && noInlinePdf();
-    const veil = document.createElement('div');
-    veil.className = `hop ${forResume ? 'hop-r' : 'hop-p'}${soft ? ' hop-soft' : ''}`;
-    veil.setAttribute('aria-hidden', 'true');
-    veil.innerHTML = !forResume ? mark
-      : soft ? `<span class="hop-stage">${mark}${sheet.replace('viewBox="2 2 40 56" preserveAspectRatio="none"', 'viewBox="-6 -6 58 70"')}</span>`
-      : `<span class="hop-stage">${mark}<span class="hop-slot"></span></span>${sheet}`;
-    document.body.appendChild(veil);
-    if (forResume && !soft) {
-      aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
-      // The outline's animation starts with the scene, so the two stay in step.
-      veil.querySelectorAll('.hop-sheet animate').forEach((a) => { if (typeof a.beginElement === 'function') a.beginElement(); });
-      splatter(veil, docRect());
-    }
-    requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('is-on')));
-    // The next page fades in from the paper rather than cutting in.
-    try { sessionStorage.setItem('hop-arrive', soft ? 'soft' : '1'); } catch {}
-    // Fetch the next page (and for the resume, the document) while the
-    // scene plays, so it is ready the moment the scene ends.
-    [url].concat(forResume && !soft ? [new URL('Ajay_Sommi_Resume.pdf', new URL(url, location.href)).href] : []).forEach((h) => {
+  const injectCss = () => {
+    if (document.getElementById('hopStyle')) return;
+    const st = document.createElement('style');
+    st.id = 'hopStyle';
+    st.textContent = css;
+    document.head.appendChild(st);
+  };
+
+  /* The resume page and its document are fetched ahead of the click, as
+     soon as the pointer or a finger is on a link to it. */
+  let warmed = false;
+  const warm = () => {
+    if (warmed) return;
+    warmed = true;
+    ['resume.html'].concat(noInlinePdf() ? [] : ['Ajay_Sommi_Resume.pdf']).forEach((h) => {
       const l = document.createElement('link');
       l.rel = 'prefetch';
       l.href = h;
       document.head.appendChild(l);
     });
-    setTimeout(() => { location.href = url; }, (soft ? SOFT : forResume ? RESUME : DANCE) + 60);
   };
+  const toResume = (e) => { const a = e.target.closest?.('a[href]'); if (a && /resume\.html$/i.test(a.pathname)) warm(); };
+  document.addEventListener('pointerover', toResume, { passive: true });
+  document.addEventListener('touchstart', toResume, { passive: true });
+  document.addEventListener('focusin', toResume);
+
+  const go = (url) => {
+    if (going) return;
+    if (reduce.matches) { location.href = url; return; }
+    const forResume = /resume\.html$/i.test(new URL(url, location.href).pathname);
+    going = true;
+    lock(true);
+    injectCss();
+    const veil = document.createElement('div');
+    veil.className = `hop ${forResume ? 'hop-lead' : 'hop-p'}`;
+    veil.setAttribute('aria-hidden', 'true');
+    // For the resume the paper only fades in here: the scene itself plays
+    // on the resume page, once that page and its document have arrived.
+    if (!forResume) veil.innerHTML = mark;
+    document.body.appendChild(veil);
+    requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('is-on')));
+    if (forResume) {
+      try { sessionStorage.setItem('hop-scene', '1'); } catch { location.href = url; return; }
+      warm();
+      setTimeout(() => { location.href = url; }, 180);
+      return;
+    }
+    setTimeout(() => { location.href = url; }, DANCE + 60);
+  };
+
+  /* The resume scene, played on the resume page itself. The page is built
+     under paper (resume.html's own head puts it up so nothing shows first);
+     once the fonts are in and the layout has settled, the scene starts, and
+     its sheet lands on the document's real box. The scene then waits, if it
+     has to, for the document itself to finish loading and paint, and only
+     then lifts away, so the resume is simply there. */
+  const scene = () => {
+    going = true;
+    lock(true);
+    injectCss();
+    scrollTo(0, 0);
+    const soft = noInlinePdf();
+    const veil = document.createElement('div');
+    veil.className = `hop hop-r hop-live${soft ? ' hop-soft' : ''}`;
+    veil.setAttribute('aria-hidden', 'true');
+    veil.innerHTML = soft
+      ? `<span class="hop-stage">${mark}${sheet.replace('viewBox="2 2 40 56" preserveAspectRatio="none"', 'viewBox="-6 -6 58 70"')}</span>`
+      : `<span class="hop-stage">${mark}<span class="hop-slot"></span></span><div class="hop-fx">${sheet}</div>`;
+    document.body.appendChild(veil);
+    if (!soft) {
+      aimSheet(veil.querySelector('.hop-sheet'), veil.querySelector('.hop-slot'));
+      veil.querySelectorAll('.hop-sheet animate').forEach((a) => { if (typeof a.beginElement === 'function') a.beginElement(); });
+      splatter(veil, docRect());
+    }
+    // The page's own paper hands over to the scene's, the same colour.
+    requestAnimationFrame(() => document.documentElement.classList.remove('hop-scene'));
+
+    // The document: loaded, and a beat for the viewer to paint it.
+    const frame = document.querySelector('#pdfEmbed iframe');
+    const docReady = soft || !frame ? Promise.resolve() : new Promise((done) => {
+      const painted = () => setTimeout(done, 750);
+      if (frame.dataset.loaded === '1') painted(); else frame.addEventListener('load', painted, { once: true });
+      setTimeout(done, 4500);   // never hold the page hostage
+    });
+    const played = new Promise((r) => setTimeout(r, soft ? SOFT : RESUME));
+    Promise.all([played, docReady]).then(() => {
+      veil.classList.add('is-lifting');
+      setTimeout(() => { veil.remove(); lock(false); going = false; }, 950);
+    });
+  };
+
   window.hopTo = go;
 
   // Coming back with the back button restores this page from the cache,
@@ -610,6 +679,16 @@
   });
 
   const isHome = (u) => /\/(index\.html)?$/.test(u.pathname);
+
+  // Arriving from a click on Resume (see resume.html's head): start once the
+  // fonts are in, so the layout the sheet lands on has stopped moving.
+  if (window.__hopScene && !reduce.matches) {
+    const faces = ['400 1em Geist', '500 1em Geist', '600 1em Geist', '700 1em Geist'];
+    const fonts = document.fonts?.load
+      ? Promise.all(faces.map((f) => document.fonts.load(f).catch(() => {}))).then(() => document.fonts.ready).catch(() => {})
+      : Promise.resolve();
+    Promise.race([fonts, new Promise((r) => setTimeout(r, 1200))]).then(scene);
+  }
 
   document.addEventListener('click', (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
