@@ -2295,8 +2295,9 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 .page-loader.is-flying { background: transparent; }
 .loader-paper {
   position: absolute;
+  inset: 0;
   z-index: -1;
-  transform-origin: 0 0;
-  will-change: transform, opacity;
+  background: var(--bg);
+  will-change: opacity;
 }
 .page-loader.is-revealing { pointer-events: none; }

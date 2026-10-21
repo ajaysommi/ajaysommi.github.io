@@ -667,59 +667,22 @@ const onScrollFrame = (() => {
     // The smile and bar are left behind, thinning away as the mark leaves.
     if (bar) anims.push(ani(bar, [{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 190) }, { opacity: 0 }], { duration: D, ...fx }));
 
-    /* The paper is the cover over the whole page, and it is drawn away, not
-       faded or shrunk. It is a large sheet of the page's own colour whose
-       leading edge is a long, soft gradient, so there is no edge to see: it
-       sweeps across the page toward the logo, the mark drawing it on, hung back
-       by a spring so it trails, and the site comes up through the feathered
-       edge, the far corner first and the logo's corner last, as the mark
-       lands. A gradient and a transform only, worked out ahead. */
+    /* The paper is the cover over the whole page: a screen-sized layer of the
+       page's own colour that fades away as the mark sets off, gently, while
+       the page's own pieces come up underneath it (below). (It was a large
+       sheet swept across the page on a slant; a layer that size, turned, is
+       drawn in tiles by Safari and by a real graphics card, and it went by in
+       pieces.) */
     const paper = document.createElement('div');
     paper.className = 'loader-paper';
-    const lrp = el.getBoundingClientRect();
-    {
-      const Wd = lrp.width, Ht = lrp.height;
-      const Lq = Math.hypot(dx, dy) || 1, qx = dx / Lq, qy = dy / Lq, rx = -qy, ry = qx;   // along the flight, and across it
-      const cs = [[0, 0], [Wd, 0], [Wd, Ht], [0, Ht]];
-      const along = cs.map(([x, y]) => x * qx + y * qy), across = cs.map(([x, y]) => x * rx + y * ry);
-      const aMin = Math.min(...along), aMax = Math.max(...along), nMin = Math.min(...across), nMax = Math.max(...across);
-      const F = Math.min(Wd, Ht) * .6;                    // the feather: a wide, gentle edge
-      const s0 = aMin - F - 2;                              // the sheet's trailing edge starts fully off the page
-      const LEN = (aMax - aMin) + F + 60, WID = (nMax - nMin) + 120;
-      const DIST = (aMax - aMin) + F + 6;                   // far enough that the feather has cleared the page
-      const nc = (nMin + nMax) / 2;
-      const Ox = qx * s0 + rx * nc, Oy = qy * s0 + ry * nc;
-      const ang = Math.atan2(qy, qx), cosA = Math.cos(ang), sinA = Math.sin(ang);
-      // An eased ramp (smoothstep, in many stops) so there is no band where the edge begins or ends.
-      const stops = [];
-      for (let i = 0; i <= 10; i++) {
-        const u = i / 10, a_ = u * u * (3 - 2 * u);
-        stops.push(`color-mix(in oklab, var(--bg) ${(a_ * 100).toFixed(1)}%, transparent) ${(u * F / LEN * 100).toFixed(2)}%`);
-      }
-      Object.assign(paper.style, {
-        inset: 'auto', left: '0px', top: `${(-WID / 2).toFixed(1)}px`, width: `${LEN.toFixed(1)}px`, height: `${WID.toFixed(1)}px`,
-        background: `linear-gradient(90deg, ${stops.join(', ')}, var(--bg) ${(F / LEN * 100).toFixed(2)}%)`,
-      });
-      el.prepend(paper);
-      // Clipped to the screen, so the sheet's size cannot widen the page (a phone zooms its layout out to fit it).
-      el.style.overflow = 'hidden';
-
-      const eMove = bezier(.5, 0, .3, 1);
-      const T0 = 30, NP = MOVE + 60;
-      const target = (t) => DIST * eMove(clamp((t - T0) / (MOVE - T0), 0, 1));
-      const W_ = phone ? 15 : 14, Z_ = .85;
-      let d = 0, v = 0;
-      const mat = (dd) => `matrix(${cosA.toFixed(5)}, ${sinA.toFixed(5)}, ${(-sinA).toFixed(5)}, ${cosA.toFixed(5)}, ${(Ox + qx * dd).toFixed(2)}, ${(Oy + qy * dd).toFixed(2)})`;
-      const frames = [{ transform: mat(0), opacity: 1, offset: 0 }, { transform: mat(0), opacity: 1, offset: o(TS) }];
-      for (let t = 1; t <= NP; t++) {
-        v += (W_ * W_ * (target(t) - d) - 2 * Z_ * W_ * v) * .001; d += v * .001;
-        if (t % 16) continue;
-        frames.push({ transform: mat(Math.min(DIST, d)), opacity: 1, offset: o(TS + t) });
-      }
-      frames.push({ transform: mat(DIST), opacity: 1, offset: o(TS + NP + 6) }, { transform: mat(DIST), opacity: 0, offset: o(TS + NP + 30) }, { transform: mat(DIST), opacity: 0, offset: 1 });
-      anims.push(ani(paper, frames, { duration: D, ...fx }));
-      paper.dataset.dist = String(Math.round(DIST));
-    }
+    el.prepend(paper);
+    // (The easing is on the segment, not on the whole animation, which would squeeze every time in it.)
+    anims.push(ani(paper, [
+      { opacity: 1, easing: 'linear' },
+      { opacity: 1, offset: o(TS + 20), easing: 'cubic-bezier(.4, 0, .3, 1)' },
+      { opacity: 0, offset: o(TS + MOVE * .6) },
+      { opacity: 0 },
+    ], { duration: D, ...fx }));
 
     // The nav's own logo waits, unseen, comes up under the mark as it arrives, and takes over from it.
     // (A step, not a fade: the nav is frosted glass, which is redrawn on every frame
@@ -727,28 +690,47 @@ const onScrollFrame = (() => {
     const homeAnim = ani(home, [{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_LAND + 8) }, { opacity: 1 }], { duration: D, ...fx });
     anims.push(homeAnim);
 
-    // The page's pieces settle in, each as the paper clears from around it.
+    /* The page's pieces come up under the fading paper, one after another,
+       from the far side of the screen to the logo's side, as if the mark were
+       drawing the page in after it: each one starts a little way back from
+       where the mark is heading and drifts in, settling with the faintest
+       overshoot. Opacity and translate only. */
     const pieces = [
-      ['.hero-figure', '0 26px', '.95', .26],
-      ['.hero-head', '0 24px', null, .34],
-      ['.hero-body .sub', '0 22px', null, .42],
-      ['.hero-body .hero-badges', '0 20px', null, .5],
-      ['.hero-body .actions', '0 20px', null, .56],
+      ['.hero-figure', '.96'],
+      ['.hero-head'],
+      ['.hero-body .sub'],
+      ['.hero-body .hero-badges'],
+      ['.hero-body .actions'],
+      ['#logos .section-head'],
+      ['#logoMarquee'],
       // (Not the nav or the phone's dock: they are frosted glass, which a browser
       // has to blur again on every frame of anything animating them. The paper
-      // clearing is what shows them, with the logo's place left empty for the mark.)
+      // fading is what shows them, with the logo's place left empty for the mark.)
     ];
     const entrances = [];
     let latest = D;
-    pieces.forEach(([sel, from_, scaleFrom, at]) => {
-      const node = $(sel);
-      if (!node || !node.getBoundingClientRect().width) return;
-      const frames = { opacity: [0, 1], translate: [from_, '0 0'] };
-      if (scaleFrom) frames.scale = [scaleFrom, '1'];
-      const delay = Math.round(TS + FLIGHT * at), dur = 640;
-      entrances.push(ani(node, frames, { duration: dur, delay, easing: 'cubic-bezier(.2, .75, .25, 1)', ...fx }));
-      latest = Math.max(latest, delay + dur);
-    });
+    {
+      const Lq = Math.hypot(dx, dy) || 1, qx = dx / Lq, qy = dy / Lq;
+      const vh = innerHeight, DRIFT = phone ? 16 : 22;
+      const found = pieces.map(([sel, scaleFrom]) => {
+        const node = $(sel);
+        if (!node) return null;
+        const r = node.getBoundingClientRect();
+        if (!r.width || r.top > vh || r.bottom < 0) return null;
+        // How far along the flight this piece lies: the far side is reached first.
+        const along = (r.left + r.width / 2 - to.x) * qx + (r.top + r.height / 2 - to.y) * qy;
+        return { node, scaleFrom, along };
+      }).filter(Boolean);
+      const most = Math.min(...found.map((f) => f.along)), least = Math.max(...found.map((f) => f.along));
+      found.forEach(({ node, scaleFrom, along }) => {
+        const k = least > most ? (along - most) / (least - most) : 0;   // 0 for the piece the mark leaves furthest behind, 1 for the one nearest the logo
+        const frames = { opacity: [0, 1], translate: [`${(-qx * DRIFT).toFixed(1)}px ${(-qy * DRIFT).toFixed(1)}px`, '0 0'] };
+        if (scaleFrom) frames.scale = [scaleFrom, '1'];
+        const delay = Math.round(TS + 60 + MOVE * .5 * k), dur = 720;
+        entrances.push(ani(node, frames, { duration: dur, delay, easing: 'cubic-bezier(.2, .8, .25, 1.04)', ...fx }));
+        latest = Math.max(latest, delay + dur);
+      });
+    }
 
 
     return () => {
