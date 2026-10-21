@@ -6,9 +6,15 @@
    from foot to foot with excitement as the lines get written, and throws
    the sheet at the screen; the resume page then fades in from
    it. Any other page gets a couple of happy hops. Links back to the home
-   page are left alone, since it has its own loading screen; so are new
-   tabs, downloads, mail links and anything on another site. With reduced
-   motion the page simply changes.
+   page play its own loading screen; so the trip there is only the mark
+   flying down from the nav to where that screen draws it. New tabs,
+   downloads, mail links and anything on another site are left alone. With
+   reduced motion the page simply changes.
+
+   Either way the scene begins with the nav's own small mark lifting out of
+   the bar and flying to the middle of the screen, growing as it goes, to
+   land exactly where the next page's mark starts, so it reads as one mark
+   carried across.
 
    The jumps move an HTML wrapper around the mark, never the shapes inside
    its SVG: an SVG trims whatever leaves its own box in Safari, which cut the
@@ -59,6 +65,9 @@
     .hop.is-lifting::before { opacity: 0; transition-duration: .85s; }
     .hop.is-lifting .hop-fx { opacity: 0; transition: opacity .95s cubic-bezier(.4, 0, .2, 1); }
     .hop svg { display: block; overflow: visible; }
+    /* The nav's mark in flight, above the paper. */
+    .hop-fly { position: fixed; z-index: 2147483601; pointer-events: none; will-change: transform; }
+    .hop-fly .am-a { fill: var(--ink, #edebe6); }
     .hop .am-a { fill: var(--ink, #edebe6); }
     .hop .hop-mark { display: block; transform-origin: 50% 92%; will-change: transform; backface-visibility: hidden; }
     .hop .hop-mark svg { width: 122px; height: 115px; }
@@ -619,25 +628,123 @@
   document.addEventListener('touchstart', toResume, { passive: true });
   document.addEventListener('focusin', toResume);
 
+  /* ---- the flight ------------------------------------------------------
+
+     Where an SVG's drawing actually is on screen: its viewBox fitted into
+     its box (centred, uniform scale), as the browser lays it out. */
+  const fit = (vb, r) => {
+    const s = Math.min(r.width / vb[2], r.height / vb[3]);
+    return { s, ox: r.left + (r.width - vb[2] * s) / 2 - vb[0] * s, oy: r.top + (r.height - vb[3] * s) / 2 - vb[1] * s };
+  };
+  const navMark = () => {
+    const el = document.querySelector('header.nav .brand-mark svg.brand-aj');
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return r.width && r.height && r.bottom > 0 && r.top < innerHeight ? el : null;
+  };
+  const FLY = 680;
+
+  /* Lifts the nav's mark out of the bar and flies it to `to` (a viewBox and
+     the box that viewBox will be drawn in on the next page), growing as it
+     goes, in one unbroken sweep. Across and down run as two motions on
+     their own curves, each a single ease from start to end with no stops in
+     between: the copy's frame carries it across, and the mark inside it
+     carries the rise, the growth and a soft overshoot as it lands, so the
+     path bends gently and the speed never dips midway. The copy is drawn at
+     its final size and scaled down to start, so it is sharp where it lands.
+     Resolves when it has landed (at once if there is no mark to fly). */
+  const fly = (to) => new Promise((done) => {
+    const src = navMark();
+    if (!src) { done(); return; }
+    const svb = src.viewBox.baseVal;
+    const from = fit(svb && svb.width ? [svb.x, svb.y, svb.width, svb.height] : [9, 8.5, 45, 42], src.getBoundingClientRect());
+    const end = fit(to.vb, to.rect);
+    const [vx, vy, vw, vh] = to.vb;
+    const w = vw * end.s, h = vh * end.s;
+    const left = end.ox + vx * end.s, top = end.oy + vy * end.s;
+    // Centre of the drawing at the start and at the end, and the scale between.
+    const cx = vx + vw / 2, cy = vy + vh / 2;
+    const dx = from.ox + cx * from.s - (left + w / 2);
+    const dy = from.oy + cy * from.s - (top + h / 2);
+    const k = from.s / end.s;
+    const frame = document.createElement('div');
+    frame.className = 'hop-fly';
+    frame.setAttribute('aria-hidden', 'true');
+    Object.assign(frame.style, { left: `${left}px`, top: `${top}px`, width: `${w}px`, height: `${h}px` });
+    const f = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    f.setAttribute('viewBox', to.vb.join(' '));
+    f.innerHTML = src.innerHTML;
+    Object.assign(f.style, { display: 'block', width: '100%', height: '100%', overflow: 'visible', transformOrigin: '50% 50%', willChange: 'transform' });
+    frame.appendChild(f);
+    document.body.appendChild(frame);
+    src.style.visibility = 'hidden';
+    const across = frame.animate(
+      [{ transform: `translateX(${dx}px)` }, { transform: 'none' }],
+      { duration: FLY, easing: 'cubic-bezier(.45, 0, .2, 1)', fill: 'forwards' });
+    f.animate(
+      [{ transform: `translateY(${dy}px) scale(${k})` }, { transform: 'none' }],
+      { duration: FLY, easing: 'cubic-bezier(.55, 0, .25, 1.08)', fill: 'forwards' });
+    across.finished.then(done, done);
+  });
+
+  /* Where the resume scene's mark stands when the scene begins: laid out
+     unseen from the scene's own markup, so it always matches. */
+  const resumeMarkBox = () => {
+    const probe = document.createElement('div');
+    probe.className = 'hop hop-r';
+    probe.style.visibility = 'hidden';
+    probe.innerHTML = noInlinePdf()
+      ? `<span class="hop-stage">${mark}${sheet.replace('viewBox="2 2 40 56" preserveAspectRatio="none"', 'viewBox="-6 -6 58 70"')}</span>`
+      : `<span class="hop-stage">${mark}<span class="hop-slot"></span></span>`;
+    document.body.appendChild(probe);
+    probe.querySelectorAll('*').forEach((n) => { n.style.animation = 'none'; });
+    const rect = probe.querySelector('.hop-mark svg').getBoundingClientRect();
+    probe.remove();
+    return { vb: [3, 2.5, 57, 54], rect };
+  };
+
+  /* Where the home page's loading screen draws its mark. This page carries
+     the same stylesheet, so the loader's own markup is laid out here unseen
+     and measured: whatever size the screen gives the mark and its bar, the
+     flight lands on it. Its paper runs the large viewport's height, unless
+     the page opens on a #link. */
+  const homeMarkBox = (u) => {
+    const probe = document.createElement('div');
+    probe.className = 'page-loader is-fixed';
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText = `visibility:hidden;pointer-events:none;bottom:auto;height:${u.hash ? '100vh' : '100lvh'}`;
+    probe.innerHTML = '<div class="loader-card"><div class="m-load"><span class="m-load-mark"></span>' +
+      '<span class="m-load-bar"><span class="m-load-line"></span></span></div></div>';
+    document.body.appendChild(probe);
+    const rect = probe.querySelector('.m-load-mark').getBoundingClientRect();
+    probe.remove();
+    return { vb: [8, 8, 48, 42], rect };
+  };
+
   const go = (url) => {
     if (going) return;
     if (reduce.matches) { location.href = url; return; }
-    const forResume = /resume\.html$/i.test(new URL(url, location.href).pathname);
+    const u = new URL(url, location.href);
+    const forResume = /resume\.html$/i.test(u.pathname);
+    const forHome = isHome(u);
     going = true;
     lock(true);
     injectCss();
     const veil = document.createElement('div');
-    veil.className = `hop ${forResume ? 'hop-lead' : 'hop-p'}`;
+    veil.className = `hop ${forResume || forHome ? 'hop-lead' : 'hop-p'}`;
     veil.setAttribute('aria-hidden', 'true');
-    // For the resume the paper only fades in here: the scene itself plays
-    // on the resume page, once that page and its document have arrived.
-    if (!forResume) veil.innerHTML = mark;
+    // For the resume and home the paper only fades in here, under the mark
+    // in flight: the scene itself plays on the next page.
+    if (!forResume && !forHome) veil.innerHTML = mark;
     document.body.appendChild(veil);
-    requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('is-on')));
-    if (forResume) {
-      try { sessionStorage.setItem('hop-scene', '1'); } catch { location.href = url; return; }
-      warm();
-      setTimeout(() => { location.href = url; }, 180);
+    // Fades in from the very next style change, not after a frame or two,
+    // so the paper is never late under the flying mark.
+    void veil.offsetWidth;
+    veil.classList.add('is-on');
+    if (forResume || forHome) {
+      try { sessionStorage.setItem(forResume ? 'hop-scene' : 'hop-home', '1'); } catch { location.href = url; return; }
+      if (forResume) warm();
+      fly(forResume ? resumeMarkBox() : homeMarkBox(u)).then(() => { location.href = url; });
       return;
     }
     setTimeout(() => { location.href = url; }, DANCE + 60);
@@ -748,7 +855,9 @@
     if (!e.persisted) return;
     going = false;
     lock(false);
-    document.querySelectorAll('.hop').forEach((n) => n.remove());
+    document.querySelectorAll('.hop, .hop-fly').forEach((n) => n.remove());
+    const src = document.querySelector('header.nav .brand-mark svg.brand-aj');
+    if (src) src.style.visibility = '';
   });
 
   const isHome = (u) => /\/(index\.html)?$/.test(u.pathname);
@@ -771,7 +880,8 @@
     try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
     if (u.origin !== location.origin || !/^https?:$/.test(u.protocol)) return;
     if (u.pathname === location.pathname) return;          // same page, an anchor
-    if (isHome(u) || /\.pdf$/i.test(u.pathname)) return;   // home has its own loader
+    if (/\.pdf$/i.test(u.pathname)) return;
+    if (isHome(u) && isHome(location)) return;             // home to itself
     e.preventDefault();
     go(u.href);
   });

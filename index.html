@@ -53,6 +53,12 @@
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         root.dataset.motion = 'reduced';
       }
+      /* Arriving from the resume page (hop.js): its nav mark has just flown
+         to where the loading screen draws its own, so the loader starts with
+         the mark already standing there instead of assembling it. */
+      try {
+        if (sessionStorage.getItem('hop-home')) { sessionStorage.removeItem('hop-home'); root.classList.add('mk-landed'); }
+      } catch (e) {}
       root.classList.add('js');
       /* Holds the page still behind the loading screen; script.js lets it go,
          and this does too if that never runs. */

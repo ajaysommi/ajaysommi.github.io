@@ -1270,6 +1270,9 @@
   .page-loader:not(.is-go) .mk,
   .page-loader:not(.is-go) .m-load-line,
   .page-loader:not(.is-go) .m-load-line i { animation-play-state: paused; }
+  /* The mark flew in from the resume page's nav (hop.js): it is already
+     whole, so the pieces simply stand, and the bar carries on from there. */
+  .mk-landed .mk { animation: none; transform: none; opacity: 1; }
   @keyframes mk-rise { to { transform: none; } }
   @keyframes mk-swing { to { transform: none; } }
   @keyframes mk-grow { to { transform: none; } }
