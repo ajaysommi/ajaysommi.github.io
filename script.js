@@ -1093,6 +1093,18 @@ syncLogoTheme();
     const glyphs = '!<>_\\/[]{}~=+*^?#01';
     let frame = 0;
 
+    /* Safari looks up a fallback font the first time it meets a glyph the
+       heading font lacks, and did it in the middle of the scramble, which was
+       the stutter. Setting every noise glyph once, invisibly, while the loader
+       is still playing gets that lookup done before the first letter. */
+    const warm = document.createElement('span');
+    warm.setAttribute('aria-hidden', 'true');
+    const hs = getComputedStyle(heading);
+    warm.style.cssText = `position:fixed;left:0;top:0;width:1px;overflow:hidden;opacity:.01;pointer-events:none;white-space:nowrap;font:${hs.fontWeight} ${hs.fontSize} ${hs.fontFamily};letter-spacing:${hs.letterSpacing}`;
+    warm.textContent = glyphs;
+    document.body.appendChild(warm);
+    const unwarm = () => warm.remove();
+
     /* The finished sentence stays in the heading the whole time, invisible,
        and holds its space; the scramble is drawn over it. Letters not yet
        reached are spaces, which collapse, so written straight into the
@@ -1143,6 +1155,7 @@ syncLogoTheme();
       widths.forEach((w, i) => { words[i].el.style.width = `${w}px`; });
     };
     const finish = () => {
+      unwarm();
       heading.textContent = finalText;
       heading.removeAttribute('aria-label');
     };
