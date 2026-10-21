@@ -2298,3 +2298,54 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   from { opacity: 0; translate: var(--ta-x, 0) var(--ta-y, 0); scale: .96; }
   to { opacity: 1; translate: 0 0; scale: 1; }
 }
+
+/* ==========================================================================
+   Time of day (experiment, with timeofday.js)
+   The room's light follows the visitor's clock. timeofday.js writes the
+   light's colour (--tod), strength (--tod-a) and direction (--tod-x/y) onto
+   the root; here it reaches only the ground and the big quiet shapes:
+
+   1. The paper itself takes a breath of it, a few percent at most.
+   2. The large disc and quarter, which are the same tone as the paper, take
+      a little more, so the field reads as lit rather than painted.
+   3. A wide, faint wash falls across the ground from where the light is:
+      low from the left in the morning, from above at midday, low from the
+      right in the evening.
+
+   Content, type, accents and the terminal theme are left exactly as they
+   are. Without the script --tod-a is 0 and every mix below is a no-op.
+   ========================================================================== */
+@layer minimal {
+  :root {
+    --tod: 255 255 255;
+    --tod-a: 0;
+    --tod-x: 50%;
+    --tod-y: 0%;
+  }
+
+  [data-theme="daylight"] {
+    --bg: color-mix(in oklab, #f2f0eb, rgb(var(--tod)) calc(var(--tod-a) * 5%));
+    --m-field: color-mix(in oklab, #e7e3da, rgb(var(--tod)) calc(var(--tod-a) * 16%));
+    --tod-wash: calc(var(--tod-a) * .16);
+  }
+
+  /* On ink the same light needs less to show, and the ring lines can carry
+     a hint of it, since there a lighter line is still a visible one. */
+  [data-theme="midnight"] {
+    --bg: color-mix(in oklab, #121212, rgb(var(--tod)) calc(var(--tod-a) * 2.5%));
+    --m-field: color-mix(in oklab, #1d1d1c, rgb(var(--tod)) calc(var(--tod-a) * 7%));
+    --m-line: color-mix(in oklab, rgba(237, 235, 230, .12), rgb(var(--tod) / .12) calc(var(--tod-a) * 50%));
+    --tod-wash: calc(var(--tod-a) * .07);
+  }
+
+  /* Under the field's shapes (::before paints ahead of the children), and
+     not faded with them on scroll, so the light stays in the room. */
+  [data-theme="daylight"] .bg::before,
+  [data-theme="midnight"] .bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(130vmax 95vmax at var(--tod-x) var(--tod-y),
+                                rgb(var(--tod) / var(--tod-wash)), transparent 62%);
+  }
+}
