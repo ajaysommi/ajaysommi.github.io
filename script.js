@@ -340,26 +340,293 @@ const onScrollFrame = (() => {
 
 
 /* ==========================================================================
-   Boot loader
-   Dismissed as soon as the page is usable. The old build faded it with a
-   CSS animation, which prefers-reduced-motion disabled outright, leaving the
-   overlay covering the page permanently. Driving it from JS fixes that.
+   Boot loader, and how it hands over to the page
+   The mark assembles, the bar fills and bounces at its end, and the bar bends
+   into a smile. Then the mark's eye (the blue dot) blinks once, slowly, and
+   the mark waits, still: the pause before the reveal. Then the whole mark
+   glides across the screen, shrinking, and lands exactly on the logo in the
+   nav, which takes over from it with a small pop. While it travels the paper
+   clears and the page's own pieces settle into place around it.
+
+   Everything that moves in the reveal is a transform or an opacity, which a
+   browser hands to the compositor, so it stays smooth while the main thread
+   is busy setting the page up underneath. (The old ending was a fade of the
+   whole screen, started at the very moment the hero text and the background
+   began their own work; a long frame there could skip it to its end.) The
+   smile's bend is time based rather than an SVG animation, so it always
+   reaches its final shape. Every step has a timer behind it, so the sequence
+   always ends, and a browser that cannot run it simply fades, as before.
+   Reduced motion fades quickly (see style.css), as it always has.
    ========================================================================== */
 (function loader() {
   const el = $('#pageLoader');
   if (!el) return;
 
-  let done = false;
-  const dismiss = () => {
-    if (done) return;
-    done = true;
-    el.classList.add('is-done');
+  const reduced = prefersReduced();
+  let lifted = false;
+
+  // The plain fade: reduced motion, no Web Animations, or anything going wrong.
+  const fade = () => {
+    el.classList.add('is-revealing', 'is-done');
     setTimeout(() => el.remove(), 900);
   };
 
-  const minShow = prefersReduced() ? 220 : 1050;
+  // A cubic bezier: the y at a given x, as CSS timing functions work.
+  const bezier = (x1, y1, x2, y2) => {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const X = (t) => ((ax * t + bx) * t + cx) * t;
+    const Y = (t) => ((ay * t + by) * t + cy) * t;
+    return (x) => {
+      let lo = 0, hi = 1, t = x;
+      for (let i = 0; i < 28; i++) { t = (lo + hi) / 2; if (X(t) < x) lo = t; else hi = t; }
+      return Y(t);
+    };
+  };
+
+  /* ---- The smile ----------------------------------------------------------
+     The bar's curve: both ends at one height, and a control point. It swells a
+     hair past its final shape and settles (a pixel, no more). Driven by the
+     clock, frame by frame, and set to its final shape by a timer as well. */
+  const smilePath = el.querySelector('.m-load-smile path');
+  const SMILE_MS = 800;
+  const SMILE = [[0, 5.5, 5.5], [.38, -10.67, 40.67], [.66, -9.83, 37.5], [1, -10, 38]];   // time, ends, control
+  const SMILE_EASE = [bezier(.3, 0, .25, 1), bezier(.45, 0, .55, 1), bezier(.45, 0, .55, 1)];
+  const smileAt = (p) => {
+    let i = 0;
+    while (i < SMILE.length - 2 && p > SMILE[i + 1][0]) i++;
+    const [t0, e0, c0] = SMILE[i], [t1, e1, c1] = SMILE[i + 1];
+    const k = SMILE_EASE[i](clamp((p - t0) / (t1 - t0), 0, 1));
+    return [e0 + (e1 - e0) * k, c0 + (c1 - c0) * k];
+  };
+  const drawSmile = (ends, ctrl) => {
+    smilePath.setAttribute('d', `M5.5 ${ends.toFixed(2)} Q76 ${ctrl.toFixed(2)} 146.5 ${ends.toFixed(2)}`);
+  };
+  const bendSmile = () => {
+    const t0 = performance.now();
+    const tick = () => {
+      const p = clamp((performance.now() - t0) / SMILE_MS, 0, 1);
+      drawSmile(...smileAt(p));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    setTimeout(() => drawSmile(SMILE[SMILE.length - 1][1], SMILE[SMILE.length - 1][2]), SMILE_MS + 120);
+  };
+
+  /* ---- The reveal --------------------------------------------------------- */
+  // Where the mark's dot is on screen, from the box of the svg that draws it.
+  const dotIn = (svg, vx, vy, vw, vh) => {
+    const r = svg.getBoundingClientRect();
+    const k = Math.min(r.width / vw, r.height / vh);
+    return {
+      x: r.left + (r.width - vw * k) / 2 + (48.2 - vx) * k,
+      y: r.top + (r.height - vh * k) / 2 + (17.4 - vy) * k,
+      d: 11.2 * k,
+    };
+  };
+
+  const openFlight = () => {
+    const markBox = el.querySelector('.m-load-mark');
+    const eye = el.querySelector('.mk-dot');
+    const bar = el.querySelector('.m-load-bar');
+    const homeSvg = $('header.nav .brand-mark svg.brand-aj');
+    const home = homeSvg && homeSvg.closest('.brand-mark');
+    if (!markBox || !eye || !homeSvg || !home) { fade(); return; }
+    const from = dotIn(eye, 8, 8, 48, 42);
+    const to = dotIn(homeSvg, 9, 8.5, 45, 42);
+    if (!(from.d > 0) || !(to.d > 0)) { fade(); return; }
+
+    const BLINK = 560, HOLD = 140, FLIGHT = 1000;   // (FLIGHT times the page's pieces settling in)
+    const TS = BLINK + HOLD;                 // when the flight begins
+    const MOVE = 840, SETTLE = 300, XFADE = 140;
+    const T_LAND = TS + MOVE + SETTLE - 100; // the mark has arrived and its wobble has all but died
+    const D = T_LAND + XFADE + 480;          // and everything, the landing bounce included
+    const o = (ms) => ms / D;
+    const EASE_FLIGHT = 'cubic-bezier(.55, 0, .15, 1)';   // from rest, then a long glide
+    const anims = [];
+    const fx = { fill: 'both' };
+
+    // The eye blinks once, closing quickly and opening slowly, about its own centre.
+    const eyeBox = eye.getBoundingClientRect();
+    eye.style.transformOrigin = `${(from.x - eyeBox.left).toFixed(1)}px ${(from.y - eyeBox.top).toFixed(1)}px`;
+    anims.push(eye.animate([
+      { transform: 'scale(1, 1)', easing: 'cubic-bezier(.5, 0, .8, .4)' },
+      { transform: 'scale(1.06, .07)', offset: .3, easing: 'linear' },
+      { transform: 'scale(1.06, .07)', offset: .42, easing: 'cubic-bezier(.2, .6, .3, 1)' },
+      { transform: 'scale(1, 1)' },
+    ], { duration: BLINK }));
+
+    // The mark stays exactly where it is through the blink and the pause, then
+    // goes: shrinking onto the nav's logo, its dot landing on the logo's dot.
+    const mr = markBox.getBoundingClientRect();
+    const ox = from.x - mr.left, oy = from.y - mr.top;
+    markBox.style.transformOrigin = `${ox.toFixed(1)}px ${oy.toFixed(1)}px`;
+    const dx = to.x - from.x, dy = to.y - from.y, sc = to.d / from.d;
+    const cx = mr.width / 2 - ox, cy = mr.height / 2 - oy;   // the body's centre, from the dot
+
+    /* The body in flight. It is a soft thing, so it deforms as a soft thing
+       does, and every term below is zero at take-off and at landing:
+       - it is stretched along its direction of travel by the wind, as speed
+         squared, and by its own inertia while it is speeding up (the rear
+         left behind), and squashed along it while it slows (the front stops
+         first, the rear catches up), thinning across by as much as keeps its
+         area, so it stays the same amount of mark;
+       - it leans into the direction it is heading;
+       - the stretch and the lean are not set but followed, by a damped spring,
+         so they overshoot and ring out a little on arrival;
+       - its parts are not rigid to it: each of the A, the hook and the stem
+         follows the body through a spring of its own, the heavy A with the
+         most lag and the light dot with none, so the body bends along the path
+         and the parts swing past on landing before they settle. */
+    const L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+    const easeMove = bezier(.55, 0, .15, 1);
+    const p = (t) => easeMove(clamp(t / MOVE, 0, 1));            // how far along, 0 to 1
+    const vel = (t) => (p(t + 3) - p(t - 3)) / .006;             // per second
+    const acc = (t) => (vel(t + 3) - vel(t - 3)) / .006;
+    let vMax = 0, aMax = 0;
+    for (let t = 0; t <= MOVE; t += 4) { vMax = Math.max(vMax, vel(t)); aMax = Math.max(aMax, Math.abs(acc(t))); }
+    const N = MOVE + SETTLE;
+    // A damped spring following a target, integrated once a millisecond.
+    const follow = (target, w, z) => {
+      const out = new Float32Array(N + 1);
+      let y = target(0), v = 0;
+      for (let t = 0; t <= N; t++) {
+        out[t] = y;
+        v += (w * w * (target(t) - y) - 2 * z * w * v) * .001;
+        y += v * .001;
+      }
+      return out;
+    };
+    const STRETCH = .24, INERTIA = .1, BANK = 10;   // the wind's stretch, inertia's, the lean in degrees
+    const stretchDrive = (t) => {
+      const q = vel(t) / vMax, ar = acc(t) / aMax;
+      return 1 + STRETCH * Math.pow(Math.max(q, 0), 2) + INERTIA * ar;
+    };
+    const bankDrive = (t) => Math.sign(ux || -1) * BANK * Math.max(vel(t) / vMax, 0);   // top tips toward where it is going
+    const lam = follow(stretchDrive, 34, .5);
+    const bank = follow(bankDrive, 30, .55);
+    // How far each part lags behind the body (the spring's own shape, scaled to
+    // a few pixels of the mark's own size), along the direction of travel.
+    const lagOf = (w, z, amp) => {
+      const f = follow((t) => L * p(t), w, z);
+      let m = 1e-6;
+      for (let t = 0; t <= N; t++) m = Math.max(m, Math.abs(f[t] - L * p(t)));
+      return { f, k: amp / m };
+    };
+    const parts = [
+      [el.querySelector('.mk-a'), lagOf(30, .55, 13)],
+      [el.querySelector('.mk-j'), lagOf(36, .55, 9)],
+      [el.querySelector('.mk-stem'), lagOf(42, .55, 5)],
+    ].filter(([n]) => n);
+
+    const IDENT = 'translate3d(0, 0, 0) scale(1) translate(0px, 0px) rotate(0deg) matrix(1, 0, 0, 1, 0, 0) translate(0px, 0px)';
+    const markAt = (t) => {       // the mark's transform and opacity, t ms into the flight
+      const e = p(t), l = lam[Math.min(N, Math.round(t))], th = bank[Math.min(N, Math.round(t))];
+      const m = 1 / Math.sqrt(l), k = l - m;
+      const a = m + k * ux * ux, b = k * ux * uy, d = m + k * uy * uy;
+      const sNow = 1 + (sc - 1) * e;
+      const fade = clamp(1 - (t - (MOVE + SETTLE - 100)) / XFADE, 0, 1);
+      return {
+        transform: `translate3d(${(dx * e).toFixed(2)}px, ${(dy * e).toFixed(2)}px, 0) scale(${sNow.toFixed(4)}) translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) rotate(${th.toFixed(3)}deg) matrix(${a.toFixed(4)}, ${b.toFixed(4)}, ${b.toFixed(4)}, ${d.toFixed(4)}, 0, 0) translate(${(-cx).toFixed(1)}px, ${(-cy).toFixed(1)}px)`,
+        opacity: fade,
+      };
+    };
+    const STEP = 16, markFrames = [{ transform: IDENT, opacity: 1, offset: 0 }, { transform: IDENT, opacity: 1, offset: o(TS) }];
+    const partFrames = parts.map(() => [{ transform: 'translate3d(0, 0, 0)', offset: 0 }, { transform: 'translate3d(0, 0, 0)', offset: o(TS) }]);
+    for (let t = STEP; t < N; t += STEP) {
+      markFrames.push({ ...markAt(t), offset: o(TS + t) });
+      parts.forEach(([, { f, k }], i) => {
+        const lag = (f[Math.round(t)] - L * p(t)) * k;
+        partFrames[i].push({ transform: `translate3d(${(ux * lag).toFixed(2)}px, ${(uy * lag).toFixed(2)}px, 0)`, offset: o(TS + t) });
+      });
+    }
+    // Landed: exactly on the logo's dot, exactly at its size, nothing deformed.
+    markFrames.push({ transform: `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${sc.toFixed(4)}) translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) rotate(0deg) matrix(1, 0, 0, 1, 0, 0) translate(${(-cx).toFixed(1)}px, ${(-cy).toFixed(1)}px)`, opacity: 0, offset: o(TS + N) });
+    markFrames.push({ ...markFrames[markFrames.length - 1], offset: 1 });
+    anims.push(markBox.animate(markFrames, { duration: D, ...fx }));
+    parts.forEach(([node], i) => {
+      partFrames[i].push({ transform: 'translate3d(0, 0, 0)', offset: o(TS + N) }, { transform: 'translate3d(0, 0, 0)', offset: 1 });
+      anims.push(node.animate(partFrames[i], { duration: D, ...fx }));
+    });
+    // The smile and bar are left behind, thinning away as the mark leaves.
+    if (bar) anims.push(bar.animate([{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 260) }, { opacity: 0 }], { duration: D, ...fx }));
+
+    // The paper becomes its own layer, the same colour, and clears while the mark travels.
+    const paper = document.createElement('div');
+    paper.className = 'loader-paper';
+    el.prepend(paper);
+    el.classList.add('is-flying');
+    // (The easing is on the segment, not on the whole animation, which would squeeze every time in it.)
+    anims.push(paper.animate([
+      { opacity: 1, easing: 'linear' },
+      { opacity: 1, offset: o(TS + FLIGHT * .16), easing: 'cubic-bezier(.4, 0, .2, 1)' },
+      { opacity: 0, offset: o(TS + FLIGHT * .74) },
+      { opacity: 0 },
+    ], { duration: D, ...fx }));
+
+    // The nav's own logo waits, unseen, and takes over as the mark arrives, with a small pop.
+    anims.push(home.animate([{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_LAND + XFADE) }, { opacity: 1 }], { duration: D, ...fx }));
+    // Once it has taken over, the logo gives a small landing bounce.
+    anims.push(home.animate([
+      { scale: '1', easing: 'cubic-bezier(.3, .7, .4, 1)' },
+      { scale: '1.15', offset: .38, easing: 'cubic-bezier(.4, 0, .4, 1)' },
+      { scale: '.97', offset: .72, easing: 'ease-out' },
+      { scale: '1' },
+    ], { duration: 480, delay: T_LAND + XFADE, ...fx }));
+
+    // The page's pieces settle in, each as the paper clears from around it.
+    const phone = matchMedia('(max-width: 719px)').matches;
+    const pieces = [
+      ['.hero-figure', '0 26px', '.95', .26],
+      ['.hero-head', '0 24px', null, .34],
+      ['.hero-body .sub', '0 22px', null, .42],
+      ['.hero-body .hero-badges', '0 20px', null, .5],
+      ['.hero-body .actions', '0 20px', null, .56],
+      // The nav is in and still before the mark lands in it, its logo slot empty.
+      ['header.nav', phone ? '0 20px' : '0 -18px', null, .12],
+      ['.dock-fab', '0 20px', null, .3],
+    ];
+    const entrances = [];
+    let latest = D;
+    pieces.forEach(([sel, from_, scaleFrom, at]) => {
+      const node = $(sel);
+      if (!node || !node.getBoundingClientRect().width) return;
+      const frames = { opacity: [0, 1], translate: [from_, '0 0'] };
+      if (scaleFrom) frames.scale = [scaleFrom, '1'];
+      const delay = Math.round(TS + FLIGHT * at), dur = 850;
+      entrances.push(node.animate(frames, { duration: dur, delay, easing: 'cubic-bezier(.2, .75, .25, 1)', ...fx }));
+      latest = Math.max(latest, delay + dur);
+    });
+
+    // The hero text and the background begin once the paper is half gone.
+    setTimeout(() => el.classList.add('is-revealing'), Math.round(TS + FLIGHT * .4));
+
+    // Every step has a timer behind it, so it ends even if a promise never does.
+    const settle = (list, cb, ms) => {
+      let called = false;
+      const fin = () => { if (!called) { called = true; cb(); } };
+      Promise.all(list.map((a) => a.finished.catch(() => {}))).then(fin);
+      setTimeout(fin, ms);
+    };
+    settle(anims, () => {
+      el.classList.add('is-revealing', 'is-done');   // unlocks the page
+      el.remove();
+      anims.forEach((a) => { try { a.cancel(); } catch {} });
+      eye.style.transformOrigin = markBox.style.transformOrigin = '';
+    }, D + 500);
+    settle(entrances, () => entrances.forEach((a) => { try { a.cancel(); } catch {} }), latest + 450);
+  };
+
+  const lift = () => {
+    if (lifted) return;
+    lifted = true;
+    if (reduced || typeof el.animate !== 'function' || !smilePath) { fade(); return; }
+    try { openFlight(); } catch { fade(); }
+  };
+
+  const minShow = reduced ? 220 : 1050;
   const started = performance.now();
-  const finish = () => setTimeout(dismiss, Math.max(0, minShow - (performance.now() - started)));
+  const finish = () => setTimeout(lift, Math.max(0, minShow - (performance.now() - started)));
 
   /* Lifts once the page is built and its fonts are in, without waiting for
      every image: photos keep arriving behind it, but nothing the visitor
@@ -378,30 +645,29 @@ const onScrollFrame = (() => {
      so it is never cut off partway on a fast first load. */
   const markDone = new Promise((r) => {
     const dot = el.querySelector('.mk-dot');
-    if (!dot || prefersReduced()) { r(); return; }
+    if (!dot || reduced) { r(); return; }
     dot.addEventListener('animationend', () => setTimeout(r, 380), { once: true });
     setTimeout(r, 2600);
   });
   // And for the bar to finish filling and bouncing (it takes longer on phones).
   const barDone = new Promise((r) => {
     const bar = el.querySelector('.m-load-line');
-    if (!bar || prefersReduced()) { r(); return; }
+    if (!bar || reduced) { r(); return; }
     bar.addEventListener('animationend', (e) => { if (e.target === bar) setTimeout(r, 60); });
     setTimeout(r, 2800);
   });
-  /* The full bar then bends into a smile, held for a beat, before the
-     loader lifts. */
+  /* The full bar then bends into a smile and rests a moment, and the reveal
+     begins as the bend settles. */
   const smile = () => new Promise((r) => {
-    const anim = el.querySelector('.m-load-smile animate');
-    if (!anim || typeof anim.beginElement !== 'function' || prefersReduced()) { r(); return; }
+    if (!smilePath || reduced) { r(); return; }
     el.classList.add('is-smiling');
-    anim.beginElement();
-    setTimeout(r, 950);
+    bendSmile();
+    setTimeout(r, 480);
   });
   Promise.all([built, fonts, markDone, barDone]).then(smile).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
-  setTimeout(dismiss, 4000);
+  setTimeout(lift, 4000);
 })();
 
 /* ==========================================================================
@@ -822,16 +1088,17 @@ syncLogoTheme();
       if (complete < queue.length) requestAnimationFrame(tick);
       else finish();
     };
-    /* Starts as the loading screen begins to lift, so it is seen from its
-       first letter, whenever that turns out to be. */
+    /* Starts as the lid uncovers the headline, so it is seen from its first
+       letter, whenever that turns out to be. */
     let started = false;
     const go = () => { if (started) return; started = true; requestAnimationFrame(() => { begin(); requestAnimationFrame(tick); }); };
     const loaderEl = $('#pageLoader');
-    if (!loaderEl || loaderEl.classList.contains('is-done')) go();
+    const showing = () => loaderEl.classList.contains('is-revealing') || loaderEl.classList.contains('is-done');
+    if (!loaderEl || showing()) go();
     else {
-      new MutationObserver((_, mo) => { if (loaderEl.classList.contains('is-done')) { mo.disconnect(); go(); } })
+      new MutationObserver((_, mo) => { if (showing()) { mo.disconnect(); go(); } })
         .observe(loaderEl, { attributes: true, attributeFilter: ['class'] });
-      setTimeout(go, 4200);
+      setTimeout(go, 6400);
     }
   }
 })();

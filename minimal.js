@@ -47,14 +47,15 @@
       setTimeout(() => ground.classList.remove('m-bursting'), 2900);
     };
     const loader = document.getElementById('pageLoader');
-    if (loader && !loader.classList.contains('is-done')) {
-      // Fires the moment the loader starts to lift, so the burst is seen
-      // through its fade.
+    const showing = () => loader.classList.contains('is-revealing') || loader.classList.contains('is-done');
+    if (loader && !showing()) {
+      // Fires as the lid uncovers the page, so the burst is seen as it
+      // comes into view.
       const mo = new MutationObserver(() => {
-        if (loader.classList.contains('is-done')) { mo.disconnect(); requestAnimationFrame(go); }
+        if (showing()) { mo.disconnect(); requestAnimationFrame(go); }
       });
       mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
-      setTimeout(go, 4600);   // the loader itself gives up at 4s
+      setTimeout(go, 6600);   // the loader gives up at 4s, and its lid takes about 2s more
     } else {
       // No loader (the resume page): let the cluster be drawn once, then go.
       requestAnimationFrame(() => requestAnimationFrame(go));

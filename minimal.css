@@ -2227,6 +2227,9 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    the loader starts to lift. */
 html:has(#pageLoader:not(.is-done)),
 html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior: none; }
+/* The scrollbar's room stays reserved while the page is held, so letting it
+   go does not nudge everything sideways. */
+html:has(#pageLoader:not(.is-done)) { scrollbar-gutter: stable; }
 /* And nothing under it takes a touch or a click either (the logo strip
    could still be flicked through it), until it starts to lift. */
 .page-loader:not(.is-done) { pointer-events: auto; touch-action: none; }
@@ -2291,3 +2294,19 @@ html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior
     font-size: clamp(.85rem, .6rem + .5vw, 1rem);
   }
 }
+
+/* ==========================================================================
+   The loader's hand over (see the loader in script.js)
+   For the reveal the paper becomes a layer of its own, in the same colour,
+   so it can clear while the mark, which is not on it, travels to the nav.
+   Clicks reach the page as soon as it starts to show.
+   ========================================================================== */
+.page-loader.is-flying { background: transparent; }
+.loader-paper {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+  will-change: opacity;
+}
+.page-loader.is-revealing { pointer-events: none; }
