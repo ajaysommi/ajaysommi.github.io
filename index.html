@@ -54,6 +54,10 @@
         root.dataset.motion = 'reduced';
       }
       root.classList.add('js');
+      /* Holds the page still behind the loading screen; script.js lets it go,
+         and this does too if that never runs. */
+      root.classList.add('is-loading');
+      setTimeout(function () { root.classList.remove('is-loading'); }, 7000);
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     })();
   </script>

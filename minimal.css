@@ -2218,13 +2218,16 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   .palette.has-query .palette-list { animation: none; }
 }
 
-/* Nothing scrolls while the loading screen is up; it lets go the moment
-   the loader starts to lift. */
-html:has(#pageLoader:not(.is-done)),
-html:has(#pageLoader:not(.is-done)) body { overflow: hidden; overscroll-behavior: none; }
+/* Nothing scrolls while the loading screen is up; it lets go when the loader
+   is done. A class on the root, set in the page's head and cleared by
+   script.js, and not html:has(#pageLoader:not(.is-done)): with :has on the
+   root, every class the loader gained while it lifted made the browser
+   re-check the whole document, a hold-up of its own at the end of the flight. */
+html.is-loading,
+html.is-loading body { overflow: hidden; overscroll-behavior: none; }
 /* The scrollbar's room stays reserved while the page is held, so letting it
    go does not nudge everything sideways. */
-html:has(#pageLoader:not(.is-done)) { scrollbar-gutter: stable; }
+html.is-loading { scrollbar-gutter: stable; }
 /* And nothing under it takes a touch or a click either (the logo strip
    could still be flicked through it), until it starts to lift. */
 .page-loader:not(.is-done) { pointer-events: auto; touch-action: none; }

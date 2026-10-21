@@ -360,13 +360,15 @@ const onScrollFrame = (() => {
    ========================================================================== */
 (function loader() {
   const el = $('#pageLoader');
-  if (!el) return;
+  const unlock = () => document.documentElement.classList.remove('is-loading');
+  if (!el) { unlock(); return; }
 
   const reduced = prefersReduced();
   let lifted = false;
 
   // The plain fade: reduced motion, no Web Animations, or anything going wrong.
   const fade = () => {
+    unlock();
     el.classList.add('is-revealing', 'is-done');
     setTimeout(() => el.remove(), 900);
   };
@@ -425,16 +427,25 @@ const onScrollFrame = (() => {
     };
   };
 
+  /* The flight is built in two steps. Working out every frame of the mark's
+     journey is some tens of milliseconds of script, on a slow phone a good
+     deal more, and done at the moment of take-off it held up everything else
+     on the page for that long. So it is all built ahead, paused, while the
+     loader is still and nothing else is moving, and lifting only presses
+     play. (Paused at their start, the animations hold exactly what the page
+     already shows.) */
   const openFlight = () => {
+    const staged = [];
+    const ani = (node, frames, opts) => { const an = node.animate(frames, opts); an.pause(); staged.push(an); return an; };
     const markBox = el.querySelector('.m-load-mark');
     const eye = el.querySelector('.mk-dot');
     const bar = el.querySelector('.m-load-bar');
     const homeSvg = $('header.nav .brand-mark svg.brand-aj');
     const home = homeSvg && homeSvg.closest('.brand-mark');
-    if (!markBox || !eye || !homeSvg || !home) { fade(); return; }
+    if (!markBox || !eye || !homeSvg || !home) { return fade; }
     const from = dotIn(eye, 8, 8, 48, 42);
     const to = dotIn(homeSvg, 9, 8.5, 45, 42);
-    if (!(from.d > 0) || !(to.d > 0)) { fade(); return; }
+    if (!(from.d > 0) || !(to.d > 0)) { return fade; }
 
     /* On a desktop the mark is drawn into the logo like a window into the Dock,
        gently (see flyPieces); on a phone it flies as one soft body (see flySoft). */
@@ -458,7 +469,7 @@ const onScrollFrame = (() => {
     // The eye blinks once, closing quickly and opening slowly, about its own centre.
     const eyeBox = eye.getBoundingClientRect();
     eye.style.transformOrigin = `${(from.x - eyeBox.left).toFixed(1)}px ${(from.y - eyeBox.top).toFixed(1)}px`;
-    anims.push(eye.animate([
+    anims.push(ani(eye, [
       { transform: 'scale(1, 1)', easing: 'cubic-bezier(.5, 0, .8, .4)' },
       { transform: 'scale(1.06, .07)', offset: .3, easing: 'linear' },
       { transform: 'scale(1.06, .07)', offset: .42, easing: 'cubic-bezier(.2, .6, .3, 1)' },
@@ -553,10 +564,10 @@ const onScrollFrame = (() => {
     // Landed: exactly on the logo's dot, exactly at its size, nothing deformed.
     markFrames.push({ transform: `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${sc.toFixed(4)}) translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) rotate(0deg) matrix(1, 0, 0, 1, 0, 0) translate(${(-cx).toFixed(1)}px, ${(-cy).toFixed(1)}px)`, opacity: 0, offset: o(TS + N) });
     markFrames.push({ ...markFrames[markFrames.length - 1], offset: 1 });
-    anims.push(markBox.animate(markFrames, { duration: D, ...fx }));
+    anims.push(ani(markBox, markFrames, { duration: D, ...fx }));
     parts.forEach(([node], i) => {
       partFrames[i].push({ transform: 'translate3d(0, 0, 0)', offset: o(TS + N) }, { transform: 'translate3d(0, 0, 0)', offset: 1 });
-      anims.push(node.animate(partFrames[i], { duration: D, ...fx }));
+      anims.push(ani(node, partFrames[i], { duration: D, ...fx }));
     });
     };
 
@@ -628,10 +639,10 @@ const onScrollFrame = (() => {
         frames.push({ transform: matrixAt(part, 1), offset: MOVE / span });
         frames.push({ transform: matrixAt(part, 1), offset: 1 });
         // Starts as the flight does (not before: the dot is still blinking), and holds its last place.
-        anims.push(part.node.animate(frames, { duration: span, delay: TS, fill: 'forwards' }));
+        anims.push(ani(part.node, frames, { duration: span, delay: TS, fill: 'forwards' }));
       });
       // The parts are one mark: it is solid until the logo has taken over, then gone in a step.
-      anims.push(markBox.animate([
+      anims.push(ani(markBox, [
         { opacity: 1 }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 0, offset: o(T_SWAP + 8) }, { opacity: 0 },
       ], { duration: D, ...fx }));
     };
@@ -639,15 +650,14 @@ const onScrollFrame = (() => {
     if (phone) flySoft(); else flyPieces();
 
     // The smile and bar are left behind, thinning away as the mark leaves.
-    if (bar) anims.push(bar.animate([{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 190) }, { opacity: 0 }], { duration: D, ...fx }));
+    if (bar) anims.push(ani(bar, [{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 190) }, { opacity: 0 }], { duration: D, ...fx }));
 
     // The paper becomes its own layer, the same colour, and clears while the mark travels.
     const paper = document.createElement('div');
     paper.className = 'loader-paper';
     el.prepend(paper);
-    el.classList.add('is-flying');
     // (The easing is on the segment, not on the whole animation, which would squeeze every time in it.)
-    anims.push(paper.animate([
+    anims.push(ani(paper, [
       { opacity: 1, easing: 'linear' },
       { opacity: 1, offset: o(TS + FLIGHT * .16), easing: 'cubic-bezier(.4, 0, .2, 1)' },
       { opacity: 0, offset: o(TS + FLIGHT * .74) },
@@ -655,7 +665,7 @@ const onScrollFrame = (() => {
     ], { duration: D, ...fx }));
 
     // The nav's own logo waits, unseen, comes up under the mark as it arrives, and takes over from it.
-    anims.push(home.animate([{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 1 }], { duration: D, ...fx }));
+    anims.push(ani(home, [{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 1 }], { duration: D, ...fx }));
 
     // The page's pieces settle in, each as the paper clears from around it.
     const pieces = [
@@ -676,34 +686,49 @@ const onScrollFrame = (() => {
       const frames = { opacity: [0, 1], translate: [from_, '0 0'] };
       if (scaleFrom) frames.scale = [scaleFrom, '1'];
       const delay = Math.round(TS + FLIGHT * at), dur = 640;
-      entrances.push(node.animate(frames, { duration: dur, delay, easing: 'cubic-bezier(.2, .75, .25, 1)', ...fx }));
+      entrances.push(ani(node, frames, { duration: dur, delay, easing: 'cubic-bezier(.2, .75, .25, 1)', ...fx }));
       latest = Math.max(latest, delay + dur);
     });
 
-    // The hero text and the background begin once the paper is half gone.
-    setTimeout(() => el.classList.add('is-revealing'), Math.round(TS + FLIGHT * .4));
 
-    // Every step has a timer behind it, so it ends even if a promise never does.
-    const settle = (list, cb, ms) => {
-      let called = false;
-      const fin = () => { if (!called) { called = true; cb(); } };
-      Promise.all(list.map((a) => a.finished.catch(() => {}))).then(fin);
-      setTimeout(fin, ms);
+    return () => {
+      el.classList.add('is-flying');
+      staged.forEach((an) => an.play());
+      // The hero text and the background begin once the paper is half gone.
+      setTimeout(() => el.classList.add('is-revealing'), Math.round(TS + FLIGHT * .4));
+
+      // Every step has a timer behind it, so it ends even if a promise never does.
+      const settle = (list, cb, ms) => {
+        let called = false;
+        const fin = () => { if (!called) { called = true; cb(); } };
+        Promise.all(list.map((a) => a.finished.catch(() => {}))).then(fin);
+        setTimeout(fin, ms);
+      };
+      settle(anims, () => {
+        unlock();
+        el.classList.add('is-revealing', 'is-done');
+        el.remove();
+        anims.forEach((a) => { try { a.cancel(); } catch {} });
+        eye.style.transformOrigin = markBox.style.transformOrigin = '';
+      }, D + 500);
+      settle(entrances, () => entrances.forEach((a) => { try { a.cancel(); } catch {} }), latest + 450);
     };
-    settle(anims, () => {
-      el.classList.add('is-revealing', 'is-done');   // unlocks the page
-      el.remove();
-      anims.forEach((a) => { try { a.cancel(); } catch {} });
-      eye.style.transformOrigin = markBox.style.transformOrigin = '';
-    }, D + 500);
-    settle(entrances, () => entrances.forEach((a) => { try { a.cancel(); } catch {} }), latest + 450);
   };
 
+  // Built ahead of lifting (see openFlight); lifting then only plays it.
+  let ready = null;
+  const prepare = () => {
+    if (lifted || ready || reduced || typeof el.animate !== 'function' || !smilePath) return;
+    try { ready = openFlight(); } catch { ready = fade; }
+  };
   const lift = () => {
     if (lifted) return;
     lifted = true;
     if (reduced || typeof el.animate !== 'function' || !smilePath) { fade(); return; }
-    try { openFlight(); } catch { fade(); }
+    try {
+      if (!ready) ready = openFlight();
+      ready();
+    } catch { fade(); }
   };
 
   const minShow = reduced ? 220 : 1050;
@@ -746,7 +771,9 @@ const onScrollFrame = (() => {
     bendSmile();
     setTimeout(r, 300);
   });
-  Promise.all([built, fonts, markDone, barDone]).then(smile).then(finish);
+  /* The flight is prepared as soon as the bar and the mark are done, before
+     the smile, while nothing on the page is moving. */
+  Promise.all([built, fonts, markDone, barDone]).then(() => { prepare(); }).then(smile).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
   setTimeout(lift, 4000);
