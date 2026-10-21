@@ -2318,8 +2318,8 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   [data-daypart="night"]     { --tod: 135 145 255; }
 
   /* How much light, by theme: on paper a pale glow needs more to show. */
-  [data-theme="daylight"] { --tod-glow: .32; }
-  [data-theme="midnight"] { --tod-glow: .16; }
+  [data-theme="daylight"] { --tod-glow: .27; }
+  [data-theme="midnight"] { --tod-glow: .135; }
 
   [data-daypart][data-theme="daylight"] :is(.m-disc, .m-quarter, .m-ring, .m-orbit),
   [data-daypart][data-theme="midnight"] :is(.m-disc, .m-quarter, .m-ring, .m-orbit) {
