@@ -1492,8 +1492,8 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 
 /* ---------- Off the Clock ------------------------------------------------
    Its own mark in the sequence of section shapes: a play triangle, since
-   each circle opens a story. The rings are a flat band of green, and go
-   to a hairline grey once seen. */
+   each circle opens a story. The rings are a flat band of the accent, and
+   go to a hairline grey once seen. */
 #offclock .section-head h2::before {
   border-radius: 0;
   background: var(--accent);
@@ -1501,9 +1501,34 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 }
 .hls .hl-ring {
   padding: 5px;
-  background: #2fbf6c;
+  background: var(--accent);
+}
+/* Until a story has been watched, its ring breathes: a soft orange glow
+   just outside it swells and fades on a slow cycle, the three a beat
+   apart, enough to draw the eye without asking for it. Only the glow's
+   opacity moves, which the compositor runs on its own. */
+.hls .hl-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  box-shadow: 0 0 16px 1px var(--accent);
+  opacity: .12;
+  pointer-events: none;
+  animation: hl-breathe 3.4s ease-in-out infinite;
+}
+.hls .hl:nth-child(2) .hl-ring::after { animation-delay: -1.1s; }
+.hls .hl:nth-child(3) .hl-ring::after { animation-delay: -2.2s; }
+@keyframes hl-breathe {
+  0%, 100% { opacity: .12; }
+  50%      { opacity: .6; }
 }
 .hls .hl.is-seen .hl-ring { background: var(--stroke-hi); }
+.hls .hl.is-seen .hl-ring::after { content: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hls .hl-ring::after { animation: none; }
+}
 .hl-name { font-weight: 500; letter-spacing: -.01em; }
 
 /* The story viewer keeps a dark frame, like the photo viewer, so photos
@@ -1964,70 +1989,67 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 }
 
 /* ==========================================================================
-   Skills & Tools, as a file tree
-   A skills/ root and a folder per group, joined by the branch lines a tree
-   listing draws. The open folder lists its
-   skills in columns under it, the way ls does; tapping one spotlights
-   where it was used.
+   Skills & Tools, as folders
+   A plain list of folders, one per group, in the page's own type and
+   hairlines: a flat folder, the group's name, how many skills are in it,
+   and a small arrow. Opening one lists its skills underneath, in columns;
+   tapping a skill spotlights where it was used.
    ========================================================================== */
-.skt { --row: 44px; }
-.skt-root { margin: 0 0 2px; font: 600 16px/1.6 var(--font-sans); color: var(--ink); }
-.skt-tree { margin: 0; padding: 0; list-style: none; }
-/* flow-root keeps the listing's bottom margin inside the folder, so the
-   trunk runs unbroken past it. */
-.skt-dir { position: relative; display: flow-root; padding-left: 30px; }
-/* The trunk runs past every folder but stops at the last one's branch. */
-.skt-dir::before,
-.skt-dir::after {
-  content: "";
-  position: absolute;
-  left: 6px;
-  background: var(--stroke-hi);
-}
-.skt-dir::before { top: 0; bottom: 0; width: 1px; }
-.skt-dir:last-child::before { bottom: auto; height: calc(var(--row) / 2); }
-.skt-dir::after { top: calc(var(--row) / 2); width: 18px; height: 1px; }
+.skt { --row: 58px; }
+.skt-tree { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--stroke); }
+.skt-dir { border-bottom: 1px solid var(--stroke); }
 
 .skt-name {
-  display: flex;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   width: 100%;
   height: var(--row);
-  padding: 0;
+  padding: 0 2px;
   border: 0;
   background: none;
   color: var(--ink-2);
-  font: 500 17px/1 var(--font-sans);
-  letter-spacing: -.005em;
+  font: 500 17px/1.2 var(--font-sans);
+  letter-spacing: -.01em;
   text-align: left;
   cursor: pointer;
   transition: color .2s ease;
 }
+/* The folder: flat, in the grey of the small marks, turning the accent
+   when it is open. */
+.skt-icon { display: block; width: 20px; height: 20px; fill: var(--ink-3); transition: fill .2s ease; }
+.skt-count {
+  color: var(--ink-3);
+  font-size: 14px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
 .skt-caret {
-  flex: none;
   width: 7px;
   height: 9px;
-  background: currentColor;
+  margin-left: 4px;
+  background: var(--ink-3);
   clip-path: polygon(0 0, 100% 50%, 0 100%);
-  transition: transform .25s cubic-bezier(.22, 1, .36, 1);
+  transition: transform .25s cubic-bezier(.22, 1, .36, 1), background-color .2s ease;
 }
 .skt-name:hover,
 .skt-name[aria-expanded="true"] { color: var(--ink); }
-.skt-name[aria-expanded="true"] .skt-caret { transform: rotate(90deg); color: var(--accent); }
+.skt-name:hover .skt-icon { fill: var(--ink-2); }
+.skt-name[aria-expanded="true"] .skt-icon { fill: var(--accent); }
+.skt-name[aria-expanded="true"] .skt-caret { transform: rotate(90deg); background-color: var(--ink); }
 /* No box on focus; the keyboard's place shows in the name itself. */
 .skt-name:focus,
 .skt-name:focus-visible { outline: none; }
-.skt-name:focus-visible { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.skt-name:focus-visible .skt-label { text-decoration: underline; text-underline-offset: 4px; }
 
-/* The open folder's listing, in columns like ls. */
+/* The open folder's skills, in columns, lined up under its name. */
 .skt-ls {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 4px 18px;
-  margin: 0 0 14px 3px;
-  padding: 4px 0 6px 18px;
-  border-left: 1px dashed var(--stroke-hi);
+  margin: -6px 0 0;
+  padding: 0 2px 18px 36px;
   animation: skt-in .28s cubic-bezier(.22, 1, .36, 1) both;
 }
 .skt-ls[hidden] { display: none; }
@@ -2050,9 +2072,9 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 .skt-ls button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 3px; }
 
 @media (max-width: 639px) {
-  .skt { --row: 42px; }
-  .skt-name { font-size: 16px; }
-  .skt-ls { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 2px 14px; }
+  .skt { --row: 54px; }
+  .skt-name { font-size: 16px; gap: 12px; }
+  .skt-ls { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 2px 14px; padding-left: 34px; }
   .skt-ls > * { font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {

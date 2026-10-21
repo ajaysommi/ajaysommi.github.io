@@ -2883,8 +2883,8 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
 })();
 
 /* ==========================================================================
-   Skills & Tools, as a file tree: a folder per group, each opening and
-   closing on its own, its skills listed in columns under it like ls.
+   Skills & Tools, as folders: one per group, each opening and closing on
+   its own, its skills listed in columns under it.
    ========================================================================== */
 (function skillTree() {
   const tree = $('#skillGroups');
