@@ -112,8 +112,7 @@
   const field = ground.querySelector('.m-field');
   // How strong the field is at its strongest, at the top of the page.
   const PEAK = 0.34;
-  // Where it settles once the hero has gone by, so a
-  // quieter top does not make the rest of the page quieter too.
+  // Where it settles once the hero has gone by.
   const REST = 0.08;
 
   /* Reads, then writes: run with the site's other scroll effects in one
