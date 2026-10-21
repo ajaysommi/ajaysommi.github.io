@@ -360,8 +360,23 @@ const onScrollFrame = (() => {
    ========================================================================== */
 (function loader() {
   const el = $('#pageLoader');
-  const unlock = () => document.documentElement.classList.remove('is-loading');
+  const root = document.documentElement;
+  const unlock = () => root.classList.remove('is-loading');
   if (!el) { unlock(); return; }
+
+  /* The page is held still behind the loader by refusing the scrolls, not by
+     switching the root's overflow off and on: letting go of that, right as the
+     logo landed, is a page-wide change, and a likely cause of a hitch across
+     the whole site in Safari. Nothing about the page's style changes when
+     this lets go. It checks the root's class each time, so the head's own release
+     frees it too. */
+  const held = () => root.classList.contains('is-loading');
+  const stop = (e) => { if (held() && e.cancelable) e.preventDefault(); };
+  addEventListener('wheel', stop, { passive: false });
+  addEventListener('touchmove', stop, { passive: false });
+  addEventListener('keydown', (e) => {
+    if (held() && [' ', 'PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown'].includes(e.key)) e.preventDefault();
+  });
 
   const reduced = prefersReduced();
   let lifted = false;
@@ -665,7 +680,9 @@ const onScrollFrame = (() => {
     ], { duration: D, ...fx }));
 
     // The nav's own logo waits, unseen, comes up under the mark as it arrives, and takes over from it.
-    const homeAnim = ani(home, [{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 1 }], { duration: D, ...fx });
+    // (A step, not a fade: the nav is frosted glass, which is redrawn on every frame
+    // anything over it changes, and the mark covers this until it goes.)
+    const homeAnim = ani(home, [{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_LAND + 8) }, { opacity: 1 }], { duration: D, ...fx });
     anims.push(homeAnim);
 
     // The page's pieces settle in, each as the paper clears from around it.
