@@ -1158,6 +1158,7 @@ syncLogoTheme();
       unwarm();
       heading.textContent = finalText;
       heading.removeAttribute('aria-label');
+      document.dispatchEvent(new Event('headline-done'));
     };
     /* Timed in milliseconds, not frames: counted in frames it ran twice as
        fast on a 120Hz screen as on a 60Hz one. Each letter starts 15ms

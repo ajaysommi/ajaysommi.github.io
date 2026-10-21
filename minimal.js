@@ -52,7 +52,17 @@
       // Fires as the lid uncovers the page, so the burst is seen as it
       // comes into view.
       const mo = new MutationObserver(() => {
-        if (showing()) { mo.disconnect(); requestAnimationFrame(go); }
+        if (showing()) {
+          mo.disconnect();
+          /* The spread animates shapes' corners and clip, which the browser has
+             to repaint on the main thread, and it began in the same second as
+             the headline spelling itself out; in Safari the two together made
+             the headline stutter. It now waits for the headline (or 1.4s). */
+          let started = false;
+          const start = () => { if (started) return; started = true; requestAnimationFrame(go); };
+          document.addEventListener('headline-done', start, { once: true });
+          setTimeout(start, 1400);
+        }
       });
       mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
       setTimeout(go, 6600);   // the loader gives up at 4s, and its lid takes about 2s more
