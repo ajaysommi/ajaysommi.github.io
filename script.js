@@ -703,6 +703,11 @@ const onScrollFrame = (() => {
       ['.hero-body .actions'],
       ['#logos .section-head'],
       ['#logoMarquee'],
+      // On a phone the Path's opening is on the first screen too. (Pieces that
+      // start below the screen are left alone, so on a desktop these do nothing.)
+      ['#experience .section-head'],
+      ['#experience .section-lede'],
+      ['#pathCompact'],
       // (Not the nav or the phone's dock: they are frosted glass, which a browser
       // has to blur again on every frame of anything animating them. The paper
       // fading is what shows them, with the logo's place left empty for the mark.)
