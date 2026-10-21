@@ -157,3 +157,48 @@
     run();
   }
 })();
+
+/* ==========================================================================
+   Minimal: the portrait catches the cursor
+   With a mouse over the hero portrait, the cursor is the light: the blue
+   arc turns to face it and the orange disc slides to the far side, the
+   shadow it casts, at the same distance it sits at rest. minimal.css eases
+   both. On leaving, the light goes back to the top left. The arc's turn is
+   kept continuous, so passing round the bottom never spins it the long way.
+   Mouse only, and not with reduced motion.
+   ========================================================================== */
+(function portraitLight() {
+  const fig = document.querySelector('.hero-figure');
+  if (!fig) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const fine = matchMedia('(hover: hover) and (pointer: fine)');
+  const REACH = 14;          // the disc's offset at rest, 10px each way
+  let arc = 0;               // degrees, unwrapped
+
+  const turnTo = (target) => {
+    arc += ((target - arc) % 360 + 540) % 360 - 180;
+    fig.style.setProperty('--fig-arc', arc.toFixed(1) + 'deg');
+  };
+
+  fig.addEventListener('pointermove', (e) => {
+    if (reduce.matches || !fine.matches || e.pointerType !== 'mouse') return;
+    const r = fig.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    const len = Math.hypot(dx, dy);
+    fig.classList.add('is-lit');
+    // Right at the centre there is no direction to take; hold the last one.
+    if (len < r.width * 0.06) return;
+    fig.style.setProperty('--fig-ox', (-dx / len * REACH).toFixed(1) + 'px');
+    fig.style.setProperty('--fig-oy', (-dy / len * REACH).toFixed(1) + 'px');
+    // The arc rests facing up and left, -135deg.
+    turnTo(Math.atan2(dy, dx) * 180 / Math.PI + 135);
+  });
+
+  fig.addEventListener('pointerleave', () => {
+    fig.classList.remove('is-lit');
+    fig.style.removeProperty('--fig-ox');
+    fig.style.removeProperty('--fig-oy');
+    turnTo(0);
+  });
+})();
