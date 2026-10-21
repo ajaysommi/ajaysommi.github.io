@@ -1492,22 +1492,16 @@ html.js .pc-slot .jcard { background: color-mix(in oklab, var(--surface-solid) 9
 
 /* ---------- Off the Clock ------------------------------------------------
    Its own mark in the sequence of section shapes: a play triangle, since
-   each circle opens a story. The rings are a flat band of the accent, and
-   go to a hairline grey once seen. */
+   each circle opens a story. The rings are a flat band of green, and go
+   to a hairline grey once seen. */
 #offclock .section-head h2::before {
   border-radius: 0;
   background: var(--accent);
   clip-path: polygon(10% 0, 100% 50%, 10% 100%);
 }
-/* The ring is the site's two colours run together: mostly orange, turning
-   through to a short run of blue opposite and back. The orange sits low
-   on the right at rest (like the portrait's disc) and turns to lead toward
-   a nearby cursor (script.js eases --spin). Blended in oklch, so the two
-   meet through a clear magenta rather than a muddy grey. */
 .hls .hl-ring {
   padding: 5px;
-  background: conic-gradient(from var(--spin, 135deg), var(--accent) 30%, var(--m-blue) 50%, var(--accent) 70%);
-  background: conic-gradient(from var(--spin, 135deg) in oklch, var(--accent) 30%, var(--m-blue) 50%, var(--accent) 70%);
+  background: #2fbf6c;
 }
 .hls .hl.is-seen .hl-ring { background: var(--stroke-hi); }
 .hl-name { font-weight: 500; letter-spacing: -.01em; }
