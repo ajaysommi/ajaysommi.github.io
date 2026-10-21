@@ -111,10 +111,10 @@
      of what made the field stutter. Opacity alone is the compositor's job. */
   const field = ground.querySelector('.m-field');
   // How strong the field is at its strongest, at the top of the page.
-  const PEAK = 0.46;
-  // Where it settles once the hero has gone by (about a tenth), so a
+  const PEAK = 0.34;
+  // Where it settles once the hero has gone by, so a
   // quieter top does not make the rest of the page quieter too.
-  const REST = 0.1;
+  const REST = 0.08;
 
   /* Reads, then writes: run with the site's other scroll effects in one
      pass per frame (reads first for all of them), so none of them makes
