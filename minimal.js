@@ -111,7 +111,10 @@
      of what made the field stutter. Opacity alone is the compositor's job. */
   const field = ground.querySelector('.m-field');
   // How strong the field is at its strongest, at the top of the page.
-  const PEAK = 0.62;
+  const PEAK = 0.46;
+  // Where it settles once the hero has gone by (about a tenth), so a
+  // quieter top does not make the rest of the page quieter too.
+  const REST = 0.1;
 
   /* Reads, then writes: run with the site's other scroll effects in one
      pass per frame (reads first for all of them), so none of them makes
@@ -135,7 +138,7 @@
     }
     if (fade === lastFade && now === scene) return;
     return () => {
-      if (fade !== lastFade) { if (field) field.style.opacity = (PEAK * (1 - fade * .84)).toFixed(3); lastFade = fade; }
+      if (fade !== lastFade) { if (field) field.style.opacity = (PEAK + (REST - PEAK) * fade).toFixed(3); lastFade = fade; }
       if (now !== scene) { scene = now; ground.dataset.scene = now; }
     };
   };
