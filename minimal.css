@@ -2301,35 +2301,37 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 
 /* ==========================================================================
    Time of day (experiment, with timeofday.js)
-   The abstract shapes behind the page catch the light of the visitor's
-   clock: gold in the early morning and evening, a cool white-blue around
-   midday, a faint moonlit blue at night. timeofday.js writes the light's
-   colour (--tod) and strength (--tod-a) onto the root.
+   The big shapes behind the page keep their own flat fill and line, and
+   only their edges catch a little light from the visitor's part of the day,
+   the same parts the greeting uses: gold in the morning, a cool white-blue
+   in the afternoon, amber in the evening, moonlight blue late at night.
 
-   Only the field's shapes take it: the big disc and quarter, the ring
-   lines, the dot grid and the small grey marks. The ground, the content and
-   the terminal theme stay exactly as they are. Scoped to .m-field so the
-   same tokens used elsewhere are untouched. Without the script --tod-a is
-   0 and every mix below is a no-op.
+   A soft halo just outside each edge and a fainter one just inside it, so
+   the light sits on the rim and fades to nothing either way. The ground,
+   the content and the terminal theme are left as they are; without the
+   script there is no data-daypart and no glow.
    ========================================================================== */
 @layer minimal {
-  :root {
-    --tod: 255 255 255;
-    --tod-a: 0;
-  }
+  [data-daypart="morning"]   { --tod: 255 182 88; }
+  [data-daypart="afternoon"] { --tod: 165 200 255; }
+  [data-daypart="evening"]   { --tod: 255 138 88; }
+  [data-daypart="night"]     { --tod: 135 145 255; }
 
-  [data-theme="daylight"] .m-field {
-    --m-field: color-mix(in oklab, #e7e3da, rgb(var(--tod)) calc(var(--tod-a) * 30%));
-    --m-line: color-mix(in oklab, rgba(20, 20, 20, .1), rgb(var(--tod) / .28) calc(var(--tod-a) * 45%));
-    --m-dot: color-mix(in oklab, rgba(20, 20, 20, .2), rgb(var(--tod) / .45) calc(var(--tod-a) * 40%));
-    --m-mark: color-mix(in oklab, rgba(20, 20, 20, .3), rgb(var(--tod) / .6) calc(var(--tod-a) * 35%));
-  }
+  /* How much light, by theme: on paper a pale glow needs more to show. */
+  [data-theme="daylight"] { --tod-glow: .32; }
+  [data-theme="midnight"] { --tod-glow: .16; }
 
-  /* On ink the same light shows with less. */
-  [data-theme="midnight"] .m-field {
-    --m-field: color-mix(in oklab, #1d1d1c, rgb(var(--tod)) calc(var(--tod-a) * 9%));
-    --m-line: color-mix(in oklab, rgba(237, 235, 230, .12), rgb(var(--tod) / .14) calc(var(--tod-a) * 55%));
-    --m-dot: color-mix(in oklab, rgba(237, 235, 230, .2), rgb(var(--tod) / .24) calc(var(--tod-a) * 45%));
-    --m-mark: color-mix(in oklab, rgba(237, 235, 230, .34), rgb(var(--tod) / .4) calc(var(--tod-a) * 40%));
+  [data-daypart][data-theme="daylight"] :is(.m-disc, .m-quarter, .m-ring, .m-orbit),
+  [data-daypart][data-theme="midnight"] :is(.m-disc, .m-quarter, .m-ring, .m-orbit) {
+    box-shadow:
+      0 0 48px 2px rgb(var(--tod) / var(--tod-glow)),
+      inset 0 0 36px rgb(var(--tod) / calc(var(--tod-glow) * .55));
+  }
+  /* The rings are a single hairline, so a tighter, quieter halo. */
+  [data-daypart][data-theme="daylight"] :is(.m-ring, .m-orbit),
+  [data-daypart][data-theme="midnight"] :is(.m-ring, .m-orbit) {
+    box-shadow:
+      0 0 18px rgb(var(--tod) / calc(var(--tod-glow) * .7)),
+      inset 0 0 18px rgb(var(--tod) / calc(var(--tod-glow) * .5));
   }
 }

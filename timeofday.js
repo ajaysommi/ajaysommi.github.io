@@ -1,38 +1,21 @@
 /* ==========================================================================
    Time of day
    Experiment, with the "Time of day" section at the end of minimal.css. The
-   shapes behind the page catch the light of the visitor's own clock: rose
-   and gold in the early morning, a cool white-blue around midday, gold again
-   toward evening, then a faint moonlit blue.
+   big shapes behind the page pick up a faint glow at their edges in the
+   light of the visitor's part of the day: gold in the morning, a cool
+   white-blue in the afternoon, amber in the evening, moonlight blue late at
+   night.
 
-   Written onto the root as two custom properties, worked out from a few
-   moments through the day and blended between them minute by minute:
+   The parts of the day are the greeting's (openerFor in script.js): before
+   5 is night ("Still up?"), then morning to noon, afternoon to 6, evening
+   after. Keep the two in step.
 
-     --tod      the light's colour, as "r g b"
-     --tod-a    how strong it is, 0 to 1
-
-   Loaded in the head, not deferred, so the first paint is already in the
-   right light. Checked again every few minutes and on coming back to the
-   tab. ?hour=18.5 in the address previews any time of day.
+   Written onto the root as data-daypart. Loaded in the head, not deferred,
+   so the first paint is already right; checked again every few minutes and
+   on coming back to the tab. ?hour=18 in the address previews any hour.
    ========================================================================== */
 (function timeOfDay() {
   var root = document.documentElement;
-
-  //  hour   colour            strength
-  var KEYS = [
-    [0,    [120, 140, 255],  .45],   // night, moonlight
-    [5,    [120, 140, 255],  .40],
-    [6,    [255, 150, 130],  .70],   // dawn, rose
-    [7.5,  [255, 190, 110],  .90],   // early morning gold
-    [10,   [255, 225, 180],  .50],   // morning, softening
-    [12.5, [200, 225, 255],  .60],   // midday, cool
-    [15.5, [210, 225, 255],  .50],   // afternoon
-    [17.5, [255, 180,  90],  .90],   // golden hour
-    [19,   [255, 135,  95],  .85],   // sunset
-    [20.5, [170, 140, 255],  .60],   // dusk
-    [22,   [120, 140, 255],  .45],   // night
-    [24,   [120, 140, 255],  .45],
-  ];
 
   var forced = null;
   try {
@@ -40,22 +23,16 @@
     if (q !== null && q !== '' && !isNaN(q)) forced = ((+q % 24) + 24) % 24;
   } catch (e) {}
 
-  var lerp = function (a, b, t) { return a + (b - a) * t; };
+  function partOf(hour) {
+    if (hour < 5)  return 'night';
+    if (hour < 12) return 'morning';
+    if (hour < 18) return 'afternoon';
+    return 'evening';
+  }
 
   function apply() {
-    var now = new Date();
-    var h = forced !== null ? forced : now.getHours() + now.getMinutes() / 60;
-    var i = 0;
-    while (i < KEYS.length - 2 && KEYS[i + 1][0] <= h) i++;
-    var a = KEYS[i], b = KEYS[i + 1];
-    // Eased, so each colour lingers around its moment and the change
-    // between them happens in the hours in between.
-    var t = (h - a[0]) / (b[0] - a[0]);
-    t = t * t * (3 - 2 * t);
-    var rgb = [0, 1, 2].map(function (k) { return Math.round(lerp(a[1][k], b[1][k], t)); });
-    var s = root.style;
-    s.setProperty('--tod', rgb.join(' '));
-    s.setProperty('--tod-a', lerp(a[2], b[2], t).toFixed(3));
+    var part = partOf(forced !== null ? forced : new Date().getHours());
+    if (root.dataset.daypart !== part) root.dataset.daypart = part;
   }
 
   apply();
