@@ -737,8 +737,10 @@ const onScrollFrame = (() => {
         const k = least > most ? (along - most) / (least - most) : 0;   // 0 for the piece the mark leaves furthest behind, 1 for the one nearest the logo
         if (tiles) {
           const delay = Math.round(TS + 60 + MOVE * .5 * k);
-          tiles.style.setProperty('--ta-x', `${(-qx * DRIFT).toFixed(1)}px`);
-          tiles.style.setProperty('--ta-y', `${(-qy * DRIFT).toFixed(1)}px`);
+          // Further than the others: it is the largest thing in the hero, and moved
+          // by the same few pixels it barely seemed to move at all.
+          tiles.style.setProperty('--ta-x', `${(-qx * DRIFT * 1.8).toFixed(1)}px`);
+          tiles.style.setProperty('--ta-y', `${(-qy * DRIFT * 1.8).toFixed(1)}px`);
           tiles.style.setProperty('--ta-delay', `${delay}ms`);
           tileCard = tiles;
           latest = Math.max(latest, delay + 720);
