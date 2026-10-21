@@ -1083,6 +1083,9 @@ syncLogoTheme();
 
   const dots = $$('button', list);
   const navLinks = $$('.nav-links a[href^="#"]');
+  // Sections with no menu item of their own light up the one they belong
+  // to: Off the Clock is more of the work, so Projects stays lit through it.
+  const NAV_ALIAS = { offclock: 'projects' };
 
   /* Where each section starts and how far the page scrolls, measured once
      and again only when the layout changes size, rather than read back on
@@ -1112,7 +1115,8 @@ syncLogoTheme();
       if (now !== active) {
         active = now;
         dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
-        const activeId = sections[active]?.[0];
+        const id = sections[active]?.[0];
+        const activeId = NAV_ALIAS[id] || id;
         navLinks.forEach((a) => a.classList.toggle('is-current', a.getAttribute('href') === `#${activeId}`));
       }
     };
