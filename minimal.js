@@ -4,8 +4,7 @@
    page with three things, all written onto the ground (.bg):
 
      --mx, --my   where the cursor is, -1 to 1 across the window, eased
-                  slowly so the field drifts after the pointer. Also written
-                  onto the hero, whose shape tiles drift with it.
+                  slowly so the field drifts after the pointer.
      fade         the field's opacity, full at the top and down to about a
                   sixth once the hero has scrolled away, so the field steps
                   back behind the content.
@@ -25,7 +24,6 @@
 (function minimalField() {
   const ground = document.querySelector('.bg');
   if (!ground) return;
-  const hero = document.getElementById('heroCard');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(hover: hover) and (pointer: fine)');
 
@@ -68,8 +66,7 @@
 
   /* Two decimals is a twentieth of a pixel of drift, finer than anything
      can be seen; at three, the slow tail of every glide wrote a new value
-     on every frame for a second or more, each one restyling the ground and
-     the hero. */
+     on every frame for a second or more, each one restyling the ground. */
   const frame = () => {
     raf = 0;
     x += (tx - x) * 0.05;
@@ -77,8 +74,8 @@
     if (Math.abs(tx - x) < 0.005) x = tx;
     if (Math.abs(ty - y) < 0.005) y = ty;
     const mx = x.toFixed(2), my = y.toFixed(2);
-    if (mx !== lastX) { ground.style.setProperty('--mx', mx); hero?.style.setProperty('--mx', mx); lastX = mx; }
-    if (my !== lastY) { ground.style.setProperty('--my', my); hero?.style.setProperty('--my', my); lastY = my; }
+    if (mx !== lastX) { ground.style.setProperty('--mx', mx); lastX = mx; }
+    if (my !== lastY) { ground.style.setProperty('--my', my); lastY = my; }
     if (x !== tx || y !== ty) raf = requestAnimationFrame(frame);
   };
   const wake = () => { if (!raf) raf = requestAnimationFrame(frame); };

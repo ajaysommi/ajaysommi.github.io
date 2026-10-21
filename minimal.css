@@ -769,12 +769,10 @@
      accent, the blue, ink or a neutral. Nothing overlaps, so there are no
      blended colours where shapes cross, and it reads as one deliberate
      object rather than shapes left lying about. It is one element, every
-     tile a hard edged gradient in its own cell, and it drifts a few pixels
-     with the cursor, like the field behind it. */
+     tile a hard edged gradient in its own cell. It stays put; only the field
+     behind it follows the cursor. */
   .hero-card {
     --t: clamp(42px, 5.4vw, 70px);
-    --mx: 0;
-    --my: 0;
   }
   .hero-card::before {
     right: clamp(8px, 2.5vw, 34px);
@@ -802,33 +800,12 @@
       0 0, var(--t) 0, calc(var(--t) * 2) 0,
       0 var(--t), var(--t) var(--t), calc(var(--t) * 2) var(--t),
       0 calc(var(--t) * 2), var(--t) calc(var(--t) * 2), calc(var(--t) * 2) calc(var(--t) * 2);
-    translate: calc(var(--mx) * 4px) calc(var(--my) * 4px);
   }
   .hero-card::after { content: none; }
-  /* The cursor values are written on the hero for its ::before, the shape
-     tiles and the hero's three blocks, and nothing deeper uses them.
-     Custom properties inherit, so without this every element in the hero
-     restyled on every frame the cursor moved; set here, the change stops at
-     the blocks' children. */
-  .hero-card > * > *,
+  /* The cursor values are written on the field for its shapes, and nothing
+     inside a shape uses them. Custom properties inherit, so without this
+     every element in a shape restyled on every frame the cursor moved. */
   .bg > :not(.m-field) { --mx: 0; --my: 0; }
-
-  /* The portrait, the headline and the text drift with the cursor by the
-     same few pixels as the tiles, following the cursor rather than
-     leaning away from it. They are moved by transform because the
-     page-load entrance animates their translate, and the two would fight.
-     The values stop at their children, as above. */
-  .hero-figure,
-  .hero-head,
-  .hero-body {
-    transform: translate(calc(var(--mx) * 4px), calc(var(--my) * 4px));
-  }
-  /* Not on a phone-width screen. */
-  @media (max-width: 719px) {
-    .hero-figure,
-    .hero-head,
-    .hero-body { transform: none; }
-  }
 
   .hero-figure::before {
     inset: auto;
