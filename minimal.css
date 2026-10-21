@@ -239,17 +239,6 @@
     --plus-x: 88vw; --plus-y: 22vh; --plus-r: 0deg;
     --tri-x: 5vw; --tri-y: 92vh; --tri-r: 0deg; --tri-clip: polygon(50% 0, 100% 100%, 50% 100%, 0 100%);
   }
-  .bg[data-scene="logos"] {
-    --ring-x: 98vw; --ring-y: 34vh; --ring-k: 0.9;
-    --q-x: -2vw; --q-y: 22vh; --q-r: 90deg; --q-br: 100% 0 100% 0;
-    --disc-x: 104vw; --disc-y: 94vh; --disc-r: 12deg; --disc-br: 28%;
-    --orbit-x: 24vw; --orbit-y: 100vh;
-    --dots-x: 90vw; --dots-y: 78vh;
-    --dot-x: 4vw; --dot-y: 70vh; --dot-br: 0; --dot-r: 45deg;
-    --sq-x: 96vw; --sq-y: 20vh; --sq-br: 50%; --sq-r: 0deg;
-    --plus-x: 8vw; --plus-y: 16vh; --plus-r: 45deg;
-    --tri-x: 94vw; --tri-y: 60vh; --tri-r: 0deg; --tri-clip: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
   .bg[data-scene="path"] {
     --ring-x: -8vw; --ring-y: 52vh; --ring-k: 1.05;
     --q-x: 100vw; --q-y: -2vh; --q-r: 0deg; --q-br: 0 0 0 100%;

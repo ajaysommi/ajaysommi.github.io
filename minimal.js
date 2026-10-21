@@ -94,8 +94,9 @@
 
   /* ---- scroll: fade and scene ------------------------------------------ */
   const scenes = [
+    // The logo strip belongs to the opening: the hero's arrangement holds
+    // through it, and the field first moves on reaching The Path.
     ['hero', '.hero'],
-    ['logos', '#logos'],
     ['path', '#experience'],
     ['education', '#education'],
     ['projects', '#projects'],
