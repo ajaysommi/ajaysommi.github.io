@@ -823,6 +823,20 @@
     background: var(--accent);
     filter: none;
   }
+  /* And a thinner blue one the other way, so the photo is held between the
+     site's two colours: orange low on the right, blue high on the left. */
+  .hero-figure::after {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: -6px;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--m-blue);
+    pointer-events: none;
+  }
   /* The face sits a touch high and left in the circle. The picture element
      cuts the circle, and the photo inside it moves 2px right and 4px down,
      drawn just big enough (8%) that the move never shows an edge. */
@@ -1421,6 +1435,7 @@
     .hero-head h1 { font-size: clamp(25px, 7vw, 32px); }
 
     .hero-figure::before { left: 6px; top: 6px; }
+    .hero-figure::after { left: -4px; top: -4px; }
 
     .card { padding: 18px; }
     .btn { min-height: 44px; }
