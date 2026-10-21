@@ -716,7 +716,17 @@ const onScrollFrame = (() => {
     let latest = D, tileCard = null;
     {
       const Lq = Math.hypot(dx, dy) || 1, qx = dx / Lq, qy = dy / Lq;
-      const vh = innerHeight, DRIFT = phone ? 16 : 22;
+      /* What counts as on screen reaches past innerHeight: Safari on an
+         iPhone shows the page through its toolbar, down past even the large
+         viewport, and a line sitting under the toolbar was left out of the
+         reveal, already standing there while everything above it drifted
+         in. So the large viewport counts, and on a phone the whole height
+         of the screen. */
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:100vh;height:100lvh;visibility:hidden;pointer-events:none';
+      document.body.appendChild(probe);
+      const vh = Math.max(innerHeight, probe.getBoundingClientRect().height, phone ? screen.height || 0 : 0), DRIFT = phone ? 16 : 22;
+      probe.remove();
       const found = pieces.map(([sel, scaleFrom]) => {
         const node = $(sel);
         if (!node) return null;
