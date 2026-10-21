@@ -66,14 +66,13 @@ const onScrollFrame = (() => {
    the morning is genuinely a different picture from half seven, because the
    sun is genuinely somewhere else.
 
-   The greeting runs before the scramble effect reads the heading, so what it
-   writes is what gets scrambled into place. The tail is taken from the markup
-   rather than repeated here, so the sentence stays in one place and a visitor
-   without JavaScript still gets a whole one.
+   The greeting rewrites the opening word of the heading. The tail is taken
+   from the markup rather than repeated here, so the sentence stays in one
+   place and a visitor without JavaScript still gets a whole one.
    ========================================================================== */
 (function sky() {
   const card = $('#heroCard');
-  const el = $('[data-scramble]');
+  const el = $('[data-greeting]');
 
   /* ---- colour helpers -------------------------------------------------- */
 
@@ -1082,122 +1081,6 @@ syncLogoTheme();
   addEventListener('scroll', onScroll, { passive: true });
 })();
 
-
-/* ==========================================================================
-   Hero: scramble headline
-   ========================================================================== */
-(function heroText() {
-  const heading = $('[data-scramble]');
-  if (heading && !prefersReduced()) {
-    const finalText = heading.textContent;
-    const glyphs = '!<>_\\/[]{}~=+*^?#01';
-    let frame = 0;
-
-    /* The finished sentence stays in the heading the whole time, invisible,
-       and holds its space; the scramble is drawn over it. Letters not yet
-       reached are spaces, which collapse, so written straight into the
-       heading the scramble started as one short line and grew to three on a
-       phone, and the whole hero card grew with it. Screen readers get the
-       finished sentence throughout, never the noise. */
-    /* The overlay is laid out word by word, each word a box locked to the
-       width of the finished word. The scramble glyphs are wider than most
-       letters, so drawn as plain text the overlay wrapped differently from
-       the sentence under it: near the end, with only a few glyphs left, a
-       word would tip onto a third line for a few frames and snap back,
-       which read as the headline jumping. With every word the width it will
-       end up, the lines break exactly where the finished ones do. */
-    let words = [];
-    const begin = () => {
-      const hold = document.createElement('span');
-      hold.className = 'scr-hold';
-      const live = document.createElement('span');
-      live.className = 'scr-live';
-      const parts = finalText.split(/(\s+)/);
-      let at = 0;
-      const holdWords = [];
-      words = [];
-      for (const part of parts) {
-        if (!part) continue;
-        if (/^\s+$/.test(part)) {
-          hold.append(part);
-          live.append(part);
-        } else {
-          const h = document.createElement('span');
-          h.textContent = part;
-          hold.append(h);
-          const w = document.createElement('span');
-          w.className = 'scr-w';
-          live.append(w);
-          holdWords.push(h);
-          words.push({ el: w, from: at, to: at + part.length, text: '' });
-        }
-        at += part.length;
-      }
-      heading.setAttribute('aria-label', finalText);
-      hold.setAttribute('aria-hidden', 'true');
-      live.setAttribute('aria-hidden', 'true');
-      heading.style.removeProperty('visibility');
-      heading.replaceChildren(hold, live);
-      // Every width is read, then every width is written: reading one and writing
-      // one in turn makes the browser lay the whole hero out again for each word.
-      const widths = holdWords.map((h) => h.getBoundingClientRect().width);
-      widths.forEach((w, i) => { words[i].el.style.width = `${w}px`; });
-    };
-    const finish = () => {
-      heading.textContent = finalText;
-      heading.removeAttribute('aria-label');
-    };
-    /* Timed in milliseconds, not frames: counted in frames it ran twice as
-       fast on a 120Hz screen as on a 60Hz one. Each letter starts 15ms
-       after the one before and settles after 150 to 270ms of noise, so the
-       whole line resolves in about a second. */
-    const queue = Array.from(finalText).map((ch, i) => ({
-      ch,
-      start: i * 15,
-      end: i * 15 + 150 + Math.floor(Math.random() * 120),
-    }));
-
-    /* Redrawn about thirty times a second, not sixty: the noise changes too fast
-       to tell the difference, and every redraw is text the browser has to lay
-       out and paint again, which is most of what this costs. */
-    let t0 = 0, drawn = -99;
-    const tick = (now) => {
-      if (!t0) t0 = now;
-      frame = now - t0;
-      if (frame - drawn < 30 && frame < queue[queue.length - 1].end) { requestAnimationFrame(tick); return; }
-      drawn = frame;
-      let complete = 0;
-      const out = queue.map((item) => {
-        if (frame >= item.end) { complete++; return item.ch; }
-        if (frame >= item.start && item.ch.trim()) return glyphs[Math.floor(Math.random() * glyphs.length)];
-        if (frame >= item.start) return item.ch;
-        return '\u00a0';
-      });
-      for (const w of words) {
-        const text = out.slice(w.from, w.to).join('');
-        if (text !== w.text) { w.el.textContent = text; w.text = text; }
-      }
-      if (complete < queue.length) requestAnimationFrame(tick);
-      else finish();
-    };
-    /* Starts once the loader has gone and everything else has settled. Begun
-       halfway through the mark's flight, while the hero pieces, the paper and
-       the nav hand-over were all still animating, it stuttered in Safari. */
-    let started = false;
-    const go = () => { if (started) return; started = true; requestAnimationFrame(() => { begin(); requestAnimationFrame(tick); }); };
-    const loaderEl = $('#pageLoader');
-    // The page is on show while the mark flies in, so the finished sentence
-    // waits out of sight until the scramble begins; the lid used to hide it.
-    if (loaderEl && !loaderEl.classList.contains('is-done')) heading.style.visibility = 'hidden';
-    const showing = () => loaderEl.classList.contains('is-done');
-    if (!loaderEl || showing()) go();
-    else {
-      new MutationObserver((_, mo) => { if (showing()) { mo.disconnect(); go(); } })
-        .observe(loaderEl, { attributes: true, attributeFilter: ['class'] });
-      setTimeout(go, 6400);
-    }
-  }
-})();
 
 /* ==========================================================================
    Pointer effects: magnetic buttons

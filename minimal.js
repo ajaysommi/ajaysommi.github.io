@@ -47,7 +47,7 @@
       setTimeout(() => ground.classList.remove('m-bursting'), 2900);
     };
     const loader = document.getElementById('pageLoader');
-    const showing = () => loader.classList.contains('is-done');
+    const showing = () => loader.classList.contains('is-revealing') || loader.classList.contains('is-done');
     if (loader && !showing()) {
       // Fires as the lid uncovers the page, so the burst is seen as it
       // comes into view.

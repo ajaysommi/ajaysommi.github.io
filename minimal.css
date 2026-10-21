@@ -2310,11 +2310,3 @@ html:has(#pageLoader:not(.is-done)) { scrollbar-gutter: stable; }
   will-change: opacity;
 }
 .page-loader.is-revealing { pointer-events: none; }
-
-/* The headline's scramble redraws its words a few dozen times in its first
-   second. Each word is a box of fixed width, so what it holds cannot change
-   the layout around it; saying so lets the browser leave the rest of the hero
-   alone. Only the overlay is contained: containment on the word boxes moves
-   an inline-block's baseline to its bottom edge, which spaced the overlay's
-   lines wider than the finished heading and made it jump up when it landed. */
-.scr-live { contain: layout style; }

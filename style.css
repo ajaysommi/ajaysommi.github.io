@@ -1238,14 +1238,6 @@
 
   .hero-head h1 { margin-bottom: .35rem; }
 
-  /* While the headline unscrambles, the finished sentence holds the space
-     invisibly and the scramble is drawn over it, so the card never resizes
-     as the letters fill in. script.js swaps both back for plain text after. */
-  [data-scramble] { position: relative; }
-  .scr-hold { visibility: hidden; }
-  .scr-live { position: absolute; top: 0; left: 0; width: 100%; }
-  .scr-w { display: inline-block; white-space: pre; vertical-align: baseline; }
-
   .hero-badges {
     display: flex;
     flex-wrap: wrap;
