@@ -708,7 +708,7 @@ const onScrollFrame = (() => {
       // fading is what shows them, with the logo's place left empty for the mark.)
     ];
     const entrances = [];
-    let latest = D;
+    let latest = D, tileCard = null;
     {
       const Lq = Math.hypot(dx, dy) || 1, qx = dx / Lq, qy = dy / Lq;
       const vh = innerHeight, DRIFT = phone ? 16 : 22;
@@ -721,9 +721,29 @@ const onScrollFrame = (() => {
         const along = (r.left + r.width / 2 - to.x) * qx + (r.top + r.height / 2 - to.y) * qy;
         return { node, scaleFrom, along };
       }).filter(Boolean);
+      // The hero's tile cluster is drawn by the card's ::before, which a script
+      // animation cannot be relied on to reach in every browser, so it joins the
+      // flow by a CSS animation instead, given its place in the order here.
+      const card = $('#heroCard');
+      const tcs = card && getComputedStyle(card, '::before');
+      if (tcs && tcs.content !== 'none' && parseFloat(tcs.width) > 0) {
+        const cr = card.getBoundingClientRect();
+        const tw = parseFloat(tcs.width), tright = parseFloat(tcs.right) || 0;
+        const tcx = cr.right - tright - tw / 2, tcy = cr.top + cr.height / 2;
+        found.push({ tiles: card, along: (tcx - to.x) * qx + (tcy - to.y) * qy });
+      }
       const most = Math.min(...found.map((f) => f.along)), least = Math.max(...found.map((f) => f.along));
-      found.forEach(({ node, scaleFrom, along }) => {
+      found.forEach(({ node, scaleFrom, along, tiles }) => {
         const k = least > most ? (along - most) / (least - most) : 0;   // 0 for the piece the mark leaves furthest behind, 1 for the one nearest the logo
+        if (tiles) {
+          const delay = Math.round(TS + 60 + MOVE * .5 * k);
+          tiles.style.setProperty('--ta-x', `${(-qx * DRIFT).toFixed(1)}px`);
+          tiles.style.setProperty('--ta-y', `${(-qy * DRIFT).toFixed(1)}px`);
+          tiles.style.setProperty('--ta-delay', `${delay}ms`);
+          tileCard = tiles;
+          latest = Math.max(latest, delay + 720);
+          return;
+        }
         const frames = { opacity: [0, 1], translate: [`${(-qx * DRIFT).toFixed(1)}px ${(-qy * DRIFT).toFixed(1)}px`, '0 0'] };
         if (scaleFrom) frames.scale = [scaleFrom, '1'];
         const delay = Math.round(TS + 60 + MOVE * .5 * k), dur = 720;
@@ -736,6 +756,7 @@ const onScrollFrame = (() => {
     return () => {
       el.classList.add('is-flying');
       staged.forEach((an) => an.play());
+      if (tileCard) tileCard.classList.add('is-arriving');
       // The hero text and the background begin once the paper is half gone.
       setTimeout(() => el.classList.add('is-revealing'), Math.round(TS + FLIGHT * .4));
 
@@ -767,7 +788,10 @@ const onScrollFrame = (() => {
         setTimeout(() => el.remove(), 320);
         setTimeout(() => { try { homeAnim.cancel(); } catch {} }, 700);
       }, D + 500);
-      settle(entrances, () => entrances.forEach((a) => { try { a.cancel(); } catch {} }), latest + 450);
+      settle(entrances, () => {
+        entrances.forEach((a) => { try { a.cancel(); } catch {} });
+        if (tileCard) tileCard.classList.remove('is-arriving');
+      }, latest + 450);
     };
   };
 

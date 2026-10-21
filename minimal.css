@@ -2301,3 +2301,13 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   will-change: opacity;
 }
 .page-loader.is-revealing { pointer-events: none; }
+
+/* The hero's tile cluster comes up with the page's other pieces as the logo
+   flies in (script.js sets where from and when; see the loader). */
+.hero-card.is-arriving::before {
+  animation: tileArrive 720ms cubic-bezier(.2, .8, .25, 1.04) var(--ta-delay, 0ms) both;
+}
+@keyframes tileArrive {
+  from { opacity: 0; translate: var(--ta-x, 0) var(--ta-y, 0); scale: .96; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
