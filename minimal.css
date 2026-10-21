@@ -2295,15 +2295,8 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
 .page-loader.is-flying { background: transparent; }
 .loader-paper {
   position: absolute;
-  inset: 0;
   z-index: -1;
-  background: var(--bg);
   transform-origin: 0 0;
-  /* A hairline and a soft shadow, so the sheet's edge can be seen as it is
-     drawn away, in the dark theme as much as the light one. */
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--ink) 12%, transparent),
-    0 18px 60px color-mix(in oklab, var(--ink) 22%, transparent);
   will-change: transform, opacity;
 }
 .page-loader.is-revealing { pointer-events: none; }
