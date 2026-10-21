@@ -437,14 +437,20 @@ const onScrollFrame = (() => {
     const to = dotIn(homeSvg, 9, 8.5, 45, 42);
     if (!(from.d > 0) || !(to.d > 0)) { fade(); return; }
 
-    /* On a desktop the mark is drawn into the logo like a window into the Dock
-       (see flyGenie); on a phone it flies as one soft body (see flySoft). */
+    /* On a desktop the mark is drawn into the logo like a window into the Dock,
+       gently (see flyPieces); on a phone it flies as one soft body (see flySoft). */
     const phone = matchMedia('(max-width: 719px)').matches;
-    const BLINK = 560, HOLD = 140, FLIGHT = 1000;   // (FLIGHT times the page's pieces settling in)
+    const BLINK = 400, HOLD = 60, FLIGHT = 720;     // (FLIGHT times the page's pieces settling in)
     const TS = BLINK + HOLD;                 // when the flight begins
-    const MOVE = 840, SETTLE = phone ? 300 : 100, XFADE = 140;
+    const MOVE = 620, SETTLE = phone ? 240 : 100, XFADE = 100;
     const T_LAND = TS + MOVE + SETTLE - 100; // the mark has arrived, and any wobble has all but died
-    const D = T_LAND + XFADE;                // and everything
+    /* The handover is not a crossfade. Two half transparent copies of the same
+       logo never add up to one solid one, so a crossfade dips: the logo
+       lightens for a moment, which reads as a flash. Instead the nav's logo
+       comes up underneath the mark while the mark stays fully opaque, and
+       only once it is solid does the mark go, in one step. */
+    const T_SWAP = T_LAND + XFADE;
+    const D = T_SWAP + 20;                   // and everything
     const o = (ms) => ms / D;
     const EASE_FLIGHT = 'cubic-bezier(.55, 0, .15, 1)';   // from rest, then a long glide
     const anims = [];
@@ -530,7 +536,7 @@ const onScrollFrame = (() => {
       const m = 1 / Math.sqrt(l), k = l - m;
       const a = m + k * ux * ux, b = k * ux * uy, d = m + k * uy * uy;
       const sNow = 1 + (sc - 1) * e;
-      const fade = clamp(1 - (t - (MOVE + SETTLE - 100)) / XFADE, 0, 1);
+      const fade = t < MOVE + SETTLE - 100 + XFADE ? 1 : 0;     // solid until the logo has taken over
       return {
         transform: `translate3d(${(dx * e).toFixed(2)}px, ${(dy * e).toFixed(2)}px, 0) scale(${sNow.toFixed(4)}) translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) rotate(${th.toFixed(3)}deg) matrix(${a.toFixed(4)}, ${b.toFixed(4)}, ${b.toFixed(4)}, ${d.toFixed(4)}, 0, 0) translate(${(-cx).toFixed(1)}px, ${(-cy).toFixed(1)}px)`,
         opacity: fade,
@@ -555,51 +561,26 @@ const onScrollFrame = (() => {
     });
     };
 
-    /* The genie. The mark is drawn into the logo the way a window is drawn
-       into the Dock when it is minimised: every point of it is moved by one
-       smooth map, so the end nearest the logo is pulled in first and the
-       rest follows, stretched out along the way, thinning toward the end it
-       is funnelled into. Concretely, each point has its own progress along
-       the flight, a little behind the progress of the points nearer the logo
-       (the stagger), and its own narrowing across it, most at the end nearest
-       the logo; at the end every point has the same progress and the mark is
-       whole again, at the logo's size and place. All of it is kept slight: the
+    /* The warp. On a desktop the mark is drawn into the logo the way a window
+       is drawn into the Dock, only gently. One smooth map moves every point of
+       it: the end nearest the logo is pulled in a little ahead of the rest, so
+       the body stretches slightly along the way, and it narrows toward the end
+       it is being drawn into, a little; at the end the map is just the mark at
+       the logo's size and place, so it lands exactly. It is kept slight: the
        mark shrinks and bends a little, it does not ripple.
-       It is computed on the shapes themselves (their outlines, cut into small
-       steps), not on a picture of them, so it stays sharp and has no seams,
-       and drawn from the clock, a frame at a time. */
-    const flyGenie = () => {
+       The map is not drawn point by point, which would have to be done by
+       script on every frame. Each of the four parts of the mark (the A, the
+       hook, the stem and the dot) is given the map's own local stretch,
+       lean and taper at its centre as a transform, frame by frame, worked out
+       now: a transform animation, which the browser runs outside the main
+       thread, so it stays smooth however busy the page is. */
+    const flyPieces = () => {
       const L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
       const W = mr.width, H = mr.height;
       const k = Math.min(W / 48, H / 42), offX = (W - 48 * k) / 2, offY = (H - 42 * k) / 2;
       const local = (x, y) => [offX + (x - 8) * k, offY + (y - 8) * k];   // viewBox 8 8 48 42, centred
-      // An outline cut into steps of about a pixel and a half.
-      const cut = (pts) => {
-        const out = [];
-        pts.forEach((a, i) => {
-          const b = pts[(i + 1) % pts.length];
-          const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / .6));
-          for (let j = 0; j < n; j++) out.push([a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n]);
-        });
-        return out;
-      };
-      const arc = (cx0, cy0, r, from, to, n) => Array.from({ length: n + 1 }, (_, i) => {
-        const t = from + (to - from) * i / n;
-        return [cx0 + r * Math.cos(t), cy0 + r * Math.sin(t)];
-      });
-      const shapes = [
-        ['var(--ink)', cut([[10.29, 44.57], [30.86, 9.90], [43.20, 32.70], [43.20, 36.19], [36.19, 36.19], [30.86, 26.67], [20.19, 44.57]])],
-        ['#ff6b35', cut([...arc(39.41, 36.19, 13.16, Math.PI, 0, 60), [43.83, 36.19], ...arc(39.41, 36.19, 4.42, 0, Math.PI, 24)])],
-        ['#3d68ff', cut([[43.83, 24.60], [52.57, 24.60], [52.57, 36.39], [43.83, 36.39]])],
-        ['#3d68ff', arc(48.20, 17.40, 5.60, 0, 2 * Math.PI, 48).slice(0, 48)],
-      ].map(([fill, pts]) => [fill, pts.map(([x, y]) => local(x, y))]);
-      // Each point's place along the flight's axis and across it, from the dot.
       const corners = [[0, 0], [W, 0], [W, H], [0, H]].map(([x, y]) => (x - ox) * ux + (y - oy) * uy);
       const aMin = Math.min(...corners), aMax = Math.max(...corners);
-      const geo = shapes.map(([fill, pts]) => [fill, pts.map(([x, y]) => {
-        const a = (x - ox) * ux + (y - oy) * uy, g = (x - ox) * nx + (y - oy) * ny;
-        return [a, g, clamp((aMax - a) / (aMax - aMin), 0, 1)];   // the last is 0 at the end nearest the logo
-      })]);
       // The flight is some 650px and the mark about 100, so a small difference in
       // progress between its two ends is a large stretch: the stagger is small,
       // and the narrowing toward the logo is set directly, not left to it.
@@ -607,56 +588,59 @@ const onScrollFrame = (() => {
       const easeMove = bezier(.55, 0, .15, 1);
       const table = Float32Array.from({ length: 1025 }, (_, i) => easeMove(i / 1024));
       const ease = (x) => { const f = clamp(x, 0, 1) * 1024, i = Math.floor(f); return i >= 1024 ? 1 : table[i] + (table[i + 1] - table[i]) * (f - i); };
-      const ov = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      ov.setAttribute('aria-hidden', 'true');
-      ov.style.cssText = `position:absolute;left:0;top:0;width:${W}px;height:${H}px;overflow:visible;pointer-events:none;opacity:0`;
-      const paths = geo.map(([fill]) => {
-        const pa = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pa.style.fill = fill;
-        ov.appendChild(pa);
-        return pa;
-      });
-      markBox.appendChild(ov);
-      const draw = (tau) => {
-        geo.forEach(([, pts], si) => {
-          let d = '';
-          for (let i = 0; i < pts.length; i++) {
-            const [a, g, v] = pts[i];
-            const pr = ease((tau - STAGGER * v) / (1 - STAGGER));
-            const A = a + pr * ((sc - 1) * a + L);
-            const bell = Math.sin(Math.PI * pr);           // 0 at take-off and at landing
-            const gg = (1 + (sc - 1) * pr) * (1 - PINCH * bell - TAPER * bell * (1 - v)) * g;
-            d += (i ? 'L' : 'M') + (ox + A * ux + gg * nx).toFixed(2) + ' ' + (oy + A * uy + gg * ny).toFixed(2);
-          }
-          paths[si].setAttribute('d', d + 'Z');
-        });
+      const warp = (x, y, tau) => {          // where a point of the mark (px in its box) is, tau of the way through
+        const a = (x - ox) * ux + (y - oy) * uy, g = (x - ox) * nx + (y - oy) * ny;
+        const v = clamp((aMax - a) / (aMax - aMin), 0, 1);       // 0 at the end nearest the logo
+        const pr = ease((tau - STAGGER * v) / (1 - STAGGER));
+        const A = a + pr * ((sc - 1) * a + L);
+        const bell = Math.sin(Math.PI * pr);                      // 0 at take-off and at landing
+        const gg = (1 + (sc - 1) * pr) * (1 - PINCH * bell - TAPER * bell * (1 - v)) * g;
+        return [ox + A * ux + gg * nx, oy + A * uy + gg * ny];
       };
-      draw(0);
-      // It takes over from the mark just as the flight begins (the outline is the same one), and fades into the logo as it lands.
-      anims.push(ov.animate([
-        { opacity: 0 }, { opacity: 0, offset: o(TS - 60) }, { opacity: 1, offset: o(TS - 50) },
-        { opacity: 1, offset: o(T_LAND) }, { opacity: 0, offset: o(T_LAND + XFADE) }, { opacity: 0 },
+      // Each part's centre, and the part as one transform at a moment: the map's
+      // position and local stretch there, as a matrix about the box's corner.
+      const parts = [
+        ['.mk-a', [[10.29, 44.57], [30.86, 9.90], [43.20, 32.70], [43.20, 36.19], [36.19, 36.19], [30.86, 26.67], [20.19, 44.57]]],
+        ['.mk-j', [[39.41, 40.2]]],
+        ['.mk-stem', [[48.20, 30.5]]],
+        ['.mk-dot', [[48.20, 17.40]]],
+      ].map(([sel, pts]) => {
+        const node = el.querySelector(sel);
+        if (!node) return null;
+        const c = local(pts.reduce((m, q) => m + q[0], 0) / pts.length, pts.reduce((m, q) => m + q[1], 0) / pts.length);
+        // The part's own transform origin, so the matrix can be worked out about it as it will be applied.
+        const org = getComputedStyle(node).transformOrigin.split(' ').map(parseFloat);
+        return { node, cx: c[0], cy: c[1], zx: org[0] || 0, zy: org[1] || 0 };
+      }).filter(Boolean);
+      const matrixAt = ({ cx, cy, zx, zy }, tau) => {
+        const h = 1.5;
+        const [px, py] = warp(cx, cy, tau);
+        const [rx, ry] = warp(cx + h, cy, tau), [lx, ly] = warp(cx - h, cy, tau);
+        const [ux2, uy2] = warp(cx, cy + h, tau), [dx2, dy2] = warp(cx, cy - h, tau);
+        const a = (rx - lx) / (2 * h), b = (ry - ly) / (2 * h), c = (ux2 - dx2) / (2 * h), d = (uy2 - dy2) / (2 * h);
+        // The map about the box's corner is x' = a x + c y + e; applied about (zx, zy) the translation is e + a zx + c zy - zx.
+        const e = px - a * cx - c * cy, f = py - b * cx - d * cy;
+        return `matrix(${a.toFixed(5)}, ${b.toFixed(5)}, ${c.toFixed(5)}, ${d.toFixed(5)}, ${(e + a * zx + c * zy - zx).toFixed(3)}, ${(f + b * zx + d * zy - zy).toFixed(3)})`;
+      };
+      const STEP = 14, span = D - TS;
+      parts.forEach((part) => {
+        const frames = [];
+        for (let t = 0; t < MOVE; t += STEP) frames.push({ transform: matrixAt(part, t / MOVE), offset: t / span });
+        frames.push({ transform: matrixAt(part, 1), offset: MOVE / span });
+        frames.push({ transform: matrixAt(part, 1), offset: 1 });
+        // Starts as the flight does (not before: the dot is still blinking), and holds its last place.
+        anims.push(part.node.animate(frames, { duration: span, delay: TS, fill: 'forwards' }));
+      });
+      // The parts are one mark: it is solid until the logo has taken over, then gone in a step.
+      anims.push(markBox.animate([
+        { opacity: 1 }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 0, offset: o(T_SWAP + 8) }, { opacity: 0 },
       ], { duration: D, ...fx }));
-      ['.mk-a', '.mk-j', '.mk-stem', '.mk-dot'].forEach((sel) => {
-        const n = el.querySelector(sel);
-        if (n) anims.push(n.animate([{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 8) }, { opacity: 0 }], { duration: D, ...fx }));
-      });
-      const t0 = document.timeline.currentTime;
-      let raf = 0;
-      const tick = (now) => {
-        const t = now - t0 - TS;
-        if (t >= MOVE) { draw(1); return; }
-        if (t > 0) draw(t / MOVE);
-        raf = requestAnimationFrame(tick);
-      };
-      raf = requestAnimationFrame(tick);
-      setTimeout(() => { cancelAnimationFrame(raf); draw(1); }, TS + MOVE + 60);   // landed, whatever the frames did
     };
 
-    if (phone) flySoft(); else flyGenie();
+    if (phone) flySoft(); else flyPieces();
 
     // The smile and bar are left behind, thinning away as the mark leaves.
-    if (bar) anims.push(bar.animate([{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 260) }, { opacity: 0 }], { duration: D, ...fx }));
+    if (bar) anims.push(bar.animate([{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 190) }, { opacity: 0 }], { duration: D, ...fx }));
 
     // The paper becomes its own layer, the same colour, and clears while the mark travels.
     const paper = document.createElement('div');
@@ -671,8 +655,8 @@ const onScrollFrame = (() => {
       { opacity: 0 },
     ], { duration: D, ...fx }));
 
-    // The nav's own logo waits, unseen, and takes over as the mark arrives.
-    anims.push(home.animate([{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_LAND + XFADE) }, { opacity: 1 }], { duration: D, ...fx }));
+    // The nav's own logo waits, unseen, comes up under the mark as it arrives, and takes over from it.
+    anims.push(home.animate([{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 1 }], { duration: D, ...fx }));
 
     // The page's pieces settle in, each as the paper clears from around it.
     const pieces = [
@@ -681,9 +665,9 @@ const onScrollFrame = (() => {
       ['.hero-body .sub', '0 22px', null, .42],
       ['.hero-body .hero-badges', '0 20px', null, .5],
       ['.hero-body .actions', '0 20px', null, .56],
-      // The nav is in and still before the mark lands in it, its logo slot empty.
-      ['header.nav', phone ? '0 20px' : '0 -18px', null, .12],
-      ['.dock-fab', '0 20px', null, .3],
+      // (Not the nav or the phone's dock: they are frosted glass, which a browser
+      // has to blur again on every frame of anything animating them. The paper
+      // clearing is what shows them, with the logo's place left empty for the mark.)
     ];
     const entrances = [];
     let latest = D;
@@ -692,7 +676,7 @@ const onScrollFrame = (() => {
       if (!node || !node.getBoundingClientRect().width) return;
       const frames = { opacity: [0, 1], translate: [from_, '0 0'] };
       if (scaleFrom) frames.scale = [scaleFrom, '1'];
-      const delay = Math.round(TS + FLIGHT * at), dur = 850;
+      const delay = Math.round(TS + FLIGHT * at), dur = 640;
       entrances.push(node.animate(frames, { duration: dur, delay, easing: 'cubic-bezier(.2, .75, .25, 1)', ...fx }));
       latest = Math.max(latest, delay + dur);
     });
@@ -761,7 +745,7 @@ const onScrollFrame = (() => {
     if (!smilePath || reduced) { r(); return; }
     el.classList.add('is-smiling');
     bendSmile();
-    setTimeout(r, 480);
+    setTimeout(r, 300);
   });
   Promise.all([built, fonts, markDone, barDone]).then(smile).then(finish);
 
@@ -1153,7 +1137,10 @@ syncLogoTheme();
       hold.setAttribute('aria-hidden', 'true');
       live.setAttribute('aria-hidden', 'true');
       heading.replaceChildren(hold, live);
-      holdWords.forEach((h, i) => { words[i].el.style.width = `${h.getBoundingClientRect().width}px`; });
+      // Every width is read, then every width is written: reading one and writing
+      // one in turn makes the browser lay the whole hero out again for each word.
+      const widths = holdWords.map((h) => h.getBoundingClientRect().width);
+      widths.forEach((w, i) => { words[i].el.style.width = `${w}px`; });
     };
     const finish = () => {
       heading.textContent = finalText;
@@ -1169,10 +1156,15 @@ syncLogoTheme();
       end: i * 15 + 150 + Math.floor(Math.random() * 120),
     }));
 
-    let t0 = 0;
+    /* Redrawn about thirty times a second, not sixty: the noise changes too fast
+       to tell the difference, and every redraw is text the browser has to lay
+       out and paint again, which is most of what this costs. */
+    let t0 = 0, drawn = -99;
     const tick = (now) => {
       if (!t0) t0 = now;
       frame = now - t0;
+      if (frame - drawn < 30 && frame < queue[queue.length - 1].end) { requestAnimationFrame(tick); return; }
+      drawn = frame;
       let complete = 0;
       const out = queue.map((item) => {
         if (frame >= item.end) { complete++; return item.ch; }

@@ -2310,3 +2310,10 @@ html:has(#pageLoader:not(.is-done)) { scrollbar-gutter: stable; }
   will-change: opacity;
 }
 .page-loader.is-revealing { pointer-events: none; }
+
+/* The headline's scramble redraws its words a few dozen times in its first
+   second. Each word is a box of fixed width, so what it holds cannot change
+   the layout around it; saying so lets the browser leave the rest of the hero
+   alone. */
+.scr-live,
+.scr-w { contain: layout style; }
