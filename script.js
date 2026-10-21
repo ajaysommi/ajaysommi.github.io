@@ -3789,7 +3789,7 @@ function gatorStorm(n = 12) {
      stopped once everything has settled. */
   if (!coarsePointer.matches && !prefersReduced()) {
     const rings = hls.map((hl) => $('.hl-ring', hl));
-    const st = rings.map(() => ({ dx: 0, dy: 0, k: 1, tx: 0, ty: 0, tk: 1, spin: 210 }));
+    const st = rings.map(() => ({ dx: 0, dy: 0, k: 1, tx: 0, ty: 0, tk: 1, spin: 135, ts: 135 }));
     let mx = -1e4, my = -1e4, loop = 0;
     const frame = () => {
       loop = 0;
@@ -3803,9 +3803,13 @@ function gatorStorm(n = 12) {
         s.tx = d ? (vx / d) * 5 * pull : 0;
         s.ty = d ? (vy / d) * 5 * pull : 0;
         s.tk = 1 + 0.025 * pull;
-        if (pull > 0) s.spin = (Math.atan2(vy, vx) * 180) / Math.PI + 90;
+        // The ring's colour turns to face the cursor the short way round,
+        // eased like the lean, so it glides rather than jumps.
+        if (pull > 0) s.ts = (Math.atan2(vy, vx) * 180) / Math.PI + 90;
+        s.spin += ((((s.ts - s.spin) % 360) + 540) % 360 - 180) * 0.1;
         s.dx += (s.tx - s.dx) * 0.1; s.dy += (s.ty - s.dy) * 0.1; s.k += (s.tk - s.k) * 0.1;
-        if (Math.abs(s.tx - s.dx) > 0.05 || Math.abs(s.ty - s.dy) > 0.05 || Math.abs(s.tk - s.k) > 0.001) moving = true;
+        if (Math.abs(s.tx - s.dx) > 0.05 || Math.abs(s.ty - s.dy) > 0.05 || Math.abs(s.tk - s.k) > 0.001 ||
+            Math.abs((((s.ts - s.spin) % 360) + 540) % 360 - 180) > 0.2) moving = true;
         r.style.setProperty('--dx', s.dx.toFixed(2));
         r.style.setProperty('--dy', s.dy.toFixed(2));
         r.style.setProperty('--k', s.k.toFixed(4));
