@@ -344,9 +344,10 @@ const onScrollFrame = (() => {
    The mark assembles, the bar fills and bounces at its end, and the bar bends
    into a smile. Then the mark's eye (the blue dot) blinks once, slowly, and
    the mark waits, still: the pause before the reveal. Then the whole mark
-   glides across the screen, shrinking, and lands exactly on the logo in the
-   nav, which takes over from it with a small pop. While it travels the paper
-   clears and the page's own pieces settle into place around it.
+   glides across the screen, shrinking and bending a little as it is drawn
+   into the logo in the nav, lands exactly on it, and the logo takes over
+   from it, quietly. While it travels the paper clears and the page's own
+   pieces settle into place around it.
 
    Everything that moves in the reveal is a transform or an opacity, which a
    browser hands to the compositor, so it stays smooth while the main thread
@@ -436,11 +437,14 @@ const onScrollFrame = (() => {
     const to = dotIn(homeSvg, 9, 8.5, 45, 42);
     if (!(from.d > 0) || !(to.d > 0)) { fade(); return; }
 
+    /* On a desktop the mark is drawn into the logo like a window into the Dock
+       (see flyGenie); on a phone it flies as one soft body (see flySoft). */
+    const phone = matchMedia('(max-width: 719px)').matches;
     const BLINK = 560, HOLD = 140, FLIGHT = 1000;   // (FLIGHT times the page's pieces settling in)
     const TS = BLINK + HOLD;                 // when the flight begins
-    const MOVE = 840, SETTLE = 300, XFADE = 140;
-    const T_LAND = TS + MOVE + SETTLE - 100; // the mark has arrived and its wobble has all but died
-    const D = T_LAND + XFADE + 480;          // and everything, the landing bounce included
+    const MOVE = 840, SETTLE = phone ? 300 : 100, XFADE = 140;
+    const T_LAND = TS + MOVE + SETTLE - 100; // the mark has arrived, and any wobble has all but died
+    const D = T_LAND + XFADE;                // and everything
     const o = (ms) => ms / D;
     const EASE_FLIGHT = 'cubic-bezier(.55, 0, .15, 1)';   // from rest, then a long glide
     const anims = [];
@@ -464,6 +468,7 @@ const onScrollFrame = (() => {
     const dx = to.x - from.x, dy = to.y - from.y, sc = to.d / from.d;
     const cx = mr.width / 2 - ox, cy = mr.height / 2 - oy;   // the body's centre, from the dot
 
+    const flySoft = () => {
     /* The body in flight. It is a soft thing, so it deforms as a soft thing
        does, and every term below is zero at take-off and at landing:
        - it is stretched along its direction of travel by the wind, as speed
@@ -548,6 +553,108 @@ const onScrollFrame = (() => {
       partFrames[i].push({ transform: 'translate3d(0, 0, 0)', offset: o(TS + N) }, { transform: 'translate3d(0, 0, 0)', offset: 1 });
       anims.push(node.animate(partFrames[i], { duration: D, ...fx }));
     });
+    };
+
+    /* The genie. The mark is drawn into the logo the way a window is drawn
+       into the Dock when it is minimised: every point of it is moved by one
+       smooth map, so the end nearest the logo is pulled in first and the
+       rest follows, stretched out along the way, thinning toward the end it
+       is funnelled into. Concretely, each point has its own progress along
+       the flight, a little behind the progress of the points nearer the logo
+       (the stagger), and its own narrowing across it, most at the end nearest
+       the logo; at the end every point has the same progress and the mark is
+       whole again, at the logo's size and place. All of it is kept slight: the
+       mark shrinks and bends a little, it does not ripple.
+       It is computed on the shapes themselves (their outlines, cut into small
+       steps), not on a picture of them, so it stays sharp and has no seams,
+       and drawn from the clock, a frame at a time. */
+    const flyGenie = () => {
+      const L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+      const W = mr.width, H = mr.height;
+      const k = Math.min(W / 48, H / 42), offX = (W - 48 * k) / 2, offY = (H - 42 * k) / 2;
+      const local = (x, y) => [offX + (x - 8) * k, offY + (y - 8) * k];   // viewBox 8 8 48 42, centred
+      // An outline cut into steps of about a pixel and a half.
+      const cut = (pts) => {
+        const out = [];
+        pts.forEach((a, i) => {
+          const b = pts[(i + 1) % pts.length];
+          const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / .6));
+          for (let j = 0; j < n; j++) out.push([a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n]);
+        });
+        return out;
+      };
+      const arc = (cx0, cy0, r, from, to, n) => Array.from({ length: n + 1 }, (_, i) => {
+        const t = from + (to - from) * i / n;
+        return [cx0 + r * Math.cos(t), cy0 + r * Math.sin(t)];
+      });
+      const shapes = [
+        ['var(--ink)', cut([[10.29, 44.57], [30.86, 9.90], [43.20, 32.70], [43.20, 36.19], [36.19, 36.19], [30.86, 26.67], [20.19, 44.57]])],
+        ['#ff6b35', cut([...arc(39.41, 36.19, 13.16, Math.PI, 0, 60), [43.83, 36.19], ...arc(39.41, 36.19, 4.42, 0, Math.PI, 24)])],
+        ['#3d68ff', cut([[43.83, 24.60], [52.57, 24.60], [52.57, 36.39], [43.83, 36.39]])],
+        ['#3d68ff', arc(48.20, 17.40, 5.60, 0, 2 * Math.PI, 48).slice(0, 48)],
+      ].map(([fill, pts]) => [fill, pts.map(([x, y]) => local(x, y))]);
+      // Each point's place along the flight's axis and across it, from the dot.
+      const corners = [[0, 0], [W, 0], [W, H], [0, H]].map(([x, y]) => (x - ox) * ux + (y - oy) * uy);
+      const aMin = Math.min(...corners), aMax = Math.max(...corners);
+      const geo = shapes.map(([fill, pts]) => [fill, pts.map(([x, y]) => {
+        const a = (x - ox) * ux + (y - oy) * uy, g = (x - ox) * nx + (y - oy) * ny;
+        return [a, g, clamp((aMax - a) / (aMax - aMin), 0, 1)];   // the last is 0 at the end nearest the logo
+      })]);
+      // The flight is some 650px and the mark about 100, so a small difference in
+      // progress between its two ends is a large stretch: the stagger is small,
+      // and the narrowing toward the logo is set directly, not left to it.
+      const STAGGER = .02, PINCH = .06, TAPER = .26;
+      const easeMove = bezier(.55, 0, .15, 1);
+      const table = Float32Array.from({ length: 1025 }, (_, i) => easeMove(i / 1024));
+      const ease = (x) => { const f = clamp(x, 0, 1) * 1024, i = Math.floor(f); return i >= 1024 ? 1 : table[i] + (table[i + 1] - table[i]) * (f - i); };
+      const ov = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      ov.setAttribute('aria-hidden', 'true');
+      ov.style.cssText = `position:absolute;left:0;top:0;width:${W}px;height:${H}px;overflow:visible;pointer-events:none;opacity:0`;
+      const paths = geo.map(([fill]) => {
+        const pa = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pa.style.fill = fill;
+        ov.appendChild(pa);
+        return pa;
+      });
+      markBox.appendChild(ov);
+      const draw = (tau) => {
+        geo.forEach(([, pts], si) => {
+          let d = '';
+          for (let i = 0; i < pts.length; i++) {
+            const [a, g, v] = pts[i];
+            const pr = ease((tau - STAGGER * v) / (1 - STAGGER));
+            const A = a + pr * ((sc - 1) * a + L);
+            const bell = Math.sin(Math.PI * pr);           // 0 at take-off and at landing
+            const gg = (1 + (sc - 1) * pr) * (1 - PINCH * bell - TAPER * bell * (1 - v)) * g;
+            d += (i ? 'L' : 'M') + (ox + A * ux + gg * nx).toFixed(2) + ' ' + (oy + A * uy + gg * ny).toFixed(2);
+          }
+          paths[si].setAttribute('d', d + 'Z');
+        });
+      };
+      draw(0);
+      // It takes over from the mark just as the flight begins (the outline is the same one), and fades into the logo as it lands.
+      anims.push(ov.animate([
+        { opacity: 0 }, { opacity: 0, offset: o(TS - 60) }, { opacity: 1, offset: o(TS - 50) },
+        { opacity: 1, offset: o(T_LAND) }, { opacity: 0, offset: o(T_LAND + XFADE) }, { opacity: 0 },
+      ], { duration: D, ...fx }));
+      ['.mk-a', '.mk-j', '.mk-stem', '.mk-dot'].forEach((sel) => {
+        const n = el.querySelector(sel);
+        if (n) anims.push(n.animate([{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 8) }, { opacity: 0 }], { duration: D, ...fx }));
+      });
+      const t0 = document.timeline.currentTime;
+      let raf = 0;
+      const tick = (now) => {
+        const t = now - t0 - TS;
+        if (t >= MOVE) { draw(1); return; }
+        if (t > 0) draw(t / MOVE);
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      setTimeout(() => { cancelAnimationFrame(raf); draw(1); }, TS + MOVE + 60);   // landed, whatever the frames did
+    };
+
+    if (phone) flySoft(); else flyGenie();
+
     // The smile and bar are left behind, thinning away as the mark leaves.
     if (bar) anims.push(bar.animate([{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 260) }, { opacity: 0 }], { duration: D, ...fx }));
 
@@ -564,18 +671,10 @@ const onScrollFrame = (() => {
       { opacity: 0 },
     ], { duration: D, ...fx }));
 
-    // The nav's own logo waits, unseen, and takes over as the mark arrives, with a small pop.
+    // The nav's own logo waits, unseen, and takes over as the mark arrives.
     anims.push(home.animate([{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_LAND + XFADE) }, { opacity: 1 }], { duration: D, ...fx }));
-    // Once it has taken over, the logo gives a small landing bounce.
-    anims.push(home.animate([
-      { scale: '1', easing: 'cubic-bezier(.3, .7, .4, 1)' },
-      { scale: '1.15', offset: .38, easing: 'cubic-bezier(.4, 0, .4, 1)' },
-      { scale: '.97', offset: .72, easing: 'ease-out' },
-      { scale: '1' },
-    ], { duration: 480, delay: T_LAND + XFADE, ...fx }));
 
     // The page's pieces settle in, each as the paper clears from around it.
-    const phone = matchMedia('(max-width: 719px)').matches;
     const pieces = [
       ['.hero-figure', '0 26px', '.95', .26],
       ['.hero-head', '0 24px', null, .34],
