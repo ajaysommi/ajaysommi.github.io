@@ -2328,22 +2328,32 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    glow.
    ========================================================================== */
 @layer minimal {
-  [data-daypart="morning"]   { --tod: 255 168 60; }
-  [data-daypart="afternoon"] { --tod: 135 180 255; }
-  [data-daypart="evening"]   { --tod: 255 118 60; }
-  [data-daypart="night"]     { --tod: 105 120 255; }
+  /* Each part of the day has its colour, how strongly it shows (--tod-k)
+     and how far it reaches in from the edge (--tod-spread). The low sun of
+     the evening is the richest and reaches furthest; the morning is close
+     behind; the afternoon is the gentlest. */
+  [data-daypart="morning"]   { --tod: 255 168 60;  --tod-k: 1.1;  --tod-spread: 1.2; }
+  [data-daypart="afternoon"] { --tod: 135 180 255; --tod-k: .85;  --tod-spread: .9; }
+  [data-daypart="evening"]   { --tod: 255 118 60;  --tod-k: 1.3;  --tod-spread: 1.45; }
+  [data-daypart="night"]     { --tod: 105 120 255; --tod-k: 1;    --tod-spread: 1.1; }
 
   /* How much light, by theme: on paper a pale glow needs more to show. */
   [data-theme="daylight"] { --tod-glow: .62; }
   [data-theme="midnight"] { --tod-glow: .5; }
+  /* Phones are quieter: the field is fainter there too (minimal.js). */
+  @media (max-width: 719px) {
+    [data-theme="daylight"] { --tod-glow: .5; }
+    [data-theme="midnight"] { --tod-glow: .4; }
+  }
 
   /* Only the two big filled shapes at the sides catch it, all of it inside
-     the shape: the light gathers just within the edge and fades inward,
-     with nothing spilling outside. The rings stay plain lines. */
+     the shape: a brighter band just within the edge and a wide, soft one
+     that carries the colour well into the shape, with nothing spilling
+     outside. The rings stay plain lines. */
   [data-daypart][data-theme="daylight"] :is(.m-disc, .m-quarter),
   [data-daypart][data-theme="midnight"] :is(.m-disc, .m-quarter) {
     box-shadow:
-      inset 0 0 22px rgb(var(--tod) / calc(var(--tod-glow) * .7)),
-      inset 0 0 70px rgb(var(--tod) / calc(var(--tod-glow) * .25));
+      inset 0 0 calc(26px * var(--tod-spread)) rgb(var(--tod) / calc(var(--tod-glow) * var(--tod-k) * .8)),
+      inset 0 0 calc(120px * var(--tod-spread)) rgb(var(--tod) / calc(var(--tod-glow) * var(--tod-k) * .4));
   }
 }
