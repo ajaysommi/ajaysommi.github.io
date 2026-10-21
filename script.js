@@ -1136,6 +1136,7 @@ syncLogoTheme();
       heading.setAttribute('aria-label', finalText);
       hold.setAttribute('aria-hidden', 'true');
       live.setAttribute('aria-hidden', 'true');
+      heading.style.removeProperty('visibility');
       heading.replaceChildren(hold, live);
       // Every width is read, then every width is written: reading one and writing
       // one in turn makes the browser lay the whole hero out again for each word.
@@ -1179,12 +1180,16 @@ syncLogoTheme();
       if (complete < queue.length) requestAnimationFrame(tick);
       else finish();
     };
-    /* Starts as the lid uncovers the headline, so it is seen from its first
-       letter, whenever that turns out to be. */
+    /* Starts once the loader has gone and everything else has settled. Begun
+       halfway through the mark's flight, while the hero pieces, the paper and
+       the nav hand-over were all still animating, it stuttered in Safari. */
     let started = false;
     const go = () => { if (started) return; started = true; requestAnimationFrame(() => { begin(); requestAnimationFrame(tick); }); };
     const loaderEl = $('#pageLoader');
-    const showing = () => loaderEl.classList.contains('is-revealing') || loaderEl.classList.contains('is-done');
+    // The page is on show while the mark flies in, so the finished sentence
+    // waits out of sight until the scramble begins; the lid used to hide it.
+    if (loaderEl && !loaderEl.classList.contains('is-done')) heading.style.visibility = 'hidden';
+    const showing = () => loaderEl.classList.contains('is-done');
     if (!loaderEl || showing()) go();
     else {
       new MutationObserver((_, mo) => { if (showing()) { mo.disconnect(); go(); } })
