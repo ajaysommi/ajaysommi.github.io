@@ -208,7 +208,7 @@
                 diamond, the dot into a diamond. Shapes start a beat apart,
                 so the change reads as the field rearranging itself.
        --mx/my  where the cursor is, eased. Each shape shifts a few pixels,
-                the near ones most, which is all the depth it needs.
+                the near ones most, which is all the depth it needs. They follow the cursor.
 
      Positions are each shape's centre, in viewport units, so an
      arrangement holds its composition on any screen. */
@@ -332,7 +332,7 @@
     transform:
       translate(calc(var(--x) - 50%), calc(var(--y) - 50%))
       rotate(var(--r, 0deg)) scale(var(--k, 1));
-    translate: calc(var(--mx) * var(--d) * -1px) calc(var(--my) * var(--d) * -1px);
+    translate: calc(var(--mx) * var(--d) * 1px) calc(var(--my) * var(--d) * 1px);
     transition:
       transform 1.9s var(--m-ease) var(--delay, 0s),
       border-radius 1.9s var(--m-ease) var(--delay, 0s),
@@ -802,7 +802,7 @@
       0 0, var(--t) 0, calc(var(--t) * 2) 0,
       0 var(--t), var(--t) var(--t), calc(var(--t) * 2) var(--t),
       0 calc(var(--t) * 2), var(--t) calc(var(--t) * 2), calc(var(--t) * 2) calc(var(--t) * 2);
-    translate: calc(var(--mx) * -4px) calc(var(--my) * -4px);
+    translate: calc(var(--mx) * 4px) calc(var(--my) * 4px);
   }
   .hero-card::after { content: none; }
   /* The cursor values are written on the hero for its ::before, the shape
