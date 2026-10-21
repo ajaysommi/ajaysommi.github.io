@@ -806,11 +806,22 @@
   }
   .hero-card::after { content: none; }
   /* The cursor values are written on the hero for its ::before, the shape
-     tiles, and nothing inside the hero uses them. Custom properties
-     inherit, so without this every element in the hero restyled on every
-     frame the cursor moved; set here, the change stops at its children. */
-  .hero-card > *,
+     tiles and the hero's three blocks, and nothing deeper uses them.
+     Custom properties inherit, so without this every element in the hero
+     restyled on every frame the cursor moved; set here, the change stops at
+     the blocks' children. */
+  .hero-card > * > *,
   .bg > :not(.m-field) { --mx: 0; --my: 0; }
+
+  /* The portrait, the headline and the text drift with the cursor by the
+     same few pixels as the tiles. They are moved by transform because the
+     page-load entrance animates their translate, and the two would fight.
+     The values stop at their children, as above. */
+  .hero-figure,
+  .hero-head,
+  .hero-body {
+    transform: translate(calc(var(--mx) * -4px), calc(var(--my) * -4px));
+  }
 
   .hero-figure::before {
     inset: auto;
