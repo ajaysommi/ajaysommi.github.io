@@ -814,13 +814,20 @@
   .bg > :not(.m-field) { --mx: 0; --my: 0; }
 
   /* The portrait, the headline and the text drift with the cursor by the
-     same few pixels as the tiles. They are moved by transform because the
+     same few pixels as the tiles, following the cursor rather than
+     leaning away from it. They are moved by transform because the
      page-load entrance animates their translate, and the two would fight.
      The values stop at their children, as above. */
   .hero-figure,
   .hero-head,
   .hero-body {
-    transform: translate(calc(var(--mx) * -4px), calc(var(--my) * -4px));
+    transform: translate(calc(var(--mx) * 4px), calc(var(--my) * 4px));
+  }
+  /* Not on a phone-width screen. */
+  @media (max-width: 719px) {
+    .hero-figure,
+    .hero-head,
+    .hero-body { transform: none; }
   }
 
   .hero-figure::before {
