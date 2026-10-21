@@ -823,18 +823,19 @@
     background: var(--accent);
     filter: none;
   }
-  /* And a thinner blue one the other way, so the photo is held between the
-     site's two colours: orange low on the right, blue high on the left. */
+  /* Opposite it, the blue as a line rather than a second disc: a hairline
+     arc around the top left, a little off the photo, fading out at both
+     ends. A flat shape and a line, like the field behind, so the two
+     colours answer each other instead of overlapping. */
   .hero-figure::after {
     content: "";
     position: absolute;
-    left: -6px;
-    top: -6px;
+    inset: -8px;
     z-index: -1;
-    width: 100%;
-    height: 100%;
+    border: 2px solid var(--m-blue);
     border-radius: 50%;
-    background: var(--m-blue);
+    -webkit-mask: conic-gradient(from 225deg, transparent 0deg, #000 70deg, #000 110deg, transparent 180deg);
+            mask: conic-gradient(from 225deg, transparent 0deg, #000 70deg, #000 110deg, transparent 180deg);
     pointer-events: none;
   }
   /* The face sits a touch high and left in the circle. The picture element
@@ -1435,7 +1436,7 @@
     .hero-head h1 { font-size: clamp(25px, 7vw, 32px); }
 
     .hero-figure::before { left: 6px; top: 6px; }
-    .hero-figure::after { left: -4px; top: -4px; }
+    .hero-figure::after { inset: -6px; border-width: 1.5px; }
 
     .card { padding: 18px; }
     .btn { min-height: 44px; }
