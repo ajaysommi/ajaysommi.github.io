@@ -665,7 +665,8 @@ const onScrollFrame = (() => {
     ], { duration: D, ...fx }));
 
     // The nav's own logo waits, unseen, comes up under the mark as it arrives, and takes over from it.
-    anims.push(ani(home, [{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 1 }], { duration: D, ...fx }));
+    const homeAnim = ani(home, [{ opacity: 0 }, { opacity: 0, offset: o(T_LAND) }, { opacity: 1, offset: o(T_SWAP) }, { opacity: 1 }], { duration: D, ...fx });
+    anims.push(homeAnim);
 
     // The page's pieces settle in, each as the paper clears from around it.
     const pieces = [
@@ -704,12 +705,26 @@ const onScrollFrame = (() => {
         Promise.all(list.map((a) => a.finished.catch(() => {}))).then(fin);
         setTimeout(fin, ms);
       };
+      /* Clearing up is spread over a few moments, not done in one go as the
+         mark lands: unlocking, removing the loader and ending nine animations
+         together was a hitch of its own, right as the logo arrived. The page is
+         let go first (the loader is already clear and does nothing), the
+         mark's own animations are ended next, the loader is taken out after,
+         and the nav logo's animation, which the nav's frosted glass sits
+         behind, is the last to go. What each leaves behind looks the same as
+         what it ends, so none of it shows. */
       settle(anims, () => {
         unlock();
+        // Hidden outright, with no transition, so nothing of it can show while it is taken apart.
+        el.style.transition = 'none';
+        el.style.visibility = 'hidden';
         el.classList.add('is-revealing', 'is-done');
-        el.remove();
-        anims.forEach((a) => { try { a.cancel(); } catch {} });
-        eye.style.transformOrigin = markBox.style.transformOrigin = '';
+        setTimeout(() => {
+          anims.forEach((a) => { if (a !== homeAnim) { try { a.cancel(); } catch {} } });
+          eye.style.transformOrigin = markBox.style.transformOrigin = '';
+        }, 140);
+        setTimeout(() => el.remove(), 320);
+        setTimeout(() => { try { homeAnim.cancel(); } catch {} }, 700);
       }, D + 500);
       settle(entrances, () => entrances.forEach((a) => { try { a.cancel(); } catch {} }), latest + 450);
     };
