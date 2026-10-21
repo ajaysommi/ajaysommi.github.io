@@ -667,17 +667,43 @@ const onScrollFrame = (() => {
     // The smile and bar are left behind, thinning away as the mark leaves.
     if (bar) anims.push(ani(bar, [{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 190) }, { opacity: 0 }], { duration: D, ...fx }));
 
-    // The paper becomes its own layer, the same colour, and clears while the mark travels.
+    /* The paper is the cover over the whole page. It is its own layer, the same
+       colour, and the mark draws it after it: it is gathered in toward the mark
+       as it flies, hung back by a spring so it trails and stretches, and when
+       the mark comes to rest the paper is still travelling, and rushes in over
+       the last of the way, so the page is uncovered from its far corner toward
+       the logo. Only transform and opacity, worked out ahead. */
     const paper = document.createElement('div');
     paper.className = 'loader-paper';
+    const lrp = el.getBoundingClientRect();
+    const pad = Math.round(Math.max(lrp.width, lrp.height) * .25);   // larger than the screen, so its rounded corners are never in view
+    paper.style.inset = `${-pad}px`;
+    // Clipped to the screen, so its extra size cannot widen the page (a phone zooms its layout out to fit it).
+    el.style.overflow = 'hidden';
+    paper.style.borderRadius = `${Math.round(Math.min(lrp.width, lrp.height) * .1)}px`;
     el.prepend(paper);
-    // (The easing is on the segment, not on the whole animation, which would squeeze every time in it.)
-    anims.push(ani(paper, [
-      { opacity: 1, easing: 'linear' },
-      { opacity: 1, offset: o(TS + FLIGHT * .16), easing: 'cubic-bezier(.4, 0, .2, 1)' },
-      { opacity: 0, offset: o(TS + FLIGHT * .74) },
-      { opacity: 0 },
-    ], { duration: D, ...fx }));
+    {
+      const px0 = from.x - lrp.left, py0 = from.y - lrp.top;
+      const eMove = bezier(.55, 0, .15, 1);
+      const T0 = 40, NP = MOVE + 90;       // starts a beat after the mark, and is done a beat after it lands
+      const target = (t) => 1 - eMove(clamp((t - T0) / (MOVE - T0), 0, 1));
+      const W = phone ? 13 : 12, Z = .78;
+      let sc_ = 1, v_ = 0, qx = px0, qy = py0, vx_ = 0, vy_ = 0;
+      const frames = [{ transform: 'matrix(1, 0, 0, 1, 0, 0)', opacity: 1, offset: 0 }, { transform: 'matrix(1, 0, 0, 1, 0, 0)', opacity: 1, offset: o(TS) }];
+      for (let t = 1; t <= NP; t++) {
+        const e = eMove(clamp(t / MOVE, 0, 1));
+        const tgx = px0 + dx * e, tgy = py0 + dy * e;           // the mark's dot
+        v_ += (W * W * (target(t) - sc_) - 2 * Z * W * v_) * .001; sc_ += v_ * .001;
+        vx_ += (11 * 11 * (tgx - qx) - 2 * .5 * 11 * vx_) * .001; qx += vx_ * .001;
+        vy_ += (11 * 11 * (tgy - qy) - 2 * .5 * 11 * vy_) * .001; qy += vy_ * .001;
+        if (t % 16) continue;
+        const k = Math.max(0, sc_);
+        const tx = qx + pad - k * (px0 + pad), ty = qy + pad - k * (py0 + pad);
+        frames.push({ transform: `matrix(${k.toFixed(4)}, 0, 0, ${k.toFixed(4)}, ${tx.toFixed(2)}, ${ty.toFixed(2)})`, opacity: k < .02 ? 0 : 1, offset: o(TS + t) });
+      }
+      frames.push({ transform: 'matrix(0, 0, 0, 0, 0, 0)', opacity: 0, offset: o(TS + NP + 4) }, { transform: 'matrix(0, 0, 0, 0, 0, 0)', opacity: 0, offset: 1 });
+      anims.push(ani(paper, frames, { duration: D, ...fx }));
+    }
 
     // The nav's own logo waits, unseen, comes up under the mark as it arrives, and takes over from it.
     // (A step, not a fade: the nav is frosted glass, which is redrawn on every frame
