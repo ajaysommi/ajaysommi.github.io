@@ -2306,10 +2306,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
    the same parts the greeting uses: gold in the morning, a cool white-blue
    in the afternoon, amber in the evening, moonlight blue late at night.
 
-   A soft halo just outside each edge and a fainter one just inside it, so
-   the light sits on the rim and fades to nothing either way. The ground,
-   the content and the terminal theme are left as they are; without the
-   script there is no data-daypart and no glow.
+   The light sits just inside each edge and fades inward; nothing shows
+   outside the shapes. The ground, the content and the terminal theme are
+   left as they are; without the script there is no data-daypart and no
+   glow.
    ========================================================================== */
 @layer minimal {
   [data-daypart="morning"]   { --tod: 255 182 88; }
@@ -2321,16 +2321,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   [data-theme="daylight"] { --tod-glow: .27; }
   [data-theme="midnight"] { --tod-glow: .135; }
 
+  /* All of it inside the shape: the light gathers just within the edge and
+     fades inward, with nothing spilling outside. */
   [data-daypart][data-theme="daylight"] :is(.m-disc, .m-quarter, .m-ring, .m-orbit),
   [data-daypart][data-theme="midnight"] :is(.m-disc, .m-quarter, .m-ring, .m-orbit) {
-    box-shadow:
-      0 0 48px 2px rgb(var(--tod) / var(--tod-glow)),
-      inset 0 0 36px rgb(var(--tod) / calc(var(--tod-glow) * .55));
-  }
-  /* The rings are a single hairline: their light stays inside the line,
-     fading inward from it, with nothing spilling outside. */
-  [data-daypart][data-theme="daylight"] :is(.m-ring, .m-orbit),
-  [data-daypart][data-theme="midnight"] :is(.m-ring, .m-orbit) {
     box-shadow: inset 0 0 18px rgb(var(--tod) / calc(var(--tod-glow) * .7));
   }
 }
