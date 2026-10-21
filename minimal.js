@@ -105,18 +105,14 @@
     ['contact', '#contact'],
   ].map(([name, sel]) => [name, document.querySelector(sel)]).filter(([, el]) => el);
 
-  let lastOp = '', scene = '';
+  let lastFade = '', scene = '';
   /* The fade is written straight onto the field's opacity, not as a
      variable on the ground: a variable there made every shape's style be
      worked out again on every frame of a scroll, which on a phone was most
      of what made the field stutter. Opacity alone is the compositor's job. */
   const field = ground.querySelector('.m-field');
-  // How strong the field is at its strongest, at the top of the page, and
-  // where it settles once the hero has gone by. Quieter on a phone, where
-  // the shapes sit behind the text rather than beside it.
-  const phone = matchMedia('(max-width: 719px)');
-  const PEAK = 0.34, REST = 0.08;
-  const PHONE_PEAK = 0.24, PHONE_REST = 0.055;
+  // How strong the field is at its strongest, at the top of the page.
+  const PEAK = 0.62;
 
   /* Reads, then writes: run with the site's other scroll effects in one
      pass per frame (reads first for all of them), so none of them makes
@@ -124,9 +120,7 @@
   const job = () => {
     const y = scrollY, vh = innerHeight;
     // Faded fully once the first screen has gone by.
-    const fade = Math.min(1, Math.max(0, y / (vh * 0.85)));
-    const p = phone.matches ? PHONE_PEAK : PEAK, r = phone.matches ? PHONE_REST : REST;
-    const op = (p + (r - p) * fade).toFixed(3);
+    const fade = Math.min(1, Math.max(0, y / (vh * 0.85))).toFixed(3);
     let now = scene;
     if (!reduce.matches && scenes.length) {
       // The section whose top has passed the middle of the screen.
@@ -140,9 +134,9 @@
       // page counts as arriving in it.
       if (y >= document.documentElement.scrollHeight - vh - 4) now = scenes[scenes.length - 1][0];
     }
-    if (op === lastOp && now === scene) return;
+    if (fade === lastFade && now === scene) return;
     return () => {
-      if (op !== lastOp) { if (field) field.style.opacity = op; lastOp = op; }
+      if (fade !== lastFade) { if (field) field.style.opacity = (PEAK * (1 - fade * .84)).toFixed(3); lastFade = fade; }
       if (now !== scene) { scene = now; ground.dataset.scene = now; }
     };
   };
