@@ -160,10 +160,10 @@
 
 /* ==========================================================================
    Minimal: the portrait catches the cursor
-   With a mouse over the hero portrait, the cursor is the light: the blue
-   arc turns to face it and the orange disc slides to the far side, the
-   shadow it casts, at the same distance it sits at rest. minimal.css eases
-   both. On leaving, the light goes back to the top left. The arc's turn is
+   With a mouse over the hero portrait, the orange disc leads: it slides
+   toward the cursor, at the same distance it sits at rest, and the blue
+   arc turns to the opposite side. minimal.css eases both. On leaving, they
+   go back to where they rest, orange low right and blue high left. The arc's turn is
    kept continuous, so passing round the bottom never spins it the long way.
    Mouse only, and not with reduced motion.
    ========================================================================== */
@@ -189,10 +189,11 @@
     fig.classList.add('is-lit');
     // Right at the centre there is no direction to take; hold the last one.
     if (len < r.width * 0.06) return;
-    fig.style.setProperty('--fig-ox', (-dx / len * REACH).toFixed(1) + 'px');
-    fig.style.setProperty('--fig-oy', (-dy / len * REACH).toFixed(1) + 'px');
-    // The arc rests facing up and left, -135deg.
-    turnTo(Math.atan2(dy, dx) * 180 / Math.PI + 135);
+    fig.style.setProperty('--fig-ox', (dx / len * REACH).toFixed(1) + 'px');
+    fig.style.setProperty('--fig-oy', (dy / len * REACH).toFixed(1) + 'px');
+    // The arc rests facing up and left (-135deg) and turns to face away
+    // from the cursor.
+    turnTo(Math.atan2(dy, dx) * 180 / Math.PI - 45);
   });
 
   fig.addEventListener('pointerleave', () => {
