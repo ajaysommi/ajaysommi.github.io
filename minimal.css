@@ -666,6 +666,14 @@
   .nav-links a:hover,
   .nav-links a.is-current,
   .nav-links a.is-pocketed { color: var(--ink); }
+  /* Resume is the one item that opens a page of its own rather than
+     scrolling to a section, and the one a recruiter is after: a hairline
+     pill sets it apart, and the pocket fills it like any other item. */
+  .nav-links a.nav-resume {
+    margin-left: 8px;
+    border: 1px solid var(--stroke-hi);
+    color: var(--ink);
+  }
 
   header.nav .icon-btn,
   header.nav a.cta,
