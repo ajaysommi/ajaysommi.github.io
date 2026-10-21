@@ -758,11 +758,17 @@
     opacity: 1;
     pointer-events: none;
   }
-  /* The text keeps a column of its own and the shapes get the rest, so
-     nothing is ever set over them. */
-  @media (min-width: 720px) {
+  /* No tile composition: the portrait and the text are one block, centred,
+     and the headline is set larger to carry the space the tiles had. */
+  .hero-card::before { content: none; }
+  @media (min-width: 900px) {
     .hero-card,
-    [data-theme] .hero-card { padding-right: clamp(190px, 27vw, 330px); }
+    [data-theme] .hero-card {
+      grid-template-columns: minmax(220px, 320px) minmax(0, 700px);
+      justify-content: center;
+      column-gap: clamp(28px, 4vw, 56px);
+    }
+    .hero-head h1 { font-size: clamp(36px, 4.4vw, 58px); }
   }
   /* The composition: a three by three grid of tiles, each holding one flat
      shape (quarter disc, circle, half disc, square, triangle) in the
@@ -1414,25 +1420,6 @@
     h1 { font-size: clamp(25px, 7vw, 32px); }
     .hero-head h1 { font-size: clamp(25px, 7vw, 32px); }
 
-    /* There is no spare column on a phone, so the composition shrinks to
-       one row of three of its tiles and moves into the one empty space the
-       hero has: beside the citizen pill. */
-    .hero-card::before { content: none; }
-    .hero-badges { align-items: center; }
-    .hero-badges::after {
-      content: "";
-      flex: 0 0 auto;
-      width: 90px;
-      height: 30px;
-      margin-left: auto;
-      background:
-        radial-gradient(circle 30px at 100% 100%, var(--accent) calc(100% - .8px), transparent 100%),
-        radial-gradient(circle 15px at 50% 50%, var(--m-blue) calc(100% - .8px), transparent 100%),
-        linear-gradient(to top right, var(--ink) calc(50% - .5px), transparent calc(50% + .5px));
-      background-size: 30px 30px;
-      background-repeat: no-repeat;
-      background-position: 0 0, 30px 0, 60px 0;
-    }
     .hero-figure::before { left: 6px; top: 6px; }
 
     .card { padding: 18px; }
