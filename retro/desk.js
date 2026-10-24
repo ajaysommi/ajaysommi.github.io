@@ -265,8 +265,9 @@
   const slotRect = () => machines[0].querySelector('.drive .slot').getBoundingClientRect();
   const driveEl = machines[0].querySelector('.drive');
 
+  let started = false;
   const insert = async () => {
-    if (state !== 'intro') return;
+    if (state !== 'intro' || !started) return;
     state = 'inserting';
     showHint('');
     floppy.classList.remove('is-idle');
@@ -288,7 +289,6 @@
     driveEl.classList.remove('is-glow');
     window.SFX.insert();
     api.led(0, 'busy');
-    try { sessionStorage.setItem('retro-in', '1'); } catch (e) {}
     await startFirst();
   };
 
@@ -318,7 +318,7 @@
      since the disk lives on the scaled desk. */
   let drag = null;
   floppy.addEventListener('pointerdown', (e) => {
-    if (state !== 'intro') return;
+    if (state !== 'intro' || !started) return;
     floppy.setPointerCapture(e.pointerId);
     floppy.classList.remove('is-idle');
     drag = { id: e.pointerId, x: e.clientX, y: e.clientY, l: parseFloat(floppy.style.left), t: parseFloat(floppy.style.top), moved: 0 };
@@ -462,7 +462,7 @@
     clearTimeout(rz);
     rz = setTimeout(() => {
       const nowPocket = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches;
-      if (nowPocket) { location.reload(); return; }
+      if (nowPocket && document.documentElement.dataset.forced !== '1') { location.reload(); return; }
       setVars();
       layout();
       applyCam(state === 'in' ? full(cur) : view(cur), 0);
@@ -473,25 +473,24 @@
   /* --------------------------------------------------------------- start */
 
   const start = () => {
+    started = true;
     powerOn(0);
     layout();
     applyCam(view(0), 0);
     setInert();
-    let again = false;
-    try { again = sessionStorage.getItem('retro-in') === '1'; } catch (e) {}
-    if (again) {
-      floppy.classList.add('is-gone');
-      state = 'inserting';
-      startFirst(true);
-      return;
-    }
     hud.hidden = false;
     floppy.style.left = floppyRest.x + 'px';
     floppy.style.top = floppyRest.y + 'px';
     showHint('Drag the disk into the drive &middot; or press <kbd>Enter</kbd>');
   };
 
-  if (document.fonts && document.fonts.ready) {
-    Promise.race([document.fonts.ready, wait(1200)]).then(start);
-  } else start();
+  /* The desk is laid out under the loading screen, so it is already
+     standing there when the lights come up. */
+  const ready = window.READY || Promise.resolve();
+  (document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, wait(1200)]) : Promise.resolve()).then(() => {
+    powerOn(0);
+    layout();
+    applyCam(view(0), 0);
+    return ready;
+  }).then(start);
 })();

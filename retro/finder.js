@@ -591,7 +591,7 @@ window.FINDER = (function () {
 
   const PATTERNS = [['violet', 'Twilight'], ['classic', 'Classic Grey'], ['teal', 'Lagoon'], ['dune', 'Dune'], ['bricks', 'Bricks'], ['weave', 'Weave']];
   const MENUS = () => [
-    ['mark', I.mark(16), [
+    ['mark', I.pxmark(16), [
       ['About This Computer…', () => openWin('computer')],
       ['Easter Eggs…', () => openWin('eggs'), `${window.EGGS.count()}/${window.EGGS.total}`],
       '-',
@@ -677,7 +677,7 @@ window.FINDER = (function () {
 
   async function bootSeq() {
     const b = h('div', 'fd-boot');
-    b.innerHTML = `<div class="hello">${I.mark(64, true)}</div>`;
+    b.innerHTML = `<div class="hello">${I.pxmark(64)}</div>`;
     root.appendChild(b);
     window.SFX.chime();
     await wait(1100);

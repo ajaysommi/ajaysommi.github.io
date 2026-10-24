@@ -450,5 +450,26 @@ window.ICONS = (function () {
   /* The speaker in each menu bar: sound on, or crossed out. */
   const spk = (muted) => `<svg viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/>${muted ? '<path d="M11 6l4 4M15 6l-4 4" stroke="currentColor" stroke-width="1.4"/>' : '<path d="M11 5.5q2 2.5 0 5M13 4q3.5 4 0 8" fill="none" stroke="currentColor" stroke-width="1.2"/>'}</svg>`;
 
-  return { svg, mark, spk, names: Object.keys(B) };
+  /* The AJ mark as screens draw it: the pixel version from the loader
+     (window.AJ_PX). Hardware keeps the smooth mark above; anything shown
+     on a pixel screen uses this. 'mono' draws every pixel in the screen's
+     own ink, for one colour displays. */
+  const PXC = { '#': 'currentColor', b: '#3d68ff', r: '#ff6b35' };
+  const pxmark = (size = 16, mono = false) => {
+    const rows = window.AJ_PX || [];
+    let rects = '';
+    rows.forEach((row, y) => {
+      let x = 0;
+      while (x < 16) {
+        const ch = row[x] || '.';
+        let n = 1;
+        while (x + n < 16 && (row[x + n] || '.') === ch) n++;
+        if (PXC[ch]) rects += `<rect x="${x}" y="${y}" width="${n}" height="1" fill="${mono ? 'currentColor' : PXC[ch]}"/>`;
+        x += n;
+      }
+    });
+    return `<svg class="aj-mark aj-px" viewBox="0 0 16 16" width="${size}" height="${size}" shape-rendering="crispEdges" aria-hidden="true">${rects}</svg>`;
+  };
+
+  return { svg, mark, pxmark, spk, names: Object.keys(B) };
 })();

@@ -467,7 +467,7 @@ window.TERM = (function () {
       </div>
       <div class="term-chips" role="toolbar" aria-label="Commands"></div>
       <input class="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type a command" />
-      <div class="term-wait"><div>SOMMI-83 PERSONAL COMPUTER<br/>BIOS v1.0 \u00b7 (C) 1983<br/><br/>NO SYSTEM DISK.<br/>INSERT PORTFOLIO DISK IN DRIVE A:<br/><span class="blink">\u2588</span></div></div>`;
+      <div class="term-wait"><div>${window.ICONS.pxmark(96, true)}SOMMI-83 PERSONAL COMPUTER<br/>BIOS v1.0 \u00b7 (C) 1983<br/><br/>NO SYSTEM DISK.<br/>INSERT PORTFOLIO DISK IN DRIVE A:<br/><span class="blink">\u2588</span></div></div>`;
     scr.appendChild(root);
     out = root.querySelector('.term-out');
     input = root.querySelector('.term-input');

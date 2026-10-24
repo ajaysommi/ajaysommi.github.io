@@ -15,7 +15,7 @@
   <meta property="og:image" content="https://ajaysommi.github.io/assets/images/opt/hero-960.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <meta name="theme-color" content="#2b2722" />
+  <meta name="theme-color" content="#16130f" />
   <meta name="color-scheme" content="light" />
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -28,18 +28,58 @@
 
   <script>
     /* Which machine this visitor gets is settled before anything draws: a
-       phone gets the pocket device, everything else the desk of computers. */
+       phone gets the pocket device, everything else the desk of computers.
+       On a development host, ?device=desk|pocket|iphone (or the DEV switch
+       in the corner) overrides that for the rest of the tab's life. */
     (function () {
       var root = document.documentElement;
-      var pocket = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches;
-      root.className = (pocket ? 'is-pocket' : 'is-desk') + ' js';
+      var dev = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || /\.(local|localhost|test)$/.test(location.hostname);
+      var forced = null;
+      if (dev) {
+        try {
+          var q = new URLSearchParams(location.search).get('device');
+          if (q === 'auto') sessionStorage.removeItem('dev-device');
+          else if (q) sessionStorage.setItem('dev-device', q);
+          forced = sessionStorage.getItem('dev-device');
+        } catch (e) {}
+      }
+      var auto = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches ? 'pocket' : 'desk';
+      var mode = forced === 'desk' || forced === 'pocket' || forced === 'iphone' ? forced : auto;
+      root.className = 'is-' + mode + ' js is-loading';
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('reduced');
-      root.dataset.mode = pocket ? 'pocket' : 'desk';
+      root.dataset.mode = mode;
+      root.dataset.forced = forced ? '1' : '';
+      root.dataset.dev = dev ? '1' : '';
     })();
   </script>
 
+  <style>
+    /* The loading screen, inline so it is the very first thing drawn. */
+    .boot-ld {
+      position: fixed; inset: 0; z-index: 10000;
+      display: grid; place-items: center;
+      background: #16130f; color: #e9e4d8;
+      transition: opacity .6s ease, visibility .6s;
+    }
+    .boot-ld.is-done { opacity: 0; visibility: hidden; }
+    .boot-ld .in { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+    .boot-ld svg { width: 112px; height: 112px; display: block; shape-rendering: crispEdges; }
+    .boot-ld svg rect { opacity: 0; transition: opacity .12s steps(1); }
+    .boot-ld svg rect.on { opacity: 1; }
+    .boot-ld .bar { display: grid; grid-template-columns: repeat(20, 8px); gap: 3px; }
+    .boot-ld .bar i { height: 12px; background: #3a342b; }
+    .boot-ld .bar i.on { background: #e9e4d8; }
+    .boot-ld .txt { font: 12px 'Silkscreen', 'Courier New', monospace; letter-spacing: .14em; color: #a59d8d; min-height: 1.2em; }
+    .boot-ld .blink { animation: ldblink 1s steps(1) infinite; }
+    @keyframes ldblink { 50% { opacity: 0; } }
+    /* The room behind it comes up like a lamp being switched on. */
+    .is-loading .room, .is-loading .pocket-room, .is-loading .iphone-room { filter: brightness(.2); }
+    .room, .pocket-room, .iphone-room { transition: filter 1s ease; }
+  </style>
+
   <link rel="stylesheet" href="retro/os.css" />
   <link rel="stylesheet" href="retro/pocket.css" />
+  <link rel="stylesheet" href="retro/iphone.css" />
 
   <script type="application/ld+json">
   {
@@ -59,8 +99,105 @@
 <body>
   <a class="skip-link" href="classic.html">Skip the computer: open the classic site</a>
 
+  <!-- Loading: the pixel mark fills in as the page's fonts and pictures
+       arrive, then the room behind it lights up. -->
+  <div class="boot-ld" id="bootLd" role="progressbar" aria-label="Loading the portfolio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="in">
+      <svg viewBox="0 0 16 16" aria-hidden="true"></svg>
+      <div class="bar" aria-hidden="true"></div>
+      <div class="txt">LOADING<span class="blink">_</span></div>
+    </div>
+  </div>
+  <script>
+    (function loader() {
+      /* The AJ mark redrawn for pixel screens, one character per pixel:
+         # ink, b blue, r orange. Every machine's screen uses this one. */
+      var ROWS = window.AJ_PX = [
+        '.......##.......',
+        '......####...bb.',
+        '......####..bbbb',
+        '.....######.bbbb',
+        '.....######..bb.',
+        '....########....',
+        '....########.bbb',
+        '...####..###.bbb',
+        '...####..####bbb',
+        '..####...####bbb',
+        '..####rrrr...rrr',
+        '.####..rrrrrrrrr',
+        '####...rrrrrrrr.',
+        '........rrrrrr..',
+        '..........rr....',
+        '................'
+      ];
+      var el = document.getElementById('bootLd');
+      var svg = el.querySelector('svg');
+      var bar = el.querySelector('.bar');
+      var txt = el.querySelector('.txt');
+      var C = { '#': '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
+      var cells = [];
+      ROWS.forEach(function (row, y) {
+        for (var x = 0; x < 16; x++) {
+          var ch = row[x];
+          if (!C[ch]) continue;
+          var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1); r.setAttribute('height', 1); r.setAttribute('fill', C[ch]);
+          svg.appendChild(r);
+          cells.push(r);
+        }
+      });
+      /* Pixels arrive in a shuffled order, but roughly top to bottom, the
+         way a picture came down a slow line. */
+      cells.sort(function (a, b) { return (+a.getAttribute('y') + Math.random() * 6) - (+b.getAttribute('y') + Math.random() * 6); });
+      for (var i = 0; i < 20; i++) bar.appendChild(document.createElement('i'));
+      var segs = bar.children;
+
+      var mode = document.documentElement.dataset.mode;
+      var imgs = ['assets/images/opt/hero-480.webp'];
+      if (mode === 'desk') imgs.push('assets/images/offclock/kid-2006-crop.webp', 'assets/images/uf-gator-320.webp');
+      var tasks = [];
+      tasks.push(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+      tasks.push(new Promise(function (r) { if (document.readyState === 'complete') r(); else addEventListener('load', r); }));
+      imgs.forEach(function (src) { tasks.push(new Promise(function (r) { var im = new Image(); im.onload = im.onerror = r; im.src = src; })); });
+      var done = 0;
+      tasks.forEach(function (t) { t.then(function () { done++; }); });
+
+      var MIN = document.documentElement.classList.contains('reduced') ? 300 : 1700;
+      var MAX = 7000;
+      var t0 = performance.now(), shown = 0, finished = false, resolveReady;
+      window.READY = new Promise(function (r) { resolveReady = r; });
+
+      function frame(now) {
+        var el2 = now - t0;
+        var target = Math.min(done / tasks.length, el2 / MIN);
+        if (el2 > MAX) target = 1;
+        shown += (target - shown) * 0.14;
+        if (target - shown < 0.004) shown = target;
+        var n = Math.round(shown * cells.length);
+        for (var k = 0; k < cells.length; k++) cells[k].classList.toggle('on', k < n);
+        var s = Math.round(shown * segs.length);
+        for (var j = 0; j < segs.length; j++) segs[j].classList.toggle('on', j < s);
+        el.setAttribute('aria-valuenow', Math.round(shown * 100));
+        txt.innerHTML = shown >= 1 ? 'READY' : 'LOADING ' + Math.round(shown * 100) + '%<span class="blink">_</span>';
+        if (shown >= 1 && !finished) {
+          finished = true;
+          setTimeout(function () {
+            el.classList.add('is-done');
+            document.documentElement.classList.remove('is-loading');
+            resolveReady();
+            setTimeout(function () { el.remove(); }, 700);
+          }, 380);
+          return;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+  </script>
+
   <!-- The whole experience is drawn by script. Without it, the plain facts. -->
   <noscript>
+    <style>.boot-ld { display: none; } .is-loading .room, .is-loading .pocket-room { filter: none; }</style>
     <div class="no-js">
       <h1>Ajay Sommi · Software Engineer</h1>
       <p>This portfolio runs on a little computer that needs JavaScript to boot.</p>
@@ -82,6 +219,9 @@
   <!-- POCKET: the phone's own machine. -->
   <div class="pocket-room" id="pocketRoom" aria-label="A pocket computer"></div>
 
+  <!-- IPHONE: a development-only simulator, reached with ?device=iphone. -->
+  <div class="iphone-room" id="iphoneRoom" aria-label="A 2007 phone"></div>
+
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
   <script src="retro/content.js"></script>
@@ -93,5 +233,28 @@
   <script src="retro/web.js"></script>
   <script src="retro/desk.js"></script>
   <script src="retro/pocket.js"></script>
+  <script src="retro/iphone.js"></script>
+
+  <script>
+    /* Development hosts only: a switch for which machine to show. */
+    (function devSwitch() {
+      if (document.documentElement.dataset.dev !== '1') return;
+      var cur = document.documentElement.dataset.forced === '1' ? document.documentElement.dataset.mode : 'auto';
+      var box = document.createElement('div');
+      box.className = 'dev-switch';
+      box.innerHTML = '<span title="Choose a machine (development only)">DEV \u25be</span>' + [['auto', 'Auto'], ['desk', 'Desk'], ['pocket', 'Pocket'], ['iphone', 'iPhone 2G']].map(function (m) {
+        return '<button type="button" data-d="' + m[0] + '"' + (m[0] === cur ? ' aria-pressed="true"' : '') + '>' + m[1] + '</button>';
+      }).join('');
+      box.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-d]');
+        if (!b) { box.classList.toggle('is-open'); return; }
+        var u = new URL(location.href);
+        u.searchParams.set('device', b.dataset.d);
+        u.hash = '';
+        location.href = u.toString();
+      });
+      document.body.appendChild(box);
+    })();
+  </script>
 </body>
 </html>

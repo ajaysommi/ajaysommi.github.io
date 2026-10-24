@@ -104,6 +104,15 @@
 .lcd-bar .bat::after { content: ''; position: absolute; right: -4px; top: 2px; width: 2px; height: 3px; background: var(--lcd-ink); }
 .lcd-bar .bat i { display: block; height: 100%; width: 80%; background: var(--lcd-ink); }
 .lcd-bar .lk { width: 14px; font-size: 12px; }
+.lcd-bar .lk:empty { display: none; }
+.lcd-back {
+  flex: none; border: 0; background: var(--lcd-ink); color: var(--lcd);
+  font: 700 16px/1 var(--pixel); padding: 1px 7px 3px; margin: -2px 0;
+  clip-path: polygon(8px 0, 100% 0, 100% 100%, 8px 100%, 0 50%); padding-left: 11px;
+}
+.pk-lcd.is-lit .lcd-back { color: var(--lcd-lit); }
+.lcd-back:active { opacity: .6; }
+.lcd-bar .bat { margin-left: 0; }
 
 .lcd-view { position: relative; flex: 1; min-height: 0; overflow: hidden; }
 .lcd-pane {
@@ -155,7 +164,7 @@
 .lcd-story .cp b { font-family: var(--pixel); }
 
 .lcd-boot { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font: 600 18px var(--pixel); background: inherit; z-index: 3; }
-.lcd-boot .aj-mark { width: 72px; height: 72px; color: var(--lcd-ink); margin: 0 auto 10px; }
+.lcd-boot .aj-mark { width: 72px; height: 72px; color: var(--lcd-ink); margin: 0 auto 10px; display: block; }
 .lcd-boot .dots { letter-spacing: .3em; font-size: 14px; margin-top: 8px; }
 .lcd-banner {
   position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 4;

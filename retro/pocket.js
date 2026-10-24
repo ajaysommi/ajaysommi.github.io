@@ -20,7 +20,7 @@
       <button class="pk-hold" type="button" aria-label="Hold switch" aria-pressed="false"><span>HOLD</span></button>
       <div class="pk-brand">${I.mark(14, true)} Sommi Pocket</div>
       <div class="pk-lcd-frame"><div class="pk-lcd" role="application" aria-label="Pocket screen">
-        <div class="lcd-bar"><span class="lk" aria-hidden="true"></span><span class="t">Sommi</span><span class="bat" aria-hidden="true"><i></i></span></div>
+        <div class="lcd-bar"><button class="lcd-back" type="button" aria-label="Back" hidden>\u2039</button><span class="lk" aria-hidden="true"></span><span class="t">Sommi</span><span class="bat" aria-hidden="true"><i></i></span></div>
         <div class="lcd-view"></div>
         <div class="lcd-banner" role="status"></div>
       </div></div>
@@ -57,6 +57,7 @@
   const view = room.querySelector('.lcd-view');
   const title = room.querySelector('.lcd-bar .t');
   const lock = room.querySelector('.lcd-bar .lk');
+  const backBtn = room.querySelector('.lcd-back');
   const banner = room.querySelector('.lcd-banner');
   const wheel = room.querySelector('.pk-wheel');
   const hub = room.querySelector('.pk-hub');
@@ -234,6 +235,7 @@
     view.innerHTML = '';
     view.appendChild(p);
     pane = p;
+    backBtn.hidden = stack.length <= 1;
     ditherIn(p);
     if (s.type === 'menu') scrollSel();
     if (top.scroll) p.scrollTop = top.scroll;
@@ -344,7 +346,8 @@
   wheel.addEventListener('pointerdown', (e) => {
     if (e.target === hub) return;
     wheel.setPointerCapture(e.pointerId);
-    wt = { id: e.pointerId, a: angleOf(e), acc: 0, turned: 0, target: e.target.closest('.zone'), t: performance.now() };
+    const a0 = angleOf(e);
+    wt = { id: e.pointerId, a: a0, a0, acc: 0, turned: 0, t: performance.now() };
   });
   wheel.addEventListener('pointermove', (e) => {
     if (!wt || e.pointerId !== wt.id) return;
@@ -370,13 +373,17 @@
     const w = wt;
     wt = null;
     wheel.classList.remove('is-turning');
-    if (w.turned < 10 && w.target) {
+    /* A press that barely turned is a button press. Which button is read
+       from the angle, so the whole quarter of the ring counts: the top
+       quarter is MENU (back), wherever on it the thumb lands. */
+    if (w.turned < 12) {
       if (!guard()) return;
       tap();
-      if (w.target.classList.contains('t')) back();
-      else if (w.target.classList.contains('l')) step(-1);
-      else if (w.target.classList.contains('r')) step(1);
-      else if (w.target.classList.contains('b')) play();
+      const a = w.a0;
+      if (a < -45 && a >= -135) back();
+      else if (a >= -45 && a < 45) step(1);
+      else if (a >= 45 && a < 135) play();
+      else step(-1);
     }
   };
   wheel.addEventListener('pointerup', wheelUp);
@@ -390,6 +397,7 @@
     else play();
   }));
   hub.addEventListener('click', () => { if (!guard()) return; tap(); select(); });
+  backBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!guard()) return; tap(); back(); });
 
   /* Tapping the screen chooses what was tapped. */
   view.addEventListener('click', (e) => {
@@ -406,15 +414,17 @@
     if (e.target.closest('.lcd-story .ph')) { tap(); step(1); }
   });
   /* A sideways swipe on the screen goes back, the way phones do. */
-  let sx = null, sy = null;
-  view.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  let sx = null, sy = null, sx0 = 0;
+  view.addEventListener('touchstart', (e) => { sx = sx0 = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
   view.addEventListener('touchend', (e) => {
     if (sx === null) return;
     const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
     sx = null;
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5 && guard()) {
       const s = stack[stack.length - 1].screen;
-      if (s.type === 'story' || s.nav) step(dx < 0 ? 1 : -1);
+      /* From the left edge, a swipe always goes back, as on a phone. */
+      if (dx > 0 && sx0 - view.getBoundingClientRect().left < 36) back();
+      else if (s.type === 'story' || s.nav) step(dx < 0 ? 1 : -1);
       else if (dx > 0) back();
     }
   }, { passive: true });
@@ -465,7 +475,7 @@
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   let inserting = false;
   async function insert() {
-    if (on || inserting) return;
+    if (on || inserting || !started) return;
     inserting = true;
     hint.textContent = '';
     card.classList.remove('is-idle');
@@ -481,7 +491,7 @@
     lcd.classList.add('is-lit');
     const b = document.createElement('div');
     b.className = 'lcd-boot';
-    b.innerHTML = `<div>${I.mark(72, true)}<div>SOMMI POCKET</div><div class="dots">·</div></div>`;
+    b.innerHTML = `<div>${I.pxmark(72, true)}<div>SOMMI POCKET</div><div class="dots">·</div></div>`;
     lcd.appendChild(b);
     window.SFX.chime();
     const dots = b.querySelector('.dots');
@@ -489,15 +499,14 @@
     await wait(250);
     b.remove();
     on = true;
-    try { sessionStorage.setItem('pk-on', '1'); } catch (e) {}
     stack.length = 0;
     stack.push({ key: 'main', args: [], screen: SCREENS.main(), sel: 0 });
     render(0);
     wake();
-    say('Turn the wheel · press the middle');
+    say('Turn the wheel · press the middle · MENU goes back');
   }
 
-  let again = false;
-  try { again = sessionStorage.getItem('pk-on') === '1'; } catch (e) {}
-  if (again) { card.style.display = 'none'; hint.textContent = ''; insert(); }
+  /* Nothing can be inserted until the loading screen has gone. */
+  let started = false;
+  (window.READY || Promise.resolve()).then(() => { started = true; });
 })();

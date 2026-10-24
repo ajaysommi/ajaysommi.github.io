@@ -244,7 +244,7 @@ window.WEB = (function () {
   /* -------------------------------------------------------------- menus */
 
   const MENUS = [
-    ['mark', I.mark(16), [['About SurfBoard', () => load('about:')], ['Easter Eggs found: ' + '?', null], '-', ['Travel to 1983', () => api.go(0)], ['Travel to 1991', () => api.go(1)]]],
+    ['mark', I.pxmark(16), [['About SurfBoard', () => load('about:')], ['Easter Eggs found: ' + '?', null], '-', ['Travel to 1983', () => api.go(0)], ['Travel to 1991', () => api.go(1)]]],
     ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('Printing... just kidding. Try the Résumé page’s Download link.'); }, '⌘P']]],
     ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U']]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],
@@ -308,7 +308,7 @@ window.WEB = (function () {
           ${tbtn('back', 'Back', 'back')}${tbtn('fwd', 'Forward', 'fwd')}${tbtn('reload', 'Reload', 'reload')}${tbtn('home', 'Home', 'home')}
           <span class="sep"></span>
           ${tbtn('book', 'Guestbook', 'guestbook')}${tbtn('mail', 'E-mail', 'contact')}${tbtn('src', 'Source', 'source')}
-          <div class="throb bev-in" aria-hidden="true">${I.mark(28, true)}<i class="star"></i></div>
+          <div class="throb bev-in" aria-hidden="true">${I.pxmark(28, true)}<i class="star"></i></div>
         </div>
         <form class="br-loc" autocomplete="off"><label for="ntLoc">Location:</label><input id="ntLoc" class="bev-in" type="text" spellcheck="false" autocapitalize="off" /><button type="submit" class="go bev">Go</button></form>
         <div class="br-links">${[['index', 'Home'], ['work', 'Work'], ['projects', 'Projects'], ['garage', 'Garage'], ['skills', 'Skills'], ['school', 'School'], ['guestbook', 'Guestbook'], ['contact', 'E-mail'], ['resume', 'Résumé']].map(([p, l]) => `<button type="button" class="bev" data-go="${p}">${l}</button>`).join('')}</div>
@@ -402,7 +402,7 @@ window.WEB = (function () {
   const boot = async () => {
     const b = document.createElement('div');
     b.className = 'nt-boot';
-    b.innerHTML = `<div class="splash"><div class="logo">${I.mark(52, false)}<span>SommiNet 98</span></div><p>Starting up…</p><div class="bar bev-in"><i></i></div></div>`;
+    b.innerHTML = `<div class="splash"><div class="logo">${I.pxmark(52)}<span>SommiNet 98</span></div><p>Starting up…</p><div class="bar bev-in"><i></i></div></div>`;
     root.appendChild(b);
     window.SFX.chime();
     const bar = b.querySelector('.bar i');

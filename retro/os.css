@@ -55,8 +55,25 @@ img { display: block; max-width: 100%; }
 .no-js { color: #eee; padding: 40px 24px; font: 18px/1.5 var(--read); max-width: 640px; margin: auto; }
 .no-js a { color: #9db9ff; }
 
-.is-pocket .room { display: none; }
-.is-desk .pocket-room { display: none; }
+.is-pocket .room, .is-iphone .room { display: none; }
+.is-desk .pocket-room, .is-iphone .pocket-room { display: none; }
+.iphone-room { display: none; }
+.is-iphone .iphone-room { display: grid; }
+
+/* Development hosts only: which machine to show. A small tab at the top
+   centre, out of the way of every machine's own controls; it opens on click. */
+.dev-switch {
+  position: fixed; left: 50%; top: 0; z-index: 20000; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 2px;
+  background: rgba(10, 9, 7, .85); border: 1px solid rgba(255,255,255,.14); border-top: 0;
+  border-radius: 0 0 8px 8px; padding: 2px 3px 3px; font: 11px/1 system-ui, sans-serif;
+  opacity: .5; transition: opacity .2s;
+}
+.dev-switch:hover, .dev-switch.is-open { opacity: 1; }
+.dev-switch > span { color: #ffd36b; font-weight: 700; padding: 3px 6px; letter-spacing: .08em; cursor: pointer; }
+.dev-switch button { border: 0; background: none; color: #ddd; padding: 4px 8px; border-radius: 5px; cursor: pointer; display: none; }
+.dev-switch.is-open button { display: block; }
+.dev-switch button[aria-pressed="true"] { background: #ffd36b; color: #111; }
 
 /* ------------------------------------------------------------------ ROOM */
 
@@ -449,6 +466,7 @@ img { display: block; max-width: 100%; }
   font-size: 1.3em; line-height: 1.4;
 }
 .term-wait .blink { animation: blink 1.06s steps(1) infinite; }
+.term-wait .aj-px { display: block; margin: 0 auto .8em; width: 4.2em; height: 4.2em; color: var(--ph); }
 
 /* ================================================================ FINDER */
 
@@ -665,7 +683,7 @@ img { display: block; max-width: 100%; }
   background: #fff; border: 2px solid #000; border-radius: 10px;
   box-shadow: 3px 3px 0 #000;
 }
-.fd-boot .hello svg { width: 64px; height: 64px; color: #000; }
+.fd-boot .hello svg { width: 64px; height: 64px; color: #000; image-rendering: pixelated; }
 .fd-boot .welcome {
   background: #fff; border: 1px solid #000; box-shadow: 2px 2px 0 #000; padding: 3px;
 }
