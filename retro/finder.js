@@ -254,7 +254,7 @@ window.FINDER = (function () {
       render: (b) => {
         b.innerHTML = `<div class="doc"><h2>Welcome to SommiOS.</h2>
           <p>This is the portfolio as it would have looked on a desktop in 1991.</p>
-          <p>• <b>Double-click</b> any icon to open it.<br/>• Drag windows by their <b>title bars</b>. The box at the top left closes one.<br/>• Press <b>⌘F</b> (or Ctrl+F) and just type what you want to see.<br/>• <b>Scroll past the bottom</b> of the desktop to travel to 1998, or up to go back to 1983.</p>
+          <p>• <b>Double-click</b> any icon to open it.<br/>• Drag windows by their <b>title bars</b>. The box at the top left closes one.<br/>• Press <b>⌘F</b> (or Ctrl+F) and just type what you want to see.<br/>• <b>Special › Restart in Another Era</b> starts up from a different year.</p>
           <p>Some things here are not what they seem. The Trash is a good place to start.</p>
           <div class="btns"><button class="btn is-default" data-open="about">Start with About Me</button><button class="btn" data-open="find">Find…</button></div></div>`;
       }
@@ -599,8 +599,7 @@ window.FINDER = (function () {
       ['Puzzle', () => openWin('puzzle')],
       ['Scrapbook', () => openWin('scrapbook')],
       '-',
-      ['Travel to 1983', () => api.go(0)],
-      ['Travel to 1998', () => api.go(2)]
+      ['Restart in Another Era\u2026', () => api.picker()]
     ]],
     ['file', 'File', [
       ['New Folder', null, '⌘N'],
@@ -627,6 +626,7 @@ window.FINDER = (function () {
       ['Empty Trash…', () => alert('<p>The Trash contains 4 items that can’t be thrown away.</p><p>They’re load-bearing.</p>')],
       '-',
       ['Restart', restart],
+      ['Restart in Another Era\u2026', () => api.picker()],
       ['Shut Down', shutdown]
     ]]
   ];
@@ -711,10 +711,10 @@ window.FINDER = (function () {
   }
 
   async function shutdown() {
-    const s = h('div', 'fd-shutdown', `<div class="dlg"><div class="dlg-in">${I.svg('mac', 32)}<div class="dlg-txt"><p>It is now safe to switch off your portfolio.</p><p class="meta" style="color:#555">Or don’t. There’s more in 1998.</p><div class="btns"><button class="btn" type="button" data-a="fw">Go to 1998</button><button class="btn is-default" type="button" data-a="r">Restart</button></div></div></div></div>`);
+    const s = h('div', 'fd-shutdown', `<div class="dlg"><div class="dlg-in">${I.svg('mac', 32)}<div class="dlg-txt"><p>It is now safe to switch off your portfolio.</p><p class="meta" style="color:#555">Or start up from another era.</p><div class="btns"><button class="btn" type="button" data-a="fw">Another era</button><button class="btn is-default" type="button" data-a="r">Restart</button></div></div></div></div>`);
     root.appendChild(s);
     s.querySelector('[data-a="r"]').addEventListener('click', restart);
-    s.querySelector('[data-a="fw"]').addEventListener('click', () => { s.remove(); api.go(2); });
+    s.querySelector('[data-a="fw"]').addEventListener('click', () => { s.remove(); api.picker(); });
   }
 
   /* --------------------------------------------------------------- wiring */

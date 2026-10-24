@@ -22,7 +22,9 @@ window.EGGS = (function () {
     ['hold', 'On hold', 'Flipped the pocket device’s hold switch.'],
     ['light', 'Flashlight', 'Turned the backlight all the way up.'],
     ['tune', 'Chiptune', 'Played the pocket device’s tune.'],
-    ['faceplate', 'New look', 'Swapped the pocket device’s faceplate.']
+    ['faceplate', 'New look', 'Swapped the pocket device’s faceplate.'],
+    ['timemachine', 'Time traveller', 'Used Time Machine to change eras.'],
+    ['update', 'Up to date', 'Checked for software updates in 2009.']
   ];
   const found = new Set(window.RETRO.store.get('eggs', []));
   let toastEl = null, toastT = 0;

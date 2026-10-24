@@ -87,7 +87,7 @@ window.TERM = (function () {
     ...MENU.map(([c, d], i) => `  ${i + 1}  ${cmd(c, pad(c.toUpperCase(), 10))}${esc(d)}`),
     '',
     [`  Type a command or a number, or click one. ${cmd('help', 'HELP')} lists them all.`, 'dim'],
-    [`  Scroll down past the end of this screen to travel to ${cmd('1991', '1991')}.`, 'dim'],
+    [`  Type ${cmd('era', 'ERA')} to start up from another era.`, 'dim'],
     ''
   ];
 
@@ -98,8 +98,7 @@ window.TERM = (function () {
     `  ${cmd('view me', pad('VIEW ME', 12))}a photo, in text mode`,
     `  ${cmd('github', pad('GITHUB', 12))}open GitHub`,
     `  ${cmd('linkedin', pad('LINKEDIN', 12))}open LinkedIn`,
-    `  ${cmd('1991', pad('1991', 12))}travel to the next machine`,
-    `  ${cmd('1998', pad('1998', 12))}skip ahead to the web`,
+    `  ${cmd('era', pad('ERA', 12))}start up from another era`,
     `  ${cmd('clear', pad('CLEAR', 12))}clear the screen`,
     '',
     ['  WORK, PROJECTS and GARAGE take a number: WORK 5. TAB completes, \u2191 recalls.', 'dim'],
@@ -327,9 +326,9 @@ window.TERM = (function () {
     cls: 'clear', dir: 'ls', 'ls -la': 'ls', cat: 'type', more: 'type', open: 'type',
     next: '1991', gui: '1991', startx: '1991', win: '1991', desktop: '1991', finder: '1991',
     web: '1998', www: '1998', internet: '1998', netscape: '1998', browser: '1998',
-    quit: 'exit', logout: 'exit', bye: 'exit', shutdown: 'exit',
+    quit: 'era', logout: 'era', bye: 'era', shutdown: 'era', exit: 'era', eras: 'era', switch: 'era', restart: 'era',
     hi: 'hello', hey: 'hello', yo: 'hello',
-    ver: 'version', restart: 'reboot', play: 'games', game: 'games', tea: 'coffee', java: 'coffee'
+    ver: 'version', play: 'games', game: 'games', tea: 'coffee', java: 'coffee'
   };
 
   const COMMANDS = {
@@ -396,6 +395,8 @@ window.TERM = (function () {
     reboot: () => { COMMANDS.clear(); return boot(true); },
     logo: () => print([...BANNER.map((l) => [esc(l), 'big']), '']),
     '1983': () => print(['YOU ARE ALREADY IN 1983.', '']),
+    era: () => { print(['SHUTTING DOWN. CHOOSE A STARTUP DISK...', '']); setTimeout(() => api.picker(), 600); return Promise.resolve(); },
+    '2009': () => { print(['JUMPING AHEAD TO 2009...', '']); setTimeout(() => api.go(3), 450); return Promise.resolve(); },
     '1991': () => { print(['ENGAGING TIME CIRCUITS...', '']); setTimeout(() => api.go(1), 450); return Promise.resolve(); },
     '1998': () => { print(['SKIPPING AHEAD TO 1998...', '']); setTimeout(() => api.go(2), 450); return Promise.resolve(); }
   };
@@ -461,7 +462,7 @@ window.TERM = (function () {
     root.className = 'term';
     root.dataset.ph = store.get('ph', 'green');
     root.innerHTML = `
-      <div class="term-bar" hidden><span>SOMMI-DOS 3.3 \u00b7 A:\\PORTFOLIO</span><span>TYPE HELP \u00b7 SCROLL \u2193 FOR 1991</span></div>
+      <div class="term-bar" hidden><span>SOMMI-DOS 3.3 \u00b7 A:\\PORTFOLIO</span><span>TYPE HELP \u00b7 ERA TO SWITCH</span></div>
       <div class="term-out" role="log" aria-live="polite" aria-label="Terminal output">
         <div class="term-prompt"><span>A:\\&gt; </span><span class="typed"></span><span class="term-cursor">&nbsp;</span></div>
       </div>
@@ -477,10 +478,10 @@ window.TERM = (function () {
     chips.hidden = true;
     sizeFont();
 
-    ['help', ...MENU.map((m) => m[0]), '1991'].forEach((c) => {
+    ['help', ...MENU.map((m) => m[0]), 'era'].forEach((c) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.textContent = c === '1991' ? '1991 \u2192' : c.toUpperCase();
+      b.textContent = c === 'era' ? 'ERA \u21c4' : c.toUpperCase();
       b.dataset.cmd = c;
       chips.appendChild(b);
     });

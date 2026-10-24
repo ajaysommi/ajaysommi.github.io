@@ -1,17 +1,15 @@
 /* ==========================================================================
-   The pocket device. A phone gets its own machine: a handheld with a
-   monochrome screen and a touch wheel. A memory card slides in to boot it.
+   The pocket device, one of the phones on the phone picker: a handheld
+   with a monochrome screen and a touch wheel. It powers on when chosen.
    Turn the wheel to move through a menu, press the middle to choose, the
    top of the ring goes back; the screen itself can be tapped and swiped
    too. Nothing here needs a keyboard.
    ========================================================================== */
-(function pocket() {
-  if (document.documentElement.dataset.mode !== 'pocket') return;
+window.POCKET = { start(room, exit) {
 
   const P = window.PORTFOLIO;
   const { esc, dither, store } = window.RETRO;
   const I = window.ICONS;
-  const room = document.getElementById('pocketRoom');
 
   const FACES = [['snow', 'Snow'], ['graphite', 'Graphite'], ['ocean', 'Ocean'], ['tangerine', 'Tangerine'], ['grape', 'Grape']];
 
@@ -37,20 +35,7 @@
         <i class="dot"></i>
       </div></div>
       <span class="pk-slot" aria-hidden="true"></span>
-    </div>
-    <button class="pk-card is-idle" type="button" aria-label="Memory card. Tap or swipe it up to insert it">
-      <svg viewBox="0 0 150 120" aria-hidden="true">
-        <path d="M8 4h126l12 12v96a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4Z" fill="#20242e"/>
-        <rect x="16" y="4" width="118" height="10" fill="#d6b44a"/>
-        ${[...Array(12)].map((_, i) => `<rect x="${20 + i * 9.4}" y="4" width="5" height="10" fill="#a8892f"/>`).join('')}
-        <rect x="14" y="24" width="122" height="84" rx="3" fill="#f4efe3"/>
-        <rect x="14" y="24" width="122" height="10" fill="#ff6b35"/><rect x="14" y="34" width="122" height="4" fill="#3d68ff"/>
-        <text x="22" y="62" font-family="Pixelify Sans, monospace" font-size="15" font-weight="700" fill="#1a1a1a">AJAY SOMMI</text>
-        <text x="22" y="80" font-family="Pixelify Sans, monospace" font-size="11" fill="#333">portfolio &#8217;26</text>
-        <text x="22" y="98" font-family="VT323, monospace" font-size="11" fill="#666">&#8593; INSERT THIS END</text>
-      </svg>
-    </button>
-    <div class="pk-hint">Swipe the card up into the slot</div>`;
+    </div>`;
 
   const dev = room.querySelector('.pk');
   const lcd = room.querySelector('.pk-lcd');
@@ -61,8 +46,6 @@
   const banner = room.querySelector('.lcd-banner');
   const wheel = room.querySelector('.pk-wheel');
   const hub = room.querySelector('.pk-hub');
-  const card = room.querySelector('.pk-card');
-  const hint = room.querySelector('.pk-hint');
   const hold = room.querySelector('.pk-hold');
 
   let on = false, held = false;
@@ -131,7 +114,8 @@
         [li('Contact'), () => open('contact')],
         [li('Resume', '↗'), () => window.open(P.resume, '_blank', 'noopener')],
         [li('Extras'), () => open('extras')],
-        [li('Settings'), () => open('settings')]
+        [li('Settings'), () => open('settings')],
+        [li('Switch phone', '\u21c4'), () => exit()]
       ]
     }),
     about: () => textScreen('About', `<img data-src="${P.photo}" alt="Ajay Sommi outdoors in front of green hills" /><h2>Ajay Sommi</h2><div class="m">Software Engineer · ${esc(P.citizen)}</div><p>${esc(P.about[0])}</p><p>${esc(P.about[1])}</p><div class="hint">turn the wheel to scroll · MENU goes back</div>`),
@@ -184,15 +168,15 @@
         [li('Flashlight', ''), () => { lcd.classList.toggle('is-flash'); window.EGGS.find('light'); }],
         [li('Play a tune', '♪'), () => { window.SFX.tune(); window.EGGS.find('tune'); }],
         [li('Easter eggs', `${window.EGGS.count()}/${window.EGGS.total}`), () => open('eggs')],
-        [li('Desk version'), () => open('desk')]
+        [li('Desktop version'), () => open('desk')]
       ]
     }),
     fortune: () => {
       const F = [P.quote, 'It works on my machine. This is that machine.', 'Have you tried turning it off and on again?', 'The best error message is the one that never shows up.', 'A 2007 Civic and 200,000 miles: the fix is usually in a tutorial somewhere.'];
       return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(F[Math.floor(Math.random() * F.length)])}”</p><div class="hint">MENU, then Fortune again for another</div>`);
     },
-    eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desk version</div>'),
-    desk: () => textScreen('Desk version', '<h2>There’s a whole desk.</h2><p>On a computer, this portfolio is three machines from three eras: a 1983 terminal, a 1991 desktop and a 1998 web browser. You travel between them by scrolling.</p><p>Open this page on a laptop to try it.</p><p class="m">Or <a href="classic.html">see the classic site</a>.</p>'),
+    eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
+    desk: () => textScreen('Desktop version', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 desktop, the 1998 web or a 2009 desktop.</p><p>Open this page on a computer to try it.</p><p class="m">Or <a href="classic.html">see the classic site</a>.</p>'),
     settings: () => ({
       type: 'menu', title: 'Settings',
       items: [
@@ -206,7 +190,8 @@
         [li('Clicker', store.get('clicker', true) ? 'On' : 'Off'), () => { store.set('clicker', !store.get('clicker', true)); refresh(); }],
         [li('Sound', window.SFX.muted ? 'Off' : 'On'), () => { window.SFX.toggle(); refresh(); }],
         [li('Backlight', store.get('backlight', 'auto') === 'auto' ? 'Auto' : 'Always'), () => { store.set('backlight', store.get('backlight', 'auto') === 'auto' ? 'always' : 'auto'); wake(); refresh(); }],
-        [li('About'), () => open('aboutdev')]
+        [li('About'), () => open('aboutdev')],
+        [li('Switch phone', '\u21c4'), () => exit()]
       ]
     }),
     aboutdev: () => textScreen('About', `<h2>Sommi Pocket</h2><div class="m">Model AJ-26 · firmware 1.0</div><p>Capacity: one portfolio.<br/>Battery: 80%, forever.</p><p>Built in 2026 by Ajay Sommi.</p><div class="hint">try the HOLD switch on top</div>`)
@@ -453,39 +438,14 @@
 
   /* ---------------------------------------------------------------- boot */
 
-  let cy = null, moved = 0;
-  card.addEventListener('pointerdown', (e) => { card.setPointerCapture(e.pointerId); cy = e.clientY; moved = 0; card.classList.remove('is-idle'); card.style.transition = 'none'; });
-  card.addEventListener('pointermove', (e) => {
-    if (cy === null) return;
-    const dy = Math.min(0, e.clientY - cy);
-    moved = Math.max(moved, -dy);
-    card.style.transform = `translate(-50%, ${dy}px)`;
-  });
-  const cardUp = () => {
-    if (cy === null) return;
-    cy = null;
-    card.style.transition = '';
-    if (moved > 40 || moved < 6) insert();
-    else { card.style.transform = ''; card.classList.add('is-idle'); }
-  };
-  card.addEventListener('pointerup', cardUp);
-  card.addEventListener('pointercancel', cardUp);
-  card.addEventListener('click', (e) => { if (e.detail === 0) insert(); });
+
 
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   let inserting = false;
   async function insert() {
-    if (on || inserting || !started) return;
+    if (on || inserting) return;
     inserting = true;
-    hint.textContent = '';
-    card.classList.remove('is-idle');
-    const slot = room.querySelector('.pk-slot').getBoundingClientRect();
-    const cr = card.getBoundingClientRect();
-    card.style.transform = `translate(-50%, ${slot.top - cr.top - cr.height * 0.25}px)`;
-    window.SFX.insert();
-    tap();
-    await wait(450);
-    card.classList.add('is-in');
+    await wait(200);
     dev.classList.remove('is-off');
     await wait(350);
     lcd.classList.add('is-lit');
@@ -506,7 +466,5 @@
     say('Turn the wheel · press the middle · MENU goes back');
   }
 
-  /* Nothing can be inserted until the loading screen has gone. */
-  let started = false;
-  (window.READY || Promise.resolve()).then(() => { started = true; });
-})();
+  insert();
+} };

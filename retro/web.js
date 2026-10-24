@@ -147,7 +147,7 @@ window.WEB = (function () {
       return { title: `Source of ${from || 'index'}.html`, html: `<div class="pg" style="background:#fff"><div class="src">${esc(src)}</div></div>` };
     },
 
-    about: () => ({ title: 'About SurfBoard', html: `<div class="pg"><div class="pg-in center"><h1>SurfBoard 3.0</h1><p>A browser that exists only on this desk.</p><p>Built in 2026 by Ajay Sommi, with nostalgia for a time he was too young to remember.</p><p><a href="#" data-go="index">Back home</a></p></div></div>` })
+    about: () => ({ title: 'About SurfBoard', html: `<div class="pg"><div class="pg-in center"><h1>SurfBoard 3.0</h1><p>A browser that exists only in this portfolio.</p><p>Built in 2026 by Ajay Sommi, with nostalgia for a time he was too young to remember.</p><p><a href="#" data-go="index">Back home</a></p></div></div>` })
   };
 
   const ALIAS = {
@@ -244,7 +244,7 @@ window.WEB = (function () {
   /* -------------------------------------------------------------- menus */
 
   const MENUS = [
-    ['mark', I.pxmark(16), [['About SurfBoard', () => load('about:')], ['Easter Eggs found: ' + '?', null], '-', ['Travel to 1983', () => api.go(0)], ['Travel to 1991', () => api.go(1)]]],
+    ['mark', I.pxmark(16), [['About SurfBoard', () => load('about:')], ['Easter Eggs found: ' + '?', null], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
     ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('Printing... just kidding. Try the Résumé page’s Download link.'); }, '⌘P']]],
     ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U']]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],

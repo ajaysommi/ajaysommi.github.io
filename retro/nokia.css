@@ -1,0 +1,115 @@
+/* ==========================================================================
+   SOMMIA 3310. Drawn at 300 by 690 and scaled to fit the phone it is shown
+   on. Navy shell, grey key cluster, a green screen that lights up when a
+   key is pressed and dims again after a while.
+   ========================================================================== */
+
+.nk-room { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; }
+.nk-scale { transform-origin: 50% 50%; }
+
+.nk {
+  --lcd: #93a85a;
+  --lcd-lit: #b9d777;
+  --ink: #1d2a10;
+  position: relative; width: 300px; height: 690px;
+  border-radius: 92px 92px 120px 120px / 70px 70px 150px 150px;
+  background:
+    radial-gradient(120% 60% at 20% 10%, rgba(255,255,255,.22), transparent 55%),
+    linear-gradient(90deg, #17213a 0%, #2c3d66 14%, #3b5286 50%, #2c3d66 86%, #17213a 100%);
+  box-shadow: inset 0 2px 2px rgba(255,255,255,.35), inset 0 -6px 12px rgba(0,0,0,.45), 0 30px 60px rgba(0,0,0,.55);
+  font-family: var(--pixel);
+  user-select: none; -webkit-user-select: none;
+}
+.nk-power {
+  position: absolute; top: -5px; left: 50%; width: 40px; height: 9px; margin-left: -20px;
+  border: 0; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, #4b4f57, #23262b); cursor: pointer;
+}
+.nk-ear { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+.nk-ear i { width: 6px; height: 6px; border-radius: 50%; background: #0c1222; box-shadow: inset 0 1px 1px #000, 0 1px 0 rgba(255,255,255,.15); }
+.nk-brand {
+  position: absolute; top: 56px; left: 0; right: 0; text-align: center;
+  font: 700 15px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: .32em; color: #d8deea;
+  text-shadow: 0 1px 0 rgba(0,0,0,.4);
+}
+
+/* The screen. */
+.nk-bezel {
+  position: absolute; top: 84px; left: 34px; right: 34px; height: 214px;
+  border-radius: 26px 26px 40px 40px / 20px 20px 46px 46px;
+  background: linear-gradient(180deg, #31363f, #1b1e24);
+  box-shadow: inset 0 2px 6px #000, 0 1px 0 rgba(255,255,255,.18);
+  padding: 22px 18px 30px;
+}
+.nk-lcd {
+  position: relative; height: 100%; border-radius: 4px;
+  background: var(--lcd); color: var(--ink);
+  box-shadow: inset 0 0 12px rgba(0,0,0,.35);
+  display: flex; flex-direction: column; overflow: hidden;
+  transition: background .4s;
+}
+.nk.is-lit .nk-lcd { background: radial-gradient(120% 120% at 50% 40%, #c9e98a, var(--lcd-lit)); box-shadow: inset 0 0 12px rgba(0,0,0,.2), 0 0 16px rgba(170,230,100,.35); }
+.nk-view { position: relative; flex: 1; min-height: 0; padding: 4px 6px 0; }
+.nk-soft { flex: none; height: 20px; text-align: center; font: 600 14px/20px var(--pixel); }
+
+.nk-hd { display: flex; justify-content: space-between; font: 600 13px/16px var(--pixel); border-bottom: 1px solid rgba(29,42,16,.35); padding-bottom: 2px; margin-right: 8px; }
+.nk-hd span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.t-standby .nk-op { position: absolute; left: 0; right: 0; top: 46px; text-align: center; font: 700 22px var(--pixel); letter-spacing: .06em; }
+.t-standby .nk-time { position: absolute; right: 22px; top: 4px; font: 600 13px var(--pixel); }
+.nk-bars { position: absolute; top: 6px; display: flex; flex-direction: column; gap: 2px; }
+.nk-bars i { height: 4px; background: var(--ink); opacity: .18; }
+.nk-bars i.on { opacity: 1; }
+.nk-bars span { font-size: 10px; text-align: center; }
+.nk-bars.l { left: 4px; align-items: flex-start; }
+.nk-bars.r { right: 4px; align-items: flex-end; }
+
+.nk-ico { display: grid; place-items: center; height: 108px; }
+.nk-ico svg, .nk-boot svg { width: 72px; height: 72px; image-rendering: pixelated; filter: grayscale(1) contrast(6); mix-blend-mode: multiply; }
+.nk-boot { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 8px; font: 700 18px var(--pixel); letter-spacing: .1em; }
+.nk-boot svg { filter: none; color: var(--ink); mix-blend-mode: normal; }
+.nk-sb { position: absolute; right: 2px; top: 22px; bottom: 4px; width: 4px; border-left: 1px dotted var(--ink); }
+.nk-sb i { position: absolute; left: -3px; width: 6px; height: 12px; margin-top: -6px; background: var(--ink); transform: translateY(6px); }
+
+.nk-list { list-style: none; margin: 4px 10px 0 0; padding: 0; }
+.nk-list li { font: 15px/24px var(--pixel); padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nk-list li.on { background: var(--ink); color: var(--lcd-lit); }
+
+.nk-txt { position: absolute; left: 6px; right: 4px; top: 22px; bottom: 0; overflow-y: auto; scrollbar-width: none; font: 13px/1.35 var(--pixel); padding-right: 4px; }
+.nk-txt::-webkit-scrollbar { display: none; }
+.nk-txt p { margin: 2px 0 7px; }
+.nk-txt img { display: block; width: 100%; image-rendering: pixelated; mix-blend-mode: multiply; margin: 2px 0 6px; }
+.nk-dim { opacity: .7; }
+.nk-big { font-size: 17px; text-align: center; margin-top: 24px !important; }
+.nk-clock { font: 700 34px var(--pixel); text-align: center; margin-top: 16px !important; }
+.nk-from { border-bottom: 1px dotted var(--ink); padding-bottom: 4px; }
+
+/* Keys. */
+.nk-cluster { position: absolute; top: 318px; left: 26px; right: 26px; height: 74px; }
+.nk-navi {
+  position: absolute; left: 50%; top: 4px; width: 126px; height: 52px; margin-left: -63px;
+  border: 0; border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%; cursor: pointer;
+  background: linear-gradient(180deg, #e4e8ef, #a9b3c4);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,.8), inset 0 -3px 4px rgba(0,0,0,.25), 0 3px 4px rgba(0,0,0,.45);
+}
+.nk-navi::after { content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 4px; margin: -2px 0 0 -20px; border-radius: 2px; background: #7d889c; }
+.nk-c {
+  position: absolute; left: 0; top: 10px; width: 50px; height: 34px; border: 0; cursor: pointer;
+  border-radius: 40% 60% 60% 40% / 50%; font: 700 14px 'Helvetica Neue', Arial, sans-serif; color: #2b3550;
+  background: linear-gradient(180deg, #d7dce6, #9aa4b6); box-shadow: inset 0 2px 1px rgba(255,255,255,.7), 0 2px 3px rgba(0,0,0,.45);
+}
+.nk-rock { position: absolute; right: 0; top: 2px; width: 50px; height: 58px; display: flex; flex-direction: column; border-radius: 30px; overflow: hidden; box-shadow: 0 2px 3px rgba(0,0,0,.45); }
+.nk-rock button { flex: 1; border: 0; cursor: pointer; font-size: 10px; color: #2b3550; background: linear-gradient(180deg, #d7dce6, #9aa4b6); box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+.nk-rock button + button { border-top: 1px solid #6f7a8f; }
+.nk-pad { position: absolute; top: 404px; left: 30px; right: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 14px; }
+.nk-pad button {
+  height: 44px; border: 0; cursor: pointer; border-radius: 50%;
+  background: linear-gradient(180deg, #e8ebf1, #b4bccb);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,.85), inset 0 -2px 3px rgba(0,0,0,.2), 0 3px 3px rgba(0,0,0,.45);
+  display: flex; align-items: baseline; justify-content: center; gap: 4px; padding-top: 10px; color: #1c2438;
+}
+.nk-pad b { font: 700 18px 'Helvetica Neue', Arial, sans-serif; }
+.nk-pad span { font: 10px 'Helvetica Neue', Arial, sans-serif; color: #4a5470; }
+.nk button:active { transform: translateY(1px); filter: brightness(.9); }
+.nk.is-lit .nk-pad button, .nk.is-lit .nk-navi, .nk.is-lit .nk-c, .nk.is-lit .nk-rock button { box-shadow: inset 0 2px 1px rgba(255,255,255,.85), 0 0 10px rgba(170,230,100,.55), 0 3px 3px rgba(0,0,0,.45); }
+.nk-mic { position: absolute; bottom: 28px; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: #0c1222; box-shadow: inset 0 1px 1px #000; }
+.nk button:focus-visible { outline: 2px solid #ffd36b; outline-offset: 2px; }

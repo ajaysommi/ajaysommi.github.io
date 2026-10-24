@@ -1,7 +1,6 @@
 /* ==========================================================================
-   iPhone 2G simulator, for development only (?device=iphone on a local
-   host). The handset is a photograph (retro/dev/iphone-2g.webp, kept out
-   of git) with the live screen laid exactly over its display: in that
+   iPhone 2G, one of the phones on the phone picker. The handset is a photograph (retro/dev/iphone-2g.webp, kept out
+   of git) when it is present, with the live screen laid exactly over its display: in that
    photo the display is the 661 by 991 pixel box at (68, 262), a 2:3 box
    the 320 by 480 point screen fills at 2.0656 pixels a point. Without the
    photo, a drawn handset stands in.
@@ -11,13 +10,11 @@
    90 point rows) over a perforated dock, blue-grey bars, pinstripes. Every
    app is a part of the portfolio.
    ========================================================================== */
-(function iphone() {
-  if (document.documentElement.dataset.mode !== 'iphone') return;
+window.IPHONE = { start(room, exit) {
 
   const P = window.PORTFOLIO;
   const { esc } = window.RETRO;
   const I = window.ICONS;
-  const room = document.getElementById('iphoneRoom');
   const SFX = window.SFX;
   const PHOTO = 'retro/dev/iphone-2g.webp';
 
@@ -39,7 +36,7 @@
       </div>
       <button class="ip-home" type="button" aria-label="Home"><span class="ip-press" aria-hidden="true"></span></button>
     </div></div>
-    <div class="ip-note">Development preview · slide to unlock · the home button closes apps · the top button sleeps</div>`;
+    <div class="ip-note">Slide to unlock \u00b7 the home button closes apps \u00b7 the top button sleeps</div>`;
 
   const scaleBox = room.querySelector('.ip-scale');
   const dev = room.querySelector('.ip');
@@ -313,11 +310,12 @@
     } },
     skills: { name: 'Skills', open(app) {
       app.push('Skills', (pg) => {
-        pg.innerHTML = `<div class="pin">${P.skills.map(([gname, list], i) => `<div class="gp"><div class="row chev" data-s="${i}"><span class="v">${esc(gname)}</span><span class="rv">${list.length}</span></div></div>`).join('')}<div class="gp"><div class="row chev" data-k="about"><span class="v">About This Portfolio</span></div></div></div>`;
+        pg.innerHTML = `<div class="pin">${P.skills.map(([gname, list], i) => `<div class="gp"><div class="row chev" data-s="${i}"><span class="v">${esc(gname)}</span><span class="rv">${list.length}</span></div></div>`).join('')}<div class="gp"><div class="row chev" data-k="about"><span class="v">About This Portfolio</span></div><div class="row chev" data-k="switch"><span class="v">Switch Phone\u2026</span></div></div></div>`;
         pg.addEventListener('click', (ev) => {
           const r = ev.target.closest('.row');
           if (!r) return;
           SFX.click();
+          if (r.dataset.k === 'switch') { exit(); return; }
           if (r.dataset.k) {
             const photos = P.experience.reduce((a, e) => a + e.photos.length, 0) + P.offclock.reduce((a, s) => a + s.steps.length, 0);
             app.push('About', (p) => { p.innerHTML = `<div class="pin">${kv([['Name', 'Ajay Sommi'], ['Roles', String(P.experience.length)], ['Projects', String(P.projects.length)], ['Photos', String(photos)], ['Skills', String(P.skills.reduce((a, s) => a + s[1].length, 0))], ['Capacity', '1 portfolio'], ['Available', 'Dec 2026'], ['Version', '1.0 (26A543a)'], ['Model', 'AJ-26']])}</div>`; });
@@ -571,4 +569,4 @@
       setInterval(tickClock, 10000);
     }, 1600);
   });
-})();
+} };

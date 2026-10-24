@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
   <title>Ajay Sommi · Software Engineer</title>
 
-  <meta name="description" content="Ajay Sommi is a software engineer who builds backend services, internal tools, and data pipelines that hold up in production. Insert the disk to load the portfolio." />
+  <meta name="description" content="Ajay Sommi is a software engineer who builds backend services, internal tools, and data pipelines that hold up in production. Pick an era and his portfolio boots as an operating system from that year." />
   <link rel="canonical" href="https://ajaysommi.github.io/" />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://ajaysommi.github.io/" />
   <meta property="og:title" content="Ajay Sommi · Software Engineer" />
-  <meta property="og:description" content="Insert the disk to load the portfolio." />
+  <meta property="og:description" content="Pick an era. The portfolio boots as an operating system from that year." />
   <meta property="og:image" content="https://ajaysommi.github.io/assets/images/opt/hero-960.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -27,10 +27,9 @@
         href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen&family=VT323&display=swap" />
 
   <script>
-    /* Which machine this visitor gets is settled before anything draws: a
-       phone gets the pocket device, everything else the desk of computers.
-       On a development host, ?device=desk|pocket|iphone (or the DEV switch
-       in the corner) overrides that for the rest of the tab's life. */
+    /* Phones get the phone picker; everything else the startup disks.
+       On a development host, ?device=desk|mobile (or the DEV tab) overrides
+       that for the rest of the tab's life. */
     (function () {
       var root = document.documentElement;
       var dev = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || /\.(local|localhost|test)$/.test(location.hostname);
@@ -38,13 +37,14 @@
       if (dev) {
         try {
           var q = new URLSearchParams(location.search).get('device');
+          if (q === 'pocket' || q === 'iphone' || q === 'nokia') { if (!location.hash) location.hash = q; q = 'mobile'; }
           if (q === 'auto') sessionStorage.removeItem('dev-device');
           else if (q) sessionStorage.setItem('dev-device', q);
           forced = sessionStorage.getItem('dev-device');
         } catch (e) {}
       }
-      var auto = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches ? 'pocket' : 'desk';
-      var mode = forced === 'desk' || forced === 'pocket' || forced === 'iphone' ? forced : auto;
+      var auto = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches ? 'mobile' : 'desk';
+      var mode = forced === 'desk' || forced === 'mobile' ? forced : auto;
       root.className = 'is-' + mode + ' js is-loading';
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('reduced');
       root.dataset.mode = mode;
@@ -73,13 +73,16 @@
     .boot-ld .blink { animation: ldblink 1s steps(1) infinite; }
     @keyframes ldblink { 50% { opacity: 0; } }
     /* The room behind it comes up like a lamp being switched on. */
-    .is-loading .room, .is-loading .pocket-room, .is-loading .iphone-room { filter: brightness(.2); }
-    .room, .pocket-room, .iphone-room { transition: filter 1s ease; }
+    .is-loading .picker, .is-loading .os-host, .is-loading .phone-host { filter: brightness(.2); }
+    .picker, .os-host, .phone-host { transition: filter 1s ease; }
   </style>
 
   <link rel="stylesheet" href="retro/os.css" />
+  <link rel="stylesheet" href="retro/osx.css" />
+  <link rel="stylesheet" href="retro/picker.css" />
   <link rel="stylesheet" href="retro/pocket.css" />
   <link rel="stylesheet" href="retro/iphone.css" />
+  <link rel="stylesheet" href="retro/nokia.css" />
 
   <script type="application/ld+json">
   {
@@ -154,7 +157,6 @@
 
       var mode = document.documentElement.dataset.mode;
       var imgs = ['assets/images/opt/hero-480.webp'];
-      if (mode === 'desk') imgs.push('assets/images/offclock/kid-2006-crop.webp', 'assets/images/uf-gator-320.webp');
       var tasks = [];
       tasks.push(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
       tasks.push(new Promise(function (r) { if (document.readyState === 'complete') r(); else addEventListener('load', r); }));
@@ -197,7 +199,7 @@
 
   <!-- The whole experience is drawn by script. Without it, the plain facts. -->
   <noscript>
-    <style>.boot-ld { display: none; } .is-loading .room, .is-loading .pocket-room { filter: none; }</style>
+    <style>.boot-ld { display: none; } .is-loading .picker { filter: none; }</style>
     <div class="no-js">
       <h1>Ajay Sommi · Software Engineer</h1>
       <p>This portfolio runs on a little computer that needs JavaScript to boot.</p>
@@ -205,22 +207,13 @@
     </div>
   </noscript>
 
-  <!-- DESK: three computers from three eras, side by side on one desk. -->
-  <div class="room" id="room" aria-label="A desk with three computers">
-    <div class="wall" aria-hidden="true"></div>
-    <div class="track" id="track"></div>
-    <div class="hud" id="hud" hidden>
-      <div class="hud-hint" id="hudHint" aria-live="polite"></div>
-      <div class="hud-eras" role="group" aria-label="Choose a computer"></div>
-    </div>
-    <div class="scroll-meter" id="scrollMeter" aria-hidden="true"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" class="sm-bed"/><circle cx="18" cy="18" r="15" class="sm-fill" id="smFill"/></svg><span id="smLabel"></span></div>
-  </div>
+  <!-- What to run: startup disks on a computer, handsets on a phone. -->
+  <div class="picker" id="picker"></div>
 
-  <!-- POCKET: the phone's own machine. -->
-  <div class="pocket-room" id="pocketRoom" aria-label="A pocket computer"></div>
-
-  <!-- IPHONE: a development-only simulator, reached with ?device=iphone. -->
-  <div class="iphone-room" id="iphoneRoom" aria-label="A 2007 phone"></div>
+  <!-- The chosen system runs here, filling the window. -->
+  <div class="os-host" id="osHost"></div>
+  <div class="phone-host" id="phoneHost"></div>
+  <div class="curtain" id="curtain" aria-hidden="true"></div>
 
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
@@ -231,9 +224,11 @@
   <script src="retro/term.js"></script>
   <script src="retro/finder.js"></script>
   <script src="retro/web.js"></script>
-  <script src="retro/desk.js"></script>
+  <script src="retro/osx.js"></script>
   <script src="retro/pocket.js"></script>
   <script src="retro/iphone.js"></script>
+  <script src="retro/nokia.js"></script>
+  <script src="retro/boot.js"></script>
 
   <script>
     /* Development hosts only: a switch for which machine to show. */
@@ -242,7 +237,7 @@
       var cur = document.documentElement.dataset.forced === '1' ? document.documentElement.dataset.mode : 'auto';
       var box = document.createElement('div');
       box.className = 'dev-switch';
-      box.innerHTML = '<span title="Choose a machine (development only)">DEV \u25be</span>' + [['auto', 'Auto'], ['desk', 'Desk'], ['pocket', 'Pocket'], ['iphone', 'iPhone 2G']].map(function (m) {
+      box.innerHTML = '<span title="Choose a machine (development only)">DEV \u25be</span>' + [['auto', 'Auto'], ['desk', 'Desktop'], ['mobile', 'Mobile']].map(function (m) {
         return '<button type="button" data-d="' + m[0] + '"' + (m[0] === cur ? ' aria-pressed="true"' : '') + '>' + m[1] + '</button>';
       }).join('');
       box.addEventListener('click', function (e) {

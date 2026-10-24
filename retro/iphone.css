@@ -7,7 +7,7 @@
    ========================================================================== */
 
 .iphone-room {
-  position: fixed; inset: 0; place-items: center; overflow: hidden;
+  position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden;
   background: radial-gradient(90% 70% at 50% 35%, #4a4038, #1c1915 75%);
   user-select: none; -webkit-user-select: none;
 }
