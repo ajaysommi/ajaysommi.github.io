@@ -220,5 +220,15 @@
     requestAnimationFrame(() => { center(sel, false); markDots(); });
   };
 
+  /* Crossing between phone and computer sizes (a rotated tablet, a
+     resized window, a browser's device toolbar) restarts on the right
+     picker, unless the address bar forces one. */
+  const want = () => (matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches ? 'mobile' : 'desk');
+  let rz = 0;
+  addEventListener('resize', () => {
+    clearTimeout(rz);
+    rz = setTimeout(() => { if (root.dataset.forced !== '1' && want() !== MODE) location.reload(); }, 250);
+  });
+
   if (MODE === 'mobile') phones(); else desk();
 })();

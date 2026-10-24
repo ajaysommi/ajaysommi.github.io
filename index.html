@@ -34,13 +34,14 @@
       var root = document.documentElement;
       var dev = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || /\.(local|localhost|test)$/.test(location.hostname);
       var forced = null;
+      /* The override lives only in the address bar, so it can never
+         outlast the visit that asked for it. */
       if (dev) {
         try {
           var q = new URLSearchParams(location.search).get('device');
           if (q === 'pocket' || q === 'iphone' || q === 'nokia') { if (!location.hash) location.hash = q; q = 'mobile'; }
-          if (q === 'auto') sessionStorage.removeItem('dev-device');
-          else if (q) sessionStorage.setItem('dev-device', q);
-          forced = sessionStorage.getItem('dev-device');
+          sessionStorage.removeItem('dev-device');
+          if (q === 'desk' || q === 'mobile') forced = q;
         } catch (e) {}
       }
       var auto = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches ? 'mobile' : 'desk';
@@ -244,7 +245,7 @@
         var b = e.target.closest('[data-d]');
         if (!b) { box.classList.toggle('is-open'); return; }
         var u = new URL(location.href);
-        u.searchParams.set('device', b.dataset.d);
+        if (b.dataset.d === 'auto') u.searchParams.delete('device'); else u.searchParams.set('device', b.dataset.d);
         u.hash = '';
         location.href = u.toString();
       });

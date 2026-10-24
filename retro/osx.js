@@ -40,9 +40,23 @@ window.OSX = (function () {
   const HN = 'font-family="Lucida Grande,Helvetica Neue,Helvetica,Arial,sans-serif"';
 
   const ICON = {
-    finder: () => art(`<rect x="8" y="8" width="112" height="112" rx="22" fill="url(#l)"/><path d="M64 8h34a22 22 0 0 1 22 22v68a22 22 0 0 1-22 22H64q-12-28-4-56-10-6-6-16 6 4 12 4-8-22 2-44z" fill="url(#r)"/>
-        <rect x="38" y="40" width="7" height="20" rx="3" fill="#1a2a44"/><rect x="82" y="40" width="7" height="20" rx="3" fill="#0b1830"/><path d="M34 84q30 20 60 0" fill="none" stroke="#0b1830" stroke-width="5" stroke-linecap="round"/>${gloss}`,
-      lg('l', [[0, '#c8ecff'], [1, '#5fb4f2']]) + lg('r', [[0, '#5fb7ff'], [1, '#1661c9']])),
+    /* Finder, with the AJ mark for a face: the A's diagonal is the
+       profile between the two halves, the j's orange hook is the smile.
+       It blinks now and then and grins under the pointer. */
+    finder: () => art(`<rect x="8" y="8" width="112" height="112" rx="24" fill="url(#l)"/>
+        <path d="M76 8h20a24 24 0 0 1 24 24v64a24 24 0 0 1-24 24H64q-7-18-3-36l-11-6 11-5q-4-20 15-45z" fill="url(#r)"/>
+        <rect class="eye" x="34" y="36" width="9" height="22" rx="4.5" fill="#12305c"/><rect class="eye" x="86" y="36" width="9" height="22" rx="4.5" fill="#06183a"/>
+        <path class="smile" d="M30 82q34 30 68 0l-6-2q-28 20-56 0z" fill="#ff6b35" stroke="#c94a1c" stroke-width="1.5"/>
+        <circle cx="98" cy="22" r="6" fill="#3d68ff" stroke="#fff" stroke-width="2" opacity=".95"/>
+        <path d="M8 32a24 24 0 0 1 24-24h64a24 24 0 0 1 24 24v14q-56 16-112 0z" fill="#fff" opacity=".22"/>`,
+      lg('l', [[0, '#d2f0ff'], [1, '#62b6f3']]) + lg('r', [[0, '#66b9ff'], [1, '#1559c4']])),
+    docs: () => art(`<path d="M10 40a8 8 0 0 1 8-8h30l8 8h54a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#bk)"/>
+        <rect x="30" y="18" width="52" height="66" rx="3" fill="#fff" stroke="#bbb" transform="rotate(-10 56 51)"/><rect x="44" y="14" width="52" height="66" rx="3" fill="#fff" stroke="#bbb" transform="rotate(6 70 47)"/>${[28, 36, 44, 52, 60].map((y) => `<rect x="52" y="${y}" width="36" height="3" fill="#b8bec6" transform="rotate(6 70 47)"/>`).join('')}
+        <path d="M10 56h108v50a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#fr)"/><path d="M50 74h28v22H50z" fill="#2f6fc4" opacity=".35"/>`,
+      lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']])),
+    downloads: () => art(`<path d="M10 40a8 8 0 0 1 8-8h30l8 8h54a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#bk)"/><path d="M10 52h108v54a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#fr)"/>
+        <path d="M56 60h16v18h12L64 100 44 78h12z" fill="#2f6fc4" opacity=".55"/>`,
+      lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']])),
     about: () => art(`<rect x="18" y="10" width="92" height="108" rx="8" fill="url(#lth)"/><rect x="18" y="10" width="14" height="108" rx="6" fill="#5a3410"/>${[20, 40, 60, 80, 100].map((y) => `<rect x="22" y="${y}" width="6" height="2" fill="#c49a62"/>`).join('')}
         <rect x="38" y="20" width="64" height="88" rx="4" fill="#fbf8f0"/><clipPath id="c"><circle cx="70" cy="52" r="20"/></clipPath><image href="${P.photo}" x="46" y="28" width="48" height="48" clip-path="url(#c)" preserveAspectRatio="xMidYMid slice"/><circle cx="70" cy="52" r="20" fill="none" stroke="#c9b48a" stroke-width="2"/>
         <rect x="48" y="80" width="44" height="5" rx="2" fill="#8a7a5a"/><rect x="54" y="90" width="32" height="4" rx="2" fill="#bba985"/>`,
@@ -105,9 +119,11 @@ window.OSX = (function () {
     mail: { name: 'Mail', icon: 'mail', keys: 'contact email hello write' },
     preview: { name: 'Resume', icon: 'preview', keys: 'cv pdf preview resume' },
     timemachine: { name: 'Time Machine', icon: 'timemachine', keys: 'era switch 1983 1991 1998 back' },
+    docs: { name: 'Documents', icon: 'docs', keys: 'files documents' },
+    downloads: { name: 'Downloads', icon: 'downloads', keys: 'download resume pdf' },
     trash: { name: 'Trash', icon: 'trash' }
   };
-  const DOCK = ['finder', 'about', 'experience', 'companies', 'projects', 'skills', 'photos', 'guestbook', 'education', 'mail', 'preview', 'safari', 'terminal', '|', 'timemachine', 'trash'];
+  const DOCK = ['finder', 'about', 'safari', 'mail', 'guestbook', 'experience', 'photos', 'preview', 'companies', 'projects', 'education', 'terminal', 'timemachine', 'skills', '|', 'docs', 'downloads', 'trash'];
 
   /* ------------------------------------------------------------- windows */
 
@@ -123,6 +139,8 @@ window.OSX = (function () {
   /* Opens an app's window, or brings it forward if it is already open. */
   const open = async (app, arg) => {
     if (app === 'timemachine') { timeTravel(); return; }
+    if (app === 'docs') { const f = wins.get('finder'); if (f) { if (f.min) restore(f); focus(f); f.show('docs'); return; } app = 'finder'; arg = 'docs'; }
+    if (app === 'downloads') { const a = document.createElement('a'); a.href = P.resume; a.download = 'Ajay_Sommi_Resume.pdf'; a.click(); bounce('downloads'); return; }
     const def = SPECS[app];
     if (!def) return;
     const key = def.multi ? app + ':' + arg : app;
@@ -253,23 +271,25 @@ window.OSX = (function () {
   };
 
   const SPECS = {
-    finder: () => ({
+    finder: (view) => ({
       title: 'Ajay HD', w: 720, h: 440,
       toolbar: '<div class="ox-seg"><button type="button" disabled>◀</button><button type="button" disabled>▶</button></div><div class="ox-search"><input type="search" placeholder="Search" aria-label="Search" data-spot /></div>',
-      status: `${DOCK.filter((a) => a !== '|' && a !== 'trash').length} items, ∞ available`,
-      render: (b) => {
+      view,
+      status: `${DOCK.filter((a) => !['|', 'trash', 'docs', 'downloads'].includes(a)).length} items, ∞ available`,
+      render: (b, rec) => {
         b.classList.add('fx');
         b.innerHTML = `<div class="fx-side"><h6>DEVICES</h6><button type="button" class="on" data-v="apps">${ICON.hd()}Ajay HD</button><h6>PLACES</h6><button type="button" data-v="apps">${ICON.folder()}Applications</button><button type="button" data-v="docs">${ICON.folder()}Documents</button><button type="button" data-v="desk">${ICON.folder()}Desktop</button></div><div class="fx-main"></div>`;
         const main = b.querySelector('.fx-main');
         const show = (v) => {
-          const items = v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', 'Education.rtf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : v === 'desk' ? [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : DOCK.filter((a) => a !== '|' && a !== 'finder').map((a) => [a, APPS[a].name, APPS[a].icon]);
+          const items = v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', 'Education.rtf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : v === 'desk' ? [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon]);
           main.innerHTML = items.map(([a, n, i]) => `<button type="button" class="fx-ico" data-open="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
           b.querySelectorAll('.fx-side button').forEach((x) => x.classList.toggle('on', x.dataset.v === v && x.textContent.trim() !== 'Ajay HD' || (v === 'apps' && x.textContent.trim() === 'Ajay HD')));
         };
         b.querySelector('.fx-side').addEventListener('click', (e) => { const x = e.target.closest('[data-v]'); if (x) show(x.dataset.v); });
         main.addEventListener('dblclick', (e) => { const x = e.target.closest('[data-open]'); if (x) open(x.dataset.open); });
         main.addEventListener('click', (e) => { const x = e.target.closest('[data-open]'); main.querySelectorAll('.fx-ico').forEach((i) => i.classList.toggle('is-sel', i === x)); if (x && e.detail === 0) open(x.dataset.open); });
-        show('apps');
+        show(rec.spec.view || 'apps');
+        rec.show = show;
       }
     }),
     about: () => ({
@@ -636,6 +656,7 @@ window.OSX = (function () {
     api = deskApi;
     root = h('div', 'ox');
     root.innerHTML = `
+      <div class="ox-sky" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="core"></i></div>
       <div class="ox-menubar" role="menubar">
         <button type="button" class="m mk" data-m="mark" aria-label="AJ menu">${I.mark(15, true)}</button>
         <button type="button" class="m b" data-m="app">Finder</button>
