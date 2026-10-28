@@ -51,7 +51,7 @@ window.IPHONE = { start(room, exit) {
         <div class="ip-screen" data-bar="trans" role="application" aria-label="Phone screen">
           <div class="ip-status"><span class="l"><span class="ip-sig"><i></i><i></i><i></i><i></i><i></i></span><b class="car">SOMMI</b><span class="ip-edge">E</span></span><span class="c"></span><span class="r"><span class="ip-bat"><i></i></span></span></div>
           <div class="ip-board is-flying"><div class="ip-grid"></div><div class="ip-dock"></div></div>
-          <div class="ip-lock" style="background-image:url(${WALL})"><div class="top"><div class="time"></div><div class="date"></div></div><div class="ip-lk-note" hidden><b></b><span></span></div><div class="bot"><div class="ip-slider"><div class="txt">slide to unlock</div><div class="ip-knob" role="slider" aria-label="Slide to unlock" tabindex="0"><svg viewBox="0 0 34 24"><defs><linearGradient id="kar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3a3a3"/><stop offset="1" stop-color="#6d6d6d"/></linearGradient></defs><path d="M5 9h13V4l11 8-11 8v-5H5z" fill="url(#kar)" stroke="#5f5f5f" stroke-width=".6" stroke-linejoin="round"/></svg></div></div></div></div>
+          <div class="ip-lock" style="background-image:url(${WALL})"><div class="top"><div class="time"></div><div class="date"></div></div><div class="ip-lk-note" hidden><img src="assets/images/ios/sms.webp" alt="" /><b></b><span>now</span></div><div class="bot"><div class="ip-slider"><div class="txt">slide to unlock</div><div class="ip-knob" role="slider" aria-label="Slide to unlock" tabindex="0"><svg viewBox="0 0 34 24"><defs><linearGradient id="kar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3a3a3"/><stop offset="1" stop-color="#6d6d6d"/></linearGradient></defs><path d="M5 9h13V4l11 8-11 8v-5H5z" fill="url(#kar)" stroke="#5f5f5f" stroke-width=".6" stroke-linejoin="round"/></svg></div></div></div></div>
           <div class="ip-boot">${SILVER}</div>
           <div class="ip-off"></div>
         </div>
@@ -184,7 +184,7 @@ window.IPHONE = { start(room, exit) {
 
   /* The springboard's own artwork, taken from the 2007 home screen. The
      calendar and weather faces are left blank and lettered live. */
-  const ART = { sms: 'sms', calendar: 'calendar', photos: 'photos', camera: 'camera', tv: 'youtube', stocks: 'stocks', maps: 'maps', weather: 'weather', settings: 'settings', notes: 'notes', phone: 'phone', mail: 'mail', safari: 'safari' };
+  const ART = { sms: 'sms', calendar: 'calendar', photos: 'photos', camera: 'camera', tv: 'youtube', stocks: 'stocks', maps: 'maps', weather: 'weather', settings: 'settings', notes: 'notes', phone: 'phone', mail: 'mail', safari: 'safari', clipGH: 'calculator' };
   Object.keys(ART).forEach((k) => {
     ICON[k] = () => {
       let over = '';
@@ -246,12 +246,12 @@ window.IPHONE = { start(room, exit) {
   const kb = (() => {
     const el = h('div', 'kb');
     const pop = h('div', 'kb-pop');
-    let target = null, mode = 'abc', shift = true;
+    let target = null, mode = 'abc', shift = true, caps = false, lastShift = 0;
     const draw = () => {
       el.innerHTML = KB_ROWS[mode].map((row, r) => `<div class="kb-r r${r}">${row.map((k) => {
         const wide = k === 'space' ? ' sp' : k === 'return' ? ' ret' : (k === '.?123' || k === 'ABC') ? ' mode' : (k === '⇧' || k === '⌫' || k === '#+=') ? ' fn' : '';
         const label = k.length === 1 && mode === 'abc' && shift ? k.toUpperCase() : k === 'return' && target && target.ret ? target.ret : k;
-        return `<button type="button" class="kb-k${wide}${k === '⇧' && shift ? ' on' : ''}" data-k="${esc(k)}">${esc(label)}</button>`;
+        return `<button type="button" class="kb-k${wide}${k === '⇧' && shift ? ' on' : ''}${k === '⇧' && caps ? ' caps' : ''}" data-k="${esc(k)}">${esc(label)}</button>`;
       }).join('')}</div>`).join('');
       el.appendChild(pop);
     };
@@ -260,10 +260,10 @@ window.IPHONE = { start(room, exit) {
       if (k === '⌫') target.back();
       else if (k === 'return') target.enter();
       else if (k === 'space') target.insert(' ');
-      else if (k === '⇧') { shift = !shift; draw(); return; }
+      else if (k === '⇧') { const t = performance.now(); if (caps) { caps = false; shift = false; } else if (shift && t - lastShift < 350) caps = true; else shift = !shift; lastShift = t; draw(); return; }
       else if (k === '.?123' || k === '#+=') { mode = 'num'; draw(); return; }
       else if (k === 'ABC') { mode = 'abc'; draw(); return; }
-      else { target.insert(mode === 'abc' && shift ? k.toUpperCase() : k); if (shift && mode === 'abc') { shift = false; draw(); } }
+      else { target.insert(mode === 'abc' && shift ? k.toUpperCase() : k); if (shift && !caps && mode === 'abc') { shift = false; draw(); } }
       SFX.key();
     };
     el.addEventListener('pointerdown', (e) => {
@@ -293,7 +293,7 @@ window.IPHONE = { start(room, exit) {
     draw();
     scr.appendChild(el);
     return {
-      show(t) { if (target && target !== t && target.blur) target.blur(); target = t; shift = !t.value || /[.!?]\s*$/.test(t.value); mode = 'abc'; draw(); el.classList.add('on'); scr.classList.add('kb-on'); },
+      show(t) { if (target && target !== t && target.blur) target.blur(); target = t; caps = false; shift = !t.value || /[.!?]\s*$/.test(t.value); mode = 'abc'; draw(); el.classList.add('on'); scr.classList.add('kb-on'); },
       hide() { if (target && target.blur) target.blur(); target = null; el.classList.remove('on'); scr.classList.remove('kb-on'); },
       get target() { return target; }
     };
@@ -310,9 +310,9 @@ window.IPHONE = { start(room, exit) {
       value, ret, sel: false,
       render() {
         const txt = f.value ? esc(f.value).replace(/\n/g, '<br/>') : `<span class="ph">${esc(placeholder)}</span>`;
-        el.innerHTML = `${f.sel && f.value ? `<span class="hl">${txt}</span>` : txt}<i class="caret"></i>${clearBtn && f.value && el.classList.contains('on') ? '<button type="button" class="fld-x" aria-label="Clear">\u00d7</button>' : ''}`;
+        el.innerHTML = `${!f.value ? `<i class="caret"></i>${txt}` : f.sel ? `<span class="hl">${txt}</span><i class="caret"></i>` : `${txt}<i class="caret"></i>`}${clearBtn && f.value && el.classList.contains('on') ? '<button type="button" class="fld-x" aria-label="Clear">\u00d7</button>' : ''}`;
         onChange && onChange(f.value);
-        if (multi) el.scrollTop = el.scrollHeight; else el.scrollLeft = el.scrollWidth;
+        if (multi) el.scrollTop = el.scrollHeight; else el.scrollLeft = el.classList.contains('on') ? el.scrollWidth : 0;
       },
       insert(s) { if (f.sel) { f.value = ''; f.sel = false; } f.value += s; f.render(); },
       back() { if (f.sel) { f.value = ''; f.sel = false; } else f.value = f.value.slice(0, -1); f.render(); },
@@ -515,35 +515,112 @@ window.IPHONE = { start(room, exit) {
   };
 
   /* Safari: tabs, an address bar that goes anywhere (or searches), back
-     and forward, bookmarks you can add to. Sites that refuse to be shown
-     inside another page get a way to open in a real tab instead. */
+     and forward, bookmarks you can add to. Most sites refuse to be framed,
+     so outside pages are fetched through a reader service and shown here
+     with their scripts left off; taps on links and forms come back through
+     Safari, which keeps each page's own history. Searches go to
+     DuckDuckGo's plain results page. */
+  const READER = 'https://r.jina.ai/';
+  const pageCache = new Map();
   const safari = (app, url, label) => {
-    const tabsList = [{ url }];
-    let cur = 0;
+    const tab = (u) => ({ url: u, hist: u ? [u] : [], pos: u ? 0 : -1 });
+    const tabsList = [tab(url)];
+    let cur = 0, token = 0;
     const marks = store.get('ip-marks', null) || [['Portfolio', 'classic.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Wikipedia', 'https://en.m.wikipedia.org/']];
     app.el.classList.add('is-safari');
-    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This site can’t be shown inside another page.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark">+</button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
-    const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b');
-    const pretty = (u) => !u ? '' : /^https?:/.test(u) ? u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : 'ajaysommi.github.io/' + (u === 'classic.html' ? '' : u.replace(/#.*$/, ''));
+    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark">+</button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
+    const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b'), prog = app.el.querySelector('.saf-prog');
+    const SEARCH = 'https://html.duckduckgo.com/html/?q=';
+    const pretty = (u) => {
+      if (!u) return '';
+      if (u.startsWith(SEARCH)) return decodeURIComponent(u.slice(SEARCH.length).replace(/\+/g, ' '));
+      return /^https?:/.test(u) ? u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : 'ajaysommi.github.io/' + (u === 'classic.html' ? '' : u.replace(/#.*$/, ''));
+    };
     const resolve = (v) => {
       v = v.trim();
       if (!v) return null;
       if (/^https?:\/\//i.test(v)) return v;
       if (v === 'classic.html' || /\.pdf$/i.test(v)) return v;
-      if (/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v)) return 'https://' + v;
-      return 'https://www.google.com/search?igu=1&q=' + encodeURIComponent(v);
+      if (/^[\w-]+(\.[\w-]+)+(:\d+)?(\/\S*)?$/.test(v)) return 'https://' + v;
+      return SEARCH + encodeURIComponent(v);
     };
-    const framable = (u) => !/^https?:/.test(u) || /google\.com\/search\?igu=1|wikipedia\.org|example\.com/.test(u);
-    const show = () => {
+    /* The fetched page: a base so its pictures and styles resolve, and no
+       scripts. The frame is sandboxed without scripts as well. */
+    const prep = (html, u) => {
+      html = html.replace(/<script\b[\s\S]*?<\/script>/gi, '').replace(/<meta[^>]+http-equiv=["']?refresh[^>]*>/gi, '');
+      const base = `<base href="${u.replace(/"/g, '&quot;')}" target="_self"><meta name="viewport" content="width=device-width, initial-scale=1"><style>html{-webkit-text-size-adjust:100%}img,video{max-width:100%;height:auto}</style>`;
+      return /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + base) : base + html;
+    };
+    const progress = (on) => { prog.classList.toggle('on', on); if (!on) { prog.classList.add('done'); setTimeout(() => prog.classList.remove('done'), 300); } };
+    const hook = () => {
+      let d;
+      try { d = fr.contentDocument; } catch (x) { return; }
+      if (!d || !fr.hasAttribute('srcdoc')) return;
+      const base = tabsList[cur].url;
+      d.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href]');
+        if (!a) return;
+        e.preventDefault();
+        const raw = a.getAttribute('href');
+        if (raw.startsWith('#')) { const t = d.getElementById(raw.slice(1)) || d.querySelector(`[name="${raw.slice(1)}"]`); if (t) t.scrollIntoView(); return; }
+        let u;
+        try { u = new URL(raw, base); } catch (x) { return; }
+        if (/duckduckgo\.com$/.test(u.hostname) && u.pathname === '/l/' && u.searchParams.get('uddg')) u = new URL(u.searchParams.get('uddg'));
+        if (/^(mailto|tel):/.test(u.protocol)) { ext(u.href); return; }
+        if (!/^https?:/.test(u.protocol)) return;
+        go(u.href);
+      });
+      d.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const f = e.target;
+        if ((f.getAttribute('method') || 'get').toLowerCase() !== 'get') { alertBox('Can’t Send Form', 'This page’s form can only be sent from a full browser.'); return; }
+        const u = new URL(f.getAttribute('action') || base, base);
+        u.search = new URLSearchParams(new FormData(f)).toString();
+        go(u.href);
+      }, true);
+    };
+    fr.addEventListener('load', hook);
+    const load = async (u, fresh) => {
+      const my = ++token;
+      note.hidden = true;
+      note.querySelector('a').href = u || '#';
+      if (!u) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.src = 'about:blank'; progress(false); return; }
+      if (!/^https?:/.test(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.src = u; progress(false); return; }
+      progress(true);
+      try {
+        let html = !fresh && pageCache.get(u);
+        if (!html) {
+          const r = await fetch(READER + u, { headers: { 'X-Return-Format': 'html' } });
+          if (!r.ok) throw new Error(r.status);
+          html = await r.text();
+          if (!/<(html|body|div|p)\b/i.test(html)) throw new Error('empty');
+          pageCache.set(u, html);
+        }
+        if (my !== token) return;
+        fr.setAttribute('sandbox', 'allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox');
+        fr.removeAttribute('src');
+        fr.srcdoc = prep(html, u);
+      } catch (x) {
+        if (my !== token) return;
+        fr.removeAttribute('srcdoc'); fr.src = 'about:blank';
+        note.hidden = false;
+      }
+      progress(false);
+    };
+    const show = (fresh) => {
       const t = tabsList[cur];
-      fr.src = t.url || 'about:blank';
       addr.value = pretty(t.url); addr.render();
-      note.hidden = !t.url || framable(t.url);
-      note.querySelector('a').href = t.url || '#';
       cnt.textContent = tabsList.length;
+      load(t.url, fresh);
     };
-    const addr = field(app.el.querySelector('.saf-url'), { placeholder: 'Search or type an address', ret: 'Go', selectAll: true, clearBtn: true, onEnter: (f) => { const u = resolve(f.value); if (!u) return; tabsList[cur].url = u; kb.hide(); show(); } });
-    app.el.querySelector('.saf-rl').addEventListener('click', () => { SFX.click(); show(); });
+    const go = (u) => {
+      const t = tabsList[cur];
+      t.hist = t.hist.slice(0, t.pos + 1);
+      t.hist.push(u); t.pos = t.hist.length - 1; t.url = u;
+      show();
+    };
+    const addr = field(app.el.querySelector('.saf-url'), { placeholder: 'Search or type an address', ret: 'Go', selectAll: true, clearBtn: true, onEnter: (f) => { const u = resolve(f.value); if (!u) return; kb.hide(); go(u); } });
+    app.el.querySelector('.saf-rl').addEventListener('click', () => { SFX.click(); show(true); });
     /* The page switcher: one card per tab, New Page, close, Done. */
     const pages = () => {
       const o = h('div', 'saf-pages');
@@ -557,8 +634,8 @@ window.IPHONE = { start(room, exit) {
         if (!b) return;
         SFX.click();
         if (b.dataset.d) { cur = (cur + +b.dataset.d + tabsList.length) % tabsList.length; draw(); }
-        if (b.classList.contains('sp-x')) { if (tabsList.length > 1) { tabsList.splice(cur, 1); cur = Math.min(cur, tabsList.length - 1); draw(); } else { tabsList[0].url = ''; o.remove(); show(); addr.focus(); } }
-        if (b.hasAttribute('data-new')) { if (tabsList.length >= 8) { alertBox('Too Many Pages', 'Close a page before opening another.'); return; } tabsList.push({ url: '' }); cur = tabsList.length - 1; o.remove(); show(); addr.focus(); }
+        if (b.classList.contains('sp-x')) { if (tabsList.length > 1) { tabsList.splice(cur, 1); cur = Math.min(cur, tabsList.length - 1); draw(); } else { tabsList[0] = tab(''); o.remove(); show(); addr.focus(); } }
+        if (b.hasAttribute('data-new')) { if (tabsList.length >= 8) { alertBox('Too Many Pages', 'Close a page before opening another.'); return; } tabsList.push(tab('')); cur = tabsList.length - 1; o.remove(); show(); addr.focus(); }
         if (b.hasAttribute('data-done')) { o.remove(); show(); }
       });
       app.el.appendChild(o);
@@ -568,8 +645,9 @@ window.IPHONE = { start(room, exit) {
       if (!b) return;
       SFX.click();
       const a = b.dataset.a;
-      if (a === 'b') { try { fr.contentWindow.history.back(); } catch (x) {} }
-      if (a === 'f') { try { fr.contentWindow.history.forward(); } catch (x) {} }
+      const t = tabsList[cur];
+      if (a === 'b' && t.pos > 0) { t.pos--; t.url = t.hist[t.pos]; show(); }
+      if (a === 'f' && t.pos < t.hist.length - 1) { t.pos++; t.url = t.hist[t.pos]; show(); }
       if (a === 'add') {
         const u = tabsList[cur].url;
         if (!u) { alertBox('Nothing to Bookmark', 'Open a page first.'); return; }
@@ -580,7 +658,7 @@ window.IPHONE = { start(room, exit) {
       if (a === 'bm') {
         const r = await alertBox('Bookmarks', '', [...marks.map((m) => m[0]), 'Cancel']);
         const m = marks.find((x) => x[0] === r);
-        if (m) { tabsList[cur].url = m[1]; show(); }
+        if (m) go(m[1]);
       }
     });
     show();
@@ -706,11 +784,12 @@ window.IPHONE = { start(room, exit) {
   /* Every recommendation arrives unread; reading one clears its dot, and
      the count shows on the icon and the lock screen. */
   const smsRead = new Set(store.get('ip-sms-read', []));
+  let noteSeen = false;
   const unreadCount = () => P.recs.filter((_, i) => !smsRead.has(i)).length;
   const showUnread = () => {
     const n = unreadCount();
     const note = room.querySelector('.ip-lk-note');
-    if (note) { note.hidden = !n; note.querySelector('b').textContent = n; note.querySelector('span').textContent = n === 1 ? 'New Text Message' : 'New Text Messages'; }
+    if (note) { note.hidden = !n || noteSeen; note.querySelector('b').textContent = n >= 9 ? '9+ Messages' : `${n} New Message${n === 1 ? '' : 's'}`; }
     const ic = room.querySelector('.ip-icon[data-id="guestbook"]');
     if (ic) { let bd = ic.querySelector('.badge'); if (!n) { if (bd) bd.remove(); } else { if (!bd) { bd = h('span', 'badge'); ic.appendChild(bd); } bd.textContent = n; } }
   };
@@ -1007,7 +1086,7 @@ window.IPHONE = { start(room, exit) {
       drawRoll();
       app.def.onClose = () => clearInterval(timer);
     } },
-    projects: { name: 'YouTube', icon: 'tv', cls: 'is-yt', bar: 'black', nb: 'black', open(app) {
+    projects: { name: 'Projects', icon: 'tv', cls: 'is-yt', bar: 'black', nb: 'black', open(app) {
       const row = (p) => ({ text: p.name, sub: p.stack, cls: 'yt-row', lead: `<span class="yt-th" style="--h:${P.projects.indexOf(p) * 57 + 200}">${esc(p.name.slice(0, 2))}</span>`, go: () => app.push(p.name, (x) => {
         x.classList.add('pin');
         x.innerHTML = `${group([['', `${esc(p.full)}<br/><span style="font-weight:normal;color:#4c566c">${esc(p.kind)}</span>`]])}<div class="gp"><div class="txt">${esc(p.text)}</div></div>${group([['stack', esc(p.stack), 1]])}${p.url ? '<button class="gbtn" type="button" data-go>View on GitHub</button>' : '<div class="gl" style="text-align:center">Source is private for now</div>'}`;
@@ -1157,7 +1236,21 @@ window.IPHONE = { start(room, exit) {
       const C = [['Gainesville', 29.652, -82.325], ['Jacksonville', 30.332, -81.656], ['Boca Raton', 26.368, -80.128], ['St. Louis', 38.627, -90.199], ['Palo Alto', 37.442, -122.143], ['Deerfield Beach', 26.318, -80.1]];
       const cache = {};
       let k = 0, flipped = false;
-      const ico = (code, day = 1) => code === 0 ? (day ? '☀' : '☾') : code <= 3 ? '⛅' : code <= 48 ? '☁' : code <= 67 ? '☂' : code <= 77 ? '❄' : code <= 82 ? '☂' : '⚡';
+      const ST = { Gainesville: 'Florida', Jacksonville: 'Florida', 'Boca Raton': 'Florida', 'St. Louis': 'Missouri', 'Palo Alto': 'California', 'Deerfield Beach': 'Florida' };
+      const words = (c) => c === 0 ? 'Clear' : c <= 2 ? 'Partly Cloudy' : c === 3 ? 'Cloudy' : c <= 48 ? 'Fog' : c <= 57 ? 'Drizzle' : c <= 67 ? 'Rain' : c <= 77 ? 'Snow' : c <= 82 ? 'Showers' : 'Thunderstorms';
+      /* Small drawn icons for the rows: a sun, a sun behind cloud, cloud,
+         rain, snow, a storm. The big one over the card is the same, larger. */
+      const kind = (c, day = 1) => c === 0 ? (day ? 'sun' : 'moon') : c <= 2 ? (day ? 'part' : 'moon') : c <= 48 ? 'cloud' : c <= 67 || (c >= 80 && c <= 82) ? 'rain' : c <= 77 ? 'snow' : 'storm';
+      let gid = 0;
+      const art = (t, big) => {
+        const g = 'wxg' + (++gid);
+        const sun = `<radialGradient id="${g}s" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="#fffbd2"/><stop offset=".45" stop-color="#ffe14a"/><stop offset="1" stop-color="#f3a20c"/></radialGradient><radialGradient id="${g}h"><stop offset=".55" stop-color="#ffd84a" stop-opacity=".55"/><stop offset="1" stop-color="#ffb000" stop-opacity="0"/></radialGradient>`;
+        const cloud = `<linearGradient id="${g}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9d3df"/></linearGradient>`;
+        const S = `${big ? `<circle cx="50" cy="44" r="40" fill="url(#${g}h)"/>` : ''}<circle cx="50" cy="44" r="26" fill="url(#${g}s)"/>`;
+        const Cl = (x, y, s, o = 1) => `<g transform="translate(${x} ${y}) scale(${s})" opacity="${o}"><path d="M10 30a10 10 0 0 1 3-19 14 14 0 0 1 26-3 11 11 0 0 1 15 10 9 9 0 0 1-2 12z" fill="url(#${g}c)"/></g>`;
+        const body = { sun: S, moon: `<mask id="${g}m"><rect width="100" height="92" fill="#fff"/><circle cx="63" cy="34" r="21" fill="#000"/></mask><radialGradient id="${g}g"><stop offset=".5" stop-color="#dfe6ff" stop-opacity=".35"/><stop offset="1" stop-color="#dfe6ff" stop-opacity="0"/></radialGradient>${big ? `<circle cx="48" cy="46" r="38" fill="url(#${g}g)"/>` : ''}<circle cx="48" cy="46" r="25" fill="#f2f4fb" mask="url(#${g}m)"/>`, part: S + Cl(28, 46, 1.1, .95), cloud: Cl(14, 22, 1.3), rain: Cl(14, 18, 1.3) + '<path d="M34 72l-4 9M50 72l-4 9M66 72l-4 9" stroke="#9cc7ff" stroke-width="4" stroke-linecap="round"/>', snow: Cl(14, 18, 1.3) + '<g fill="#fff"><circle cx="34" cy="78" r="3.5"/><circle cx="50" cy="82" r="3.5"/><circle cx="66" cy="78" r="3.5"/></g>', storm: Cl(14, 16, 1.3) + '<path d="M50 62l-9 15h8l-5 13 15-19h-9l6-9z" fill="#ffd84a"/>' }[t];
+        return `<svg viewBox="0 0 100 92" aria-hidden="true"><defs>${sun}${cloud}</defs>${body}</svg>`;
+      };
       app.el.innerHTML = '<div class="wx2"><div class="wx-card"></div><div class="wx-dots"></div></div>';
       const card = app.el.querySelector('.wx-card'), dots = app.el.querySelector('.wx-dots');
       const load = async (i) => {
@@ -1176,19 +1269,20 @@ window.IPHONE = { start(room, exit) {
         }
         const [name] = C[k];
         card.className = 'wx-card';
-        card.innerHTML = `<div class="hd"><div class="city">${esc(name)}</div><div class="hi">Loading…</div><div class="tmp">–</div></div><ul></ul><div class="wx-foot"><span></span><span class="upd"></span><button type="button" data-a="info" aria-label="Cities">i</button></div>`;
+        card.innerHTML = `<div class="wx-art"></div><div class="hd"><div class="city">${esc(name)}</div><div class="st">${esc(ST[name])}</div><div class="cond">Loading…</div><div class="tmp">–<sup>°</sup></div></div><ul></ul><div class="wx-foot"><span class="wx-by">Open-Meteo</span><span class="upd"></span><button type="button" data-a="info" aria-label="Cities">i</button></div>`;
         try {
           const d = await load(k);
           if (C[k][0] !== name || flipped) return;
           const day = d.current.is_day;
           card.classList.toggle('night', !day);
-          card.querySelector('.tmp').textContent = Math.round(d.current.temperature_2m) + '°';
-          card.querySelector('.hi').textContent = `H: ${Math.round(d.daily.temperature_2m_max[0])}°  L: ${Math.round(d.daily.temperature_2m_min[0])}°`;
-          card.querySelector('.hd').insertAdjacentHTML('afterbegin', `<span class="wx-now">${ico(d.current.weather_code, day)}</span>`);
-          card.querySelector('ul').innerHTML = d.daily.time.map((t, i) => `<li><span class="dd">${new Date(t + 'T12:00').toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}</span><span class="ii">${ico(d.daily.weather_code[i])}</span><span class="gg">${Math.round(d.daily.temperature_2m_max[i])}°</span><span class="lo">${Math.round(d.daily.temperature_2m_min[i])}°</span></li>`).join('');
-          card.querySelector('.upd').textContent = 'Updated ' + hm(now());
+          card.querySelector('.wx-art').innerHTML = art(kind(d.current.weather_code, day), true);
+          card.querySelector('.tmp').innerHTML = Math.round(d.current.temperature_2m) + '<sup>°</sup>';
+          card.querySelector('.cond').textContent = words(d.current.weather_code);
+          card.querySelector('ul').innerHTML = d.daily.time.map((t, i) => `<li><span class="dd">${new Date(t + 'T12:00').toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}</span><span class="ii">${art(kind(d.daily.weather_code[i]))}</span><span class="gg">${Math.round(d.daily.temperature_2m_max[i])}°</span><span class="lo">${Math.round(d.daily.temperature_2m_min[i])}°</span></li>`).join('');
+          const n = now();
+          card.querySelector('.upd').innerHTML = `Updated ${n.getMonth() + 1}/${n.getDate()}/${String(n.getFullYear()).slice(2)} <b>${hm(n)}</b>`;
         } catch (x) {
-          card.querySelector('.hi').textContent = 'Weather is unavailable right now.';
+          card.querySelector('.cond').textContent = 'Weather is unavailable right now.';
         }
       };
       const step = (d) => { k = (k + d + C.length) % C.length; SFX.click(); draw(); };
@@ -1326,12 +1420,14 @@ window.IPHONE = { start(room, exit) {
     const far = Math.max(...icons.map((b) => +b.dataset.d));
     void board.offsetWidth;
     board.classList.remove('is-flying');
+    /* Slow off the mark, then faster and faster until they hit their
+       places: an ease-in with no settle, the outer ring a beat ahead. */
     icons.forEach((b) => {
-      b.style.transition = '';
-      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * 160) + 'ms';
+      b.style.transition = 'transform .42s cubic-bezier(.82, 0, 1, .9), opacity .22s linear';
+      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * 50) + 'ms';
       b.style.transform = '';
     });
-    setTimeout(() => icons.forEach((b) => { b.style.transitionDelay = ''; }), 720);
+    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), 520);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
 
@@ -1365,6 +1461,7 @@ window.IPHONE = { start(room, exit) {
   function unlock() {
     if (state !== 'locked') return;
     state = 'home';
+    noteSeen = true;
     quietUntil = performance.now() + 600;
     SFX.click();
     lock.classList.add('is-gone');

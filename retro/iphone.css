@@ -860,9 +860,6 @@
 
 /* Unread counts: a red oval on the icon, a bar on the lock screen. */
 .ip-screen .ip-icon .badge { position: absolute; left: 50px; top: -8px; min-width: 25px; height: 25px; padding: 0 6px; box-sizing: border-box; border-radius: 13px; border: 2px solid #fff; display: grid; place-items: center; font: bold 15px/1 Helvetica, Arial, sans-serif; color: #fff; background: radial-gradient(120% 90% at 50% 0%, #ff9a9a 0%, #e01010 45%, #b40000 100%); box-shadow: 0 2px 3px rgba(0,0,0,.55); text-shadow: 0 -1px 0 rgba(0,0,0,.3); z-index: 2; }
-.ip-screen .ip-lk-note { position: absolute; left: 50%; top: 128px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 14px 0 4px; border-radius: 15px; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.28); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); color: #fff; font: bold 14px Helvetica, Arial, sans-serif; white-space: nowrap; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
-.ip-screen .ip-lk-note[hidden] { display: none; }
-.ip-screen .ip-lk-note b { min-width: 22px; height: 22px; padding: 0 5px; box-sizing: border-box; border-radius: 11px; display: grid; place-items: center; font-size: 13px; border: 1.5px solid #fff; background: radial-gradient(120% 90% at 50% 0%, #ff9a9a 0%, #e01010 45%, #b40000 100%); }
 
 /* Icon buttons in a nav bar, as Notes has them: share, trash, then +. */
 .ip-screen .nbb.ico { padding: 0; width: 36px; display: grid; place-items: center; }
@@ -907,3 +904,50 @@
 .ip-screen .ip-lock .time { font-weight: 400; letter-spacing: -1px; }
 .ip-screen .cam2 .vf img.fit { object-fit: contain; padding: 40px; box-sizing: border-box; background: radial-gradient(circle at 50% 45%, #1d3f7a, #071530 75%); }
 .ip-screen .snap-ph img.fit { object-fit: contain; padding: 18px; box-sizing: border-box; background: #0b2150; }
+
+/* Shift lit up in bright blue; caps lock adds a white bar under the arrow. */
+.ip-screen .kb-k.fn.on { color: #fff; background: linear-gradient(180deg, #6ea6ff 0%, #2f74ef 50%, #1f63e2 51%, #2a6deb 100%); box-shadow: 0 1px 1px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.4); text-shadow: 0 -1px 0 rgba(0,0,0,.3); }
+.ip-screen .kb-k.fn.caps { box-shadow: 0 1px 1px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.4), inset 0 -5px 0 -2px #fff; }
+
+/* A notification under the clock, glass like the bar above it, one short line. */
+.ip-screen .ip-lk-note { position: absolute; left: 0; right: 0; top: 117px; height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 10px 0 8px; color: #fff; font: 13px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.6); background: linear-gradient(180deg, rgba(70,70,70,.62), rgba(10,10,10,.72)); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 1px 0 rgba(0,0,0,.6); }
+.ip-screen .ip-lk-note[hidden] { display: none; }
+.ip-screen .ip-lk-note img { width: 22px; height: 22px; border-radius: 4px; flex: none; }
+.ip-screen .ip-lk-note b { flex: 1; font-size: 14px; }
+.ip-screen .ip-lk-note span { font-weight: bold; font-size: 12px; opacity: .9; }
+
+/* Weather, as the forecast card looked: slate blue glass, the sky's picture
+   rising out of its top, a big thin temperature, striped day rows with the
+   low in pale blue, the source and update time along the bottom. */
+.ip-screen .wx2 { padding: 46px 14px 0; }
+.ip-screen .wx2 .wx-card { border-radius: 12px; padding: 0; overflow: visible; color: #fff;
+  background: linear-gradient(180deg, #a3abb8 0, #6f7c92 10px, #4a5a7b 34px, #354360 62px, #354360 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 0 0 1px rgba(255,255,255,.12), 0 0 0 1px #10182a; }
+.ip-screen .wx2 .wx-card.night { background: linear-gradient(180deg, #8a90a0 0, #555f78 10px, #343f5c 34px, #232c45 62px, #232c45 100%); }
+.ip-screen .wx-art { position: absolute; left: 50%; top: -34px; width: 92px; height: 84px; margin-left: -46px; pointer-events: none; }
+.ip-screen .wx-art svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+.ip-screen .wx2 .hd { position: relative; min-height: 0; height: 104px; padding: 46px 12px 0; }
+.ip-screen .wx2 .wx-now { display: none; }
+.ip-screen .wx2 .city { font: bold 19px/21px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ip-screen .wx2 .st { font: bold 12.5px/15px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); }
+.ip-screen .wx2 .cond { font: bold 12px/15px Helvetica, Arial, sans-serif; color: #9fb0c8; }
+.ip-screen .wx2 .wx-card .tmp { position: absolute; right: 8px; top: 34px; font: 200 66px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: -3px; text-shadow: 0 -1px 0 rgba(0,0,0,.35); }
+.ip-screen .wx2 .wx-card .tmp sup { font-size: 30px; vertical-align: 0; position: relative; top: -26px; margin-left: 3px; letter-spacing: 0; }
+.ip-screen .wx2 .wx-card ul { margin: 0; border-top: 1px solid rgba(0,0,0,.45); }
+.ip-screen .wx2 .wx-card li { height: 34px; padding: 0 10px 0 12px; border-top: 1px solid rgba(255,255,255,.14); border-bottom: 1px solid rgba(0,0,0,.35);
+  background: linear-gradient(180deg, #4a5d84, #3c4d70); font: bold 14px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); }
+.ip-screen .wx2 .wx-card li:nth-child(even) { background: linear-gradient(180deg, #42547a, #354566); }
+.ip-screen .wx2 .wx-card.night li { background: linear-gradient(180deg, #34405c, #29334b); }
+.ip-screen .wx2 .wx-card li .dd { flex: 1; }
+.ip-screen .wx2 .wx-card li .ii { width: 30px; height: 26px; margin-right: 14px; }
+.ip-screen .wx2 .wx-card li .ii svg { width: 30px; height: 26px; }
+.ip-screen .wx2 .wx-card li .gg { width: 36px; text-align: right; font-size: 16px; }
+.ip-screen .wx2 .wx-card li .lo { width: 36px; text-align: right; font-size: 16px; color: #7d95bb; opacity: 1; }
+.ip-screen .wx2 .wx-foot { height: 32px; margin: 0; padding: 0 8px 0 10px; border-top: 1px solid rgba(255,255,255,.12); font: 11px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); border-radius: 0 0 12px 12px; }
+.ip-screen .wx2 .wx-foot .wx-by { font: bold italic 11px Georgia, serif; opacity: .85; }
+.ip-screen .wx2 .wx-foot .upd { opacity: 1; }
+.ip-screen .wx2 .wx-foot .upd b { margin-left: 3px; }
+.ip-screen .wx2 .wx-foot button { width: 20px; height: 20px; border: 0; background: radial-gradient(circle at 50% 40%, #fff, #d4d9e2); color: #3b4a6a; font: bold italic 13px/20px Georgia, serif; text-shadow: none; box-shadow: 0 1px 1px rgba(0,0,0,.5); }
+.ip-screen .wx2 .wx-dots { padding: 14px 0; }
+.ip-screen .ic-wd { top: 2.5px; }
+.ip-screen .ic-dd { top: 16px; }
