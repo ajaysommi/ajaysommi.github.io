@@ -253,3 +253,11 @@
 .pk.is-photo .pk-btns [data-b="menu"] { left: 139px; }
 .pk.is-photo .pk-btns [data-b="play"] { left: 209.4px; }
 .pk.is-photo .pk-btns [data-b="next"] { left: 279.8px; }
+
+/* A story: the picture first, the words underneath it, the two never
+   overlapping; the whole page scrolls when the words run long. */
+.lcd-story { display: block; height: 100%; overflow-y: auto; scrollbar-width: none; touch-action: pan-y; }
+.lcd-story::-webkit-scrollbar { display: none; }
+.lcd-story .ph { display: block; padding: 6px 8px 4px; }
+.lcd-story .ph img { display: block; width: 100%; max-height: none; height: auto; }
+.lcd-story .cp { max-height: none; overflow: visible; }

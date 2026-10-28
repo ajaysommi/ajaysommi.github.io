@@ -412,3 +412,41 @@
 .ox-wall { position: absolute; inset: 0; pointer-events: none; background: #1a0b33 url(../assets/images/snowleopard/wallpaper.webp) center / cover no-repeat; }
 .sl-ic { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); -webkit-user-drag: none; }
 .dk-ic .sl-ic { filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
+
+/* Messages, as Apple's Mac chat app looked: a white sidebar of people,
+   a pale blue-grey conversation, white bubbles in, blue bubbles out. */
+.is-chat .ox-body { display: grid; grid-template-columns: 250px 1fr; }
+.ch-list { display: flex; flex-direction: column; background: #f7f8fa; border-right: 1px solid #b9c0c8; overflow: hidden; }
+.ch-find { flex: none; padding: 8px 10px; border-bottom: 1px solid #d7dbe0; background: linear-gradient(180deg, #eef0f3, #e2e5e9); }
+.ch-find input { width: 100%; box-sizing: border-box; height: 22px; border-radius: 11px; border: 1px solid #a9b0b8; padding: 0 10px; font: 12px var(--lg); box-shadow: inset 0 1px 2px rgba(0,0,0,.15); }
+.ch-people { flex: 1; overflow-y: auto; }
+.ch-people button { position: relative; display: grid; grid-template-columns: 40px 1fr auto; align-items: start; gap: 9px; width: 100%; border: 0; border-bottom: 1px solid #e3e6ea; background: #fff; padding: 9px 10px 9px 20px; text-align: left; cursor: default; font: 12px var(--lg); }
+.ch-people button[hidden] { display: none; }
+.ch-people button.new::before { content: ''; position: absolute; left: 7px; top: 22px; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #8fc4ff, #2a76e8); }
+.ch-people .ch-av { width: 40px; height: 40px; }
+.ch-tx { min-width: 0; }
+.ch-tx b { display: block; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ch-tx em { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-style: normal; color: #8a8f96; font-size: 11.5px; line-height: 1.3; margin-top: 1px; }
+.ch-people time { font-size: 11px; color: #3b7de0; white-space: nowrap; }
+.ch-people button.on { background: linear-gradient(180deg, #c9d3df, #b5c1cf); }
+.ch-people button.on .ch-tx em { color: #59606a; }
+.ch-main { display: flex; flex-direction: column; min-height: 0; background: linear-gradient(180deg, #e7ecf2, #dce3eb); }
+.ch-head { flex: none; padding: 8px 14px; font: 12px var(--lg); color: #333; border-bottom: 1px solid #c7ced6; background: #eef1f4; text-align: left; }
+.ch-head span { color: #8a8f96; margin-right: 4px; }
+.ch-head em { font-style: normal; color: #8a8f96; margin-left: 6px; }
+.ch-msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+.ch-day { align-self: center; font: 11px var(--lg); color: #8a8f96; }
+.ch-m { display: flex; align-items: flex-end; gap: 8px; max-width: 80%; }
+.ch-m.out { align-self: flex-end; }
+.ch-av { width: 30px; height: 30px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,.35); }
+.ch-av.ini { background: linear-gradient(180deg, #b5bcc6, #8c95a2); color: #fff; font: bold 12px var(--lg); display: grid; place-items: center; }
+.ch-m p { margin: 0; padding: 7px 13px; border-radius: 16px; font-size: 13px; line-height: 1.45; color: #111; background: linear-gradient(180deg, #ffffff, #f1f3f5); border: 1px solid #b9c0c8; box-shadow: 0 1px 1px rgba(0,0,0,.08), inset 0 1px 0 #fff; }
+.ch-m.out p { background: linear-gradient(180deg, #cfe6ff 0%, #9fcbff 55%, #8ec1ff 100%); border-color: #6b9fd8; }
+.ch-m.is-new p { animation: ch-pop .25s ease-out; transform-origin: 100% 100%; }
+@keyframes ch-pop { from { transform: scale(.6); opacity: 0; } }
+.ch-send { flex: none; padding: 8px 12px; border-top: 1px solid #c7ced6; background: linear-gradient(180deg, #eef1f4, #e1e6eb); }
+.ch-send input { width: 100%; box-sizing: border-box; height: 26px; border-radius: 13px; border: 1px solid #a9b0b8; padding: 0 12px; font: 13px var(--lg); background: #fff; box-shadow: inset 0 1px 2px rgba(0,0,0,.15); outline: none; }
+.ch-send input:focus { border-color: #6b9fd8; box-shadow: 0 0 0 3px rgba(107,159,216,.35); }
+.is-chat .ox-body { overflow: hidden; }
+.ch-people button .ch-tx em { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #8a8f96; font-size: 11.5px; }
+.ch-people button.on .ch-tx em { color: #59606a; }

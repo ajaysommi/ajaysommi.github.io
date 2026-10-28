@@ -7,14 +7,14 @@ window.EGGS = (function () {
   const LIST = [
     ['sudo', 'Superuser', 'Asked the terminal for more power than it gives.'],
     ['phosphor', 'Phosphor', 'Changed the terminal’s colour.'],
-    ['hire', 'Good idea', 'Ran the one command that matters.'],
+    ['hire', 'Hire', 'Ran the hire command.'],
     ['xyzzy', 'Adventurer', 'Said the magic word.'],
     ['ascii', 'Text mode', 'Looked at a photo made of characters.'],
-    ['trash', 'Dumpster diver', 'Went through the 1991 Trash.'],
-    ['bomb', 'Error type 26', 'Opened the file you were told not to.'],
+    ['trash', 'Trash', 'Looked through the 1991 Trash.'],
+    ['bomb', 'Error type 26', 'Opened the bomb file.'],
     ['puzzle', 'Fifteen', 'Solved the sliding puzzle.'],
     ['pattern', 'Interior design', 'Changed the desktop pattern.'],
-    ['keepresume', 'Second thoughts', 'Tried to throw the resume away.'],
+    ['keepresume', 'Kept', 'Tried to throw the resume away.'],
     ['guestbook', 'Signed', 'Signed the 1998 guestbook.'],
     ['source', 'View source', 'Read the page’s source in 1998.'],
     ['counter', 'Hit counter', 'Clicked the hit counter.'],
@@ -22,7 +22,7 @@ window.EGGS = (function () {
     ['hold', 'On hold', 'Flipped the pocket device’s hold switch.'],
     ['light', 'Flashlight', 'Turned the backlight all the way up.'],
     ['tune', 'Chiptune', 'Played the pocket device’s tune.'],
-    ['faceplate', 'New look', 'Swapped the pocket device’s faceplate.'],
+    ['faceplate', 'New look', 'Changed the room behind the music player.'],
     ['timemachine', 'Time traveller', 'Used Time Machine to change eras.'],
     ['update', 'Up to date', 'Checked for software updates in 2009.']
   ];

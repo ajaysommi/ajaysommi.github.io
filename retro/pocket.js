@@ -11,10 +11,13 @@ window.POCKET = { start(room, exit) {
   const { esc, dither, store } = window.RETRO;
   const I = window.ICONS;
 
-  const FACES = [['snow', 'Snow'], ['graphite', 'Graphite'], ['ocean', 'Ocean'], ['tangerine', 'Tangerine'], ['grape', 'Grape']];
+  /* The player is always white, as the 2003 one was; Settings changes the
+     colour of the room behind it instead. */
+  const BGS = [['lilac', 'Lilac'], ['sky', 'Sky'], ['mint', 'Mint'], ['sand', 'Sand'], ['slate', 'Slate']];
+  room.dataset.bg = store.get('pod-bg', 'lilac');
 
   room.innerHTML = `
-    <div class="pk-scale"><div class="pk is-off is-photo" data-face="${store.get('face', 'snow')}" style="background-image:url(assets/images/isommi-classic.webp)">
+    <div class="pk-scale"><div class="pk is-off is-photo" style="background-image:url(assets/images/isommi-classic.webp)">
       <button class="pk-hold" type="button" aria-label="Hold switch" aria-pressed="false"><span>HOLD</span></button>
       <div class="pk-brand">${I.mark(14, true)} iSommi Classic</div>
       <div class="pk-lcd-frame"><div class="pk-lcd" role="application" aria-label="Pocket screen">
@@ -34,7 +37,7 @@ window.POCKET = { start(room, exit) {
         <button class="pk-hub" type="button" aria-label="Select"></button>
         <i class="dot"></i>
       </div></div>
-      <div class="pk-btns">${[['prev', 'Previous'], ['menu', 'Menu'], ['play', 'Play or pause'], ['next', 'Next']].map(([k, l]) => `<button type="button" data-b="${k}" aria-label="${l}"></button>`).join('')}</div>
+      <div class="pk-btns">${[['prev', 'Back'], ['menu', 'Menu'], ['play', 'Play or pause'], ['next', 'Next']].map(([k, l]) => `<button type="button" data-b="${k}" aria-label="${l}"></button>`).join('')}</div>
     </div></div>`;
 
   const dev = room.querySelector('.pk');
@@ -194,10 +197,10 @@ window.POCKET = { start(room, exit) {
     settings: () => ({
       type: 'menu', title: 'Settings',
       items: [
-        [li('Faceplate', (FACES.find((f) => f[0] === dev.dataset.face) || FACES[0])[1]), () => {
-          const k = FACES.findIndex((f) => f[0] === dev.dataset.face);
-          const n = FACES[(k + 1) % FACES.length];
-          dev.dataset.face = n[0]; store.set('face', n[0]);
+        [li('Background', (BGS.find((f) => f[0] === room.dataset.bg) || BGS[0])[1]), () => {
+          const k = BGS.findIndex((f) => f[0] === room.dataset.bg);
+          const n = BGS[(k + 1) % BGS.length];
+          room.dataset.bg = n[0]; store.set('pod-bg', n[0]);
           window.EGGS.find('faceplate');
           refresh();
         }],
@@ -401,7 +404,7 @@ window.POCKET = { start(room, exit) {
     const b = e.target.closest('[data-b]');
     if (!b || !guard()) return;
     tap();
-    ({ prev: () => step(-1), menu: back, play, next: () => step(1) })[b.dataset.b]();
+    ({ prev: back, menu: back, play, next: () => step(1) })[b.dataset.b]();
   });
   backBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!guard()) return; tap(); back(); });
 

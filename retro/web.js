@@ -25,7 +25,7 @@ window.WEB = (function () {
   };
 
   const footer = () => `<hr/><div class="center small">
-      <p>Best viewed with SurfBoard 3.0 at 800&times;600 &middot; Made with Notepad and too much caffeine</p>
+      <p>Best viewed with SurfBoard 3.0 at 800&times;600 &middot; Made with Notepad</p>
       <p>You are visitor number <span class="counter" data-counter title="It counts.">${visits().split('').map((d) => `<span>${d}</span>`).join('')}</span></p>
       <p>Last updated: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
     </div>
@@ -251,7 +251,7 @@ window.WEB = (function () {
 
   const MENUS = [
     ['mark', I.pxmark(16), [['About SurfBoard', () => load('about:')], ['Easter Eggs found: ' + '?', null], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
-    ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('Printing... just kidding. Try the Résumé page’s Download link.'); }, '⌘P']]],
+    ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('To print the résumé, open the Résumé page and use Download.'); }, '⌘P']]],
     ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U']]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],
     ['bm', 'Bookmarks', [['GitHub', () => window.open(P.github, '_blank', 'noopener')], ['LinkedIn', () => window.open(P.linkedin, '_blank', 'noopener')], ['The Garage', () => load('garage')], ['Résumé', () => load('resume')]]]

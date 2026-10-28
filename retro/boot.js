@@ -39,6 +39,27 @@
     curtain.classList.remove('is-on');
   };
 
+  /* Behind both pickers: time itself, faint and slow. A clock face of
+     ticks, rings turning at different speeds, the eras marked around them,
+     and two hands sweeping. It fades up out of black. */
+  const TIMEART = (() => {
+    let ticks = '';
+    for (let i = 0; i < 120; i++) { const a = i * 3, L = i % 10 === 0 ? 26 : i % 5 === 0 ? 16 : 8; ticks += `<line x1="500" y1="${70}" x2="500" y2="${70 + L}" transform="rotate(${a} 500 500)"/>`; }
+    const years = ['1983', '1991', '1998', '2000', '2004', '2007', '2009', 'TODAY'];
+    const yr = years.map((y, i) => `<text transform="rotate(${i * 45} 500 500)" x="500" y="150" text-anchor="middle">${y}</text>`).join('');
+    let dots = '';
+    for (let i = 0; i < 36; i++) dots += `<circle cx="500" cy="230" r="${i % 3 ? 2 : 4}" transform="rotate(${i * 10} 500 500)"/>`;
+    return `<div class="pk-time" aria-hidden="true"><svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+      <g class="t-face" stroke="#fff" stroke-width="2" fill="none">${ticks}<circle cx="500" cy="500" r="430"/><circle cx="500" cy="500" r="392" stroke-dasharray="2 10"/></g>
+      <g class="t-years" fill="#fff" font-family="Silkscreen, monospace" font-size="22" letter-spacing="6">${yr}</g>
+      <g class="t-dots" fill="#fff">${dots}<circle cx="500" cy="500" r="270" fill="none" stroke="#fff" stroke-width="1.5"/></g>
+      <g class="t-ring2" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="500" cy="500" r="170" stroke-dasharray="40 14 4 14"/></g>
+      <g class="t-min"><line x1="500" y1="500" x2="500" y2="140" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>
+      <g class="t-hr"><line x1="500" y1="500" x2="500" y2="290" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+      <circle cx="500" cy="500" r="7" fill="#fff"/>
+    </svg></div>`;
+  })();
+
   /* ================================================================ DESKTOP */
 
   /* Each era drawn as the computer it ran on: an Apple II-style terminal, a
@@ -79,7 +100,7 @@
     };
 
     pick.classList.add('is-desk-pick');
-    pick.innerHTML = `
+    pick.innerHTML = TIMEART + `
       <div class="sm-status"><span class="sm-bat"><i></i></span><span class="sm-clock"></span></div>
       <div class="pk-in">
         <div class="pk-head">${I.pxmark(36)}<h1>Choose an era</h1><p>Each one is the portfolio on a computer from its year.</p></div>
@@ -142,10 +163,53 @@
     bezel.className = 'bz';
     bezel.setAttribute('aria-hidden', 'true');
     host.appendChild(bezel);
+    /* A way back to the eras from inside any system, out on the backdrop
+       where it never covers the screen. */
+    const eras = document.createElement('button');
+    eras.type = 'button';
+    eras.className = 'dk-eras';
+    eras.hidden = true;
+    eras.innerHTML = '\u2039 Eras';
+    eras.addEventListener('click', () => { SFX.click(); showPicker(); });
+    document.body.appendChild(eras);
+    /* Photographed machines: the picture scaled to the window (the part in
+       view, at least), the system's screen laid exactly over the picture's
+       screen, and the AJ where the maker's logo was. Sizes are the
+       picture's own pixels. */
+    const PHOTO = {
+      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1416, h: 1402, scr: [252, 271, 895, 600], r: 8, view: [0, 0, 1416, 1402], aj: [222, 1319, 50, false] },
+      1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1200, h: 1085, scr: [230, 211, 739, 554], r: 6, view: [0, 0, 1200, 1085], aj: [600, 850, 40, false] },
+      2009: { src: 'assets/images/bezels/imac-2009.webp', w: 1864, h: 1270, scr: [83, 94, 1698, 930], r: 0, view: [0, 0, 1864, 1270], aj: [941, 1171, 58, true] }
+    };
+    let photo = null;
+    const layout = () => {
+      if (!photo) return;
+      const pad = 26, W = innerWidth - pad * 2, H = innerHeight - pad * 2;
+      const [vx, vy, vw, vh] = photo.view;
+      const k = Math.min(W / vw, H / vh);
+      const ox = (innerWidth - vw * k) / 2 - vx * k, oy = (innerHeight - vh * k) / 2 - vy * k;
+      const dev = bezel.querySelector('.bz-dev');
+      dev.style.transform = `translate(${ox}px, ${oy}px) scale(${k})`;
+      const [sx, sy, sw, sh] = photo.scr;
+      Object.entries({ '--pl': ox + sx * k, '--pt': oy + sy * k, '--pw': sw * k, '--ph': sh * k, '--pr': photo.r * k }).forEach(([n, v]) => host.style.setProperty(n, v + 'px'));
+    };
+    addEventListener('resize', layout);
     const dress = (i) => {
+      eras.hidden = i < 0;
+      photo = null;
+      host.classList.remove('is-photo');
       if (i < 0) { delete host.dataset.era; bezel.innerHTML = ''; return; }
-      host.dataset.era = ERAS[i].year;
-      bezel.innerHTML = `<div class="bz-body"></div><div class="bz-frame"></div>${BEZEL[ERAS[i].year]}`;
+      const y = ERAS[i].year;
+      host.dataset.era = y;
+      if (PHOTO[y]) {
+        photo = PHOTO[y];
+        const [ax, ay, as, mono] = photo.aj;
+        bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
+        host.classList.add('is-photo');
+        layout();
+        return;
+      }
+      bezel.innerHTML = `<div class="bz-body"></div><div class="bz-frame"></div>${BEZEL[y]}`;
     };
 
     async function launch(i) {
@@ -197,7 +261,7 @@
   const PHONE_ART = {
     nokia: `<svg viewBox="0 0 74 122" aria-hidden="true"><rect x="2" y="2" width="70" height="118" rx="26" fill="#2f4372"/><rect x="2" y="2" width="70" height="118" rx="26" fill="url(#nkG)"/><defs><linearGradient id="nkG" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient></defs><rect x="13" y="16" width="48" height="38" rx="8" fill="#20252c"/><rect x="18" y="21" width="38" height="27" rx="2" fill="#b4d074"/><text x="37" y="38" text-anchor="middle" font-family="Pixelify Sans, monospace" font-size="7" font-weight="700" fill="#1d2a10">SOMMIA</text><rect x="25" y="59" width="24" height="9" rx="4.5" fill="#c4cbd8"/>${[0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<ellipse cx="${20 + c * 17}" cy="${78 + r * 10}" rx="6.5" ry="3.6" fill="#d7dce6"/>`).join('')).join('')}</svg>`,
     pocket: `<svg viewBox="0 0 74 122" aria-hidden="true"><rect x="2" y="2" width="70" height="118" rx="12" fill="#f3f1ec" stroke="#c9c3b6"/><rect x="9" y="9" width="56" height="48" rx="4" fill="#2b2e2a"/><rect x="12" y="12" width="50" height="42" rx="2" fill="#c9dcb6"/><rect x="14" y="18" width="46" height="5" fill="#1c2614"/><rect x="14" y="26" width="34" height="3" fill="#55603f"/><rect x="14" y="32" width="40" height="3" fill="#55603f"/><circle cx="37" cy="88" r="24" fill="#fbfaf7" stroke="#d9d4c8"/><circle cx="37" cy="88" r="8.5" fill="#ece9e2" stroke="#d9d4c8"/></svg>`,
-    now: `<svg viewBox="0 0 66 122" aria-hidden="true"><rect x="1" y="1" width="64" height="120" rx="12" fill="#1b1c1f" stroke="#55575c" stroke-width=".8"/><rect x="4" y="5" width="58" height="112" rx="9" fill="#f5f7fa"/><rect x="25" y="8" width="16" height="3.4" rx="1.7" fill="#1b1c1f"/><rect x="10" y="20" width="8" height="2.6" rx="1.3" fill="#ff6b35"/><rect x="10" y="30" width="40" height="6" rx="2" fill="#1d1f24"/><rect x="10" y="39" width="30" height="6" rx="2" fill="#3d68ff"/><rect x="10" y="50" width="44" height="2.4" rx="1.2" fill="#aab1bc"/><rect x="10" y="55" width="36" height="2.4" rx="1.2" fill="#aab1bc"/><circle cx="33" cy="82" r="15" fill="#e6ebf2"/>${AJ(33, 82, .5, '#1d1f24')}<rect x="10" y="104" width="22" height="6" rx="3" fill="#1d1f24"/></svg>`,
+    now: `<svg viewBox="0 0 66 122" aria-hidden="true"><rect x="1" y="1" width="64" height="120" rx="12" fill="#1b1c1f" stroke="#55575c" stroke-width=".8"/><rect x="4" y="4" width="58" height="114" rx="9" fill="#f5f7fa"/><rect x="24.5" y="7.2" width="17" height="5" rx="2.5" fill="#1b1c1f"/><rect x="10" y="20" width="8" height="2.6" rx="1.3" fill="#ff6b35"/><rect x="10" y="30" width="40" height="6" rx="2" fill="#1d1f24"/><rect x="10" y="39" width="30" height="6" rx="2" fill="#3d68ff"/><rect x="10" y="50" width="44" height="2.4" rx="1.2" fill="#aab1bc"/><rect x="10" y="55" width="36" height="2.4" rx="1.2" fill="#aab1bc"/><circle cx="33" cy="82" r="15" fill="#e6ebf2"/>${AJ(33, 82, .5, '#1d1f24')}<rect x="10" y="104" width="22" height="6" rx="3" fill="#1d1f24"/></svg>`,
     iphone: `<svg viewBox="0 0 66 122" aria-hidden="true"><defs><linearGradient id="ipR" x1="0" x2="1"><stop offset="0" stop-color="#8d9298"/><stop offset=".3" stop-color="#f2f3f4"/><stop offset=".7" stop-color="#c5c9ce"/><stop offset="1" stop-color="#7f848a"/></linearGradient></defs><rect x="1" y="1" width="64" height="120" rx="11" fill="url(#ipR)"/><rect x="2.6" y="2.6" width="60.8" height="116.8" rx="9.6" fill="#0b0b0b"/><rect x="27" y="10" width="12" height="2" rx="1" fill="#2b2b2b"/><rect x="7.5" y="21" width="51" height="76.5" fill="#000"/>${[0, 1, 2].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${10 + c * 12.2}" y="${25 + r * 14.5}" width="9" height="9" rx="2" fill="hsl(${(r * 4 + c) * 33} 70% 55%)"/>`).join('')).join('')}<rect x="7.5" y="84" width="51" height="13.5" fill="#a9a9a9"/>${[0, 1, 2, 3].map((c) => `<rect x="${10 + c * 12.2}" y="86.2" width="9" height="9" rx="2" fill="hsl(${120 + c * 70} 65% 55%)"/>`).join('')}<circle cx="33" cy="109" r="6.2" fill="#121212" stroke="#3a3a3a" stroke-width=".8"/><rect x="30.6" y="106.6" width="4.8" height="4.8" rx="1.2" fill="none" stroke="#9a9a9a" stroke-width=".7"/></svg>`
   };
   const PHONES = [
@@ -215,7 +279,7 @@
     let sel = Math.max(0, PHONES.findIndex((p) => p.id === store.get('phone', 'iphone')));
 
     pick.classList.add('is-phones');
-    pick.innerHTML = `
+    pick.innerHTML = TIMEART + `
       <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a device from its year.</p></div>
       <div class="mp-rail" role="listbox" aria-label="Eras">${PICKS.map((p, i) => `<button type="button" class="mp-card${p.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><span class="mp-y">${p.year}</span><b>${esc(p.name)}</b><span class="mp-n">${esc(p.note)}</span><span class="mp-on">${p.href ? 'Open' : 'Power on'}</span></button>`).join('')}</div>
       <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>`;

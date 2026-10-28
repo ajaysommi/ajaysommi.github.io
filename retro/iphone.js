@@ -1003,7 +1003,7 @@ window.IPHONE = { start(room, exit) {
       { text: 'Inbox', rt: unread() ? String(unread()) : '', go: () => app.push(inboxTitle(), inbox, { back: 'Mailboxes' }) },
       { text: 'Drafts', go: () => box('Drafts', [{ text: 'Offer letter', sub: 'Dear Ajay, we’d love to have you…', go: () => compose(P.email, 'Offer') }]) },
       { text: 'Sent', go: () => box('Sent', sent.map(([s, b]) => ({ text: s, sub: b }))) },
-      { text: 'Trash', go: () => box('Trash', [{ text: 'Old resume (2019)', sub: 'Listed “Microsoft Word” as a skill. Deleted.' }]) }
+      { text: 'Trash', go: () => box('Trash', [{ text: 'Old resume (2019)', sub: 'Replaced by the current one.' }]) }
     ]));
     app.push(inboxTitle(), inbox, { instant: true, back: 'Mailboxes' });
     app.compose = compose;
@@ -1363,8 +1363,8 @@ window.IPHONE = { start(room, exit) {
 
   /* The original grid: icons 57 points square, columns 75 apart starting
      19 in, rows 90 apart starting 19 under the status bar. */
-  const GRID = ['guestbook', 'experience', 'builds', 'about', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'];
-  const DOCK = ['contact', 'email', 'resume', 'portfolio'];
+  const GRID = ['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'];
+  const DOCK = ['contact', 'email', 'resume', 'about'];
   const iconBtn = (id) => {
     const b = h('button', 'ip-icon', `<span class="ic">${ICON[APPS[id].icon]()}</span><span class="lbl">${esc(APPS[id].name)}</span>`);
     b.type = 'button';
@@ -1413,7 +1413,7 @@ window.IPHONE = { start(room, exit) {
        places: an ease-in with no settle, the outer ring a beat ahead. */
     icons.forEach((b) => {
       /* Unlocking takes its time, a smooth sweep in; Home is quicker. */
-      b.style.transition = unlocking ? 'transform .5s cubic-bezier(.32, 0, .58, 1), opacity .3s ease' : 'transform .19s cubic-bezier(.45, 0, .9, .85), opacity .1s linear';
+      b.style.transition = unlocking ? 'transform .5s cubic-bezier(.32, 0, .58, 1), opacity .3s ease' : 'transform .22s cubic-bezier(.6, 0, 1, .3), opacity .1s linear';
       b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * (unlocking ? 50 : 20)) + 'ms';
       b.style.transform = '';
     });

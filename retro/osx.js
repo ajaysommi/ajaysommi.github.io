@@ -118,7 +118,7 @@ window.OSX = (function () {
     projects: { name: 'Projects', icon: 'projects', keys: 'code github built apps' },
     skills: { name: 'Skills', icon: 'skills', keys: 'stack languages tools system preferences' },
     photos: { name: 'Off the Clock', icon: 'photos', keys: 'photos garage repairs macbook civic electronics builds' },
-    guestbook: { name: 'Guestbook', icon: 'guestbook', keys: 'recommendations references testimonials chat' },
+    guestbook: { name: 'Messages', icon: 'guestbook', keys: 'recommendations references testimonials chat guestbook' },
     education: { name: 'Education', icon: 'education', keys: 'school uf university florida degree' },
     terminal: { name: 'Terminal', icon: 'terminal', keys: 'shell command line' },
     safari: { name: 'Safari', icon: 'safari', keys: 'web browser classic portfolio site' },
@@ -281,7 +281,7 @@ window.OSX = (function () {
       title: 'Ajay HD', w: 720, h: 440,
       toolbar: '<div class="ox-seg"><button type="button" disabled>◀</button><button type="button" disabled>▶</button></div><div class="ox-search"><input type="search" placeholder="Search" aria-label="Search" data-spot /></div>',
       view,
-      status: `${DOCK.filter((a) => !['|', 'trash', 'docs', 'downloads'].includes(a)).length} items, ∞ available`,
+      status: `${DOCK.filter((a) => !['|', 'trash', 'docs', 'downloads'].includes(a)).length} items, 112 GB available`,
       render: (b, rec) => {
         b.classList.add('fx');
         b.innerHTML = `<div class="fx-side"><h6>DEVICES</h6><button type="button" class="on" data-v="apps">${ICON.hd()}Ajay HD</button><h6>PLACES</h6><button type="button" data-v="apps">${ICON.folder()}Applications</button><button type="button" data-v="docs">${ICON.folder()}Documents</button><button type="button" data-v="desk">${ICON.folder()}Desktop</button></div><div class="fx-main"></div>`;
@@ -406,18 +406,40 @@ window.OSX = (function () {
       }
     }),
     guestbook: () => ({
-      title: 'Guestbook', w: 720, h: 500, cls: 'is-chat',
+      title: 'Messages', w: 760, h: 520, cls: 'is-chat',
       render: (b) => {
-        const COL = ['#5aa9ff', '#7bd36a', '#ff9f5a', '#c58cff', '#ff7aa8', '#4fd1c5', '#f2c94c', '#8fa8ff', '#ff8a7a'];
-        b.innerHTML = `<div class="ch-list"><h6>BUDDIES</h6>${P.recs.map(([n, c], i) => `<button type="button" data-i="${i}"><i></i><span>${esc(n)}<em>${esc(c)}</em></span></button>`).join('')}</div><div class="ch-main"></div>`;
+        /* Each recommendation is a conversation, unread until opened. White
+           bubbles come in, blue ones go out; the box at the bottom sends. */
+        const read = new Set(store.get('ox-chat-read', []));
+        const sent = store.get('ox-chat-sent', {});
+        const WHEN = ['9:41 AM', '9:12 AM', '8:05 AM', 'Yesterday', 'Yesterday', 'Thursday', 'Wednesday', 'Monday', 'Sunday', 'Sunday'];
+        const av = (n) => `<span class="ch-av ini">${esc(n.split(' ').map((w) => w[0]).join(''))}</span>`;
+        b.innerHTML = `<div class="ch-list"><div class="ch-find"><input type="search" placeholder="Search" aria-label="Search" /></div><div class="ch-people">${P.recs.map(([n, c, q], i) => `<button type="button" data-i="${i}" class="${read.has(i) ? '' : 'new'}">${av(n)}<span class="ch-tx"><b>${esc(n)}</b><em>${esc(q)}</em></span><time>${WHEN[i % WHEN.length]}</time></button>`).join('')}</div></div><div class="ch-main"></div>`;
         const main = b.querySelector('.ch-main');
+        let cur = 0;
         const show = (i) => {
+          cur = i;
           const [n, c, q] = P.recs[i];
-          b.querySelectorAll('.ch-list button').forEach((x) => x.classList.toggle('on', +x.dataset.i === i));
-          main.innerHTML = `<div class="ch-head">${esc(n)} · ${esc(c)}</div><div class="ch-msgs"><div class="ch-m in"><span class="ch-av" style="background:${COL[i % COL.length]}">${esc(n.split(' ').map((w) => w[0]).join(''))}</span><p style="--c:${COL[i % COL.length]}">${esc(q)}</p></div><div class="ch-m out"><p style="--c:#d6d6d6">Thank you, ${esc(n.split(' ')[0])}! That means a lot.</p><span class="ch-av"><img src="${P.photo}" alt="" /></span></div></div>`;
+          if (!read.has(i)) { read.add(i); store.set('ox-chat-read', [...read]); }
+          b.querySelectorAll('.ch-people button').forEach((x) => { x.classList.toggle('on', +x.dataset.i === i); if (+x.dataset.i === i) x.classList.remove('new'); });
+          main.innerHTML = `<div class="ch-head"><span>To:</span> ${esc(n)} <em>${esc(c)}</em></div><div class="ch-msgs"><div class="ch-day">${WHEN[i % WHEN.length]}</div><div class="ch-m in">${av(n)}<p>${esc(q)}</p></div>${(sent[i] || []).map((t) => `<div class="ch-m out"><p>${esc(t)}</p><span class="ch-av"><img src="${P.photo}" alt="" /></span></div>`).join('')}</div><form class="ch-send"><input type="text" placeholder="Message" aria-label="Message" autocomplete="off" /></form>`;
+          const msgs = main.querySelector('.ch-msgs');
+          msgs.scrollTop = msgs.scrollHeight;
+          main.querySelector('.ch-send').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const inp = e.target.querySelector('input'), t = inp.value.trim();
+            if (!t) return;
+            (sent[i] = sent[i] || []).push(t);
+            store.set('ox-chat-sent', sent);
+            msgs.insertAdjacentHTML('beforeend', `<div class="ch-m out is-new"><p>${esc(t)}</p><span class="ch-av"><img src="${P.photo}" alt="" /></span></div>`);
+            msgs.scrollTop = msgs.scrollHeight;
+            inp.value = '';
+            SFX.click();
+          });
         };
-        b.querySelector('.ch-list').addEventListener('click', (e) => { const x = e.target.closest('[data-i]'); if (x) { SFX.click(); show(+x.dataset.i); } });
-        show(0);
+        b.querySelector('.ch-people').addEventListener('click', (e) => { const x = e.target.closest('[data-i]'); if (x) { SFX.click(); show(+x.dataset.i); } });
+        b.querySelector('.ch-find input').addEventListener('input', (e) => { const v = e.target.value.toLowerCase(); b.querySelectorAll('.ch-people button').forEach((x) => { x.hidden = !x.textContent.toLowerCase().includes(v); }); });
+        show(cur);
       }
     }),
     education: () => doc('Education.rtf', () => { const e = P.education; return `<h1>${esc(e.school)}</h1><p><b>${esc(e.degree)}</b><br/>${esc(e.college)}<br/>Graduating ${esc(e.when)}</p><p>${esc(e.text)}</p><p>${e.tags.map(esc).join(' · ')}</p>`; }),
@@ -479,8 +501,8 @@ window.OSX = (function () {
             const t = e.target.closest('[data-t]');
             if (!t) return;
             if (t.dataset.t === 'oldsite') open('safari', 'classic.html');
-            if (t.dataset.t === 'bugs') alert({ title: 'bugs.txt', text: 'Known bugs: 0.<br/>(that we know of)', icon: ICON.doc() });
-            if (t.dataset.t === 'old') alert({ title: 'That one stays in the trash.', text: 'The 2019 resume had a skills section listing “Microsoft Word”. We have moved on.', icon: ICON.doc() });
+            if (t.dataset.t === 'bugs') alert({ title: 'bugs.txt', text: 'Known bugs: none listed.', icon: ICON.doc() });
+            if (t.dataset.t === 'old') alert({ title: 'Resume_2019.pdf', text: 'An older resume, replaced by the current one.', icon: ICON.doc() });
           });
         }
       };
@@ -564,7 +586,21 @@ window.OSX = (function () {
   };
   const bounce = (app) => {
     const d = dockEl.querySelector(`[data-app="${app}"] .dk-ic`);
-    if (d) d.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-22px)' }, { transform: 'translateY(0)' }, { transform: 'translateY(-10px)' }, { transform: 'translateY(0)' }], { duration: 700, easing: 'ease-out' });
+    if (!d) return;
+    /* Thrown up off the shelf and falling back under gravity: a high first
+       bounce, each one lower, never sinking below the glass. Time in the
+       air goes with the square root of the height, as it does. */
+    const H = d.offsetHeight * 0.9, hops = [1, 0.5, 0.24, 0.1];
+    const t = hops.map((k) => Math.sqrt(k));
+    const total = t.reduce((a, b) => a + b, 0);
+    const kf = [{ transform: 'translateY(0)', offset: 0, easing: 'cubic-bezier(.2,.6,.35,1)' }];
+    let at = 0;
+    hops.forEach((k, i) => {
+      kf.push({ transform: `translateY(${-H * k}px)`, offset: (at + t[i] / 2) / total, easing: 'cubic-bezier(.65,0,.8,.4)' });
+      at += t[i];
+      kf.push({ transform: 'translateY(0)', offset: at / total, easing: 'cubic-bezier(.2,.6,.35,1)' });
+    });
+    d.animate(kf, { duration: 1500 });
   };
 
   /* ---------------------------------------------------------- menu bar */
@@ -576,8 +612,8 @@ window.OSX = (function () {
     const appName = f && APPS[f.app] ? APPS[f.app].name : 'Finder';
     return {
       mark: [
-        ['About This Portfolio', () => alert({ title: 'SommiOS X', text: `Version 10.6 “Snow Gator”<br/><br/>Processor: one curious engineer<br/>Memory: ${P.experience.length} roles, ${P.projects.length} projects<br/>Startup disk: Ajay HD`, icon: I.mark(64) })],
-        ['Software Update…', () => { window.EGGS.find('update'); alert({ title: 'Your software is up to date.', text: 'There are no updates for this portfolio. The next version ships when Ajay joins your team.', icon: ICON.hd() }); }],
+        ['About This Portfolio', () => alert({ title: 'SommiOS X', text: `Version 10.6 “Snow Gator”<br/><br/>Built by Ajay Sommi<br/>${P.experience.length} roles, ${P.projects.length} projects<br/>Startup disk: Ajay HD`, icon: I.mark(64) })],
+        ['Software Update…', () => { window.EGGS.find('update'); alert({ title: 'Your software is up to date.', text: 'No updates are available for this portfolio.', icon: ICON.hd() }); }],
         '-',
         ['System Preferences…', () => open('skills')],
         ['Dock', null],

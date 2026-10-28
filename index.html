@@ -78,12 +78,12 @@
     .picker, .os-host, .phone-host { transition: filter 1s ease; }
   </style>
 
-  <link rel="stylesheet" href="retro/os.css?v=20" />
-  <link rel="stylesheet" href="retro/osx.css?v=20" />
-  <link rel="stylesheet" href="retro/picker.css?v=20" />
-  <link rel="stylesheet" href="retro/pocket.css?v=20" />
-  <link rel="stylesheet" href="retro/iphone.css?v=20" />
-  <link rel="stylesheet" href="retro/nokia.css?v=20" />
+  <link rel="stylesheet" href="retro/os.css?v=23" />
+  <link rel="stylesheet" href="retro/osx.css?v=23" />
+  <link rel="stylesheet" href="retro/picker.css?v=23" />
+  <link rel="stylesheet" href="retro/pocket.css?v=23" />
+  <link rel="stylesheet" href="retro/iphone.css?v=23" />
+  <link rel="stylesheet" href="retro/nokia.css?v=23" />
 
   <script type="application/ld+json">
   {
@@ -185,10 +185,29 @@
         if (shown >= 1 && !finished) {
           finished = true;
           setTimeout(function () {
-            el.classList.add('is-done');
-            document.documentElement.classList.remove('is-loading');
+            /* The picker comes up behind, then the mark flies from the
+               middle of the loader to the mark over the picker and settles
+               there, while everything else fades in around it. */
             resolveReady();
-            setTimeout(function () { el.remove(); }, 700);
+            document.documentElement.classList.remove('is-loading');
+            requestAnimationFrame(function () { requestAnimationFrame(function () {
+              var pick = document.getElementById('picker');
+              var target = pick && !pick.hidden && pick.querySelector('.pk-head svg, .mp-head svg');
+              el.classList.add('is-done');
+              if (!target || document.documentElement.classList.contains('reduced')) { setTimeout(function () { el.remove(); }, 700); return; }
+              var a = svg.getBoundingClientRect(), b = target.getBoundingClientRect();
+              var fly = svg.cloneNode(true);
+              fly.style.cssText = 'position:fixed;margin:0;z-index:10001;left:' + a.left + 'px;top:' + a.top + 'px;width:' + a.width + 'px;height:' + a.height + 'px;transform-origin:0 0;shape-rendering:crispEdges;transition:transform .75s cubic-bezier(.65,0,.25,1)';
+              document.body.appendChild(fly);
+              svg.style.visibility = 'hidden';
+              target.style.visibility = 'hidden';
+              pick.classList.add('is-arriving');
+              requestAnimationFrame(function () {
+                fly.style.transform = 'translate(' + (b.left - a.left) + 'px,' + (b.top - a.top) + 'px) scale(' + (b.width / a.width) + ')';
+              });
+              setTimeout(function () { target.style.visibility = ''; fly.remove(); }, 800);
+              setTimeout(function () { pick.classList.remove('is-arriving'); el.remove(); }, 1300);
+            }); });
           }, 160);
           return;
         }
@@ -218,19 +237,19 @@
 
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
-  <script src="retro/content.js?v=20"></script>
-  <script src="retro/sound.js?v=20"></script>
-  <script src="retro/icons.js?v=20"></script>
-  <script src="retro/eggs.js?v=20"></script>
-  <script src="retro/oldweb.js?v=20"></script>
-  <script src="retro/term.js?v=20"></script>
-  <script src="retro/finder.js?v=20"></script>
-  <script src="retro/web.js?v=20"></script>
-  <script src="retro/osx.js?v=20"></script>
-  <script src="retro/pocket.js?v=20"></script>
-  <script src="retro/iphone.js?v=20"></script>
-  <script src="retro/nokia.js?v=20"></script>
-  <script src="retro/boot.js?v=20"></script>
+  <script src="retro/content.js?v=23"></script>
+  <script src="retro/sound.js?v=23"></script>
+  <script src="retro/icons.js?v=23"></script>
+  <script src="retro/eggs.js?v=23"></script>
+  <script src="retro/oldweb.js?v=23"></script>
+  <script src="retro/term.js?v=23"></script>
+  <script src="retro/finder.js?v=23"></script>
+  <script src="retro/web.js?v=23"></script>
+  <script src="retro/osx.js?v=23"></script>
+  <script src="retro/pocket.js?v=23"></script>
+  <script src="retro/iphone.js?v=23"></script>
+  <script src="retro/nokia.js?v=23"></script>
+  <script src="retro/boot.js?v=23"></script>
 
 </body>
 </html>

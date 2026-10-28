@@ -245,7 +245,7 @@ window.FINDER = (function () {
   const SPECS = {
     hd: () => ({
       title: 'Ajay HD', w: 560, h: 380,
-      info: `<span>${DESKTOP.length + 1} items</span><span>1,337K in disk</span><span>∞ available</span>`,
+      info: `<span>${DESKTOP.length + 1} items</span><span>1.3 MB in disk</span><span>18 MB available</span>`,
       render: folderGrid(['about', 'experience', 'projects', 'offclock', 'skills', 'education', 'recs', 'contact', 'resume', 'system'])
     }),
     system: () => ({ title: 'System Folder', w: 420, h: 240, info: '<span>4 items</span><span>please don’t touch</span>', render: folderGrid(['eggs', 'computer', 'readme', 'scrapbook']) }),
@@ -332,7 +332,7 @@ window.FINDER = (function () {
         if (r === 'Open') window.open('classic.html', '_blank', 'noopener');
       }
     }),
-    bugs: () => ({ title: 'bugs.txt', w: 360, h: 200, render: (b) => { b.innerHTML = '<div class="doc"><p>Known bugs: 0</p><p class="meta">(that we know of)</p></div>'; } }),
+    bugs: () => ({ title: 'bugs.txt', w: 360, h: 200, render: (b) => { b.innerHTML = '<div class="doc"><p>Known bugs: none listed.</p></div>'; } }),
     jquery: () => ({ title: 'jquery.min.js', w: 380, h: 210, render: (b) => { b.innerHTML = '<div class="doc"><p>Retired with honours from the old site.</p><p class="meta">$(\'thank you\').fadeOut();</p></div>'; } }),
     dontopen: () => ({
       action: async () => {
