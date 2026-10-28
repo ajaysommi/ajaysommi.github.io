@@ -530,3 +530,198 @@
 .ip-home.is-down { transform: translate(-50%, 1px); }
 .ip.is-photo .ip-home.is-down { transform: translate(-50%, calc(-50% + .6px)); }
 
+
+/* ==========================================================================
+   Closer still to 2007: the status bar's filled E (blue inside apps), the
+   lock screen measured from the real one, the one-piece back button, the
+   keyboard, alerts, and everything that now does something.
+   ========================================================================== */
+
+/* Status bar. */
+.ip-status { --sb: #fff; --sbk: #000; font-size: 13px; }
+.ip-status .car { font: bold 13px Helvetica, Arial, sans-serif; letter-spacing: -.2px; }
+.ip-status .c { font: bold 13px Helvetica, Arial, sans-serif; }
+.ip-sig i { background: var(--sb); }
+.ip-edge { display: inline-grid; place-items: center; width: 10px; height: 12px; margin-left: 4px; border: 0; border-radius: 1.5px; background: var(--sb); color: var(--sbk); font: bold 10px/1 Helvetica, Arial, sans-serif; text-shadow: none; }
+.ip-screen[data-bar="gray"] .ip-status { --sb: #2f62c6; --sbk: #d3dbe5; color: #20262f; }
+.ip-screen[data-bar="gray"] .ip-edge { color: #d3dbe5; }
+
+/* The display's own black edge, over the grey of the photograph. */
+.ip.is-photo .ip-screen { box-shadow: 0 0 0 4.6px #040404, inset 0 0 0 .5px rgba(0,0,0,.6); }
+
+/* Lock screen, to the real proportions: a 58pt clock, a 67 by 44 knob. */
+.ip-lock .top, .ip-lock .bot { left: -1px; right: -1px; }
+.ip-lock .top { height: 96px; }
+.ip-lock .time { font: 200 79px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; margin-top: -2px; letter-spacing: -2.5px; }
+.ip-lock .date { font: 15px Helvetica, Arial, sans-serif; margin-top: -3px; }
+.ip-lock .bot { height: 98px; bottom: -1px; }
+.ip-slider { width: 278px; height: 52px; border-radius: 11px; background: rgba(0,0,0,.42); border: 1px solid rgba(0,0,0,.6); box-shadow: inset 0 1px 1px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.2); }
+.ip-knob { left: 3px; top: 3px; width: 67.5px; height: 44px; border-radius: 8px; }
+.ip-knob svg { width: 30px; height: 21px; }
+.ip-slider .txt { inset: 0 0 0 72px; font-size: 21.5px; }
+
+/* Icon gloss, as it fell on the 2007 icons: a broad arc over the top. */
+.ic { box-shadow: 0 1px 2px rgba(0,0,0,.8), inset 0 0 0 .5px rgba(0,0,0,.3); }
+.ic::after { left: -18px; right: -18px; top: -34px; height: 62px; border-radius: 0 0 50% 50% / 0 0 26px 26px; background: linear-gradient(180deg, rgba(255,255,255,.62) 0%, rgba(255,255,255,.34) 55%, rgba(255,255,255,.16) 100%); }
+.ip-icon .lbl { font: bold 11.5px/14px Helvetica, Arial, sans-serif; }
+
+/* Nav bar buttons: the back button is one drawn shape. */
+.nbb.l { left: 6px; border: 0; background: none; box-shadow: none; padding: 0 9px 0 15px; isolation: isolate; max-width: 116px; }
+.nbb.l .bsh { position: absolute; left: 0; top: 0; z-index: -1; }
+.nbb.l span { display: block; position: relative; overflow: hidden; text-overflow: ellipsis; max-width: 92px; line-height: 30px; }
+.nbb span { pointer-events: none; }
+.nbb.ll.blue, .nbb.r.blue { background: linear-gradient(180deg, #8fb3f1 0%, #4a83e6 50%, #2f6bdc 51%, #3d79e6 100%); border-color: #1d4aa0; }
+.seg.small button { padding: 0 16px; }
+
+/* Lists that can be edited. */
+.pl .del-dot, .pl .del-btn { display: none; }
+.pl.editing li .del-dot { display: block; flex: none; width: 22px; height: 22px; border-radius: 50%; border: 0; padding: 0; position: relative; background: radial-gradient(circle at 50% 35%, #ff7a6e, #d01d10 70%); box-shadow: 0 0 0 1.5px #fff, 0 1px 2px rgba(0,0,0,.5); transition: transform .2s; }
+.pl.editing li .del-dot::after { content: ''; position: absolute; left: 5px; right: 5px; top: 9.5px; height: 3px; background: #fff; border-radius: 1px; }
+.pl.editing li.arm .del-dot { transform: rotate(90deg); }
+.pl.editing li.arm .del-btn { display: block; flex: none; height: 30px; padding: 0 10px; border-radius: 5px; border: 1px solid #8c1a12; font: bold 13px Helvetica, Arial, sans-serif; color: #fff; background: linear-gradient(180deg, #f2867e, #d0291e 50%, #bf1b10 51%, #d6372b); }
+.pl.editing li.chev::after { display: none; }
+.pl li.gone { transition: opacity .25s, transform .25s; opacity: 0; transform: translateX(-30px); }
+.pl li.none { color: #9a9a9a; font-weight: normal; cursor: default; justify-content: center; }
+.pl li.none:active { background: none; color: #9a9a9a; }
+
+/* Hand-drawn text fields and their caret. */
+.fld { cursor: text; position: relative; }
+.fld .ph { color: #a5a5a5; font-weight: normal; }
+.fld .caret { display: none; width: 2px; height: 1.15em; margin-left: 1px; vertical-align: -0.2em; background: #2f6bdc; }
+.fld.on .caret { display: inline-block; animation: ip-caret 1s steps(1) infinite; }
+@keyframes ip-caret { 50% { opacity: 0; } }
+
+/* The keyboard. */
+.kb {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 216px; z-index: 55; padding: 10px 2px 3px;
+  background: linear-gradient(180deg, #a6adba 0%, #8b93a2 100%); border-top: 1px solid #5f6672;
+  transform: translateY(100%); transition: transform .3s cubic-bezier(.2,.7,.3,1);
+  display: flex; flex-direction: column; gap: 11px; user-select: none; -webkit-user-select: none;
+}
+.kb.on { transform: none; }
+.kb-r { display: flex; justify-content: center; gap: 6px; height: 40px; }
+.kb-r.r1 { padding: 0 16px; }
+.kb-k {
+  flex: 0 0 26px; height: 40px; border: 0; border-radius: 5px; padding: 0; cursor: pointer;
+  font: 22px/40px Helvetica, Arial, sans-serif; color: #000;
+  background: linear-gradient(180deg, #ffffff, #e4e6ea 60%, #d6d9de);
+  box-shadow: 0 1px 1px rgba(0,0,0,.55);
+}
+.kb-k.fn, .kb-k.mode { flex-basis: 36px; font-size: 18px; color: #fff; background: linear-gradient(180deg, #8d96a6, #6c7586); box-shadow: 0 1px 1px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.2); }
+.kb-k.fn.on { background: linear-gradient(180deg, #ffffff, #e4e6ea); color: #2f6bdc; }
+.kb-k.mode { flex-basis: 76px; font-size: 15px; font-weight: bold; }
+.kb-k.sp { flex-basis: 152px; font-size: 15px; color: #444; }
+.kb-k.ret { flex-basis: 76px; font-size: 15px; color: #fff; background: linear-gradient(180deg, #8d96a6, #6c7586); text-transform: capitalize; }
+.kb-r.r2 .kb-k.fn:first-child { margin-right: 6px; }
+.kb-r.r2 .kb-k.fn:last-child { margin-left: 6px; }
+.kb-k.dn { filter: brightness(.82); }
+.kb-pop {
+  position: absolute; z-index: 2; width: 42px; height: 58px; margin: -54px 0 0 -21px; pointer-events: none;
+  display: grid; place-items: center; font: 34px Helvetica, Arial, sans-serif; color: #000;
+  background: linear-gradient(180deg, #ffffff, #dfe2e7); border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.55);
+  opacity: 0;
+}
+.kb-pop.on { opacity: 1; }
+.kb-on .ip-app { padding-bottom: 216px; }
+.kb-on .ip-app .tabs, .kb-on .ip-app .ml-tb { display: none; }
+
+/* The alert. */
+.ip-alert-scrim { position: absolute; inset: 0; z-index: 75; display: grid; place-items: center; background: rgba(0,0,0,.35); animation: ip-fade .2s ease; }
+.ip-alert-scrim.is-out { opacity: 0; transition: opacity .2s; }
+@keyframes ip-fade { from { opacity: 0; } }
+.ip-alert {
+  width: 284px; padding: 14px 12px 12px; border-radius: 10px; text-align: center; color: #fff;
+  background: linear-gradient(180deg, rgba(110,125,155,.92) 0%, rgba(40,52,82,.94) 30%, rgba(18,26,48,.95) 100%);
+  border: 2px solid rgba(255,255,255,.85); box-shadow: 0 6px 20px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.4);
+  animation: ip-pop .38s cubic-bezier(.2,1.6,.4,1);
+}
+.ip-alert.is-out { transform: scale(.9); transition: transform .2s; }
+@keyframes ip-pop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+.ip-alert b { display: block; font: bold 17px/1.25 Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.6); }
+.ip-alert p { margin: 6px 4px 0; font: 15px/1.3 Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
+.ip-al-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.ip-al-btns.two { flex-direction: row; }
+.ip-al-btns button {
+  flex: 1; height: 42px; border-radius: 6px; border: 1px solid rgba(0,0,0,.6); cursor: pointer;
+  font: bold 17px Helvetica, Arial, sans-serif; color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+  background: linear-gradient(180deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.06) 51%, rgba(255,255,255,.14) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+}
+.ip-al-btns button.dflt { background: linear-gradient(180deg, rgba(160,180,215,.6) 0%, rgba(110,135,180,.45) 50%, rgba(80,105,150,.45) 51%, rgba(100,125,170,.5) 100%); }
+.ip-al-btns button:active { filter: brightness(.75); }
+
+/* Text messages: the field and Send sit at the very bottom. */
+.pg.sms-pg { display: flex; flex-direction: column; overflow: hidden; }
+.sms-pg .sms { flex: 1; overflow-y: auto; padding: 10px 8px 14px; scrollbar-width: none; }
+.sms-pg .sms::-webkit-scrollbar { display: none; }
+.sms-bar { position: static; margin: 0; flex: none; height: 40px; }
+.sms-field { display: block; height: 28px; padding: 0 12px; font: 15px/26px Helvetica, Arial, sans-serif; white-space: nowrap; overflow: hidden; color: #000; }
+.sms-send { opacity: .55; cursor: pointer; }
+.sms-send.on { opacity: 1; }
+.bub.is-new.out span { animation: ip-bub-out .3s cubic-bezier(.2,1.4,.4,1); transform-origin: 100% 100%; }
+.bub.is-new.in span { animation: ip-bub-in .3s cubic-bezier(.2,1.4,.4,1); transform-origin: 0 100%; }
+@keyframes ip-bub-out { from { transform: translateY(20px) scale(.6); opacity: 0; } }
+@keyframes ip-bub-in { from { transform: scale(.6); opacity: 0; } }
+.bub.gone { opacity: 0; transition: opacity .25s; }
+
+/* Forms. */
+.gp .row.frm .v { color: #000; font-size: 16px; }
+.gp .row.frm .fld.on { color: #2f5cb8; }
+
+/* Notes. */
+.note-body { min-height: 200px; white-space: pre-wrap; }
+.note-tb button { border: 0; background: none; color: #a87c3e; font-size: 22px; width: 44px; height: 40px; cursor: pointer; display: grid; place-items: center; }
+.note-tb button:active { color: #6b4318; }
+
+/* Phone. */
+.ct-head { margin: 4px 12px 14px; }
+.ct-btns { display: flex; gap: 8px; margin: 0 9px; }
+.ct-btns .gbtn { margin: 0; width: auto; flex: 1; font-size: 14px; }
+.ip-app.no-nb .nb { display: none; }
+.kp-pg { background: #000 !important; display: flex; flex-direction: column; overflow: hidden !important; }
+.kp-num { flex: none; height: 74px; display: flex; align-items: center; justify-content: center; padding: 0 10px; color: #fff; font: 34px Helvetica, Arial, sans-serif; background: linear-gradient(180deg, #2b3a5c, #0d1426); border-bottom: 1px solid #000; white-space: nowrap; overflow: hidden; }
+.kp-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(5, 1fr); gap: 1px; background: #000; }
+.kp-grid button { border: 0; cursor: pointer; color: #fff; background: linear-gradient(180deg, #4d5566 0%, #2d3442 50%, #212734 51%, #2a313f 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
+.kp-grid button:active { background: linear-gradient(180deg, #6a7fb0, #3a5590); }
+.kp-grid b { font: bold 30px/1 Helvetica, Arial, sans-serif; }
+.kp-grid span { font: bold 11px Helvetica, Arial, sans-serif; color: #9aa3b5; letter-spacing: 1px; min-height: 13px; }
+.kp-grid .kp-call { flex-direction: row; gap: 6px; font: bold 22px Helvetica, Arial, sans-serif; background: linear-gradient(180deg, #8fe36a 0%, #3fae2c 50%, #2e9a1d 51%, #3fae2c 100%); text-shadow: 0 -1px 0 rgba(0,0,0,.35); }
+.kp-grid .kp-add, .kp-grid .kp-del { font-size: 26px; color: #c8cfdc; }
+.vm-player { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: linear-gradient(180deg, #e9edf2, #c9d1dc); border-bottom: 1px solid #a7b0bc; }
+.vm-play { width: 34px; height: 30px; border-radius: 6px; border: 1px solid #556; background: linear-gradient(180deg, #fff, #d0d4da); cursor: pointer; }
+.vm-bar { flex: 1; height: 8px; border-radius: 4px; background: #fff; box-shadow: inset 0 1px 2px rgba(0,0,0,.35); overflow: hidden; }
+.vm-bar i { display: block; height: 100%; width: 0; background: linear-gradient(180deg, #8fb3f1, #2f6bdc); }
+.vm-t { font: bold 12px Helvetica, Arial, sans-serif; color: #4c566c; }
+.vm-text { padding: 10px 12px; min-height: 64px; font: 14px/1.4 Helvetica, Arial, sans-serif; color: #333; border-bottom: 1px solid #ddd; }
+.vm-row .tx::before { content: ''; display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #9fd0ff, #1b6fe0); vertical-align: 2px; }
+.vm-row.heard .tx::before { visibility: hidden; }
+.vm-row.sel { background: #e8eef8; }
+
+/* Mail. */
+.ml-new { background: #fff; display: flex; flex-direction: column; }
+.ml-row { display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 10px; border-bottom: 1px solid #ccc; font: 15px Helvetica, Arial, sans-serif; color: #7a7a7a; }
+.ml-row .v { flex: 1; color: #000; }
+.ml-tok { padding: 2px 10px; border-radius: 12px; color: #20324f; font-weight: normal; background: linear-gradient(180deg, #dfeafa, #b9cff0); border: 1px solid #8ea8d3; }
+.ml-body { flex: 1; padding: 10px; font: 15px/1.45 Helvetica, Arial, sans-serif; min-height: 120px; }
+.ml-tb { flex: none; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; background: linear-gradient(180deg, #b2c0d2, #6e86a7); border-top: 1px solid #cdd5df; color: #fff; font: bold 12px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
+.ml-tb button { border: 0; background: none; color: #fff; font-size: 22px; width: 40px; height: 40px; cursor: pointer; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
+
+/* Search fields. */
+.srch { padding: 8px; background: linear-gradient(180deg, #b2c0d2, #8299b8); border-bottom: 1px solid #2d3a4d; }
+.srch-f, .mb-f { display: block; height: 28px; border-radius: 14px; background: #fff; border: 1px solid #556; font: 14px/26px Helvetica, Arial, sans-serif; padding: 0 12px; color: #000; white-space: nowrap; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.3); }
+.map-bar { height: 32px; }
+
+/* Buttons that used to be decoration. */
+.stk-tabs button, .stk-foot button, .wx-foot button { border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+.stk-tabs button { padding: 1px 7px; border-radius: 9px; font-weight: bold; }
+.stk-tabs button.on { background: #fff; color: #1c2b45; }
+.stk-foot button, .wx-foot button { font-weight: bold; font-size: 14px; }
+.saf-bot button { border: 0; background: none; color: #fff; font: bold 20px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.4); width: 50px; height: 40px; cursor: pointer; display: grid; place-items: center; }
+.saf-bot button:active { opacity: .6; }
+.map-tb button + button { margin-left: 10px; }
+.cam .bar { grid-template-columns: 50px 1fr 50px; display: grid; justify-items: center; padding: 0 8px; }
+.cam .roll { width: 38px; height: 38px; border: 1px solid #000; border-radius: 4px; overflow: hidden; padding: 0; cursor: pointer; }
+.cam .roll img { width: 100%; height: 100%; object-fit: cover; }
+.wall-pv { position: absolute; inset: 0; background: center / cover no-repeat; }
+
+.ip-screen .gbtn, .ip-screen .sms-send, .ip-screen .nbb, .ip-screen .del-btn, .ip-screen .kb-k, .ip-screen .ip-al-btns button { font-family: Helvetica, Arial, sans-serif; }

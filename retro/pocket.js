@@ -16,7 +16,7 @@ window.POCKET = { start(room, exit) {
   room.innerHTML = `
     <div class="pk-scale"><div class="pk is-off" data-face="${store.get('face', 'snow')}">
       <button class="pk-hold" type="button" aria-label="Hold switch" aria-pressed="false"><span>HOLD</span></button>
-      <div class="pk-brand">${I.mark(14, true)} Sommi Pocket</div>
+      <div class="pk-brand">${I.mark(14, true)} iSommi Classic</div>
       <div class="pk-lcd-frame"><div class="pk-lcd" role="application" aria-label="Pocket screen">
         <div class="lcd-bar"><button class="lcd-back" type="button" aria-label="Back" hidden>\u2039</button><span class="lk" aria-hidden="true"></span><span class="t">Sommi</span><span class="bat" aria-hidden="true"><i></i></span></div>
         <div class="lcd-view"></div>
@@ -207,7 +207,7 @@ window.POCKET = { start(room, exit) {
         [li('Switch phone', '\u21c4'), () => exit()]
       ]
     }),
-    aboutdev: () => textScreen('About', `<h2>Sommi Pocket</h2><div class="m">Model AJ-26 · firmware 1.0</div><p>Capacity: one portfolio.<br/>Battery: 80%, forever.</p><p>Built in 2026 by Ajay Sommi.</p><div class="hint">try the HOLD switch on top</div>`)
+    aboutdev: () => textScreen('About', `<h2>iSommi Classic</h2><div class="m">Model AJ-26 · firmware 1.0</div><p>Capacity: one portfolio.<br/>Battery: 80%, forever.</p><p>Built in 2026 by Ajay Sommi.</p><div class="hint">try the HOLD switch on top</div>`)
   };
 
   /* ------------------------------------------------------------- render */
@@ -464,7 +464,7 @@ window.POCKET = { start(room, exit) {
     lcd.classList.add('is-lit');
     const b = document.createElement('div');
     b.className = 'lcd-boot';
-    b.innerHTML = `<div>${I.pxmark(72, true)}<div>SOMMI POCKET</div><div class="dots">·</div></div>`;
+    b.innerHTML = `<div>${I.pxmark(72, true)}<div>iSOMMI</div><div class="dots">·</div></div>`;
     lcd.appendChild(b);
     window.SFX.chime();
     const dots = b.querySelector('.dots');
