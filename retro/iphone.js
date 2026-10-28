@@ -1423,7 +1423,7 @@ window.IPHONE = { start(room, exit) {
     /* Slow off the mark, then faster and faster until they hit their
        places: an ease-in with no settle, the outer ring a beat ahead. */
     icons.forEach((b) => {
-      b.style.transition = 'transform .28s cubic-bezier(.55, 0, 1, .8), opacity .14s linear';
+      b.style.transition = 'transform .24s cubic-bezier(.45, 0, .9, .85), opacity .12s linear';
       b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * 30) + 'ms';
       b.style.transform = '';
     });
