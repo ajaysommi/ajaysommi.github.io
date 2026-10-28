@@ -60,31 +60,39 @@
     return n;
   };
   const go = (n, a, b, dur) => n.animate([{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${b.width / a.width})` }], { duration: dur, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).finished;
-  const flight = async ({ glyph, glyphBox, photo, photoW, photoH, glass, device, back = false, dur = 820 }) => {
-    const sq = Math.max(device.width, device.height);
-    const gBig = photo ? { left: center(device).x - sq / 2, top: center(device).y - sq / 2, width: sq, height: sq } : fit(device, glyphBox.width, glyphBox.height);
-    const pSmall = photo ? fit(glyphBox, photoW, photoH) : null;
+  const flight = async ({ glyph, glyphBox, photo, photoW, photoH, glass, device, focus, back = false, dur = 820 }) => {
+    /* The drawing travels to the part of the machine it depicts (focus),
+       keeping its own shape, never larger than the machine. Only opacity
+       and transforms animate, so every frame stays cheap. */
+    const gBig = fit(focus || device, glyphBox.width, glyphBox.height);
+    /* The photograph starts with the part it shows (focus) fitted where
+       the drawing is, so both begin and end in register. */
+    let pStart = null;
+    if (photo) {
+      const f = focus || device, fb = fit(glyphBox, f.width, f.height), s0 = fb.width / f.width;
+      pStart = { left: fb.left - (f.left - device.left) * s0, top: fb.top - (f.top - device.top) * s0, width: device.width * s0, height: device.height * s0 };
+    }
     const [g0, g1] = back ? [gBig, glyphBox] : [glyphBox, gBig];
     const jobs = [];
     if (glyph) {
       const g = clone(glyph, g0, 8710);
-      /* With no photograph to hand over to, the drawing itself lands and is
-         returned to fade over the real thing. */
       if (!photo) { jobs.push(go(g, g0, g1, dur).then(() => g)); if (back) g.animate([{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 1 }], { duration: dur, fill: 'forwards' }); }
-      else jobs.push(go(g, g0, g1, dur).then(() => g.remove()));
-      if (photo) g.animate(back ? [{ opacity: 0, filter: 'blur(6px)' }, { opacity: 0, offset: .35 }, { opacity: 1, filter: 'blur(0)', offset: .7 }, { opacity: 1, filter: 'blur(0)' }]
-        : [{ opacity: 1, filter: 'blur(0)' }, { opacity: 1, filter: 'blur(0)', offset: .3 }, { opacity: 0, filter: 'blur(6px)', offset: .65 }, { opacity: 0 }], { duration: dur, fill: 'forwards' });
+      else {
+        jobs.push(go(g, g0, g1, dur).then(() => g.remove()));
+        g.animate(back ? [{ opacity: 0 }, { opacity: 0, offset: .4 }, { opacity: 1, offset: .8 }, { opacity: 1 }]
+          : [{ opacity: 1 }, { opacity: 1, offset: .2 }, { opacity: 0, offset: .6 }, { opacity: 0 }], { duration: dur, fill: 'forwards' });
+      }
     }
     if (photo) {
-      const [p0, p1] = back ? [device, pSmall] : [pSmall, device];
-      /* The photograph, with its screen blacked out as the real one is. */
+      const [p0, p1] = back ? [device, pStart] : [pStart, device];
       const im = document.createElement('div');
       im.style.background = `url("${photo}") 0 0 / 100% 100% no-repeat`;
       if (glass) im.innerHTML = `<i style="position:absolute;left:${glass[0] / photoW * 100}%;top:${glass[1] / photoH * 100}%;width:${glass[2] / photoW * 100}%;height:${glass[3] / photoH * 100}%;background:${glass[5] || '#050506'};border-radius:${glass[4] / photoW * 100}% / ${glass[4] / photoH * 100}%"></i>`;
       const q = clone(im, p0, 8711);
+      q.style.willChange = 'transform, opacity';
       jobs.push(go(q, p0, p1, dur).then(() => q));
-      q.animate(back ? [{ opacity: 1, filter: 'blur(0)' }, { opacity: 1, filter: 'blur(0)', offset: .3 }, { opacity: 0, filter: 'blur(6px)', offset: .65 }, { opacity: 0 }]
-        : [{ opacity: 0, filter: 'blur(6px) brightness(1.4)' }, { opacity: 0, offset: .3 }, { opacity: 1, filter: 'blur(0) brightness(1)', offset: .72 }, { opacity: 1, filter: 'blur(0) brightness(1)' }], { duration: dur, fill: 'forwards' });
+      q.animate(back ? [{ opacity: 1 }, { opacity: 1, offset: .25 }, { opacity: 0, offset: .65 }, { opacity: 0 }]
+        : [{ opacity: 0 }, { opacity: 0, offset: .15 }, { opacity: 1, offset: .55 }, { opacity: 1 }], { duration: dur, fill: 'forwards' });
     }
     const out = await Promise.all(jobs);
     return out.find((x) => x && x.nodeType === 1) || null;
@@ -100,6 +108,13 @@
     g.style.cssText = `left:${c.x}px;top:${c.y}px;width:${d}px;height:${d}px;--c:${color}`;
     const under = into.querySelector(':scope > .bz');
     if (under) into.insertBefore(g, under); else into.appendChild(g);
+    /* And a halo: light hugging the machine's outline, rising as it lands
+       and fading over a couple of seconds. */
+    const halo = document.createElement('div');
+    halo.className = 'tl-halo';
+    halo.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${Math.min(r.height, innerHeight - r.top + 40)}px;--c:${color}`;
+    if (under) into.insertBefore(halo, under); else into.appendChild(halo);
+    halo.animate([{ opacity: 0 }, { opacity: 1, offset: .22 }, { opacity: .85, offset: .45 }, { opacity: 0 }], { duration: 2000, easing: 'ease-out', fill: 'forwards' }).finished.then(() => halo.remove());
     g.animate([
       { transform: 'translate(-50%,-50%) scale(.35)', opacity: 0 },
       { transform: 'translate(-50%,-50%) scale(.85)', opacity: 1, offset: .22 },
@@ -218,17 +233,20 @@
        part kept in view (down to the chin, the keyboard and stand left
        below the window), and where the AJ replaces the maker's logo. */
     const PHOTO = {
-      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [334, 186, 521, 372, 18], scr: [346, 197, 497, 349], r: 10, view: [215, 95, 755, 780], aj: [307, 769, 38, false] },
-      1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [306, 194, 878, 600, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 90, 1180, 950], aj: [738, 851, 38, false] },
-      2007: { src: 'assets/images/bezels/imac-2007.webp', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [137, 137, 1448, 894], r: 0, view: [42, 90, 1642, 1230], aj: [861, 1184, 132, true] }
+      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [318, 172, 553, 398, 30], scr: [346, 197, 497, 349], r: 10, view: [215, 30, 755, 770], aj: [307, 769, 38, false] },
+      1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [306, 194, 878, 600, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 30, 1180, 960], aj: [738, 851, 38, false] },
+      2007: { src: 'assets/images/bezels/imac-2007.webp', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [128, 128, 1466, 912], r: 0, view: [42, 42, 1642, 1250], aj: [861, 1184, 132, true] }
     };
     let photo = null;
     /* The machine fills most of the window: room above and at the sides,
        none below, where it runs off the bottom edge. */
+    const TOP = 66;
     const place = (ph) => {
+      /* The top of the machine sits just under the buttons; it is as large
+         as the height allows from there, and runs off the bottom. */
       const [vx, vy, vw, vh] = ph.view;
-      const k = Math.min((innerHeight - 62) / vh, (innerWidth * 0.94) / vw);
-      return { k, ox: (innerWidth - vw * k) / 2 - vx * k, oy: innerHeight - vh * k - vy * k };
+      const k = Math.min((innerHeight - TOP) / vh, (innerWidth * 0.94) / vw);
+      return { k, ox: (innerWidth - vw * k) / 2 - vx * k, oy: TOP - vy * k };
     };
     const layout = () => {
       if (!photo) return;
@@ -284,6 +302,11 @@
 
     /* Where the machine is on screen: the photograph's whole frame, or for
        1983 (drawn) the body of the drawing. */
+    const focusBox = (y) => {
+      if (!PHOTO[y]) return null;
+      const ph = PHOTO[y], { k, ox, oy } = place(ph), [vx, vy, vw] = ph.view;
+      return { left: ox + vx * k, top: oy + vy * k, width: vw * k, height: Math.min(vw * k * 1.0, innerHeight - (oy + vy * k)) };
+    };
     const deviceBox = (y) => {
       if (PHOTO[y]) { const ph = PHOTO[y], { k, ox, oy } = place(ph); return { left: ox, top: oy, width: ph.w * k, height: ph.h * k }; }
       const b = bezel.querySelector('.bz-body');
@@ -324,7 +347,7 @@
         pick.classList.add('is-leaving');
         const ph = PHOTO[y];
         setTimeout(() => arrival(deviceBox(y), GLOW[y], host), 380);
-        const land = await flight({ glyph: art, glyphBox: from, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: deviceBox(y) });
+        const land = await flight({ glyph: art, glyphBox: from, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: deviceBox(y), focus: focusBox(y) });
         pick.hidden = true;
         pick.classList.remove('is-leaving');
         art.style.visibility = '';
@@ -367,7 +390,7 @@
         const to = art.getBoundingClientRect();
         art.style.visibility = 'hidden';
         const ph = PHOTO[y];
-        const left = flight({ glyph: art, glyphBox: to, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: dev, back: true, dur: 720 });
+        const left = flight({ glyph: art, glyphBox: to, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: dev, focus: focusBox(y), back: true, dur: 720 });
         const land = await left;
         screens[prev].hidden = true;
         dress(-1);

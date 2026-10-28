@@ -414,3 +414,17 @@ html.is-turned .mp-art { height: min(calc(var(--th) * .36), 260px); }
 .cd-box b { display: block; margin-bottom: 4px; }
 .cd-box p { margin: 0; }
 .cd-box button { grid-column: 2; justify-self: end; min-width: 70px; padding: 3px 12px; font: 13px var(--pixel); background: #dcdcdc; border: 2px solid #000; border-radius: 6px; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; cursor: pointer; }
+
+/* Picker tiles: a little narrower, a little more room between them. */
+.is-desk-pick .pk-in { width: min(1060px, 92vw); }
+.is-desk-pick .pk-row { gap: 22px; }
+/* Returning to the phone picker, the chosen card is already full size. */
+.picker.is-returning .mp-card { transition: none !important; }
+
+.tl-halo { position: fixed; z-index: 0; pointer-events: none; border-radius: 22% / 14%; opacity: 0; transform: scale(.94);
+  box-shadow: 0 0 70px 10px color-mix(in srgb, var(--c) 75%, transparent), 0 0 180px 50px color-mix(in srgb, var(--c) 35%, transparent); }
+.os-host .tl-halo { border-radius: 4%; }
+/* 1983 under the same top line as the others, and a little larger. */
+.os-host[data-era="1983"] { --side: 6vw; --st: 88px; --sb: 9vh; }
+.os-host[data-era="1983"] .bz-body { top: 66px; }
+.os-host[data-era="1983"] .bz-frame { top: 78px; }
