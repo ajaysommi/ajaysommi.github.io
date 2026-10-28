@@ -614,7 +614,7 @@ window.OSX = (function () {
       at += t[i];
       kf.push({ transform: 'translateY(0)', offset: at / total, easing: 'cubic-bezier(.2,.6,.35,1)' });
     });
-    d.animate(kf, { duration: 1500 });
+    d.animate(kf, { duration: 950 });
   };
 
   /* ---------------------------------------------------------- menu bar */

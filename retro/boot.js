@@ -55,21 +55,24 @@
     const n = node.cloneNode(true);
     n.removeAttribute('id');
     n.classList.add('pk-fly');
-    n.style.cssText += `;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${z}`;
+    n.style.cssText += `;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${z};visibility:visible`;
     document.body.appendChild(n);
     return n;
   };
-  const go = (n, a, b, dur) => n.animate([{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${b.width / a.width})` }], { duration: dur, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' }).finished;
+  const go = (n, a, b, dur) => n.animate([{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${b.width / a.width})` }], { duration: dur, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).finished;
   const flight = async ({ glyph, glyphBox, photo, photoW, photoH, glass, device, back = false, dur = 820 }) => {
     const sq = Math.max(device.width, device.height);
-    const gBig = { left: center(device).x - sq / 2, top: center(device).y - sq / 2, width: sq, height: sq };
+    const gBig = photo ? { left: center(device).x - sq / 2, top: center(device).y - sq / 2, width: sq, height: sq } : fit(device, glyphBox.width, glyphBox.height);
     const pSmall = photo ? fit(glyphBox, photoW, photoH) : null;
     const [g0, g1] = back ? [gBig, glyphBox] : [glyphBox, gBig];
     const jobs = [];
     if (glyph) {
       const g = clone(glyph, g0, 8710);
-      jobs.push(go(g, g0, g1, dur).then(() => g.remove()));
-      g.animate(back ? [{ opacity: 0, filter: 'blur(6px)' }, { opacity: 0, offset: .35 }, { opacity: 1, filter: 'blur(0)', offset: .7 }, { opacity: 1, filter: 'blur(0)' }]
+      /* With no photograph to hand over to, the drawing itself lands and is
+         returned to fade over the real thing. */
+      if (!photo) { jobs.push(go(g, g0, g1, dur).then(() => g)); if (back) g.animate([{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 1 }], { duration: dur, fill: 'forwards' }); }
+      else jobs.push(go(g, g0, g1, dur).then(() => g.remove()));
+      if (photo) g.animate(back ? [{ opacity: 0, filter: 'blur(6px)' }, { opacity: 0, offset: .35 }, { opacity: 1, filter: 'blur(0)', offset: .7 }, { opacity: 1, filter: 'blur(0)' }]
         : [{ opacity: 1, filter: 'blur(0)' }, { opacity: 1, filter: 'blur(0)', offset: .3 }, { opacity: 0, filter: 'blur(6px)', offset: .65 }, { opacity: 0 }], { duration: dur, fill: 'forwards' });
     }
     if (photo) {
@@ -86,18 +89,22 @@
     const out = await Promise.all(jobs);
     return out.find((x) => x && x.nodeType === 1) || null;
   };
-  /* Arriving from another timeline: a flash and a ring of light thrown out
-     from the machine's middle. */
-  const arrival = (r, color = '#fff') => {
+  /* Arriving from another timeline: a soft burst of light behind the
+     machine, no shape to it, swelling and fading. It sits in the room,
+     under the machine. */
+  const arrival = (r, color = '#fff', into = document.body) => {
     if (root.classList.contains('reduced')) return;
-    const c = center(r), d = Math.max(r.width, r.height);
-    const glow = document.createElement('div'), ring = document.createElement('div'), ring2 = document.createElement('div');
-    glow.className = 'tl-glow'; ring.className = 'tl-ring'; ring2.className = 'tl-ring';
-    [glow, ring, ring2].forEach((e) => { e.style.cssText = `left:${c.x}px;top:${c.y}px;width:${d}px;height:${d}px;--c:${color}`; document.body.appendChild(e); });
-    glow.animate([{ transform: 'translate(-50%,-50%) scale(.2)', opacity: .9 }, { transform: 'translate(-50%,-50%) scale(1.3)', opacity: 0 }], { duration: 650, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'forwards' });
-    ring.animate([{ transform: 'translate(-50%,-50%) scale(.3)', opacity: .9 }, { transform: 'translate(-50%,-50%) scale(1.9)', opacity: 0 }], { duration: 800, easing: 'cubic-bezier(.15,.7,.3,1)', fill: 'forwards' });
-    ring2.animate([{ transform: 'translate(-50%,-50%) scale(.2)', opacity: .6 }, { transform: 'translate(-50%,-50%) scale(1.4)', opacity: 0 }], { duration: 950, delay: 90, easing: 'cubic-bezier(.15,.7,.3,1)', fill: 'both' });
-    setTimeout(() => [glow, ring, ring2].forEach((e) => e.remove()), 1150);
+    const c = center(r), d = Math.max(r.width, r.height) * 1.5;
+    const g = document.createElement('div');
+    g.className = 'tl-back';
+    g.style.cssText = `left:${c.x}px;top:${c.y}px;width:${d}px;height:${d}px;--c:${color}`;
+    const under = into.querySelector(':scope > .bz');
+    if (under) into.insertBefore(g, under); else into.appendChild(g);
+    g.animate([
+      { transform: 'translate(-50%,-50%) scale(.35)', opacity: 0 },
+      { transform: 'translate(-50%,-50%) scale(.85)', opacity: 1, offset: .22 },
+      { transform: 'translate(-50%,-50%) scale(1.35)', opacity: 0 }
+    ], { duration: 1700, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'forwards' }).finished.then(() => g.remove());
   };
 
   /* ================================================================ DESKTOP */
@@ -147,8 +154,7 @@
         <div class="pk-head">${I.pxmark(36)}<h1>Choose an era</h1><p>Each one is the portfolio on a computer from its year.</p></div>
         <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.year}</span><b>${esc(e.name)}</b><span class="pk-n">${esc(e.note)}</span></button>`).join('')}</div>
         <p class="pk-foot">Click one to start it up · or use ← → and Return</p>
-      </div>
-      <p class="pk-copy">${I.mark(18)}<span>\u00a9 ${new Date().getFullYear()} Ajay Sommi</span></p>`;
+      </div>`;
     const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
     tick(); setInterval(tick, 15000);
     const disks = [...pick.querySelectorAll('.pk-d')];
@@ -212,16 +218,16 @@
        part kept in view (down to the chin, the keyboard and stand left
        below the window), and where the AJ replaces the maker's logo. */
     const PHOTO = {
-      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [334, 186, 521, 372, 18], scr: [346, 197, 497, 349], r: 10, view: [215, 30, 755, 850], aj: [307, 769, 38, false] },
-      1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [306, 194, 878, 600, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 30, 1180, 1010], aj: [738, 851, 38, false] },
-      2007: { src: 'assets/images/bezels/imac-2007.webp', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [137, 137, 1448, 894], r: 0, view: [42, 42, 1642, 1290], aj: [861, 1184, 132, true] }
+      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [334, 186, 521, 372, 18], scr: [346, 197, 497, 349], r: 10, view: [215, 95, 755, 780], aj: [307, 769, 38, false] },
+      1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [306, 194, 878, 600, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 90, 1180, 950], aj: [738, 851, 38, false] },
+      2007: { src: 'assets/images/bezels/imac-2007.webp', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [137, 137, 1448, 894], r: 0, view: [42, 90, 1642, 1230], aj: [861, 1184, 132, true] }
     };
     let photo = null;
     /* The machine fills most of the window: room above and at the sides,
        none below, where it runs off the bottom edge. */
     const place = (ph) => {
       const [vx, vy, vw, vh] = ph.view;
-      const k = Math.min((innerHeight * 0.935) / vh, (innerWidth * 0.9) / vw);
+      const k = Math.min((innerHeight - 62) / vh, (innerWidth * 0.94) / vw);
       return { k, ox: (innerWidth - vw * k) / 2 - vx * k, oy: innerHeight - vh * k - vy * k };
     };
     const layout = () => {
@@ -254,6 +260,21 @@
           b.style.cssText = 'left:1003px;top:948px;width:44px;height:44px';
           b.addEventListener('click', () => { SFX.click(); host.classList.toggle('is-dark'); });
           bezel.querySelector('.bz-dev').appendChild(b);
+          /* The CD tray: nothing to eject, and the screen says so. */
+          const cd = document.createElement('button');
+          cd.type = 'button'; cd.className = 'bz-power'; cd.setAttribute('aria-label', 'CD-ROM drive');
+          cd.style.cssText = 'left:525px;top:905px;width:440px;height:60px;border-radius:12px';
+          cd.addEventListener('click', () => {
+            SFX.click();
+            const s = screens[i];
+            if (!s || host.classList.contains('is-dark') || s.querySelector('.cd-alert')) return;
+            const m = document.createElement('div');
+            m.className = 'cd-alert';
+            m.innerHTML = `<div class="cd-box">${I.svg('alert', 32)}<div><b>The CD-ROM drive is empty.</b><p>Everything this portfolio needs is already on the hard disk. No discs were harmed.</p></div><button type="button">OK</button></div>`;
+            m.querySelector('button').addEventListener('click', () => { SFX.click(); m.remove(); });
+            s.appendChild(m);
+          });
+          bezel.querySelector('.bz-dev').appendChild(cd);
         }
         layout();
         return;
@@ -270,9 +291,9 @@
       return { left: r.left, top: r.top, width: r.width, height: Math.min(r.height, innerHeight - r.top) };
     };
     const tileArt = (i) => disks[i] && disks[i].querySelector('.pk-art svg');
+    const GLOW = { 1983: '#7dff8a', 1991: '#fff6dc', 1998: '#bff4ff', 2007: '#e6f0ff' };
     const settle = (y) => {
       const r = deviceBox(y);
-      arrival(r, y === '1983' ? '#7dff8a' : '#ffffff');
       window.SHAPES.arrive(backdrop.querySelector('.bg-shapes'), center(r).x, center(r).y);
     };
 
@@ -280,6 +301,7 @@
       if (i === cur) return;
       const prev = cur;
       cur = i;
+      let bootP = null;
       const y = ERAS[i].year;
       store.set('era', y);
       const show = () => {
@@ -301,10 +323,17 @@
         art.style.visibility = 'hidden';
         pick.classList.add('is-leaving');
         const ph = PHOTO[y];
+        setTimeout(() => arrival(deviceBox(y), GLOW[y], host), 380);
         const land = await flight({ glyph: art, glyphBox: from, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: deviceBox(y) });
         pick.hidden = true;
         pick.classList.remove('is-leaving');
         art.style.visibility = '';
+        /* Booting starts once it has landed (it is heavy work), and the
+           screen shows only after its start-up screen is up, never a
+           finished desktop first. */
+        const sys0 = ERAS[i].sys();
+        if (!booted[i]) { booted[i] = true; bootP = sys0.boot(); }
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         host.classList.remove('is-morph');
         backdrop.querySelector('.bg-shapes').style.visibility = '';
         settle(y);
@@ -314,7 +343,8 @@
         settle(y);
       }
       const sys = ERAS[i].sys();
-      if (!booted[i]) { booted[i] = true; await sys.boot(); }
+      if (bootP) await bootP;
+      else if (!booted[i]) { booted[i] = true; await sys.boot(); }
       sys.resize && sys.resize();
       sys.enter();
     }
@@ -338,8 +368,9 @@
         art.style.visibility = 'hidden';
         const ph = PHOTO[y];
         const left = flight({ glyph: art, glyphBox: to, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: dev, back: true, dur: 720 });
-        setTimeout(() => { screens[prev].hidden = true; dress(-1); }, 60);
         const land = await left;
+        screens[prev].hidden = true;
+        dress(-1);
         if (land) land.remove();
         art.style.visibility = '';
         pick.classList.remove('is-returning');
@@ -457,6 +488,7 @@
       box.style.opacity = '0';
       if (layer) layer.style.visibility = 'hidden';
       pick.classList.add('is-leaving');
+      setTimeout(() => arrival(to, id === 'nokia' ? '#dbe7ff' : id === 'pocket' ? '#f3ecff' : '#ffffff', room), 340);
       const land = await flight({ glyph: art, glyphBox: from, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: to, dur: 760 });
       box.style.transition = 'opacity .3s ease';
       box.style.opacity = '';
@@ -464,7 +496,6 @@
       art.style.visibility = '';
       if (layer) layer.style.visibility = '';
       const c = { x: to.left + to.width / 2, y: to.top + to.height / 2 };
-      arrival(to, id === 'nokia' ? '#cfe0ff' : '#ffffff');
       window.SHAPES.arrive(layer, c.x, c.y);
       if (land) land.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => land.remove());
     };
@@ -522,8 +553,8 @@
         box.style.opacity = '0';
         pick.classList.add('is-returning');
         const left = flight({ glyph: art, glyphBox: to, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: from, back: true, dur: 680 });
-        setTimeout(done, 60);
         const land = await left;
+        done();
         if (land) land.remove();
         art.style.visibility = '';
         box.style.opacity = '';

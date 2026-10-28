@@ -351,13 +351,13 @@
 
 /* Flights and landings. */
 .pk-fly { position: fixed; z-index: 8700; transform-origin: 0 0; pointer-events: none; margin: 0; display: block; }
-.picker.is-returning { animation: pk-ret .55s ease both; }
+.picker.is-returning { animation: pk-ret .6s ease both; }
 @keyframes pk-ret { from { opacity: 0; } }
 .tl-glow, .tl-ring { position: fixed; z-index: 8650; pointer-events: none; border-radius: 50%; }
 .tl-glow { background: radial-gradient(closest-side, rgba(255,255,255,.75), color-mix(in srgb, var(--c) 35%, transparent) 45%, transparent 72%); mix-blend-mode: screen; }
 .tl-ring { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 85%, transparent), 0 0 24px 6px color-mix(in srgb, var(--c) 40%, transparent), inset 0 0 24px 4px color-mix(in srgb, var(--c) 35%, transparent); }
 
-.picker > .bg-shapes { opacity: 0; animation: pk-time-in 2.2s ease .25s forwards; }
+.picker > .bg-shapes { opacity: 0; animation: pk-time-in 4.5s cubic-bezier(.4,0,.2,1) 1s forwards; }
 .pk-copy { font: 15px var(--read); color: #8a8a90; gap: 8px; bottom: 18px; }
 .pk-copy .aj-mark { width: 18px; height: 18px; }
 .mp-card, .mp-card:not(.is-sel) { opacity: 1; background: #262628; }
@@ -393,3 +393,24 @@ html.is-turned[data-turn="r"] body { transform: rotate(90deg) translateY(-100%);
 html.is-turned .mp-card { flex-basis: calc(var(--tw) * .64); }
 html.is-turned .mp-rail { padding: 10px calc(var(--tw) * .18); }
 html.is-turned .mp-art { height: min(calc(var(--th) * .36), 260px); }
+
+/* The light behind an arriving machine: a soft, shapeless glow. */
+.tl-back { position: absolute; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(30px);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 75%, transparent), color-mix(in srgb, var(--c) 40%, transparent) 40%, color-mix(in srgb, var(--c) 12%, transparent) 65%, transparent 82%); }
+.os-host .tl-back { position: fixed; }
+.phone-room .tl-back { position: fixed; }
+/* While a machine flies in or out, nothing of it shows in the room. */
+.os-host.is-morph::after { opacity: 0; }
+.os-host::after { transition: opacity .3s ease; }
+/* The machines can't be selected or dragged. */
+.os-host, .phone-host, .picker { -webkit-user-select: none; user-select: none; }
+.os-host .os-screen input, .os-host .os-screen textarea, .os-host .os-screen [contenteditable] { -webkit-user-select: text; user-select: text; }
+.bz-dev img { pointer-events: none; -webkit-user-drag: none; }
+
+/* The empty CD tray, in the system's own dialog style. */
+.cd-alert { position: absolute; inset: 0; z-index: 900; display: grid; place-items: center; background: rgba(0,0,0,.15); }
+.cd-box { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: start; max-width: 340px; padding: 14px 16px 12px; background: #dcdcdc; border: 1px solid #000; box-shadow: 2px 2px 0 rgba(0,0,0,.45), inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; font: 13px/1.35 var(--pixel); color: #000; }
+.cd-box svg { image-rendering: pixelated; }
+.cd-box b { display: block; margin-bottom: 4px; }
+.cd-box p { margin: 0; }
+.cd-box button { grid-column: 2; justify-self: end; min-width: 70px; padding: 3px 12px; font: 13px var(--pixel); background: #dcdcdc; border: 2px solid #000; border-radius: 6px; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; cursor: pointer; }

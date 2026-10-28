@@ -837,7 +837,7 @@ window.FINDER = (function () {
 
   return {
     build,
-    async boot() { await wait(500); await bootSeq(); await drawDesktop(); },
+    async boot() { await bootSeq(); await drawDesktop(); },
     enter() { active = true; },
     leave() { active = false; closeMenus(); },
     resize() { if (!menubar.hidden) layoutIcons(); }
