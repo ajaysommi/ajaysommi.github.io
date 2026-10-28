@@ -14,7 +14,7 @@ window.POCKET = { start(room, exit) {
   const FACES = [['snow', 'Snow'], ['graphite', 'Graphite'], ['ocean', 'Ocean'], ['tangerine', 'Tangerine'], ['grape', 'Grape']];
 
   room.innerHTML = `
-    <div class="pk-scale"><div class="pk is-off" data-face="${store.get('face', 'snow')}">
+    <div class="pk-scale"><div class="pk is-off is-photo" data-face="${store.get('face', 'snow')}" style="background-image:url(assets/images/isommi-classic.webp)">
       <button class="pk-hold" type="button" aria-label="Hold switch" aria-pressed="false"><span>HOLD</span></button>
       <div class="pk-brand">${I.mark(14, true)} iSommi Classic</div>
       <div class="pk-lcd-frame"><div class="pk-lcd" role="application" aria-label="Pocket screen">
@@ -34,6 +34,7 @@ window.POCKET = { start(room, exit) {
         <button class="pk-hub" type="button" aria-label="Select"></button>
         <i class="dot"></i>
       </div></div>
+      <div class="pk-btns">${[['prev', 'Previous'], ['menu', 'Menu'], ['play', 'Play or pause'], ['next', 'Next']].map(([k, l]) => `<button type="button" data-b="${k}" aria-label="${l}"></button>`).join('')}</div>
     </div></div>`;
 
   const dev = room.querySelector('.pk');
@@ -43,11 +44,11 @@ window.POCKET = { start(room, exit) {
      really leaves under the buttons on top. */
   const fit = () => {
     const v = window.RETRO.viewport();
-    /* 46 points clear for the buttons on top, 26 at the bottom so a
+    /* 56 points clear for the buttons on top, 26 at the bottom so a
        browser's toolbar never touches the phone. */
-    const s = Math.min(1.35, (v.h - 72) / 545, (v.w - 24) / 335);
+    const s = Math.min(1.35, (v.h - 82) / 568, (v.w - 24) / 346);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 72 - 545 * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - 568 * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);
@@ -115,7 +116,7 @@ window.POCKET = { start(room, exit) {
 
   const SCREENS = {
     main: () => ({
-      type: 'menu', title: 'Sommi',
+      type: 'menu', title: 'iSommia',
       items: [
         [li('About Me'), () => open('about')],
         [li('Experience'), () => open('work')],
@@ -395,6 +396,13 @@ window.POCKET = { start(room, exit) {
     else play();
   }));
   hub.addEventListener('click', () => { if (!guard()) return; tap(); select(); });
+  /* The four touch buttons over the wheel, as the 2003 model had them. */
+  room.querySelector('.pk-btns').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-b]');
+    if (!b || !guard()) return;
+    tap();
+    ({ prev: () => step(-1), menu: back, play, next: () => step(1) })[b.dataset.b]();
+  });
   backBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!guard()) return; tap(); back(); });
 
   /* Tapping the screen chooses what was tapped. */
@@ -476,7 +484,6 @@ window.POCKET = { start(room, exit) {
     stack.push({ key: 'main', args: [], screen: SCREENS.main(), sel: 0 });
     render(0);
     wake();
-    say('Turn the wheel · press the middle · MENU goes back');
   }
 
   insert();

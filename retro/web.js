@@ -167,7 +167,7 @@ window.WEB = (function () {
     if (s.startsWith('about:')) return ['about'];
     if (s.startsWith('view-source:')) return ['source', s.replace('view-source:', '').replace(/^.*\/~ajay\/?/, '').replace(/\.html?$/, '')];
     const outside = s.match(/^(?:https?:\/\/)?(?:www\.)?([a-z0-9-]+\.[a-z.]+)/);
-    if (outside && !outside[1].includes('sommi.net')) return ['offline', outside[1]];
+    if (outside && !outside[1].includes('sommi.net')) return ['outside', raw.trim()];
     s = s.replace(/^(https?:\/\/)?(www\.)?sommi\.net/, '').replace(/^\/?~ajay/, '').replace(/^\/+|\/+$/g, '').replace(/\.html?$/, '');
     let [a, b] = s.split('/');
     a = ALIAS[a] !== undefined ? ALIAS[a] : a;
@@ -188,14 +188,17 @@ window.WEB = (function () {
   const setStatus = (t) => { status.textContent = t; };
 
   const load = (raw, push = true) => {
-    const [a, b] = parse(raw);
+    let [a, b] = parse(raw);
     let pg;
-    if (a === 'offline') pg = offline(b);
+    if (a === 'outside' || a === 'search') pg = outsidePage();
+    else if (a === 'offline') pg = offline(b);
     else if (a === 'source') pg = PAGES.source(b);
     else pg = PAGES[a] ? PAGES[a](b) : null;
     const path = a === 'offline' ? b : (a === 'index' ? '' : a + (b ? '/' + b : '') + '.html');
+    /* Words that aren't one of these pages are a search. */
+    if (!pg && !b && raw.trim() && !/[\/~:]/.test(raw.trim())) { a = 'search'; b = raw.trim(); pg = outsidePage(); }
     if (!pg) pg = notFound(raw.replace(/^.*~ajay\/?/, ''));
-    const url = a === 'offline' ? 'http://' + b + '/' : a === 'source' ? 'view-source:' + HOST + (b || 'index') + '.html' : a === 'about' ? 'about:surfboard' : HOST + path;
+    const url = a === 'outside' || a === 'search' ? 'http://' + window.OLDWEB.shown(b) : a === 'offline' ? 'http://' + b + '/' : a === 'source' ? 'view-source:' + HOST + (b || 'index') + '.html' : a === 'about' ? 'about:surfboard' : HOST + path;
     if (push) { hist = hist.slice(0, hpos + 1); hist.push(raw); hpos = hist.length - 1; }
     back.disabled = hpos <= 0;
     fwd.disabled = hpos >= hist.length - 1;
@@ -225,7 +228,10 @@ window.WEB = (function () {
       }
     }, 140);
     wirePage();
+    /* Somewhere else on the web: as it was in 1998, through OLDWEB. */
+    if (a === 'outside' || a === 'search') window.OLDWEB.open(page.querySelector('.old-frame'), b, 1998, { onNav: (u) => load(u) });
   };
+  const outsidePage = () => ({ title: 'Netsite', html: '<iframe class="pdf-frame old-frame" style="width:100%;height:100%;border:0;display:block;background:#fff" title="Web page"></iframe>', full: true });
 
   const wirePage = () => {
     const form = page.querySelector('[data-gb]');

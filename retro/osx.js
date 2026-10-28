@@ -102,6 +102,12 @@ window.OSX = (function () {
       lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']]))
   };
 
+  /* Snow Leopard's own icons, from Apple's 2009 Mac OS X pages, wherever
+     the app has a match. Finder keeps the AJ face; folders and the Trash
+     stay drawn. */
+  const SL = { about: 'about', experience: 'ical', guestbook: 'ichat', skills: 'prefs', safari: 'safari', mail: 'mail', preview: 'preview', terminal: 'terminal', timemachine: 'timemachine', education: 'dictionary', photos: 'photobooth', projects: 'automator' };
+  Object.entries(SL).forEach(([k, f]) => { ICON[k] = () => `<img class="sl-ic" src="assets/images/snowleopard/${f}.webp" alt="" draggable="false" />`; });
+
   /* --------------------------------------------------------------- apps */
 
   const APPS = {
@@ -421,15 +427,29 @@ window.OSX = (function () {
       title: 'Ajay Sommi · Software Engineer', w: Math.min(1060, SW() - 80), h: SH() - 140, cls: 'is-safari',
       toolbar: '<div class="ox-seg"><button type="button" data-b>◀</button><button type="button" data-f>▶</button></div><div class="ox-url"><input type="text" aria-label="Address" value="http://ajaysommi.github.io/" /></div><div class="ox-search"><input type="search" placeholder="Google" aria-label="Search the web" /></div>',
       render: (b, rec) => {
-        b.innerHTML = '<div class="sf-bm"><button type="button" data-go="classic.html">Portfolio (classic)</button><button type="button" data-go="Ajay_Sommi_Resume.pdf">Resume</button><button type="button" data-ext="github">GitHub ↗</button><button type="button" data-ext="linkedin">LinkedIn ↗</button></div><iframe title="Safari" src="classic.html"></iframe>';
+        b.innerHTML = '<div class="sf-bm"><button type="button" data-go="classic.html">Portfolio (classic)</button><button type="button" data-go="Ajay_Sommi_Resume.pdf">Resume</button><button type="button" data-ext="github">GitHub ↗</button><button type="button" data-ext="linkedin">LinkedIn ↗</button></div><iframe title="Safari"></iframe>';
         const fr = b.querySelector('iframe');
         const addr = rec.el.querySelector('.ox-url input');
-        const go = (u) => { fr.src = u; addr.value = 'http://ajaysommi.github.io/' + (u === 'classic.html' ? '' : u); };
+        /* Our own pages load directly; anything else typed goes through
+           OLDWEB: the site as it was in 2009 (today's if there is no copy),
+           and searches on that year's Google. Back and Forward walk the
+           addresses visited here. */
+        const hist = [];
+        let pos = -1;
+        const local = (u) => u === 'classic.html' || /\.pdf(#|$)/i.test(u);
+        const show = (u) => {
+          if (local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.onload = null; fr.src = u; addr.value = 'http://ajaysommi.github.io/' + (u === 'classic.html' ? '' : u); return; }
+          addr.value = 'http://' + window.OLDWEB.shown(u);
+          window.OLDWEB.open(fr, u, 2009, { onNav: go });
+        };
+        function go(u) { hist.length = pos + 1; hist.push(u); pos = hist.length - 1; show(u); }
         b.addEventListener('click', (e) => { const g = e.target.closest('[data-go]'); if (g) go(g.dataset.go); const x = e.target.closest('[data-ext]'); if (x) ext(P[x.dataset.ext]); });
-        rec.el.querySelector('[data-b]').addEventListener('click', () => { try { fr.contentWindow.history.back(); } catch (e) {} });
-        rec.el.querySelector('[data-f]').addEventListener('click', () => { try { fr.contentWindow.history.forward(); } catch (e) {} });
-        addr.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const v = addr.value.trim(); if (/github/i.test(v)) ext(P.github); else if (/linkedin/i.test(v)) ext(P.linkedin); else go(/resume|\.pdf/i.test(v) ? P.resume : 'classic.html'); } });
-        if (url) go(url);
+        rec.el.querySelector('[data-b]').addEventListener('click', () => { if (pos > 0) show(hist[--pos]); });
+        rec.el.querySelector('[data-f]').addEventListener('click', () => { if (pos < hist.length - 1) show(hist[++pos]); });
+        addr.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const v = addr.value.trim().replace(/^http:\/\/ajaysommi\.github\.io\/?$/, 'classic.html'); if (v) go(v); } });
+        const srch = rec.el.querySelector('.ox-search input');
+        if (srch) srch.addEventListener('keydown', (e) => { if (e.key === 'Enter' && srch.value.trim()) go(srch.value.trim()); });
+        go(url || 'classic.html');
       }
     }),
     mail: () => ({
@@ -656,7 +676,7 @@ window.OSX = (function () {
     api = deskApi;
     root = h('div', 'ox');
     root.innerHTML = `
-      <div class="ox-sky" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="core"></i></div>
+      <div class="ox-wall" aria-hidden="true"></div>
       <div class="ox-menubar" role="menubar">
         <button type="button" class="m mk" data-m="mark" aria-label="AJ menu">${I.mark(15, true)}</button>
         <button type="button" class="m b" data-m="app">Finder</button>

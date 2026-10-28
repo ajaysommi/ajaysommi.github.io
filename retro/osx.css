@@ -407,3 +407,8 @@
 .ml-f input { flex: 1; border: 0; outline: none; font: 13px var(--lg); }
 .ox .ml-tok { padding: 1px 10px; border-radius: 10px; background: linear-gradient(180deg, #dfeafa, #c3d6f2); border: 1px solid #93acd3; color: #20324f; }
 .is-mail textarea { flex: 1; border: 0; outline: none; resize: none; padding: 14px 16px; font: 13px/1.6 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+/* The real Snow Leopard desktop picture, and its icons drawn as images. */
+.ox-wall { position: absolute; inset: 0; pointer-events: none; background: #1a0b33 url(../assets/images/snowleopard/wallpaper.webp) center / cover no-repeat; }
+.sl-ic { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); -webkit-user-drag: none; }
+.dk-ic .sl-ic { filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }

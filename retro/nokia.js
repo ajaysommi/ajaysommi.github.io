@@ -41,11 +41,11 @@ window.NOKIA = { start(room, exit) {
   /* Fits the room the browser really leaves, under the buttons on top. */
   const fit = () => {
     const v = window.RETRO.viewport();
-    /* 46 points clear for the buttons on top, 26 at the bottom so a
+    /* 56 points clear for the buttons on top, 26 at the bottom so a
        browser's toolbar never touches the phone. */
-    const s = Math.min(1.2, (v.h - 72) / 775, (v.w - 24) / 367);
+    const s = Math.min(1.2, (v.h - 82) / 775, (v.w - 24) / 367);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 72 - 775 * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - 775 * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);

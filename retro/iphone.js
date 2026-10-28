@@ -84,11 +84,11 @@ window.IPHONE = { start(room, exit) {
     const v = window.RETRO.viewport();
     const w = dev.classList.contains('is-photo') ? 385 : 396;
     const h = dev.classList.contains('is-photo') ? 730 : 748;
-    /* 46 points clear for the buttons on top, 26 at the bottom so a
+    /* 56 points clear for the buttons on top, 26 at the bottom so a
        browser's toolbar never touches the phone. */
-    const s = Math.min(1.3, (v.h - 72) / h, (v.w - 24) / w);
+    const s = Math.min(1.3, (v.h - 82) / h, (v.w - 24) / w);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 72 - h * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - h * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);
@@ -178,15 +178,15 @@ window.IPHONE = { start(room, exit) {
       lg('bg', [[0, '#8cc8ff'], [0.5, '#3d8fe8'], [1, '#1d63c7']]) + lg('rim', [[0, '#ffffff'], [1, '#c3ccd8']]) + rg('dial', [[0, '#bfe6ff'], [0.7, '#4aa0ea'], [1, '#1c66c0']], 0.45, 0.38, 0.62)); },
     clipAJ: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g transform="translate(5.5 6) scale(.74)"><path d="${MARK.a}" fill="#fff"/><path d="${MARK.j}" fill="#ff6b35"/><path d="${MARK.stem}" fill="#5c86ff"/><path d="${MARK.dot}" fill="#5c86ff"/></g>`,
       lg('bg', [[0, '#3a3f4a'], [1, '#101318']])),
-    clipGH: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="37" text-anchor="middle" font-family="Menlo,Monaco,monospace" font-weight="bold" font-size="21" fill="#fff">{ }</text>`,
-      lg('bg', [[0, '#62666e'], [1, '#1d2026']])),
+    clipGH: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g transform="translate(10 10.5) scale(2.32)"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" fill="#fff"/></g>`,
+      lg('bg', [[0, '#5b5f66'], [0.5, '#2c2f35'], [1, '#121418']])),
     clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="40" text-anchor="middle" ${HV} font-weight="bold" font-size="30" fill="#fff" letter-spacing="-1">in</text>`,
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
 
   /* The springboard's own artwork, taken from the 2007 home screen. The
      calendar and weather faces are left blank and lettered live. */
-  const ART = { sms: 'sms', calendar: 'calendar', photos: 'photos', camera: 'camera', tv: 'youtube', stocks: 'stocks', maps: 'maps', weather: 'weather', settings: 'settings', notes: 'notes', phone: 'phone', mail: 'mail', safari: 'safari', clipGH: 'calculator' };
+  const ART = { sms: 'sms', calendar: 'calendar', photos: 'photos', camera: 'camera', tv: 'youtube', stocks: 'stocks', maps: 'maps', weather: 'weather', settings: 'settings', notes: 'notes', phone: 'phone', mail: 'mail', safari: 'safari', ipod: 'ipod' };
   Object.keys(ART).forEach((k) => {
     ICON[k] = () => {
       let over = '';
@@ -551,8 +551,6 @@ window.IPHONE = { start(room, exit) {
      with their scripts left off; taps on links and forms come back through
      Safari, which keeps each page's own history. Searches go to
      DuckDuckGo's plain results page. */
-  const READER = 'https://r.jina.ai/';
-  const pageCache = new Map();
   const safari = (app, url, label) => {
     const tab = (u) => ({ url: u, hist: u ? [u] : [], pos: u ? 0 : -1 });
     const tabsList = [tab(url)];
@@ -561,88 +559,24 @@ window.IPHONE = { start(room, exit) {
     app.el.classList.add('is-safari');
     app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark"><svg viewBox="0 0 22 22" width="22" height="22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="3.6" stroke-linecap="square"/></svg></button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
     const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b'), prog = app.el.querySelector('.saf-prog');
-    const SEARCH = 'https://html.duckduckgo.com/html/?q=';
-    const pretty = (u) => {
-      if (!u) return '';
-      if (u.startsWith(SEARCH)) return decodeURIComponent(u.slice(SEARCH.length).replace(/\+/g, ' '));
-      return /^https?:/.test(u) ? u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : 'ajaysommi.github.io/' + (u === 'classic.html' ? '' : u.replace(/#.*$/, ''));
-    };
-    const resolve = (v) => {
-      v = v.trim();
-      if (!v) return null;
-      if (/^https?:\/\//i.test(v)) return v;
-      if (v === 'classic.html' || /\.pdf$/i.test(v)) return v;
-      if (/^[\w-]+(\.[\w-]+)+(:\d+)?(\/\S*)?$/.test(v)) return 'https://' + v;
-      return SEARCH + encodeURIComponent(v);
-    };
-    /* The fetched page: a base so its pictures and styles resolve, and no
-       scripts. The frame is sandboxed without scripts as well. */
-    const prep = (html, u) => {
-      html = html.replace(/<script\b[\s\S]*?<\/script>/gi, '').replace(/<meta[^>]+http-equiv=["']?refresh[^>]*>/gi, '');
-      const base = `<base href="${u.replace(/"/g, '&quot;')}" target="_self"><meta name="viewport" content="width=device-width, initial-scale=1"><style>html{-webkit-text-size-adjust:100%}img,video{max-width:100%;height:auto}</style>`;
-      return /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + base) : base + html;
-    };
+    /* Our own pages load directly; everything typed goes through OLDWEB,
+       which finds the site as it was in 2007 (or today's, failing that)
+       and dresses searches as that year's Google. */
+    const local = (u) => u === 'classic.html' || /\.pdf(#|$)/i.test(u);
+    const pretty = (u) => !u ? '' : local(u) ? 'ajaysommi.github.io/' + (u === 'classic.html' ? '' : u.replace(/#.*$/, '')) : window.OLDWEB.shown(u);
+    const resolve = (v) => { v = v.trim(); return v || null; };
     const progress = (on) => { prog.classList.toggle('on', on); if (!on) { prog.classList.add('done'); setTimeout(() => prog.classList.remove('done'), 300); } };
-    const hook = () => {
-      let d;
-      try { d = fr.contentDocument; } catch (x) { return; }
-      if (!d || !fr.hasAttribute('srcdoc')) return;
-      const base = tabsList[cur].url;
-      d.addEventListener('click', (e) => {
-        const a = e.target.closest('a[href]');
-        if (!a) return;
-        e.preventDefault();
-        const raw = a.getAttribute('href');
-        if (raw.startsWith('#')) { const t = d.getElementById(raw.slice(1)) || d.querySelector(`[name="${raw.slice(1)}"]`); if (t) t.scrollIntoView(); return; }
-        let u;
-        try { u = new URL(raw, base); } catch (x) { return; }
-        if (/duckduckgo\.com$/.test(u.hostname) && u.pathname === '/l/' && u.searchParams.get('uddg')) u = new URL(u.searchParams.get('uddg'));
-        if (/^(mailto|tel):/.test(u.protocol)) { ext(u.href); return; }
-        if (!/^https?:/.test(u.protocol)) return;
-        go(u.href);
-      });
-      d.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const f = e.target;
-        if ((f.getAttribute('method') || 'get').toLowerCase() !== 'get') { alertBox('Can’t Send Form', 'This page’s form can only be sent from a full browser.'); return; }
-        const u = new URL(f.getAttribute('action') || base, base);
-        u.search = new URLSearchParams(new FormData(f)).toString();
-        go(u.href);
-      }, true);
-    };
-    fr.addEventListener('load', hook);
-    const load = async (u, fresh) => {
+    const load = async (u) => {
       const my = ++token;
       note.hidden = true;
-      note.querySelector('a').href = u || '#';
-      if (!u) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.src = 'about:blank'; progress(false); return; }
-      if (!/^https?:/.test(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.src = u; progress(false); return; }
-      progress(true);
-      try {
-        let html = !fresh && pageCache.get(u);
-        if (!html) {
-          const r = await fetch(READER + u, { headers: { 'X-Return-Format': 'html' } });
-          if (!r.ok) throw new Error(r.status);
-          html = await r.text();
-          if (!/<(html|body|div|p)\b/i.test(html)) throw new Error('empty');
-          pageCache.set(u, html);
-        }
-        if (my !== token) return;
-        fr.setAttribute('sandbox', 'allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox');
-        fr.removeAttribute('src');
-        fr.srcdoc = prep(html, u);
-      } catch (x) {
-        if (my !== token) return;
-        fr.removeAttribute('srcdoc'); fr.src = 'about:blank';
-        note.hidden = false;
-      }
-      progress(false);
+      if (!u || local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.dataset.kind = ''; fr.onload = null; fr.src = u || 'about:blank'; progress(false); return; }
+      await window.OLDWEB.open(fr, u, 2007, { onNav: (x) => { if (my === token) go(x); }, onState: (st) => { if (my === token) progress(st === 'loading'); } });
     };
     const show = (fresh) => {
       const t = tabsList[cur];
       addr.value = pretty(t.url); addr.render();
       cnt.textContent = tabsList.length;
-      load(t.url, fresh);
+      load(t.url);
     };
     const go = (u) => {
       const t = tabsList[cur];
@@ -1088,74 +1022,58 @@ window.IPHONE = { start(room, exit) {
         p.addEventListener('click', (ev) => { const im = ev.target.closest('img[data-k]'); if (im) viewer(app, s, +im.dataset.k); });
       }, { right: ['Play', () => viewer(app, s, 0).play()] }) }))));
     } },
-    about: { name: 'Camera', icon: 'camera', bare: true, bar: 'black', open(app) {
-      /* A camera pointed at the last few years. The viewfinder drifts over
-         real photos; the shutter develops one into a snapshot with a line
-         about it, and every shot taken waits in the Camera Roll. */
-      const O = 'assets/images/offclock/';
-      const SC = [
-        [P.photo, 'Ajay Sommi', `${P.title}. ${P.about[0].replace(/^Welcome\. /, '')}`],
-        ['assets/images/uf-gator-640.webp', P.education.school, `${P.education.degree}, graduating ${P.education.when}.`, 'fit'],
-        [P.kidPhoto, 'Where it started', P.quote],
-        ...[...P.experience].reverse().filter((x) => x.photos.length).map((x) => [x.photos[0], x.org, `${x.role} \u00b7 ${x.when.replace(' to ', ' \u2013 ')}`]),
-        [O + 'ard-desk-480.webp', 'Off the clock', 'Repairs, teardowns and builds, mostly to see how things work.']
+    about: { name: 'About Me', icon: 'ipod', nb: 'black', bar: 'black', cls: 'is-yt', open(app) {
+      /* The story as an iPod: each chapter a playlist, each fact a track.
+         Now Playing shows its picture as the album art; tap the art for the
+         words. Tracks play through on their own, one into the next. */
+      const G = 'assets/images/uf-gator-640.webp';
+      const PL = [
+        ['About Me', [
+          { t: 'Hello', a: 'About Me', img: P.photo, x: `${P.about[0]} ${P.title}, ${P.citizen}.` },
+          { t: 'Problem Solver', a: 'About Me', img: P.photo, x: P.about[1] },
+          { t: 'Where It Started', a: 'About Me', img: P.kidPhoto, x: `“${P.quote}”` }
+        ]],
+        ['Education', [{ t: P.education.degree, a: P.education.school, img: G, fit: 1, x: `${P.education.college}. Graduating ${P.education.when}. ${P.education.text}` }]],
+        ['Career', [...P.experience].reverse().map((e) => ({ t: e.org, a: e.role, img: e.photos[0] || G, fit: !e.photos[0], x: `${e.when} · ${e.where}. ${e.text}` }))],
+        ['Off the Clock', P.offclock.map((o) => ({ t: o.name, a: o.title, img: o.cover || (o.steps[0] && o.steps[0][0]), x: o.lede }))]
       ];
-      const roll = store.get('ip-cam-roll', []).filter((k) => SC[k]);
-      let k = 0, busy = false, timer = 0;
-      app.el.innerHTML = `<div class="cam cam2"><div class="vf"><img class="vf-a" alt="" /><img class="vf-b" alt="" /><div class="vf-focus"></div><div class="vf-dots">${SC.map(() => '<i></i>').join('')}</div></div>
-        <div class="iris">${[0, 1, 2, 3, 4, 5].map((i) => `<i style="--r:${i * 60}deg"></i>`).join('')}</div><div class="flash"></div>
-        <div class="snap" hidden><div class="snap-ph"><img alt="" /><b></b><span></span></div></div>
-        <div class="bar"><button class="roll" type="button" aria-label="Camera Roll"></button><button class="shut" type="button" aria-label="Take picture"><svg viewBox="0 0 30 22" width="30" height="22"><rect x="2" y="5" width="26" height="16" rx="3" fill="#333"/><circle cx="15" cy="13" r="5.5" fill="#bbb" stroke="#333" stroke-width="2"/><rect x="10" y="2" width="10" height="4" rx="1" fill="#333"/></svg></button><span class="roll-sp"></span></div></div>`;
-      const cam = app.el.querySelector('.cam'), vf = app.el.querySelector('.vf'), snap = app.el.querySelector('.snap'), rollBtn = app.el.querySelector('.roll');
-      let front = vf.querySelector('.vf-a'), back = vf.querySelector('.vf-b');
-      const drawRoll = () => { rollBtn.innerHTML = roll.length ? `<img src="${SC[roll[roll.length - 1]][0]}" alt="" />` : ''; };
-      const show = (i) => {
-        k = (i + SC.length) % SC.length;
-        back.src = SC[k][0];
-        back.classList.toggle('fit', SC[k][3] === 'fit');
-        back.classList.add('on'); front.classList.remove('on');
-        [front, back] = [back, front];
-        vf.querySelectorAll('.vf-dots i').forEach((d, j) => d.classList.toggle('on', j === k));
-        const f = vf.querySelector('.vf-focus');
-        f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+      const len = (tr) => 60 + tr.x.length % 150;
+      const clk = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+      const nowPlaying = (list, k) => {
+        const v = h('div', 'np');
+        let at = 0, playing = true, words = false;
+        const draw = () => {
+          const tr = list[k];
+          v.innerHTML = `<div class="np-top"><button type="button" class="np-back" aria-label="Back"></button><div class="np-ti"><span>Ajay Sommi</span><b>${esc(tr.t)}</b><span>${esc(tr.a)}</span></div><button type="button" class="np-list" aria-label="Words"></button></div>
+            <div class="np-scrub"><span class="t0"></span><div class="np-track"><i></i><b></b></div><span class="t1"></span></div>
+            <div class="np-art${tr.fit ? ' fit' : ''}"><img src="${tr.img}" alt="" /><div class="np-words"${words ? '' : ' hidden'}><p>${esc(tr.x)}</p></div></div>
+            <div class="np-ctl"><button type="button" data-c="-1" aria-label="Previous"><svg viewBox="0 0 40 24"><path d="M18 12 32 3v18zM4 12 18 3v18z" fill="url(#npg)"/><defs><linearGradient id="npg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#bbb"/></linearGradient></defs></svg></button><button type="button" data-c="0" aria-label="Play or pause">${playing ? '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="5" height="18" fill="#eee"/><rect x="14" y="3" width="5" height="18" fill="#eee"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M6 3l15 9-15 9z" fill="#eee"/></svg>'}</button><button type="button" data-c="1" aria-label="Next"><svg viewBox="0 0 40 24"><path d="M22 12 8 3v18zM36 12 22 3v18z" fill="#eee"/></svg></button></div>`;
+          tick();
+        };
+        const tick = () => {
+          const d = len(list[k]);
+          const f = Math.min(1, at / d);
+          v.querySelector('.np-track i').style.width = f * 100 + '%';
+          v.querySelector('.np-track b').style.left = f * 100 + '%';
+          v.querySelector('.t0').textContent = clk(at);
+          v.querySelector('.t1').textContent = '-' + clk(d - at);
+        };
+        const go = (d) => { k = (k + d + list.length) % list.length; at = 0; draw(); };
+        const timer = setInterval(() => { if (!playing) return; at += 1; if (at >= len(list[k])) go(1); else tick(); }, 1000);
+        v.addEventListener('click', (e) => {
+          if (e.target.closest('.np-back')) { SFX.click(); clearInterval(timer); v.classList.add('out'); setTimeout(() => v.remove(), 260); setBar('black'); return; }
+          if (e.target.closest('.np-list') || e.target.closest('.np-art')) { words = !words; v.querySelector('.np-words').hidden = !words; return; }
+          const c = e.target.closest('[data-c]');
+          if (!c) return;
+          SFX.click();
+          if (c.dataset.c === '0') { playing = !playing; draw(); } else go(+c.dataset.c);
+        });
+        app.def.onClose = () => clearInterval(timer);
+        draw();
+        app.el.appendChild(v);
       };
-      const idle = () => { clearInterval(timer); timer = setInterval(() => { if (!busy && snap.hidden) show(k + 1); }, 4200); };
-      show(0); idle();
-      setTimeout(() => cam.classList.add('is-open'), 250);
-      app.el.querySelector('.shut').addEventListener('click', () => {
-        if (busy) return;
-        busy = true;
-        SFX.insert();
-        cam.classList.remove('is-open');
-        setTimeout(() => {
-          const [src, t, d] = SC[k];
-          if (!roll.includes(k)) { roll.push(k); store.set('ip-cam-roll', roll); }
-          snap.querySelector('img').src = src;
-          snap.querySelector('img').classList.toggle('fit', SC[k][3] === 'fit');
-          snap.querySelector('b').textContent = t;
-          snap.querySelector('span').textContent = d;
-          snap.hidden = false;
-          snap.classList.remove('away');
-          cam.classList.add('is-open');
-          drawRoll();
-          busy = false;
-        }, 650);
-      });
-      const putAway = () => { if (snap.hidden) return; snap.classList.add('away'); setTimeout(() => { snap.hidden = true; show(k + 1); idle(); }, 380); };
-      snap.addEventListener('click', putAway);
-      let x0 = null;
-      vf.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-      vf.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) { show(k + (e.clientX < x0 ? 1 : -1)); idle(); } x0 = null; });
-      rollBtn.addEventListener('click', () => {
-        SFX.click();
-        if (!roll.length) { alertBox('No Photos', 'Pictures taken with the camera appear here.'); return; }
-        clearInterval(timer);
-        snap.hidden = true;
-        const v = viewer(app, { steps: roll.map((j) => SC[j]) }, roll.length - 1, 'black');
-        v.onDone = idle;
-      });
-      drawRoll();
-      app.def.onClose = () => clearInterval(timer);
+      const songs = (list) => (pg) => plain(pg, list.map((tr, i) => ({ text: tr.t, sub: tr.a, img: tr.img, rt: clk(len(tr)), cls: 'yt-row', go: () => nowPlaying(list, i) })));
+      app.push('Playlists', (pg) => plain(pg, PL.map(([n, list]) => ({ text: n, sub: `${list.length} song${list.length === 1 ? '' : 's'}`, img: list[0].img, cls: 'yt-row', go: () => app.push(n, songs(list), { back: 'Playlists' }) }))), { right: ['Now Playing', () => nowPlaying(PL[0][1], 0)] });
     } },
     projects: { name: 'Projects', icon: 'tv', cls: 'is-yt', bar: 'black', nb: 'black', open(app) {
       const row = (p) => ({ text: p.name, sub: p.stack, cls: 'yt-row', lead: `<span class="yt-th" style="--h:${P.projects.indexOf(p) * 57 + 200}">${esc(p.name.slice(0, 2))}</span>`, go: () => app.push(p.name, (x) => {
@@ -1486,7 +1404,7 @@ window.IPHONE = { start(room, exit) {
     });
     showUnread();
   };
-  const flyIn = () => {
+  const flyIn = (unlocking) => {
     const icons = [...room.querySelectorAll('.ip-icon')];
     const far = Math.max(...icons.map((b) => +b.dataset.d));
     void board.offsetWidth;
@@ -1494,11 +1412,12 @@ window.IPHONE = { start(room, exit) {
     /* Slow off the mark, then faster and faster until they hit their
        places: an ease-in with no settle, the outer ring a beat ahead. */
     icons.forEach((b) => {
-      b.style.transition = 'transform .19s cubic-bezier(.45, 0, .9, .85), opacity .1s linear';
-      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * 20) + 'ms';
+      /* Unlocking takes its time, a smooth sweep in; Home is quicker. */
+      b.style.transition = unlocking ? 'transform .5s cubic-bezier(.32, 0, .58, 1), opacity .3s ease' : 'transform .19s cubic-bezier(.45, 0, .9, .85), opacity .1s linear';
+      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * (unlocking ? 50 : 20)) + 'ms';
       b.style.transform = '';
     });
-    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), 360);
+    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), unlocking ? 650 : 360);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
 
@@ -1523,7 +1442,7 @@ window.IPHONE = { start(room, exit) {
     const x = Math.max(0, Math.min(MAXX, (e.clientX - drag.x) / drag.k));
     drag = null;
     if (x >= MAXX - 4) unlock();
-    else { knob.classList.add('is-back'); knob.style.transform = ''; slideTxt.style.opacity = ''; }
+    else { knob.classList.add('is-back'); knob.style.transform = ''; slideTxt.style.opacity = ''; armSleep(); }
   };
   knob.addEventListener('pointerup', release);
   knob.addEventListener('pointercancel', release);
@@ -1536,9 +1455,10 @@ window.IPHONE = { start(room, exit) {
     quietUntil = performance.now() + 600;
     SFX.click();
     lock.classList.add('is-gone');
+    clearTimeout(sleepT);
     setBar('black');
     tickClock();
-    setTimeout(flyIn, 150);
+    setTimeout(() => flyIn(true), 150);
   }
   function relock() {
     kb.hide();
@@ -1549,6 +1469,7 @@ window.IPHONE = { start(room, exit) {
     slideTxt.style.opacity = '';
     lock.classList.remove('is-gone');
     flyOut();
+    armSleep();
     tickClock();
   }
 
@@ -1559,9 +1480,17 @@ window.IPHONE = { start(room, exit) {
     if (state === 'boot') return;
     if (asleep) { wake(); return; }
     if (state === 'app') { SFX.click(); closeApp(); return; }
+    if (state === 'locked') armSleep();
     if (state === 'locked') knob.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(16px)' }, { transform: 'translateX(0)' }], { duration: 380, easing: 'ease-out' });
   });
-  const wake = () => { asleep = false; off.classList.remove('on'); };
+  const wake = () => { asleep = false; off.classList.remove('on'); if (state === 'locked') armSleep(); };
+  /* Left on the lock screen, the display goes dark after a few seconds,
+     as the real one did; the home or sleep button wakes it. */
+  let sleepT = 0;
+  function armSleep() {
+    clearTimeout(sleepT);
+    sleepT = setTimeout(() => { if (state === 'locked' && !asleep && !drag) { asleep = true; off.classList.add('on'); } }, 4000);
+  }
   room.querySelector('.ip-sleep').addEventListener('click', () => {
     if (state === 'boot') return;
     if (asleep) { wake(); return; }
@@ -1589,6 +1518,7 @@ window.IPHONE = { start(room, exit) {
       state = 'locked';
       tickClock();
       setInterval(tickClock, 10000);
+      armSleep();
     }, 1650);
   });
 } };

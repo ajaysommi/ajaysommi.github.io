@@ -1014,3 +1014,38 @@
 /* The caret takes no room of its own, so text never shifts around it. */
 .ip-screen .fld .caret { margin: 0 -1px; position: relative; z-index: 1; }
 .ip-screen .fld.multi { white-space: pre-wrap; word-break: break-word; }
+
+/* The display's edge: a hair of near-black where the glass meets the bezel. */
+.ip.is-photo .ip-screen { box-shadow: 0 0 0 1.1px rgba(6,6,8,.92); }
+
+/* About Me's Now Playing: the album art under a translucent black bar,
+   a scrubber, and big white transport controls on dark glass. */
+.ip-screen .np { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; z-index: 8; background: #000; color: #fff; animation: ip-in-r .3s ease-out both; }
+.ip-screen .np.out { animation: ip-out-r .26s ease-in both; }
+.ip-screen .np-top { position: absolute; left: 0; right: 0; top: 0; height: 44px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 0 6px; background: linear-gradient(180deg, rgba(70,70,70,.85), rgba(0,0,0,.85) 50%, rgba(0,0,0,.9)); border-bottom: 1px solid #000; }
+.ip-screen .np-back, .ip-screen .np-list { flex: none; width: 36px; height: 30px; border-radius: 5px; border: 1px solid #000; cursor: pointer; background: linear-gradient(180deg, #6a6a6a, #333 50%, #222 51%, #111); position: relative; }
+.ip-screen .np-back::after { content: ''; position: absolute; left: 13px; top: 9px; width: 9px; height: 9px; border-left: 3px solid #fff; border-bottom: 3px solid #fff; transform: rotate(45deg); }
+.ip-screen .np-list::after { content: ''; position: absolute; left: 9px; top: 8px; width: 16px; height: 2.5px; background: #fff; box-shadow: 0 5px 0 #fff, 0 10px 0 #fff; }
+.ip-screen .np-ti { flex: 1; min-width: 0; text-align: center; line-height: 1.15; }
+.ip-screen .np-ti b { display: block; font: bold 13px Helvetica, Arial, sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ip-screen .np-ti span { display: block; font: bold 11px Helvetica, Arial, sans-serif; color: #a7a7a7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ip-screen .np-scrub { position: absolute; left: 0; right: 0; top: 44px; height: 26px; z-index: 3; display: flex; align-items: center; gap: 8px; padding: 0 8px; background: rgba(0,0,0,.65); font: bold 11px Helvetica, Arial, sans-serif; }
+.ip-screen .np-scrub span { width: 32px; }
+.ip-screen .np-scrub .t1 { text-align: right; }
+.ip-screen .np-track { position: relative; flex: 1; height: 6px; border-radius: 3px; background: #444; box-shadow: inset 0 1px 2px #000; }
+.ip-screen .np-track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(180deg, #e6e6e6, #9a9a9a); }
+.ip-screen .np-track b { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: radial-gradient(circle at 50% 30%, #fff, #bbb); box-shadow: 0 1px 2px #000; }
+.ip-screen .np-art { position: absolute; left: 0; right: 0; top: 44px; height: 320px; overflow: hidden; cursor: pointer; background: #111; }
+.ip-screen .np-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ip-screen .np-art.fit img { object-fit: contain; padding: 40px; box-sizing: border-box; background: radial-gradient(circle at 50% 45%, #1d3f7a, #071530 75%); }
+.ip-screen .np-words { position: absolute; inset: 26px 0 0; padding: 16px 18px; overflow-y: auto; background: rgba(0,0,0,.78); font: 15px/1.45 Helvetica, Arial, sans-serif; scrollbar-width: none; }
+.ip-screen .np-words[hidden] { display: none; }
+.ip-screen .np-words p { margin: 0; }
+.ip-screen .np-ctl { position: absolute; left: 0; right: 0; top: 364px; bottom: 0; display: flex; align-items: center; justify-content: space-around; background: linear-gradient(180deg, rgba(60,60,60,.95), #111 45%, #000); border-top: 1px solid #555; }
+.ip-screen .np-ctl button { border: 0; background: none; width: 72px; height: 56px; display: grid; place-items: center; cursor: pointer; }
+.ip-screen .np-ctl svg { width: 36px; height: 26px; filter: drop-shadow(0 -1px 0 rgba(0,0,0,.6)); }
+.ip-screen .np-ctl button:active svg { opacity: .6; }
+
+/* Sites from back then were built for desktops: shown 980 wide and zoomed
+   out to the screen, as Safari on the first iPhone did. */
+.ip-screen .saf-frame[data-kind="site"] { position: absolute; left: 0; top: 0; width: 980px; height: 306.25%; flex: none; transform: scale(.32653); transform-origin: 0 0; }

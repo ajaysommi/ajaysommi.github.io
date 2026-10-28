@@ -58,14 +58,44 @@ window.SFX = (function () {
     return o;
   };
 
+  /* Background music: an original, gentle marimba loop in the spirit of
+     2007's handsets, made here rather than recorded. It only plays while
+     sound is on and a device asked for it. */
+  let song = null, songT = 0, nextAt = 0, step = 0;
+  const mallet = (t, f, gain) => {
+    tone(t, f, 0.9, { gain, attack: 0.004 });
+    tone(t, f * 4, 0.18, { gain: gain * 0.18, attack: 0.002 });
+  };
+  const SONGS = {
+    2007: { bpm: 92, chords: [[261.6, 329.6, 392], [220, 261.6, 329.6], [174.6, 220, 261.6], [196, 246.9, 293.7]], line: [0, 2, 1, 2, 0, 2, 1, 3, 2, 1, 0, 1, 2, -1, 1, -1] }
+  };
+  const schedule = () => {
+    if (!song || muted || !ctx) return;
+    const s = SONGS[song], e = 60 / s.bpm / 2;
+    while (nextAt < ctx.currentTime + 0.25) {
+      const ch = s.chords[Math.floor(step / 16) % s.chords.length], n = s.line[step % 16];
+      if (n >= 0) mallet(nextAt, n === 3 ? ch[0] * 2 : ch[n] * 2, 0.045);
+      if (step % 8 === 0) mallet(nextAt, ch[0] / 2, 0.05);
+      nextAt += e; step++;
+    }
+  };
+  const playSong = () => {
+    clearInterval(songT);
+    if (!song || muted || !ready()) return;
+    nextAt = ctx.currentTime + 0.1; step = 0;
+    songT = setInterval(schedule, 100);
+  };
+
   const api = {
     get muted() { return muted; },
     setMuted(v) {
       muted = !!v;
       window.RETRO.store.set('sound-on', !muted);
       if (muted && ctx) ctx.suspend();
+      if (muted) clearInterval(songT); else playSong();
       document.dispatchEvent(new CustomEvent('sfx-mute', { detail: muted }));
     },
+    music(name) { if (name === song) return; song = name || null; if (song) playSong(); else clearInterval(songT); },
     toggle() { api.setMuted(!muted); if (!muted) api.click(); return muted; },
 
     click() {
