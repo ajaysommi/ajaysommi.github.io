@@ -215,20 +215,12 @@
 .phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(90% 60% at 50% 32%, #fbf6ec, #e4d6bc 82%); }
 .phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(90% 60% at 50% 32%, #5e6470, #2d3038 82%); }
 
-/* The time art behind the pickers. */
-.pk-time { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0; animation: pk-time-in 3.2s ease .3s forwards; }
-.pk-time svg { position: absolute; left: 50%; top: 50%; width: max(120vw, 120vh); height: max(120vw, 120vh); transform: translate(-50%, -50%); opacity: .085; }
-.is-phones .pk-time svg { width: max(170vw, 120vh); height: max(170vw, 120vh); opacity: .09; }
-.pk-time g { transform-origin: 500px 500px; }
-.pk-time .t-face { animation: pk-spin 400s linear infinite; }
-.pk-time .t-years { animation: pk-spin 240s linear infinite reverse; }
-.pk-time .t-dots { animation: pk-spin 160s linear infinite; }
-.pk-time .t-ring2 { animation: pk-spin 90s linear infinite reverse; }
-.pk-time .t-min { animation: pk-spin 60s linear infinite; }
-.pk-time .t-hr { animation: pk-spin 720s linear infinite; }
-@keyframes pk-spin { to { transform: rotate(360deg); } }
+/* The time shapes behind the pickers. */
+.pk-time { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0; animation: pk-time-in 2.4s ease .2s forwards; }
+.pk-time .tm { position: absolute; width: calc(46px * var(--s)); height: calc(55px * var(--s)); opacity: .1; transform: translate(-50%, -50%); animation: pk-drift var(--d) ease-in-out infinite alternate; }
+@keyframes pk-drift { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, calc(-50% - 14px)) rotate(var(--r)); } }
 @keyframes pk-time-in { to { opacity: 1; } }
-.reduced .pk-time g { animation: none; }
+.reduced .pk-time .tm { animation: none; }
 .picker > .pk-in, .picker .mp-head, .picker .mp-rail, .picker .mp-dots, .picker .sm-power, .picker .sm-status { position: relative; z-index: 1; }
 
 /* The way back to the eras on a computer: low on the left, on the backdrop. */
@@ -274,3 +266,11 @@
 .os-host.is-photo[data-era="1991"] { --bg: radial-gradient(60% 55% at 50% 45%, rgba(255,255,255,.55), transparent 70%), repeating-conic-gradient(#d8d4c9 0 25%, #cfcabd 0 50%) 0 0 / 4px 4px; }
 .os-host.is-photo[data-era="1998"] { --bg: radial-gradient(circle at 18% 30%, rgba(255,255,255,.22) 0 60px, transparent 61px), radial-gradient(circle at 82% 70%, rgba(255,255,255,.16) 0 90px, transparent 91px), radial-gradient(circle at 70% 18%, rgba(255,255,255,.14) 0 34px, transparent 35px), radial-gradient(90% 80% at 50% 40%, #59c3d3, #0d5568 85%); }
 .os-host[data-era="1983"] { --bg: radial-gradient(70% 60% at 50% 45%, rgba(60,200,90,.16), transparent 70%), repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 4px), radial-gradient(90% 80% at 50% 40%, #1d231c, #070907 85%); }
+
+/* The choices sit on solid tiles; the clock and battery sit top right. */
+.is-desk-pick .pk-d { background: #1c1c1f; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+.is-desk-pick .pk-d.is-sel { background: #2a2a2e; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
+.mp-card { background: #262628; opacity: 1; }
+.mp-card:not(.is-sel) { opacity: .75; }
+.mp-card.is-sel { background: #303033; }
+.picker .sm-status { position: absolute; top: 14px; right: 130px; left: auto; z-index: 2; }

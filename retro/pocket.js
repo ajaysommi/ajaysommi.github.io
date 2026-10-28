@@ -399,12 +399,14 @@ window.POCKET = { start(room, exit) {
     else play();
   }));
   hub.addEventListener('click', () => { if (!guard()) return; tap(); select(); });
+  /* MENU goes all the way out to the main menu. */
+  const home = () => { if (stack.length <= 1) return; stack.length = 1; render(-1); };
   /* The four touch buttons over the wheel, as the 2003 model had them. */
   room.querySelector('.pk-btns').addEventListener('click', (e) => {
     const b = e.target.closest('[data-b]');
     if (!b || !guard()) return;
     tap();
-    ({ prev: back, menu: back, play, next: () => step(1) })[b.dataset.b]();
+    ({ prev: back, menu: home, play, next: () => step(1) })[b.dataset.b]();
   });
   backBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!guard()) return; tap(); back(); });
 

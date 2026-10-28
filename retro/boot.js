@@ -43,21 +43,20 @@
      ticks, rings turning at different speeds, the eras marked around them,
      and two hands sweeping. It fades up out of black. */
   const TIMEART = (() => {
-    let ticks = '';
-    for (let i = 0; i < 120; i++) { const a = i * 3, L = i % 10 === 0 ? 26 : i % 5 === 0 ? 16 : 8; ticks += `<line x1="500" y1="${70}" x2="500" y2="${70 + L}" transform="rotate(${a} 500 500)"/>`; }
-    const years = ['1983', '1991', '1998', '2000', '2004', '2007', '2009', 'TODAY'];
-    const yr = years.map((y, i) => `<text transform="rotate(${i * 45} 500 500)" x="500" y="150" text-anchor="middle">${y}</text>`).join('');
-    let dots = '';
-    for (let i = 0; i < 36; i++) dots += `<circle cx="500" cy="230" r="${i % 3 ? 2 : 4}" transform="rotate(${i * 10} 500 500)"/>`;
-    return `<div class="pk-time" aria-hidden="true"><svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
-      <g class="t-face" stroke="#fff" stroke-width="2" fill="none">${ticks}<circle cx="500" cy="500" r="430"/><circle cx="500" cy="500" r="392" stroke-dasharray="2 10"/></g>
-      <g class="t-years" fill="#fff" font-family="Silkscreen, monospace" font-size="22" letter-spacing="6">${yr}</g>
-      <g class="t-dots" fill="#fff">${dots}<circle cx="500" cy="500" r="270" fill="none" stroke="#fff" stroke-width="1.5"/></g>
-      <g class="t-ring2" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="500" cy="500" r="170" stroke-dasharray="40 14 4 14"/></g>
-      <g class="t-min"><line x1="500" y1="500" x2="500" y2="140" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>
-      <g class="t-hr"><line x1="500" y1="500" x2="500" y2="290" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
-      <circle cx="500" cy="500" r="7" fill="#fff"/>
-    </svg></div>`;
+    /* A few small outlines that have to do with time, scattered and
+       drifting slowly: an hourglass, a clock face, a stopwatch, a calendar
+       page, a sundial, a pendulum. Faint, and plenty of empty space. */
+    const S = {
+      hour: '<path d="M8 4h24M8 44h24M11 4c0 12 18 14 18 20S11 32 11 44M29 4c0 12-18 14-18 20s18 8 18 20"/>',
+      clock: '<circle cx="20" cy="24" r="16"/><path d="M20 14v10l7 5"/>',
+      watch: '<circle cx="20" cy="27" r="14"/><path d="M16 9h8M20 9v4M20 27l5-6"/>',
+      cal: '<rect x="5" y="9" width="30" height="30" rx="3"/><path d="M5 17h30M12 5v8M28 5v8"/>',
+      dial: '<path d="M6 34h28M20 34 30 14M20 34V18"/><path d="M8 34a12 12 0 0 1 24 0"/>',
+      pend: '<path d="M20 4v26"/><circle cx="20" cy="36" r="6"/><path d="M12 4h16"/>'
+    };
+    const K = Object.keys(S);
+    const spots = [[8, 14], [22, 72], [37, 30], [55, 84], [68, 18], [84, 60], [93, 30], [14, 46], [46, 58], [76, 88], [61, 44], [30, 92]];
+    return `<div class="pk-time" aria-hidden="true">${spots.map(([x, y], i) => `<svg class="tm" viewBox="0 0 40 48" style="left:${x}%;top:${y}%;--d:${18 + (i * 7) % 16}s;--r:${(i % 2 ? 1 : -1) * (8 + i * 3)}deg;--s:${0.8 + (i % 3) * 0.25}" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${S[K[i % K.length]]}</svg>`).join('')}</div>`;
   })();
 
   /* ================================================================ DESKTOP */
