@@ -1,6 +1,6 @@
 /* ==========================================================================
    The web as it was. Every browser here (SurfBoard in 1998, Safari on the
-   2007 phone and the 2009 desktop) sends what was typed through this:
+   2007 phone and the 2006 desktop) sends what was typed through this:
 
    - an address opens the Internet Archive's copy of that site from the
      browser's own year, shown without any archive toolbar; if there is no

@@ -49,9 +49,9 @@ window.POCKET = { start(room, exit) {
     const v = window.RETRO.viewport();
     /* 56 points clear for the buttons on top, 26 at the bottom so a
        browser's toolbar never touches the phone. */
-    const s = Math.min(1.35, (v.h - 82) / 568, (v.w - 24) / 346);
+    const s = Math.min(1.35, (v.h - 82) / 603, (v.w - 24) / 346);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - 568 * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - 603 * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);
@@ -193,7 +193,7 @@ window.POCKET = { start(room, exit) {
       return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(F[Math.floor(Math.random() * F.length)])}”</p><div class="hint">MENU, then Fortune again for another</div>`);
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
-    desk: () => textScreen('Desktop version', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 desktop, the 1998 web or a 2009 desktop.</p><p>Open this page on a computer to try it.</p><p class="m">Or <a href="classic.html">see the classic site</a>.</p>'),
+    desk: () => textScreen('Desktop version', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 desktop, the 1998 web or a 2006 desktop.</p><p>Open this page on a computer to try it.</p><p class="m">Or <a href="classic.html">see the classic site</a>.</p>'),
     settings: () => ({
       type: 'menu', title: 'Settings',
       items: [

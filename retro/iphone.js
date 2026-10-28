@@ -859,7 +859,7 @@ window.IPHONE = { start(room, exit) {
       const digits = String(num).replace(/\D/g, '');
       if (!digits) { alertBox('Enter a Number', 'Type a number on the keypad first.'); return; }
       if (digits === '911') { alertBox('Emergency Calls Unavailable', 'This phone can’t place real calls.'); return; }
-      if (['1983', '1991', '1998', '2009'].includes(digits)) {
+      if (['1983', '1991', '1998', '2006'].includes(digits)) {
         const r = await alertBox('Switch Era', `Dialing ${digits} opens the ${digits} version of this portfolio.`, ['Cancel', 'Go']);
         if (r === 'Go') exit();
         return;

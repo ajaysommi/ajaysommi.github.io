@@ -78,12 +78,12 @@
     .picker, .os-host, .phone-host { transition: filter 1s ease; }
   </style>
 
-  <link rel="stylesheet" href="retro/os.css?v=25" />
-  <link rel="stylesheet" href="retro/osx.css?v=25" />
-  <link rel="stylesheet" href="retro/picker.css?v=25" />
-  <link rel="stylesheet" href="retro/pocket.css?v=25" />
-  <link rel="stylesheet" href="retro/iphone.css?v=25" />
-  <link rel="stylesheet" href="retro/nokia.css?v=25" />
+  <link rel="stylesheet" href="retro/os.css?v=26" />
+  <link rel="stylesheet" href="retro/osx.css?v=26" />
+  <link rel="stylesheet" href="retro/picker.css?v=26" />
+  <link rel="stylesheet" href="retro/pocket.css?v=26" />
+  <link rel="stylesheet" href="retro/iphone.css?v=26" />
+  <link rel="stylesheet" href="retro/nokia.css?v=26" />
 
   <script type="application/ld+json">
   {
@@ -108,8 +108,6 @@
   <div class="boot-ld" id="bootLd" role="progressbar" aria-label="Loading the portfolio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
     <div class="in">
       <svg viewBox="0 0 16 16" aria-hidden="true"></svg>
-      <div class="bar" aria-hidden="true"></div>
-      <div class="txt">LOADING<span class="blink">_</span></div>
     </div>
   </div>
   <script>
@@ -136,7 +134,6 @@
       ];
       var el = document.getElementById('bootLd');
       var svg = el.querySelector('svg');
-      var bar = el.querySelector('.bar');
       var txt = el.querySelector('.txt');
       var C = { '#': '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
       var cells = [];
@@ -153,8 +150,6 @@
       /* Pixels arrive in a shuffled order, but roughly top to bottom, the
          way a picture came down a slow line. */
       cells.sort(function (a, b) { return (+a.getAttribute('y') + Math.random() * 6) - (+b.getAttribute('y') + Math.random() * 6); });
-      for (var i = 0; i < 20; i++) bar.appendChild(document.createElement('i'));
-      var segs = bar.children;
 
       var mode = document.documentElement.dataset.mode;
       var imgs = ['assets/images/opt/hero-480.webp'];
@@ -178,10 +173,7 @@
         if (target - shown < 0.004) shown = target;
         var n = Math.round(shown * cells.length);
         for (var k = 0; k < cells.length; k++) cells[k].classList.toggle('on', k < n);
-        var s = Math.round(shown * segs.length);
-        for (var j = 0; j < segs.length; j++) segs[j].classList.toggle('on', j < s);
         el.setAttribute('aria-valuenow', Math.round(shown * 100));
-        txt.innerHTML = shown >= 1 ? 'READY' : 'LOADING ' + Math.round(shown * 100) + '%<span class="blink">_</span>';
         if (shown >= 1 && !finished) {
           finished = true;
           setTimeout(function () {
@@ -237,19 +229,20 @@
 
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
-  <script src="retro/content.js?v=25"></script>
-  <script src="retro/sound.js?v=25"></script>
-  <script src="retro/icons.js?v=25"></script>
-  <script src="retro/eggs.js?v=25"></script>
-  <script src="retro/oldweb.js?v=25"></script>
-  <script src="retro/term.js?v=25"></script>
-  <script src="retro/finder.js?v=25"></script>
-  <script src="retro/web.js?v=25"></script>
-  <script src="retro/osx.js?v=25"></script>
-  <script src="retro/pocket.js?v=25"></script>
-  <script src="retro/iphone.js?v=25"></script>
-  <script src="retro/nokia.js?v=25"></script>
-  <script src="retro/boot.js?v=25"></script>
+  <script src="retro/content.js?v=26"></script>
+  <script src="retro/sound.js?v=26"></script>
+  <script src="retro/icons.js?v=26"></script>
+  <script src="retro/eggs.js?v=26"></script>
+  <script src="retro/oldweb.js?v=26"></script>
+  <script src="retro/term.js?v=26"></script>
+  <script src="retro/finder.js?v=26"></script>
+  <script src="retro/web.js?v=26"></script>
+  <script src="retro/osx.js?v=26"></script>
+  <script src="retro/pocket.js?v=26"></script>
+  <script src="retro/iphone.js?v=26"></script>
+  <script src="retro/nokia.js?v=26"></script>
+  <script src="retro/shapes.js?v=26"></script>
+  <script src="retro/boot.js?v=26"></script>
 
 </body>
 </html>

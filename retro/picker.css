@@ -201,13 +201,13 @@
 .bz-mid .aj-mark { width: 4.2vh; height: 4.2vh; }
 .bz-cd { width: 22vw; max-width: 300px; height: 1.6vh; border-radius: 1vh; background: linear-gradient(180deg, #2c9cb6, #7fd8e8); box-shadow: inset 0 1px 3px rgba(0,0,0,.45), 0 1px 0 #fff; }
 
-/* 2009: black glass edge to edge, a thin aluminium rim, the aluminium chin
+/* 2006: black glass edge to edge, a thin aluminium rim, the aluminium chin
    with a black AJ. */
-.os-host[data-era="2009"] { --bg: radial-gradient(90% 80% at 50% 35%, #3a3f48, #0d0f12 85%); --mat: linear-gradient(180deg, #dfe2e5 0%, #c9cdd1 100%); --frame: #070708; --frame-sh: inset 0 0 0 1px rgba(255,255,255,.08); --st: 30px; --sx: 26px; --sb: 13vh; --fw: 22px; --sr: 0px; }
-.os-host[data-era="2009"] .bz-body { border-radius: 20px; }
-.os-host[data-era="2009"] .bz-chin { justify-content: center; height: calc(var(--sb) - var(--fw)); top: auto; }
-.os-host[data-era="2009"] .bz-badge { width: 4.6vh; height: 4.6vh; color: #1a1a1c; }
-.os-host[data-era="2009"] .bz-frame { top: -60px; left: calc(var(--side) + 3px); right: calc(var(--side) + 3px); border-radius: 0; background: linear-gradient(180deg, #121214, #050506); }
+.os-host[data-era="2006"] { --bg: radial-gradient(90% 80% at 50% 35%, #3a3f48, #0d0f12 85%); --mat: linear-gradient(180deg, #dfe2e5 0%, #c9cdd1 100%); --frame: #070708; --frame-sh: inset 0 0 0 1px rgba(255,255,255,.08); --st: 30px; --sx: 26px; --sb: 13vh; --fw: 22px; --sr: 0px; }
+.os-host[data-era="2006"] .bz-body { border-radius: 20px; }
+.os-host[data-era="2006"] .bz-chin { justify-content: center; height: calc(var(--sb) - var(--fw)); top: auto; }
+.os-host[data-era="2006"] .bz-badge { width: 4.6vh; height: 4.6vh; color: #1a1a1c; }
+.os-host[data-era="2006"] .bz-frame { top: -60px; left: calc(var(--side) + 3px); right: calc(var(--side) + 3px); border-radius: 0; background: linear-gradient(180deg, #121214, #050506); }
 
 /* The music player's room, in the colour chosen in its Settings. */
 .phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(90% 60% at 50% 32%, #eef5fc, #c3d6ee 82%); }
@@ -259,8 +259,8 @@
 .bz-dev { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: drop-shadow(0 30px 60px rgba(0,0,0,.55)); }
 .bz-dev img { display: block; width: 100%; height: 100%; -webkit-user-drag: none; }
 .bz-aj { position: absolute; display: block; }
-.os-host.is-photo[data-era="2009"] .bz-aj { color: #141416; }
-.os-host.is-photo[data-era="2009"] { --bg: radial-gradient(70% 60% at 50% 40%, #3a2d5a, #120d22 75%), #0d0a18; }
+.os-host.is-photo[data-era="2006"] .bz-aj { color: #141416; }
+.os-host.is-photo[data-era="2006"] { --bg: radial-gradient(70% 60% at 50% 40%, #3a2d5a, #120d22 75%), #0d0a18; }
 
 /* Era backdrops behind the photographed machines. */
 .os-host.is-photo[data-era="1991"] { --bg: radial-gradient(60% 55% at 50% 45%, rgba(255,255,255,.55), transparent 70%), repeating-conic-gradient(#d8d4c9 0 25%, #cfcabd 0 50%) 0 0 / 4px 4px; }
@@ -274,3 +274,66 @@
 .mp-card:not(.is-sel) { opacity: .75; }
 .mp-card.is-sel { background: #303033; }
 .picker .sm-status { position: absolute; top: 14px; right: 130px; left: auto; z-index: 2; }
+
+/* ==========================================================================
+   Shapes, the morph into a machine, era rooms and their buttons.
+   ========================================================================== */
+.bg-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bg-shapes svg { position: absolute; transform: translate(-50%, -50%) rotate(var(--rot)); animation: shp-float var(--d) ease-in-out var(--dl) infinite alternate; }
+@keyframes shp-float { to { transform: translate(-50%, calc(-50% - 12px)) rotate(calc(var(--rot) + 10deg)); } }
+.reduced .bg-shapes svg { animation: none; }
+.picker > .bg-shapes { opacity: 0; animation: pk-time-in 2s ease .2s forwards; }
+.shape-burst { position: fixed; inset: 0; z-index: 8600; pointer-events: none; overflow: hidden; }
+.shape-burst i { position: absolute; display: block; }
+.shape-burst svg { width: 100%; height: 100%; display: block; }
+
+/* Picker tiles show the machines' photographs. */
+.pk-art img { width: 146px; height: 146px; object-fit: contain; filter: drop-shadow(0 12px 16px rgba(0,0,0,.6)); -webkit-user-drag: none; }
+.mp-art img { height: 100%; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 12px 18px rgba(0,0,0,.55)); }
+
+/* The flight from tile to machine. */
+.pk-fly { position: fixed; z-index: 8700; transform-origin: 0 0; pointer-events: none; margin: 0; object-fit: contain; }
+.picker.is-leaving { transition: opacity .45s ease; opacity: 0; pointer-events: none; }
+.os-host.is-morph .bz, .os-host.is-morph .os-screen { opacity: 0; }
+.os-host .bz, .os-host .os-screen { transition: opacity .3s ease; }
+.os-host .dk-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.os-host .bz { z-index: 0; }
+.os-host .os-screen { z-index: 1; }
+
+/* Era rooms on the desktop: light for the pale machines, dark for 1983. */
+.os-host[data-era="1983"] { --bg: radial-gradient(70% 60% at 50% 45%, rgba(60,200,90,.14), transparent 70%), radial-gradient(90% 80% at 50% 40%, #16221a, #060906 85%); }
+.os-host.is-photo[data-era="1991"] { --bg: radial-gradient(80% 70% at 50% 35%, #f6f1e4, #ddd3bb 85%); }
+.os-host.is-photo[data-era="1998"] { --bg: radial-gradient(80% 70% at 50% 35%, #f1fbfd, #a9dde6 88%); }
+.os-host.is-photo[data-era="2006"] { --bg: radial-gradient(80% 70% at 50% 35%, #fbfcfd, #cfd8e4 88%); }
+.os-host.is-photo[data-era="2006"] .bz-aj { color: #c7cacf; filter: drop-shadow(0 1px 0 rgba(255,255,255,.8)) drop-shadow(0 -1px 0 rgba(0,0,0,.08)); }
+.os-host.is-photo .bz-dev { filter: drop-shadow(0 30px 50px rgba(40,40,60,.35)); }
+/* 1983, drawn, sized like the others: room above, running off the bottom. */
+.os-host[data-era="1983"] { --side: 10vw; --st: calc(14vh + 22px); --sb: 10vh; }
+.os-host[data-era="1983"] .bz-body { top: 14vh; bottom: -60px; }
+.os-host[data-era="1983"] .bz-frame { top: calc(14vh + 12px); }
+.os-host[data-era="1983"]::after { top: var(--st); }
+
+/* The bar over a machine. */
+.dk-bar { position: fixed; left: 0; right: 0; top: 0; z-index: 7000; display: flex; align-items: center; gap: 10px; padding: 16px 20px; pointer-events: none; }
+.dk-bar[hidden] { display: none; }
+.dk-bar span { flex: 1; }
+.dk-chip { pointer-events: auto; border: 1px solid var(--chip-bd, rgba(255,255,255,.25)); border-radius: 999px; padding: 8px 16px; font: 14px var(--pixel); color: var(--chip-fg, #eee); background: var(--chip-bg, rgba(20,18,16,.7)); text-decoration: none; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.dk-chip:hover { filter: brightness(1.06); }
+[data-era="1983"] .dk-chip { --chip-bg: rgba(8,26,10,.82); --chip-fg: #8dff98; --chip-bd: rgba(92,255,107,.35); }
+[data-era="1991"] .dk-chip { --chip-bg: #f6f1e4; --chip-fg: #3c372b; --chip-bd: #b8ad92; }
+[data-era="1998"] .dk-chip { --chip-bg: rgba(255,255,255,.88); --chip-fg: #0b5b6e; --chip-bd: #59bfd1; }
+[data-era="2006"] .dk-chip { --chip-bg: linear-gradient(180deg, #ffffff, #e6ebf2); --chip-fg: #2c3e57; --chip-bd: #a7b6c9; }
+
+/* Phones: their rooms' gradients (the shapes are their own layer now),
+   the handset above the shapes, and buttons in the phone's colours. */
+.phone-host .nk-room { background: radial-gradient(90% 60% at 50% 32%, #c9d4e7, #8d9dbd 82%); }
+.phone-host .pocket-room { background: radial-gradient(90% 60% at 50% 32%, #f6f3fa, #d6cfe3 82%); }
+.phone-host .iphone-room { background: radial-gradient(90% 60% at 50% 32%, #7c7d82, #46474c 80%); }
+.nk-scale, .pk-scale, .ip-scale { position: relative; z-index: 1; }
+.is-mobile .snd-toggle span { display: none; }
+.is-mobile .snd-toggle { padding: 10px 12px; }
+.mp-site { position: fixed; top: calc(env(safe-area-inset-top) + 8px); right: calc(max(10px, env(safe-area-inset-right)) + 54px); z-index: 7000; border-radius: 999px; padding: 10px 14px; font: 15px var(--pixel); color: #eee; text-decoration: none; background: rgba(20,18,16,.78); box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.mp-site[hidden] { display: none; }
+[data-phone="nokia"] .mp-back, [data-phone="nokia"] .mp-site, [data-phone="nokia"] .snd-toggle { background: rgba(31,45,85,.88); color: #e6ecf7; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(20,30,60,.3); }
+[data-phone="pocket"] .mp-back, [data-phone="pocket"] .mp-site, [data-phone="pocket"] .snd-toggle { background: rgba(255,255,255,.9); color: #3b3352; box-shadow: 0 0 0 1px #c5bcd9, 0 4px 12px rgba(60,50,90,.15); }
+[data-phone="iphone"] .mp-back, [data-phone="iphone"] .mp-site, [data-phone="iphone"] .snd-toggle { background: rgba(28,28,30,.82); color: #f2f2f2; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.3); }

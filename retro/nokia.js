@@ -12,9 +12,9 @@ window.NOKIA = { start(room, exit) {
 
   /* The handset is a photograph of the real one, rebadged; the screen and
      every key sit over their places in it. Positions are in the photo's
-     own points (it is drawn at 357 by 765). */
+     own points (it is drawn at 369.6 by 680.8). */
   const BODY = 'assets/images/sommia-3310.webp';
-  const AT = { 1: [63, 501, 57, 34], 2: [156, 516, 63, 30], 3: [254, 501, 58, 34], 4: [67, 555, 57, 34], 5: [156, 570, 63, 31], 6: [251, 555, 58, 35], 7: [70, 609, 58, 35], 8: [156, 625, 63, 30], 9: [247, 610, 58, 34], '*': [74, 664, 57, 34], 0: [156, 680, 63, 30], '#': [244, 665, 58, 33] };
+  const AT = { 1: [76.8, 430, 50.4, 31.2], 2: [157.2, 443.2, 55.2, 26.4], 3: [241.2, 430, 51.6, 31.2], 4: [80.4, 476.8, 50.4, 31.2], 5: [157.2, 488.8, 55.2, 27.6], 6: [238.8, 476.8, 50.4, 31.2], 7: [82.8, 523.6, 50.4, 31.2], 8: [157.2, 536.8, 55.2, 27.6], 9: [236.4, 523.6, 50.4, 32.4], '*': [86.4, 571.6, 50.4, 30], 0: [158.4, 583.6, 52.8, 27.6], '#': [232.8, 571.6, 50.4, 30] };
   const KEYS = [['1', ''], ['2', 'abc'], ['3', 'def'], ['4', 'ghi'], ['5', 'jkl'], ['6', 'mno'], ['7', 'pqrs'], ['8', 'tuv'], ['9', 'wxyz'], ['*', '+'], ['0', '␣'], ['#', '⇧']];
 
   room.innerHTML = `
@@ -43,9 +43,9 @@ window.NOKIA = { start(room, exit) {
     const v = window.RETRO.viewport();
     /* 56 points clear for the buttons on top, 26 at the bottom so a
        browser's toolbar never touches the phone. */
-    const s = Math.min(1.2, (v.h - 82) / 775, (v.w - 24) / 367);
+    const s = Math.min(1.2, (v.h - 82) / 690, (v.w - 24) / 380);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - 775 * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - 690 * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);

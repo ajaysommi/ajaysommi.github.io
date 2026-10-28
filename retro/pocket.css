@@ -261,3 +261,14 @@
 .lcd-story .ph { display: block; padding: 6px 8px 4px; }
 .lcd-story .ph img { display: block; width: 100%; max-height: none; height: auto; }
 .lcd-story .cp { max-height: none; overflow: visible; }
+
+/* The newer photograph (947 by 1661, drawn at 0.36). */
+.pk.is-photo { width: 340.9px; height: 598px; }
+.pk.is-photo .pk-lcd-frame { left: 60.5px; top: 54.4px; width: 216px; height: 176px; }
+.pk.is-photo .pk-btns button { top: 258px; width: 60px; height: 60px; margin-left: -30px; }
+.pk.is-photo .pk-btns [data-b="prev"] { left: 58.7px; }
+.pk.is-photo .pk-btns [data-b="menu"] { left: 132.1px; }
+.pk.is-photo .pk-btns [data-b="play"] { left: 206.3px; }
+.pk.is-photo .pk-btns [data-b="next"] { left: 278.6px; }
+.pk.is-photo .pk-wheel-wrap { left: 62px; top: 330.5px; width: 215.3px; height: 215.3px; }
+.pk.is-photo .pk-hub { width: 74px; height: 74px; margin: -37px 0 0 -37px; }
