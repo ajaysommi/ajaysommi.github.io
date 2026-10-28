@@ -572,12 +572,26 @@ window.OSX = (function () {
     dockEl.querySelectorAll('.dk-i').forEach((d) => { d.style.width = base + 'px'; });
   };
   /* The dock swells under the pointer, falling off with distance. */
+  /* Centres are measured once with the dock at rest (in the dock's own
+     coordinates, so scaling the page doesn't matter), and every change is
+     written in one frame: nothing is read while widths change. */
+  let rest = null, want = null, raf = 0;
   const magnify = (x) => {
-    dockEl.querySelectorAll('.dk-i').forEach((d) => {
-      const r = d.getBoundingClientRect();
-      const dist = Math.abs(x - (r.left + r.width / 2));
-      const s = x == null ? 1 : 1 + 0.75 * Math.max(0, 1 - dist / (base * 3));
-      d.style.width = base * s + 'px';
+    want = x;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const items = [...dockEl.querySelectorAll('.dk-i')];
+      if (want == null) { items.forEach((d) => { d.style.width = base + 'px'; }); rest = null; return; }
+      if (!rest) {
+        const r0 = dockEl.getBoundingClientRect(), k = r0.width / dockEl.offsetWidth || 1;
+        rest = { left: r0.left, k, c: items.map((d) => d.offsetLeft + d.offsetWidth / 2) };
+      }
+      const px = (want - rest.left) / rest.k;
+      items.forEach((d, i) => {
+        const dist = Math.abs(px - rest.c[i]);
+        d.style.width = base * (1 + 0.75 * Math.max(0, 1 - dist / (base * 3))) + 'px';
+      });
     });
   };
   const markRunning = () => {

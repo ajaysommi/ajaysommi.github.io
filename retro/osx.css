@@ -450,3 +450,9 @@
 .is-chat .ox-body { overflow: hidden; }
 .ch-people button .ch-tx em { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #8a8f96; font-size: 11.5px; }
 .ch-people button.on .ch-tx em { color: #59606a; }
+
+/* The dock, lighter to draw: no live reflection, no width transition. */
+.dk-ic { -webkit-box-reflect: none; }
+.dk-i { transition: none; }
+.dk-ic .sl-ic, .dk-ic svg { filter: none; }
+.ox-dock { will-change: contents; }

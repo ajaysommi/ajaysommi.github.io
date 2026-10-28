@@ -41,7 +41,7 @@
 
   /* Behind both pickers: small filled shapes from every era, with
      hourglasses and clocks among them, shaded in softly. */
-  const TIMEART = (mobile) => window.SHAPES.layer('time', mobile ? { count: 34, opacity: 0.13, size: [22, 44], seed: 11 } : { count: 56, opacity: 0.07, size: [26, 58], seed: 5 });
+  const TIMEART = (mobile) => window.SHAPES.layer('time', mobile ? { count: 36, opacity: 0.055, size: [22, 42], seed: 11 } : { count: 60, opacity: 0.032, size: [26, 56], seed: 5 });
 
   /* The morph between a tile's drawing and the real machine. The drawing
      and the photograph fly the same path together: the drawing grows into
@@ -55,12 +55,12 @@
     const n = node.cloneNode(true);
     n.removeAttribute('id');
     n.classList.add('pk-fly');
-    n.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${z}`;
+    n.style.cssText += `;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${z}`;
     document.body.appendChild(n);
     return n;
   };
   const go = (n, a, b, dur) => n.animate([{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${b.width / a.width})` }], { duration: dur, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' }).finished;
-  const flight = async ({ glyph, glyphBox, photo, photoW, photoH, device, back = false, dur = 820 }) => {
+  const flight = async ({ glyph, glyphBox, photo, photoW, photoH, glass, device, back = false, dur = 820 }) => {
     const sq = Math.max(device.width, device.height);
     const gBig = { left: center(device).x - sq / 2, top: center(device).y - sq / 2, width: sq, height: sq };
     const pSmall = photo ? fit(glyphBox, photoW, photoH) : null;
@@ -74,15 +74,17 @@
     }
     if (photo) {
       const [p0, p1] = back ? [device, pSmall] : [pSmall, device];
-      const im = document.createElement('img');
-      im.src = photo; im.alt = '';
+      /* The photograph, with its screen blacked out as the real one is. */
+      const im = document.createElement('div');
+      im.style.background = `url("${photo}") 0 0 / 100% 100% no-repeat`;
+      if (glass) im.innerHTML = `<i style="position:absolute;left:${glass[0] / photoW * 100}%;top:${glass[1] / photoH * 100}%;width:${glass[2] / photoW * 100}%;height:${glass[3] / photoH * 100}%;background:${glass[5] || '#050506'};border-radius:${glass[4] / photoW * 100}% / ${glass[4] / photoH * 100}%"></i>`;
       const q = clone(im, p0, 8711);
       jobs.push(go(q, p0, p1, dur).then(() => q));
       q.animate(back ? [{ opacity: 1, filter: 'blur(0)' }, { opacity: 1, filter: 'blur(0)', offset: .3 }, { opacity: 0, filter: 'blur(6px)', offset: .65 }, { opacity: 0 }]
         : [{ opacity: 0, filter: 'blur(6px) brightness(1.4)' }, { opacity: 0, offset: .3 }, { opacity: 1, filter: 'blur(0) brightness(1)', offset: .72 }, { opacity: 1, filter: 'blur(0) brightness(1)' }], { duration: dur, fill: 'forwards' });
     }
     const out = await Promise.all(jobs);
-    return out.find((x) => x && x.tagName === 'IMG') || null;
+    return out.find((x) => x && x.nodeType === 1) || null;
   };
   /* Arriving from another timeline: a flash and a ring of light thrown out
      from the machine's middle. */
@@ -146,7 +148,7 @@
         <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.year}</span><b>${esc(e.name)}</b><span class="pk-n">${esc(e.note)}</span></button>`).join('')}</div>
         <p class="pk-foot">Click one to start it up · or use ← → and Return</p>
       </div>
-      <p class="pk-copy">${I.mark(12)}<span>\u00a9 ${new Date().getFullYear()} Ajay Sommi</span></p>`;
+      <p class="pk-copy">${I.mark(18)}<span>\u00a9 ${new Date().getFullYear()} Ajay Sommi</span></p>`;
     const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
     tick(); setInterval(tick, 15000);
     const disks = [...pick.querySelectorAll('.pk-d')];
@@ -219,7 +221,7 @@
        none below, where it runs off the bottom edge. */
     const place = (ph) => {
       const [vx, vy, vw, vh] = ph.view;
-      const k = Math.min((innerHeight * 0.9) / vh, (innerWidth * 0.85) / vw);
+      const k = Math.min((innerHeight * 0.935) / vh, (innerWidth * 0.9) / vw);
       return { k, ox: (innerWidth - vw * k) / 2 - vx * k, oy: innerHeight - vh * k - vy * k };
     };
     const layout = () => {
@@ -244,6 +246,15 @@
         const [ax, ay, as, mono] = photo.aj;
         bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${photo.glass[4]}px"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
         host.classList.add('is-photo');
+        host.classList.remove('is-dark');
+        /* The Bondi iMac's power button switches the picture tube off and on. */
+        if (y === '1998') {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'bz-power'; b.setAttribute('aria-label', 'Display power');
+          b.style.cssText = 'left:1003px;top:948px;width:44px;height:44px';
+          b.addEventListener('click', () => { SFX.click(); host.classList.toggle('is-dark'); });
+          bezel.querySelector('.bz-dev').appendChild(b);
+        }
         layout();
         return;
       }
@@ -290,7 +301,7 @@
         art.style.visibility = 'hidden';
         pick.classList.add('is-leaving');
         const ph = PHOTO[y];
-        const land = await flight({ glyph: art, glyphBox: from, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, device: deviceBox(y) });
+        const land = await flight({ glyph: art, glyphBox: from, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: deviceBox(y) });
         pick.hidden = true;
         pick.classList.remove('is-leaving');
         art.style.visibility = '';
@@ -326,7 +337,7 @@
         const to = art.getBoundingClientRect();
         art.style.visibility = 'hidden';
         const ph = PHOTO[y];
-        const left = flight({ glyph: art, glyphBox: to, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, device: dev, back: true, dur: 720 });
+        const left = flight({ glyph: art, glyphBox: to, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: dev, back: true, dur: 720 });
         setTimeout(() => { screens[prev].hidden = true; dress(-1); }, 60);
         const land = await left;
         if (land) land.remove();
@@ -352,7 +363,7 @@
     READY.then(() => {
       const want = ERAS.findIndex((e) => '#' + e.year === location.hash);
       if (want >= 0) launch(want);
-      else { pick.hidden = false; disks[sel].focus({ preventScroll: true }); setTimeout(() => window.SHAPES.arrive(pick.querySelector('.bg-shapes'), innerWidth / 2, innerHeight * 0.3, { stagger: 1400 }), 250); }
+      else { pick.hidden = false; disks[sel].focus({ preventScroll: true }); }
       window.SHAPES.follow(pick.querySelector('.bg-shapes'));
     });
     pick.hidden = location.hash.length > 1;
@@ -384,8 +395,7 @@
     pick.innerHTML = TIMEART(true) + `
       <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a device from its year.</p></div>
       <div class="mp-rail" role="listbox" aria-label="Eras">${PICKS.map((p, i) => `<button type="button" class="mp-card${p.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><span class="mp-y">${p.year}</span><b>${esc(p.name)}</b><span class="mp-n">${esc(p.note)}</span><span class="mp-on">${p.href ? 'Open' : 'Power on'}</span></button>`).join('')}</div>
-      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>
-      <p class="pk-copy">${I.mark(12)}<span>\u00a9 ${new Date().getFullYear()} Ajay Sommi</span></p>`;
+      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>`;
     const rail = pick.querySelector('.mp-rail');
     const cards = [...pick.querySelectorAll('.mp-card')];
     const dots = [...pick.querySelectorAll('.mp-dots i')];
@@ -430,7 +440,7 @@
 
     /* The tile's drawing becomes the phone (and back), by the same flight
        as the computers, its photograph sharpening in mid-air. */
-    const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702], pocket: ['assets/images/isommi-classic.webp', 947, 1661], iphone: ['retro/dev/iphone-2g.webp', 795, 1508] };
+    const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702, [232, 452, 470, 342, 40, '#a9c262']], pocket: ['assets/images/isommi-classic.webp', 947, 1661, [168, 151, 600, 489, 6, '#b3c0da']], iphone: ['retro/dev/iphone-2g.webp', 795, 1508, [68, 262, 661, 991, 0, '#000']] };
     const parts = (id) => {
       const room = rooms[id], card = cards[PICKS.findIndex((x) => x.id === id)];
       const dev = room.querySelector('.nk, .pk, .ip'), box = room.querySelector('.nk-scale, .pk-scale, .ip-scale');
@@ -438,23 +448,25 @@
       return { room, dev, box, shot, art: card && card.querySelector('.mp-art svg') };
     };
     const morph = async (id) => {
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       const { room, dev, box, shot, art } = parts(id);
       const layer = room.querySelector('.bg-shapes');
       if (!art || !dev) return;
-      const from = art.getBoundingClientRect(), to = dev.getBoundingClientRect();
+      const from = art.getBoundingClientRect(), to = box.getBoundingClientRect();
       art.style.visibility = 'hidden';
       box.style.opacity = '0';
       if (layer) layer.style.visibility = 'hidden';
       pick.classList.add('is-leaving');
-      const land = await flight({ glyph: art, glyphBox: from, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], device: to, dur: 760 });
+      const land = await flight({ glyph: art, glyphBox: from, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: to, dur: 760 });
+      box.style.transition = 'opacity .3s ease';
       box.style.opacity = '';
+      setTimeout(() => { box.style.transition = ''; }, 320);
       art.style.visibility = '';
       if (layer) layer.style.visibility = '';
       const c = { x: to.left + to.width / 2, y: to.top + to.height / 2 };
       arrival(to, id === 'nokia' ? '#cfe0ff' : '#ffffff');
       window.SHAPES.arrive(layer, c.x, c.y);
-      if (land) land.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: 'forwards' }).finished.then(() => land.remove());
+      if (land) land.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => land.remove());
     };
 
     async function launch(id) {
@@ -466,7 +478,7 @@
         cur = id;
         if (!rooms[id]) {
           const r = document.createElement('div');
-          r.className = p.cls + ' phone-room';
+          r.className = p.cls + ' phone-room' + (pick.hidden ? '' : ' no-intro');
           host.appendChild(r);
           rooms[id] = r;
           p.mod().start(r, () => showPicker());
@@ -505,11 +517,11 @@
         center(sel, false);
         markDots();
         const { dev, box, shot, art } = parts(id);
-        const to = art.getBoundingClientRect(), from = dev.getBoundingClientRect();
+        const to = art.getBoundingClientRect(), from = box.getBoundingClientRect();
         art.style.visibility = 'hidden';
         box.style.opacity = '0';
         pick.classList.add('is-returning');
-        const left = flight({ glyph: art, glyphBox: to, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], device: from, back: true, dur: 680 });
+        const left = flight({ glyph: art, glyphBox: to, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: from, back: true, dur: 680 });
         setTimeout(done, 60);
         const land = await left;
         if (land) land.remove();
@@ -526,7 +538,7 @@
     READY.then(() => {
       const want = PHONES.find((p) => '#' + p.id === location.hash);
       if (want) launch(want.id);
-      else { pick.hidden = false; center(sel, false); markDots(); setTimeout(() => window.SHAPES.arrive(pick.querySelector('.bg-shapes'), innerWidth / 2, innerHeight * 0.2, { stagger: 1400 }), 250); }
+      else { pick.hidden = false; center(sel, false); markDots(); }
     });
     pick.hidden = PHONES.some((p) => '#' + p.id === location.hash);
     requestAnimationFrame(() => { center(sel, false); markDots(); });
@@ -539,7 +551,7 @@
   let rz = 0;
   addEventListener('resize', () => {
     clearTimeout(rz);
-    rz = setTimeout(() => { if (root.dataset.forced !== '1' && want() !== MODE) location.reload(); }, 250);
+    rz = setTimeout(() => { if (MODE === 'mobile' && matchMedia('(pointer: coarse)').matches) return; if (root.dataset.forced !== '1' && want() !== MODE) location.reload(); }, 250);
   });
 
   if (MODE === 'mobile') phones(); else desk();

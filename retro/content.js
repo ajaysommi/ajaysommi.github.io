@@ -333,6 +333,8 @@ window.RETRO = (function () {
       probe.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100svh;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box';
       document.body.appendChild(probe);
     }
+    /* Turned sideways, the page is drawn upright across the long side. */
+    if (turned()) { const vv = window.visualViewport; return { w: vv ? vv.height : innerHeight, h: vv ? vv.width : innerWidth, top: 0 }; }
     const cs = getComputedStyle(probe);
     const h = Math.min(probe.offsetHeight || innerHeight, window.visualViewport ? visualViewport.height : innerHeight) - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     const w = (window.visualViewport ? visualViewport.width : innerWidth) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
@@ -342,8 +344,24 @@ window.RETRO = (function () {
   /* Follow the visible viewport as browser bars come and go: the phone
      host is sized to it, and anything that fits itself listens for
      retro-fit. */
+  /* A phone turned on its side stays upright: the whole page is rotated
+     back a quarter turn against the turn, so nothing reflows into a
+     landscape (or desktop) layout. */
+  const turned = () => document.documentElement.classList.contains('is-turned');
   const sync = () => {
-    const vv = window.visualViewport, r = document.documentElement.style;
+    const vv = window.visualViewport, root = document.documentElement, r = root.style;
+    const W = vv ? vv.width : innerWidth, H = vv ? vv.height : innerHeight;
+    const side = root.dataset.mode === 'mobile' && matchMedia('(pointer: coarse)').matches && W > H;
+    root.classList.toggle('is-turned', side);
+    if (side) {
+      const a = screen.orientation ? screen.orientation.angle : (window.orientation || 90);
+      root.dataset.turn = a === 270 || a === -90 ? 'r' : 'l';
+      r.setProperty('--tw', H + 'px'); r.setProperty('--th', W + 'px');
+      r.setProperty('--vvh', W + 'px'); r.setProperty('--vvt', '0px');
+      dispatchEvent(new Event('retro-fit'));
+      return;
+    }
+    r.setProperty('--tw', W + 'px'); r.setProperty('--th', H + 'px');
     r.setProperty('--vvh', (vv ? vv.height : innerHeight) + 'px');
     r.setProperty('--vvt', (vv ? Math.max(0, vv.offsetTop) : 0) + 'px');
     dispatchEvent(new Event('retro-fit'));

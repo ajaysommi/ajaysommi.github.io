@@ -591,3 +591,19 @@ img { display: block; max-width: 100%; }
 .dial .steps div { opacity: .35; }
 .dial .steps div.on { opacity: 1; }
 .dial .steps div.on::before { content: '\25B8 '; }
+
+/* 1998: a desktop under the browser, the jellyfish picture behind it all,
+   icons down the right, and the browser as a window that closes or rolls
+   up to its title bar. */
+.nt { background: #1f8f99 url(../assets/images/jelly-wallpaper.webp) center / cover no-repeat; }
+.nt .br { position: relative; z-index: 2; margin: 12px 96px 12px 12px; }
+.nt .br.is-shaded { flex: none; }
+.nt .br.is-shaded > :not(.br-title) { display: none; }
+.nt .br.is-closed { display: none; }
+.nt .br-title .tb { padding: 0; cursor: pointer; }
+.nt-desk { position: absolute; top: 34px; right: 6px; bottom: 6px; width: 84px; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.nt-ico { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 84px; border: 0; background: none; padding: 3px 0; cursor: default; }
+.nt-ico span { display: grid; place-items: center; width: 34px; height: 34px; }
+.nt-ico svg { image-rendering: pixelated; }
+.nt-ico b { font: 11px/1.2 var(--pixel); font-weight: normal; color: #fff; background: rgba(0,0,0,.35); padding: 0 3px; text-shadow: 0 1px 0 #000; }
+.nt-ico.on b { background: #000; }

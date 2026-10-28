@@ -67,18 +67,19 @@ window.SHAPES = (function () {
   const rnd = (seed) => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   const svg = (k, attrs) => `<svg viewBox="0 0 40 40" ${attrs}><path d="${P[k]}" fill="currentColor" fill-rule="evenodd"/></svg>`;
 
-  /* Spread by a Halton sequence (bases 2 and 3), which fills the area
-     evenly without lining up, nudged a little at random. Each one turns
-     and floats on its own clock, and sits at its own depth for the cursor. */
-  const halton = (i, b) => { let f = 1, r = 0; while (i > 0) { f /= b; r += f * (i % b); i = Math.floor(i / b); } return r; };
-  const layer = (set, { count = 30, color = '#fff', opacity = 0.08, size = [26, 54], seed = 7 } = {}) => {
-    const r = rnd(seed), keys = SETS[set] || SETS.time, off = Math.floor(r() * 40);
-    let out = '';
-    for (let i = 0; i < count; i++) {
-      const x = 3 + (halton(i + off + 1, 2) * 94 + (r() - 0.5) * 3), y = 3 + (halton(i + off + 1, 3) * 94 + (r() - 0.5) * 3);
+  /* One shape to every cell of a grid shaped like the screen, placed
+     somewhere in the middle of its cell: every part of the screen gets its
+     share, and nothing lines up. Each turns and floats on its own clock,
+     and sits at its own depth for the cursor. */
+  const layer = (set, { count = 30, color = '#fff', opacity = 0.08, size = [26, 54], seed = 7, aspect = innerWidth / Math.max(1, innerHeight) } = {}) => {
+    const r = rnd(seed), keys = SETS[set] || SETS.time;
+    const cols = Math.max(2, Math.round(Math.sqrt(count * aspect))), rows = Math.max(2, Math.round(count / cols));
+    let out = '', i = 0;
+    for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++, i++) {
+      const x = ((col + 0.25 + r() * 0.5) / cols) * 100, y = ((row + 0.25 + r() * 0.5) / rows) * 100;
       const s = size[0] + r() * (size[1] - size[0]), rot = Math.round(r() * 60 - 30);
-      const o = (opacity * (0.6 + r() * 0.7)).toFixed(3);
-      out += svg(keys[Math.floor(r() * keys.length)], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
+      const o = (opacity * (0.7 + r() * 0.5)).toFixed(3);
+      out += svg(keys[(i * 5 + Math.floor(r() * 3)) % keys.length], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
     }
     return `<div class="bg-shapes" aria-hidden="true" style="color:${color}">${out}</div>`;
   };
@@ -93,11 +94,10 @@ window.SHAPES = (function () {
       const dx = x - (b.left + b.width / 2), dy = y - (b.top + b.height / 2);
       const o = +s.style.opacity || 0.1;
       s.animate([
-        { translate: `${dx}px ${dy}px`, scale: '0.2', opacity: 0 },
-        { opacity: Math.min(1, o * 3), offset: 0.55 },
-        { translate: '0 0', scale: '1.18', opacity: o, offset: 0.82 },
+        { translate: `${dx}px ${dy}px`, scale: '0.3', opacity: 0 },
+        { opacity: Math.min(1, o * 2), offset: 0.25 },
         { translate: '0 0', scale: '1', opacity: o }
-      ], { duration: 700 + Math.random() * 300, delay: Math.random() * stagger, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'backwards' });
+      ], { duration: 1500 + Math.random() * 700, delay: Math.random() * stagger, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
     });
     void box;
   };

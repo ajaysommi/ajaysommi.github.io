@@ -308,8 +308,9 @@ window.WEB = (function () {
         ${MENUS.map(([k, l]) => `<button type="button" class="m" data-m="${k}" ${k === 'mark' ? 'aria-label="AJ menu"' : ''}>${l}</button>`).join('')}
         <span class="spacer"></span><button type="button" class="m spk" data-spk aria-label="Toggle sound">${window.ICONS.spk(window.SFX.muted)}</button><span class="clock"></span>
       </div>
+      <div class="nt-desk">${[['globe', 'SurfBoard', 'index'], ['resume', 'Résumé', 'resume'], ['book', 'Guestbook', 'guestbook'], ['mail', 'E-mail', 'contact'], ['folder', 'Projects', 'projects'], ['hd', 'Macintosh HD', 'work'], ['trash', 'Trash', '']].map(([ic, n, go]) => `<button type="button" class="nt-ico" data-open="${go}"><span>${I.svg(ic, 32)}</span><b>${n}</b></button>`).join('')}</div>
       <div class="br plat">
-        <div class="br-title"><span class="tb l"></span><span class="ttl">SurfBoard</span><span class="tb r"></span></div>
+        <div class="br-title"><button type="button" class="tb l" data-win="close" aria-label="Close window"></button><span class="ttl">SurfBoard</span><button type="button" class="tb r" data-win="shade" aria-label="Collapse window"></button></div>
         <div class="br-tools">
           ${tbtn('back', 'Back', 'back')}${tbtn('fwd', 'Forward', 'fwd')}${tbtn('reload', 'Reload', 'reload')}${tbtn('home', 'Home', 'home')}
           <span class="sep"></span>
@@ -353,6 +354,22 @@ window.WEB = (function () {
     });
     root.addEventListener('pointerover', (e) => { const m = e.target.closest('.nt-menubar .m'); if (openMenu && m && m !== openMenu && !m.hasAttribute('data-spk')) showMenu(m); });
 
+    /* The browser is a window on a desktop: the left box closes it, the
+       right one rolls it up to its title bar; the icons open it again. */
+    const win = root.querySelector('.br');
+    root.addEventListener('click', (e) => {
+      const w = e.target.closest('[data-win]');
+      if (w) { window.SFX.click(); if (w.dataset.win === 'close') win.classList.add('is-closed'); else win.classList.toggle('is-shaded'); return; }
+      const o = e.target.closest('[data-open]');
+      if (o) {
+        window.SFX.click();
+        root.querySelectorAll('.nt-ico').forEach((x) => x.classList.toggle('on', x === o));
+        if (!o.dataset.open) { setStatus('The Trash is empty.'); return; }
+        win.classList.remove('is-closed', 'is-shaded');
+        load(o.dataset.open);
+        return;
+      }
+    });
     root.addEventListener('click', (e) => {
       const g = e.target.closest('[data-go]');
       if (g) { e.preventDefault(); window.SFX.click(); load(g.dataset.go); return; }
