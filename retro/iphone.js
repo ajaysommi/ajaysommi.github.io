@@ -89,8 +89,7 @@ window.IPHONE = { start(room, exit) {
     scaleBox.style.marginTop = v.top + 44 + Math.max(0, (v.h - 56 - h * s) / 2) + 'px';
   };
   fit();
-  addEventListener('resize', fit);
-  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
+  addEventListener('retro-fit', fit);
 
   /* The home button sinks while held and is the photograph again when
      let go. */
@@ -123,7 +122,7 @@ window.IPHONE = { start(room, exit) {
   };
   const lg = (id, stops, x2 = 0, y2 = 1) => `<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}"${a != null ? ` stop-opacity="${a}"` : ''}/>`).join('')}</linearGradient>`;
   const rg = (id, stops, cx = 0.5, cy = 0.5, r = 0.5) => `<radialGradient id="${id}" cx="${cx}" cy="${cy}" r="${r}">${stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}"${a != null ? ` stop-opacity="${a}"` : ''}/>`).join('')}</radialGradient>`;
-  const GREEN = lg('g', [[0, '#8fe36a'], [0.5, '#45bb35'], [1, '#1c9216']]);
+  const GREEN = lg('g', [[0, '#b4f497'], [0.48, '#56cf3f'], [0.52, '#3fbf2c'], [1, '#22a01a']]);
 
   const ICON = {
     sms: () => ic(`<rect width="57" height="57" fill="url(#g)"/><path d="M28.5 10.5c12.2 0 21.3 7.2 21.3 16.3S40.7 43 28.5 43c-2.3 0-4.5-.3-6.5-.8l-9.6 6 3.2-8.6C10.3 36.6 7.2 32 7.2 26.8 7.2 17.7 16.3 10.5 28.5 10.5z" fill="#fff"/>
@@ -156,13 +155,12 @@ window.IPHONE = { start(room, exit) {
         <path d="M17.6 33.5h1.3v11h-1.3z" fill="#7a7a7a"/><circle cx="18.2" cy="30" r="4.8" fill="url(#pin)"/><circle cx="16.8" cy="28.6" r="1.4" fill="#fff" opacity=".8"/>`,
       rg('pin', [[0, '#ff8d8d'], [0.6, '#d40f0f'], [1, '#8f0000']], 0.35, 0.35)),
     weather: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><circle cx="30" cy="23" r="17" fill="url(#glow)"/><circle cx="30" cy="23" r="11.5" fill="url(#sun)"/>
-        <text x="51" y="50" text-anchor="end" ${HV} font-weight="bold" font-size="13" fill="#fff">26°</text>`,
+        <text x="51" y="50" text-anchor="end" ${HV} font-weight="bold" font-size="13" fill="#fff">73°</text>`,
       lg('bg', [[0, '#6ab9ff'], [0.5, '#2f86f0'], [1, '#1758cc']]) + rg('glow', [[0, '#ffe680', 0.75], [1, '#ffe680', 0]]) + rg('sun', [[0, '#fff6a6'], [0.6, '#ffc61a'], [1, '#f39400']], 0.4, 0.35)),
     settings: () => {
       const gear = (cx, cy, r, n, w) => { let t = ''; for (let i = 0; i < n; i++) t += `<rect x="${cx - w / 2}" y="${cy - r - 4}" width="${w}" height="7" rx="1.1" transform="rotate(${i * 360 / n} ${cx} ${cy})"/>`; return t; };
       return ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="2.5" y="2.5" width="52" height="52" rx="8" fill="url(#in)"/>
-        <g fill="#6f6f6f" opacity=".6">${gear(44, 13, 9, 10, 3.6)}<circle cx="44" cy="13" r="9"/></g>
-        <g fill="url(#gr)">${gear(26, 31, 16, 16, 5)}<circle cx="26" cy="31" r="16"/></g><circle cx="26" cy="31" r="11" fill="url(#hub)"/><circle cx="26" cy="31" r="6.5" fill="url(#gr)"/><circle cx="26" cy="31" r="3" fill="#3d3d3d"/>`,
+        <g fill="url(#gr)">${gear(28.5, 28.5, 17, 16, 5)}<circle cx="28.5" cy="28.5" r="17"/></g><circle cx="28.5" cy="28.5" r="12" fill="url(#hub)"/><circle cx="28.5" cy="28.5" r="7" fill="url(#gr)"/><circle cx="28.5" cy="28.5" r="3.2" fill="#3d3d3d"/>`,
       lg('bg', [[0, '#e9e9e9'], [1, '#6d6d6d']]) + rg('in', [[0, '#7a7a7a'], [1, '#3b3b3b']], 0.5, 0.4, 0.7) + lg('gr', [[0, '#f2f2f2'], [0.5, '#bdbdbd'], [1, '#8a8a8a']]) + rg('hub', [[0, '#9a9a9a'], [1, '#5a5a5a']]));
     },
     notes: () => ic(`<rect width="57" height="57" fill="url(#pad)"/>${[23, 29.5, 36, 42.5, 49].map((y) => `<line x1="0" y1="${y}" x2="57" y2="${y}" stroke="#cbb75c" stroke-width=".7"/>`).join('')}
@@ -171,11 +169,11 @@ window.IPHONE = { start(room, exit) {
     phone: () => ic(`<rect width="57" height="57" fill="url(#g)"/><path d="M17.6 9.6c2.5-1.7 5.1-.5 6 2.3l1.7 4.7c.8 2.4-.5 3.7-2.3 4.7 1.1 4.3 4.4 8.3 8.6 10.1 1.1-1.7 2.8-3.1 5.2-2.2l4.9 2.1c2.6 1.1 3.5 3.7 1.8 6.1-2.1 3.2-6.3 4.9-10.5 3.5-9.4-3.3-17-11.2-19.7-20.2-1.2-4.3.6-8.8 4.3-11.1z" fill="#fff"/>`, GREEN),
     mail: () => ic(`<rect width="57" height="57" fill="url(#sky)"/><ellipse cx="11" cy="48" rx="15" ry="6" fill="#fff" opacity=".9"/><ellipse cx="44" cy="51" rx="16" ry="6" fill="#fff" opacity=".8"/><ellipse cx="30" cy="54" rx="12" ry="4" fill="#fff" opacity=".85"/>
         <rect x="8" y="15" width="41" height="27" rx="1.2" fill="url(#env)" stroke="#9aaac0" stroke-width=".7"/><path d="M8.4 15.6 28.5 31 48.6 15.6" fill="none" stroke="#9aaac0" stroke-width="1.3"/><path d="M8.4 41.5 23 27.6M48.6 41.5 34 27.6" stroke="#c5d0dd" stroke-width=".9"/>`,
-      lg('sky', [[0, '#2f7ce6'], [0.6, '#79b9f6'], [1, '#c5e3fb']]) + lg('env', [[0, '#ffffff'], [1, '#dfe6ef']])),
+      lg('sky', [[0, '#1f5fd2'], [0.55, '#5ca3f0'], [1, '#bfe0fb']]) + lg('env', [[0, '#ffffff'], [1, '#dde4ee']])),
     safari: () => { let t = ''; for (let i = 0; i < 48; i++) t += `<line x1="28.5" y1="9.5" x2="28.5" y2="${i % 4 ? 11.2 : 12.6}" stroke="#fff" stroke-width=".6" transform="rotate(${i * 7.5} 28.5 28.5)"/>`; return ic(`<rect width="57" height="57" fill="url(#bg)"/><circle cx="28.5" cy="28.5" r="22" fill="url(#rim)"/><circle cx="28.5" cy="28.5" r="19.5" fill="url(#dial)"/>${t}
         ${[['N', 28.5, 17.6], ['S', 28.5, 43.4], ['E', 41.6, 30.4], ['W', 15.4, 30.4]].map(([l, x, y]) => `<text x="${x}" y="${y}" text-anchor="middle" ${HV} font-weight="bold" font-size="4.6" fill="#fff">${l}</text>`).join('')}
         <path d="M28.5 28.5 40 15.5 31.4 31.2z" fill="#e3261d"/><path d="M28.5 28.5 17 41.5 25.6 25.8z" fill="#f2f2f2"/><circle cx="28.5" cy="28.5" r="1.6" fill="#999"/>`,
-      lg('bg', [[0, '#cfe6ff'], [1, '#4f8fda']]) + lg('rim', [[0, '#ffffff'], [1, '#b8c2cf']]) + rg('dial', [[0, '#a8deff'], [0.75, '#2c88e2'], [1, '#1259b3']], 0.45, 0.38, 0.62)); },
+      lg('bg', [[0, '#8cc8ff'], [0.5, '#3d8fe8'], [1, '#1d63c7']]) + lg('rim', [[0, '#ffffff'], [1, '#c3ccd8']]) + rg('dial', [[0, '#bfe6ff'], [0.7, '#4aa0ea'], [1, '#1c66c0']], 0.45, 0.38, 0.62)); },
     clipAJ: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g transform="translate(5.5 6) scale(.74)"><path d="${MARK.a}" fill="#fff"/><path d="${MARK.j}" fill="#ff6b35"/><path d="${MARK.stem}" fill="#5c86ff"/><path d="${MARK.dot}" fill="#5c86ff"/></g>`,
       lg('bg', [[0, '#3a3f4a'], [1, '#101318']])),
     clipGH: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="37" text-anchor="middle" font-family="Menlo,Monaco,monospace" font-weight="bold" font-size="21" fill="#fff">{ }</text>`,
@@ -195,6 +193,13 @@ window.IPHONE = { start(room, exit) {
   const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const setBar = (b) => { scr.dataset.bar = b; };
   const ext = (url) => window.open(url, '_blank', 'noopener');
+  /* Email buttons open a new message in the phone's own Mail. */
+  let pendingMail = null;
+  const writeMail = (subject = '', body = '') => {
+    pendingMail = { subject, body };
+    if (current && current.def === APPS.email && current.compose) { current.compose(P.email, subject, body); pendingMail = null; return; }
+    if (current) { closeApp(); setTimeout(() => openApp('email', null), 380); } else openApp('email', null);
+  };
   const mailto = (subject, body) => { location.href = `mailto:${P.email}?subject=${encodeURIComponent(subject || '')}${body ? '&body=' + encodeURIComponent(body) : ''}`; };
 
   /* ---------------------------------------------------------------- alert */
@@ -316,20 +321,13 @@ window.IPHONE = { start(room, exit) {
     const C = THEMES[theme] || THEMES.blue;
     const w = Math.ceil(b.offsetWidth), k = 'bb' + (++bid);
     b.insertAdjacentHTML('afterbegin', `<svg class="bsh" width="${w}" height="30" viewBox="0 0 ${w} 30" aria-hidden="true"><defs><linearGradient id="${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C[0]}"/><stop offset=".5" stop-color="${C[1]}"/><stop offset=".51" stop-color="${C[2]}"/><stop offset="1" stop-color="${C[3]}"/></linearGradient></defs>
-      <path d="M${w - 5.5} .5H12.4L.9 15l11.5 14.5H${w - 5.5}A5 5 0 0 0 ${w - .5} 24.5V5.5A5 5 0 0 0 ${w - 5.5} .5Z" fill="url(#${k})" stroke="${C[4]}" stroke-width="1"/>
-      <path d="M${w - 5.5} 1.5H12.9L2.2 15" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1"/></svg>`);
+      <path d="M${w - 5.5} .5H12.6L2.3 13.1Q.8 15 2.3 16.9L12.6 29.5H${w - 5.5}A5 5 0 0 0 ${w - .5} 24.5V5.5A5 5 0 0 0 ${w - 5.5} .5Z" fill="url(#${k})" stroke="${C[4]}" stroke-width="1" stroke-linejoin="round"/></svg>`);
   };
 
   /* An app: a nav bar over a stack of sliding pages. */
   const makeApp = (def, from) => {
     const el = h('div', 'ip-app' + (def.cls ? ' ' + def.cls : ''));
-    const r = from ? from.getBoundingClientRect() : null;
-    const s = scr.getBoundingClientRect();
-    if (r) {
-      const k = s.width / 320;
-      el.style.setProperty('--ox', ((r.left + r.width / 2 - s.left) / k) + 'px');
-      el.style.setProperty('--oy', ((r.top + r.height / 2 - s.top) / k) + 'px');
-    }
+    void from;
     scr.insertBefore(el, scr.querySelector('.kb'));
     const app = { el, stack: [], def };
     if (def.bare) { setBar(def.bar || 'black'); def.open(app); return app; }
@@ -346,7 +344,9 @@ window.IPHONE = { start(room, exit) {
       app.stack.push(entry);
       fill(pg, app, entry);
       vw.appendChild(pg);
-      if (prev && !opts.instant) { prev.pg.classList.add('out-l'); pg.classList.add('in-r'); setTimeout(() => { prev.pg.style.visibility = 'hidden'; prev.pg.classList.remove('out-l'); }, 300); }
+      /* The page underneath hides once the new one has slid over it, but
+         only if it is still underneath: a quick Back must not hide it. */
+      if (prev && !opts.instant) { prev.pg.classList.add('out-l'); pg.classList.add('in-r'); setTimeout(() => { prev.pg.classList.remove('out-l'); if (app.stack[app.stack.length - 1] !== prev) prev.pg.style.visibility = 'hidden'; }, 300); }
       else if (prev) prev.pg.style.visibility = 'hidden';
       drawBar();
       return pg;
@@ -391,6 +391,7 @@ window.IPHONE = { start(room, exit) {
     if (current || state !== 'home' || performance.now() < quietUntil) return;
     SFX.click();
     if (APPS[id].link) { ext(APPS[id].link); return; }
+    board.classList.add('is-converge');
     current = makeApp(APPS[id], from);
     state = 'app';
   };
@@ -402,6 +403,7 @@ window.IPHONE = { start(room, exit) {
     a.def.onClose && a.def.onClose();
     scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
     a.el.classList.add('is-closing');
+    setTimeout(() => board.classList.remove('is-converge'), 120);
     setTimeout(() => a.el.remove(), 320);
     setBar('black');
     state = 'home';
@@ -470,14 +472,54 @@ window.IPHONE = { start(room, exit) {
     more: 'M4 12h5v5H4zM12.5 12h5v5h-5zM21 12h5v5h-5z'
   };
 
-  /* Safari: the address on top, a working toolbar below. */
+  /* Safari: tabs, an address bar that goes anywhere (or searches), back
+     and forward, bookmarks you can add to. Sites that refuse to be shown
+     inside another page get a way to open in a real tab instead. */
   const safari = (app, url, label) => {
-    const marks = [['Portfolio', 'classic.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin]];
-    app.el.innerHTML = `<div class="saf-top"><span class="saf-url">${esc(label)}</span><a href="${url}" target="_blank" rel="noopener" class="saf-open">Open</a></div><iframe class="saf-frame" src="${url}" title="${esc(label)}"></iframe><div class="saf-bot"><button type="button" data-a="b">◀</button><button type="button" data-a="f">▶</button><button type="button" data-a="add">+</button><button type="button" data-a="bm"><span class="bk"></span></button><button type="button" data-a="pg"><span class="pg2"></span></button></div>`;
-    const fr = app.el.querySelector('.saf-frame'), u = app.el.querySelector('.saf-url'), o = app.el.querySelector('.saf-open');
-    const go = (href) => {
-      if (/^https?:/.test(href)) { ext(href); return; }
-      fr.src = href; u.textContent = 'ajaysommi.github.io/' + (href === 'classic.html' ? '' : href); o.href = href;
+    const tabsList = [{ url }];
+    let cur = 0;
+    const marks = store.get('ip-marks', null) || [['Portfolio', 'classic.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Wikipedia', 'https://en.m.wikipedia.org/']];
+    app.el.classList.add('is-safari');
+    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This site can’t be shown inside another page.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark">+</button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
+    const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b');
+    const pretty = (u) => !u ? '' : /^https?:/.test(u) ? u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : 'ajaysommi.github.io/' + (u === 'classic.html' ? '' : u.replace(/#.*$/, ''));
+    const resolve = (v) => {
+      v = v.trim();
+      if (!v) return null;
+      if (/^https?:\/\//i.test(v)) return v;
+      if (v === 'classic.html' || /\.pdf$/i.test(v)) return v;
+      if (/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v)) return 'https://' + v;
+      return 'https://www.google.com/search?igu=1&q=' + encodeURIComponent(v);
+    };
+    const framable = (u) => !/^https?:/.test(u) || /google\.com\/search\?igu=1|wikipedia\.org|example\.com/.test(u);
+    const show = () => {
+      const t = tabsList[cur];
+      fr.src = t.url || 'about:blank';
+      addr.value = pretty(t.url); addr.render();
+      note.hidden = !t.url || framable(t.url);
+      note.querySelector('a').href = t.url || '#';
+      cnt.textContent = tabsList.length;
+    };
+    const addr = field(app.el.querySelector('.saf-url'), { placeholder: 'Search or type an address', ret: 'Go', onEnter: (f) => { const u = resolve(f.value); if (!u) return; tabsList[cur].url = u; kb.hide(); show(); } });
+    app.el.querySelector('.saf-rl').addEventListener('click', () => { SFX.click(); show(); });
+    /* The page switcher: one card per tab, New Page, close, Done. */
+    const pages = () => {
+      const o = h('div', 'saf-pages');
+      const draw = () => {
+        o.innerHTML = `<div class="sp-card"><button type="button" class="sp-x" aria-label="Close page">×</button><b>${esc(pretty(tabsList[cur].url) || 'Untitled')}</b><span>${cur + 1} of ${tabsList.length}</span></div><div class="sp-nav"><button type="button" data-d="-1">◀</button><span>${tabsList.map((_, i) => `<i class="${i === cur ? 'on' : ''}"></i>`).join('')}</span><button type="button" data-d="1">▶</button></div><div class="sp-bar"><button type="button" data-new>New Page</button><button type="button" data-done>Done</button></div>`;
+      };
+      draw();
+      o.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const b = e.target.closest('button');
+        if (!b) return;
+        SFX.click();
+        if (b.dataset.d) { cur = (cur + +b.dataset.d + tabsList.length) % tabsList.length; draw(); }
+        if (b.classList.contains('sp-x')) { if (tabsList.length > 1) { tabsList.splice(cur, 1); cur = Math.min(cur, tabsList.length - 1); draw(); } else { tabsList[0].url = ''; o.remove(); show(); addr.focus(); } }
+        if (b.hasAttribute('data-new')) { if (tabsList.length >= 8) { alertBox('Too Many Pages', 'Close a page before opening another.'); return; } tabsList.push({ url: '' }); cur = tabsList.length - 1; o.remove(); show(); addr.focus(); }
+        if (b.hasAttribute('data-done')) { o.remove(); show(); }
+      });
+      app.el.appendChild(o);
     };
     app.el.querySelector('.saf-bot').addEventListener('click', async (e) => {
       const b = e.target.closest('[data-a]');
@@ -486,14 +528,20 @@ window.IPHONE = { start(room, exit) {
       const a = b.dataset.a;
       if (a === 'b') { try { fr.contentWindow.history.back(); } catch (x) {} }
       if (a === 'f') { try { fr.contentWindow.history.forward(); } catch (x) {} }
-      if (a === 'add') alertBox('Bookmark Added', 'Saved to Bookmarks. It was already there, but it’s a good page.');
-      if (a === 'pg') alertBox('1 Page', 'One page is open: the one about Ajay. That’s all you need.');
+      if (a === 'add') {
+        const u = tabsList[cur].url;
+        if (!u) { alertBox('Nothing to Bookmark', 'Open a page first.'); return; }
+        if (!marks.some((m) => m[1] === u)) { marks.push([pretty(u).slice(0, 24), u]); store.set('ip-marks', marks); }
+        alertBox('Bookmark Added', esc(pretty(u)));
+      }
+      if (a === 'pg') pages();
       if (a === 'bm') {
         const r = await alertBox('Bookmarks', '', [...marks.map((m) => m[0]), 'Cancel']);
         const m = marks.find((x) => x[0] === r);
-        if (m) go(m[1]);
+        if (m) { tabsList[cur].url = m[1]; show(); }
       }
     });
+    show();
   };
 
   /* ---------------------------------------------------------- app content */
@@ -593,16 +641,17 @@ window.IPHONE = { start(room, exit) {
       left: ['Today', () => { month = new Date(now().getFullYear(), now().getMonth(), 1); view = 2; control.querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', k === 2)); render(); }],
       right: ['+', () => app.push('Add Event', (pg, a, entry) => {
         const [title, where] = form(pg, [['Title', 'Interview with Ajay'], ['Location', 'Your office, or a call']]);
-        pg.insertAdjacentHTML('beforeend', `<div class="gp"><div class="row"><span class="k">Starts</span><span class="v n">${now().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div></div><div class="gl" style="text-align:center;font-size:14px">Done adds it here and drafts the invite.</div>`);
+        pg.insertAdjacentHTML('beforeend', `<div class="gp"><div class="row"><span class="k">Starts</span><span class="v n">${now().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div></div>`);
         setTimeout(() => title.focus(), 320);
         entry.opts.left = ['Cancel', () => app.pop()];
         entry.opts.right = ['Done', () => {
           const t = title.value || 'Interview with Ajay';
           mine.push({ t, d: now().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), ts: Date.now() });
           store.set('ip-events', mine);
+          void where;
           app.pop();
           render();
-          mailto(t, `Hi Ajay,\n\n${t}${where.value ? ' at ' + where.value : ''}. When works for you?`);
+          alertBox('Event Added', `“${esc(t)}” is on the calendar for today.`);
         }];
         entry.opts.blue = true;
       })]
@@ -613,11 +662,6 @@ window.IPHONE = { start(room, exit) {
      A reply comes back. */
   const convo = {};
   const messages = (app) => {
-    const REPLIES = [
-      'Got it! Every message here is read. For a real answer, email me at ' + P.email + '.',
-      'Ha, thanks. The fastest way to reach me is still email: ' + P.email,
-      'Message received. I’ll take that as a yes on the interview.'
-    ];
     const thread = (p, i) => {
       const [n, c, q] = P.recs[i];
       if (!convo[i]) convo[i] = [['in', q], ['out', `Thank you, ${n.split(' ')[0]}! That means a lot.`]];
@@ -632,13 +676,11 @@ window.IPHONE = { start(room, exit) {
         box.scrollTop = box.scrollHeight;
         SFX.click();
       };
-      let replied = 0;
       const go = (x) => {
         const t = x.value.trim();
         if (!t) return;
         add('out', t);
         x.clear();
-        setTimeout(() => add('in', REPLIES[replied++ % REPLIES.length]), 1100);
       };
       const f = field(p.querySelector('.sms-field'), { ret: 'Send', onEnter: (x) => go(x), onChange: (v) => send.classList.toggle('on', !!v.trim()) });
       send.addEventListener('click', () => go(f));
@@ -653,6 +695,7 @@ window.IPHONE = { start(room, exit) {
   /* Notes: every note can be edited, new ones made, sent or thrown away. */
   const NOTES_DEFAULT = [
     ['About me', `${P.about[0]}\n\n${P.about[1]}`],
+    ['Education', `${P.education.school}\n${P.education.degree}\n${P.education.college}\nGraduating ${P.education.when}\n\n${P.education.text}`],
     ['Off the clock', `“${P.quote}”\n\nRepairs, teardowns and builds: see Builds.`],
     ['To do', `Graduate from UF (Dec 2026)\nFind a great team\nSay hi: ${P.email}`]
   ];
@@ -680,7 +723,7 @@ window.IPHONE = { start(room, exit) {
         const k = b.dataset.a;
         if (k === 'prev') { if (i > 0) { app.pop(); setTimeout(() => open(i - 1), 320); } else alertBox('First Note', 'There’s nothing before this one.'); }
         if (k === 'next') { if (i < notes.length - 1) { app.pop(); setTimeout(() => open(i + 1), 320); } else alertBox('Last Note', 'Tap + to start a new one.'); }
-        if (k === 'mail') mailto(named(notes[i]), notes[i][1]);
+        if (k === 'mail') writeMail(named(notes[i]), notes[i][1]);
         if (k === 'trash') {
           const r = await alertBox('Delete Note', 'This note will be thrown away.', ['Cancel', 'Delete']);
           if (r === 'Delete') { notes.splice(i, 1); save(); list(); }
@@ -696,24 +739,21 @@ window.IPHONE = { start(room, exit) {
      The keypad dials anything, and the network politely declines. */
   const phoneApp = (app) => {
     const card = store.get('ip-card', null) || { mobile: '(555) 252-9726', email: P.email, home: 'github.com/ajaysommi', work: 'linkedin.com/in/ajay-sommi', notes: 'Software engineer. Graduating December 2026.' };
+    const favs = store.get('ip-favs', null) || [['Ajay Sommi', 'mobile', card.mobile], ['Ajay Sommi', 'email', P.email]];
+    let toTab = () => {};
     const allRecents = () => [...P.experience].reverse().map((e) => [e.short, e.where, e.when.split(' to ')[1] || e.when]);
     let recents = allRecents();
     const call = async (num) => {
       const digits = String(num).replace(/\D/g, '');
-      if (!digits) { alertBox('Enter a Number', 'Dial something first. A-J-A-Y works.'); return; }
-      if (digits === '2529' || digits === '5552529726') {
-        const r = await alertBox('Calling Ajay…', 'He’s not on this network, but his inbox always picks up.', ['Dismiss', 'Email Ajay']);
-        if (r === 'Email Ajay') mailto('Saw your portfolio');
-        return;
-      }
-      if (digits === '911') { await alertBox('Emergency Calls Unavailable', 'This is a portfolio. In a real emergency, please use a real phone.'); return; }
+      if (!digits) { alertBox('Enter a Number', 'Type a number on the keypad first.'); return; }
+      if (digits === '911') { alertBox('Emergency Calls Unavailable', 'This phone can’t place real calls.'); return; }
       if (['1983', '1991', '1998', '2009'].includes(digits)) {
-        const r = await alertBox('Time Machine', `Dialling ${digits} reaches another era. Go there?`, ['Cancel', 'Go']);
+        const r = await alertBox('Switch Era', `Dialing ${digits} opens the ${digits} version of this portfolio.`, ['Cancel', 'Go']);
         if (r === 'Go') exit();
         return;
       }
-      const r = await alertBox('Cellular Network Not Available', 'This iPhone only runs on the SOMMI network. Try E-mail instead, or dial A-J-A-Y.', ['Dismiss', 'E-mail']);
-      if (r === 'E-mail') mailto('Hello from your portfolio');
+      const r = await alertBox('Cellular Network Not Available', 'This phone can’t place calls. You can send an email instead.', ['Dismiss', 'Email']);
+      if (r === 'Email') writeMail('Hello');
     };
     const F = [['mobile', 'mobile'], ['email', 'email'], ['home page', 'home'], ['work', 'work'], ['notes', 'notes']];
     const showCard = (edit) => (pg, a, entry) => {
@@ -726,10 +766,10 @@ window.IPHONE = { start(room, exit) {
       pg.addEventListener('click', (e) => {
         if (edit) return;
         const r = e.target.closest('[data-k]');
-        if (r) { const f = r.dataset.k; if (f === 'mobile') call(card.mobile); else if (f === 'email') mailto('Hello'); else if (f === 'home') ext(P.github); else if (f === 'work') ext(P.linkedin); else alertBox('Notes', esc(card.notes)); }
+        if (r) { const f = r.dataset.k; if (f === 'mobile') call(card.mobile); else if (f === 'email') writeMail('Hello'); else if (f === 'home') ext(P.github); else if (f === 'work') ext(P.linkedin); else alertBox('Notes', esc(card.notes)); }
         const act = e.target.closest('[data-act]');
         if (act && act.dataset.act === 'text') { closeApp(); setTimeout(() => openApp('guestbook', null), 360); }
-        if (act && act.dataset.act === 'fav') alertBox('Added to Favorites', 'Ajay is already your favourite. Good choice.');
+        if (act && act.dataset.act === 'fav') { favs.push(['Ajay Sommi', 'mobile', card.mobile]); store.set('ip-favs', favs); alertBox('Added to Favorites'); }
       });
       entry.opts.right = [edit ? 'Done' : 'Edit', () => {
         if (edit) { Object.keys(fields).forEach((f) => { card[f] = fields[f].value; }); store.set('ip-card', card); }
@@ -753,7 +793,7 @@ window.IPHONE = { start(room, exit) {
         if (!a) return;
         if (a.dataset.a === 'del') { num = num.slice(0, -1); draw(); }
         if (a.dataset.a === 'call') call(num);
-        if (a.dataset.a === 'add') alertBox('Add to Contacts', num ? `${esc(fmt(num))} is saved. Ajay is still the only contact worth having.` : 'Dial a number first.');
+        if (a.dataset.a === 'add') { if (!num) { alertBox('Enter a Number', 'Type a number on the keypad first.'); return; } favs.push([fmt(num), 'mobile', num]); store.set('ip-favs', favs); alertBox('Added to Favorites', `${esc(fmt(num))} is in Favorites now.`); }
       });
       draw();
     };
@@ -776,9 +816,9 @@ window.IPHONE = { start(room, exit) {
       app.def.onClose = () => clearInterval(timer);
     };
     const favorites = (pg, a, entry) => {
-      const ul = plain(pg, [{ text: 'Ajay Sommi', rt: 'mobile', go: () => call(card.mobile) }, { text: 'Ajay Sommi', rt: 'email', go: () => mailto('Hello') }]);
+      const ul = plain(pg, favs.map(([n, kind, num], i) => ({ id: i, text: n, rt: kind, go: () => (kind === 'email' ? writeMail('Hello') : call(num)), onDelete: () => { favs.splice(i, 1); store.set('ip-favs', favs); } })));
       editable(app, entry, ul);
-      entry.opts.right = ['+', () => alertBox('Add Favorite', 'Your only option is Ajay, and he’s already here.')];
+      entry.opts.right = ['+', () => toTab(3)];
     };
     const recentsPage = (pg, a, entry) => {
       const draw = () => { pg.innerHTML = ''; plain(pg, recents.length ? recents.map(([n, w, d]) => ({ text: n, sub: w, rt: d, go: () => call('0') })) : [{ text: 'No Recents', cls: 'none' }]); };
@@ -786,10 +826,11 @@ window.IPHONE = { start(room, exit) {
       entry.opts.seg = seg(['All', 'Missed'], 0, (i) => { recents = i ? allRecents().filter((_, k) => k % 3 === 0) : allRecents(); draw(); }, 'small');
       entry.opts.right = ['Clear', async () => { const r = await alertBox('Clear All Recents', '', ['Cancel', 'Clear All Recents']); if (r !== 'Cancel') { recents = []; draw(); } }];
     };
-    tabs(app, [['Favorites', TAB.star], ['Recents', TAB.clock], ['Contacts', TAB.person], ['Keypad', TAB.keypad], ['Voicemail', TAB.vm]], 2, (i) => {
+    const bar = tabs(app, [['Favorites', TAB.star], ['Recents', TAB.clock], ['Contacts', TAB.person], ['Keypad', TAB.keypad], ['Voicemail', TAB.vm]], 2, (i) => {
       app.el.classList.toggle('no-nb', i === 3);
-      [() => app.reset('Favorites', favorites), () => app.reset('Recents', recentsPage), () => app.reset('Info', showCard(false)), () => app.reset('', keypad), () => app.reset('Voicemail', voicemail, { left: ['Greeting', () => alertBox('Greeting', '“Hi, you’ve reached Ajay. Leave a message, or better, an offer.”')] })][i]();
+      [() => app.reset('Favorites', favorites), () => app.reset('Recents', recentsPage), () => app.reset('Info', showCard(false)), () => app.reset('', keypad), () => app.reset('Voicemail', voicemail, { left: ['Greeting', () => alertBox('Greeting', 'The default greeting is in use.')] })][i]();
     });
+    toTab = (i) => bar.querySelectorAll('button')[i].click();
   };
 
   /* Mail: Mailboxes, the inbox, reading, replying and writing. */
@@ -800,14 +841,14 @@ window.IPHONE = { start(room, exit) {
       ['LinkedIn', 'Recommendations', `${P.recs.length} people have written recommendations for Ajay. Read them in Guestbook.`]
     ];
     const sent = [];
-    const compose = (to, subject) => app.push('New Message', (pg, a, entry) => {
+    const compose = (to, subject, body) => app.push('New Message', (pg, a, entry) => {
       pg.classList.add('ml-new');
       pg.innerHTML = `<div class="ml-row"><span>To:</span><b class="ml-tok">${esc(to)}</b></div><div class="ml-row"><span>Subject:</span><span class="v" data-s></span></div><div class="ml-body" data-b></div>`;
-      const b = field(pg.querySelector('[data-b]'), { multi: true });
+      const b = field(pg.querySelector('[data-b]'), { multi: true, value: body || '' });
       const s = field(pg.querySelector('[data-s]'), { value: subject || '', ret: 'Next', onEnter: () => b.focus() });
       setTimeout(() => b.focus(), 340);
       entry.opts.left = ['Cancel', () => app.pop()];
-      entry.opts.right = ['Send', () => { sent.push([s.value || '(no subject)', b.value]); app.pop(); mailto(s.value, b.value); }];
+      entry.opts.right = ['Send', () => { sent.push([s.value || '(no subject)', b.value]); app.pop(); mailto(s.value, b.value); setTimeout(() => alertBox('Message Ready', 'Your mail app has opened with the message filled in. A copy is in Sent.'), 350); }];
       entry.opts.blue = true;
     });
     const inbox = (pg, a, entry) => {
@@ -824,8 +865,10 @@ window.IPHONE = { start(room, exit) {
       { text: 'Trash', go: () => box('Trash', [{ text: 'Old resume (2019)', sub: 'Listed “Microsoft Word” as a skill. Deleted.' }]) }
     ]));
     app.push('Inbox (1)', inbox, { instant: true, back: 'Mailboxes' });
+    app.compose = compose;
+    if (pendingMail) { const m = pendingMail; pendingMail = null; setTimeout(() => compose(P.email, m.subject, m.body), 380); }
     app.el.appendChild(h('div', 'ml-tb', '<button type="button" data-a="r" aria-label="Check mail">↻</button><span>Updated just now</span><button type="button" data-a="c" aria-label="Compose">✎</button>'));
-    app.el.querySelector('.ml-tb').addEventListener('click', (e) => { const b = e.target.closest('[data-a]'); if (!b) return; SFX.click(); if (b.dataset.a === 'c') compose(P.email, ''); else alertBox('No New Mail', 'Ajay’s inbox is the one that matters. Write to it.'); });
+    app.el.querySelector('.ml-tb').addEventListener('click', (e) => { const b = e.target.closest('[data-a]'); if (!b) return; SFX.click(); if (b.dataset.a === 'c') compose(P.email, ''); else alertBox('No New Mail'); });
   };
 
   const APPS = {
@@ -903,58 +946,151 @@ window.IPHONE = { start(room, exit) {
         const r = ev.target.closest('.row'); if (r) { SFX.click(); sel = +r.dataset.i; show(); return; }
         const t = ev.target.closest('[data-r]'); if (t) { SFX.click(); range = +t.dataset.r; show(); return; }
         const a = ev.target.closest('[data-a]');
-        if (a && a.dataset.a === 'i') alertBox('About Impact', 'Real numbers from Ajay’s internships. Past performance is a strong indicator of future results.');
+        if (a && a.dataset.a === 'i') alertBox('About Impact', 'Figures from internship work at Southeast Toyota, Hunter Engineering, JM Family and Shiva Robotics.');
         if (a && a.dataset.a === 'aj') { closeApp(); setTimeout(() => openApp('experience', null), 360); }
       });
       show();
     } },
     places: { name: 'Places', icon: 'maps', bare: true, bar: 'gray', open(app) {
-      const US = [[-124.7, 48.4], [-124, 42], [-122.4, 37.8], [-120.6, 34.6], [-117.1, 32.5], [-114.7, 32.7], [-111, 31.3], [-106.5, 31.8], [-103, 29], [-99.5, 26.4], [-97.2, 25.9], [-97.4, 27.8], [-94.7, 29.4], [-90, 29.2], [-89, 30.2], [-85, 29.7], [-83, 29], [-82.5, 27.5], [-81.7, 25.2], [-80.4, 25.2], [-80, 26.8], [-81.2, 30.3], [-79, 33.6], [-75.5, 35.3], [-76, 37], [-74, 40.5], [-70, 41.6], [-70.5, 43], [-67, 44.8], [-67.8, 47.1], [-69.2, 47.4], [-71.5, 45], [-75, 45], [-79, 43.3], [-83, 42], [-82.5, 45.3], [-84.6, 46.5], [-88, 48], [-95, 49], [-123, 49]];
-      const X = (lon) => (lon + 126) / 60 * 320, Y = (lat) => (50 - lat) / 26 * 177 * 1.25;
-      const CITIES = [['Jacksonville, FL', 30.33, -81.66, 'rjax'], ['Palo Alto, CA', 37.44, -122.14, 'rfa'], ['Gainesville, FL', 29.65, -82.32, 'fics'], ['Deerfield Beach, FL', 26.32, -80.1, 'jm'], ['St. Louis, MO', 38.63, -90.2, 'hunter'], ['Boca Raton, FL', 26.0, -80.13, 'adt']];
-      app.el.innerHTML = `<div class="map" style="top:20px"><div class="map-bar"><span class="mb-f"></span></div><svg viewBox="0 0 320 240" height="240"><path d="M${US.map(([a, b]) => `${X(a).toFixed(1)} ${Y(b).toFixed(1)}`).join('L')}Z" fill="#f2efe9" stroke="#c9c0ad"/><path d="M${X(-120)} ${Y(47)}L${X(-90)} ${Y(41)}L${X(-80)} ${Y(35)}M${X(-117)} ${Y(33)}L${X(-97)} ${Y(32)}L${X(-82)} ${Y(30)}" stroke="#f3c64c" stroke-width="1.6" fill="none"/></svg>${CITIES.map(([n, la, lo], i) => `<button class="pin-d" type="button" data-i="${i}" style="left:${X(lo)}px;top:${32 + Y(la)}px;animation-delay:${i * 0.12}s" aria-label="${esc(n)}"></button>`).join('')}<div class="tbar map-tb"><button type="button" data-a="loc" aria-label="Show where I am">➤</button><button type="button" data-list>List</button></div></div>`;
-      const map = app.el.querySelector('.map');
-      const callout = (i) => {
-        map.querySelectorAll('.callout').forEach((c) => c.remove());
-        const p = map.querySelector(`.pin-d[data-i="${i}"]`);
-        const [n, , , id] = CITIES[i];
-        const e = P.experience.find((x) => x.id === id);
-        const c = h('div', 'callout', `${esc(e.short)}<span>${esc(n)} · ${e.year}</span>`);
-        c.style.left = p.style.left; c.style.top = p.style.top;
-        map.appendChild(c);
-      };
-      field(map.querySelector('.mb-f'), { placeholder: 'Search places I’ve worked', ret: 'Search', onEnter: (f) => {
-        const q = f.value.toLowerCase().trim();
-        const i = CITIES.findIndex(([n, , , id]) => (n + ' ' + P.experience.find((x) => x.id === id).org).toLowerCase().includes(q));
-        kb.hide();
-        if (q && i >= 0) callout(i); else alertBox('No Results Found', `Ajay hasn’t worked in “${esc(f.value)}” yet. Maybe that’s next.`);
-      } });
-      map.addEventListener('click', (ev) => {
-        const p = ev.target.closest('.pin-d');
-        if (p) { SFX.click(); callout(+p.dataset.i); }
-        if (ev.target.closest('[data-a="loc"]')) { SFX.click(); callout(5); }
-        if (ev.target.closest('[data-list]')) {
-          const l = h('div', 'pg');
-          l.style.top = '32px'; l.style.bottom = '44px'; l.style.zIndex = 3;
-          plain(l, CITIES.map(([n, , , id], i) => { const e = P.experience.find((x) => x.id === id); return { text: e.short, sub: n, rt: String(e.year), go: () => { l.remove(); callout(i); } }; }));
-          map.appendChild(l);
+      /* A real map: OpenStreetMap tiles, or satellite imagery, with a pin
+         for every place worked. Drag to move, double-tap or + to zoom,
+         and List shows them as a list that leads back to the map. */
+      const CITIES = [['Jacksonville, FL', 30.332, -81.656, 'rjax'], ['Palo Alto, CA', 37.442, -122.143, 'rfa'], ['Gainesville, FL', 29.652, -82.325, 'fics'], ['Deerfield Beach, FL', 26.318, -80.1, 'jm'], ['St. Louis, MO', 38.627, -90.199, 'hunter'], ['Boca Raton, FL', 26.368, -80.128, 'adt']];
+      const W = 320, H = 480 - 20 - 32 - 44;
+      let z = 4, mode = 'map';
+      const wp = (lat, lon, zz) => { const s = 256 * 2 ** zz, r = Math.sin(lat * Math.PI / 180); return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + r) / (1 - r)) / (4 * Math.PI)) * s]; };
+      /* Start framed on every pin: the deepest zoom that still holds them all. */
+      const fitAll = () => {
+        for (z = 12; z > 2; z--) {
+          const pts = CITIES.map(([, la, lo]) => wp(la, lo, z)), xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
+          if (Math.max(...xs) - Math.min(...xs) < W - 50 && Math.max(...ys) - Math.min(...ys) < H - 90) { cx = (Math.max(...xs) + Math.min(...xs)) / 2; cy = (Math.max(...ys) + Math.min(...ys)) / 2 - 15; return; }
         }
+      };
+      let cx = 0, cy = 0;
+      fitAll();
+      app.el.innerHTML = `<div class="mp2"><div class="map-bar"><span class="mb-f"></span></div><div class="mp-view"><div class="mp-tiles"></div><div class="mp-pins"></div><div class="mp-zoom"><button type="button" data-z="1" aria-label="Zoom in">+</button><button type="button" data-z="-1" aria-label="Zoom out">−</button></div><div class="mp-attr">© OpenStreetMap · Esri</div></div><div class="mp-list pg" hidden></div><div class="mp-tb"></div></div>`;
+      const view = app.el.querySelector('.mp-view'), tilesEl = app.el.querySelector('.mp-tiles'), pinsEl = app.el.querySelector('.mp-pins'), list = app.el.querySelector('.mp-list');
+      const url = (x, y, zz, kind) => kind === 'map' ? `https://tile.openstreetmap.org/${zz}/${x}/${y}.png` : kind === 'sat' ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zz}/${y}/${x}` : `https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/${zz}/${y}/${x}`;
+      let open = -1;
+      const draw = () => {
+        const n = 2 ** z;
+        const x0 = Math.floor((cx - W / 2) / 256), x1 = Math.floor((cx + W / 2) / 256), y0 = Math.max(0, Math.floor((cy - H / 2) / 256)), y1 = Math.min(n - 1, Math.floor((cy + H / 2) / 256));
+        let html = '';
+        for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+          const wx = ((tx % n) + n) % n, l = tx * 256 - (cx - W / 2), t = ty * 256 - (cy - H / 2);
+          html += `<img src="${url(wx, ty, z, mode === 'sat' ? 'sat' : 'map')}" style="left:${l}px;top:${t}px" alt="" draggable="false" />`;
+          if (mode === 'sat') html += `<img src="${url(wx, ty, z, 'lbl')}" style="left:${l}px;top:${t}px" alt="" draggable="false" />`;
+        }
+        tilesEl.innerHTML = html;
+        pinsEl.innerHTML = CITIES.map(([nme, la, lo], i) => { const [px, py] = wp(la, lo, z); return `<button type="button" class="pin-d" data-i="${i}" style="left:${px - (cx - W / 2)}px;top:${py - (cy - H / 2)}px" aria-label="${esc(nme)}"></button>`; }).join('');
+        if (open >= 0) callout(open, true);
+      };
+      const callout = (i, keep) => {
+        pinsEl.querySelectorAll('.callout').forEach((c) => c.remove());
+        open = i;
+        if (i < 0) return;
+        const p = pinsEl.querySelector(`.pin-d[data-i="${i}"]`);
+        const [nme, , , id] = CITIES[i];
+        const e = P.experience.find((x) => x.id === id);
+        const c = h('button', 'callout', `<span class="co-t">${esc(e.short)}<em>${esc(nme)} · ${e.year}</em></span><span class="co-go">›</span>`);
+        c.type = 'button';
+        c.style.left = p.style.left; c.style.top = p.style.top;
+        c.addEventListener('click', (ev) => { ev.stopPropagation(); alertBox(e.org, `${esc(e.role)}<br/>${esc(e.when)}`); });
+        pinsEl.appendChild(c);
+        if (!keep) SFX.click();
+      };
+      const go = (i, zz = 9) => { const [, la, lo] = CITIES[i]; z = zz; [cx, cy] = wp(la, lo, z); open = i; draw(); };
+      const zoom = (d, px = W / 2, py = H / 2) => {
+        const nz = Math.max(2, Math.min(16, z + d));
+        if (nz === z) return;
+        const k = 2 ** (nz - z);
+        const wx = cx - W / 2 + px, wy = cy - H / 2 + py;
+        cx = wx * k - (px - W / 2); cy = wy * k - (py - H / 2); z = nz;
+        draw();
+      };
+      let drag = null, moved = 0;
+      view.addEventListener('pointerdown', (e) => { if (e.target.closest('.callout, .mp-zoom')) return; drag = { x: e.clientX, y: e.clientY, cx, cy, k: scr.getBoundingClientRect().width / 320 }; moved = 0; try { view.setPointerCapture(e.pointerId); } catch (x) {} });
+      view.addEventListener('pointermove', (e) => { if (!drag) return; const dx = (e.clientX - drag.x) / drag.k, dy = (e.clientY - drag.y) / drag.k; moved = Math.max(moved, Math.abs(dx) + Math.abs(dy)); cx = drag.cx - dx; cy = drag.cy - dy; draw(); });
+      view.addEventListener('pointerup', (e) => {
+        if (!drag) return;
+        drag = null;
+        if (moved > 4) return;
+        const pin = document.elementFromPoint(e.clientX, e.clientY);
+        const p = pin && pin.closest('.pin-d');
+        if (p) callout(+p.dataset.i); else callout(-1);
       });
+      view.addEventListener('dblclick', (e) => { const r = view.getBoundingClientRect(), k = r.width / 320; zoom(1, (e.clientX - r.left) / k, (e.clientY - r.top) / k); });
+      view.addEventListener('wheel', (e) => { e.preventDefault(); const r = view.getBoundingClientRect(), k = r.width / 320; zoom(e.deltaY < 0 ? 1 : -1, (e.clientX - r.left) / k, (e.clientY - r.top) / k); }, { passive: false });
+      app.el.querySelector('.mp-zoom').addEventListener('click', (e) => { const b = e.target.closest('[data-z]'); if (b) { SFX.click(); zoom(+b.dataset.z); } });
+      plain(list, CITIES.map(([nme, , , id], i) => { const e = P.experience.find((x) => x.id === id); return { text: e.short, sub: nme, rt: String(e.year), go: () => { setMode('map'); go(i); } }; }));
+      const setMode = (m) => {
+        list.hidden = m !== 'list';
+        if (m !== 'list') { mode = m; draw(); }
+        ctl.querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', ['map', 'sat', 'list'][k] === m));
+      };
+      const ctl = seg(['Map', 'Satellite', 'List'], 0, (i) => setMode(['map', 'sat', 'list'][i]), 'map-seg');
+      app.el.querySelector('.mp-tb').appendChild(ctl);
+      field(app.el.querySelector('.mb-f'), { placeholder: 'Search places', ret: 'Search', onEnter: (f) => {
+        const q = f.value.toLowerCase().trim();
+        const i = CITIES.findIndex(([nme, , , id]) => (nme + ' ' + P.experience.find((x) => x.id === id).org).toLowerCase().includes(q));
+        kb.hide();
+        if (q && i >= 0) { setMode(mode === 'sat' ? 'sat' : 'map'); go(i); } else alertBox('No Results Found', `No matches for “${esc(f.value)}”.`);
+      } });
+      draw();
     } },
-    education: { name: 'Education', icon: 'weather', bare: true, bar: 'black', open(app) {
-      const e = P.education;
-      const W = [['OPERATING SYS.', '☀', 'A'], ['DATABASES', '⛅', 'A'], ['ALGORITHMS', '☀', 'A'], ['SOFTWARE ENG.', '☁', 'A'], ['A.I.', '☀', 'A'], ['SECURITY', '⚡', 'A']];
-      app.el.style.background = '#000';
-      app.el.innerHTML = `<div class="wx"><div class="wx-card"><div class="wx-sun"></div><div class="hd"><div class="city">Gainesville</div><div class="hi">UF · Class of Dec 2026</div><div class="tmp">26°</div></div>
-        <ul>${W.map(([d, i, g]) => `<li><span class="dd">${d}</span><span class="ii">${i}</span><span class="gg">${g}</span></li>`).join('')}</ul>
-        <div class="wx-foot"><button type="button" data-a="uf">UF</button><span>${esc(e.degree)}</span><button type="button" data-a="i">i</button></div></div></div>`;
-      app.el.addEventListener('click', (ev) => {
-        const a = ev.target.closest('[data-a]');
-        if (!a) return;
-        SFX.click();
-        if (a.dataset.a === 'i') alertBox('Forecast', `${esc(e.degree)}, ${esc(e.college)}.<br/>AI Certificate: 100% chance.`);
-        else ext('https://www.ufl.edu');
+    weather: { name: 'Weather', icon: 'weather', bare: true, bar: 'black', open(app) {
+      /* Live weather for the places worked, from Open-Meteo. Swipe or tap
+         the dots to move between cities; i shows the list of them. */
+      const C = [['Gainesville', 29.652, -82.325], ['Jacksonville', 30.332, -81.656], ['Boca Raton', 26.368, -80.128], ['St. Louis', 38.627, -90.199], ['Palo Alto', 37.442, -122.143], ['Deerfield Beach', 26.318, -80.1]];
+      const cache = {};
+      let k = 0, flipped = false;
+      const ico = (code, day = 1) => code === 0 ? (day ? '☀' : '☾') : code <= 3 ? '⛅' : code <= 48 ? '☁' : code <= 67 ? '☂' : code <= 77 ? '❄' : code <= 82 ? '☂' : '⚡';
+      app.el.innerHTML = '<div class="wx2"><div class="wx-card"></div><div class="wx-dots"></div></div>';
+      const card = app.el.querySelector('.wx-card'), dots = app.el.querySelector('.wx-dots');
+      const load = async (i) => {
+        if (cache[i]) return cache[i];
+        const [, la, lo] = C[i];
+        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=auto&forecast_days=6`);
+        if (!r.ok) throw new Error('weather');
+        return (cache[i] = await r.json());
+      };
+      const draw = async () => {
+        dots.innerHTML = C.map((_, i) => `<i class="${i === k ? 'on' : ''}"></i>`).join('');
+        if (flipped) {
+          card.className = 'wx-card back';
+          card.innerHTML = `<div class="wx-bh"><b>Cities</b><button type="button" data-a="done">Done</button></div><ul>${C.map(([n], i) => `<li><button type="button" data-c="${i}">${esc(n)}</button></li>`).join('')}</ul><p class="wx-src">Forecasts from Open-Meteo.</p>`;
+          return;
+        }
+        const [name] = C[k];
+        card.className = 'wx-card';
+        card.innerHTML = `<div class="hd"><div class="city">${esc(name)}</div><div class="hi">Loading…</div><div class="tmp">–</div></div><ul></ul><div class="wx-foot"><span></span><span class="upd"></span><button type="button" data-a="info" aria-label="Cities">i</button></div>`;
+        try {
+          const d = await load(k);
+          if (C[k][0] !== name || flipped) return;
+          const day = d.current.is_day;
+          card.classList.toggle('night', !day);
+          card.querySelector('.tmp').textContent = Math.round(d.current.temperature_2m) + '°';
+          card.querySelector('.hi').textContent = `H: ${Math.round(d.daily.temperature_2m_max[0])}°  L: ${Math.round(d.daily.temperature_2m_min[0])}°`;
+          card.querySelector('.hd').insertAdjacentHTML('afterbegin', `<span class="wx-now">${ico(d.current.weather_code, day)}</span>`);
+          card.querySelector('ul').innerHTML = d.daily.time.map((t, i) => `<li><span class="dd">${new Date(t + 'T12:00').toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}</span><span class="ii">${ico(d.daily.weather_code[i])}</span><span class="gg">${Math.round(d.daily.temperature_2m_max[i])}°</span><span class="lo">${Math.round(d.daily.temperature_2m_min[i])}°</span></li>`).join('');
+          card.querySelector('.upd').textContent = 'Updated ' + hm(now());
+        } catch (x) {
+          card.querySelector('.hi').textContent = 'Weather is unavailable right now.';
+        }
+      };
+      const step = (d) => { k = (k + d + C.length) % C.length; SFX.click(); draw(); };
+      app.el.addEventListener('click', (e) => {
+        const a = e.target.closest('[data-a]');
+        if (a) { SFX.click(); flipped = a.dataset.a === 'info'; card.classList.add('flip'); setTimeout(() => { card.classList.remove('flip'); draw(); }, 180); return; }
+        const c = e.target.closest('[data-c]');
+        if (c) { k = +c.dataset.c; flipped = false; draw(); return; }
+        const dot = e.target.closest('.wx-dots i');
+        if (dot) { k = [...dots.children].indexOf(dot); draw(); }
       });
+      let x0 = null;
+      app.el.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+      app.el.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40 && !flipped) step(e.clientX < x0 ? 1 : -1); x0 = null; });
+      draw();
     } },
     skills: { name: 'Skills', icon: 'settings', open(app) {
       const ICO = [['#3d7fe0', '⌨'], ['#5aa0e8', '☁'], ['#8a6ad8', '⧉'], ['#2fa36a', '⇄'], ['#f08b2a', '⚒'], ['#d24b4b', '♥']];
@@ -967,7 +1103,7 @@ window.IPHONE = { start(room, exit) {
           const sw = ev.target.closest('[data-sw]');
           if (sw) {
             if (sw.dataset.sw === 'sound') { SFX.toggle(); sw.classList.toggle('on', !SFX.muted); sw.setAttribute('aria-checked', String(!SFX.muted)); }
-            else { sw.classList.remove('on'); setTimeout(() => { sw.classList.add('on'); alertBox('Nice Try', 'Ajay is always open to work. This switch is stuck on.'); }, 250); }
+            else { sw.classList.remove('on'); setTimeout(() => { sw.classList.add('on'); alertBox('Open to Work', 'This setting stays on.'); }, 250); }
             return;
           }
           const r = ev.target.closest('.row');
@@ -984,7 +1120,7 @@ window.IPHONE = { start(room, exit) {
                 if (e2.target.closest('[data-ab]')) app.push('About', (q) => { q.classList.add('pin'); q.innerHTML = kv([['Name', 'Ajay Sommi'], ['Roles', String(P.experience.length)], ['Projects', String(P.projects.length)], ['Photos', String(photos)], ['Skills', String(P.skills.reduce((a, s) => a + s[1].length, 0))], ['Capacity', '1 portfolio'], ['Available', 'Dec 2026'], ['Version', '1.0 (26A543a)'], ['Model', 'AJ-26']]); });
                 if (e2.target.closest('[data-rs]')) {
                   const rr = await alertBox('Reset All Settings', 'Your notes, events and edits on this phone will be cleared.', ['Cancel', 'Reset']);
-                  if (rr === 'Reset') { ['ip-notes', 'ip-events', 'ip-card', 'ip-read'].forEach((k) => store.set(k, null)); alertBox('Reset Complete', 'Everything is back to how Ajay left it.'); }
+                  if (rr === 'Reset') { ['ip-notes', 'ip-events', 'ip-card', 'ip-read'].forEach((k) => store.set(k, null)); alertBox('Reset Complete'); }
                 }
               });
             });
@@ -1029,7 +1165,7 @@ window.IPHONE = { start(room, exit) {
 
   /* The original grid: icons 57 points square, columns 75 apart starting
      19 in, rows 90 apart starting 19 under the status bar. */
-  const GRID = ['guestbook', 'experience', 'builds', 'about', 'projects', 'impact', 'places', 'education', 'skills', 'notes', 'github', 'linkedin'];
+  const GRID = ['guestbook', 'experience', 'builds', 'about', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'];
   const DOCK = ['contact', 'email', 'resume', 'portfolio'];
   const iconBtn = (id) => {
     const b = h('button', 'ip-icon', `<span class="ic">${ICON[APPS[id].icon]()}</span><span class="lbl">${esc(APPS[id].name)}</span>`);
@@ -1046,6 +1182,9 @@ window.IPHONE = { start(room, exit) {
       const c = i % 4, r = Math.floor(i / 4);
       b.style.left = 19.4 - 8.5 + c * 75 + 'px';
       b.style.top = 19.2 + r * 90.4 + 'px';
+      /* Where it goes when an app opens: the middle of the screen. */
+      b.style.setProperty('--cx', (160 - (19.4 + c * 75 + 28.5)) + 'px');
+      b.style.setProperty('--cy', (240 - (20 + 19.2 + r * 90.4 + 28.5)) + 'px');
       b.style.transform = `translate(${(c - 1.5) * 90}px, ${(r - 1) * 140}px) scale(.6)`;
       grid.appendChild(b);
     });
@@ -1053,6 +1192,8 @@ window.IPHONE = { start(room, exit) {
       const b = iconBtn(id);
       b.style.left = 19.4 - 8.5 + i * 75 + 'px';
       b.style.top = '10.6px';
+      b.style.setProperty('--cx', (160 - (19.4 + i * 75 + 28.5)) + 'px');
+      b.style.setProperty('--cy', (240 - (388.8 + 10.6 + 28.5)) + 'px');
       b.style.transform = 'translateY(90px)';
       dock.appendChild(b);
     });
@@ -1142,13 +1283,13 @@ window.IPHONE = { start(room, exit) {
   drawBoard();
   (window.READY || Promise.resolve()).then(() => {
     boot.classList.add('is-on');
-    setTimeout(() => boot.classList.add('is-shine'), 700);
-    setTimeout(() => boot.classList.add('is-out'), 2300);
+    setTimeout(() => boot.classList.add('is-shine'), 250);
+    setTimeout(() => boot.classList.add('is-out'), 1150);
     setTimeout(() => {
       boot.classList.add('is-gone');
       state = 'locked';
       tickClock();
       setInterval(tickClock, 10000);
-    }, 2950);
+    }, 1650);
   });
 } };

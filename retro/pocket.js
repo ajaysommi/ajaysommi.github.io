@@ -49,8 +49,7 @@ window.POCKET = { start(room, exit) {
     scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 60 - 545 * s) / 2) + 'px';
   };
   fit();
-  addEventListener('resize', fit);
-  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
+  addEventListener('retro-fit', fit);
   const lcd = room.querySelector('.pk-lcd');
   const view = room.querySelector('.lcd-view');
   const title = room.querySelector('.lcd-bar .t');

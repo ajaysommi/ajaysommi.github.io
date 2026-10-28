@@ -41,8 +41,7 @@ window.NOKIA = { start(room, exit) {
     scaleBox.style.marginTop = v.top + 44 + Math.max(0, (v.h - 64 - 650 * s) / 2) + 'px';
   };
   fit();
-  addEventListener('resize', fit);
-  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
+  addEventListener('retro-fit', fit);
 
   /* ------------------------------------------------------------- feedback */
 

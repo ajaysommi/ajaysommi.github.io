@@ -355,8 +355,8 @@
 .ph-ev { border: 0; background: none; color: #eee; display: flex; flex-direction: column; gap: 4px; text-align: left; font: 12px var(--lg); cursor: default; }
 .ph-ev img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,.5); }
 .ph-ev span { color: #aaa; }
-.ph-lede { padding: 16px 20px 0; }
-.ph-lede p { margin: 4px 0 0; color: #ccc; font-size: 12.5px; line-height: 1.5; }
+.ox .ph-lede { padding: 16px 20px 0; }
+.ox .ph-lede p { margin: 4px 0 0; color: #ccc; font-size: 12.5px; line-height: 1.5; }
 .ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; padding: 16px 20px 24px; }
 .ph-grid button { border: 0; padding: 0; background: none; cursor: default; }
 .ph-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; box-shadow: 0 3px 8px rgba(0,0,0,.6); }
@@ -405,5 +405,5 @@
 .ml-f { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid #ddd; }
 .ml-f label { width: 64px; text-align: right; color: #777; }
 .ml-f input { flex: 1; border: 0; outline: none; font: 13px var(--lg); }
-.ml-tok { padding: 1px 10px; border-radius: 10px; background: linear-gradient(180deg, #dfeafa, #c3d6f2); border: 1px solid #93acd3; color: #20324f; }
+.ox .ml-tok { padding: 1px 10px; border-radius: 10px; background: linear-gradient(180deg, #dfeafa, #c3d6f2); border: 1px solid #93acd3; color: #20324f; }
 .is-mail textarea { flex: 1; border: 0; outline: none; resize: none; padding: 14px 16px; font: 13px/1.6 'Helvetica Neue', Helvetica, Arial, sans-serif; }

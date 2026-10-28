@@ -339,5 +339,21 @@ window.RETRO = (function () {
     return { w, h, top: parseFloat(cs.paddingTop) };
   };
 
+  /* Follow the visible viewport as browser bars come and go: the phone
+     host is sized to it, and anything that fits itself listens for
+     retro-fit. */
+  const sync = () => {
+    const vv = window.visualViewport, r = document.documentElement.style;
+    r.setProperty('--vvh', (vv ? vv.height : innerHeight) + 'px');
+    r.setProperty('--vvt', (vv ? Math.max(0, vv.offsetTop) : 0) + 'px');
+    dispatchEvent(new Event('retro-fit'));
+  };
+  let raf = 0;
+  const later = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(sync); };
+  if (window.visualViewport) { visualViewport.addEventListener('resize', later); visualViewport.addEventListener('scroll', later); }
+  addEventListener('resize', later);
+  addEventListener('orientationchange', () => setTimeout(sync, 350));
+  sync();
+
   return { esc, usedAt, dither, ditherAll, ascii, store, viewport };
 })();

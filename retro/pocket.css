@@ -5,7 +5,7 @@
    ========================================================================== */
 
 .pocket-room {
-  position: fixed; inset: 0;
+  position: absolute; inset: 0;
   display: flex; justify-content: center; align-items: flex-start;
   background:
     radial-gradient(90% 60% at 50% 30%, #4a3f33, #2a241e 70%);

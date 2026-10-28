@@ -4,6 +4,7 @@
    ========================================================================== */
 
 .os-host, .phone-host { position: fixed; inset: 0; }
+.phone-host { bottom: auto; top: var(--vvt, 0px); height: var(--vvh, 100%); overflow: hidden; }
 .os-screen { position: absolute; inset: 0; overflow: hidden; }
 .phone-host { background: radial-gradient(90% 60% at 50% 30%, #4a3f33, #1c1915 75%); }
 .phone-room { position: absolute; inset: 0; }
