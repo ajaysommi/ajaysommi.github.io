@@ -382,6 +382,7 @@ window.TERM = (function () {
       return print([`PHOSPHOR SET TO ${want.toUpperCase()}. Try COLOR ${order.filter((o) => o !== want).join(', ').toUpperCase()}.`, '']);
     },
     beep: () => { window.SFX.beep(); return print(['\u0007BEEP.', '']); },
+    sound: () => { window.SFX.toggle(); return print([window.SFX.muted ? 'SOUND OFF.' : 'SOUND ON. TYPE SOUND AGAIN TO MUTE.', '']); },
     fortune: () => print([`"${esc(FORTUNES[Math.floor(Math.random() * FORTUNES.length)])}"`, '']),
     coffee: () => print(['BREWING... ERROR 418: I\u2019M A TEAPOT.', '']),
     ping: () => print(['PING ajay (127.0.0.1): 56 data bytes', '64 bytes: icmp_seq=0 time=0.26 ms', '64 bytes: icmp_seq=1 time=0.24 ms', ['  He responds fast. Try CONTACT.', 'dim'], '']),
@@ -462,7 +463,7 @@ window.TERM = (function () {
     root.className = 'term';
     root.dataset.ph = store.get('ph', 'green');
     root.innerHTML = `
-      <div class="term-bar" hidden><span>SOMMI-DOS 3.3 \u00b7 A:\\PORTFOLIO</span><span>TYPE HELP \u00b7 ERA TO SWITCH</span></div>
+      <div class="term-bar" hidden><span>SOMMI-DOS 3.3 \u00b7 A:\\PORTFOLIO</span><span>TYPE HELP \u00b7 ERA TO SWITCH \u00b7 <button type="button" class="term-snd" data-snd>SOUND OFF</button></span></div>
       <div class="term-out" role="log" aria-live="polite" aria-label="Terminal output">
         <div class="term-prompt"><span>A:\\&gt; </span><span class="typed"></span><span class="term-cursor">&nbsp;</span></div>
       </div>
@@ -486,6 +487,11 @@ window.TERM = (function () {
       chips.appendChild(b);
     });
 
+    const sndBtn = root.querySelector('[data-snd]');
+    const sndLabel = () => { sndBtn.textContent = window.SFX.muted ? 'SOUND OFF' : 'SOUND ON'; };
+    sndLabel();
+    document.addEventListener('sfx-mute', sndLabel);
+    sndBtn.addEventListener('click', (e) => { e.stopPropagation(); window.SFX.toggle(); });
     root.addEventListener('click', (e) => {
       const b = e.target.closest('[data-cmd]');
       if (b && ready) { submit(b.dataset.cmd, true); focus(); return; }

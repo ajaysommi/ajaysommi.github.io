@@ -16,6 +16,22 @@
   const READY = window.READY || Promise.resolve();
 
   const curtain = document.getElementById('curtain');
+
+  /* Sound starts off. A small speaker in the corner turns it on (and off
+     again); inside a desktop system the system's own menu bar has one. */
+  const snd = document.createElement('button');
+  snd.type = 'button';
+  snd.className = 'snd-toggle';
+  const sndDraw = () => {
+    snd.innerHTML = `${I.spk(SFX.muted)}<span>${SFX.muted ? 'Sound off' : 'Sound on'}</span>`;
+    snd.setAttribute('aria-pressed', String(!SFX.muted));
+    snd.setAttribute('aria-label', SFX.muted ? 'Turn sound on' : 'Turn sound off');
+  };
+  sndDraw();
+  snd.addEventListener('click', () => SFX.toggle());
+  document.addEventListener('sfx-mute', sndDraw);
+  document.body.appendChild(snd);
+  const osOn = (on) => root.classList.toggle('os-on', on);
   const fade = async (fn) => {
     curtain.classList.add('is-on');
     await wait(380);
@@ -91,6 +107,7 @@
         pick.hidden = true;
         const s = screen(i);
         s.hidden = false;
+        osOn(true);
         history.replaceState(null, '', '#' + ERAS[i].year);
       });
       const sys = ERAS[i].sys();
@@ -105,6 +122,7 @@
       await fade(async () => {
         if (prev >= 0) { ERAS[prev].sys().leave(); screens[prev].hidden = true; }
         pick.hidden = false;
+        osOn(false);
         history.replaceState(null, '', location.pathname + location.search);
         mark();
       });
@@ -124,8 +142,8 @@
   /* ================================================================= PHONES */
 
   const PHONE_ART = {
-    nokia: `<svg viewBox="0 0 60 130" aria-hidden="true"><rect x="2" y="2" width="56" height="126" rx="20" fill="#2f4372"/><rect x="10" y="18" width="40" height="34" rx="6" fill="#20252c"/><rect x="14" y="22" width="32" height="24" rx="2" fill="#b4d074"/><text x="30" y="37" text-anchor="middle" font-family="Pixelify Sans, monospace" font-size="6" font-weight="700" fill="#1d2a10">SOMMIA</text><rect x="20" y="58" width="20" height="9" rx="4.5" fill="#c4cbd8"/>${[0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<ellipse cx="${17 + c * 13}" cy="${78 + r * 11}" rx="5" ry="3.6" fill="#d7dce6"/>`).join('')).join('')}</svg>`,
-    pocket: `<svg viewBox="0 0 60 130" aria-hidden="true"><rect x="2" y="2" width="56" height="126" rx="12" fill="#f3f1ec" stroke="#c9c3b6"/><rect x="8" y="10" width="44" height="50" rx="4" fill="#2b2e2a"/><rect x="11" y="13" width="38" height="44" rx="2" fill="#c9dcb6"/><rect x="13" y="20" width="34" height="5" fill="#1c2614"/><rect x="13" y="28" width="26" height="3" fill="#55603f"/><rect x="13" y="34" width="30" height="3" fill="#55603f"/><circle cx="30" cy="94" r="22" fill="#fbfaf7" stroke="#d9d4c8"/><circle cx="30" cy="94" r="8" fill="#ece9e2" stroke="#d9d4c8"/></svg>`,
+    nokia: `<svg viewBox="0 0 74 122" aria-hidden="true"><rect x="2" y="2" width="70" height="118" rx="26" fill="#2f4372"/><rect x="2" y="2" width="70" height="118" rx="26" fill="url(#nkG)"/><defs><linearGradient id="nkG" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient></defs><rect x="13" y="16" width="48" height="38" rx="8" fill="#20252c"/><rect x="18" y="21" width="38" height="27" rx="2" fill="#b4d074"/><text x="37" y="38" text-anchor="middle" font-family="Pixelify Sans, monospace" font-size="7" font-weight="700" fill="#1d2a10">SOMMIA</text><rect x="25" y="59" width="24" height="9" rx="4.5" fill="#c4cbd8"/>${[0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<ellipse cx="${20 + c * 17}" cy="${78 + r * 10}" rx="6.5" ry="3.6" fill="#d7dce6"/>`).join('')).join('')}</svg>`,
+    pocket: `<svg viewBox="0 0 74 122" aria-hidden="true"><rect x="2" y="2" width="70" height="118" rx="12" fill="#f3f1ec" stroke="#c9c3b6"/><rect x="9" y="9" width="56" height="48" rx="4" fill="#2b2e2a"/><rect x="12" y="12" width="50" height="42" rx="2" fill="#c9dcb6"/><rect x="14" y="18" width="46" height="5" fill="#1c2614"/><rect x="14" y="26" width="34" height="3" fill="#55603f"/><rect x="14" y="32" width="40" height="3" fill="#55603f"/><circle cx="37" cy="88" r="24" fill="#fbfaf7" stroke="#d9d4c8"/><circle cx="37" cy="88" r="8.5" fill="#ece9e2" stroke="#d9d4c8"/></svg>`,
     iphone: `<svg viewBox="0 0 60 130" aria-hidden="true"><rect x="2" y="2" width="56" height="126" rx="13" fill="#0c0c0c" stroke="#c9ccd0" stroke-width="2.4"/><rect x="25" y="12" width="10" height="2" rx="1" fill="#333"/><rect x="7" y="22" width="46" height="70" fill="#000"/>${[0, 1, 2].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${9.5 + c * 11}" y="${26 + r * 13}" width="8" height="8" rx="2" fill="hsl(${(r * 4 + c) * 33} 70% 55%)"/>`).join('')).join('')}<rect x="7" y="80" width="46" height="12" fill="#9a9a9a"/><circle cx="30" cy="108" r="7" fill="#111" stroke="#444"/><rect x="27.4" y="105.4" width="5.2" height="5.2" rx="1.2" fill="none" stroke="#888" stroke-width=".8"/></svg>`
   };
   const PHONES = [
@@ -143,8 +161,8 @@
 
     pick.classList.add('is-phones');
     pick.innerHTML = `
-      <div class="mp-head">${I.pxmark(32)}<h1>Choose your phone</h1><p>Swipe through, then tap one to power it on.</p></div>
-      <div class="mp-rail" role="listbox" aria-label="Phones">${PHONES.map((p, i) => `<button type="button" class="mp-card" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><b>${esc(p.name)}</b><span class="mp-y">${p.year}</span><span class="mp-n">${esc(p.note)}</span><span class="mp-on">Power on</span></button>`).join('')}</div>
+      <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a phone from its year.</p></div>
+      <div class="mp-rail" role="listbox" aria-label="Eras">${PHONES.map((p, i) => `<button type="button" class="mp-card" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><b>${esc(p.name)}</b><span class="mp-y">${p.year}</span><span class="mp-n">${esc(p.note)}</span><span class="mp-on">Power on</span></button>`).join('')}</div>
       <div class="mp-dots">${PHONES.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>
       <a class="pk-classic" href="classic.html">Or open the classic site</a>`;
     const rail = pick.querySelector('.mp-rail');
@@ -175,7 +193,7 @@
     back.type = 'button';
     back.className = 'mp-back';
     back.hidden = true;
-    back.innerHTML = '‹ Phones';
+    back.innerHTML = '\u2039 Eras';
     back.addEventListener('click', () => showPicker());
     document.body.appendChild(back);
 

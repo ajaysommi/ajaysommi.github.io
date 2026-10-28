@@ -322,5 +322,22 @@ window.RETRO = (function () {
     set(k, v) { try { localStorage.setItem('retro-' + k, JSON.stringify(v)); } catch (e) {} }
   };
 
-  return { esc, usedAt, dither, ditherAll, ascii, store };
+  /* The space a phone really has: the small viewport height (browser bars
+     showing, as svh measures it) minus the safe areas, the same allowance
+     the main site makes for a bottom toolbar. */
+  let probe = null;
+  const viewport = () => {
+    if (!probe) {
+      probe = document.createElement('div');
+      probe.setAttribute('aria-hidden', 'true');
+      probe.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100svh;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box';
+      document.body.appendChild(probe);
+    }
+    const cs = getComputedStyle(probe);
+    const h = Math.min(probe.offsetHeight || innerHeight, window.visualViewport ? visualViewport.height : innerHeight) - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const w = (window.visualViewport ? visualViewport.width : innerWidth) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    return { w, h, top: parseFloat(cs.paddingTop) };
+  };
+
+  return { esc, usedAt, dither, ditherAll, ascii, store, viewport };
 })();

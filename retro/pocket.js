@@ -14,7 +14,7 @@ window.POCKET = { start(room, exit) {
   const FACES = [['snow', 'Snow'], ['graphite', 'Graphite'], ['ocean', 'Ocean'], ['tangerine', 'Tangerine'], ['grape', 'Grape']];
 
   room.innerHTML = `
-    <div class="pk is-off" data-face="${store.get('face', 'snow')}">
+    <div class="pk-scale"><div class="pk is-off" data-face="${store.get('face', 'snow')}">
       <button class="pk-hold" type="button" aria-label="Hold switch" aria-pressed="false"><span>HOLD</span></button>
       <div class="pk-brand">${I.mark(14, true)} Sommi Pocket</div>
       <div class="pk-lcd-frame"><div class="pk-lcd" role="application" aria-label="Pocket screen">
@@ -35,9 +35,22 @@ window.POCKET = { start(room, exit) {
         <i class="dot"></i>
       </div></div>
       <span class="pk-slot" aria-hidden="true"></span>
-    </div>`;
+    </div></div>`;
 
   const dev = room.querySelector('.pk');
+  const scaleBox = room.querySelector('.pk-scale');
+
+  /* A fixed shape, an iPod's proportions, scaled to the room the browser
+     really leaves under the buttons on top. */
+  const fit = () => {
+    const v = window.RETRO.viewport();
+    const s = Math.min(1.35, (v.h - 60) / 545, (v.w - 24) / 335);
+    scaleBox.style.transform = `scale(${s})`;
+    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 60 - 545 * s) / 2) + 'px';
+  };
+  fit();
+  addEventListener('resize', fit);
+  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
   const lcd = room.querySelector('.pk-lcd');
   const view = room.querySelector('.lcd-view');
   const title = room.querySelector('.lcd-bar .t');

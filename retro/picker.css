@@ -96,3 +96,16 @@
   border: 0; border-radius: 999px; padding: 6px 12px; font: 13px var(--pixel); color: #eee;
   background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12);
 }
+
+/* The sound switch: a speaker in the top right corner, everywhere but
+   inside a desktop system, which has its own. */
+.snd-toggle {
+  position: fixed; right: max(10px, env(safe-area-inset-right)); top: calc(env(safe-area-inset-top) + 8px); z-index: 9500;
+  display: flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 6px 12px 6px 10px;
+  font: 13px var(--pixel); color: #eee; background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12); cursor: pointer;
+}
+.snd-toggle svg { width: 16px; height: 16px; }
+.snd-toggle[aria-pressed="false"] { opacity: .75; }
+.snd-toggle:hover { opacity: 1; }
+.os-on .snd-toggle { display: none; }
+.is-loading .snd-toggle { display: none; }

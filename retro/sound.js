@@ -7,7 +7,9 @@
    ========================================================================== */
 window.SFX = (function () {
   let ctx = null, master = null;
-  let muted = window.RETRO.store.get('muted', false);
+  /* Silent until the visitor asks for sound, every visit, unless they
+     turned it on before. */
+  let muted = !window.RETRO.store.get('sound-on', false);
 
   const ready = () => {
     if (muted) return null;
@@ -60,7 +62,7 @@ window.SFX = (function () {
     get muted() { return muted; },
     setMuted(v) {
       muted = !!v;
-      window.RETRO.store.set('muted', muted);
+      window.RETRO.store.set('sound-on', !muted);
       if (muted && ctx) ctx.suspend();
       document.dispatchEvent(new CustomEvent('sfx-mute', { detail: muted }));
     },

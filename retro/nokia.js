@@ -33,12 +33,16 @@ window.NOKIA = { start(room, exit) {
   const view = room.querySelector('.nk-view');
   const soft = room.querySelector('.nk-soft');
 
+  /* Fits the room the browser really leaves, under the buttons on top. */
   const fit = () => {
-    const s = Math.min(1.25, (innerHeight - 70) / 700, (innerWidth - 24) / 310);
+    const v = window.RETRO.viewport();
+    const s = Math.min(1.25, (v.h - 64) / 650, (v.w - 24) / 330);
     scaleBox.style.transform = `scale(${s})`;
+    scaleBox.style.marginTop = v.top + 44 + Math.max(0, (v.h - 64 - 650 * s) / 2) + 'px';
   };
   fit();
   addEventListener('resize', fit);
+  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
 
   /* ------------------------------------------------------------- feedback */
 
