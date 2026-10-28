@@ -149,7 +149,7 @@
   const PHONES = [
     { id: 'nokia', name: 'SOMMIA 3310', year: '2000', note: 'Keys only. Navi selects, C goes back.', mod: () => window.NOKIA, cls: 'nk-room' },
     { id: 'pocket', name: 'iSommi Classic', year: '2004', note: 'A click wheel and a tiny screen.', mod: () => window.POCKET, cls: 'pocket-room' },
-    { id: 'iphone', name: 'iPhone 2G', year: '2007', note: 'Slide to unlock. The home button goes back.', mod: () => window.IPHONE, cls: 'iphone-room' }
+    { id: 'iphone', name: 'iSommi 2G', year: '2007', note: 'Slide to unlock. The home button goes back.', mod: () => window.IPHONE, cls: 'iphone-room' }
   ];
 
   const phones = () => {
@@ -161,7 +161,7 @@
 
     pick.classList.add('is-phones');
     pick.innerHTML = `
-      <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a phone from its year.</p></div>
+      <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a device from its year.</p></div>
       <div class="mp-rail" role="listbox" aria-label="Eras">${PHONES.map((p, i) => `<button type="button" class="mp-card" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><span class="mp-y">${p.year}</span><b>${esc(p.name)}</b><span class="mp-n">${esc(p.note)}</span><span class="mp-on">Power on</span></button>`).join('')}</div>
       <div class="mp-dots">${PHONES.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>
       <a class="pk-classic" href="classic.html">Or open the classic site</a>`;

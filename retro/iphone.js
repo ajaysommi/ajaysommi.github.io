@@ -51,7 +51,7 @@ window.IPHONE = { start(room, exit) {
         <div class="ip-screen" data-bar="trans" role="application" aria-label="Phone screen">
           <div class="ip-status"><span class="l"><span class="ip-sig"><i></i><i></i><i></i><i></i><i></i></span><b class="car">SOMMI</b><span class="ip-edge">E</span></span><span class="c"></span><span class="r"><span class="ip-bat"><i></i></span></span></div>
           <div class="ip-board is-flying"><div class="ip-grid"></div><div class="ip-dock"></div></div>
-          <div class="ip-lock" style="background-image:url(${WALL})"><div class="top"><div class="time"></div><div class="date"></div></div><div class="bot"><div class="ip-slider"><div class="txt">slide to unlock</div><div class="ip-knob" role="slider" aria-label="Slide to unlock" tabindex="0"><svg viewBox="0 0 34 24"><defs><linearGradient id="kar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3a3a3"/><stop offset="1" stop-color="#6d6d6d"/></linearGradient></defs><path d="M5 9h13V4l11 8-11 8v-5H5z" fill="url(#kar)" stroke="#5f5f5f" stroke-width=".6" stroke-linejoin="round"/></svg></div></div></div></div>
+          <div class="ip-lock" style="background-image:url(${WALL})"><div class="top"><div class="time"></div><div class="date"></div></div><div class="ip-lk-note" hidden><b></b><span></span></div><div class="bot"><div class="ip-slider"><div class="txt">slide to unlock</div><div class="ip-knob" role="slider" aria-label="Slide to unlock" tabindex="0"><svg viewBox="0 0 34 24"><defs><linearGradient id="kar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3a3a3"/><stop offset="1" stop-color="#6d6d6d"/></linearGradient></defs><path d="M5 9h13V4l11 8-11 8v-5H5z" fill="url(#kar)" stroke="#5f5f5f" stroke-width=".6" stroke-linejoin="round"/></svg></div></div></div></div>
           <div class="ip-boot">${SILVER}</div>
           <div class="ip-off"></div>
         </div>
@@ -182,6 +182,18 @@ window.IPHONE = { start(room, exit) {
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
 
+  /* The springboard's own artwork, taken from the 2007 home screen. The
+     calendar and weather faces are left blank and lettered live. */
+  const ART = { sms: 'sms', calendar: 'calendar', photos: 'photos', camera: 'camera', tv: 'youtube', stocks: 'stocks', maps: 'maps', weather: 'weather', settings: 'settings', notes: 'notes', phone: 'phone', mail: 'mail', safari: 'safari' };
+  Object.keys(ART).forEach((k) => {
+    ICON[k] = () => {
+      let over = '';
+      if (k === 'calendar') { const d = now(); over = `<span class="ic-wd">${d.toLocaleDateString('en-US', { weekday: 'long' })}</span><span class="ic-dd">${d.getDate()}</span>`; }
+      if (k === 'weather') over = '<span class="ic-tp">73\u00b0</span>';
+      return `<img class="ic-img" src="assets/images/ios/${ART[k]}.webp" alt="" draggable="false" />${over}`;
+    };
+  });
+
   /* Small row icons for the Settings-style tables. */
   const mini = (bg, glyph) => `<span class="mi" style="--mi:${bg}">${glyph}</span>`;
 
@@ -289,20 +301,32 @@ window.IPHONE = { start(room, exit) {
 
   /* A text field drawn by hand: a caret that blinks, a value the keyboard
      edits. Tapping it brings the keyboard up. */
-  const field = (el, { value = '', placeholder = '', multi = false, ret = 'return', onEnter, onChange } = {}) => {
+  const field = (el, { value = '', placeholder = '', multi = false, ret = 'return', onEnter, onChange, selectAll = false, clearBtn = false } = {}) => {
     el.classList.add('fld');
     if (multi) el.classList.add('multi');
+    /* selectAll: focusing highlights everything, so the first key typed
+       replaces it, as an address bar does. clearBtn: a grey x empties it. */
     const f = {
-      value, ret,
-      render() { el.innerHTML = `${f.value ? esc(f.value).replace(/\n/g, '<br/>') : `<span class="ph">${esc(placeholder)}</span>`}<i class="caret"></i>`; onChange && onChange(f.value); if (multi) el.scrollTop = el.scrollHeight; },
-      insert(s) { f.value += s; f.render(); },
-      back() { f.value = f.value.slice(0, -1); f.render(); },
-      enter() { if (onEnter) onEnter(f); else if (multi) f.insert('\n'); },
-      focus() { el.classList.add('on'); kb.show(f); },
-      blur() { el.classList.remove('on'); },
-      clear() { f.value = ''; f.render(); }
+      value, ret, sel: false,
+      render() {
+        const txt = f.value ? esc(f.value).replace(/\n/g, '<br/>') : `<span class="ph">${esc(placeholder)}</span>`;
+        el.innerHTML = `${f.sel && f.value ? `<span class="hl">${txt}</span>` : txt}<i class="caret"></i>${clearBtn && f.value && el.classList.contains('on') ? '<button type="button" class="fld-x" aria-label="Clear">\u00d7</button>' : ''}`;
+        onChange && onChange(f.value);
+        if (multi) el.scrollTop = el.scrollHeight; else el.scrollLeft = el.scrollWidth;
+      },
+      insert(s) { if (f.sel) { f.value = ''; f.sel = false; } f.value += s; f.render(); },
+      back() { if (f.sel) { f.value = ''; f.sel = false; } else f.value = f.value.slice(0, -1); f.render(); },
+      enter() { f.sel = false; if (onEnter) onEnter(f); else if (multi) f.insert('\n'); },
+      focus() { el.classList.add('on'); f.sel = selectAll && !!f.value; f.render(); kb.show(f); },
+      blur() { el.classList.remove('on'); f.sel = false; f.render(); },
+      clear() { f.value = ''; f.sel = false; f.render(); }
     };
-    el.addEventListener('click', (e) => { e.stopPropagation(); f.focus(); });
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (e.target.closest('.fld-x')) { SFX.click(); f.clear(); if (!el.classList.contains('on')) f.focus(); return; }
+      if (el.classList.contains('on') && f.sel) { f.sel = false; f.render(); return; }
+      if (!el.classList.contains('on')) f.focus();
+    });
     f.render();
     return f;
   };
@@ -379,8 +403,26 @@ window.IPHONE = { start(room, exit) {
       }
       if (top.opts.right) btn('r' + (top.opts.blue ? ' blue' : '') + (top.opts.right[0] === '+' ? ' plus' : ''), top.opts.right[0], top.opts.right[1]);
       if (top.opts.seg) nb.appendChild(top.opts.seg);
-      const side = Math.max(0, ...[...nb.querySelectorAll('.nbb')].map((b) => b.offsetWidth + 10));
-      nb.querySelector('.t').style.maxWidth = (320 - side * 2 - 8) + 'px';
+      /* Extra icon buttons, packed to the left of the right-hand one. */
+      let x = 6 + (nb.querySelector('.nbb.r') ? nb.querySelector('.nbb.r').offsetWidth + 6 : 0);
+      (top.opts.tools || []).slice().reverse().forEach(([svg, label, fn]) => {
+        const t = h('button', 'nbb ico', svg);
+        t.type = 'button';
+        t.setAttribute('aria-label', label);
+        t.style.right = x + 'px';
+        t.addEventListener('click', (e) => { SFX.click(); fn(e); });
+        nb.appendChild(t);
+        x += t.offsetWidth + 6;
+      });
+      const tt = nb.querySelector('.t');
+      if (top.opts.tools) {
+        const l = nb.querySelector('.nbb.l, .nbb.ll');
+        Object.assign(tt.style, { position: 'absolute', left: (l ? l.offsetLeft + l.offsetWidth + 8 : 10) + 'px', right: x + 2 + 'px', maxWidth: 'none', textAlign: 'left' });
+      } else {
+        Object.assign(tt.style, { position: '', left: '', right: '', textAlign: '' });
+        const side = Math.max(0, ...[...nb.querySelectorAll('.nbb')].map((b) => b.offsetWidth + 10));
+        tt.style.maxWidth = (320 - side * 2 - 8) + 'px';
+      }
     };
     def.open(app);
     return app;
@@ -403,7 +445,7 @@ window.IPHONE = { start(room, exit) {
     a.def.onClose && a.def.onClose();
     scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
     a.el.classList.add('is-closing');
-    setTimeout(() => board.classList.remove('is-converge'), 120);
+    setTimeout(() => { flyOut(); board.classList.remove('is-converge'); requestAnimationFrame(flyIn); }, 140);
     setTimeout(() => a.el.remove(), 320);
     setBar('black');
     state = 'home';
@@ -500,7 +542,7 @@ window.IPHONE = { start(room, exit) {
       note.querySelector('a').href = t.url || '#';
       cnt.textContent = tabsList.length;
     };
-    const addr = field(app.el.querySelector('.saf-url'), { placeholder: 'Search or type an address', ret: 'Go', onEnter: (f) => { const u = resolve(f.value); if (!u) return; tabsList[cur].url = u; kb.hide(); show(); } });
+    const addr = field(app.el.querySelector('.saf-url'), { placeholder: 'Search or type an address', ret: 'Go', selectAll: true, clearBtn: true, onEnter: (f) => { const u = resolve(f.value); if (!u) return; tabsList[cur].url = u; kb.hide(); show(); } });
     app.el.querySelector('.saf-rl').addEventListener('click', () => { SFX.click(); show(); });
     /* The page switcher: one card per tab, New Page, close, Done. */
     const pages = () => {
@@ -661,10 +703,21 @@ window.IPHONE = { start(room, exit) {
   /* Text messages: tap the field, type, Send, and it goes up the screen.
      A reply comes back. */
   const convo = {};
+  /* Every recommendation arrives unread; reading one clears its dot, and
+     the count shows on the icon and the lock screen. */
+  const smsRead = new Set(store.get('ip-sms-read', []));
+  const unreadCount = () => P.recs.filter((_, i) => !smsRead.has(i)).length;
+  const showUnread = () => {
+    const n = unreadCount();
+    const note = room.querySelector('.ip-lk-note');
+    if (note) { note.hidden = !n; note.querySelector('b').textContent = n; note.querySelector('span').textContent = n === 1 ? 'New Text Message' : 'New Text Messages'; }
+    const ic = room.querySelector('.ip-icon[data-id="guestbook"]');
+    if (ic) { let bd = ic.querySelector('.badge'); if (!n) { if (bd) bd.remove(); } else { if (!bd) { bd = h('span', 'badge'); ic.appendChild(bd); } bd.textContent = n; } }
+  };
   const messages = (app) => {
     const thread = (p, i) => {
       const [n, c, q] = P.recs[i];
-      if (!convo[i]) convo[i] = [['in', q], ['out', `Thank you, ${n.split(' ')[0]}! That means a lot.`]];
+      if (!convo[i]) convo[i] = [['in', q]];
       p.classList.add('sms-pg');
       p.innerHTML = `<div class="sms"><div class="day">${esc(c)}</div>${convo[i].map(([d, t]) => `<div class="bub ${d}"><span>${esc(t)}</span></div>`).join('')}</div><div class="sms-bar"><span class="sms-field"></span><button type="button" class="sms-send">Send</button></div>`;
       const box = p.querySelector('.sms');
@@ -687,7 +740,7 @@ window.IPHONE = { start(room, exit) {
       setTimeout(() => { box.scrollTop = box.scrollHeight; }, 50);
     };
     app.push('Text Messages', (pg, a, entry) => {
-      const ul = plain(pg, P.recs.map(([n, c, q], i) => ({ id: i, text: n, sub: q, rt: c.split(' ')[0], cls: 'sms-row', go: () => app.push(n.split(' ')[0], (p) => thread(p, i), { back: 'Messages', right: ['Clear', () => { convo[i] = []; app.stack[app.stack.length - 1].pg.querySelectorAll('.bub').forEach((b) => { b.classList.add('gone'); setTimeout(() => b.remove(), 250); }); }] }) })));
+      const ul = plain(pg, P.recs.map(([n, c, q], i) => ({ id: i, text: n, sub: q, rt: c.split(' ')[0], cls: 'sms-row' + (smsRead.has(i) ? '' : ' unread'), go: () => (smsRead.add(i), store.set('ip-sms-read', [...smsRead]), setTimeout(() => { const li = pg.querySelector(`.sms-row[data-id="${i}"]`); if (li) li.classList.remove('unread'); showUnread(); }, 320)) && app.push(n.split(' ')[0], (p) => thread(p, i), { back: 'Messages', right: ['Clear', () => { convo[i] = []; app.stack[app.stack.length - 1].pg.querySelectorAll('.bub').forEach((b) => { b.classList.add('gone'); setTimeout(() => b.remove(), 250); }); }] }) })));
       editable(app, entry, ul);
     });
   };
@@ -713,22 +766,25 @@ window.IPHONE = { start(room, exit) {
     const open = (i, fresh) => app.push(named(notes[i]), (p, a, entry) => {
       p.classList.add('note-pg');
       const d = now();
-      p.innerHTML = `<div class="note"><div class="d"><span>Today</span><span>${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} &nbsp;${hm(d)}</span></div><div class="note-body"></div></div><div class="note-tb"><button type="button" data-a="prev" aria-label="Previous note">⇦</button><button type="button" data-a="mail" aria-label="Email this note">✉</button><button type="button" data-a="trash" aria-label="Delete note"><svg viewBox="0 0 16 18" width="16" height="18"><path d="M2 4h12M6 4V2h4v2M3.5 4l1 12h7l1-12" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button><button type="button" data-a="next" aria-label="Next note">⇨</button></div>`;
+      p.innerHTML = `<div class="note"><div class="d"><span>Today</span><span>${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} &nbsp;${hm(d)}</span></div><div class="note-body"></div></div>`;
       field(p.querySelector('.note-body'), { value: notes[i][1], multi: true, onChange: (v) => { notes[i][1] = v; save(); } });
       if (fresh) setTimeout(() => p.querySelector('.note-body').click(), 340);
-      p.querySelector('.note-tb').addEventListener('click', async (e) => {
-        const b = e.target.closest('[data-a]');
-        if (!b) return;
-        SFX.click();
-        const k = b.dataset.a;
-        if (k === 'prev') { if (i > 0) { app.pop(); setTimeout(() => open(i - 1), 320); } else alertBox('First Note', 'There’s nothing before this one.'); }
-        if (k === 'next') { if (i < notes.length - 1) { app.pop(); setTimeout(() => open(i + 1), 320); } else alertBox('Last Note', 'Tap + to start a new one.'); }
-        if (k === 'mail') writeMail(named(notes[i]), notes[i][1]);
-        if (k === 'trash') {
+      /* Swipe sideways to move between notes. */
+      let x0 = null;
+      p.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+      p.addEventListener('pointerup', (e) => {
+        if (x0 === null || Math.abs(e.clientX - x0) < 60) { x0 = null; return; }
+        const j = i + (e.clientX < x0 ? 1 : -1);
+        x0 = null;
+        if (j >= 0 && j < notes.length) { app.pop(); setTimeout(() => open(j), 320); }
+      });
+      entry.opts.tools = [
+        ['<svg viewBox="0 0 22 18" width="22" height="18"><path d="M2 6.5v9.5h15.5V12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 12c1-4.5 4.5-6.5 9-6.5V2.5L20.5 7 15 11.5V8.5C11.5 8.5 8.5 9.5 6 12z" fill="#fff"/></svg>', 'Email this note', () => writeMail(named(notes[i]), notes[i][1])],
+        ['<svg viewBox="0 0 16 19" width="16" height="19"><path d="M1 4h14M5.5 4V1.8h5V4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M2.6 5.6h10.8l-1 12.4H3.6z" fill="#fff"/><path d="M6 8v8M8 8v8M10 8v8" stroke="#8a5d2a" stroke-width="1"/></svg>', 'Delete note', async () => {
           const r = await alertBox('Delete Note', 'This note will be thrown away.', ['Cancel', 'Delete']);
           if (r === 'Delete') { notes.splice(i, 1); save(); list(); }
-        }
-      });
+        }]
+      ];
       entry.opts.right = ['+', () => { notes.push(['', '']); save(); app.pop(); setTimeout(() => open(notes.length - 1, true), 320); }];
       entry.opts.onPop = () => setTimeout(list, 310);
     }, { back: 'Notes' });
@@ -738,8 +794,9 @@ window.IPHONE = { start(room, exit) {
   /* Phone: Favorites, Recents, Contacts, Keypad and Voicemail all work.
      The keypad dials anything, and the network politely declines. */
   const phoneApp = (app) => {
-    const card = store.get('ip-card', null) || { mobile: '(555) 252-9726', email: P.email, home: 'github.com/ajaysommi', work: 'linkedin.com/in/ajay-sommi', notes: 'Software engineer. Graduating December 2026.' };
-    const favs = store.get('ip-favs', null) || [['Ajay Sommi', 'mobile', card.mobile], ['Ajay Sommi', 'email', P.email]];
+    const card = store.get('ip-card', null) || { email: P.email, home: 'github.com/ajaysommi', work: 'linkedin.com/in/ajay-sommi', notes: 'Software engineer. Graduating December 2026.' };
+    delete card.mobile;
+    const favs = (store.get('ip-favs', null) || [['Ajay Sommi', 'email', P.email]]).filter((f) => !/555/.test(f[2]));
     let toTab = () => {};
     const allRecents = () => [...P.experience].reverse().map((e) => [e.short, e.where, e.when.split(' to ')[1] || e.when]);
     let recents = allRecents();
@@ -755,7 +812,7 @@ window.IPHONE = { start(room, exit) {
       const r = await alertBox('Cellular Network Not Available', 'This phone can’t place calls. You can send an email instead.', ['Dismiss', 'Email']);
       if (r === 'Email') writeMail('Hello');
     };
-    const F = [['mobile', 'mobile'], ['email', 'email'], ['home page', 'home'], ['work', 'work'], ['notes', 'notes']];
+    const F = [['email', 'email'], ['home page', 'home'], ['work', 'work'], ['notes', 'notes']];
     const showCard = (edit) => (pg, a, entry) => {
       pg.classList.add('pin');
       pg.innerHTML = `<div class="ct-head"><img src="${P.photo}" alt="" /><div><b>Ajay Sommi</b><span>${esc(P.title)}</span></div></div>
@@ -766,10 +823,10 @@ window.IPHONE = { start(room, exit) {
       pg.addEventListener('click', (e) => {
         if (edit) return;
         const r = e.target.closest('[data-k]');
-        if (r) { const f = r.dataset.k; if (f === 'mobile') call(card.mobile); else if (f === 'email') writeMail('Hello'); else if (f === 'home') ext(P.github); else if (f === 'work') ext(P.linkedin); else alertBox('Notes', esc(card.notes)); }
+        if (r) { const f = r.dataset.k; if (f === 'email') writeMail('Hello'); else if (f === 'home') ext(P.github); else if (f === 'work') ext(P.linkedin); else alertBox('Notes', esc(card.notes)); }
         const act = e.target.closest('[data-act]');
         if (act && act.dataset.act === 'text') { closeApp(); setTimeout(() => openApp('guestbook', null), 360); }
-        if (act && act.dataset.act === 'fav') { favs.push(['Ajay Sommi', 'mobile', card.mobile]); store.set('ip-favs', favs); alertBox('Added to Favorites'); }
+        if (act && act.dataset.act === 'fav') { if (!favs.some((f) => f[1] === 'email')) favs.push(['Ajay Sommi', 'email', P.email]); store.set('ip-favs', favs); alertBox('Added to Favorites'); }
       });
       entry.opts.right = [edit ? 'Done' : 'Edit', () => {
         if (edit) { Object.keys(fields).forEach((f) => { card[f] = fields[f].value; }); store.set('ip-card', card); }
@@ -872,31 +929,85 @@ window.IPHONE = { start(room, exit) {
   };
 
   const APPS = {
-    guestbook: { name: 'Guestbook', icon: 'sms', open: messages },
-    experience: { name: 'Experience', icon: 'calendar', open: calendar },
-    builds: { name: 'Builds', icon: 'photos', cls: 'is-photos', open(app) {
+    guestbook: { name: 'Text', icon: 'sms', open: messages },
+    experience: { name: 'Calendar', icon: 'calendar', open: calendar },
+    builds: { name: 'Photos', icon: 'photos', cls: 'is-photos', open(app) {
       app.push('Photo Albums', (pg) => plain(pg, P.offclock.map((s) => ({ text: `${s.name} (${s.steps.length})`, img: s.cover, cls: 'alb', go: () => app.push(s.name, (p) => {
         p.classList.add('ph-pg');
         p.innerHTML = `<div class="grid4">${s.steps.map((st, k) => `<img src="${st[0]}" data-k="${k}" alt="${esc(st[1])}" />`).join('')}</div><div class="ph-lede">${esc(s.lede)}</div>`;
         p.addEventListener('click', (ev) => { const im = ev.target.closest('img[data-k]'); if (im) viewer(app, s, +im.dataset.k); });
       }, { right: ['Play', () => viewer(app, s, 0).play()] }) }))));
     } },
-    about: { name: 'About Me', icon: 'camera', bare: true, bar: 'black', open(app) {
-      app.el.innerHTML = `<div class="cam" style="background-image:url(${WALL})"><div class="iris">${[0, 1, 2, 3, 4, 5].map((i) => `<i style="--r:${i * 60}deg;transform:rotate(${i * 60}deg)"></i>`).join('')}</div><div class="flash"></div>
-        <div class="cam-card"><b>Ajay Sommi</b><span>${esc(P.title)} · ${esc(P.citizen)}</span><p>${esc(P.about[1])}</p></div>
-        <div class="bar"><button class="roll" type="button" aria-label="Camera Roll"><img src="${P.photo}" alt="" /></button><button class="shut" type="button" aria-label="Take picture"><svg viewBox="0 0 30 22" width="30" height="22"><rect x="2" y="5" width="26" height="16" rx="3" fill="#333"/><circle cx="15" cy="13" r="5.5" fill="#bbb" stroke="#333" stroke-width="2"/><rect x="10" y="2" width="10" height="4" rx="1" fill="#333"/></svg></button><span class="roll-sp"></span></div></div>`;
-      const cam = app.el.querySelector('.cam');
+    about: { name: 'Camera', icon: 'camera', bare: true, bar: 'black', open(app) {
+      /* A camera pointed at the last few years. The viewfinder drifts over
+         real photos; the shutter develops one into a snapshot with a line
+         about it, and every shot taken waits in the Camera Roll. */
+      const O = 'assets/images/offclock/';
+      const SC = [
+        [P.photo, 'Ajay Sommi', `${P.title}. ${P.about[0].replace(/^Welcome\. /, '')}`],
+        ['assets/images/uf-gator-640.webp', P.education.school, `${P.education.degree}, graduating ${P.education.when}.`, 'fit'],
+        [P.kidPhoto, 'Where it started', P.quote],
+        ...[...P.experience].reverse().filter((x) => x.photos.length).map((x) => [x.photos[0], x.org, `${x.role} \u00b7 ${x.when.replace(' to ', ' \u2013 ')}`]),
+        [O + 'ard-desk-480.webp', 'Off the clock', 'Repairs, teardowns and builds, mostly to see how things work.']
+      ];
+      const roll = store.get('ip-cam-roll', []).filter((k) => SC[k]);
+      let k = 0, busy = false, timer = 0;
+      app.el.innerHTML = `<div class="cam cam2"><div class="vf"><img class="vf-a" alt="" /><img class="vf-b" alt="" /><div class="vf-focus"></div><div class="vf-dots">${SC.map(() => '<i></i>').join('')}</div></div>
+        <div class="iris">${[0, 1, 2, 3, 4, 5].map((i) => `<i style="--r:${i * 60}deg"></i>`).join('')}</div><div class="flash"></div>
+        <div class="snap" hidden><div class="snap-ph"><img alt="" /><b></b><span></span></div></div>
+        <div class="bar"><button class="roll" type="button" aria-label="Camera Roll"></button><button class="shut" type="button" aria-label="Take picture"><svg viewBox="0 0 30 22" width="30" height="22"><rect x="2" y="5" width="26" height="16" rx="3" fill="#333"/><circle cx="15" cy="13" r="5.5" fill="#bbb" stroke="#333" stroke-width="2"/><rect x="10" y="2" width="10" height="4" rx="1" fill="#333"/></svg></button><span class="roll-sp"></span></div></div>`;
+      const cam = app.el.querySelector('.cam'), vf = app.el.querySelector('.vf'), snap = app.el.querySelector('.snap'), rollBtn = app.el.querySelector('.roll');
+      let front = vf.querySelector('.vf-a'), back = vf.querySelector('.vf-b');
+      const drawRoll = () => { rollBtn.innerHTML = roll.length ? `<img src="${SC[roll[roll.length - 1]][0]}" alt="" />` : ''; };
+      const show = (i) => {
+        k = (i + SC.length) % SC.length;
+        back.src = SC[k][0];
+        back.classList.toggle('fit', SC[k][3] === 'fit');
+        back.classList.add('on'); front.classList.remove('on');
+        [front, back] = [back, front];
+        vf.querySelectorAll('.vf-dots i').forEach((d, j) => d.classList.toggle('on', j === k));
+        const f = vf.querySelector('.vf-focus');
+        f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+      };
+      const idle = () => { clearInterval(timer); timer = setInterval(() => { if (!busy && snap.hidden) show(k + 1); }, 4200); };
+      show(0); idle();
       setTimeout(() => cam.classList.add('is-open'), 250);
       app.el.querySelector('.shut').addEventListener('click', () => {
-        const f = app.el.querySelector('.flash');
+        if (busy) return;
+        busy = true;
         SFX.insert();
-        f.classList.add('on');
         cam.classList.remove('is-open');
-        setTimeout(() => { f.classList.remove('on'); cam.classList.add('is-open'); }, 500);
+        setTimeout(() => {
+          const [src, t, d] = SC[k];
+          if (!roll.includes(k)) { roll.push(k); store.set('ip-cam-roll', roll); }
+          snap.querySelector('img').src = src;
+          snap.querySelector('img').classList.toggle('fit', SC[k][3] === 'fit');
+          snap.querySelector('b').textContent = t;
+          snap.querySelector('span').textContent = d;
+          snap.hidden = false;
+          snap.classList.remove('away');
+          cam.classList.add('is-open');
+          drawRoll();
+          busy = false;
+        }, 650);
       });
-      app.el.querySelector('.roll').addEventListener('click', () => { closeApp(); setTimeout(() => openApp('builds', null), 360); });
+      const putAway = () => { if (snap.hidden) return; snap.classList.add('away'); setTimeout(() => { snap.hidden = true; show(k + 1); idle(); }, 380); };
+      snap.addEventListener('click', putAway);
+      let x0 = null;
+      vf.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+      vf.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) { show(k + (e.clientX < x0 ? 1 : -1)); idle(); } x0 = null; });
+      rollBtn.addEventListener('click', () => {
+        SFX.click();
+        if (!roll.length) { alertBox('No Photos', 'Pictures taken with the camera appear here.'); return; }
+        clearInterval(timer);
+        snap.hidden = true;
+        const v = viewer(app, { steps: roll.map((j) => SC[j]) }, roll.length - 1, 'black');
+        v.onDone = idle;
+      });
+      drawRoll();
+      app.def.onClose = () => clearInterval(timer);
     } },
-    projects: { name: 'Projects', icon: 'tv', cls: 'is-yt', bar: 'black', nb: 'black', open(app) {
+    projects: { name: 'YouTube', icon: 'tv', cls: 'is-yt', bar: 'black', nb: 'black', open(app) {
       const row = (p) => ({ text: p.name, sub: p.stack, cls: 'yt-row', lead: `<span class="yt-th" style="--h:${P.projects.indexOf(p) * 57 + 200}">${esc(p.name.slice(0, 2))}</span>`, go: () => app.push(p.name, (x) => {
         x.classList.add('pin');
         x.innerHTML = `${group([['', `${esc(p.full)}<br/><span style="font-weight:normal;color:#4c566c">${esc(p.kind)}</span>`]])}<div class="gp"><div class="txt">${esc(p.text)}</div></div>${group([['stack', esc(p.stack), 1]])}${p.url ? '<button class="gbtn" type="button" data-go>View on GitHub</button>' : '<div class="gl" style="text-align:center">Source is private for now</div>'}`;
@@ -951,7 +1062,7 @@ window.IPHONE = { start(room, exit) {
       });
       show();
     } },
-    places: { name: 'Places', icon: 'maps', bare: true, bar: 'gray', open(app) {
+    places: { name: 'Maps', icon: 'maps', bare: true, bar: 'gray', open(app) {
       /* A real map: OpenStreetMap tiles, or satellite imagery, with a pin
          for every place worked. Drag to move, double-tap or + to zoom,
          and List shows them as a list that leads back to the map. */
@@ -959,30 +1070,32 @@ window.IPHONE = { start(room, exit) {
       const W = 320, H = 480 - 20 - 32 - 44;
       let z = 4, mode = 'map';
       const wp = (lat, lon, zz) => { const s = 256 * 2 ** zz, r = Math.sin(lat * Math.PI / 180); return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + r) / (1 - r)) / (4 * Math.PI)) * s]; };
-      /* Start framed on every pin: the deepest zoom that still holds them all. */
+      /* Start framed on the whole country, every pin in view. */
       const fitAll = () => {
-        for (z = 12; z > 2; z--) {
-          const pts = CITIES.map(([, la, lo]) => wp(la, lo, z)), xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
-          if (Math.max(...xs) - Math.min(...xs) < W - 50 && Math.max(...ys) - Math.min(...ys) < H - 90) { cx = (Math.max(...xs) + Math.min(...xs)) / 2; cy = (Math.max(...ys) + Math.min(...ys)) / 2 - 15; return; }
-        }
+        const a = wp(49.5, -125, 0), b = wp(24, -66.5, 0);
+        z = Math.log2(Math.min((W - 4) / (b[0] - a[0]), (H - 20) / (b[1] - a[1])));
+        [cx, cy] = wp(37, -96, z);
       };
       let cx = 0, cy = 0;
       fitAll();
-      app.el.innerHTML = `<div class="mp2"><div class="map-bar"><span class="mb-f"></span></div><div class="mp-view"><div class="mp-tiles"></div><div class="mp-pins"></div><div class="mp-zoom"><button type="button" data-z="1" aria-label="Zoom in">+</button><button type="button" data-z="-1" aria-label="Zoom out">−</button></div><div class="mp-attr">© OpenStreetMap · Esri</div></div><div class="mp-list pg" hidden></div><div class="mp-tb"></div></div>`;
+      app.el.innerHTML = `<div class="mp2"><div class="map-bar"><span class="mb-f"></span></div><div class="mp-view"><div class="mp-tiles"></div><div class="mp-pins"></div><div class="mp-zoom"><button type="button" data-z="1" aria-label="Zoom in">+</button><button type="button" data-z="-1" aria-label="Zoom out">−</button></div><div class="mp-attr">Esri, HERE, Garmin, © OpenStreetMap</div></div><div class="mp-list pg" hidden></div><div class="mp-tb"></div></div>`;
       const view = app.el.querySelector('.mp-view'), tilesEl = app.el.querySelector('.mp-tiles'), pinsEl = app.el.querySelector('.mp-pins'), list = app.el.querySelector('.mp-list');
-      const url = (x, y, zz, kind) => kind === 'map' ? `https://tile.openstreetmap.org/${zz}/${x}/${y}.png` : kind === 'sat' ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zz}/${y}/${x}` : `https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/${zz}/${y}/${x}`;
+      const url = (x, y, zz, kind) => kind === 'map' ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${zz}/${y}/${x}` : kind === 'sat' ? `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zz}/${y}/${x}` : `https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/${zz}/${y}/${x}`;
       let open = -1;
+      /* Zoom can sit between tile levels: the nearest level is drawn and
+         scaled to fit. */
       const draw = () => {
-        const n = 2 ** z;
-        const x0 = Math.floor((cx - W / 2) / 256), x1 = Math.floor((cx + W / 2) / 256), y0 = Math.max(0, Math.floor((cy - H / 2) / 256)), y1 = Math.min(n - 1, Math.floor((cy + H / 2) / 256));
+        const zi = Math.max(2, Math.min(17, Math.round(z))), n = 2 ** zi, ts = 256 * 2 ** (z - zi);
+        const L = cx - W / 2, T = cy - H / 2;
+        const x0 = Math.floor(L / ts), x1 = Math.floor((L + W) / ts), y0 = Math.max(0, Math.floor(T / ts)), y1 = Math.min(n - 1, Math.floor((T + H) / ts));
         let html = '';
         for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
-          const wx = ((tx % n) + n) % n, l = tx * 256 - (cx - W / 2), t = ty * 256 - (cy - H / 2);
-          html += `<img src="${url(wx, ty, z, mode === 'sat' ? 'sat' : 'map')}" style="left:${l}px;top:${t}px" alt="" draggable="false" />`;
-          if (mode === 'sat') html += `<img src="${url(wx, ty, z, 'lbl')}" style="left:${l}px;top:${t}px" alt="" draggable="false" />`;
+          const wx = ((tx % n) + n) % n, st = `left:${tx * ts - L}px;top:${ty * ts - T}px;width:${ts + .5}px;height:${ts + .5}px`;
+          html += `<img src="${url(wx, ty, zi, mode === 'sat' ? 'sat' : 'map')}" style="${st}" alt="" draggable="false" />`;
+          if (mode === 'sat') html += `<img src="${url(wx, ty, zi, 'lbl')}" style="${st}" alt="" draggable="false" />`;
         }
         tilesEl.innerHTML = html;
-        pinsEl.innerHTML = CITIES.map(([nme, la, lo], i) => { const [px, py] = wp(la, lo, z); return `<button type="button" class="pin-d" data-i="${i}" style="left:${px - (cx - W / 2)}px;top:${py - (cy - H / 2)}px" aria-label="${esc(nme)}"></button>`; }).join('');
+        pinsEl.innerHTML = CITIES.map(([nme, la, lo], i) => { const [px, py] = wp(la, lo, z); return `<button type="button" class="pin-d" data-i="${i}" style="left:${px - L}px;top:${py - T}px" aria-label="${esc(nme)}"></button>`; }).join('');
         if (open >= 0) callout(open, true);
       };
       const callout = (i, keep) => {
@@ -1001,7 +1114,7 @@ window.IPHONE = { start(room, exit) {
       };
       const go = (i, zz = 9) => { const [, la, lo] = CITIES[i]; z = zz; [cx, cy] = wp(la, lo, z); open = i; draw(); };
       const zoom = (d, px = W / 2, py = H / 2) => {
-        const nz = Math.max(2, Math.min(16, z + d));
+        const nz = Math.max(2, Math.min(17, Math.round(z) + d));
         if (nz === z) return;
         const k = 2 ** (nz - z);
         const wx = cx - W / 2 + px, wy = cy - H / 2 + py;
@@ -1092,7 +1205,7 @@ window.IPHONE = { start(room, exit) {
       app.el.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40 && !flipped) step(e.clientX < x0 ? 1 : -1); x0 = null; });
       draw();
     } },
-    skills: { name: 'Skills', icon: 'settings', open(app) {
+    skills: { name: 'Settings', icon: 'settings', open(app) {
       const ICO = [['#3d7fe0', '⌨'], ['#5aa0e8', '☁'], ['#8a6ad8', '⧉'], ['#2fa36a', '⇄'], ['#f08b2a', '⚒'], ['#d24b4b', '♥']];
       app.push('Settings', (pg) => {
         pg.classList.add('pin');
@@ -1135,21 +1248,22 @@ window.IPHONE = { start(room, exit) {
     portfolio: { name: 'Portfolio', icon: 'clipAJ', bare: true, bar: 'gray', open(app) { safari(app, 'classic.html', 'ajaysommi.github.io'); } },
     github: { name: 'GitHub', icon: 'clipGH', link: P.github },
     linkedin: { name: 'LinkedIn', icon: 'clipIN', link: P.linkedin },
-    contact: { name: 'Contact', icon: 'phone', open: phoneApp },
-    email: { name: 'Email', icon: 'mail', open: mailApp },
-    resume: { name: 'Resume', icon: 'safari', bare: true, bar: 'gray', open(app) { safari(app, P.resume + '#view=FitH', 'ajaysommi.github.io/' + P.resume); } }
+    contact: { name: 'Phone', icon: 'phone', open: phoneApp },
+    email: { name: 'Mail', icon: 'mail', open: mailApp },
+    resume: { name: 'Web', icon: 'safari', bare: true, bar: 'gray', open(app) { safari(app, P.resume + '#view=FitH', 'ajaysommi.github.io/' + P.resume); } }
   };
 
-  const viewer = (app, s, k) => {
+  const viewer = (app, s, k, bar = 'gray') => {
     const v = h('div', 'photo-view');
     let auto = 0;
+    const api = {};
     const draw = () => { v.innerHTML = `<div class="pv-top"><button type="button" data-x>Done</button><b>${k + 1} of ${s.steps.length}</b><span></span></div><img src="${s.steps[k][0].replace('-480', '-960')}" alt="${esc(s.steps[k][1])}" /><div class="cap"><b>${esc(s.steps[k][1])}</b>${esc(s.steps[k][2])}</div><div class="tbar"><button type="button" data-d="-1">◀</button><button type="button" data-p>${auto ? '❙❙' : '▶'}</button><button type="button" data-d="1">▶▶</button></div>`; };
     const step = (d) => { k = (k + d + s.steps.length) % s.steps.length; draw(); };
     draw();
     v.addEventListener('click', (ev) => {
       const b = ev.target.closest('button');
       if (!b) return;
-      if (b.hasAttribute('data-x')) { clearInterval(auto); v.remove(); setBar('gray'); return; }
+      if (b.hasAttribute('data-x')) { clearInterval(auto); v.remove(); setBar(bar); api.onDone && api.onDone(); return; }
       if (b.hasAttribute('data-p')) { if (auto) { clearInterval(auto); auto = 0; } else auto = setInterval(() => step(1), 2200); draw(); return; }
       step(+b.dataset.d);
     });
@@ -1158,7 +1272,8 @@ window.IPHONE = { start(room, exit) {
     v.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) step(e.clientX < x0 ? 1 : -1); x0 = null; });
     app.el.appendChild(v);
     setBar('black');
-    return { play() { auto = setInterval(() => step(1), 2200); draw(); } };
+    api.play = () => { auto = setInterval(() => step(1), 2200); draw(); };
+    return api;
   };
 
   /* ----------------------------------------------------------- springboard */
@@ -1171,8 +1286,20 @@ window.IPHONE = { start(room, exit) {
     const b = h('button', 'ip-icon', `<span class="ic">${ICON[APPS[id].icon]()}</span><span class="lbl">${esc(APPS[id].name)}</span>`);
     b.type = 'button';
     b.setAttribute('aria-label', APPS[id].name);
+    b.dataset.id = id;
     b.addEventListener('click', () => openApp(id, b));
     return b;
+  };
+  /* Each icon knows the way to the middle (--cx, --cy) for when an app
+     opens, and starts out beyond the edges along that same line, so the
+     board flies together from outside in, the outer icons landing first. */
+  const place = (b, x, y) => {
+    const cx = 160 - (x + 28.5), cy = 240 - (y + 28.5), d = Math.hypot(cx, cy);
+    b.style.setProperty('--cx', cx + 'px');
+    b.style.setProperty('--cy', cy + 'px');
+    b.dataset.d = d;
+    b.style.transition = 'none';
+    b.style.transform = `translate(${-cx * 1.6}px, ${-cy * 1.6}px) scale(1.5)`;
   };
   const drawBoard = () => {
     grid.innerHTML = '';
@@ -1182,25 +1309,29 @@ window.IPHONE = { start(room, exit) {
       const c = i % 4, r = Math.floor(i / 4);
       b.style.left = 19.4 - 8.5 + c * 75 + 'px';
       b.style.top = 19.2 + r * 90.4 + 'px';
-      /* Where it goes when an app opens: the middle of the screen. */
-      b.style.setProperty('--cx', (160 - (19.4 + c * 75 + 28.5)) + 'px');
-      b.style.setProperty('--cy', (240 - (20 + 19.2 + r * 90.4 + 28.5)) + 'px');
-      b.style.transform = `translate(${(c - 1.5) * 90}px, ${(r - 1) * 140}px) scale(.6)`;
       grid.appendChild(b);
+      place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
     });
     DOCK.forEach((id, i) => {
       const b = iconBtn(id);
       b.style.left = 19.4 - 8.5 + i * 75 + 'px';
       b.style.top = '10.6px';
-      b.style.setProperty('--cx', (160 - (19.4 + i * 75 + 28.5)) + 'px');
-      b.style.setProperty('--cy', (240 - (388.8 + 10.6 + 28.5)) + 'px');
-      b.style.transform = 'translateY(90px)';
       dock.appendChild(b);
+      place(b, 19.4 + i * 75, 388.8 + 10.6);
     });
+    showUnread();
   };
   const flyIn = () => {
+    const icons = [...room.querySelectorAll('.ip-icon')];
+    const far = Math.max(...icons.map((b) => +b.dataset.d));
+    void board.offsetWidth;
     board.classList.remove('is-flying');
-    requestAnimationFrame(() => room.querySelectorAll('.ip-icon').forEach((b, i) => { b.style.transitionDelay = (i % 4) * 25 + 'ms'; b.style.transform = ''; }));
+    icons.forEach((b) => {
+      b.style.transition = '';
+      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * 160) + 'ms';
+      b.style.transform = '';
+    });
+    setTimeout(() => icons.forEach((b) => { b.style.transitionDelay = ''; }), 720);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
 

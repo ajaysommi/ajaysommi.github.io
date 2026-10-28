@@ -78,12 +78,12 @@
     .picker, .os-host, .phone-host { transition: filter 1s ease; }
   </style>
 
-  <link rel="stylesheet" href="retro/os.css" />
-  <link rel="stylesheet" href="retro/osx.css" />
-  <link rel="stylesheet" href="retro/picker.css" />
-  <link rel="stylesheet" href="retro/pocket.css" />
-  <link rel="stylesheet" href="retro/iphone.css" />
-  <link rel="stylesheet" href="retro/nokia.css" />
+  <link rel="stylesheet" href="retro/os.css?v=12" />
+  <link rel="stylesheet" href="retro/osx.css?v=12" />
+  <link rel="stylesheet" href="retro/picker.css?v=12" />
+  <link rel="stylesheet" href="retro/pocket.css?v=12" />
+  <link rel="stylesheet" href="retro/iphone.css?v=12" />
+  <link rel="stylesheet" href="retro/nokia.css?v=12" />
 
   <script type="application/ld+json">
   {
@@ -165,7 +165,7 @@
       var done = 0;
       tasks.forEach(function (t) { t.then(function () { done++; }); });
 
-      var MIN = document.documentElement.classList.contains('reduced') ? 300 : 1700;
+      var MIN = document.documentElement.classList.contains('reduced') ? 200 : 550;
       var MAX = 7000;
       var t0 = performance.now(), shown = 0, finished = false, resolveReady;
       window.READY = new Promise(function (r) { resolveReady = r; });
@@ -174,7 +174,7 @@
         var el2 = now - t0;
         var target = Math.min(done / tasks.length, el2 / MIN);
         if (el2 > MAX) target = 1;
-        shown += (target - shown) * 0.14;
+        shown += (target - shown) * 0.32;
         if (target - shown < 0.004) shown = target;
         var n = Math.round(shown * cells.length);
         for (var k = 0; k < cells.length; k++) cells[k].classList.toggle('on', k < n);
@@ -189,7 +189,7 @@
             document.documentElement.classList.remove('is-loading');
             resolveReady();
             setTimeout(function () { el.remove(); }, 700);
-          }, 380);
+          }, 160);
           return;
         }
         requestAnimationFrame(frame);
@@ -218,18 +218,18 @@
 
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
-  <script src="retro/content.js"></script>
-  <script src="retro/sound.js"></script>
-  <script src="retro/icons.js"></script>
-  <script src="retro/eggs.js"></script>
-  <script src="retro/term.js"></script>
-  <script src="retro/finder.js"></script>
-  <script src="retro/web.js"></script>
-  <script src="retro/osx.js"></script>
-  <script src="retro/pocket.js"></script>
-  <script src="retro/iphone.js"></script>
-  <script src="retro/nokia.js"></script>
-  <script src="retro/boot.js"></script>
+  <script src="retro/content.js?v=12"></script>
+  <script src="retro/sound.js?v=12"></script>
+  <script src="retro/icons.js?v=12"></script>
+  <script src="retro/eggs.js?v=12"></script>
+  <script src="retro/term.js?v=12"></script>
+  <script src="retro/finder.js?v=12"></script>
+  <script src="retro/web.js?v=12"></script>
+  <script src="retro/osx.js?v=12"></script>
+  <script src="retro/pocket.js?v=12"></script>
+  <script src="retro/iphone.js?v=12"></script>
+  <script src="retro/nokia.js?v=12"></script>
+  <script src="retro/boot.js?v=12"></script>
 
   <script>
     /* Development hosts only: a switch for which machine to show. */
