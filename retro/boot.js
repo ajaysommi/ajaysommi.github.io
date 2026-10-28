@@ -41,16 +41,26 @@
 
   /* ================================================================ DESKTOP */
 
-  const FLOPPY = `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M6 4h80l10 10v80a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" fill="#1d2230"/><rect x="24" y="4" width="50" height="30" rx="1.5" fill="#c9ccd2"/><rect x="54" y="9" width="11" height="20" rx="1" fill="#1d2230"/><rect x="14" y="44" width="72" height="50" rx="2" fill="#f4efe3"/><rect x="14" y="44" width="72" height="7" fill="#ff6b35"/><rect x="14" y="51" width="72" height="3" fill="#3d68ff"/><text x="20" y="68" font-family="Pixelify Sans, monospace" font-size="9" font-weight="700" fill="#1a1a1a">SOMMI-DOS</text><text x="20" y="80" font-family="VT323, monospace" font-size="8" fill="#555">SYSTEM DISK 3.3</text><rect x="8" y="88" width="4" height="4" fill="#0e121a"/></svg>`;
-  const CD = `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="cdA"><stop offset=".18" stop-color="#e9edf2"/><stop offset=".2" stop-color="#bfc6cf"/><stop offset="1" stop-color="#dfe5ec"/></radialGradient><linearGradient id="cdB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8ac8" stop-opacity=".5"/><stop offset=".3" stop-color="#8af0ff" stop-opacity=".4"/><stop offset=".55" stop-color="#fff38a" stop-opacity=".45"/><stop offset=".8" stop-color="#9a8aff" stop-opacity=".5"/></linearGradient></defs><circle cx="50" cy="50" r="46" fill="url(#cdA)" stroke="#9aa3ad"/><circle cx="50" cy="50" r="46" fill="url(#cdB)"/><circle cx="50" cy="50" r="13" fill="#eef2f6" stroke="#9aa3ad"/><circle cx="50" cy="50" r="6" fill="#1a1a1a"/><text x="50" y="80" text-anchor="middle" font-family="Pixelify Sans, monospace" font-size="8" font-weight="700" fill="#1a3a6a">SommiNet 98</text></svg>`;
-  const ALU = `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="alA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f5f7"/><stop offset=".5" stop-color="#d4d8dd"/><stop offset="1" stop-color="#a7adb4"/></linearGradient></defs><rect x="6" y="24" width="88" height="54" rx="7" fill="url(#alA)" stroke="#7d838a"/><rect x="6" y="24" width="88" height="14" rx="7" fill="#fff" opacity=".55"/><g transform="translate(36 40) scale(.62)">${I.mark(40, true).replace('<svg', '<svg x="0" y="0" style="color:#6b7178"')}</g><circle cx="83" cy="69" r="2.6" fill="#59d16a"/></svg>`;
+  /* Each era drawn as the computer it ran on: an Apple II-style terminal, a
+     compact Macintosh, a Bondi iMac, the aluminium iMac (AJ on the chin,
+     the stand only hinted at), and a modern display for the standard site. */
+  const AJ = (x, y, s, c) => `<g transform="translate(${x} ${y}) scale(${s})" style="color:${c}"><path d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z M43.83 24.60h8.74v11.79h-8.74z" fill="currentColor"/><circle cx="48.2" cy="17.4" r="5.6" fill="currentColor"/></g>`;
+  const ART = {
+    1983: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="a2b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ece3cc"/><stop offset="1" stop-color="#c9bc9b"/></linearGradient></defs><rect x="22" y="10" width="76" height="62" rx="6" fill="url(#a2b)" stroke="#8d8063"/><rect x="29" y="16" width="62" height="46" rx="4" fill="#111"/><rect x="32" y="19" width="56" height="40" rx="3" fill="#0c1a0c"/><text x="36" y="32" font-family="VT323, monospace" font-size="9" fill="#5cff6b">SOMMI-DOS</text><text x="36" y="42" font-family="VT323, monospace" font-size="9" fill="#5cff6b">]_</text><rect x="52" y="72" width="16" height="6" fill="#b3a585"/><path d="M10 80h100l6 22a3 3 0 0 1-3 4H7a3 3 0 0 1-3-4z" fill="url(#a2b)" stroke="#8d8063"/>${[0, 1, 2].map((r) => `<rect x="${16 + r * 3}" y="${84 + r * 6}" width="${84 - r * 6}" height="4.5" rx="1" fill="#6d6250" opacity=".55"/>`).join('')}</svg>`,
+    1991: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="mcb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1ecdf"/><stop offset="1" stop-color="#cfc7b3"/></linearGradient></defs><path d="M28 6h64a6 6 0 0 1 6 6v92H22V12a6 6 0 0 1 6-6z" fill="url(#mcb)" stroke="#968d78"/><rect x="22" y="104" width="76" height="8" rx="2" fill="#bdb49e" stroke="#968d78"/><rect x="32" y="14" width="56" height="46" rx="5" fill="#3a3a36"/><rect x="36" y="18" width="48" height="38" rx="2" fill="#f4f4f0"/><rect x="36" y="18" width="48" height="5" fill="#fff" stroke="#222" stroke-width=".6"/><rect x="42" y="30" width="22" height="14" fill="#fff" stroke="#222" stroke-width=".8"/><rect x="42" y="30" width="22" height="3" fill="#222"/><rect x="66" y="44" width="10" height="8" fill="#fff" stroke="#222" stroke-width=".8"/><rect x="58" y="80" width="26" height="3" rx="1.5" fill="#55503f"/>${AJ(29, 73, .2, '#8b8270')}</svg>`,
+    1998: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="g3b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd6e6"/><stop offset=".5" stop-color="#1f9fbd"/><stop offset="1" stop-color="#0e6f8a"/></linearGradient><linearGradient id="g3w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dee3"/></linearGradient></defs><path d="M60 6c26 0 44 4 46 14 3 17 3 46-2 66-3 12-20 18-44 18S19 98 16 86c-5-20-5-49-2-66C16 10 34 6 60 6z" fill="url(#g3b)" stroke="#0b5b72"/><path d="M60 10c22 0 38 3 40 11 2 14 2 34-1 49H21c-3-15-3-35-1-49 2-8 18-11 40-11z" fill="url(#g3w)"/><rect x="28" y="18" width="64" height="48" rx="3" fill="#1a1a1a"/><rect x="31" y="21" width="58" height="42" rx="1.5" fill="#2d6bd0"/><rect x="31" y="21" width="58" height="5" fill="#d8d8d8"/><rect x="38" y="31" width="44" height="26" fill="#fff"/><rect x="38" y="31" width="44" height="4" fill="#1e3f8a"/><path d="M28 78h64l-4 14H32z" fill="#0e6f8a" opacity=".5"/>${AJ(53.5, 76, .15, '#e6f4f8')}<path d="M44 104h32l4 10H40z" fill="url(#g3b)" stroke="#0b5b72"/></svg>`,
+    2009: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="imA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f4f6"/><stop offset="1" stop-color="#c3c7cc"/></linearGradient><radialGradient id="imS" cx=".55" cy=".45" r=".8"><stop offset="0" stop-color="#e7a3e0"/><stop offset=".35" stop-color="#9b3fa4"/><stop offset=".7" stop-color="#3a1a5c"/><stop offset="1" stop-color="#140b26"/></radialGradient><linearGradient id="imF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a5d62" stop-opacity=".55"/><stop offset="1" stop-color="#5a5d62" stop-opacity="0"/></linearGradient></defs><path d="M50 98h20l2 8H48z" fill="url(#imF)"/><rect x="4" y="12" width="112" height="86" rx="3" fill="url(#imA)" stroke="#8f959c" stroke-width=".8"/><rect x="5.2" y="13.2" width="109.6" height="66" rx="2" fill="#0b0b0c"/><rect x="11" y="18" width="98" height="56" fill="url(#imS)"/><path d="M11 40c22-14 52-20 98-10v8C70 28 40 34 11 52z" fill="#fff" opacity=".12"/><rect x="11" y="18" width="98" height="3" fill="#e8e8ec" opacity=".85"/><rect x="34" y="68" width="52" height="5" rx="1.5" fill="#fff" opacity=".35"/>${AJ(53.8, 82.5, .27, '#111')}<path d="M4.4 79.6h111.2" stroke="#b5bac0" stroke-width=".6"/></svg>`,
+    now: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="nwS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef1f5"/></linearGradient></defs><rect x="6" y="16" width="108" height="70" rx="4" fill="#1b1c1f" stroke="#55575c" stroke-width=".8"/><rect x="9" y="19" width="102" height="64" rx="1.5" fill="url(#nwS)"/><rect x="15" y="24" width="10" height="3" rx="1.5" fill="#ff6b35"/><rect x="78" y="24" width="27" height="3" rx="1.5" fill="#c9ced6"/><rect x="15" y="36" width="56" height="7" rx="2" fill="#1d1f24"/><rect x="15" y="46" width="44" height="7" rx="2" fill="#3d68ff"/><rect x="15" y="58" width="60" height="3" rx="1.5" fill="#aab1bc"/><rect x="15" y="64" width="50" height="3" rx="1.5" fill="#aab1bc"/><rect x="15" y="72" width="22" height="6" rx="3" fill="#1d1f24"/><circle cx="94" cy="54" r="12" fill="#e6ebf2"/>${AJ(85.5, 45.5, .38, '#1d1f24')}<path d="M52 86h16l3 14H49z" fill="#8a8d93" opacity=".45"/><rect x="40" y="100" width="40" height="3" rx="1.5" fill="#8a8d93" opacity=".35"/></svg>`
+  };
 
   const ERAS = [
-    { year: '1983', name: 'SOMMI-DOS', disk: 'System disk', note: 'A command line. Type, or click the commands.', sys: () => window.TERM, art: FLOPPY },
-    { year: '1991', name: 'SommiOS 7', disk: 'Ajay HD', note: 'Black and white windows, icons and a Trash.', sys: () => window.FINDER, art: I.svg('hd', 100) },
-    { year: '1998', name: 'SommiNet 98', disk: 'CD-ROM', note: 'A browser and a homepage, guestbook included.', sys: () => window.WEB, art: CD },
-    { year: '2009', name: 'SommiOS X', disk: 'Snow Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ALU }
+    { year: '1983', name: 'SOMMI-DOS', note: 'A command line. Type, or click the commands.', sys: () => window.TERM, art: ART[1983] },
+    { year: '1991', name: 'SommiOS 7', note: 'Black and white windows, icons and a Trash.', sys: () => window.FINDER, art: ART[1991] },
+    { year: '1998', name: 'SommiNet 98', note: 'A browser and a homepage, guestbook included.', sys: () => window.WEB, art: ART[1998] },
+    { year: '2009', name: 'SommiOS X Snow Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ART[2009] }
   ];
+  /* The standard site sits in the same row, as the newest machine. */
+  const OPTS = [...ERAS, { year: 'Today', name: 'Standard site', note: 'The regular portfolio, no time travel.', href: 'classic.html', art: ART.now }];
 
   const desk = () => {
     const host = document.getElementById('osHost');
@@ -67,23 +77,43 @@
       hint() {}, led() {}
     };
 
+    pick.classList.add('is-desk-pick');
     pick.innerHTML = `
+      <div class="sm-status"><span class="sm-bat"><i></i></span><span class="sm-clock"></span></div>
       <div class="pk-in">
-        <div class="pk-head">${I.pxmark(40)}<div><h1>Choose a startup disk</h1><p>Each one starts the portfolio up as it would have run in its year.</p></div></div>
-        <div class="pk-row" role="listbox" aria-label="Startup disks">${ERAS.map((e, i) => `<button type="button" class="pk-d" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><b>${esc(e.name)}</b><span class="pk-y">${e.year} · ${esc(e.disk)}</span><span class="pk-n">${esc(e.note)}</span><span class="pk-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5 5 12h4v7h6v-7h4z" fill="currentColor"/></svg></span></button>`).join('')}</div>
-        <p class="pk-foot">Click a disk to start up · or use ← → and Return</p>
-        <a class="pk-classic" href="classic.html">Or skip the computer and open the classic site</a>
-      </div>`;
+        <div class="pk-head">${I.pxmark(36)}<h1>Choose an era</h1><p>Each one is the portfolio on a computer from its year.</p></div>
+        <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.year}</span><b>${esc(e.name)}</b><span class="pk-n">${esc(e.note)}</span></button>`).join('')}</div>
+        <p class="pk-foot">Click one to start it up · or use ← → and Return</p>
+      </div>
+      <div class="sm-power"><button type="button" data-p="off"><svg viewBox="0 0 24 24"><path d="M12 3v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7.5 6.2a8 8 0 1 0 9 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Shut Down</span></button><button type="button" data-p="re"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 8l-5 4 5 4z" fill="currentColor"/></svg><span>Restart</span></button></div>`;
+    const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
+    tick(); setInterval(tick, 15000);
     const disks = [...pick.querySelectorAll('.pk-d')];
+    const N = OPTS.length;
     const mark = () => disks.forEach((d, i) => { d.classList.toggle('is-sel', i === sel); d.setAttribute('aria-selected', i === sel); });
     mark();
+    const choose = (i) => { if (OPTS[i].href) { fade(async () => { location.href = OPTS[i].href; await wait(5000); }); return; } launch(i); };
     pick.addEventListener('pointerover', (e) => { const d = e.target.closest('.pk-d'); if (d) { sel = +d.dataset.i; mark(); } });
-    pick.addEventListener('click', (e) => { const d = e.target.closest('.pk-d'); if (d) { sel = +d.dataset.i; mark(); SFX.click(); launch(sel); } });
+    pick.addEventListener('click', (e) => {
+      const d = e.target.closest('.pk-d');
+      if (d) { sel = +d.dataset.i; mark(); SFX.click(); choose(sel); return; }
+      const pw = e.target.closest('[data-p]');
+      if (pw && pw.dataset.p === 're') { SFX.click(); fade(async () => { location.reload(); await wait(5000); }); }
+      if (pw && pw.dataset.p === 'off') {
+        SFX.click();
+        const off = document.createElement('button');
+        off.type = 'button'; off.className = 'sm-off'; off.setAttribute('aria-label', 'Power on');
+        off.innerHTML = '<span>Press any key or click to start up</span>';
+        const on = () => { off.remove(); removeEventListener('keydown', on); };
+        off.addEventListener('click', on); addEventListener('keydown', on);
+        document.body.appendChild(off);
+      }
+    });
     document.addEventListener('keydown', (e) => {
-      if (pick.hidden) return;
-      if (e.key === 'ArrowRight') { sel = (sel + 1) % ERAS.length; mark(); disks[sel].focus(); }
-      if (e.key === 'ArrowLeft') { sel = (sel - 1 + ERAS.length) % ERAS.length; mark(); disks[sel].focus(); }
-      if (e.key === 'Enter' && !e.target.closest('a')) { e.preventDefault(); launch(sel); }
+      if (pick.hidden || document.querySelector('.sm-off')) return;
+      if (e.key === 'ArrowRight') { sel = (sel + 1) % N; mark(); disks[sel].focus(); }
+      if (e.key === 'ArrowLeft') { sel = (sel - 1 + N) % N; mark(); disks[sel].focus(); }
+      if (e.key === 'Enter' && !e.target.closest('a')) { e.preventDefault(); choose(sel); }
     });
 
     const screen = (i) => {
@@ -164,7 +194,7 @@
       <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a device from its year.</p></div>
       <div class="mp-rail" role="listbox" aria-label="Eras">${PHONES.map((p, i) => `<button type="button" class="mp-card" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><span class="mp-y">${p.year}</span><b>${esc(p.name)}</b><span class="mp-n">${esc(p.note)}</span><span class="mp-on">Power on</span></button>`).join('')}</div>
       <div class="mp-dots">${PHONES.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>
-      <a class="pk-classic" href="classic.html">Or open the classic site</a>`;
+      <a class="mp-std" href="classic.html">Open the standard site <span aria-hidden="true">›</span></a>`;
     const rail = pick.querySelector('.mp-rail');
     const cards = [...pick.querySelectorAll('.mp-card')];
     const dots = [...pick.querySelectorAll('.mp-dots i')];

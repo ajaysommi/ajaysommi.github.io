@@ -84,9 +84,11 @@ window.IPHONE = { start(room, exit) {
     const v = window.RETRO.viewport();
     const w = dev.classList.contains('is-photo') ? 385 : 396;
     const h = dev.classList.contains('is-photo') ? 730 : 748;
-    const s = Math.min(1.3, (v.h - 56) / h, (v.w - 24) / w);
+    /* 46 points clear for the buttons on top, 26 at the bottom so a
+       browser's toolbar never touches the phone. */
+    const s = Math.min(1.3, (v.h - 72) / h, (v.w - 24) / w);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 44 + Math.max(0, (v.h - 56 - h * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 72 - h * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);
@@ -305,27 +307,56 @@ window.IPHONE = { start(room, exit) {
     el.classList.add('fld');
     if (multi) el.classList.add('multi');
     /* selectAll: focusing highlights everything, so the first key typed
-       replaces it, as an address bar does. clearBtn: a grey x empties it. */
+       replaces it, as an address bar does. clearBtn: a grey x empties it.
+       The caret sits wherever the field was tapped, and stays in view. */
+    const reveal = () => {
+      const c = el.querySelector('.caret');
+      if (!c || !el.classList.contains('on')) return;
+      if (!multi) { el.scrollLeft = Math.max(0, c.offsetLeft - el.clientWidth + 24); return; }
+      let sc = el;
+      while (sc && sc !== scr && !(/(auto|scroll)/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight)) sc = sc.parentElement;
+      if (!sc || sc === scr) return;
+      const cr = c.getBoundingClientRect(), sr = sc.getBoundingClientRect(), k = sr.height / sc.clientHeight || 1;
+      if (cr.bottom > sr.bottom - 8 * k) sc.scrollTop += (cr.bottom - sr.bottom) / k + 24;
+      else if (cr.top < sr.top) sc.scrollTop -= (sr.top - cr.top) / k + 12;
+    };
     const f = {
-      value, ret, sel: false,
+      value, ret, sel: false, pos: value.length, last: value,
       render() {
-        const txt = f.value ? esc(f.value).replace(/\n/g, '<br/>') : `<span class="ph">${esc(placeholder)}</span>`;
-        el.innerHTML = `${!f.value ? `<i class="caret"></i>${txt}` : f.sel ? `<span class="hl">${txt}</span><i class="caret"></i>` : `${txt}<i class="caret"></i>`}${clearBtn && f.value && el.classList.contains('on') ? '<button type="button" class="fld-x" aria-label="Clear">\u00d7</button>' : ''}`;
+        if (f.value !== f.last) { f.pos = f.value.length; f.last = f.value; }
+        f.pos = Math.max(0, Math.min(f.pos, f.value.length));
+        const a = esc(f.value.slice(0, f.pos)), b = esc(f.value.slice(f.pos));
+        const body = !f.value ? `<i class="caret"></i><span class="ph">${esc(placeholder)}</span>` : f.sel ? `<span class="hl">${esc(f.value)}</span><i class="caret"></i>` : `<span class="t0">${a}</span><i class="caret"></i><span class="t1">${b}</span>`;
+        el.innerHTML = body + (clearBtn && f.value && el.classList.contains('on') ? '<button type="button" class="fld-x" aria-label="Clear">×</button>' : '');
         onChange && onChange(f.value);
-        if (multi) el.scrollTop = el.scrollHeight; else el.scrollLeft = el.classList.contains('on') ? el.scrollWidth : 0;
+        if (el.classList.contains('on')) reveal(); else if (!multi) el.scrollLeft = 0;
       },
-      insert(s) { if (f.sel) { f.value = ''; f.sel = false; } f.value += s; f.render(); },
-      back() { if (f.sel) { f.value = ''; f.sel = false; } else f.value = f.value.slice(0, -1); f.render(); },
+      set(v, at) { f.value = v; f.last = v; f.pos = at; f.render(); },
+      insert(s) { if (f.sel) { f.sel = false; f.set(s, s.length); return; } f.set(f.value.slice(0, f.pos) + s + f.value.slice(f.pos), f.pos + s.length); },
+      back() { if (f.sel) { f.sel = false; f.set('', 0); return; } if (!f.pos) return; f.set(f.value.slice(0, f.pos - 1) + f.value.slice(f.pos), f.pos - 1); },
       enter() { f.sel = false; if (onEnter) onEnter(f); else if (multi) f.insert('\n'); },
-      focus() { el.classList.add('on'); f.sel = selectAll && !!f.value; f.render(); kb.show(f); },
+      focus() { el.classList.add('on'); f.sel = selectAll && !!f.value; f.pos = f.value.length; f.render(); kb.show(f); },
       blur() { el.classList.remove('on'); f.sel = false; f.render(); },
-      clear() { f.value = ''; f.sel = false; f.render(); }
+      clear() { f.sel = false; f.set('', 0); }
+    };
+    /* Where in the text a tap landed. */
+    const hit = (x, y) => {
+      let node, off;
+      if (document.caretPositionFromPoint) { const r = document.caretPositionFromPoint(x, y); if (r) { node = r.offsetNode; off = r.offset; } }
+      else if (document.caretRangeFromPoint) { const r = document.caretRangeFromPoint(x, y); if (r) { node = r.startContainer; off = r.startOffset; } }
+      if (!node) return f.value.length;
+      const span = node.nodeType === 3 ? node.parentElement : node;
+      if (span && span.classList.contains('t0')) return off;
+      if (span && span.classList.contains('t1')) return f.pos + off;
+      return f.value.length;
     };
     el.addEventListener('click', (e) => {
       e.stopPropagation();
       if (e.target.closest('.fld-x')) { SFX.click(); f.clear(); if (!el.classList.contains('on')) f.focus(); return; }
       if (el.classList.contains('on') && f.sel) { f.sel = false; f.render(); return; }
-      if (!el.classList.contains('on')) f.focus();
+      const at = f.value && !f.sel ? hit(e.clientX, e.clientY) : f.value.length;
+      if (!el.classList.contains('on')) { f.focus(); if (!selectAll) { f.pos = at; f.render(); } return; }
+      f.pos = at; f.render();
     });
     f.render();
     return f;
@@ -528,7 +559,7 @@ window.IPHONE = { start(room, exit) {
     let cur = 0, token = 0;
     const marks = store.get('ip-marks', null) || [['Portfolio', 'classic.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Wikipedia', 'https://en.m.wikipedia.org/']];
     app.el.classList.add('is-safari');
-    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark">+</button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
+    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark"><svg viewBox="0 0 22 22" width="22" height="22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="3.6" stroke-linecap="square"/></svg></button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
     const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b'), prog = app.el.querySelector('.saf-prog');
     const SEARCH = 'https://html.duckduckgo.com/html/?q=';
     const pretty = (u) => {
@@ -790,9 +821,20 @@ window.IPHONE = { start(room, exit) {
     const n = unreadCount();
     const note = room.querySelector('.ip-lk-note');
     if (note) { note.hidden = !n || noteSeen; note.querySelector('b').textContent = n >= 9 ? '9+ Messages' : `${n} New Message${n === 1 ? '' : 's'}`; }
-    const ic = room.querySelector('.ip-icon[data-id="guestbook"]');
-    if (ic) { let bd = ic.querySelector('.badge'); if (!n) { if (bd) bd.remove(); } else { if (!bd) { bd = h('span', 'badge'); ic.appendChild(bd); } bd.textContent = n; } }
+    badge('guestbook', n);
+    badge('email', MAIL_N - mailRead.size);
   };
+  const badge = (id, n) => {
+    const ic = room.querySelector(`.ip-icon[data-id="${id}"]`);
+    if (!ic) return;
+    let bd = ic.querySelector('.badge');
+    if (!n) { if (bd) bd.remove(); return; }
+    if (!bd) { bd = h('span', 'badge'); ic.appendChild(bd); }
+    bd.textContent = n;
+  };
+  /* Mail works the same way: everything in the Inbox starts unread. */
+  const MAIL_N = 3;
+  const mailRead = new Set(store.get('ip-mail-read', []).filter((i) => i < MAIL_N));
   const messages = (app) => {
     const thread = (p, i) => {
       const [n, c, q] = P.recs[i];
@@ -933,23 +975,50 @@ window.IPHONE = { start(room, exit) {
       });
       draw();
     };
-    const voicemail = (pg) => {
-      pg.innerHTML = '<div class="vm-player"><button type="button" class="vm-play" aria-label="Play">▶</button><div class="vm-bar"><i></i></div><span class="vm-t">0:00</span></div><div class="vm-text">Tap a message to play it.</div>';
-      const ul = plain(pg, P.recs.map(([n, c, q], i) => ({ id: i, text: n, sub: c, rt: `0:${String(20 + q.length % 39).padStart(2, '0')}`, cls: 'vm-row' })));
-      const text = pg.querySelector('.vm-text'), bar = pg.querySelector('.vm-bar i'), t = pg.querySelector('.vm-t');
-      let timer = 0, cur = 0;
-      const play = (i) => {
-        cur = i;
-        ul.querySelectorAll('li').forEach((x, k) => { x.classList.toggle('sel', k === i); if (k === i) x.classList.add('heard'); });
-        clearInterval(timer);
-        const q = P.recs[i][2];
-        let k = 0;
-        text.textContent = '';
-        timer = setInterval(() => { k += 2; text.textContent = q.slice(0, k); bar.style.width = Math.min(100, k / q.length * 100) + '%'; t.textContent = `0:${String(Math.round(k / 6)).padStart(2, '0')}`; if (k >= q.length) clearInterval(timer); }, 30);
+    /* Voicemail as it was: the list over a dark panel holding the scrubber,
+       Call Back and Delete. Tap a message to play it (the selected row
+       turns blue); the round blue button opens what was said. */
+    const vmDeleted = new Set(store.get('ip-vm-del', []));
+    const WHEN = ['5:34 AM', '2:22 AM', 'Saturday', 'Saturday', 'Friday', 'Thursday', 'Wednesday', 'Monday', 'Sunday', 'Sunday'];
+    const dur = (i) => 8 + P.recs[i][2].length % 40;
+    const clock = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+    const voicemail = (pg, a, entry) => {
+      pg.classList.add('vm-pg');
+      const heard = new Set(store.get('ip-vm-heard', []));
+      let sel = -1, timer = 0, at = 0, speaker = false;
+      pg.innerHTML = `<ul class="vm-list"></ul><div class="vm-panel"><div class="vm-scrub"><span class="t0">0:00</span><div class="vm-track"><i class="fill"></i><b class="knob"></b></div><span class="t1">-0:00</span></div><div class="vm-btns"><button type="button" class="vm-call"><svg viewBox="0 0 20 20" width="17" height="17"><path d="M6 2.4c1-.6 2 0 2.4.9l.8 2c.3.9-.2 1.5-.9 1.9.5 1.7 1.8 3.2 3.4 4 .5-.7 1.1-1.2 2-.9l2 .8c1 .4 1.4 1.4.7 2.4-.9 1.3-2.5 1.9-4.1 1.3C8.6 13.5 5.6 10.4 4.6 7c-.5-1.7.2-3.5 1.4-4.6z" fill="#fff"/></svg>Call Back</button><button type="button" class="vm-del">Delete</button></div></div>`;
+      const list = pg.querySelector('.vm-list'), fill = pg.querySelector('.fill'), knob = pg.querySelector('.knob'), t0 = pg.querySelector('.t0'), t1 = pg.querySelector('.t1');
+      const scrub = () => { const d = sel >= 0 ? dur(sel) : 0, f = d ? at / d : 0; fill.style.width = f * 100 + '%'; knob.style.left = f * 100 + '%'; t0.textContent = clock(at); t1.textContent = '-' + clock(Math.max(0, d - at)); };
+      const draw = () => {
+        list.innerHTML = P.recs.map(([n], i) => vmDeleted.has(i) ? '' : `<li class="vm-r${i === sel ? ' sel' : ''}${heard.has(i) ? '' : ' new'}" data-i="${i}"><span class="st"></span><b>${esc(n)}</b><span class="when">${WHEN[i % WHEN.length]}</span><button type="button" class="vm-i" aria-label="Details"></button></li>`).join('') + `<li class="vm-r vm-trash"><b>Deleted Messages</b><span class="n">${vmDeleted.size || ''}</span></li>`;
+        scrub();
       };
-      ul.querySelectorAll('li').forEach((li, i) => li.addEventListener('click', () => play(i)));
-      pg.querySelector('.vm-play').addEventListener('click', () => play(cur));
-      app.def.onClose = () => clearInterval(timer);
+      const stop = () => { clearInterval(timer); timer = 0; };
+      const play = (i) => {
+        stop(); sel = i; at = 0; heard.add(i); store.set('ip-vm-heard', [...heard]); draw();
+        timer = setInterval(() => { at = Math.min(dur(sel), at + .25); scrub(); if (at >= dur(sel)) stop(); }, 250);
+      };
+      list.addEventListener('click', (e) => {
+        const li = e.target.closest('li');
+        if (!li) return;
+        SFX.click();
+        if (li.classList.contains('vm-trash')) {
+          app.push('Deleted', (p2) => plain(p2, vmDeleted.size ? [...vmDeleted].map((i) => ({ text: P.recs[i][0], sub: 'Tap to undelete', go: () => { vmDeleted.delete(i); store.set('ip-vm-del', [...vmDeleted]); app.pop(); setTimeout(draw, 320); } })) : [{ text: 'No Deleted Messages', cls: 'none' }]), { back: 'Voicemail' });
+          return;
+        }
+        const i = +li.dataset.i;
+        if (e.target.closest('.vm-i')) { const [n, c, q] = P.recs[i]; app.push(n.split(' ')[0], (p2) => { p2.innerHTML = `<div class="ml-h">From: <b>${esc(n)}</b><br/>${esc(c)}</div><div class="ml-b">“${esc(q)}”</div>`; }, { back: 'Voicemail' }); return; }
+        play(i);
+      });
+      pg.querySelector('.vm-call').addEventListener('click', () => { SFX.click(); call(sel >= 0 ? '0' : ''); });
+      pg.querySelector('.vm-del').addEventListener('click', () => {
+        SFX.click();
+        if (sel < 0) { alertBox('No Message Selected', 'Tap a message first.'); return; }
+        stop(); vmDeleted.add(sel); store.set('ip-vm-del', [...vmDeleted]); sel = -1; at = 0; draw();
+      });
+      entry.opts.right = ['Speaker', () => { speaker = !speaker; entry.opts.right = ['Speaker', entry.opts.right[1]]; entry.opts.blue = speaker; app.redraw(); }];
+      app.def.onClose = stop;
+      draw();
     };
     const favorites = (pg, a, entry) => {
       const ul = plain(pg, favs.map(([n, kind, num], i) => ({ id: i, text: n, rt: kind, go: () => (kind === 'email' ? writeMail('Hello') : call(num)), onDelete: () => { favs.splice(i, 1); store.set('ip-favs', favs); } })));
@@ -974,7 +1043,7 @@ window.IPHONE = { start(room, exit) {
     const M = [
       ['Ajay Sommi', 'Let’s talk', `Hi there,\n\nThanks for stopping by. I’m a software engineer graduating from UF in December 2026, and I’m looking for a team that cares about the people using what it builds.\n\nReply to this and it goes straight to me.\n\nAjay`],
       ['GitHub', 'Your repositories', 'SommiScript, GatorGoods, BalanceTree and more are at github.com/ajaysommi.'],
-      ['LinkedIn', 'Recommendations', `${P.recs.length} people have written recommendations for Ajay. Read them in Guestbook.`]
+      ['LinkedIn', 'Recommendations', `${P.recs.length} people have written recommendations for Ajay. Read them in Text Messages.`]
     ];
     const sent = [];
     const compose = (to, subject, body) => app.push('New Message', (pg, a, entry) => {
@@ -987,20 +1056,22 @@ window.IPHONE = { start(room, exit) {
       entry.opts.right = ['Send', () => { sent.push([s.value || '(no subject)', b.value]); app.pop(); mailto(s.value, b.value); setTimeout(() => alertBox('Message Ready', 'Your mail app has opened with the message filled in. A copy is in Sent.'), 350); }];
       entry.opts.blue = true;
     });
+    const unread = () => M.length - mailRead.size;
+    const inboxTitle = () => unread() ? `Inbox (${unread()})` : 'Inbox';
     const inbox = (pg, a, entry) => {
-      const ul = plain(pg, M.map(([f, s, body], i) => ({ id: i, text: f, sub: `${s} — ${body.replace(/\n/g, ' ')}`, rt: i ? 'Oct 2026' : hm(now()), cls: i || store.get('ip-read', false) ? '' : 'unread', go: () => { store.set('ip-read', true); app.push(s, (p) => {
+      const ul = plain(pg, M.map(([f, s, body], i) => ({ id: i, text: f, sub: `${s} — ${body.replace(/\n/g, ' ')}`, rt: i ? 'Oct 2026' : hm(now()), cls: mailRead.has(i) ? '' : 'unread', go: () => { if (!mailRead.has(i)) { mailRead.add(i); store.set('ip-mail-read', [...mailRead]); entry.title = inboxTitle(); setTimeout(() => { const li = pg.querySelector(`li[data-id="${i}"]`); if (li) li.classList.remove('unread'); showUnread(); }, 320); } app.push(s, (p) => {
         p.innerHTML = `<div class="ml-h">From: <b>${esc(f)}</b><br/>Subject: <b>${esc(s)}</b></div><div class="ml-b">${esc(body).replace(/\n/g, '<br/>')}</div>`;
       }, { right: ['Reply', () => compose(P.email, 'Re: ' + s)], blue: true, back: 'Inbox' }); } })));
       entry.opts.right = ['Edit', () => { const on = ul.classList.toggle('editing'); entry.opts.right = [on ? 'Done' : 'Edit', entry.opts.right[1]]; entry.opts.blue = on; app.redraw(); }];
     };
     const box = (name, rows) => app.push(name, (pg) => { plain(pg, rows.length ? rows : [{ text: 'No Mail', cls: 'none' }]); }, { back: 'Mailboxes' });
     app.push('Mailboxes', (pg) => plain(pg, [
-      { text: 'Inbox', rt: '1', go: () => app.push('Inbox (1)', inbox, { back: 'Mailboxes' }) },
+      { text: 'Inbox', rt: unread() ? String(unread()) : '', go: () => app.push(inboxTitle(), inbox, { back: 'Mailboxes' }) },
       { text: 'Drafts', go: () => box('Drafts', [{ text: 'Offer letter', sub: 'Dear Ajay, we’d love to have you…', go: () => compose(P.email, 'Offer') }]) },
       { text: 'Sent', go: () => box('Sent', sent.map(([s, b]) => ({ text: s, sub: b }))) },
       { text: 'Trash', go: () => box('Trash', [{ text: 'Old resume (2019)', sub: 'Listed “Microsoft Word” as a skill. Deleted.' }]) }
     ]));
-    app.push('Inbox (1)', inbox, { instant: true, back: 'Mailboxes' });
+    app.push(inboxTitle(), inbox, { instant: true, back: 'Mailboxes' });
     app.compose = compose;
     if (pendingMail) { const m = pendingMail; pendingMail = null; setTimeout(() => compose(P.email, m.subject, m.body), 380); }
     app.el.appendChild(h('div', 'ml-tb', '<button type="button" data-a="r" aria-label="Check mail">↻</button><span>Updated just now</span><button type="button" data-a="c" aria-label="Compose">✎</button>'));

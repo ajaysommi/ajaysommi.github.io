@@ -10,10 +10,15 @@ window.NOKIA = { start(room, exit) {
   const I = window.ICONS;
   const SFX = window.SFX;
 
+  /* The handset is a photograph of the real one, rebadged; the screen and
+     every key sit over their places in it. Positions are in the photo's
+     own points (it is drawn at 357 by 765). */
+  const BODY = 'assets/images/sommia-3310.webp';
+  const AT = { 1: [63, 501, 57, 34], 2: [156, 516, 63, 30], 3: [254, 501, 58, 34], 4: [67, 555, 57, 34], 5: [156, 570, 63, 31], 6: [251, 555, 58, 35], 7: [70, 609, 58, 35], 8: [156, 625, 63, 30], 9: [247, 610, 58, 34], '*': [74, 664, 57, 34], 0: [156, 680, 63, 30], '#': [244, 665, 58, 33] };
   const KEYS = [['1', ''], ['2', 'abc'], ['3', 'def'], ['4', 'ghi'], ['5', 'jkl'], ['6', 'mno'], ['7', 'pqrs'], ['8', 'tuv'], ['9', 'wxyz'], ['*', '+'], ['0', '␣'], ['#', '⇧']];
 
   room.innerHTML = `
-    <div class="nk-scale"><div class="nk">
+    <div class="nk-scale"><div class="nk is-photo" style="background-image:url(${BODY})">
       <button class="nk-power" type="button" aria-label="Power"></button>
       <div class="nk-ear" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
       <div class="nk-brand" aria-hidden="true">SOMMIA</div>
@@ -23,7 +28,7 @@ window.NOKIA = { start(room, exit) {
         <button class="nk-navi" type="button" aria-label="Navi key"></button>
         <div class="nk-rock"><button class="up" type="button" aria-label="Up">▲</button><button class="dn" type="button" aria-label="Down">▼</button></div>
       </div>
-      <div class="nk-pad">${KEYS.map(([n, l]) => `<button type="button" data-k="${n}" aria-label="${n}"><b>${n}</b><span>${l}</span></button>`).join('')}</div>
+      <div class="nk-pad">${KEYS.map(([n, l]) => `<button type="button" data-k="${n}" aria-label="${n}" style="left:${AT[n][0]}px;top:${AT[n][1]}px;width:${AT[n][2]}px;height:${AT[n][3]}px"><b>${n}</b><span>${l}</span></button>`).join('')}</div>
       <div class="nk-mic" aria-hidden="true"></div>
     </div></div>`;
 
@@ -36,9 +41,11 @@ window.NOKIA = { start(room, exit) {
   /* Fits the room the browser really leaves, under the buttons on top. */
   const fit = () => {
     const v = window.RETRO.viewport();
-    const s = Math.min(1.25, (v.h - 64) / 650, (v.w - 24) / 330);
+    /* 46 points clear for the buttons on top, 26 at the bottom so a
+       browser's toolbar never touches the phone. */
+    const s = Math.min(1.2, (v.h - 72) / 775, (v.w - 24) / 367);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 44 + Math.max(0, (v.h - 64 - 650 * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 72 - 775 * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);

@@ -113,3 +113,27 @@
 .nk.is-lit .nk-pad button, .nk.is-lit .nk-navi, .nk.is-lit .nk-c, .nk.is-lit .nk-rock button { box-shadow: inset 0 2px 1px rgba(255,255,255,.85), 0 0 10px rgba(170,230,100,.55), 0 3px 3px rgba(0,0,0,.45); }
 .nk-mic { position: absolute; bottom: 24px; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: #0c1222; box-shadow: inset 0 1px 1px #000; }
 .nk button:focus-visible { outline: 2px solid #ffd36b; outline-offset: 2px; }
+
+/* ==========================================================================
+   The photographed handset. The body is the picture; the screen and the
+   keys are laid over their places in it and only show themselves when
+   pressed or lit.
+   ========================================================================== */
+.nk.is-photo { width: 357px; height: 765px; border-radius: 0; box-shadow: none; background: center / 100% 100% no-repeat; filter: drop-shadow(0 26px 40px rgba(0,0,0,.55)); }
+.nk.is-photo .nk-ear, .nk.is-photo .nk-brand, .nk.is-photo .nk-mic { display: none; }
+.nk.is-photo .nk-power { top: -4px; width: 60px; height: 14px; margin-left: -30px; background: none; }
+.nk.is-photo .nk-bezel { left: 75px; top: 205px; right: auto; width: 227px; height: 158px; padding: 0; background: none; box-shadow: none; border-radius: 4px 4px 22px 22px / 4px 4px 12px 12px; overflow: hidden; }
+.nk.is-photo .nk-lcd { border-radius: inherit; background: #a9c262; box-shadow: inset 0 0 14px rgba(0,0,0,.28); }
+.nk.is-photo.is-lit .nk-lcd { background: radial-gradient(120% 120% at 50% 40%, #cbe98c, #b2d36c); }
+.nk.is-photo .nk-cluster { position: static; }
+.nk.is-photo .nk-cluster button, .nk.is-photo .nk-rock, .nk.is-photo .nk-pad button { color: transparent; background: none; box-shadow: none; border: 0; filter: none; transform: none; }
+.nk.is-photo .nk-navi { left: 125px; top: 399px; width: 125px; height: 30px; margin: 0; border-radius: 50%; }
+.nk.is-photo .nk-navi::after { display: none; }
+.nk.is-photo .nk-c { left: 76px; top: 417px; width: 58px; height: 52px; border-radius: 45%; }
+.nk.is-photo .nk-rock { left: auto; right: auto; left: 210px; top: 418px; width: 90px; height: 72px; border-radius: 40%; overflow: hidden; }
+.nk.is-photo .nk-rock button + button { border: 0; }
+.nk.is-photo .nk-pad { position: static; display: block; }
+.nk.is-photo .nk-pad button { position: absolute; padding: 0; border-radius: 50%; }
+.nk.is-photo .nk-pad b, .nk.is-photo .nk-pad span { visibility: hidden; }
+.nk.is-photo button:active { background: rgba(0,0,0,.22) !important; }
+.nk.is-photo.is-lit .nk-pad button { box-shadow: 0 0 10px 2px rgba(160,230,100,.28); }

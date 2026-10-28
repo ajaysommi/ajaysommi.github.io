@@ -34,7 +34,6 @@ window.POCKET = { start(room, exit) {
         <button class="pk-hub" type="button" aria-label="Select"></button>
         <i class="dot"></i>
       </div></div>
-      <span class="pk-slot" aria-hidden="true"></span>
     </div></div>`;
 
   const dev = room.querySelector('.pk');
@@ -44,9 +43,11 @@ window.POCKET = { start(room, exit) {
      really leaves under the buttons on top. */
   const fit = () => {
     const v = window.RETRO.viewport();
-    const s = Math.min(1.35, (v.h - 60) / 545, (v.w - 24) / 335);
+    /* 46 points clear for the buttons on top, 26 at the bottom so a
+       browser's toolbar never touches the phone. */
+    const s = Math.min(1.35, (v.h - 72) / 545, (v.w - 24) / 335);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 60 - 545 * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 46 + Math.max(0, (v.h - 72 - 545 * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);

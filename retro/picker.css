@@ -111,3 +111,45 @@
 .snd-toggle:hover { opacity: 1; }
 .os-on .snd-toggle { display: none; }
 .is-loading .snd-toggle { display: none; }
+
+/* Desktop: a startup screen. Near black, the choices in one row, each one
+   the computer it ran on; a soft rounded highlight marks the selection. */
+.picker.is-desk-pick { background: radial-gradient(70% 55% at 50% 45%, #1a1a1c, #0a0a0b 70%); }
+.is-desk-pick .pk-in { width: min(1180px, 96vw); gap: 26px; }
+.is-desk-pick .pk-head { flex-direction: column; gap: 6px; text-align: center; }
+.is-desk-pick .pk-head h1 { margin: 6px 0 0; font: 600 24px var(--pixel); }
+.is-desk-pick .pk-head p { margin: 0; font-size: 14.5px; }
+.is-desk-pick .pk-row { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.is-desk-pick .pk-d { padding: 18px 10px 20px; gap: 4px; border-radius: 16px; }
+.is-desk-pick .pk-d.is-sel { background: rgba(255,255,255,.075); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.is-desk-pick .pk-art { width: 150px; height: 150px; margin-bottom: 6px; }
+.is-desk-pick .pk-art svg { width: 146px; height: 146px; filter: drop-shadow(0 12px 18px rgba(0,0,0,.6)); }
+.is-desk-pick .pk-y { font-size: 28px; }
+.is-desk-pick .pk-d b { font: 600 14px var(--pixel); color: #d9d9de; }
+.is-desk-pick .pk-n { font-size: 12.5px; max-width: 190px; }
+.is-desk-pick .pk-d.is-now .pk-y { color: #ffd7c4; }
+.is-desk-pick .pk-d.is-now b { color: #fff; }
+.is-desk-pick .pk-go { display: none; }
+.sm-status { position: absolute; top: 14px; right: 120px; display: flex; align-items: center; gap: 12px; color: #ddd; font: 13px -apple-system, 'Helvetica Neue', Arial, sans-serif; }
+.sm-bat { width: 22px; height: 11px; border: 1.5px solid #ddd; border-radius: 3px; position: relative; }
+.sm-bat::after { content: ''; position: absolute; right: -4px; top: 2.5px; width: 2px; height: 4px; background: #ddd; border-radius: 0 1px 1px 0; }
+.sm-bat i { position: absolute; inset: 1.5px 3px 1.5px 1.5px; background: #ddd; border-radius: 1px; }
+.sm-power { position: absolute; left: 0; right: 0; bottom: 28px; display: flex; justify-content: center; gap: 40px; }
+.sm-power button { display: flex; flex-direction: column; align-items: center; gap: 6px; border: 0; background: none; color: #ddd; font: 12px -apple-system, 'Helvetica Neue', Arial, sans-serif; cursor: pointer; opacity: .8; }
+.sm-power button:hover { opacity: 1; }
+.sm-power svg { width: 24px; height: 24px; }
+.sm-off { position: fixed; inset: 0; z-index: 9800; border: 0; background: #000; color: #333; font: 13px var(--pixel); cursor: pointer; display: grid; place-items: end center; padding-bottom: 40px; }
+@media (max-width: 1100px) { .is-desk-pick .pk-row { grid-template-columns: repeat(3, 1fr); } .sm-power { position: static; margin: 10px 0 30px; } }
+@media (max-height: 760px) { .sm-power { position: static; margin: 0 0 24px; } }
+
+/* Phones: the standard site as a clear button under the eras. */
+.mp-std { align-self: center; display: inline-flex; align-items: center; gap: 6px; padding: 11px 22px; border-radius: 999px; color: #f1ece2; font: 600 15px var(--pixel); text-decoration: none; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
+.mp-std span { font-size: 18px; line-height: 1; }
+.mp-std:active { background: rgba(255,255,255,.16); }
+
+/* Behind each phone, a faint pattern from its era: snakes for the 2000
+   candybar, discs, notes and files for the music player, icons, home
+   buttons and droplets for the touchscreen. Each on its own dark tone. */
+.phone-host .nk-room { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22260%22 viewBox=%220 0 260 260%22%3E%3Cg fill=%22%239fd36a%22 opacity=%22.11%22%3E%3Crect x=%2230%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2236%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2242%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2248%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2248%22 y=%2236%22 width=%225%22 height=%225%22/%3E%3Crect x=%2248%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%2254%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%2260%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%2266%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%22150%22 y=%2290%22 width=%225%22 height=%225%22/%3E%3Crect x=%22150%22 y=%2296%22 width=%225%22 height=%225%22/%3E%3Crect x=%22150%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22156%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22162%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22168%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22168%22 y=%22108%22 width=%225%22 height=%225%22/%3E%3Crect x=%22168%22 y=%22114%22 width=%225%22 height=%225%22/%3E%3Crect x=%2240%22 y=%22170%22 width=%225%22 height=%225%22/%3E%3Crect x=%2246%22 y=%22170%22 width=%225%22 height=%225%22/%3E%3Crect x=%2252%22 y=%22170%22 width=%225%22 height=%225%22/%3E%3Crect x=%2252%22 y=%22164%22 width=%225%22 height=%225%22/%3E%3Crect x=%2252%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2258%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2264%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2270%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2276%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2282%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%22190%22 y=%22200%22 width=%225%22 height=%225%22/%3E%3Crect x=%22196%22 y=%22200%22 width=%225%22 height=%225%22/%3E%3Crect x=%22196%22 y=%22206%22 width=%225%22 height=%225%22/%3E%3Crect x=%22196%22 y=%22212%22 width=%225%22 height=%225%22/%3E%3Crect x=%22202%22 y=%22212%22 width=%225%22 height=%225%22/%3E%3Crect x=%22208%22 y=%22212%22 width=%225%22 height=%225%22/%3E%3C/g%3E%3Cg fill=%22%239fd36a%22 opacity=%22.16%22%3E%3Crect x=%22110%22 y=%2240%22 width=%225%22 height=%225%22/%3E%3Crect x=%22230%22 y=%22150%22 width=%225%22 height=%225%22/%3E%3Crect x=%22120%22 y=%22230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2220%22 y=%22110%22 width=%225%22 height=%225%22/%3E%3C/g%3E%3C/svg%3E") 0 0 / 260px 260px, radial-gradient(90% 60% at 50% 32%, #22301f, #0c110b 78%); }
+.phone-host .pocket-room { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22280%22 viewBox=%220 0 280 280%22%3E%3Cg fill=%22none%22 stroke=%22%23c7b4ff%22 stroke-width=%221.6%22 opacity=%22.12%22%3E%3Ccircle cx=%2260%22 cy=%2270%22 r=%2230%22/%3E%3Ccircle cx=%2260%22 cy=%2270%22 r=%227%22/%3E%3Ccircle cx=%2260%22 cy=%2270%22 r=%2218%22 stroke-dasharray=%223 5%22/%3E%3Ccircle cx=%22215%22 cy=%22210%22 r=%2224%22/%3E%3Ccircle cx=%22215%22 cy=%22210%22 r=%225%22/%3E%3Cpath d=%22M180 40h26l10 10v34h-36z M206 40v10h10%22/%3E%3Cpath d=%22M186 62h20M186 70h24M186 78h16%22/%3E%3Cpath d=%22M40 190h30v40H40z M44 196h22v14H44z%22/%3E%3C/g%3E%3Cg fill=%22%23c7b4ff%22 opacity=%22.12%22%3E%3Cg transform=%22translate%28130 120%29%22%3E%3Cpath d=%22M0 0v20a6 6 0 1 1-3-5V0h14v4H0z%22/%3E%3C/g%3E%3Cg transform=%22translate%28240 90%29%22%3E%3Cpath d=%22M0 2l16-3v20a6 6 0 1 1-3-5V5L3 7v15a6 6 0 1 1-3-5z%22/%3E%3C/g%3E%3Cg transform=%22translate%28110 250%29%22%3E%3Cpath d=%22M0 0v18a5 5 0 1 1-3-4V0z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 0 0 / 280px 280px, radial-gradient(90% 60% at 50% 32%, #2c2438, #100d16 78%); }
+.phone-host .iphone-room { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22240%22 viewBox=%220 0 240 240%22%3E%3Cg fill=%22none%22 stroke=%22%23ffffff%22 opacity=%22.055%22 stroke-width=%221.5%22%3E%3Crect x=%2220%22 y=%2224%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3Crect x=%2270%22 y=%2224%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3Crect x=%2220%22 y=%2274%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3Ccircle cx=%22180%22 cy=%2260%22 r=%2222%22/%3E%3Crect x=%22171%22 y=%2251%22 width=%2218%22 height=%2218%22 rx=%224%22/%3E%3Crect x=%22150%22 y=%22150%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3C/g%3E%3Cg fill=%22%23ffffff%22 opacity=%22.05%22%3E%3Ccircle cx=%2270%22 cy=%22180%22 r=%226%22/%3E%3Ccircle cx=%2288%22 cy=%22196%22 r=%223.5%22/%3E%3Ccircle cx=%2256%22 cy=%22204%22 r=%222.5%22/%3E%3Ccircle cx=%22214%22 cy=%22128%22 r=%224%22/%3E%3Ccircle cx=%22130%22 cy=%22110%22 r=%222.5%22/%3E%3C/g%3E%3C/svg%3E") 0 0 / 240px 240px, radial-gradient(90% 60% at 50% 32%, #2a2a2c, #0b0b0c 78%); }

@@ -955,3 +955,62 @@
 /* The slider's arrow: larger, grey and glossy, pressed into a white knob. */
 .ip-screen .ip-knob svg { width: 42px; height: 29.2px; }
 .ip-screen .ip-knob { background: linear-gradient(180deg, #ffffff 0%, #f1f1f1 48%, #dcdcdc 52%, #c9c9c9 100%); box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.6); }
+
+/* Back buttons on black and Notes bars: only the drawn shape, no box. */
+.ip-screen .nb .nbb.l { background: none; border: 0; box-shadow: none; }
+/* The photo viewer starts under the status bar. */
+.ip-screen .photo-view { top: 20px; }
+/* Safari's toolbar: every glyph the same weight and size. */
+.ip-screen .saf-bot svg { display: block; filter: drop-shadow(0 -1px 0 rgba(0,0,0,.4)); }
+
+/* Message tails: drawn as one piece with the bubble, so the outline runs
+   from the bubble's edge out to the tip and back along the bottom. */
+.ip-screen .bub.in span { border-bottom-left-radius: 0; }
+.ip-screen .bub.out span { border-bottom-right-radius: 0; }
+.ip-screen .bub.in span::after, .ip-screen .bub.out span::after { left: auto; right: auto; width: 15px; height: 16px; bottom: -1px; border: 0; border-radius: 0; transform: none; clip-path: none; z-index: 1; background: no-repeat 0 0 / 15px 16px; }
+.ip-screen .bub.in span::after { left: -13px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 16'%3E%3Cpath d='M14 0C14 8 10 13.2 .6 15.4 6 16 10.5 15.5 15 15.5V0z' fill='%23d5d5d5'/%3E%3Cpath d='M13.5 0C13.5 8 9.6 13 .6 15.4 6 16 10.5 15.5 15 15.5' fill='none' stroke='%239d9d9d' stroke-width='1'/%3E%3C/svg%3E"); }
+.ip-screen .bub.out span::after { right: -13px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 16'%3E%3Cpath d='M1 0C1 8 5 13.2 14.4 15.4 9 16 4.5 15.5 0 15.5V0z' fill='%2396d655'/%3E%3Cpath d='M1.5 0C1.5 8 5.4 13 14.4 15.4 9 16 4.5 15.5 0 15.5' fill='none' stroke='%236a9d3a' stroke-width='1'/%3E%3C/svg%3E"); }
+
+/* Text Messages list: roomier rows, name over two lines of preview, the
+   label in blue at the top right, and the unread dot in the left margin. */
+.ip-screen .pl li.sms-row { position: relative; min-height: 74px; align-items: flex-start; padding: 9px 6px 9px 24px; box-sizing: border-box; }
+.ip-screen .pl li.sms-row .tx { font-size: 17px; line-height: 21px; padding-right: 64px; white-space: nowrap; }
+.ip-screen .pl li.sms-row .sub { margin-top: 2px; margin-right: -64px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; line-height: 18px; }
+.ip-screen .pl li.sms-row .rt { position: absolute; right: 26px; top: 11px; font-size: 13px; }
+.ip-screen .pl li.sms-row.chev::after { align-self: center; }
+.ip-screen .pl li.sms-row.unread .tx::before { position: absolute; left: 8px; top: 14px; margin: 0; }
+
+/* Voicemail. */
+.ip-screen .pg.vm-pg { display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+.ip-screen .vm-list { flex: 1; min-height: 0; overflow-y: auto; margin: 0; padding: 0; list-style: none; scrollbar-width: none;
+  background: repeating-linear-gradient(180deg, #fff 0, #fff 43px, #e0e0e0 43px, #e0e0e0 44px); }
+.ip-screen .vm-r { position: relative; display: flex; align-items: center; height: 44px; padding: 0 8px 0 30px; border-bottom: 1px solid #e0e0e0; cursor: pointer; font: bold 18px Helvetica, Arial, sans-serif; color: #000; }
+.ip-screen .vm-r b { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.2px; }
+.ip-screen .vm-r .when { margin: 0 8px; font: 13px Helvetica, Arial, sans-serif; color: #2f5cb8; white-space: nowrap; }
+.ip-screen .vm-r .st { position: absolute; left: 10px; top: 50%; width: 10px; height: 10px; margin-top: -5px; }
+.ip-screen .vm-r.new .st { border-radius: 50%; background: radial-gradient(circle at 40% 35%, #9fd0ff, #1b6fe0); }
+.ip-screen .vm-r.sel { background: linear-gradient(180deg, #5f9bf2 0%, #2f74e3 50%, #1f63d4 51%, #2a6edb 100%); color: #fff; border-color: #2457b4; text-shadow: 0 -1px 0 rgba(0,0,0,.3); }
+.ip-screen .vm-r.sel .when { color: #fff; }
+.ip-screen .vm-r.sel .st { border-radius: 0; background: none; width: 0; height: 0; margin-top: -6px; border: 6px solid transparent; border-left: 10px solid #fff; border-right: 0; }
+.ip-screen .vm-i { flex: none; width: 23px; height: 23px; border-radius: 50%; padding: 0; border: 0; cursor: pointer; background: radial-gradient(circle at 50% 30%, #7fb4ff, #2a69dc 70%); box-shadow: inset 0 0 0 1px rgba(0,0,0,.15), 0 1px 0 #fff; position: relative; }
+.ip-screen .vm-i::after { content: ''; position: absolute; left: 7px; top: 8px; width: 5px; height: 5px; border-top: 2.5px solid #fff; border-right: 2.5px solid #fff; transform: rotate(45deg); }
+.ip-screen .vm-r.sel .vm-i { background: #fff; }
+.ip-screen .vm-r.sel .vm-i::after { border-color: #2a69dc; }
+.ip-screen .vm-trash::after { content: ''; width: 8px; height: 8px; border-top: 3px solid #8a8a8a; border-right: 3px solid #8a8a8a; transform: rotate(45deg); margin: 0 6px 0 4px; }
+.ip-screen .vm-trash .n { font: 14px Helvetica, Arial, sans-serif; color: #2f5cb8; }
+.ip-screen .vm-panel { flex: none; padding: 10px 10px 12px; background: linear-gradient(180deg, #4a4a4a 0, #2a2a2a 2px, #1a1a1a 50%, #0b0b0b 100%); border-top: 1px solid #000; box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+.ip-screen .vm-scrub { display: flex; align-items: center; gap: 8px; color: #fff; font: bold 12px Helvetica, Arial, sans-serif; }
+.ip-screen .vm-scrub span { width: 34px; }
+.ip-screen .vm-scrub .t1 { text-align: right; }
+.ip-screen .vm-track { position: relative; flex: 1; height: 9px; border-radius: 5px; background: linear-gradient(180deg, #e6e6e6, #ffffff 60%, #d8d8d8); box-shadow: inset 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.15); }
+.ip-screen .vm-track .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 5px; background: linear-gradient(180deg, #b9c2cf, #8d99aa); }
+.ip-screen .vm-track .knob { position: absolute; top: 50%; left: 0; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: radial-gradient(circle at 50% 30%, #fff, #d9d9d9 60%, #a9a9a9); box-shadow: 0 1px 2px rgba(0,0,0,.7); }
+.ip-screen .vm-btns { display: flex; gap: 12px; margin-top: 12px; }
+.ip-screen .vm-btns button { flex: 1; height: 42px; border-radius: 8px; color: #fff; font: bold 17px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.4); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.ip-screen .vm-call { border: 1px solid #1d5e12; background: linear-gradient(180deg, #8edc6d 0%, #4cb42c 50%, #34a015 51%, #46ae22 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 1px 0 rgba(255,255,255,.12); }
+.ip-screen .vm-del { border: 1px solid #5c0a0a; background: linear-gradient(180deg, #e27b7b 0%, #c23232 50%, #a81818 51%, #b52525 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 1px 0 rgba(255,255,255,.12); }
+.ip-screen .vm-btns button:active { filter: brightness(.85); }
+
+/* The caret takes no room of its own, so text never shifts around it. */
+.ip-screen .fld .caret { margin: 0 -1px; position: relative; z-index: 1; }
+.ip-screen .fld.multi { white-space: pre-wrap; word-break: break-word; }

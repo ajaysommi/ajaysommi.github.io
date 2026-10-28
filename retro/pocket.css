@@ -62,11 +62,6 @@
 .pk-hold.is-on { background: #e0632a; }
 .pk-hold.is-on::after { left: 23px; }
 .pk-hold span { position: absolute; top: -16px; left: 0; width: 100%; text-align: center; font: 8px var(--label); color: #b8b0a2; }
-.pk-slot {
-  position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
-  width: 46%; height: 6px; border-radius: 3px; background: #1a1712;
-  box-shadow: 0 1px 0 rgba(255,255,255,.3);
-}
 
 .pk-brand {
   font: 10px var(--label); letter-spacing: .25em; color: var(--ring-ink);

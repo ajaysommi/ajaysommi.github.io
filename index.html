@@ -28,7 +28,7 @@
 
   <script>
     /* Phones get the phone picker; everything else the startup disks.
-       On a development host, ?device=desk|mobile (or the DEV tab) overrides
+       On a development host, ?device=desk|mobile overrides
        that for the rest of the tab's life. */
     (function () {
       var root = document.documentElement;
@@ -78,12 +78,12 @@
     .picker, .os-host, .phone-host { transition: filter 1s ease; }
   </style>
 
-  <link rel="stylesheet" href="retro/os.css?v=17" />
-  <link rel="stylesheet" href="retro/osx.css?v=17" />
-  <link rel="stylesheet" href="retro/picker.css?v=17" />
-  <link rel="stylesheet" href="retro/pocket.css?v=17" />
-  <link rel="stylesheet" href="retro/iphone.css?v=17" />
-  <link rel="stylesheet" href="retro/nokia.css?v=17" />
+  <link rel="stylesheet" href="retro/os.css?v=18" />
+  <link rel="stylesheet" href="retro/osx.css?v=18" />
+  <link rel="stylesheet" href="retro/picker.css?v=18" />
+  <link rel="stylesheet" href="retro/pocket.css?v=18" />
+  <link rel="stylesheet" href="retro/iphone.css?v=18" />
+  <link rel="stylesheet" href="retro/nokia.css?v=18" />
 
   <script type="application/ld+json">
   {
@@ -218,39 +218,18 @@
 
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
-  <script src="retro/content.js?v=17"></script>
-  <script src="retro/sound.js?v=17"></script>
-  <script src="retro/icons.js?v=17"></script>
-  <script src="retro/eggs.js?v=17"></script>
-  <script src="retro/term.js?v=17"></script>
-  <script src="retro/finder.js?v=17"></script>
-  <script src="retro/web.js?v=17"></script>
-  <script src="retro/osx.js?v=17"></script>
-  <script src="retro/pocket.js?v=17"></script>
-  <script src="retro/iphone.js?v=17"></script>
-  <script src="retro/nokia.js?v=17"></script>
-  <script src="retro/boot.js?v=17"></script>
+  <script src="retro/content.js?v=18"></script>
+  <script src="retro/sound.js?v=18"></script>
+  <script src="retro/icons.js?v=18"></script>
+  <script src="retro/eggs.js?v=18"></script>
+  <script src="retro/term.js?v=18"></script>
+  <script src="retro/finder.js?v=18"></script>
+  <script src="retro/web.js?v=18"></script>
+  <script src="retro/osx.js?v=18"></script>
+  <script src="retro/pocket.js?v=18"></script>
+  <script src="retro/iphone.js?v=18"></script>
+  <script src="retro/nokia.js?v=18"></script>
+  <script src="retro/boot.js?v=18"></script>
 
-  <script>
-    /* Development hosts only: a switch for which machine to show. */
-    (function devSwitch() {
-      if (document.documentElement.dataset.dev !== '1') return;
-      var cur = document.documentElement.dataset.forced === '1' ? document.documentElement.dataset.mode : 'auto';
-      var box = document.createElement('div');
-      box.className = 'dev-switch';
-      box.innerHTML = '<span title="Choose a machine (development only)">DEV \u25be</span>' + [['auto', 'Auto'], ['desk', 'Desktop'], ['mobile', 'Mobile']].map(function (m) {
-        return '<button type="button" data-d="' + m[0] + '"' + (m[0] === cur ? ' aria-pressed="true"' : '') + '>' + m[1] + '</button>';
-      }).join('');
-      box.addEventListener('click', function (e) {
-        var b = e.target.closest('[data-d]');
-        if (!b) { box.classList.toggle('is-open'); return; }
-        var u = new URL(location.href);
-        if (b.dataset.d === 'auto') u.searchParams.delete('device'); else u.searchParams.set('device', b.dataset.d);
-        u.hash = '';
-        location.href = u.toString();
-      });
-      document.body.appendChild(box);
-    })();
-  </script>
 </body>
 </html>
