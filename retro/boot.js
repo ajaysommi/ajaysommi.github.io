@@ -52,7 +52,9 @@
   const center = (r) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
   const fit = (box, w, h) => { const k = Math.min(box.width / w, box.height / h); return { left: box.left + (box.width - w * k) / 2, top: box.top + (box.height - h * k) / 2, width: w * k, height: h * k }; };
   const clone = (node, r, z) => {
+    const sh = node.isConnected ? getComputedStyle(node).filter : 'none';
     const n = node.cloneNode(true);
+    if (sh && sh !== 'none') n.style.filter = sh;
     n.removeAttribute('id');
     n.classList.add('pk-fly');
     n.style.cssText += `;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${z};visibility:visible`;
@@ -108,13 +110,6 @@
     g.style.cssText = `left:${c.x}px;top:${c.y}px;width:${d}px;height:${d}px;--c:${color}`;
     const under = into.querySelector(':scope > .bz');
     if (under) into.insertBefore(g, under); else into.appendChild(g);
-    /* And a halo: light hugging the machine's outline, rising as it lands
-       and fading over a couple of seconds. */
-    const halo = document.createElement('div');
-    halo.className = 'tl-halo';
-    halo.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${Math.min(r.height, innerHeight - r.top + 40)}px;--c:${color}`;
-    if (under) into.insertBefore(halo, under); else into.appendChild(halo);
-    halo.animate([{ opacity: 0 }, { opacity: 1, offset: .22 }, { opacity: .85, offset: .45 }, { opacity: 0 }], { duration: 2000, easing: 'ease-out', fill: 'forwards' }).finished.then(() => halo.remove());
     g.animate([
       { transform: 'translate(-50%,-50%) scale(.35)', opacity: 0 },
       { transform: 'translate(-50%,-50%) scale(.85)', opacity: 1, offset: .22 },
@@ -233,7 +228,7 @@
        part kept in view (down to the chin, the keyboard and stand left
        below the window), and where the AJ replaces the maker's logo. */
     const PHOTO = {
-      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [318, 172, 553, 398, 30], scr: [346, 197, 497, 349], r: 10, view: [215, 30, 755, 770], aj: [307, 769, 38, false] },
+      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [316, 156, 557, 414, 40], scr: [346, 197, 497, 349], r: 10, view: [215, 30, 755, 770], aj: [307, 769, 38, false] },
       1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [306, 194, 878, 600, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 30, 1180, 960], aj: [738, 851, 38, false] },
       2007: { src: 'assets/images/bezels/imac-2007.webp', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [128, 128, 1466, 912], r: 0, view: [42, 42, 1642, 1250], aj: [861, 1184, 132, true] }
     };
@@ -320,7 +315,12 @@
       window.SHAPES.arrive(backdrop.querySelector('.bg-shapes'), center(r).x, center(r).y);
     };
 
-    async function launch(i) {
+    /* One transition at a time: clicks during a flight are ignored. */
+    let busy = false;
+    const once = (fn) => async (...a) => { if (busy) return; busy = true; try { await fn(...a); } finally { busy = false; } };
+    const launch = once(launchNow);
+    const showPicker = once(pickerNow);
+    async function launchNow(i) {
       if (i === cur) return;
       const prev = cur;
       cur = i;
@@ -365,16 +365,19 @@
         await fade(async () => { pick.hidden = true; show(); });
         settle(y);
       }
+      /* Landed: the eras button works again even while it boots. */
+      busy = false;
       const sys = ERAS[i].sys();
       if (bootP) await bootP;
       else if (!booted[i]) { booted[i] = true; await sys.boot(); }
+      if (cur !== i) return;
       sys.resize && sys.resize();
       sys.enter();
     }
 
     /* Back to the eras: the machine shrinks into its drawing on the tile
        while the picker fades up around it. */
-    async function showPicker() {
+    async function pickerNow() {
       const prev = cur;
       cur = -1;
       const y = prev >= 0 ? ERAS[prev].year : null;
@@ -523,7 +526,11 @@
       if (land) land.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => land.remove());
     };
 
-    async function launch(id) {
+    let busy = false;
+    const once = (fn) => async (...a) => { if (busy) return; busy = true; try { await fn(...a); } finally { busy = false; } };
+    const launch = once(launchNow);
+    const showPicker = once(pickerNow);
+    async function launchNow(id) {
       const p = PHONES.find((x) => x.id === id);
       if (!p || cur === id) return;
       store.set('phone', id);
@@ -552,7 +559,7 @@
       } else await fade(async () => open());
     }
 
-    async function showPicker() {
+    async function pickerNow() {
       const id = cur;
       const done = () => {
         if (cur) rooms[cur].hidden = true;
