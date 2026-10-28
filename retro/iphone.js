@@ -51,7 +51,7 @@ window.IPHONE = { start(room, exit) {
         <div class="ip-screen" data-bar="trans" role="application" aria-label="Phone screen">
           <div class="ip-status"><span class="l"><span class="ip-sig"><i></i><i></i><i></i><i></i><i></i></span><b class="car">SOMMI</b><span class="ip-edge">E</span></span><span class="c"></span><span class="r"><span class="ip-bat"><i></i></span></span></div>
           <div class="ip-board is-flying"><div class="ip-grid"></div><div class="ip-dock"></div></div>
-          <div class="ip-lock" style="background-image:url(${WALL})"><div class="top"><div class="time"></div><div class="date"></div></div><div class="ip-lk-note" hidden><img src="assets/images/ios/sms.webp" alt="" /><b></b><span>now</span></div><div class="bot"><div class="ip-slider"><div class="txt">slide to unlock</div><div class="ip-knob" role="slider" aria-label="Slide to unlock" tabindex="0"><svg viewBox="0 0 34 24"><defs><linearGradient id="kar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3a3a3"/><stop offset="1" stop-color="#6d6d6d"/></linearGradient></defs><path d="M5 9h13V4l11 8-11 8v-5H5z" fill="url(#kar)" stroke="#5f5f5f" stroke-width=".6" stroke-linejoin="round"/></svg></div></div></div></div>
+          <div class="ip-lock" style="background-image:url(${WALL})"><div class="top"><div class="time"></div><div class="date"></div></div><div class="ip-lk-note" hidden><img src="assets/images/ios/sms.webp" alt="" /><b></b><span>now</span></div><div class="bot"><div class="ip-slider"><div class="txt">slide to unlock</div><div class="ip-knob" role="slider" aria-label="Slide to unlock" tabindex="0"><svg viewBox="0 0 40 28"><defs><linearGradient id="kar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4c4c4"/><stop offset=".48" stop-color="#9a9a9a"/><stop offset=".52" stop-color="#7f7f7f"/><stop offset="1" stop-color="#6a6a6a"/></linearGradient><linearGradient id="kgl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity=".05"/></linearGradient><clipPath id="kcl"><path d="M3.5 9.5h17.5V3l16 11-16 11v-6.5H3.5z"/></clipPath></defs><path d="M3.5 10.5h17.5V4l16 11-16 11v-6.5H3.5z" fill="#fff" opacity=".9"/><path d="M3.5 9.5h17.5V3l16 11-16 11v-6.5H3.5z" fill="url(#kar)" stroke="#5a5a5a" stroke-width=".8" stroke-linejoin="round"/><rect x="0" y="0" width="40" height="14" fill="url(#kgl)" clip-path="url(#kcl)"/></svg></div></div></div></div>
           <div class="ip-boot">${SILVER}</div>
           <div class="ip-off"></div>
         </div>
@@ -1423,11 +1423,11 @@ window.IPHONE = { start(room, exit) {
     /* Slow off the mark, then faster and faster until they hit their
        places: an ease-in with no settle, the outer ring a beat ahead. */
     icons.forEach((b) => {
-      b.style.transition = 'transform .42s cubic-bezier(.82, 0, 1, .9), opacity .22s linear';
-      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * 50) + 'ms';
+      b.style.transition = 'transform .28s cubic-bezier(.55, 0, 1, .8), opacity .14s linear';
+      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * 30) + 'ms';
       b.style.transform = '';
     });
-    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), 520);
+    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), 360);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
 
