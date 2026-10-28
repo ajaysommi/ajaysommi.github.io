@@ -859,7 +859,7 @@ window.IPHONE = { start(room, exit) {
       const digits = String(num).replace(/\D/g, '');
       if (!digits) { alertBox('Enter a Number', 'Type a number on the keypad first.'); return; }
       if (digits === '911') { alertBox('Emergency Calls Unavailable', 'This phone can’t place real calls.'); return; }
-      if (['1983', '1991', '1998', '2006'].includes(digits)) {
+      if (['1983', '1991', '1998', '2007'].includes(digits)) {
         const r = await alertBox('Switch Era', `Dialing ${digits} opens the ${digits} version of this portfolio.`, ['Cancel', 'Go']);
         if (r === 'Go') exit();
         return;
@@ -1489,7 +1489,7 @@ window.IPHONE = { start(room, exit) {
   let sleepT = 0;
   function armSleep() {
     clearTimeout(sleepT);
-    sleepT = setTimeout(() => { if (state === 'locked' && !asleep && !drag) { asleep = true; off.classList.add('on'); } }, 4000);
+    sleepT = setTimeout(() => { if (state === 'locked' && !asleep && !drag) { asleep = true; off.classList.add('on'); } }, 5000);
   }
   room.querySelector('.ip-sleep').addEventListener('click', () => {
     if (state === 'boot') return;

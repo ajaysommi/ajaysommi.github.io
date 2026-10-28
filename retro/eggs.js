@@ -24,7 +24,7 @@ window.EGGS = (function () {
     ['tune', 'Chiptune', 'Played the pocket device’s tune.'],
     ['faceplate', 'New look', 'Changed the room behind the music player.'],
     ['timemachine', 'Time traveller', 'Used Time Machine to change eras.'],
-    ['update', 'Up to date', 'Checked for software updates in 2006.']
+    ['update', 'Up to date', 'Checked for software updates in 2007.']
   ];
   const found = new Set(window.RETRO.store.get('eggs', []));
   let toastEl = null, toastT = 0;

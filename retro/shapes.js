@@ -1,7 +1,7 @@
 /* ==========================================================================
    Small filled shapes, each one something from its era: floppies and
    prompts for 1983, the happy Mac and the bomb for 1991, CDs and @ signs
-   for 1998, iPods and Wi-Fi for 2006, snakes and envelopes on the 2000
+   for 1998, iPods and Wi-Fi for 2007, snakes and envelopes on the 2000
    phone, notes on the music player, app tiles on the touchscreen, and
    hourglasses among a little of everything on the era picker.
 
@@ -57,7 +57,7 @@ window.SHAPES = (function () {
     1983: ['crt', 'prompt', 'floppy525', 'joystick', 'cassette', 'cursor'],
     1991: ['floppy', 'happymac', 'bomb', 'watch', 'trash', 'brush'],
     1998: ['cd', 'globe', 'at', 'envelope', 'puck', 'star', 'bars'],
-    2006: ['ipod', 'pill', 'wifi', 'magnifier', 'usb', 'dock'],
+    2007: ['ipod', 'pill', 'wifi', 'magnifier', 'usb', 'dock'],
     nokia: ['snake', 'envelope', 'bars', 'battery', 'note', 'candybar'],
     pocket: ['note', 'cd', 'headphones', 'play', 'ipod'],
     iphone: ['apps', 'home', 'wifi', 'ripple', 'slide', 'battery', 'touch']
@@ -67,20 +67,48 @@ window.SHAPES = (function () {
   const rnd = (seed) => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   const svg = (k, attrs) => `<svg viewBox="0 0 40 40" ${attrs}><path d="${P[k]}" fill="currentColor" fill-rule="evenodd"/></svg>`;
 
-  /* Scattered over a jittered grid, so they spread evenly without lining
-     up; each one turns and floats a little, on its own clock. */
+  /* Spread by a Halton sequence (bases 2 and 3), which fills the area
+     evenly without lining up, nudged a little at random. Each one turns
+     and floats on its own clock, and sits at its own depth for the cursor. */
+  const halton = (i, b) => { let f = 1, r = 0; while (i > 0) { f /= b; r += f * (i % b); i = Math.floor(i / b); } return r; };
   const layer = (set, { count = 30, color = '#fff', opacity = 0.08, size = [26, 54], seed = 7 } = {}) => {
-    const r = rnd(seed), keys = SETS[set] || SETS.time;
-    const cols = Math.ceil(Math.sqrt(count * 1.6)), rows = Math.ceil(count / cols);
+    const r = rnd(seed), keys = SETS[set] || SETS.time, off = Math.floor(r() * 40);
     let out = '';
     for (let i = 0; i < count; i++) {
-      const c = i % cols, w = Math.floor(i / cols);
-      const x = ((c + 0.15 + r() * 0.7) / cols) * 100, y = ((w + 0.15 + r() * 0.7) / rows) * 100;
+      const x = 3 + (halton(i + off + 1, 2) * 94 + (r() - 0.5) * 3), y = 3 + (halton(i + off + 1, 3) * 94 + (r() - 0.5) * 3);
       const s = size[0] + r() * (size[1] - size[0]), rot = Math.round(r() * 60 - 30);
       const o = (opacity * (0.6 + r() * 0.7)).toFixed(3);
-      out += svg(keys[Math.floor(r() * keys.length)], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s"`);
+      out += svg(keys[Math.floor(r() * keys.length)], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
     }
     return `<div class="bg-shapes" aria-hidden="true" style="color:${color}">${out}</div>`;
+  };
+
+  /* A layer that starts empty: its shapes fly out from (x, y) one after
+     another and land where they belong, with a small settle as they stick. */
+  const arrive = (el, x, y, { stagger = 900 } = {}) => {
+    if (!el || document.documentElement.classList.contains('reduced')) return;
+    const box = el.getBoundingClientRect();
+    [...el.querySelectorAll('svg')].forEach((s, i) => {
+      const b = s.getBoundingClientRect();
+      const dx = x - (b.left + b.width / 2), dy = y - (b.top + b.height / 2);
+      const o = +s.style.opacity || 0.1;
+      s.animate([
+        { translate: `${dx}px ${dy}px`, scale: '0.2', opacity: 0 },
+        { opacity: Math.min(1, o * 3), offset: 0.55 },
+        { translate: '0 0', scale: '1.18', opacity: o, offset: 0.82 },
+        { translate: '0 0', scale: '1', opacity: o }
+      ], { duration: 700 + Math.random() * 300, delay: Math.random() * stagger, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'backwards' });
+    });
+    void box;
+  };
+
+  /* The cursor pushes the shapes a few pixels, nearer ones more. */
+  const follow = (el) => {
+    if (!el || matchMedia('(pointer: coarse)').matches) return;
+    addEventListener('pointermove', (e) => {
+      el.style.setProperty('--mx', ((e.clientX / innerWidth - 0.5) * -14).toFixed(1) + 'px');
+      el.style.setProperty('--my', ((e.clientY / innerHeight - 0.5) * -14).toFixed(1) + 'px');
+    }, { passive: true });
   };
 
   /* A burst from (x, y): shapes thrown outward, turning, fading. */
@@ -107,5 +135,5 @@ window.SHAPES = (function () {
     setTimeout(() => box.remove(), 1500);
   };
 
-  return { layer, burst, SETS };
+  return { layer, burst, arrive, follow, SETS };
 })();

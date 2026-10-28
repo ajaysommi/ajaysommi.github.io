@@ -306,7 +306,7 @@ window.FINDER = (function () {
     contact: () => ({
       title: 'Contact', w: 520, h: 440,
       render: (b) => {
-        b.innerHTML = `<div class="doc"><div class="row"><img class="dpic" data-dither="${P.kidPhoto}" data-dw="170" width="170" alt="Ajay as a kid in 2006, at a computer" /><div><h2>20+ years of experience.</h2><p>Let’s not be strangers.</p><p class="meta">To: ${esc(P.email)}</p></div></div>
+        b.innerHTML = `<div class="doc"><div class="row"><img class="dpic" data-dither="${P.kidPhoto}" data-dw="170" width="170" alt="Ajay as a kid in 2006, at a computer" /><div><h2>Contact</h2><p>Email is the quickest way to reach me.</p><p class="meta">To: ${esc(P.email)}</p></div></div>
           <div class="btns"><a class="btn is-default" href="mailto:${P.email}">Write an email</a><button class="btn" type="button" data-act="copy">Copy address</button></div>
           <div class="btns"><a class="btn" href="${P.github}" target="_blank" rel="noopener noreferrer">GitHub</a><a class="btn" href="${P.linkedin}" target="_blank" rel="noopener noreferrer">LinkedIn</a><button class="btn" type="button" data-open="resume">Resume</button></div></div>`;
       }
@@ -353,7 +353,7 @@ window.FINDER = (function () {
     computer: () => ({
       title: 'About This Computer', w: 500, h: 290,
       render: (b) => {
-        b.innerHTML = `<div class="about-mem"><div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">${I.svg('mac', 32)}<div><b style="font-size:17px">SommiOS 7.1</b><br/>© 1991 Sommi Systems. Built in 2026, mostly at night.</div></div>
+        b.innerHTML = `<div class="about-mem"><div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">${I.svg('mac', 32)}<div><b style="font-size:17px">SommiOS 7.1</b><br/>© 1991 Sommi Systems.</div></div>
           <div>Total Memory: 4,096K · Largest Unused Block: 0K</div><hr style="border:0;border-top:1px solid #000;margin:8px 0"/>
           <div class="r">${I.svg('person', 16)}<span>Portfolio</span><div class="bar"><i style="width:56%"></i></div></div>
           <div class="r">${I.svg('chip', 16)}<span>Curiosity</span><div class="bar"><i style="width:100%"></i></div></div>
@@ -449,7 +449,7 @@ window.FINDER = (function () {
       if (mixed && tiles.every((t, k) => t === k)) {
         mixed = false;
         window.EGGS.find('puzzle');
-        dialog({ icon: 'puzzle', html: '<p><b>Solved.</b></p><p>Patience and a plan. That is most of engineering, honestly.</p>' });
+        dialog({ icon: 'puzzle', html: '<p><b>Solved.</b></p>' });
       }
     };
     const shuffle = () => {

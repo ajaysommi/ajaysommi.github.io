@@ -252,7 +252,7 @@ window.TERM = (function () {
   const contact = () => [
     'CONTACT',
     rule(48),
-    '  20+ years of experience. Let\u2019s not be strangers.',
+    '  Email is the quickest way to reach me.',
     ['  (most of them spent being a kid. see VIEW KID)', 'dim'],
     '',
     `  EMAIL     ${link('mailto:' + P.email, P.email)}`,
@@ -397,7 +397,7 @@ window.TERM = (function () {
     logo: () => print([...BANNER.map((l) => [esc(l), 'big']), '']),
     '1983': () => print(['YOU ARE ALREADY IN 1983.', '']),
     era: () => { print(['SHUTTING DOWN. CHOOSE A STARTUP DISK...', '']); setTimeout(() => api.picker(), 600); return Promise.resolve(); },
-    '2006': () => { print(['JUMPING AHEAD TO 2006...', '']); setTimeout(() => api.go(3), 450); return Promise.resolve(); },
+    '2007': () => { print(['JUMPING AHEAD TO 2007...', '']); setTimeout(() => api.go(3), 450); return Promise.resolve(); },
     '1991': () => { print(['ENGAGING TIME CIRCUITS...', '']); setTimeout(() => api.go(1), 450); return Promise.resolve(); },
     '1998': () => { print(['SKIPPING AHEAD TO 1998...', '']); setTimeout(() => api.go(2), 450); return Promise.resolve(); }
   };

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   2006: SommiOS X 10.4 "Gator". A parody of the desktop of its day:
+   2007: SommiOS X 10.4 "Gator". A parody of the desktop of its day:
    a translucent menu bar, Spotlight in the corner, a glass dock that
    swells under the pointer, Aqua windows with traffic lights. Every app in
    the dock is a part of the portfolio, and Time Machine goes back to the
@@ -102,7 +102,7 @@ window.OSX = (function () {
       lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']]))
   };
 
-  /* Snow Leopard's own icons, from Apple's 2006 Mac OS X pages, wherever
+  /* Snow Leopard's own icons, from Apple's 2009 Mac OS X pages, wherever
      the app has a match. Finder keeps the AJ face; folders and the Trash
      stay drawn. */
   const SL = { about: 'about', experience: 'ical', guestbook: 'ichat', skills: 'prefs', safari: 'safari', mail: 'mail', preview: 'preview', terminal: 'terminal', timemachine: 'timemachine', education: 'dictionary', photos: 'photobooth', projects: 'automator' };
@@ -443,7 +443,7 @@ window.OSX = (function () {
       }
     }),
     education: () => doc('Education.rtf', () => { const e = P.education; return `<h1>${esc(e.school)}</h1><p><b>${esc(e.degree)}</b><br/>${esc(e.college)}<br/>Graduating ${esc(e.when)}</p><p>${esc(e.text)}</p><p>${e.tags.map(esc).join(' · ')}</p>`; }),
-    welcome: () => doc('Welcome.rtf', () => `<h1>Welcome to Gator.</h1><p>This is my portfolio, as it would have run on a desktop in 2006.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Have a look around. There are a few things hidden here too.</p><p>Ajay</p>`),
+    welcome: () => doc('Welcome.rtf', () => `<h1>Welcome to Gator.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Have a look around.</p><p>Ajay</p>`),
     terminal: () => ({ title: 'Terminal — bash — 80×24', w: 640, h: 400, cls: 'is-term', render: term }),
     safari: (url) => ({
       title: 'Ajay Sommi · Software Engineer', w: Math.min(1060, SW() - 80), h: SH() - 140, cls: 'is-safari',
@@ -453,7 +453,7 @@ window.OSX = (function () {
         const fr = b.querySelector('iframe');
         const addr = rec.el.querySelector('.ox-url input');
         /* Our own pages load directly; anything else typed goes through
-           OLDWEB: the site as it was in 2006 (today's if there is no copy),
+           OLDWEB: the site as it was in 2007 (today's if there is no copy),
            and searches on that year's Google. Back and Forward walk the
            addresses visited here. */
         const hist = [];
@@ -462,7 +462,7 @@ window.OSX = (function () {
         const show = (u) => {
           if (local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.onload = null; fr.src = u; addr.value = 'http://ajaysommi.github.io/' + (u === 'classic.html' ? '' : u); return; }
           addr.value = 'http://' + window.OLDWEB.shown(u);
-          window.OLDWEB.open(fr, u, 2006, { onNav: go });
+          window.OLDWEB.open(fr, u, 2007, { onNav: go });
         };
         function go(u) { hist.length = pos + 1; hist.push(u); pos = hist.length - 1; show(u); }
         b.addEventListener('click', (e) => { const g = e.target.closest('[data-go]'); if (g) go(g.dataset.go); const x = e.target.closest('[data-ext]'); if (x) ext(P[x.dataset.ext]); });

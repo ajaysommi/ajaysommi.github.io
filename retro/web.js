@@ -120,7 +120,7 @@ window.WEB = (function () {
 
     contact: () => shell('E-mail me!', `<h1>E-mail me!</h1>
       <table class="lay"><tr><td style="width:250px"><span class="frame"><img class="slow" src="${P.kidPhoto}" width="230" alt="Ajay as a kid in 2006, at a computer" /></span></td>
-      <td><h2 style="margin-top:0">20+ years of experience.</h2><p>Let’s not be strangers.</p>
+      <td><h2 style="margin-top:0">Contact</h2><p>Email is the quickest way to reach me.</p>
       <p><span class="mail-anim">✉️</span> <a href="mailto:${P.email}"><b>${esc(P.email)}</b></a></p>
       <p>💾 <a href="${P.github}" target="_blank" rel="noopener noreferrer">My GitHub</a><br/>💼 <a href="${P.linkedin}" target="_blank" rel="noopener noreferrer">My LinkedIn</a><br/>📄 <a href="#" data-go="resume">My Résumé</a></p></td></tr></table>${nav()}`),
 
