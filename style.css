@@ -5446,8 +5446,25 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-ad.is-glow { box-shadow: 0 0 0 1px rgba(255, 255, 255, .12), -12px 0 30px rgba(97, 187, 70, .35), 12px 0 30px rgba(0, 157, 220, .35), 0 10px 30px rgba(0, 0, 0, .25); }
 .era-spark { position: fixed; z-index: 70; width: 12px; height: 12px; margin: -6px 0 0 -6px; pointer-events: none;
   background: var(--c); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
-/* The nav mark's eye, glancing toward the banner as it launches it. */
-header.nav .brand-aj circle { transform-box: fill-box; }
+/* The machines have faces. As the banner lands they give one short dance,
+   one after another, then just blink now and then and glance about. */
+.era-dv svg { transform-origin: 50% 100%; }
+.era-ad-wrap.is-dance .era-dv svg { animation: era-dance .9s ease-in-out 1 both; }
+.era-ad-wrap.is-dance .era-dv:nth-child(2) svg, .era-ad-wrap.is-dance .era-dv:nth-child(6) svg { animation-delay: .12s; }
+.era-ad-wrap.is-dance .era-dv:nth-child(3) svg, .era-ad-wrap.is-dance .era-dv:nth-child(7) svg { animation-delay: .24s; }
+.era-ad-wrap.is-dance .era-dv:nth-child(4) svg { animation-delay: .36s; }
+.era-dv .ev { transform-box: fill-box; transform-origin: 50% 50%; animation: era-blink 4.2s steps(1, end) infinite; }
+.era-dv:nth-child(even) .ev { animation-delay: -1.4s; }
+.era-dv:nth-child(3n) .ev { animation-delay: -2.7s; }
+.era-dv .pu { animation: era-look 6s ease-in-out infinite; }
+@keyframes era-dance {
+  0%, 100% { transform: none; }
+  20% { transform: scale(1.04, .95); }
+  45% { transform: translateY(-3px) rotate(-5deg); }
+  70% { transform: translateY(0) rotate(4deg) scale(1.03, .97); }
+}
+@keyframes era-blink { 0%, 93%, 100% { transform: none; } 95% { transform: scaleY(.1); } }
+@keyframes era-look { 0%, 30%, 100% { transform: translateX(0); } 40%, 60% { transform: translateX(.35px); } 70%, 85% { transform: translateX(-.35px); } }
 .era-ad {
   position: relative; overflow: hidden; isolation: isolate;
   display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 18px;
@@ -5530,27 +5547,9 @@ header.nav .brand-aj circle { transform-box: fill-box; }
   .era-ad-kicker { font-size: .6rem; }
   .era-ad-kicker b { margin-right: 0; }
   .era-ad-exp { display: none; }
-  /* The phones, as a little troupe: each bobs and sways in turn, blinks
-     now and then, and the one whose year is up hops highest. */
   .era-ad-devs { display: flex; gap: 7px; align-items: flex-end; margin-left: auto; padding-right: 2px; }
   .era-dv { height: 24px; opacity: 1; transform: none; }
   .era-dv.is-on { transform: translateY(-4px) scale(1.12); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .3)); }
-  .era-dv svg { transform-origin: 50% 100%; animation: era-dance 1.4s ease-in-out infinite; }
-  .era-dv:nth-child(6) svg { animation-delay: -.47s; }
-  .era-dv:nth-child(7) svg { animation-delay: -.94s; }
-  .era-dv .ev { transform-box: fill-box; transform-origin: 50% 50%; animation: era-blink 3.6s steps(1, end) infinite; }
-  .era-dv:nth-child(6) .ev { animation-delay: -1.2s; }
-  .era-dv:nth-child(7) .ev { animation-delay: -2.3s; }
-  .era-dv .pu { animation: era-look 5s ease-in-out infinite; }
-  @keyframes era-dance {
-    0%, 100% { transform: translateY(0) rotate(0) scale(1, 1); }
-    18% { transform: translateY(0) rotate(0) scale(1.08, .9); }
-    40% { transform: translateY(-5px) rotate(-8deg) scale(.96, 1.06); }
-    60% { transform: translateY(0) rotate(0) scale(1.06, .92); }
-    80% { transform: translateY(-2px) rotate(6deg) scale(1, 1); }
-  }
-  @keyframes era-blink { 0%, 92%, 100% { transform: none; } 94% { transform: scaleY(.1); } }
-  @keyframes era-look { 0%, 30%, 100% { transform: translateX(0); } 40%, 60% { transform: translateX(.4px); } 70%, 85% { transform: translateX(-.4px); } }
   .era-ad-title { font-size: .95rem; font-weight: 650; line-height: 1.2; white-space: nowrap; }
   .era-ad-cta { width: 30px; height: 30px; padding: 0; justify-content: center; }
   .era-ad-cta-t { display: none; }

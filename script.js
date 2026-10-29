@@ -4157,9 +4157,8 @@ console.log(
 /* ==========================================================================
    The way into the eras (the banner over the hero; on a phone, a pill
    floating over the bottom nav). It waits for the page to finish loading;
-   then the nav's AJ mark glances toward it and it launches out from the
-   mark's direction (on desktop the page eases down to make room), landing
-   with a shine and a glow. If the page has already been scrolled, or
+   then it launches out from the direction of the nav's AJ mark (on desktop the page eases down to make room), landing
+   with a shine and a glow while its machines give a short dance. If the page has already been scrolled, or
    motion is reduced, it is simply there (scrolled for, so nothing jumps).
    Once up, the year in it moves through the eras of this visitor's kind
    of device, scrambling through digits and landing in each era's type,
@@ -4262,21 +4261,14 @@ console.log(
   const serve = async () => {
     const mark = navMark();
     if (reduce || !mark || (!phone.matches && scrollY > 40)) { instantly(); return; }
-    /* The mark stays where it is. Its eye glances toward the banner's spot,
-       the banner launches out from the mark's direction, and the eye comes
-       back to rest. */
+    /* The mark stays where it is and the banner launches out from its
+       direction. */
     const nr = mark.getBoundingClientRect(), mx = nr.left + nr.width / 2, my = nr.top + nr.height / 2;
     const br = box.getBoundingClientRect();
     const top = phone.matches ? br.top : wrap.getBoundingClientRect().top + padPx();
-    const h = phone.matches ? br.height : 70;
-    const tx = br.left + Math.min(br.width / 2, 260) - mx, ty = top + h / 2 - my, len = Math.hypot(tx, ty) || 1;
     box.style.setProperty('--ox', `${mx - br.left}px`);
     box.style.setProperty('--oy', `${my - top}px`);
-    const eye = mark.querySelector('circle');
-    // in the drawing's own units: a clear look, most of the eye's own width
-    const look = eye && eye.animate([{ transform: 'none' }, { transform: `translate(${(tx / len * 6).toFixed(2)}px, ${(ty / len * 6).toFixed(2)}px)` }],
-      { duration: 320, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' });
-    await wait(420);
+    await wait(120);
     wrap.classList.add('is-open');
     await wait(phone.matches ? 0 : 120);
     wrap.classList.add('is-served');
@@ -4286,14 +4278,9 @@ console.log(
     shine.className = 'era-ad-shine';
     ad.appendChild(shine);
     ad.classList.add('is-glow');
-    wrap.classList.add('is-done');
+    wrap.classList.add('is-done', 'is-dance');
     if (phone.matches) sparkle();
     setTimeout(() => { ad.classList.remove('is-glow'); shine.remove(); }, 1100);
-    await wait(500);
-    if (look) {
-      look.reverse();
-      look.finished.then(() => look.cancel());
-    }
     cycle();
   };
 
