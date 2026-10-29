@@ -47,11 +47,11 @@ window.POCKET = { start(room, exit) {
      really leaves under the buttons on top. */
   const fit = () => {
     const v = window.RETRO.viewport();
-    /* 56 points clear for the buttons on top, 26 at the bottom so a
-       browser's toolbar never touches the phone. */
-    const s = Math.min(1.35, (v.h - 82) / 603, (v.w - 24) / 346);
+    /* 16 points clear at the top, 72 at the bottom for the row of
+       buttons under the phone (which sits above any browser toolbar). */
+    const s = Math.min(1.35, (v.h - 88) / 603, (v.w - 24) / 346);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - 603 * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 16 + Math.max(0, (v.h - 88 - 603 * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);

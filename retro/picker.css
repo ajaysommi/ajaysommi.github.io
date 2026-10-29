@@ -336,6 +336,9 @@
 .is-mobile .snd-toggle { padding: 10px 12px; }
 .mp-site { position: fixed; top: calc(env(safe-area-inset-top) + 8px); right: calc(max(10px, env(safe-area-inset-right)) + 54px); z-index: 7000; border-radius: 999px; padding: 10px 14px; font: 15px var(--pixel); color: #eee; text-decoration: none; background: rgba(20,18,16,.78); box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .mp-site[hidden] { display: none; }
+/* Inside a phone the controls sit in a row under it, at the bottom of what
+   the browser shows (above its toolbar), where a thumb reaches them. */
+html[data-phone] .mp-back, html[data-phone] .mp-site, html[data-phone] .snd-toggle { top: calc(var(--vvt, 0px) + var(--vvh, 100svh) - env(safe-area-inset-bottom) - 12px); transform: translateY(-100%); }
 [data-phone="nokia"] .mp-back, [data-phone="nokia"] .mp-site, [data-phone="nokia"] .snd-toggle { background: rgba(31,45,85,.88); color: #e6ecf7; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(20,30,60,.3); }
 [data-phone="pocket"] .mp-back, [data-phone="pocket"] .mp-site, [data-phone="pocket"] .snd-toggle { background: rgba(255,255,255,.9); color: #3b3352; box-shadow: 0 0 0 1px #c5bcd9, 0 4px 12px rgba(60,50,90,.15); }
 [data-phone="iphone"] .mp-back, [data-phone="iphone"] .mp-site, [data-phone="iphone"] .snd-toggle { background: rgba(28,28,30,.82); color: #f2f2f2; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.3); }

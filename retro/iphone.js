@@ -87,11 +87,11 @@ window.IPHONE = { start(room, exit) {
     const v = window.RETRO.viewport();
     const w = dev.classList.contains('is-photo') ? 385 : 396;
     const h = dev.classList.contains('is-photo') ? 730 : 748;
-    /* 56 points clear for the buttons on top, 26 at the bottom so a
-       browser's toolbar never touches the phone. */
-    const s = Math.min(1.3, (v.h - 82) / h, (v.w - 24) / w);
+    /* 16 points clear at the top, 72 at the bottom for the row of
+       buttons under the phone (which sits above any browser toolbar). */
+    const s = Math.min(1.3, (v.h - 88) / h, (v.w - 24) / w);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - h * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 16 + Math.max(0, (v.h - 88 - h * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);
