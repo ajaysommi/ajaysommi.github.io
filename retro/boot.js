@@ -41,7 +41,7 @@
 
   /* Behind both pickers: small filled shapes from every era, with
      hourglasses and clocks among them, shaded in softly. */
-  const TIMEART = (mobile) => window.SHAPES.layer('time', mobile ? { count: 36, opacity: 0.055, size: [22, 42], seed: 11 } : { count: 60, opacity: 0.032, size: [26, 56], seed: 5 });
+  const TIMEART = (mobile) => window.SHAPES.layer('time', mobile ? { count: 36, opacity: 0.034, size: [22, 42], seed: 11 } : { count: 60, opacity: 0.032, size: [26, 56], seed: 5 });
 
   /* The morph between a tile's drawing and the real machine. The drawing
      and the photograph fly the same path together: the drawing grows into
@@ -148,7 +148,7 @@
     { year: '2007', name: 'SommiOS X Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ART[2007] }
   ];
   /* The standard site sits in the same row, as the newest machine. */
-  const OPTS = [...ERAS, { year: 'Today', name: 'Standard site', note: 'The regular portfolio, no time travel.', href: 'classic.html', art: ART.now }];
+  const OPTS = [...ERAS, { year: 'Today', name: 'Standard site', note: 'The regular portfolio, no time travel.', href: 'index.html', art: ART.now }];
 
   const desk = () => {
     const host = document.getElementById('osHost');
@@ -223,7 +223,7 @@
     const bar = document.createElement('div');
     bar.className = 'dk-bar';
     bar.hidden = true;
-    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Eras</button><span></span><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="classic.html">Standard site</a>`;
+    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Eras</button><span></span><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
     bar.querySelector('[data-k="eras"]').addEventListener('click', () => { SFX.click(); showPicker(); });
     document.body.appendChild(bar);
     /* Shapes of the era behind the machine. */
@@ -452,7 +452,7 @@
     { id: 'iphone', name: 'iSommi 2G', year: '2007', note: 'Slide to unlock. The home button goes back.', mod: () => window.IPHONE, cls: 'iphone-room' }
   ];
 
-  const PICKS = [...PHONES, { id: 'now', name: 'Standard site', year: 'Today', note: 'The regular portfolio, no time travel.', href: 'classic.html' }];
+  const PICKS = [...PHONES, { id: 'now', name: 'Standard site', year: 'Today', note: 'The regular portfolio, no time travel.', href: 'index.html' }];
   const phones = () => {
     const host = document.getElementById('phoneHost');
     const pick = document.getElementById('picker');
@@ -501,7 +501,7 @@
     document.body.appendChild(back);
     const std = document.createElement('a');
     std.className = 'mp-site';
-    std.href = 'classic.html';
+    std.href = 'index.html';
     std.hidden = true;
     std.textContent = 'Standard site';
     document.body.appendChild(std);

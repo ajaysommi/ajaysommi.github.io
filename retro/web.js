@@ -391,7 +391,7 @@ window.WEB = (function () {
         if (r.dataset.ring === 'prev') api.go(1);
         else if (r.dataset.ring === 'next') {
           setStatus('Following the webring into the future...');
-          setTimeout(() => window.open('classic.html', '_blank', 'noopener'), 300);
+          setTimeout(() => window.open('index.html', '_blank', 'noopener'), 300);
         } else load(['work', 'projects', 'garage', 'skills', 'guestbook'][Math.floor(Math.random() * 5)]);
         return;
       }

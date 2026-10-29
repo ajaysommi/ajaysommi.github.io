@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
+  <title>Ajay Sommi · Software Engineer</title>
+
+  <meta name="description" content="Ajay Sommi is a software engineer who builds backend services, internal tools, and data pipelines that hold up in production. Pick an era and his portfolio boots as an operating system from that year." />
+  <link rel="canonical" href="https://ajaysommi.github.io/eras.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajaysommi.github.io/eras.html" />
+  <meta property="og:title" content="Ajay Sommi · Software Engineer" />
+  <meta property="og:description" content="Pick an era. The portfolio boots as an operating system from that year." />
+  <meta property="og:image" content="https://ajaysommi.github.io/assets/images/opt/hero-960.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="theme-color" content="#16130f" />
+  <meta name="color-scheme" content="light" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen&family=VT323&display=swap" />
+
+  <script>
+    /* Phones get the phone picker; everything else the startup disks.
+       On a development host, ?device=desk|mobile overrides
+       that for the rest of the tab's life. */
+    (function () {
+      var root = document.documentElement;
+      var dev = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || /\.(local|localhost|test)$/.test(location.hostname);
+      var forced = null;
+      /* The override lives only in the address bar, so it can never
+         outlast the visit that asked for it. */
+      if (dev) {
+        try {
+          var q = new URLSearchParams(location.search).get('device');
+          if (q === 'pocket' || q === 'iphone' || q === 'nokia') { if (!location.hash) location.hash = q; q = 'mobile'; }
+          sessionStorage.removeItem('dev-device');
+          if (q === 'desk' || q === 'mobile') forced = q;
+        } catch (e) {}
+      }
+      var auto = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches ? 'mobile' : 'desk';
+      var mode = forced === 'desk' || forced === 'mobile' ? forced : auto;
+      root.className = 'is-' + mode + ' js is-loading';
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('reduced');
+      root.dataset.mode = mode;
+      root.dataset.forced = forced ? '1' : '';
+      root.dataset.dev = dev ? '1' : '';
+    })();
+  </script>
+
+  <style>
+    /* The loading screen, inline so it is the very first thing drawn. */
+    .boot-ld {
+      position: fixed; inset: 0; z-index: 10000;
+      display: grid; place-items: center;
+      background: #16130f; color: #e9e4d8;
+      transition: opacity .6s ease, visibility .6s;
+    }
+    .boot-ld.is-done { opacity: 0; visibility: hidden; }
+    .boot-ld .in { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+    .boot-ld svg { width: 112px; height: 112px; display: block; shape-rendering: crispEdges; }
+    .boot-ld svg rect { opacity: 0; transition: opacity .12s steps(1); }
+    .boot-ld svg rect.on { opacity: 1; }
+    .boot-ld .bar { display: grid; grid-template-columns: repeat(20, 8px); gap: 3px; }
+    .boot-ld .bar i { height: 12px; background: #3a342b; }
+    .boot-ld .bar i.on { background: #e9e4d8; }
+    .boot-ld .txt { font: 12px 'Silkscreen', 'Courier New', monospace; letter-spacing: .14em; color: #a59d8d; min-height: 1.2em; }
+    .boot-ld .blink { animation: ldblink 1s steps(1) infinite; }
+    @keyframes ldblink { 50% { opacity: 0; } }
+    /* The room behind it comes up like a lamp being switched on. */
+    .is-loading .picker, .is-loading .os-host, .is-loading .phone-host { filter: brightness(.2); }
+    .picker, .os-host, .phone-host { transition: filter 1s ease; }
+  </style>
+
+  <link rel="stylesheet" href="retro/os.css?v=35" />
+  <link rel="stylesheet" href="retro/osx.css?v=35" />
+  <link rel="stylesheet" href="retro/picker.css?v=35" />
+  <link rel="stylesheet" href="retro/pocket.css?v=35" />
+  <link rel="stylesheet" href="retro/iphone.css?v=35" />
+  <link rel="stylesheet" href="retro/nokia.css?v=35" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ajay Sommi",
+    "url": "https://ajaysommi.github.io/",
+    "jobTitle": "Software Engineer",
+    "email": "mailto:ajaysommi7@gmail.com",
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Florida" },
+    "sameAs": ["https://github.com/ajaysommi", "https://www.linkedin.com/in/ajay-sommi/"],
+    "knowsAbout": ["C#", ".NET", "Microsoft Azure", "SQL", "REST APIs", "Cloud Engineering"]
+  }
+  </script>
+</head>
+
+<body>
+  <a class="skip-link" href="index.html">Skip the computer: open the classic site</a>
+
+  <!-- Loading: the pixel mark fills in as the page's fonts and pictures
+       arrive, then the room behind it lights up. -->
+  <div class="boot-ld" id="bootLd" role="progressbar" aria-label="Loading the portfolio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="in">
+      <svg viewBox="0 0 16 16" aria-hidden="true"></svg>
+    </div>
+  </div>
+  <script>
+    (function loader() {
+      /* The AJ mark redrawn for pixel screens, one character per pixel:
+         # ink, b blue, r orange. Every machine's screen uses this one. */
+      var ROWS = window.AJ_PX = [
+        '.......##.......',
+        '......####...bb.',
+        '......####..bbbb',
+        '.....######.bbbb',
+        '.....######..bb.',
+        '....########....',
+        '....########.bbb',
+        '...####..###.bbb',
+        '...####..####bbb',
+        '..####...####bbb',
+        '..####rrrr...rrr',
+        '.####..rrrrrrrrr',
+        '####...rrrrrrrr.',
+        '........rrrrrr..',
+        '..........rr....',
+        '................'
+      ];
+      var el = document.getElementById('bootLd');
+      var svg = el.querySelector('svg');
+      var txt = el.querySelector('.txt');
+      var C = { '#': '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
+      var cells = [];
+      ROWS.forEach(function (row, y) {
+        for (var x = 0; x < 16; x++) {
+          var ch = row[x];
+          if (!C[ch]) continue;
+          var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1); r.setAttribute('height', 1); r.setAttribute('fill', C[ch]);
+          svg.appendChild(r);
+          cells.push(r);
+        }
+      });
+      /* Pixels arrive in a shuffled order, but roughly top to bottom, the
+         way a picture came down a slow line. */
+      cells.sort(function (a, b) { return (+a.getAttribute('y') + Math.random() * 6) - (+b.getAttribute('y') + Math.random() * 6); });
+
+      /* Arriving from the standard site, its mark has already flown here and
+         turned to pixels on the way, so the whole mark is up at once. */
+      var handed = false;
+      try { handed = !!sessionStorage.getItem('hop-px'); sessionStorage.removeItem('hop-px'); } catch (e) {}
+      if (handed) cells.forEach(function (c) { c.classList.add('on'); });
+
+      var mode = document.documentElement.dataset.mode;
+      var imgs = ['assets/images/opt/hero-480.webp'];
+      var tasks = [];
+      tasks.push(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+      tasks.push(new Promise(function (r) { if (document.readyState === 'complete') r(); else addEventListener('load', r); }));
+      imgs.forEach(function (src) { tasks.push(new Promise(function (r) { var im = new Image(); im.onload = im.onerror = r; im.src = src; })); });
+      var done = 0;
+      tasks.forEach(function (t) { t.then(function () { done++; }); });
+
+      var MIN = handed ? 1 : document.documentElement.classList.contains('reduced') ? 200 : 550;
+      var MAX = 7000;
+      var t0 = performance.now(), shown = 0, finished = false, resolveReady;
+      window.READY = new Promise(function (r) { resolveReady = r; });
+
+      function frame(now) {
+        var el2 = now - t0;
+        var target = Math.min(done / tasks.length, el2 / MIN);
+        if (el2 > MAX) target = 1;
+        shown += (target - shown) * 0.32;
+        if (target - shown < 0.004) shown = target;
+        var n = Math.round(shown * cells.length);
+        if (!handed) for (var k = 0; k < cells.length; k++) cells[k].classList.toggle('on', k < n);
+        el.setAttribute('aria-valuenow', Math.round(shown * 100));
+        if (shown >= 1 && !finished) {
+          finished = true;
+          setTimeout(function () {
+            /* The picker comes up behind, then the mark flies from the
+               middle of the loader to the mark over the picker and settles
+               there, while everything else fades in around it. */
+            resolveReady();
+            document.documentElement.classList.remove('is-loading');
+            requestAnimationFrame(function () { requestAnimationFrame(function () {
+              var pick = document.getElementById('picker');
+              var target = pick && !pick.hidden && pick.querySelector('.pk-head svg, .mp-head svg');
+              el.classList.add('is-done');
+              if (!target || document.documentElement.classList.contains('reduced')) { setTimeout(function () { el.remove(); }, 700); return; }
+              var a = svg.getBoundingClientRect(), b = target.getBoundingClientRect();
+              var fly = svg.cloneNode(true);
+              fly.style.cssText = 'position:fixed;margin:0;z-index:10001;left:' + a.left + 'px;top:' + a.top + 'px;width:' + a.width + 'px;height:' + a.height + 'px;transform-origin:0 0;shape-rendering:crispEdges;transition:transform .75s cubic-bezier(.65,0,.25,1)';
+              document.body.appendChild(fly);
+              svg.style.visibility = 'hidden';
+              target.style.visibility = 'hidden';
+              pick.classList.add('is-arriving');
+              requestAnimationFrame(function () {
+                fly.style.transform = 'translate(' + (b.left - a.left) + 'px,' + (b.top - a.top) + 'px) scale(' + (b.width / a.width) + ')';
+              });
+              setTimeout(function () { target.style.visibility = ''; fly.remove(); }, 800);
+              setTimeout(function () { pick.classList.remove('is-arriving'); el.remove(); }, 1300);
+            }); });
+          }, 160);
+          return;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+  </script>
+
+  <!-- The whole experience is drawn by script. Without it, the plain facts. -->
+  <noscript>
+    <style>.boot-ld { display: none; } .is-loading .picker { filter: none; }</style>
+    <div class="no-js">
+      <h1>Ajay Sommi · Software Engineer</h1>
+      <p>This portfolio runs on a little computer that needs JavaScript to boot.</p>
+      <p><a href="index.html">Open the classic site</a> · <a href="Ajay_Sommi_Resume.pdf">Resume (PDF)</a> · <a href="mailto:ajaysommi7@gmail.com">ajaysommi7@gmail.com</a></p>
+    </div>
+  </noscript>
+
+  <!-- What to run: startup disks on a computer, handsets on a phone. -->
+  <div class="picker" id="picker"></div>
+
+  <!-- The chosen system runs here, filling the window. -->
+  <div class="os-host" id="osHost"></div>
+  <div class="phone-host" id="phoneHost"></div>
+  <div class="curtain" id="curtain" aria-hidden="true"></div>
+
+  <div class="sr-only" aria-live="polite" id="srLive"></div>
+
+  <script src="retro/content.js?v=35"></script>
+  <script src="retro/sound.js?v=35"></script>
+  <script src="retro/icons.js?v=35"></script>
+  <script src="retro/eggs.js?v=35"></script>
+  <script src="retro/oldweb.js?v=35"></script>
+  <script src="retro/term.js?v=35"></script>
+  <script src="retro/finder.js?v=35"></script>
+  <script src="retro/web.js?v=35"></script>
+  <script src="retro/osx.js?v=35"></script>
+  <script src="retro/pocket.js?v=35"></script>
+  <script src="retro/iphone.js?v=35"></script>
+  <script src="retro/nokia.js?v=35"></script>
+  <script src="retro/shapes.js?v=35"></script>
+  <script src="retro/boot.js?v=35"></script>
+
+</body>
+</html>

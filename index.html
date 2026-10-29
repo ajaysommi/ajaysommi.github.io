@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Ajay Sommi · Software Engineer</title>
 
-  <meta name="description" content="Ajay Sommi is a software engineer who builds backend services, internal tools, and data pipelines that hold up in production. Pick an era and his portfolio boots as an operating system from that year." />
+  <meta name="description" content="Ajay Sommi is a software engineer who adapts to whatever the problem needs, building backend services, internal tools, and data pipelines that hold up in production." />
   <link rel="canonical" href="https://ajaysommi.github.io/" />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://ajaysommi.github.io/" />
   <meta property="og:title" content="Ajay Sommi · Software Engineer" />
-  <meta property="og:description" content="Pick an era. The portfolio boots as an operating system from that year." />
+  <meta property="og:description" content="A software engineer who adapts to whatever the problem needs. Projects, experience, and resume." />
   <meta property="og:image" content="https://ajaysommi.github.io/assets/images/opt/hero-960.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <meta name="theme-color" content="#16130f" />
-  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#050814" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#eef2f8" media="(prefers-color-scheme: light)" />
+  <meta name="color-scheme" content="dark light" />
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="favicon.svg" />
@@ -24,66 +25,48 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen&family=VT323&display=swap" />
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap" />
+
+  <link rel="preload" as="image" fetchpriority="high"
+        href="assets/images/opt/hero-640.webp"
+        imagesrcset="assets/images/opt/hero-320.webp 320w, assets/images/opt/hero-480.webp 480w, assets/images/opt/hero-640.webp 640w, assets/images/opt/hero-960.webp 960w"
+        imagesizes="(max-width: 719px) 42vw, 360px" />
+
+  <!-- Which intro length shows is decided here, in the page itself, so a
+       browser still holding yesterday's stylesheet can never show both. -->
+  <style>.sub-short{display:none}@media (max-width:719px){.sub-long{display:none}.sub-short{display:inline}}</style>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="minimal.css" />
 
   <script>
-    /* Phones get the phone picker; everything else the startup disks.
-       On a development host, ?device=desk|mobile overrides
-       that for the rest of the tab's life. */
+    /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
     (function () {
       var root = document.documentElement;
-      var dev = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || /\.(local|localhost|test)$/.test(location.hostname);
-      var forced = null;
-      /* The override lives only in the address bar, so it can never
-         outlast the visit that asked for it. */
-      if (dev) {
-        try {
-          var q = new URLSearchParams(location.search).get('device');
-          if (q === 'pocket' || q === 'iphone' || q === 'nokia') { if (!location.hash) location.hash = q; q = 'mobile'; }
-          sessionStorage.removeItem('dev-device');
-          if (q === 'desk' || q === 'mobile') forced = q;
-        } catch (e) {}
+      /* The system setting decides the theme. The theme button can flip it
+         for the rest of the visit (sessionStorage), and a change of the
+         system setting always wins. A choice saved permanently by older
+         versions is cleared, since it kept the site in the wrong mode. */
+      var saved = null;
+      try { localStorage.removeItem('as-theme'); saved = sessionStorage.getItem('as-theme'); } catch (e) {}
+      var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      root.dataset.theme = saved === 'daylight' || saved === 'midnight' ? saved : (prefersLight ? 'daylight' : 'midnight');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.dataset.motion = 'reduced';
       }
-      var auto = matchMedia('(max-width: 760px), (max-height: 520px) and (pointer: coarse)').matches ? 'mobile' : 'desk';
-      var mode = forced === 'desk' || forced === 'mobile' ? forced : auto;
-      root.className = 'is-' + mode + ' js is-loading';
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('reduced');
-      root.dataset.mode = mode;
-      root.dataset.forced = forced ? '1' : '';
-      root.dataset.dev = dev ? '1' : '';
+      /* Arriving from the resume page (hop.js): its nav mark has just flown
+         to where the loading screen draws its own, so the loader starts with
+         the mark already standing there instead of assembling it. */
+      try {
+        if (sessionStorage.getItem('hop-home')) { sessionStorage.removeItem('hop-home'); root.classList.add('mk-landed'); }
+      } catch (e) {}
+      root.classList.add('js');
+      /* Holds the page still behind the loading screen; script.js lets it go,
+         and this does too if that never runs. */
+      root.classList.add('is-loading');
+      setTimeout(function () { root.classList.remove('is-loading'); }, 7000);
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     })();
   </script>
-
-  <style>
-    /* The loading screen, inline so it is the very first thing drawn. */
-    .boot-ld {
-      position: fixed; inset: 0; z-index: 10000;
-      display: grid; place-items: center;
-      background: #16130f; color: #e9e4d8;
-      transition: opacity .6s ease, visibility .6s;
-    }
-    .boot-ld.is-done { opacity: 0; visibility: hidden; }
-    .boot-ld .in { display: flex; flex-direction: column; align-items: center; gap: 22px; }
-    .boot-ld svg { width: 112px; height: 112px; display: block; shape-rendering: crispEdges; }
-    .boot-ld svg rect { opacity: 0; transition: opacity .12s steps(1); }
-    .boot-ld svg rect.on { opacity: 1; }
-    .boot-ld .bar { display: grid; grid-template-columns: repeat(20, 8px); gap: 3px; }
-    .boot-ld .bar i { height: 12px; background: #3a342b; }
-    .boot-ld .bar i.on { background: #e9e4d8; }
-    .boot-ld .txt { font: 12px 'Silkscreen', 'Courier New', monospace; letter-spacing: .14em; color: #a59d8d; min-height: 1.2em; }
-    .boot-ld .blink { animation: ldblink 1s steps(1) infinite; }
-    @keyframes ldblink { 50% { opacity: 0; } }
-    /* The room behind it comes up like a lamp being switched on. */
-    .is-loading .picker, .is-loading .os-host, .is-loading .phone-host { filter: brightness(.2); }
-    .picker, .os-host, .phone-host { transition: filter 1s ease; }
-  </style>
-
-  <link rel="stylesheet" href="retro/os.css?v=34" />
-  <link rel="stylesheet" href="retro/osx.css?v=34" />
-  <link rel="stylesheet" href="retro/picker.css?v=34" />
-  <link rel="stylesheet" href="retro/pocket.css?v=34" />
-  <link rel="stylesheet" href="retro/iphone.css?v=34" />
-  <link rel="stylesheet" href="retro/nokia.css?v=34" />
 
   <script type="application/ld+json">
   {
@@ -101,154 +84,986 @@
 </head>
 
 <body>
-  <a class="skip-link" href="classic.html">Skip the computer: open the classic site</a>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- Loading: the pixel mark fills in as the page's fonts and pictures
-       arrive, then the room behind it lights up. -->
-  <div class="boot-ld" id="bootLd" role="progressbar" aria-label="Loading the portfolio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-    <div class="in">
-      <svg viewBox="0 0 16 16" aria-hidden="true"></svg>
+  <!-- Boot sequence; removed by script.js, with a CSS-only fallback timeout. -->
+  <div class="page-loader" id="pageLoader" aria-hidden="true">
+    <div class="loader-stars"></div>
+    <div class="loader-card">
+      <!-- Minimal experiment: the flat loader. Hidden without minimal.css. -->
+      <div class="m-load">
+        <span class="m-load-mark" aria-hidden="true">
+          <svg class="mk mk-a" viewBox="8 8 48 42" aria-hidden="true"><path d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/></svg>
+          <svg class="mk mk-j" viewBox="8 8 48 42" aria-hidden="true"><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z"/></svg>
+          <svg class="mk mk-stem" viewBox="8 8 48 42" aria-hidden="true"><rect x="43.83" y="24.60" width="8.74" height="11.79"/></svg>
+          <svg class="mk mk-dot" viewBox="8 8 48 42" aria-hidden="true"><circle cx="48.20" cy="17.40" r="5.60"/></svg>
+        </span>
+        <span class="m-load-bar">
+          <span class="m-load-line"><i></i></span>
+          <!-- Takes over from the full bar, matching it exactly, and bends into a smile (script.js draws the bend). -->
+          <svg class="m-load-smile" viewBox="0 0 152 11" preserveAspectRatio="none" aria-hidden="true"><path d="M5.5 5.5 Q76 5.5 146.5 5.5"></path></svg>
+        </span>
+      </div>
+      <div class="loader-orb"></div>
+      <div class="loader-text">
+        <span>initializing portfolio</span>
+        <span>loading experience</span>
+        <span>systems online</span>
+      </div>
+      <div class="loader-bar"><i></i></div>
     </div>
   </div>
   <script>
-    (function loader() {
-      /* The AJ mark redrawn for pixel screens, one character per pixel:
-         # ink, b blue, r orange. Every machine's screen uses this one. */
-      var ROWS = window.AJ_PX = [
-        '.......##.......',
-        '......####...bb.',
-        '......####..bbbb',
-        '.....######.bbbb',
-        '.....######..bb.',
-        '....########....',
-        '....########.bbb',
-        '...####..###.bbb',
-        '...####..####bbb',
-        '..####...####bbb',
-        '..####rrrr...rrr',
-        '.####..rrrrrrrrr',
-        '####...rrrrrrrr.',
-        '........rrrrrr..',
-        '..........rr....',
-        '................'
-      ];
-      var el = document.getElementById('bootLd');
-      var svg = el.querySelector('svg');
-      var txt = el.querySelector('.txt');
-      var C = { '#': '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
-      var cells = [];
-      ROWS.forEach(function (row, y) {
-        for (var x = 0; x < 16; x++) {
-          var ch = row[x];
-          if (!C[ch]) continue;
-          var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-          r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1); r.setAttribute('height', 1); r.setAttribute('fill', C[ch]);
-          svg.appendChild(r);
-          cells.push(r);
-        }
-      });
-      /* Pixels arrive in a shuffled order, but roughly top to bottom, the
-         way a picture came down a slow line. */
-      cells.sort(function (a, b) { return (+a.getAttribute('y') + Math.random() * 6) - (+b.getAttribute('y') + Math.random() * 6); });
-
-      /* Arriving from the standard site, its mark has already flown here and
-         turned to pixels on the way, so the whole mark is up at once. */
-      var handed = false;
-      try { handed = !!sessionStorage.getItem('hop-px'); sessionStorage.removeItem('hop-px'); } catch (e) {}
-      if (handed) cells.forEach(function (c) { c.classList.add('on'); });
-
-      var mode = document.documentElement.dataset.mode;
-      var imgs = ['assets/images/opt/hero-480.webp'];
-      var tasks = [];
-      tasks.push(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
-      tasks.push(new Promise(function (r) { if (document.readyState === 'complete') r(); else addEventListener('load', r); }));
-      imgs.forEach(function (src) { tasks.push(new Promise(function (r) { var im = new Image(); im.onload = im.onerror = r; im.src = src; })); });
-      var done = 0;
-      tasks.forEach(function (t) { t.then(function () { done++; }); });
-
-      var MIN = handed ? 1 : document.documentElement.classList.contains('reduced') ? 200 : 550;
-      var MAX = 7000;
-      var t0 = performance.now(), shown = 0, finished = false, resolveReady;
-      window.READY = new Promise(function (r) { resolveReady = r; });
-
-      function frame(now) {
-        var el2 = now - t0;
-        var target = Math.min(done / tasks.length, el2 / MIN);
-        if (el2 > MAX) target = 1;
-        shown += (target - shown) * 0.32;
-        if (target - shown < 0.004) shown = target;
-        var n = Math.round(shown * cells.length);
-        if (!handed) for (var k = 0; k < cells.length; k++) cells[k].classList.toggle('on', k < n);
-        el.setAttribute('aria-valuenow', Math.round(shown * 100));
-        if (shown >= 1 && !finished) {
-          finished = true;
-          setTimeout(function () {
-            /* The picker comes up behind, then the mark flies from the
-               middle of the loader to the mark over the picker and settles
-               there, while everything else fades in around it. */
-            resolveReady();
-            document.documentElement.classList.remove('is-loading');
-            requestAnimationFrame(function () { requestAnimationFrame(function () {
-              var pick = document.getElementById('picker');
-              var target = pick && !pick.hidden && pick.querySelector('.pk-head svg, .mp-head svg');
-              el.classList.add('is-done');
-              if (!target || document.documentElement.classList.contains('reduced')) { setTimeout(function () { el.remove(); }, 700); return; }
-              var a = svg.getBoundingClientRect(), b = target.getBoundingClientRect();
-              var fly = svg.cloneNode(true);
-              fly.style.cssText = 'position:fixed;margin:0;z-index:10001;left:' + a.left + 'px;top:' + a.top + 'px;width:' + a.width + 'px;height:' + a.height + 'px;transform-origin:0 0;shape-rendering:crispEdges;transition:transform .75s cubic-bezier(.65,0,.25,1)';
-              document.body.appendChild(fly);
-              svg.style.visibility = 'hidden';
-              target.style.visibility = 'hidden';
-              pick.classList.add('is-arriving');
-              requestAnimationFrame(function () {
-                fly.style.transform = 'translate(' + (b.left - a.left) + 'px,' + (b.top - a.top) + 'px) scale(' + (b.width / a.width) + ')';
-              });
-              setTimeout(function () { target.style.visibility = ''; fly.remove(); }, 800);
-              setTimeout(function () { pick.classList.remove('is-arriving'); el.remove(); }, 1300);
-            }); });
-          }, 160);
-          return;
-        }
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    })();
+    /* Start the loading animation once the loader has actually been drawn,
+       two frames in, so none of it is spent before the first paint. */
+    (function () { var l = document.getElementById('pageLoader'); if (l && location.hash) l.classList.add('is-fixed'); if (l) requestAnimationFrame(function () { requestAnimationFrame(function () { l.classList.add('is-go'); }); }); })();
   </script>
 
-  <!-- The whole experience is drawn by script. Without it, the plain facts. -->
-  <noscript>
-    <style>.boot-ld { display: none; } .is-loading .picker { filter: none; }</style>
-    <div class="no-js">
-      <h1>Ajay Sommi · Software Engineer</h1>
-      <p>This portfolio runs on a little computer that needs JavaScript to boot.</p>
-      <p><a href="classic.html">Open the classic site</a> · <a href="Ajay_Sommi_Resume.pdf">Resume (PDF)</a> · <a href="mailto:ajaysommi7@gmail.com">ajaysommi7@gmail.com</a></p>
+  <!-- Ambient field. One environment under the whole page whose lighting
+       follows the chapter you are reading; script.js blends between seven
+       presets and writes the result onto .bg as custom properties. Two
+       layers, only so each can drift on its own long cycle. -->
+  <div class="bg" aria-hidden="true">
+    <div class="amb amb-a"></div>
+    <div class="amb amb-b"></div>
+    <div class="grid-veil"></div>
+    <!-- Minimal experiment: abstract field. Empty without minimal.css. -->
+    <div class="m-field">
+      <i class="m-s m-ring"></i><i class="m-s m-quarter"></i><i class="m-s m-disc"></i><i class="m-s m-orbit"></i><i class="m-s m-dots"></i><i class="m-s m-dot"></i><i class="m-s m-square"></i><i class="m-s m-plus"></i><i class="m-s m-tri"></i>
+      <i class="m-s m-bit m-bit1"></i><i class="m-s m-bit m-bit2"></i><i class="m-s m-bit m-bit3"></i><i class="m-s m-bit m-bit6"></i>
     </div>
-  </noscript>
+  </div>
 
-  <!-- What to run: startup disks on a computer, handsets on a phone. -->
-  <div class="picker" id="picker"></div>
+  <!-- Scroll progress rail + section dots (desktop) -->
+  <nav class="rail" aria-label="Section progress">
+    <div class="rail-line"><span class="rail-fill"></span></div>
+    <ul class="rail-dots"></ul>
+  </nav>
 
-  <!-- The chosen system runs here, filling the window. -->
-  <div class="os-host" id="osHost"></div>
-  <div class="phone-host" id="phoneHost"></div>
-  <div class="curtain" id="curtain" aria-hidden="true"></div>
+  <!-- NAV -->
+  <header class="nav glass" id="siteNav">
+    <a class="brand" href="#top" aria-label="Back to top" title="Back to top">
+      <span class="brand-mark"><svg class="brand-house" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4.4 10.6 12 4.4l7.6 6.2v8.4a.6.6 0 0 1-.6.6H5a.6.6 0 0 1-.6-.6Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="brand-aj" viewBox="9 8.5 45 42" aria-hidden="true" focusable="false"><path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg></span>
+    </a>
 
-  <div class="sr-only" aria-live="polite" id="srLive"></div>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#experience">Experience</a>
+      <a href="#education">Education</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#recs">Recommendations</a>
+    </nav>
 
-  <script src="retro/content.js?v=34"></script>
-  <script src="retro/sound.js?v=34"></script>
-  <script src="retro/icons.js?v=34"></script>
-  <script src="retro/eggs.js?v=34"></script>
-  <script src="retro/oldweb.js?v=34"></script>
-  <script src="retro/term.js?v=34"></script>
-  <script src="retro/finder.js?v=34"></script>
-  <script src="retro/web.js?v=34"></script>
-  <script src="retro/osx.js?v=34"></script>
-  <script src="retro/pocket.js?v=34"></script>
-  <script src="retro/iphone.js?v=34"></script>
-  <script src="retro/nokia.js?v=34"></script>
-  <script src="retro/shapes.js?v=34"></script>
-  <script src="retro/boot.js?v=34"></script>
+    <div class="nav-actions">
+      <button class="icon-btn" id="paletteBtn" type="button" aria-label="Open command palette" title="Command palette (⌘K)">
+        <span class="kbd-hint" aria-hidden="true">⌘K</span>
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M15.5 15.5 20.4 20.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+      </button>
 
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Change theme" title="Change theme">
+        <svg class="ico-midnight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg>
+        <svg class="ico-daylight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      </button>
+
+      <a href="#contact" class="cta">
+        <svg class="cta-ico" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="cta-label">Contact</span>
+      </a>
+
+      <button class="icon-btn nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileSheet">
+        <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile-only search FAB: a sibling of header.nav, not a descendant.
+       header.nav has backdrop-filter, which creates a containing block for
+       position:fixed children. Nesting this button inside it made
+       right/bottom position relative to the nav pill's own box instead of
+       the viewport, landing it beside the hamburger instead of a clean
+       circle at the screen edge. -->
+  <div class="dock-fab">
+    <button class="icon-btn" id="paletteBtnMobile" type="button" aria-label="Open command palette" title="Command palette">
+      <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M15.5 15.5 20.4 20.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu sheet -->
+  <div class="sheet-scrim" id="sheetScrim" hidden></div>
+  <nav class="mobile-sheet" id="mobileSheet" aria-label="Mobile menu" hidden>
+    <div class="sheet-grab" aria-hidden="true"></div>
+    <a href="#experience">The Path<span>01</span></a>
+    <a href="#education">Education<span>02</span></a>
+    <a href="#projects">Projects<span>03</span></a>
+    <a href="#skills">Skills<span>04</span></a>
+    <a href="#recs">Recommendations<span>05</span></a>
+    <a href="resume.html">Resume<span>06</span></a>
+    <a href="eras.html">Another era<span>07</span></a>
+    <a href="#contact" class="sheet-cta">Contact<span>→</span></a>
+  </nav>
+
+  <main id="main">
+    <span id="top" class="anchor" aria-hidden="true"></span>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-card glass" id="heroCard">
+
+        <!-- Planet limb behind the hero. Entirely CSS gradients: no photograph
+             of Earth, just the shading a sphere and an atmosphere produce. The
+             sun's position and every colour come from script.js, which works
+             out where the sun actually is from the clock: a continuous angle
+             through the day rather than a handful of named phases. The markup
+             is only the parts; the time decides how they look. -->
+        <div class="hero-sky" aria-hidden="true">
+          <span class="sky-stars"></span>
+          <span class="sky-sun"></span>
+          <span class="sky-limb">
+            <span class="limb-glow"></span>
+            <span class="limb-sea"></span>
+            <span class="limb-land"></span>
+            <span class="limb-lights"></span>
+          </span>
+        </div>
+
+
+
+        <figure class="hero-figure">
+          <picture>
+            <source type="image/webp"
+                    srcset="assets/images/opt/hero-320.webp 320w,
+                            assets/images/opt/hero-480.webp 480w,
+                            assets/images/opt/hero-640.webp 640w,
+                            assets/images/opt/hero-960.webp 960w"
+                    sizes="(max-width: 719px) 42vw, 360px" />
+            <img src="assets/images/opt/hero-640.jpg"
+                 srcset="assets/images/opt/hero-320.jpg 320w,
+                         assets/images/opt/hero-480.jpg 480w,
+                         assets/images/opt/hero-640.jpg 640w,
+                         assets/images/opt/hero-960.jpg 960w"
+                 sizes="(max-width: 719px) 42vw, 360px"
+                 width="890" height="890"
+                 alt="Ajay Sommi outdoors in front of green hills" class="hero-pic"
+                 fetchpriority="high" decoding="async" />
+          </picture>
+        </figure>
+
+        <div class="hero-head">
+          <h1 data-greeting>Welcome. I'm Ajay, glad you're here.</h1>
+        </div>
+
+        <div class="hero-body">
+          <p class="sub">
+            <span class="sub-long">I&#8217;m a software engineer and a problem solver at heart. As our tools become more intelligent and capable, I think good problem solving matters more, not less. I keep learning what each problem needs while staying focused on the person using it. I care about experiences that feel thoughtful, reliable, secure, and genuinely good to use.</span><span class="sub-short">I&#8217;m a software engineer and a problem solver at heart. I keep learning what each problem needs and stay focused on the person using it, building experiences that feel thoughtful, reliable, secure, and genuinely good to use.</span>
+          </p>
+
+          <div class="hero-badges">
+            <!-- A button rather than a span, so the easter egg is reachable
+                 with a keyboard too and announces itself as something you can
+                 press. It is styled exactly as the chip was.
+
+                 The label is wrapped because the celebration fills the pill
+                 from a pseudo element, and a positioned pseudo element paints
+                 above a bare text node. Wrapped, it can be lifted above the
+                 fill; unwrapped, the fill would cover the words. -->
+            <button type="button" class="chip" id="citizenChip" aria-label="U.S. Citizen">
+              <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg"
+                   alt="" class="flag-icon" width="20" height="14" loading="lazy" />
+              <span class="chip-text">U.S. Citizen</span>
+            </button>
+          </div>
+
+          <div class="actions">
+            <a href="resume.html" class="btn solid" data-magnetic>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M13.5 3.5H7A1.5 1.5 0 0 0 5.5 5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8.5l-5-5ZM13.5 3.5v5h5M9 13h6M9 16.5h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Resume
+            </a>
+            <a href="#contact" class="btn ghost" data-magnetic>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Get in touch
+            </a>
+            <a href="eras.html" class="btn ghost btn-era" data-magnetic title="The same portfolio on a computer or phone from 1983 to 2007">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4v4h4M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Try it in another era
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGOS -->
+    <section id="logos" class="section" aria-label="Companies I have worked with">
+      <div class="section-head">
+        <h2>Impact delivered at and trusted by</h2>
+        <div class="carousel-ctrl">
+          <button type="button" class="icon-btn" data-marquee-prev aria-label="Scroll logos left">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="icon-btn" data-marquee-toggle aria-label="Pause logo animation" aria-pressed="false">
+            <svg class="ico-pause" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor"/></svg>
+            <svg class="ico-play" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>
+          </button>
+          <button type="button" class="icon-btn" data-marquee-next aria-label="Scroll logos right">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="logo-marquee glass" id="logoMarquee" tabindex="0" role="group"
+           aria-label="Company logos, scrollable. Use arrow keys or swipe">
+        <div class="logo-track" id="logoTrack">
+          <a class="logo-cell" href="https://www.roboticsforall.net" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/roboticsforall.webp" alt="Robotics For All" class="logo" width="200" height="200" loading="lazy" decoding="async">
+            <span class="logo-tip">Robotics For All</span>
+          </a>
+          <a class="logo-cell" href="https://en.wikipedia.org/wiki/JM_Family_Enterprises" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/jm-family.webp" data-dark-src="assets/logos/opt/jm-family.webp" data-light-src="assets/logos/opt/jm-family-light.webp" alt="JM Family Enterprises" class="logo" width="276" height="240" loading="lazy" decoding="async">
+            <span class="logo-tip">JM Family Enterprises</span>
+          </a>
+          <a class="logo-cell" href="https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/toyota.webp" data-dark-src="assets/logos/opt/toyota.webp" data-light-src="assets/logos/opt/toyota-light.webp" alt="Southeast Toyota Distributors, LLC" class="logo" width="834" height="240" loading="lazy" decoding="async">
+            <span class="logo-tip">Southeast Toyota Distributors</span>
+          </a>
+          <a class="logo-cell" href="https://jmfamily.com/our-businesses/jm-lexus/" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/jm-lexus.webp" alt="JM Lexus" class="logo" width="1002" height="185" loading="lazy" decoding="async">
+            <span class="logo-tip">JM Lexus</span>
+          </a>
+          <a class="logo-cell" href="https://en.wikipedia.org/wiki/ADT_Inc." target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/adt.webp" alt="ADT" class="logo" width="240" height="240" loading="lazy" decoding="async">
+            <span class="logo-tip">ADT</span>
+          </a>
+          <a class="logo-cell" href="https://www.hunter.com" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/hunter.webp" data-dark-src="assets/logos/opt/hunter.webp" data-light-src="assets/logos/opt/hunter-light.webp" alt="Hunter Engineering Company" class="logo" width="632" height="170" loading="lazy" decoding="async">
+            <span class="logo-tip">Hunter Engineering</span>
+          </a>
+          <a class="logo-cell" href="https://fics.institute.ufl.edu" target="_blank" rel="noopener noreferrer">
+            <img src="assets/logos/opt/fics.webp" data-dark-src="assets/logos/opt/fics.webp" data-light-src="assets/logos/opt/fics-light.webp" alt="Florida Institute for Cybersecurity Research" class="logo" width="396" height="234" loading="lazy" decoding="async">
+            <span class="logo-tip">Florida Institute for Cybersecurity</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE PATH: scroll-driven career circuit -->
+    <section id="experience" class="section journey-section" data-compact>
+      <div class="section-head"><h2>The path so far</h2></div>
+      <p class="section-lede">Every role so far, from a robotics vision system in high school to identity infrastructure in the cloud. Tap a role to open it.</p>
+
+      <!-- Compact path: a circuit trace with one node per role. A node opens
+           its role's tile right under it. -->
+      <div class="pc" id="pathCompact">
+        <svg class="pc-trace" aria-hidden="true"><path class="pc-bed" d="" /><path class="pc-live" d="" /></svg>
+        <ol class="pc-track" aria-label="Roles, oldest first">
+          <li class="pc-row" data-c="0" data-pc="0" style="--tint:#2fae5a">
+            <button type="button" class="pc-stop" data-i="0" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2019</span></span>
+              <span class="pc-label"><span class="pc-name">Renaissance Jax</span><span class="pc-role">Software Developer</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#f39c12">
+            <button type="button" class="pc-stop" data-i="1" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2020</span></span>
+              <span class="pc-label"><span class="pc-name">Shiva Robotics</span><span class="pc-role">SEO Analyst</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="2" data-pc="0" style="--tint:#f2b705">
+            <button type="button" class="pc-stop" data-i="2" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2022</span></span>
+              <span class="pc-label"><span class="pc-name">Robotics For All</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#fa4616">
+            <button type="button" class="pc-stop" data-i="3" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2023</span></span>
+              <span class="pc-label"><span class="pc-name">FICS @ UF</span><span class="pc-role">AI Cybersecurity Researcher</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="0" data-pc="0" style="--tint:#eb0a1e">
+            <button type="button" class="pc-stop" data-i="4" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2024</span></span>
+              <span class="pc-label"><span class="pc-name">Toyota</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#00857c">
+            <button type="button" class="pc-stop" data-i="5" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2025</span></span>
+              <span class="pc-label"><span class="pc-name">JM Family</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="2" data-pc="0" style="--tint:#b5121b">
+            <button type="button" class="pc-stop" data-i="6" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2026</span></span>
+              <span class="pc-label"><span class="pc-name">Hunter Engineering</span><span class="pc-role">Software Engineering Co-op, R&amp;D</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+          <li class="pc-row" data-c="1" data-pc="1" style="--tint:#1f6fd1">
+            <button type="button" class="pc-stop" data-i="7" aria-expanded="false">
+              <span class="pc-node" aria-hidden="true"><span class="pc-year">2026</span></span>
+              <span class="pc-label"><span class="pc-name">ADT</span><span class="pc-role">Software Engineering Intern</span></span>
+            </button>
+            <div class="pc-slot"></div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="journey-scope" id="journeyScope">
+        <div class="journey-sticky">
+
+          <!-- 3D circuit board -->
+          <div class="journey-stage" aria-hidden="true">
+            <div class="board-rot">
+              <div class="board" id="journeyBoard">
+                <svg class="board-trace" id="boardTrace" viewBox="0 0 560 2240" preserveAspectRatio="none">
+                  <path class="trace-bed"  id="traceBed"  d="" />
+                  <path class="trace-live" id="traceLive" d="" />
+                </svg>
+                <!-- .node elements are generated by script.js from the cards below -->
+              </div>
+            </div>
+            <div class="stage-fade stage-fade-top"></div>
+            <div class="stage-fade stage-fade-bottom"></div>
+          </div>
+
+          <!-- Readout: full detail for the active node -->
+          <div class="journey-readout">
+            <div class="readout-meter" aria-hidden="true">
+              <span class="readout-count"><b id="journeyIdx">01</b> / <span id="journeyTotal">08</span></span>
+              <span class="readout-bar"><i id="journeyBar"></i></span>
+            </div>
+
+            <ol class="journey-cards" id="journeyCards">
+
+              <li class="jcard" data-i="0" data-company="Renaissance Jax" data-short="2019">
+                <p class="jc-when">Sep 2019 to Feb 2020 · Jacksonville, FL</p>
+                <h3>Software Developer</h3>
+                <p class="jc-org">Renaissance Jax</p>
+                <p class="jc-built">Gave a competition robot the ability to line itself up on its own. I wrote the vision code that spotted targets by color mid match, so the robot could aim without the driver doing it by hand, and kept the cameras, wiring and code working together all season. My first time writing code that had to work in the real world, not just on a laptop.</p>
+                <div class="jc-tags"><span>C++</span><span>Computer Vision</span><span>Git</span></div>
+                <figure class="jc-media">
+                  <img data-src="assets/images/journey/renaissance-jax-480.webp"
+                       data-srcset="assets/images/journey/renaissance-jax-480.webp 480w,
+                               assets/images/journey/renaissance-jax-800.webp 800w"
+                       sizes="184px"
+                       width="1170" height="1146"
+                       alt="Ajay at a Renaissance Jax build session, wiring a sensor board next to a laptop and a color calibration strip"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/rjax-sensor-480.webp"
+                       data-srcset="assets/images/journey/rjax-sensor-480.webp 480w,
+                               assets/images/journey/rjax-sensor-960.webp 960w"
+                       sizes="240px"
+                       width="4032" height="3024"
+                       alt="The robot's color sensor lit green over a strip of blue, green, red and yellow"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/rjax-code-480.webp"
+                       data-srcset="assets/images/journey/rjax-code-480.webp 480w,
+                               assets/images/journey/rjax-code-960.webp 960w"
+                       sizes="135px"
+                       width="3024" height="4032"
+                       alt="Color detection code open on a laptop beside the FRC Driver Station"
+                       loading="lazy" decoding="async" />
+                </figure>
+              </li>
+
+              <li class="jcard" data-i="1" data-company="Shiva Robotics" data-short="2020">
+                <p class="jc-when">Jun 2020 to Jul 2020 · Remote</p>
+                <h3>SEO Analyst</h3>
+                <p class="jc-org">Shiva Robotics Academy</p>
+                <p class="jc-built">Grew search visits to the academy's site by 20% in one summer, so more families looking for robotics classes actually found it. I studied what people were searching for, rewrote the parts of the site search engines read, and checked the numbers every week to see what was working.</p>
+                <div class="jc-tags"><span>Analytics</span><span>SEO</span></div>
+              </li>
+
+              <li class="jcard" data-i="2" data-company="Robotics For All" data-short="2022">
+                <p class="jc-when">Mar 2022 to Jan 2023 · Palo Alto, CA</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">Robotics For All</p>
+                <p class="jc-built">Gave volunteers back hours every week. They were copying sign up details between forms and spreadsheets by hand, so I wrote scripts that filed each family's information automatically and sent the confirmation emails. Fewer typos, faster replies to parents, and the start of a habit: finding manual work and making it run on its own.</p>
+                <div class="jc-tags"><span>JavaScript</span><span>Google Apps Script</span><span>Automation</span></div>
+              </li>
+
+              <li class="jcard" data-i="3" data-company="FICS @ UF" data-short="2023">
+                <p class="jc-when">May 2023 to May 2024 · Gainesville, FL</p>
+                <h3>AI Cybersecurity Researcher</h3>
+                <p class="jc-org">Florida Institute for Cybersecurity Research</p>
+                <p class="jc-built">Helped find the weak spots in AI chatbots before bad actors could. I built tools that automatically tested ChatGPT with inputs designed to make it misbehave, kept a catalogue of the failures we could reliably repeat, and worked on ways to detect and block them, running some of the experiments on HiPerGator, UF's supercomputer. Early, hands on experience with how AI can fail.</p>
+                <div class="jc-tags"><span>Python</span><span>LLM Security</span><span>Research</span></div>
+                <figure class="jc-media">
+                  <img data-src="assets/images/journey/fics-terminal-400.webp"
+                       data-srcset="assets/images/journey/fics-terminal-400.webp 400w,
+                               assets/images/journey/fics-terminal-800.webp 800w"
+                       sizes="240px"
+                       width="2000" height="1500"
+                       alt="A Linux terminal running a ping test against a lab target during security research"
+                       loading="lazy" decoding="async" />
+                </figure>
+              </li>
+
+              <li class="jcard" data-i="4" data-company="Toyota" data-short="2024">
+                <p class="jc-when">Jun 2024 to Aug 2024 · Jacksonville, FL</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">Southeast Toyota Distributors</p>
+                <p class="jc-built">Helped cut tire warranty claims by 20% and save over $150k by catching costly tire package recalls before they happened. I analyzed tire data for 51,000 vehicles into 21 reports, automated a file transfer that saved about 350 hours a year, and replaced a manual spreadsheet with a live dashboard that made data entry 5× faster.</p>
+                <ul class="jc-impact">
+                  <li><b>20%</b> fewer warranty claims</li>
+                  <li><b>$150k</b> saved on prevented tire recalls</li>
+                  <li><b>5×</b> faster data entry</li>
+                </ul>
+                <div class="jc-tags"><span>Python</span><span>SQL</span><span>Azure Blob</span><span>Amazon RDS</span><span>Power BI</span><span>VBA</span></div>
+                <figure class="jc-media">
+                  <img data-src="assets/images/journey/toyota-sign-400.webp"
+                       data-srcset="assets/images/journey/toyota-sign-400.webp 400w,
+                               assets/images/journey/toyota-sign-800.webp 800w"
+                       sizes="240px"
+                       width="1920" height="1440"
+                       alt="Ajay in front of the Southeast Toyota Distributors entrance sign"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/toyota-vpc-lexus-400.webp"
+                       data-srcset="assets/images/journey/toyota-vpc-lexus-400.webp 400w,
+                               assets/images/journey/toyota-vpc-lexus-800.webp 800w"
+                       sizes="240px"
+                       width="1920" height="1440"
+                       alt="A Lexus LS 500h on the line inside the vehicle processing center"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/toyota-road-force-400.webp"
+                       data-srcset="assets/images/journey/toyota-road-force-400.webp 400w,
+                               assets/images/journey/toyota-road-force-800.webp 800w"
+                       sizes="135px"
+                       width="960" height="1280"
+                       alt="A Hunter road force balancer mid measurement, the kind of tire data behind the analysis"
+                       loading="lazy" decoding="async" />
+                </figure>
+              </li>
+
+              <li class="jcard" data-i="5" data-company="JM Family" data-short="2025">
+                <p class="jc-when">May 2025 to Nov 2025 · Deerfield Beach, FL</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">JM Family Enterprises</p>
+                <p class="jc-built">Made it easier to spot employees with the wrong system access. I built an automated check in Azure that compared each person's access across Microsoft Graph, Salesforce and MuleSoft, flagged anything that didn't match company policy, and produced exception reports. I also built a service that analyzed 100k+ events from JM Lexus and Toyota dealership systems, and helped set up GPT agents to answer questions about that data.</p>
+                <div class="jc-tags"><span>Azure Functions</span><span>C#/.NET</span><span>Microsoft Graph</span><span>Salesforce</span><span>MuleSoft</span><span>App Insights</span><span>MCP</span><span>RAG</span></div>
+                <figure class="jc-media">
+                  <img data-src="assets/images/journey/jm-campus-400.webp"
+                       data-srcset="assets/images/journey/jm-campus-400.webp 400w,
+                               assets/images/journey/jm-campus-800.webp 800w"
+                       sizes="240px"
+                       width="1920" height="1440"
+                       alt="Ajay outside the JM Family campus entrance on Jim Moran Boulevard"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/jm-interns-400.webp"
+                       data-srcset="assets/images/journey/jm-interns-400.webp 400w,
+                               assets/images/journey/jm-interns-800.webp 800w"
+                       sizes="298px"
+                       width="1920" height="1160"
+                       alt="The JM Family intern class group photo on the campus amphitheater steps"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/jm-showroom-400.webp"
+                       data-srcset="assets/images/journey/jm-showroom-400.webp 400w,
+                               assets/images/journey/jm-showroom-800.webp 800w"
+                       sizes="240px"
+                       width="1920" height="1440"
+                       alt="The JM Lexus showroom floor, one of the dealership systems behind the identity work"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/jm-jet-400.webp"
+                       data-srcset="assets/images/journey/jm-jet-400.webp 400w,
+                               assets/images/journey/jm-jet-800.webp 800w"
+                       sizes="240px"
+                       width="2000" height="1500"
+                       alt="A JM Family business jet on the tarmac, with two people stepping off it"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/jm-axe-400.webp"
+                       data-srcset="assets/images/journey/jm-axe-400.webp 400w,
+                               assets/images/journey/jm-axe-800.webp 800w"
+                       sizes="180px"
+                       width="1500" height="2000"
+                       alt="Ajay holding an axe on a giant wooden throne at an axe throwing outing with JM Family"
+                       loading="lazy" decoding="async" />
+                </figure>
+              </li>
+
+              <li class="jcard" data-i="6" data-company="Hunter Engineering" data-short="2026">
+                <p class="jc-when">Jan 2026 to May 2026 · St. Louis, MO</p>
+                <h3>Software Engineering Co-op, R&amp;D</h3>
+                <p class="jc-org">Hunter Engineering Company</p>
+                <p class="jc-built">Made it possible to reset Hunter's alignment machines remotely instead of sending someone out, across more than 100,000 units worldwide. I designed and built the secure reset workflow myself, in C#/.NET and Blazor on Azure IoT Hub. I also fixed crashes that hit during machine setup, and moved the tests to a safer framework that removed a security and privacy risk.</p>
+                <ul class="jc-impact">
+                  <li><b>100,000+</b> units reachable worldwide</li>
+                  <li><b>Moq to NSubstitute</b> across an enterprise codebase</li>
+                </ul>
+                <div class="jc-tags"><span>C#/.NET</span><span>Blazor</span><span>Azure IoT Hub</span><span>IoT Edge</span><span>NSubstitute</span><span>Docker</span></div>
+                <figure class="jc-media">
+                  <img data-src="assets/images/journey/hunter-sign-400.webp"
+                       data-srcset="assets/images/journey/hunter-sign-400.webp 400w,
+                               assets/images/journey/hunter-sign-800.webp 800w"
+                       sizes="240px"
+                       width="1920" height="1440"
+                       alt="Ajay outside the Hunter Engineering Company sign in St. Louis"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/hunter-shop-400.webp"
+                       data-srcset="assets/images/journey/hunter-shop-400.webp 400w,
+                               assets/images/journey/hunter-shop-800.webp 800w"
+                       sizes="240px"
+                       width="1920" height="1440"
+                       alt="A Toyota Camry on a Hunter alignment rack in the demonstration bay"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/hunter-axe-400.webp"
+                       data-srcset="assets/images/journey/hunter-axe-400.webp 400w,
+                               assets/images/journey/hunter-axe-800.webp 800w"
+                       sizes="135px"
+                       width="960" height="1280"
+                       alt="Ajay at an axe throwing lane on a team outing, badge still clipped on"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/hunter-jump-400.webp"
+                       data-srcset="assets/images/journey/hunter-jump-400.webp 400w,
+                               assets/images/journey/hunter-jump-800.webp 800w"
+                       sizes="135px"
+                       width="960" height="1280"
+                       alt="Ajay jumping in front of the Hunter Engineering building entrance on his last day"
+                       loading="lazy" decoding="async" />
+                </figure>
+              </li>
+
+              <li class="jcard" data-i="7" data-company="ADT" data-short="2026">
+                <p class="jc-when">May 2026 to Oct 2026 · Boca Raton, FL</p>
+                <h3>Software Engineering Intern</h3>
+                <p class="jc-org">ADT</p>
+                <p class="jc-built">Designed an AI check to catch false alarms before emergency responders are sent out, and presented it to senior leadership. On ADT's Salesforce platform I cleaned up data to keep it under platform limits, brought test coverage back up so releases could ship, and used AI tools like Claude and Cursor to work through a large codebase faster.</p>
+                <ul class="jc-impact">
+                  <li><b>False alarms</b> AI dispatch check, pitched to leadership</li>
+                  <li><b>Under the cap</b> metadata folded into Custom Objects</li>
+                  <li><b>Coverage</b> Apex tests back above the deploy bar</li>
+                </ul>
+                <div class="jc-tags"><span>Salesforce</span><span>Apex</span><span>Custom Objects</span><span>Cursor</span><span>Claude + MCP</span><span>AI</span></div>
+                <figure class="jc-media">
+                  <img data-src="assets/images/journey/adt-hq-400.webp"
+                       data-srcset="assets/images/journey/adt-hq-400.webp 400w,
+                               assets/images/journey/adt-hq-800.webp 800w"
+                       sizes="240px"
+                       width="1920" height="1440"
+                       alt="Ajay outside the ADT headquarters entrance in Boca Raton"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/adt-jump-400.webp"
+                       data-srcset="assets/images/journey/adt-jump-400.webp 400w,
+                               assets/images/journey/adt-jump-800.webp 800w"
+                       sizes="135px"
+                       width="960" height="1280"
+                       alt="Ajay jumping in front of the ADT sign on his first week"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/adt-interns-400.webp"
+                       data-srcset="assets/images/journey/adt-interns-400.webp 400w,
+                               assets/images/journey/adt-interns-800.webp 800w"
+                       sizes="230px"
+                       width="1280" height="1002"
+                       alt="The ADT intern class photographed from above in the courtyard"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/adt-stage-400.webp"
+                       data-srcset="assets/images/journey/adt-stage-400.webp 400w,
+                               assets/images/journey/adt-stage-800.webp 800w"
+                       sizes="337px"
+                       width="1024" height="548"
+                       alt="The ADT intern class on stage at the end of program presentations"
+                       loading="lazy" decoding="async" />
+                  <img data-src="assets/images/journey/adt-sign-400.webp"
+                       data-srcset="assets/images/journey/adt-sign-400.webp 400w,
+                               assets/images/journey/adt-sign-800.webp 800w"
+                       sizes="203px"
+                       width="2000" height="1776"
+                       alt="Ajay holding a Secured by ADT yard sign against a white backdrop"
+                       loading="lazy" decoding="async" />
+                </figure>
+              </li>
+
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="section">
+      <div class="section-head"><h2>Education</h2></div>
+      <div class="timeline">
+        <article class="row glass education-card" data-reveal>
+          <img class="edu-gator" src="assets/images/uf-gator-320.webp" srcset="assets/images/uf-gator-320.webp 320w, assets/images/uf-gator-640.webp 640w" sizes="260px" width="640" height="426" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+          <div class="when"><span class="when-dot" aria-hidden="true"></span>December 2026</div>
+          <div class="what">
+            <strong>University of Florida, B.S. in Computer Science, Herbert Wertheim College of Engineering</strong>
+            <p>Earned the University of Florida AI Certificate, with coursework spanning operating systems, databases, data structures and algorithms, software engineering, artificial intelligence, and cybersecurity.</p>
+            <div class="row-tags"><span>AI Certificate</span><span>Operating Systems</span><span>Databases</span><span>Algorithms</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+      <div class="section-head">
+        <h2>Featured Work</h2>
+      </div>
+
+      <div class="work-filter" id="projectFilters" role="group" aria-label="Filter projects by technology">
+        <button type="button" class="wf" data-filter="all">All<sup></sup></button>
+        <button type="button" class="wf" data-filter="python">Python<sup></sup></button>
+        <button type="button" class="wf" data-filter="c++">C++<sup></sup></button>
+        <button type="button" class="wf" data-filter="java">Java<sup></sup></button>
+        <button type="button" class="wf" data-filter="react">React<sup></sup></button>
+        <button type="button" class="wf wf-extra" id="filterStatus" hidden aria-label="Clear filter"><span id="filterTag"></span> ✕</button>
+      </div>
+
+      <ol class="work" id="projectGrid">
+        <li class="work-item has-link" data-reveal data-tags="java,language design,interpreters">
+          <div class="punch-edge"><article class="punch">
+            <a class="work-go" href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a>
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/SommiScript" target="_blank" rel="noopener noreferrer">SommiScript: Lightweight Programming Language</a></h3>
+            <p class="work-desc">Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.</p>
+            <p class="work-spec"><span class="work-kind">Language</span><span class="work-stack">Java&nbsp;/ Language Design&nbsp;/ Interpreters</span></p>
+            <span class="punch-holes" aria-hidden="true"></span>
+          </article></div>
+        </li>
+        <li class="work-item" data-reveal data-tags="python,fastapi,typescript,next.js,react,postgres,supabase,ai">
+          <div class="punch-edge"><article class="punch">
+            <h3 class="work-title">BetAI Marketplace</h3>
+            <p class="work-desc">AI sports betting platform built on an NFL betting model, being turned into a marketplace where users build their own models, prove them against historical data, and sell access to their live picks.</p>
+            <p class="work-spec"><span class="work-kind">AI platform</span><span class="work-stack">Python&nbsp;/ FastAPI&nbsp;/ Next.js&nbsp;/ Supabase</span></p>
+            <span class="punch-holes" aria-hidden="true"></span>
+          </article></div>
+        </li>
+        <li class="work-item has-link" data-reveal data-tags="react,node,mongodb,express,javascript">
+          <div class="punch-edge"><article class="punch">
+            <a class="work-go" href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a>
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/GatorGoods" target="_blank" rel="noopener noreferrer">GatorGoods Marketplace</a></h3>
+            <p class="work-desc">Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.</p>
+            <p class="work-spec"><span class="work-kind">Full-stack</span><span class="work-stack">MongoDB&nbsp;/ Express&nbsp;/ React&nbsp;/ Node</span></p>
+            <span class="punch-holes" aria-hidden="true"></span>
+          </article></div>
+        </li>
+        <li class="work-item has-link" data-reveal data-tags="python,pandas,data science">
+          <div class="punch-edge"><article class="punch">
+            <a class="work-go" href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a>
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/Car-Crash-Analyzation-Tool" target="_blank" rel="noopener noreferrer">Crash Fatality Analysis</a></h3>
+            <p class="work-desc">Interactive analysis of vehicle fatality data (1996 to 2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.</p>
+            <p class="work-spec"><span class="work-kind">Data science</span><span class="work-stack">Python&nbsp;/ Pandas&nbsp;/ Visualization</span></p>
+            <span class="punch-holes" aria-hidden="true"></span>
+          </article></div>
+        </li>
+        <li class="work-item has-link" data-reveal data-tags="c++,data structures">
+          <div class="punch-edge"><article class="punch">
+            <a class="work-go" href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a>
+            <h3 class="work-title"><a href="https://github.com/ajaysommi/BalanceTree" target="_blank" rel="noopener noreferrer">BalanceTree (AVL)</a></h3>
+            <p class="work-desc">Self-balancing AVL tree with insert, delete, and lookup operations, optimized for performance and correctness.</p>
+            <p class="work-spec"><span class="work-kind">Algorithms</span><span class="work-stack">C++&nbsp;/ Data Structures</span></p>
+            <span class="punch-holes" aria-hidden="true"></span>
+          </article></div>
+        </li>
+        <li class="work-item" data-reveal data-tags="c++,file systems,operating systems">
+          <div class="punch-edge"><article class="punch">
+            <h3 class="work-title">Custom WAD File System with FUSE Integration</h3>
+            <p class="work-desc">Implemented a file system in C++ from scratch, supporting directories and files inside WAD archives. Integrated with FUSE so it can be mounted and browsed like a real OS file system.</p>
+            <p class="work-spec"><span class="work-kind">Systems</span><span class="work-stack">C++&nbsp;/ FUSE&nbsp;/ File Systems</span></p>
+            <span class="punch-holes" aria-hidden="true"></span>
+          </article></div>
+        </li>
+      </ol>
+
+      <p class="empty-state" id="emptyState" hidden>No projects match that filter yet. <button type="button" class="linkish" data-filter-reset>show everything</button>.</p>
+    </section>
+
+    <!-- QUOTE -->
+    <!-- OFF THE CLOCK -->
+    <section id="offclock" class="section">
+      <div class="section-head"><h2>Off the Clock</h2></div>
+      <p class="section-lede">Repairs, teardowns and builds I've taken on outside of work. Tap one to see how it went.</p>
+      <ul class="hls">
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="0" aria-haspopup="dialog">
+          <span class="hl-ring"><span class="hl-pic"><img src="assets/images/offclock/ard-tool-480.webp" width="3024" height="4032" alt="" loading="lazy" decoding="async" /></span></span>
+          <span class="hl-name">Learning electronics by building (and breaking)</span>
+        </button>
+        <div class="hl-data" hidden>
+          <h3>Learning electronics by building (and breaking)</h3>
+          <p>It started with one screen saying hello, and turned into a habit of opening things up to see how they work, including one lesson about heat I learned the hard way.</p>
+          <ol>
+          <li data-src="assets/images/offclock/ard-lcd-480.webp" data-srcset="assets/images/offclock/ard-lcd-480.webp 480w, assets/images/offclock/ard-lcd-960.webp 960w, assets/images/offclock/ard-lcd-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="LCD screen reading Greetings World wired to an Arduino"><strong>Hello, world.</strong> My first real Arduino circuit. Wired it up, flashed it, and the screen said hello back.</li>
+          <li data-src="assets/images/offclock/ard-drive-480.webp" data-srcset="assets/images/offclock/ard-drive-480.webp 480w, assets/images/offclock/ard-drive-960.webp 960w, assets/images/offclock/ard-drive-1600.webp 1500w" data-w="1500" data-h="2000" data-alt="An old hard drive with its circuit board exposed, wired to a USB to IDE/SATA adapter beside a laptop"><strong>The dead drive.</strong> I hooked an old hard drive up to my laptop to recover its data. It wouldn't power on, and the problem looked like the board itself.</li>
+          <li data-src="assets/images/offclock/ard-tool-480.webp" data-srcset="assets/images/offclock/ard-tool-480.webp 480w, assets/images/offclock/ard-tool-960.webp 960w, assets/images/offclock/ard-tool-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="A homemade soldering iron built from a pencil, tape and wire"><strong>The homemade soldering iron.</strong> Fixing that board meant soldering, and I didn't own an iron, so I built one: pencil lead, an old phone charger and wrapped wire. It got hot. So did my fingers.</li>
+          <li data-src="assets/images/offclock/diag-humidifier-480.webp" data-srcset="assets/images/offclock/diag-humidifier-480.webp 480w, assets/images/offclock/diag-humidifier-960.webp 960w, assets/images/offclock/diag-humidifier-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="A dehumidifier opened up to show its cooling fins and wiring"><strong>Why did it stop?</strong> Our dehumidifier died, so I took it apart to find out how it actually works. A crash course in Peltier cooling and thermodynamics.</li>
+          <li data-src="assets/images/offclock/ard-laptop-480.webp" data-srcset="assets/images/offclock/ard-laptop-480.webp 480w, assets/images/offclock/ard-laptop-960.webp 960w, assets/images/offclock/ard-laptop-1600.webp 1600w" data-w="2000" data-h="1500" data-alt="An old HP laptop with its bottom case off, battery and board exposed, open to its BIOS setup screen with a spare SSD beside it"><strong>Just for fun.</strong> Bored one day, I gutted an old laptop nobody at home was using anymore and gave myself one goal: get the smallest operating system I could find running on it. No reason. Just curiosity.</li>
+          <li data-src="assets/images/offclock/ard-desk-480.webp" data-srcset="assets/images/offclock/ard-desk-480.webp 480w, assets/images/offclock/ard-desk-960.webp 960w, assets/images/offclock/ard-desk-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="Laptop and breadboard circuits spread across a desk"><strong>The idea.</strong> College group project: pick an idea and build it. Ours was a toilet lid that opens on its own when you walk up.</li>
+          <li data-src="assets/images/offclock/ard-servo-480.webp" data-srcset="assets/images/offclock/ard-servo-480.webp 480w, assets/images/offclock/ard-servo-960.webp 960w, assets/images/offclock/ard-servo-1600.webp 1600w" data-w="2662" data-h="3703" data-alt="Arduino and breadboard wired to a motorized lid on a 3D printed bowl"><strong>The prototype.</strong> Our working prototype: walk up and the lid lifts, over a bowl we 3D printed.</li>
+          </ol>
+        </div>
+      </li>
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="1" aria-haspopup="dialog">
+          <span class="hl-ring"><span class="hl-pic"><img src="assets/images/offclock/mac-paste-480.webp" width="3024" height="4032" alt="" loading="lazy" decoding="async" /></span></span>
+          <span class="hl-name">Bringing a MacBook back from the dead</span>
+        </button>
+        <div class="hl-data" hidden>
+          <h3>Bringing a MacBook back from the dead</h3>
+          <p>It started with a dead memory slot on my 2011 MacBook Pro's board. Rather than settle for a repair, I put a 2012 logic board in the 2011 body, something it was never built to take, shaved down a connector to make it fit and tracked down why it wouldn't boot. It came back as a 2012, faster graphics and memory included, now running a macOS Apple never released for it.</p>
+          <ol>
+          <li data-src="assets/images/offclock/mac-open-480.webp" data-srcset="assets/images/offclock/mac-open-480.webp 480w, assets/images/offclock/mac-open-960.webp 960w, assets/images/offclock/mac-open-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="MacBook Pro opened up on a desk"><strong>Gutted.</strong> Everything out. The hard drive became an SSD and the battery was replaced.</li>
+          <li data-src="assets/images/offclock/mac-paste-480.webp" data-srcset="assets/images/offclock/mac-paste-480.webp 480w, assets/images/offclock/mac-paste-960.webp 960w, assets/images/offclock/mac-paste-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="MacBook heatsink lifted off the logic board"><strong>Fresh paste.</strong> Thermal paste is what carries heat off the processor. Years old, it had dried out, and a chip that can't shed heat runs hot and slows itself down. I took the board out, cleaned the old paste off and put fresh paste on.</li>
+          <li data-src="assets/images/offclock/mac-clean-480.webp" data-srcset="assets/images/offclock/mac-clean-480.webp 480w, assets/images/offclock/mac-clean-960.webp 960w, assets/images/offclock/mac-clean-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="MacBook logic board on a paper towel"><strong>Making it fit.</strong> The 2012 board was never meant to go in a 2011 body, and its display connector simply didn't fit. So I literally took a sheet of sandpaper and filed the connector's edges down by hand, a little at a time. File too far and I'd wear through the insulation and short the board, or crack the fragile connector for good. It clicked in.</li>
+          <li data-src="assets/images/offclock/mac-boot-480.webp" data-srcset="assets/images/offclock/mac-boot-480.webp 480w, assets/images/offclock/mac-boot-960.webp 960w, assets/images/offclock/mac-boot-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="The MacBook Pro powered on at the setup screen"><strong>Stuck at boot.</strong> First attempt: it powered on but wouldn't boot properly, so it was back to troubleshooting to track down the fault.</li>
+          <li data-src="assets/images/offclock/mac-sonoma-480.webp" data-srcset="assets/images/offclock/mac-sonoma-480.webp 480w, assets/images/offclock/mac-sonoma-960.webp 960w, assets/images/offclock/mac-sonoma-1600.webp 1500w" data-w="1500" data-h="2000" data-alt="The upgraded MacBook Pro running macOS Sonoma, its About This Mac window showing a Mid 2012 model, with the old logic board and memory on the desk"><strong>It boots.</strong> With the fault fixed, it came up as a 2012. Then I went one step further and unofficially installed macOS Sonoma, a version Apple never supported on this model. One less laptop in a landfill.</li>
+          </ol>
+        </div>
+      </li>
+      <li class="hl" data-reveal>
+        <button type="button" class="hl-btn" data-story="2" aria-haspopup="dialog">
+          <span class="hl-ring"><span class="hl-pic"><img src="assets/images/offclock/diag-goggles-480.webp" width="3088" height="2320" alt="" loading="lazy" decoding="async" /></span></span>
+          <span class="hl-name">Working on my own car</span>
+        </button>
+        <div class="hl-data" hidden>
+          <h3>Working on my own car</h3>
+          <p>A 2007 Honda Civic closing in on 200,000 miles, and a habit of trying the fix myself before calling in a mechanic. Every repair started the same way: a symptom, hours of research and tutorials, then doing it myself until it worked.</p>
+          <ol>
+          <li data-src="assets/images/offclock/diag-goggles-480.webp" data-srcset="assets/images/offclock/diag-goggles-480.webp 480w, assets/images/offclock/diag-goggles-960.webp 960w, assets/images/offclock/diag-goggles-1600.webp 1600w" data-w="3088" data-h="2320" data-alt="Ajay in goggles and a mask beside his car with the hood up"><strong>AC out, mid summer.</strong> The AC quit in the middle of summer. Ninety degree heat, a low pressure refrigerant gauge and an electrical check on the compressor clutch, working through it one tutorial at a time.</li>
+          <li data-src="assets/images/offclock/civic-plug-480.webp" data-srcset="assets/images/offclock/civic-plug-480.webp 480w, assets/images/offclock/civic-plug-960.webp 960w, assets/images/offclock/civic-plug-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="A spark plug held up in front of the engine bay"><strong>First engine work.</strong> My first time working inside an engine. This is what a spark plug looks like after almost 200,000 miles.</li>
+          <li data-src="assets/images/offclock/civic-throttle-480.webp" data-srcset="assets/images/offclock/civic-throttle-480.webp 480w, assets/images/offclock/civic-throttle-960.webp 960w, assets/images/offclock/civic-throttle-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="The throttle body in the engine bay"><strong>Running rough.</strong> The engine was running rough. Hours of troubleshooting, well past midnight, came down to a dirty throttle body. One careful cleaning later, it was running noticeably better.</li>
+          <li data-src="assets/images/offclock/civic-magnet-480.webp" data-srcset="assets/images/offclock/civic-magnet-480.webp 480w, assets/images/offclock/civic-magnet-960.webp 960w, assets/images/offclock/civic-magnet-1600.webp 1600w" data-w="3024" data-h="4032" data-alt="The transmission drain plug magnet coated in black metal shavings on a paper towel"><strong>What 180,000 miles leaves behind.</strong> The transmission had never had its fluid changed. Grinding, violent shaking, jerky shifts and a transmission code. When the drain plug came out, its magnet was coated in burnt black sludge: raw metal shavings from inside the transmission.</li>
+          <li data-src="assets/images/offclock/civic-fluid-480.webp" data-srcset="assets/images/offclock/civic-fluid-480.webp 480w, assets/images/offclock/civic-fluid-960.webp 960w, assets/images/offclock/civic-fluid-1600.webp 1600w" data-w="4032" data-h="3024" data-alt="Pouring automatic transmission fluid into the engine bay"><strong>Fresh fluid.</strong> After weeks of research, a drain and fill with fresh fluid. It shifted buttery smooth again, and I saved about $2,000.</li>
+          </ol>
+        </div>
+      </li>
+      </ul>
+    </section>
+
+    <section class="section quote glass" data-reveal>
+      <blockquote>"I hope I never run out of things I don’t understand."</blockquote>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section">
+      <div class="section-head"><h2>Skills &amp; Tools</h2></div>
+      <p class="section-lede">Open a folder, then tap a skill to see where I've used it.</p>
+      <div class="skt" id="skillGroups">
+        <ul class="skt-tree">
+          <li class="skt-dir">
+            <button type="button" class="skt-name" aria-expanded="false" aria-controls="skx-0"><svg class="skt-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5.6A1.6 1.6 0 0 1 3.6 4h4.1l1.7 1.9h7A1.6 1.6 0 0 1 18 7.5v7A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5Z"/></svg><span class="skt-label">Programming</span><span class="skt-count">11</span><span class="skt-caret" aria-hidden="true"></span></button>
+            <div class="skt-ls" id="skx-0" role="group" aria-label="Programming" hidden><button type="button">C#</button><button type="button">C++</button><button type="button">Python</button><button type="button">Java</button><button type="button">JavaScript</button><button type="button">TypeScript</button><button type="button">SQL</button><button type="button">HTML &amp; CSS</button><button type="button">ARM Assembly</button><button type="button">VBA</button><button type="button">DAX</button></div>
+          </li>
+          <li class="skt-dir">
+            <button type="button" class="skt-name" aria-expanded="false" aria-controls="skx-1"><svg class="skt-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5.6A1.6 1.6 0 0 1 3.6 4h4.1l1.7 1.9h7A1.6 1.6 0 0 1 18 7.5v7A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5Z"/></svg><span class="skt-label">Cloud, Data &amp; Databases</span><span class="skt-count">8</span><span class="skt-caret" aria-hidden="true"></span></button>
+            <div class="skt-ls" id="skx-1" role="group" aria-label="Cloud, Data &amp; Databases" hidden><button type="button">Microsoft Azure</button><button type="button">Azure Blob Storage</button><button type="button">Amazon RDS</button><button type="button">Oracle</button><button type="button">Pandas</button><button type="button">TensorFlow</button><button type="button">KQL</button><button type="button">Power BI</button></div>
+          </li>
+          <li class="skt-dir">
+            <button type="button" class="skt-name" aria-expanded="false" aria-controls="skx-2"><svg class="skt-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5.6A1.6 1.6 0 0 1 3.6 4h4.1l1.7 1.9h7A1.6 1.6 0 0 1 18 7.5v7A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5Z"/></svg><span class="skt-label">Frameworks &amp; Libraries</span><span class="skt-count">6</span><span class="skt-caret" aria-hidden="true"></span></button>
+            <div class="skt-ls" id="skx-2" role="group" aria-label="Frameworks &amp; Libraries" hidden><button type="button">.NET</button><button type="button">React</button><button type="button">Next.js</button><button type="button">Node.js</button><button type="button">Chart.js</button><button type="button">Tkinter</button></div>
+          </li>
+          <li class="skt-dir">
+            <button type="button" class="skt-name" aria-expanded="false" aria-controls="skx-3"><svg class="skt-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5.6A1.6 1.6 0 0 1 3.6 4h4.1l1.7 1.9h7A1.6 1.6 0 0 1 18 7.5v7A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5Z"/></svg><span class="skt-label">APIs &amp; Integration</span><span class="skt-count">3</span><span class="skt-caret" aria-hidden="true"></span></button>
+            <div class="skt-ls" id="skx-3" role="group" aria-label="APIs &amp; Integration" hidden><button type="button">REST APIs</button><button type="button">JSON</button><button type="button">Salesforce (Apex/LWC)</button></div>
+          </li>
+          <li class="skt-dir">
+            <button type="button" class="skt-name" aria-expanded="false" aria-controls="skx-4"><svg class="skt-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5.6A1.6 1.6 0 0 1 3.6 4h4.1l1.7 1.9h7A1.6 1.6 0 0 1 18 7.5v7A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5Z"/></svg><span class="skt-label">DevOps &amp; Tooling</span><span class="skt-count">8</span><span class="skt-caret" aria-hidden="true"></span></button>
+            <div class="skt-ls" id="skx-4" role="group" aria-label="DevOps &amp; Tooling" hidden><button type="button">Git</button><button type="button">Azure DevOps</button><button type="button">Containerization</button><button type="button">Docker</button><button type="button">GitHub Actions</button><button type="button">JetBrains IDEs</button><button type="button">GDB</button><button type="button">Google Apps Script</button></div>
+          </li>
+          <li class="skt-dir skt-soft">
+            <button type="button" class="skt-name" aria-expanded="false" aria-controls="skx-5"><svg class="skt-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5.6A1.6 1.6 0 0 1 3.6 4h4.1l1.7 1.9h7A1.6 1.6 0 0 1 18 7.5v7A1.5 1.5 0 0 1 16.5 16h-13A1.5 1.5 0 0 1 2 14.5Z"/></svg><span class="skt-label">Soft Skills</span><span class="skt-count">6</span><span class="skt-caret" aria-hidden="true"></span></button>
+            <div class="skt-ls" id="skx-5" role="group" aria-label="Soft Skills" hidden><span>Agile</span><span>Problem-solving</span><span>Teamwork</span><span>Communication</span><span>Time management</span><span>Precision</span></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- RECOMMENDATIONS -->
+    <section id="recs" class="section">
+      <div class="section-head"><h2>What folks have to say</h2></div>
+      <div class="thread-wrap" id="recThread">
+      <ol class="thread" aria-label="Recommendations">
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">BR</span>
+          <div class="rec-bubble">
+            <blockquote>Ajay consistently exceeded expectations … always open to feedback, eager to learn, and quick to offer fresh ideas … I highly recommend him to any organization seeking a talented and dedicated professional.</blockquote>
+          </div>
+          <cite>Barbara Russo<span>JM Family</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">BM</span>
+          <div class="rec-bubble">
+            <blockquote>Ajay has done a wonderful job at Hunter Engineering as a co-op. He did a full design of a feature to implementation with minimal guidance and excelled at every task given to him. He was instrumental in delivering value to our team and exceeded expectations of a co-op.</blockquote>
+          </div>
+          <cite>Branden Martinelli<span>Hunter Engineering</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">DD</span>
+          <div class="rec-bubble">
+            <blockquote>Ajay created automation that moved quality assessment data into our repository and built reports that made a real impact for our team. His focus and resolve helped us make significant progress.</blockquote>
+          </div>
+          <cite>Daniel Donaldson<span>Southeast Toyota</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">SN</span>
+          <div class="rec-bubble">
+            <blockquote>I had the pleasure of mentoring Ajay during his internship at JM Family, and he consistently impressed me with his strong work ethic and eagerness to learn … Any team would be fortunate to have him!</blockquote>
+          </div>
+          <cite>Saleem Nashawaty<span>JM Family</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">NG</span>
+          <div class="rec-bubble">
+            <blockquote>Ajay consistently demonstrated enthusiasm, determination, and strong data skills. His grasp of data structures and proficiency with Microsoft Power Suite significantly contributed to our project's success.</blockquote>
+          </div>
+          <cite>Naman Goyal<span>Southeast Toyota</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">PM</span>
+          <div class="rec-bubble">
+            <blockquote>Ajay was a diligent and focused software developer in his time at Hunter Engineering. He was open to feedback, enthusiastic to learn new technologies, and thoughtful in his approach to design and problem solving.</blockquote>
+          </div>
+          <cite>Preston Misemer<span>Hunter Engineering</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">AB</span>
+          <div class="rec-bubble">
+            <blockquote>I was lucky enough to have Ajay as a fellow co-op during my time as a data science co-op at Hunter Engineering. Throughout, he was a great team player and demonstrated a variety of strong skills in programming and software engineering. Any company would be lucky to have him in the future!</blockquote>
+          </div>
+          <cite>Andrew Butzel<span>Hunter Engineering</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">GT</span>
+          <div class="rec-bubble">
+            <blockquote>Ajay was a key member of our software team, taking ownership of projects and bridging knowledge gaps. His backend automation streamlined how parent and student information is ingested.</blockquote>
+          </div>
+          <cite>Garrett Tieng<span>Robotics For All</span></cite>
+        </li>
+        <li class="rec" data-reveal>
+          <span class="rec-avatar" aria-hidden="true">VP</span>
+          <div class="rec-bubble">
+            <blockquote>Ajay demonstrated exceptional software engineering skills and a proactive, problem-solving approach. He delivered high-quality work and collaborated effectively across the team.</blockquote>
+          </div>
+          <cite>Valeria Pinatelli<span>Robotics For All</span></cite>
+        </li>
+      </ol>
+      </div>
+      <div class="recs-more-row">
+        <button type="button" class="btn ghost recs-more" aria-expanded="false" aria-controls="recThread" hidden>Show more<svg class="recs-more-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6.5 9.5 12 15l5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <p class="note">More on <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer">LinkedIn</a>.</p>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="section-head"><h2>Contact</h2></div>
+      <div class="since">
+        <figure class="since-print" data-reveal>
+          <button type="button" class="jc-shot since-pic" aria-label="Open photo: Ajay as a young kid at a family computer, 2006">
+            <img src="assets/images/offclock/kid-2006-crop.webp" width="600" height="430"
+                 alt="Ajay as a young kid typing at the family computer, 2006" loading="lazy" decoding="async" />
+          </button>
+        </figure>
+        <div class="since-body">
+          <p class="since-line"><strong>20+ years of experience.</strong> Let’s not be strangers.</p>
+      <div class="contact glass">
+        <a href="mailto:ajaysommi7@gmail.com" data-magnetic>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 6h18v12H3z M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+          ajaysommi7@gmail.com
+        </a>
+        <a href="https://github.com/ajaysommi" target="_blank" rel="noreferrer" data-magnetic>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noreferrer" data-magnetic>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0ZM.3 8.2h4.4V24H.3V8.2Zm7.5 0h4.2v2.2h.06c.6-1.1 2-2.3 4.14-2.3 4.4 0 5.2 2.9 5.2 6.7V24h-4.4v-7.6c0-1.8 0-4.1-2.5-4.1s-2.9 2-2.9 4V24H7.8V8.2Z"/></svg>
+          LinkedIn
+        </a>
+        <a href="resume.html" class="resume-btn" data-magnetic>Open Resume</a>
+      </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-sign"><svg class="footer-mark" viewBox="9 8.5 45 42" aria-hidden="true" focusable="false"><path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg><span>© <span id="y"></span> Ajay Sommi</span></p>
+  </footer>
+
+  <!-- ============ Overlays ============ -->
+
+  <!-- Command palette -->
+  <dialog class="palette" id="palette" aria-label="Search">
+    <form method="dialog" class="palette-inner">
+      <div class="pal-bar">
+        <div class="palette-search">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M11 3a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 11 3Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z" fill="currentColor"/></svg>
+          <input type="search" id="paletteInput" autocomplete="off" spellcheck="false" aria-label="Search" />
+        </div>
+        <div class="pal-quick">
+          <button type="button" data-cmd="Projects" aria-label="Projects" title="Projects"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/></svg></button>
+          <button type="button" data-cmd="The Path" aria-label="The Path" title="The Path"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6.5a3.5 3.5 0 0 0 0-7h-5a3.5 3.5 0 0 1 0-7H16"/></svg></button>
+          <button type="button" data-cmd="Resume" aria-label="Resume" title="Resume"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h6"/></svg></button>
+          <button type="button" data-cmd="Copy email" aria-label="Copy email" title="Copy email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="6" width="17" height="12" rx="2"/><path d="m4 7 8 6 8-6"/></svg></button>
+        </div>
+      </div>
+      <ul class="palette-list" id="paletteList" role="listbox" aria-label="Results"></ul>
+    </form>
+  </dialog>
+
+  <!-- Mini terminal -->
+  <section class="terminal" id="terminal" hidden aria-label="Interactive terminal">
+    <header class="term-bar">
+      <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="term-title">ajay@portfolio · zsh</span>
+      <button type="button" class="term-close" id="termClose" aria-label="Close terminal">✕</button>
+    </header>
+    <div class="term-body" id="termBody" tabindex="0">
+      <div class="term-out" id="termOut"></div>
+      <div class="term-line">
+        <span class="term-prompt" aria-hidden="true">ajay@portfolio <b>~</b> %</span>
+        <input type="text" id="termInput" autocomplete="off" spellcheck="false" aria-label="Terminal input" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Photo viewer for the journey strips -->
+  <dialog class="story" id="storyView" aria-label="Story" tabindex="-1">
+    <div class="st-frame">
+      <div class="st-bars" aria-hidden="true"></div>
+      <header class="st-head">
+        <span class="st-who"><img class="st-avatar" alt="" aria-hidden="true" /><span class="st-title st-title-top"></span></span>
+        <button type="button" class="st-close" aria-label="Close story"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></button>
+      </header>
+      <div class="st-media"><img class="st-blur" alt="" aria-hidden="true" /><img class="st-img" alt="" /></div>
+      <button type="button" class="st-tap st-prev" aria-label="Previous"></button>
+      <button type="button" class="st-tap st-next" aria-label="Next"></button>
+      <div class="st-text" aria-live="polite">
+        <h3 class="st-title"></h3>
+        <p class="st-intro"></p>
+        <p class="st-step"><span class="st-n"></span><strong class="st-lead"></strong><span class="st-body"></span></p>
+        <div class="st-controls">
+          <button type="button" class="st-btn st-back" aria-label="Previous photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button type="button" class="st-btn st-pause" aria-label="Pause"><svg class="st-i-pause" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6.5v11M15 6.5v11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><svg class="st-i-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8.5 6.2v11.6L18 12z" fill="currentColor"/></svg></button>
+          <button type="button" class="st-btn st-fwd" aria-label="Next photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="st-count" aria-live="polite"></span>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+    <figure class="lb-frame">
+      <img id="lbImg" alt="" />
+      <button class="lb-btn lb-prev" id="lbPrev" type="button" aria-label="Previous photo"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 4.5 7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Next photo"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 4.5 16.5 12 9 19.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></button>
+    </figure>
+    <p class="lb-cap"><span id="lbCap"></span><span class="lb-count" id="lbCount"></span></p>
+  </dialog>
+
+  <!-- Toasts -->
+  <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module" src="script.js"></script>
+  <script src="haptics.js" defer></script>
+  <script src="hop.js" defer></script>
+  <script src="brand.js" defer></script>
+  <script src="liquid.js" defer></script>
+  <script src="minimal.js" defer></script>
 </body>
 </html>

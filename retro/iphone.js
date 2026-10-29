@@ -558,15 +558,15 @@ window.IPHONE = { start(room, exit) {
     const tab = (u) => ({ url: u, hist: u ? [u] : [], pos: u ? 0 : -1 });
     const tabsList = [tab(url)];
     let cur = 0, token = 0;
-    const marks = store.get('ip-marks', null) || [['Portfolio', 'classic.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Wikipedia', 'https://en.m.wikipedia.org/']];
+    const marks = store.get('ip-marks', null) || [['Portfolio', 'index.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Wikipedia', 'https://en.m.wikipedia.org/']];
     app.el.classList.add('is-safari');
     app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark"><svg viewBox="0 0 22 22" width="22" height="22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="3.6" stroke-linecap="square"/></svg></button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
     const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b'), prog = app.el.querySelector('.saf-prog');
     /* Our own pages load directly; everything typed goes through OLDWEB,
        which finds the site as it was in 2007 (or today's, failing that)
        and dresses searches as that year's Google. */
-    const local = (u) => u === 'classic.html' || /\.pdf(#|$)/i.test(u);
-    const pretty = (u) => !u ? '' : local(u) ? 'ajaysommi.github.io/' + (u === 'classic.html' ? '' : u.replace(/#.*$/, '')) : window.OLDWEB.shown(u);
+    const local = (u) => u === 'index.html' || /\.pdf(#|$)/i.test(u);
+    const pretty = (u) => !u ? '' : local(u) ? 'ajaysommi.github.io/' + (u === 'index.html' ? '' : u.replace(/#.*$/, '')) : window.OLDWEB.shown(u);
     const resolve = (v) => { v = v.trim(); return v || null; };
     const progress = (on) => { prog.classList.toggle('on', on); if (!on) { prog.classList.add('done'); setTimeout(() => prog.classList.remove('done'), 300); } };
     const load = async (u) => {
@@ -1096,7 +1096,7 @@ window.IPHONE = { start(room, exit) {
           field(pg.querySelector('.srch-f'), { placeholder: 'Search projects', ret: 'Search', onChange: draw, onEnter: () => kb.hide() });
           setTimeout(() => pg.querySelector('.srch-f').click(), 120);
         });
-        if (i === 4) app.reset('More', (pg) => plain(pg, [{ text: 'GitHub', go: () => ext(P.github) }, { text: 'LinkedIn', go: () => ext(P.linkedin) }, { text: 'Classic website', go: () => ext('classic.html') }, { text: 'Resume', go: () => ext(P.resume) }]));
+        if (i === 4) app.reset('More', (pg) => plain(pg, [{ text: 'GitHub', go: () => ext(P.github) }, { text: 'LinkedIn', go: () => ext(P.linkedin) }, { text: 'Classic website', go: () => ext('index.html') }, { text: 'Resume', go: () => ext(P.resume) }]));
       });
     } },
     impact: { name: 'Impact', icon: 'stocks', bare: true, bar: 'black', open(app) {
@@ -1331,7 +1331,7 @@ window.IPHONE = { start(room, exit) {
       });
     } },
     notes: { name: 'Notes', icon: 'notes', nb: 'notes', open: notesApp },
-    portfolio: { name: 'Portfolio', icon: 'clipAJ', bare: true, bar: 'gray', open(app) { safari(app, 'classic.html', 'ajaysommi.github.io'); } },
+    portfolio: { name: 'Portfolio', icon: 'clipAJ', bare: true, bar: 'gray', open(app) { safari(app, 'index.html', 'ajaysommi.github.io'); } },
     github: { name: 'GitHub', icon: 'clipGH', link: P.github },
     linkedin: { name: 'LinkedIn', icon: 'clipIN', link: P.linkedin },
     contact: { name: 'Phone', icon: 'phone', open: phoneApp },

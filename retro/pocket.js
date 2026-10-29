@@ -119,7 +119,7 @@ window.POCKET = { start(room, exit) {
 
   const SCREENS = {
     main: () => ({
-      type: 'menu', title: 'iSommia',
+      type: 'menu', title: 'iSommi',
       items: [
         [li('About Me'), () => open('about')],
         [li('Experience'), () => open('work')],
@@ -193,7 +193,7 @@ window.POCKET = { start(room, exit) {
       return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(F[Math.floor(Math.random() * F.length)])}”</p><div class="hint">MENU, then Fortune again for another</div>`);
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
-    desk: () => textScreen('Desktop version', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 desktop, the 1998 web or a 2007 desktop.</p><p>Open this page on a computer to try it.</p><p class="m">Or <a href="classic.html">see the classic site</a>.</p>'),
+    desk: () => textScreen('Desktop version', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 desktop, the 1998 web or a 2007 desktop.</p><p>Open this page on a computer to try it.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
     settings: () => ({
       type: 'menu', title: 'Settings',
       items: [

@@ -329,7 +329,7 @@ window.FINDER = (function () {
     oldsite: () => ({
       action: async () => {
         const r = await dialog({ icon: 'folder', html: '<p><b>Portfolio (2025)</b> is the modern version of this site: glass, gradients and a scroll.</p><p>Open it in a new window?</p>', buttons: ['Cancel', 'Open'] });
-        if (r === 'Open') window.open('classic.html', '_blank', 'noopener');
+        if (r === 'Open') window.open('index.html', '_blank', 'noopener');
       }
     }),
     bugs: () => ({ title: 'bugs.txt', w: 360, h: 200, render: (b) => { b.innerHTML = '<div class="doc"><p>Known bugs: none listed.</p></div>'; } }),

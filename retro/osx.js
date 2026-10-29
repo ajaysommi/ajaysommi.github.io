@@ -449,7 +449,7 @@ window.OSX = (function () {
       title: 'Ajay Sommi · Software Engineer', w: Math.min(1060, SW() - 80), h: SH() - 140, cls: 'is-safari',
       toolbar: '<div class="ox-seg"><button type="button" data-b>◀</button><button type="button" data-f>▶</button></div><div class="ox-url"><input type="text" aria-label="Address" value="http://ajaysommi.github.io/" /></div><div class="ox-search"><input type="search" placeholder="Google" aria-label="Search the web" /></div>',
       render: (b, rec) => {
-        b.innerHTML = '<div class="sf-bm"><button type="button" data-go="classic.html">Portfolio (classic)</button><button type="button" data-go="Ajay_Sommi_Resume.pdf">Resume</button><button type="button" data-ext="github">GitHub ↗</button><button type="button" data-ext="linkedin">LinkedIn ↗</button></div><iframe title="Safari"></iframe>';
+        b.innerHTML = '<div class="sf-bm"><button type="button" data-go="index.html">Portfolio (classic)</button><button type="button" data-go="Ajay_Sommi_Resume.pdf">Resume</button><button type="button" data-ext="github">GitHub ↗</button><button type="button" data-ext="linkedin">LinkedIn ↗</button></div><iframe title="Safari"></iframe>';
         const fr = b.querySelector('iframe');
         const addr = rec.el.querySelector('.ox-url input');
         /* Our own pages load directly; anything else typed goes through
@@ -458,9 +458,9 @@ window.OSX = (function () {
            addresses visited here. */
         const hist = [];
         let pos = -1;
-        const local = (u) => u === 'classic.html' || /\.pdf(#|$)/i.test(u);
+        const local = (u) => u === 'index.html' || /\.pdf(#|$)/i.test(u);
         const show = (u) => {
-          if (local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.onload = null; fr.src = u; addr.value = 'http://ajaysommi.github.io/' + (u === 'classic.html' ? '' : u); return; }
+          if (local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.onload = null; fr.src = u; addr.value = 'http://ajaysommi.github.io/' + (u === 'index.html' ? '' : u); return; }
           addr.value = 'http://' + window.OLDWEB.shown(u);
           window.OLDWEB.open(fr, u, 2007, { onNav: go });
         };
@@ -468,10 +468,10 @@ window.OSX = (function () {
         b.addEventListener('click', (e) => { const g = e.target.closest('[data-go]'); if (g) go(g.dataset.go); const x = e.target.closest('[data-ext]'); if (x) ext(P[x.dataset.ext]); });
         rec.el.querySelector('[data-b]').addEventListener('click', () => { if (pos > 0) show(hist[--pos]); });
         rec.el.querySelector('[data-f]').addEventListener('click', () => { if (pos < hist.length - 1) show(hist[++pos]); });
-        addr.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const v = addr.value.trim().replace(/^http:\/\/ajaysommi\.github\.io\/?$/, 'classic.html'); if (v) go(v); } });
+        addr.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const v = addr.value.trim().replace(/^http:\/\/ajaysommi\.github\.io\/?$/, 'index.html'); if (v) go(v); } });
         const srch = rec.el.querySelector('.ox-search input');
         if (srch) srch.addEventListener('keydown', (e) => { if (e.key === 'Enter' && srch.value.trim()) go(srch.value.trim()); });
-        go(url || 'classic.html');
+        go(url || 'index.html');
       }
     }),
     mail: () => ({
@@ -500,7 +500,7 @@ window.OSX = (function () {
           b.addEventListener('dblclick', (e) => {
             const t = e.target.closest('[data-t]');
             if (!t) return;
-            if (t.dataset.t === 'oldsite') open('safari', 'classic.html');
+            if (t.dataset.t === 'oldsite') open('safari', 'index.html');
             if (t.dataset.t === 'bugs') alert({ title: 'bugs.txt', text: 'Known bugs: none listed.', icon: ICON.doc() });
             if (t.dataset.t === 'old') alert({ title: 'Resume_2019.pdf', text: 'An older resume, replaced by the current one.', icon: ICON.doc() });
           });

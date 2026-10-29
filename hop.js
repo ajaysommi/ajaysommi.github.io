@@ -6,7 +6,7 @@
    from foot to foot with excitement as the lines get written, and throws
    the sheet at the screen; the resume page then fades in from
    it. Any other page gets a couple of happy hops. Links back to the home
-   page (the era picker) or to the standard site play that page's own
+   page (the standard site) or on to the era picker play that page's own
    loading screen; so the trip there is the mark flying down from the nav to
    where that screen draws it (turning to pixels on the way to the picker). New tabs,
    downloads, mail links and anything on another site are left alone. With
@@ -712,7 +712,7 @@
      as it settles, redraws it in pixels: square by square the pixel mark
      comes in over the smooth one, which fades out from under it, until only
      the pixel mark is left, exactly where the next page draws its own. That
-     page then opens with it already in place (see index.html's loader). */
+     page then opens with it already in place (see eras.html's loader). */
   const PX = [
     '.......##.......', '......####...bb.', '......####..bbbb', '.....######.bbbb',
     '.....######..bb.', '....########....', '....########.bbb', '...####..###.bbb',
@@ -816,7 +816,7 @@
     if (reduce.matches) { location.href = url; return; }
     const u = new URL(url, location.href);
     const forResume = /resume\.html$/i.test(u.pathname);
-    const forHome = isHome(u);
+    const forHome = isEras(u);
     const forClassic = isClassic(u);
     going = true;
     lock(true);
@@ -951,9 +951,10 @@
     if (src) src.style.visibility = '';
   });
 
-  const isHome = (u) => /\/(index\.html)?$/.test(u.pathname);
-  // The standard site, which has its own loading screen to land on.
-  const isClassic = (u) => /\/classic\.html$/.test(u.pathname);
+  // The era picker, and the standard site (the home page) with its own
+  // loading screen to land on.
+  const isEras = (u) => /\/eras\.html$/.test(u.pathname);
+  const isClassic = (u) => /\/(index\.html)?$/.test(u.pathname);
 
   // Arriving from a click on Resume (see resume.html's head): start once the
   // fonts are in, so the layout the sheet lands on has stopped moving.
@@ -974,7 +975,7 @@
     if (u.origin !== location.origin || !/^https?:$/.test(u.protocol)) return;
     if (u.pathname === location.pathname) return;          // same page, an anchor
     if (/\.pdf$/i.test(u.pathname)) return;
-    if (isHome(u) && isHome(location)) return;             // home to itself
+    if (isClassic(u) && isClassic(location)) return;       // home to itself
     e.preventDefault();
     go(u.href);
   });
