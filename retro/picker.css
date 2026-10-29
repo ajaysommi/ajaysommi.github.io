@@ -4,7 +4,16 @@
    ========================================================================== */
 
 .os-host, .phone-host { position: fixed; inset: 0; }
-.phone-host { bottom: auto; top: var(--vvt, 0px); height: var(--vvh, 100%); overflow: hidden; }
+/* Like the standard site's backdrop: pinned to the top and as tall as the
+   viewport ever gets, plus a margin, so the room runs on under Safari's
+   floating toolbar to the foot of the screen (Safari sets the bottom of
+   fixed boxes above that bar). Everything inside is placed from the top
+   within the visible height, so the extra only shows more room. */
+.phone-host { bottom: auto; top: var(--vvt, 0px); height: calc(100vh + 80px); height: calc(100lvh + 80px); overflow: hidden; }
+html.is-turned .phone-host { height: var(--vvh, 100%); }
+.picker.is-phones::before { content: ''; position: fixed; inset: 0 0 auto; height: calc(100vh + 80px); height: calc(100lvh + 80px); z-index: -1; pointer-events: none;
+  background: radial-gradient(70% 50% at 50% 38%, rgba(255,255,255,.07), transparent 70%), linear-gradient(180deg, #2a2a2c, #121214); }
+html.is-turned .picker.is-phones::before { height: 100%; }
 .os-screen { position: absolute; inset: 0; overflow: hidden; }
 .phone-host { background: radial-gradient(90% 60% at 50% 30%, #4a3f33, #1c1915 75%); }
 .phone-room { position: absolute; inset: 0; }

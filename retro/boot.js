@@ -468,13 +468,15 @@
       pocket: ['#dcd6e8', '#beb4d0'], 'pocket-sky': ['#d2e1f3', '#a8bfdc'], 'pocket-mint': ['#d3ece0', '#a5d2b7'],
       'pocket-sand': ['#ece2cf', '#d0bf9f'], 'pocket-slate': ['#3e434d', '#202228']
     };
+    /* The rooms themselves run on under Safari's bars (see .phone-host);
+       its status bar and the page behind take the matching colours. */
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     const tint = (id) => {
       const bg = id === 'pocket' && rooms.pocket && rooms.pocket.dataset.bg;
       const [top, bottom] = EDGE[bg && EDGE['pocket-' + bg] ? 'pocket-' + bg : id] || EDGE.pick;
       if (themeMeta) themeMeta.content = top;
-      document.documentElement.style.background = bottom;
-      document.body.style.background = `linear-gradient(${top}, ${bottom})`;
+      document.documentElement.style.backgroundColor = bottom;
+      document.body.style.background = `linear-gradient(${top}, ${bottom}) ${bottom}`;
     };
     tint('pick');
 
