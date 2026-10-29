@@ -210,10 +210,10 @@
 .os-host[data-era="2007"] .bz-frame { top: -60px; left: calc(var(--side) + 3px); right: calc(var(--side) + 3px); border-radius: 0; background: linear-gradient(180deg, #121214, #050506); }
 
 /* The music player's room, in the colour chosen in its Settings. */
-.phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(90% 60% at 50% 32%, #eef5fc, #c3d6ee 82%); }
-.phone-host .pocket-room[data-bg="mint"] { background: radial-gradient(90% 60% at 50% 32%, #eefaf3, #c3e6d1 82%); }
-.phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(90% 60% at 50% 32%, #fbf6ec, #e4d6bc 82%); }
-.phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(90% 60% at 50% 32%, #5e6470, #2d3038 82%); }
+.phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(90% 60% at 50% 32%, #eef5fc, #c3d6ee 70%, #a8bfdc 104%); }
+.phone-host .pocket-room[data-bg="mint"] { background: radial-gradient(90% 60% at 50% 32%, #eefaf3, #c3e6d1 70%, #a5d2b7 104%); }
+.phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(90% 60% at 50% 32%, #fbf6ec, #e4d6bc 70%, #d0bf9f 104%); }
+.phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(90% 60% at 50% 32%, #5e6470, #2d3038 70%, #202228 104%); }
 
 /* The time shapes behind the pickers. */
 .pk-time { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0; animation: pk-time-in 2.4s ease .2s forwards; }
@@ -302,9 +302,9 @@
 
 /* Era rooms on the desktop: light for the pale machines, dark for 1983. */
 .os-host[data-era="1983"] { --bg: radial-gradient(70% 60% at 50% 45%, rgba(60,200,90,.14), transparent 70%), radial-gradient(90% 80% at 50% 40%, #16221a, #060906 85%); }
-.os-host.is-photo[data-era="1991"] { --bg: radial-gradient(80% 70% at 50% 35%, #f6f1e4, #ddd3bb 85%); }
-.os-host.is-photo[data-era="1998"] { --bg: radial-gradient(80% 70% at 50% 35%, #f1fbfd, #a9dde6 88%); }
-.os-host.is-photo[data-era="2007"] { --bg: radial-gradient(80% 70% at 50% 35%, #fbfcfd, #cfd8e4 88%); }
+.os-host.is-photo[data-era="1991"] { --bg: radial-gradient(80% 70% at 50% 35%, #f6f1e4, #ddd3bb 70%, #c8bb9a 108%); }
+.os-host.is-photo[data-era="1998"] { --bg: radial-gradient(80% 70% at 50% 35%, #f1fbfd, #a9dde6 72%, #86c6d2 108%); }
+.os-host.is-photo[data-era="2007"] { --bg: radial-gradient(80% 70% at 50% 35%, #fbfcfd, #cfd8e4 72%, #b3bfd0 108%); }
 .os-host.is-photo[data-era="2007"] .bz-aj { color: #c7cacf; filter: drop-shadow(0 1px 0 rgba(255,255,255,.8)) drop-shadow(0 -1px 0 rgba(0,0,0,.08)); }
 .os-host.is-photo .bz-dev { filter: drop-shadow(0 30px 50px rgba(40,40,60,.35)); }
 /* 1983, drawn, sized like the others: room above, running off the bottom. */
@@ -326,9 +326,9 @@
 
 /* Phones: their rooms' gradients (the shapes are their own layer now),
    the handset above the shapes, and buttons in the phone's colours. */
-.phone-host .nk-room { background: radial-gradient(90% 60% at 50% 32%, #c9d4e7, #8d9dbd 82%); }
-.phone-host .pocket-room { background: radial-gradient(90% 60% at 50% 32%, #f6f3fa, #d6cfe3 82%); }
-.phone-host .iphone-room { background: radial-gradient(90% 60% at 50% 32%, #7c7d82, #46474c 80%); }
+.phone-host .nk-room { background: radial-gradient(90% 60% at 50% 32%, #c9d4e7, #8d9dbd 70%, #75869f 104%); }
+.phone-host .pocket-room { background: radial-gradient(90% 60% at 50% 32%, #f6f3fa, #d6cfe3 70%, #bfb5d1 104%); }
+.phone-host .iphone-room { background: radial-gradient(90% 60% at 50% 32%, #7c7d82, #46474c 68%, #333438 104%); }
 .nk-scale, .pk-scale, .ip-scale { position: relative; z-index: 1; }
 .is-mobile .snd-toggle span { display: none; }
 .is-mobile .snd-toggle { padding: 10px 12px; }
@@ -374,6 +374,8 @@ div.pk-fly { position: fixed; }
 .bz-power { position: absolute; border: 0; border-radius: 50%; background: none; padding: 0; cursor: pointer; pointer-events: auto; }
 .bz-power:active { background: rgba(0,0,0,.12); }
 .os-host .os-screen::after { content: ''; position: absolute; inset: 0; z-index: 99999; pointer-events: none; background: #050506; opacity: 0; transform: scale(1); transition: opacity .25s; }
+.os-host.is-dark .os-screen { background: #050506; }
+.os-host.is-dark .os-screen > * { visibility: hidden; transition: visibility 0s .45s; }
 .os-host.is-dark .os-screen::after { opacity: 1; pointer-events: auto; transition: none; animation: crt-off .45s ease-in forwards; }
 @keyframes crt-off { 0% { opacity: 0; } 1% { opacity: 1; clip-path: inset(0 0 0 0); background: #050506; } 30% { background: #fff; clip-path: inset(49.5% 0 49.5% 0); } 60% { background: #fff; clip-path: inset(49.5% 48% 49.5% 48%); } 100% { background: #050506; clip-path: inset(0 0 0 0); opacity: 1; } }
 

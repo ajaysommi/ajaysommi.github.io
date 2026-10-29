@@ -62,6 +62,14 @@
     return n;
   };
   const go = (n, a, b, dur) => n.animate([{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${b.width / a.width})` }], { duration: dur, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).finished;
+  /* A screen's corners: one radius, or [across, down] at the top and at the
+     bottom, for a tube whose opening arches. In px, or as a share of the
+     picture when given its size. */
+  const round = (r, w, h) => {
+    const [ta, td, ba, bd] = Array.isArray(r) ? r : [r, r, r, r];
+    const x = (v) => (w ? `${v / w * 100}%` : `${v}px`), y = (v) => (h ? `${v / h * 100}%` : `${v}px`);
+    return `${x(ta)} ${x(ta)} ${x(ba)} ${x(ba)} / ${y(td)} ${y(td)} ${y(bd)} ${y(bd)}`;
+  };
   const flight = async ({ glyph, glyphBox, photo, photoW, photoH, glass, device, focus, back = false, dur = 820 }) => {
     /* The drawing travels to the part of the machine it depicts (focus),
        keeping its own shape, never larger than the machine. Only opacity
@@ -89,7 +97,7 @@
       const [p0, p1] = back ? [device, pStart] : [pStart, device];
       const im = document.createElement('div');
       im.style.background = `url("${photo}") 0 0 / 100% 100% no-repeat`;
-      if (glass) im.innerHTML = `<i style="position:absolute;left:${glass[0] / photoW * 100}%;top:${glass[1] / photoH * 100}%;width:${glass[2] / photoW * 100}%;height:${glass[3] / photoH * 100}%;background:${glass[5] || '#050506'};border-radius:${glass[4] / photoW * 100}% / ${glass[4] / photoH * 100}%"></i>`;
+      if (glass) im.innerHTML = `<i style="position:absolute;left:${glass[0] / photoW * 100}%;top:${glass[1] / photoH * 100}%;width:${glass[2] / photoW * 100}%;height:${glass[3] / photoH * 100}%;background:${glass[5] || '#050506'};border-radius:${round(glass[4], glass[2], glass[3])}"></i>`;
       const q = clone(im, p0, 8711);
       q.style.willChange = 'transform, opacity';
       jobs.push(go(q, p0, p1, dur).then(() => q));
@@ -228,8 +236,8 @@
        part kept in view (down to the chin, the keyboard and stand left
        below the window), and where the AJ replaces the maker's logo. */
     const PHOTO = {
-      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [316, 156, 557, 414, 40], scr: [346, 197, 497, 349], r: 10, view: [215, 30, 755, 770], aj: [307, 769, 38, false] },
-      1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [306, 194, 878, 600, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 30, 1180, 960], aj: [738, 851, 38, false] },
+      1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [319, 161, 551, 427, [120, 14, 120, 14]], scr: [346, 197, 497, 349], r: 10, view: [215, 30, 755, 770], aj: [307, 769, 38, false] },
+      1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [304, 192, 880, 602, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 30, 1180, 960], aj: [738, 851, 38, false] },
       2007: { src: 'assets/images/bezels/imac-2007.webp', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [128, 128, 1466, 912], r: 0, view: [42, 42, 1642, 1250], aj: [861, 1184, 132, true] }
     };
     let photo = null;
@@ -263,7 +271,7 @@
       if (PHOTO[y]) {
         photo = PHOTO[y];
         const [ax, ay, as, mono] = photo.aj;
-        bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${photo.glass[4]}px"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
+        bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${round(photo.glass[4])}"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
         host.classList.add('is-photo');
         host.classList.remove('is-dark');
         /* The Bondi iMac's power button switches the picture tube off and on. */

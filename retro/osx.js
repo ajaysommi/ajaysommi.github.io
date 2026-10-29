@@ -732,7 +732,7 @@ window.OSX = (function () {
         <button type="button" class="m b" data-m="app">Finder</button>
         <button type="button" class="m" data-m="file">File</button><button type="button" class="m" data-m="edit">Edit</button><button type="button" class="m" data-m="view">View</button><button type="button" class="m" data-m="win">Window</button><button type="button" class="m" data-m="help">Help</button>
         <span class="sp"></span>
-        <span class="st" aria-hidden="true"><svg viewBox="0 0 18 13" width="18" height="13"><path d="M9 12.5 6.6 9.9a3.4 3.4 0 0 1 4.8 0zM4.4 7.6a6.4 6.4 0 0 1 9.2 0l1.5-1.6a8.6 8.6 0 0 0-12.2 0zM1.3 4.3a11 11 0 0 1 15.4 0L18 3A12.8 12.8 0 0 0 0 3z" fill="currentColor"/></svg></span>
+        <span class="st" aria-hidden="true"><svg viewBox="0 -1.5 18 14.5" width="18" height="14.5" style="overflow:visible"><path d="M9 12.5 6.6 9.9a3.4 3.4 0 0 1 4.8 0zM4.4 7.6a6.4 6.4 0 0 1 9.2 0l1.5-1.6a8.6 8.6 0 0 0-12.2 0zM1.3 4.3a11 11 0 0 1 15.4 0L18 3A12.8 12.8 0 0 0 0 3z" fill="currentColor"/></svg></span>
         <button type="button" class="st snd" data-snd aria-label="Toggle sound">${I.spk(SFX.muted)}</button>
         <span class="st bat" aria-hidden="true"><i></i></span>
         <span class="st clk"></span>
