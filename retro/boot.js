@@ -468,13 +468,28 @@
       pocket: ['#dcd6e8', '#beb4d0'], 'pocket-sky': ['#d2e1f3', '#a8bfdc'], 'pocket-mint': ['#d3ece0', '#a5d2b7'],
       'pocket-sand': ['#ece2cf', '#d0bf9f'], 'pocket-slate': ['#3e434d', '#202228']
     };
+    /* Safari reads plain colours for this, not gradients or pictures: the
+       theme colour, the page's own background colour, and (Safari 26) the
+       colour of a full-width fixed strip on the top or bottom edge. So
+       each is given one, matching the room behind it. */
     const themeMeta = document.querySelector('meta[name="theme-color"]');
+    const strip = (edge) => {
+      const d = document.createElement('div');
+      d.className = 'edge-tint';
+      d.setAttribute('aria-hidden', 'true');
+      d.style.cssText = `position:fixed;left:0;right:0;${edge}:0;height:6px;z-index:8600;pointer-events:none`;
+      document.body.appendChild(d);
+      return d;
+    };
+    const edgeTop = strip('top'), edgeBottom = strip('bottom');
     const tint = (id) => {
       const bg = id === 'pocket' && rooms.pocket && rooms.pocket.dataset.bg;
       const [top, bottom] = EDGE[bg && EDGE['pocket-' + bg] ? 'pocket-' + bg : id] || EDGE.pick;
       if (themeMeta) themeMeta.content = top;
-      document.documentElement.style.background = bottom;
-      document.body.style.background = `linear-gradient(${top}, ${bottom})`;
+      edgeTop.style.backgroundColor = top;
+      edgeBottom.style.backgroundColor = bottom;
+      document.documentElement.style.backgroundColor = bottom;
+      document.body.style.background = `linear-gradient(${top}, ${bottom}) ${bottom}`;
     };
     tint('pick');
 

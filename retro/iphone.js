@@ -251,12 +251,18 @@ window.IPHONE = { start(room, exit) {
   const kb = (() => {
     const el = h('div', 'kb');
     const pop = h('div', 'kb-pop');
-    let target = null, mode = 'abc', shift = true, caps = false, lastShift = 0;
+    /* Shift and delete drawn, not typed: phone fonts set the arrow and the
+     delete glyph thin and squeezed. */
+  const KEY_ICON = {
+    '⇧': '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 2.6 2.4 10.4h4.3v6.6h6.6v-6.6h4.3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+    '⌫': '<svg viewBox="0 0 26 18" width="26" height="18" aria-hidden="true"><path d="M8.3 2h14.2a1.6 1.6 0 0 1 1.6 1.6v10.8a1.6 1.6 0 0 1-1.6 1.6H8.3L1.8 9z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m11.6 5.8 6.4 6.4m0-6.4-6.4 6.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+  };
+  let target = null, mode = 'abc', shift = true, caps = false, lastShift = 0;
     const draw = () => {
       el.innerHTML = KB_ROWS[mode].map((row, r) => `<div class="kb-r r${r}">${row.map((k) => {
         const wide = k === 'space' ? ' sp' : k === 'return' ? ' ret' : (k === '.?123' || k === 'ABC') ? ' mode' : (k === '⇧' || k === '⌫' || k === '#+=') ? ' fn' : '';
         const label = k.length === 1 && mode === 'abc' && shift ? k.toUpperCase() : k === 'return' && target && target.ret ? target.ret : k;
-        return `<button type="button" class="kb-k${wide}${k === '⇧' && shift ? ' on' : ''}${k === '⇧' && caps ? ' caps' : ''}" data-k="${esc(k)}">${esc(label)}</button>`;
+        return `<button type="button" class="kb-k${wide}${k === '⇧' && shift ? ' on' : ''}${k === '⇧' && caps ? ' caps' : ''}" data-k="${esc(k)}"${KEY_ICON[k] ? ` aria-label="${k === '⇧' ? 'Shift' : 'Delete'}"` : ''}>${KEY_ICON[k] || esc(label)}</button>`;
       }).join('')}</div>`).join('');
       el.appendChild(pop);
     };
