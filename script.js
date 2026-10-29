@@ -4155,22 +4155,33 @@ console.log(
 
 
 /* ==========================================================================
-   The way into the eras (the banner over the hero): the year in its
-   headline moves through the eras of this visitor's kind of device,
-   scrambling through digits for a moment and landing in that era's type,
-   and the matching machine lifts. Paused while off screen or the tab is
-   hidden; still with reduced motion. Put away, it stays away until the
-   tab is closed.
+   The way into the eras (the banner over the hero). It waits for the page
+   to finish loading, then the AJ mark serves it: the mark hops down out of
+   the nav (on a phone, where the nav is at the bottom, it drops in from
+   the top of the screen) and stops over where the banner goes, the page
+   eases down to make room, the banner is set down under the mark like a
+   tray, and it lands with a shine, a glow and a few sparkles while the
+   mark gives a little bounce; then the mark hops home. If the page has
+   already been scrolled, or motion is reduced, the banner is simply there
+   (scrolled for, so nothing jumps). Once up, the year in its headline
+   moves through the eras of this visitor's kind of device, scrambling
+   through digits and landing in each era's type, and the matching machine
+   lifts. Closed, it stays away until the page is loaded again.
    ========================================================================== */
 (function eraBanner() {
   const wrap = document.getElementById('eraAd');
   if (!wrap) return;
-  try { if (sessionStorage.getItem('era-ad-off')) { wrap.classList.add('is-off'); return; } } catch {}
+  const root = document.documentElement;
+  const box = wrap.querySelector('.era-ad-box'), ad = wrap.querySelector('.era-ad');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const RAINBOW = ['#61bb46', '#fdb827', '#f5821f', '#e03a3e', '#963d97', '#009ddc'];
+
   wrap.querySelector('.era-ad-x').addEventListener('click', () => {
-    wrap.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-8px)' }], { duration: 260, easing: 'ease-in' })
-      .finished.then(() => wrap.classList.add('is-off'));
-    try { sessionStorage.setItem('era-ad-off', '1'); } catch {}
+    wrap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in' }).finished.then(() => wrap.classList.add('is-off'));
   });
+
+  /* ---- the year ---- */
   const yr = wrap.querySelector('.era-yr');
   const phone = matchMedia('(max-width: 760px)');
   const years = () => (phone.matches ? ['2000', '2004', '2007'] : ['1983', '1991', '1998', '2007']);
@@ -4179,23 +4190,126 @@ console.log(
   let k = 0;
   land(years()[0]);
   phone.addEventListener('change', () => { k = 0; land(years()[0]); });
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let seen = true, timer = 0;
-  const step = () => {
-    const list = years();
-    k = (k + 1) % list.length;
-    const y = list[k];
-    yr.classList.add('is-scramble');
-    let n = 0;
-    const roll = setInterval(() => {
-      n++;
-      // the digits settle left to right
-      yr.textContent = y.split('').map((c, i) => (n > 3 + i * 2 ? c : Math.floor(Math.random() * 10))).join('');
-      if (n > 9) { clearInterval(roll); land(y); }
-    }, 45);
+  const cycle = () => {
+    if (reduce) return;
+    let seen = true, timer = 0;
+    const step = () => {
+      const list = years();
+      k = (k + 1) % list.length;
+      const y = list[k];
+      yr.classList.add('is-scramble');
+      let n = 0;
+      const roll = setInterval(() => {
+        n++;
+        // the digits settle left to right
+        yr.textContent = y.split('').map((c, i) => (n > 3 + i * 2 ? c : Math.floor(Math.random() * 10))).join('');
+        if (n > 9) { clearInterval(roll); land(y); }
+      }, 45);
+    };
+    const run = () => { clearInterval(timer); if (seen && !document.hidden) timer = setInterval(step, 2400); };
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(); }).observe(wrap);
+    document.addEventListener('visibilitychange', run);
+    run();
   };
-  const run = () => { clearInterval(timer); if (seen && !document.hidden) timer = setInterval(step, 2400); };
-  new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(); }).observe(wrap);
-  document.addEventListener('visibilitychange', run);
-  run();
+
+  /* ---- arriving ---- */
+  const padPx = () => {
+    const t = document.createElement('div');
+    t.style.cssText = 'position:absolute;visibility:hidden;padding-top:var(--pad)';
+    wrap.appendChild(t);
+    const v = parseFloat(getComputedStyle(t).paddingTop) || 0;
+    t.remove();
+    return v;
+  };
+  const instantly = () => {
+    const before = wrap.getBoundingClientRect().height, above = wrap.getBoundingClientRect().top < 0;
+    wrap.style.transition = 'none';
+    wrap.classList.add('is-open', 'is-served', 'is-done');
+    if (above || scrollY > 40) scrollBy(0, wrap.getBoundingClientRect().height - before);
+    requestAnimationFrame(() => { wrap.style.transition = ''; });
+    cycle();
+  };
+  const sparkle = () => {
+    const r = ad.getBoundingClientRect();
+    for (let i = 0; i < 12; i++) {
+      const e = document.createElement('i');
+      e.className = 'era-spark';
+      // around the edge: along the top and bottom, and off both ends
+      const side = i % 4, f = Math.random();
+      const x = side < 2 ? r.left + f * r.width : side === 2 ? r.left : r.right;
+      const y = side === 0 ? r.top : side === 1 ? r.bottom : r.top + f * r.height;
+      const dx = side === 2 ? -1 : side === 3 ? 1 : (f - .5) * .8, dy = side === 0 ? -1 : side === 1 ? 1 : (Math.random() - .5);
+      const d = 16 + Math.random() * 22, sc = .6 + Math.random() * .7;
+      e.style.cssText = `left:${x}px;top:${y}px;--c:${RAINBOW[i % 6]}`;
+      document.body.appendChild(e);
+      e.animate([
+        { transform: 'translate(0,0) scale(0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx * d * .6}px,${dy * d * .6}px) scale(${sc}) rotate(45deg)`, opacity: 1, offset: .45 },
+        { transform: `translate(${dx * d}px,${dy * d}px) scale(0) rotate(90deg)`, opacity: 0 }
+      ], { duration: 700 + Math.random() * 300, delay: Math.random() * 180, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'both' }).finished.then(() => e.remove());
+    }
+  };
+  const serve = async () => {
+    if (reduce || scrollY > 40) { instantly(); return; }
+    // the mark at home: the nav's, if it is up top; on a phone it drops in from above the screen
+    const navMark = document.querySelector('header.nav .brand-mark svg.brand-aj');
+    const nr = navMark && navMark.getBoundingClientRect();
+    const fromNav = nr && nr.width > 0 && nr.top < innerHeight / 3;
+    const S = phone.matches ? 30 : 36;
+    const br = box.getBoundingClientRect(), top = wrap.getBoundingClientRect().top + padPx();
+    const spot = phone.matches ? { x: br.left + 6, y: top - S * .55 } : { x: br.left + 44, y: top - S + 4 };
+    const home = fromNav ? { x: nr.left + nr.width / 2 - S / 2, y: nr.top + nr.height / 2 - S / 2, s: nr.width / S } : { x: spot.x + 20, y: -S - 20, s: 1 };
+    const w = document.createElement('div');
+    w.className = 'era-waiter';
+    w.setAttribute('aria-hidden', 'true');
+    w.style.cssText = `width:${S}px;height:${S}px`;
+    const vb = navMark && navMark.getAttribute('viewBox') || '9 8.5 45 42';
+    w.innerHTML = `<div class="era-waiter-b" style="width:100%;height:100%;transform-origin:50% 100%"><svg viewBox="${vb}">${navMark ? navMark.innerHTML : ''}</svg></div>`;
+    document.body.appendChild(w);
+    const body = w.firstChild;
+    if (fromNav) navMark.style.visibility = 'hidden';
+    const at = (p, s = 1) => `translate(${p.x}px, ${p.y}px) scale(${s})`;
+    // a hop along an arc, rising over the halfway mark
+    const hop = (a, b, dur, rise = 34) => w.animate([
+      { transform: at(a, a.s || 1) },
+      { transform: at({ x: (a.x + b.x) / 2, y: Math.min(a.y, b.y) - rise }, ((a.s || 1) + (b.s || 1)) / 2), offset: .5, easing: 'cubic-bezier(.3,0,.6,1)' },
+      { transform: at(b, b.s || 1) }
+    ], { duration: dur, easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' }).finished;
+    const squash = (sx, sy, dur) => body.animate([{ transform: 'none' }, { transform: `scale(${sx}, ${sy})` }, { transform: 'none' }], { duration: dur, easing: 'ease-out' }).finished;
+
+    await hop(home, spot, 620, phone.matches ? 10 : 40);
+    squash(1.18, .8, 220);
+    // the page makes room, and the banner is set down under the mark
+    wrap.classList.add('is-open');
+    // a little "here you go": a lean toward the banner and back
+    body.animate([{ transform: 'none' }, { transform: 'rotate(-14deg) translateX(-2px)', offset: .4 }, { transform: 'rotate(4deg)', offset: .75 }, { transform: 'none' }], { duration: 760, easing: 'ease-in-out' });
+    await wait(260);
+    wrap.classList.add('is-served');
+    await wait(520);
+    // landing: shine, glow, sparkles, and a happy bounce from the mark
+    const shine = document.createElement('span');
+    shine.className = 'era-ad-shine';
+    ad.appendChild(shine);
+    ad.classList.add('is-glow');
+    wrap.classList.add('is-done');
+    sparkle();
+    w.animate([{ transform: at(spot) }, { transform: at({ x: spot.x, y: spot.y - 16 }), offset: .45 }, { transform: at(spot) }], { duration: 420, easing: 'cubic-bezier(.3,.7,.4,1)' });
+    await wait(450);
+    squash(1.12, .88, 180);
+    setTimeout(() => { ad.classList.remove('is-glow'); shine.remove(); }, 1100);
+    await wait(520);
+    // home again
+    await hop(spot, home, 560, phone.matches ? 6 : 36);
+    if (fromNav) navMark.style.visibility = '';
+    w.remove();
+    cycle();
+  };
+
+  // after the page has loaded and its loading screen has gone
+  const go = () => setTimeout(serve, 700);
+  if (!root.classList.contains('is-loading')) go();
+  else {
+    const mo = new MutationObserver(() => { if (!root.classList.contains('is-loading')) { mo.disconnect(); go(); } });
+    mo.observe(root, { attributes: true, attributeFilter: ['class'] });
+  }
 })();
