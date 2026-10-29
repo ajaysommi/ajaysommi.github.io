@@ -3239,8 +3239,11 @@
        CTA. With just Resume + Copy email now, that math gave Resume a
        half-width column with dead space beside it. A plain equal-width pair
        reads as one deliberate row instead. */
-    .actions { display: flex; gap: 10px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
     .actions .btn { flex: 1 1 0; }
+    /* Resume and Get in touch stay a pair; the era button takes its own
+       full-width row beneath them. */
+    .actions .btn-era { flex: 1 0 100%; }
 
     .section { padding-inline: 14px; }
 
