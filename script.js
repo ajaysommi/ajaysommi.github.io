@@ -4155,34 +4155,47 @@ console.log(
 
 
 /* ==========================================================================
-   The way into the eras (under the hero buttons): the device and year move
-   through the eras every few seconds. The year scrambles through digits for
-   a moment and lands in its era's type; the device word fades across.
-   Paused while off screen or the tab is hidden; still with reduced motion.
+   The way into the eras (the banner over the hero): the year in its
+   headline moves through the eras of this visitor's kind of device,
+   scrambling through digits for a moment and landing in that era's type,
+   and the matching machine lifts. Paused while off screen or the tab is
+   hidden; still with reduced motion. Put away, it stays away until the
+   tab is closed.
    ========================================================================== */
-(function eraTeaser() {
-  const line = document.querySelector('.era-try');
-  if (!line) return;
-  const dev = line.querySelector('.era-dev'), yr = line.querySelector('.era-yr');
-  const ERAS = [['a terminal', '1983'], ['a Macintosh', '1991'], ['an iMac', '1998'], ['an iPod', '2004'], ['an iPhone', '2007']];
+(function eraBanner() {
+  const wrap = document.getElementById('eraAd');
+  if (!wrap) return;
+  try { if (sessionStorage.getItem('era-ad-off')) { wrap.classList.add('is-off'); return; } } catch {}
+  wrap.querySelector('.era-ad-x').addEventListener('click', () => {
+    wrap.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-8px)' }], { duration: 260, easing: 'ease-in' })
+      .finished.then(() => wrap.classList.add('is-off'));
+    try { sessionStorage.setItem('era-ad-off', '1'); } catch {}
+  });
+  const yr = wrap.querySelector('.era-yr');
+  const phone = matchMedia('(max-width: 760px)');
+  const years = () => (phone.matches ? ['2000', '2004', '2007'] : ['1983', '1991', '1998', '2007']);
+  const light = (y) => wrap.querySelectorAll('.era-dv').forEach((d) => d.classList.toggle('is-on', d.dataset.y === y && getComputedStyle(d).display !== 'none'));
+  const land = (y) => { yr.textContent = y; yr.dataset.y = y; yr.classList.remove('is-scramble'); light(y); };
+  let k = 0;
+  land(years()[0]);
+  phone.addEventListener('change', () => { k = 0; land(years()[0]); });
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let k = 0, seen = true, timer = 0;
+  let seen = true, timer = 0;
   const step = () => {
-    k = (k + 1) % ERAS.length;
-    const [d, y] = ERAS[k];
-    dev.classList.add('is-out');
-    setTimeout(() => { dev.textContent = d; dev.classList.remove('is-out'); }, 250);
+    const list = years();
+    k = (k + 1) % list.length;
+    const y = list[k];
     yr.classList.add('is-scramble');
     let n = 0;
     const roll = setInterval(() => {
       n++;
-      // digits settle left to right
+      // the digits settle left to right
       yr.textContent = y.split('').map((c, i) => (n > 3 + i * 2 ? c : Math.floor(Math.random() * 10))).join('');
-      if (n > 3 + 3 * 2) { clearInterval(roll); yr.textContent = y; yr.dataset.y = y; yr.classList.remove('is-scramble'); }
+      if (n > 9) { clearInterval(roll); land(y); }
     }, 45);
   };
-  const run = () => { clearInterval(timer); if (seen && !document.hidden) timer = setInterval(step, 2600); };
-  new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(); }).observe(line);
+  const run = () => { clearInterval(timer); if (seen && !document.hidden) timer = setInterval(step, 2400); };
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(); }).observe(wrap);
   document.addEventListener('visibilitychange', run);
   run();
 })();
