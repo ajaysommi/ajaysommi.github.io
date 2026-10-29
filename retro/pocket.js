@@ -491,5 +491,5 @@ window.POCKET = { start(room, exit) {
     wake();
   }
 
-  insert();
+  Promise.resolve(room.landed).then(insert);
 } };

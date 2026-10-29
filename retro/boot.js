@@ -437,7 +437,11 @@
   /* ================================================================= PHONES */
 
   const PHONE_ART = {
-    nokia: `<svg viewBox="0 0 74 122" aria-hidden="true"><rect x="2" y="2" width="70" height="118" rx="26" fill="#2f4372"/><rect x="2" y="2" width="70" height="118" rx="26" fill="url(#nkG)"/><defs><linearGradient id="nkG" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient></defs><rect x="13" y="16" width="48" height="38" rx="8" fill="#20252c"/><rect x="18" y="21" width="38" height="27" rx="2" fill="#b4d074"/><text x="37" y="38" text-anchor="middle" font-family="Pixelify Sans, monospace" font-size="7" font-weight="700" fill="#1d2a10">SOMMIA</text><rect x="25" y="59" width="24" height="9" rx="4.5" fill="#c4cbd8"/>${[0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<ellipse cx="${20 + c * 17}" cy="${78 + r * 10}" rx="6.5" ry="3.6" fill="#d7dce6"/>`).join('')).join('')}</svg>`,
+    /* Traced over the phone's own photograph, in its pixels, so the
+       drawing and the photo match shape for shape as one becomes the
+       other: the waisted body, the silver surround dipping into the
+       navigation keys, and keys in rows that curve down at the sides. */
+    nokia: `<svg viewBox="100 14 724 1666" aria-hidden="true"><defs><linearGradient id="nkG" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset=".22" stop-color="#fff" stop-opacity=".07"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset=".78" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient><linearGradient id="nkS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6e8eb"/><stop offset="1" stop-color="#b7bbc1"/></linearGradient><radialGradient id="nkK" cx=".45" cy=".35" r=".7"><stop offset="0" stop-color="#f4f5f6"/><stop offset="1" stop-color="#b9bdc3"/></radialGradient></defs><path d="M462 24C640 24 742 40 768 140C798 262 811 500 811 800C811 1100 800 1300 782 1450C762 1600 700 1666 462 1666C224 1666 162 1600 142 1450C124 1300 112 1100 112 800C112 500 126 262 156 140C182 40 284 24 462 24Z" fill="#2c3a5e"/><path d="M462 24C640 24 742 40 768 140C798 262 811 500 811 800C811 1100 800 1300 782 1450C762 1600 700 1666 462 1666C224 1666 162 1600 142 1450C124 1300 112 1100 112 800C112 500 126 262 156 140C182 40 284 24 462 24Z" fill="url(#nkG)"/><path d="M462 44C632 44 728 58 742 150L748 770C748 960 622 1078 462 1078C302 1078 176 960 176 770L182 150C196 58 292 44 462 44Z" fill="url(#nkS)"/><path d="M462 70C618 70 704 84 714 164L718 760C718 842 668 868 610 868L314 868C256 868 206 842 206 760L210 164C220 84 306 70 462 70Z" fill="#2f3e64"/><path d="M462 70C618 70 704 84 714 164L718 760C718 842 668 868 610 868L314 868C256 868 206 842 206 760L210 164C220 84 306 70 462 70Z" fill="url(#nkG)" opacity=".6"/>${[92, 126, 160, 194, 228].map((y) => `<ellipse cx="462" cy="${y}" rx="15" ry="11" fill="#141a2a"/>`).join('')}<rect x="352" y="326" width="221" height="50" rx="4" fill="#15171b"/><text x="462" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#e8e8e8" letter-spacing="1">SOMMIA</text><rect x="222" y="450" width="486" height="348" rx="34" fill="#a9c262"/><rect x="222" y="450" width="486" height="348" rx="34" fill="#000" opacity=".06"/><g fill="#1d2a10" font-family="Pixelify Sans, monospace" font-weight="700"><text x="648" y="510" text-anchor="end" font-size="50">12:00</text><text x="465" y="772" text-anchor="middle" font-size="54">Menu</text></g><g fill="#1d2a10">${[0, 1, 2, 3].map((k) => `<rect x="244" y="${690 - k * 34}" width="${10 + k * 4}" height="24"/>`).join('')}<rect x="672" y="580" width="16" height="130"/></g><path d="M330 900C330 870 400 862 462 862C524 862 594 870 594 900C594 930 524 938 462 938C400 938 330 930 330 900Z" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/><rect x="408" y="890" width="108" height="9" rx="4.5" fill="#3aa4e6"/><rect x="222" y="910" width="126" height="78" rx="22" transform="rotate(14 285 949)" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/><rect x="510" y="930" width="190" height="96" rx="24" transform="rotate(-16 605 978)" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/>${[[1118, 1140, 1108], [1230, 1255, 1222], [1345, 1370, 1338], [1460, 1488, 1455]].map((r, k) => [[258 + k * 9, r[0], 9], [462, r[1], 0], [665 - k * 8, r[2], -9]].map(([x, y, a]) => `<ellipse cx="${x}" cy="${y}" rx="72" ry="42" transform="rotate(${a} ${x} ${y})" fill="url(#nkK)" stroke="#7d828a" stroke-width="3"/>`).join('')).join('')}</svg>`,
     pocket: `<svg viewBox="0 0 74 122" aria-hidden="true"><rect x="2" y="2" width="70" height="118" rx="12" fill="#f3f1ec" stroke="#c9c3b6"/><rect x="9" y="9" width="56" height="48" rx="4" fill="#2b2e2a"/><rect x="12" y="12" width="50" height="42" rx="2" fill="#c9dcb6"/><rect x="14" y="18" width="46" height="5" fill="#1c2614"/><rect x="14" y="26" width="34" height="3" fill="#55603f"/><rect x="14" y="32" width="40" height="3" fill="#55603f"/><circle cx="37" cy="88" r="24" fill="#fbfaf7" stroke="#d9d4c8"/><circle cx="37" cy="88" r="8.5" fill="#ece9e2" stroke="#d9d4c8"/></svg>`,
     now: `<svg viewBox="0 0 66 122" aria-hidden="true"><rect x="1" y="1" width="64" height="120" rx="12" fill="#1b1c1f" stroke="#55575c" stroke-width=".8"/><rect x="4" y="4" width="58" height="114" rx="9" fill="#f5f7fa"/><rect x="24.5" y="7.2" width="17" height="5" rx="2.5" fill="#1b1c1f"/><rect x="10" y="20" width="8" height="2.6" rx="1.3" fill="#ff6b35"/><rect x="10" y="30" width="40" height="6" rx="2" fill="#1d1f24"/><rect x="10" y="39" width="30" height="6" rx="2" fill="#3d68ff"/><rect x="10" y="50" width="44" height="2.4" rx="1.2" fill="#aab1bc"/><rect x="10" y="55" width="36" height="2.4" rx="1.2" fill="#aab1bc"/><circle cx="33" cy="82" r="15" fill="#e6ebf2"/>${AJ(33, 82, .5, '#1d1f24')}<rect x="10" y="104" width="22" height="6" rx="3" fill="#1d1f24"/></svg>`,
     iphone: `<svg viewBox="0 0 66 122" aria-hidden="true"><defs><linearGradient id="ipR" x1="0" x2="1"><stop offset="0" stop-color="#8d9298"/><stop offset=".3" stop-color="#f2f3f4"/><stop offset=".7" stop-color="#c5c9ce"/><stop offset="1" stop-color="#7f848a"/></linearGradient></defs><rect x="1" y="1" width="64" height="120" rx="11" fill="url(#ipR)"/><rect x="2.6" y="2.6" width="60.8" height="116.8" rx="9.6" fill="#0b0b0b"/><rect x="27" y="10" width="12" height="2" rx="1" fill="#2b2b2b"/><rect x="7.5" y="21" width="51" height="76.5" fill="#000"/>${[0, 1, 2].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${10 + c * 12.2}" y="${25 + r * 14.5}" width="9" height="9" rx="2" fill="hsl(${(r * 4 + c) * 33} 70% 55%)"/>`).join('')).join('')}<rect x="7.5" y="84" width="51" height="13.5" fill="#a9a9a9"/>${[0, 1, 2, 3].map((c) => `<rect x="${10 + c * 12.2}" y="86.2" width="9" height="9" rx="2" fill="hsl(${120 + c * 70} 65% 55%)"/>`).join('')}<circle cx="33" cy="109" r="6.2" fill="#121212" stroke="#3a3a3a" stroke-width=".8"/><rect x="30.6" y="106.6" width="4.8" height="4.8" rx="1.2" fill="none" stroke="#9a9a9a" stroke-width=".7"/></svg>`
@@ -506,6 +510,15 @@
     /* The tile's drawing becomes the phone (and back), by the same flight
        as the computers, its photograph sharpening in mid-air. */
     const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702, [232, 452, 470, 342, 40, '#a9c262']], pocket: ['assets/images/isommi-classic.webp', 947, 1661, [168, 151, 600, 489, 6, '#b3c0da']], iphone: ['retro/dev/iphone-2g.webp', 795, 1508, [68, 262, 661, 991, 0, '#000']] };
+    /* The photographs are fetched and decoded while the picker is up, so
+       the first flight has its picture as surely as every later one. */
+    const SHOTS = {};
+    Object.keys(SHOT).forEach((id) => {
+      const im = new Image();
+      im.src = SHOT[id][0];
+      SHOTS[id] = (im.decode ? im.decode() : new Promise((r) => { im.onload = r; })).catch(() => {});
+    });
+    const within = (p, ms) => Promise.race([p || Promise.resolve(), wait(ms)]);
     const parts = (id) => {
       const room = rooms[id], card = cards[PICKS.findIndex((x) => x.id === id)];
       const dev = room.querySelector('.nk, .pk, .ip'), box = room.querySelector('.nk-scale, .pk-scale, .ip-scale');
@@ -513,6 +526,10 @@
       return { room, dev, box, shot, art: card && card.querySelector('.mp-art svg') };
     };
     const morph = async (id) => {
+      /* A phone opened for the first time is laid out at its final size
+         (the iPhone waits on its photograph for that) before it is
+         measured, and its picture is ready to fly. */
+      await within(Promise.all([rooms[id].ready, SHOTS[id]]), 1500);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       const { room, dev, box, shot, art } = parts(id);
       const layer = room.querySelector('.bg-shapes');
@@ -548,6 +565,8 @@
         if (!rooms[id]) {
           const r = document.createElement('div');
           r.className = p.cls + ' phone-room' + (pick.hidden ? '' : ' no-intro');
+          // The phone starts up once it is in the hand, not mid-flight.
+          r.landed = new Promise((res) => { r.land = res; });
           host.appendChild(r);
           rooms[id] = r;
           p.mod().start(r, () => showPicker());
@@ -565,6 +584,7 @@
         pick.hidden = true;
         pick.classList.remove('is-leaving');
       } else await fade(async () => open());
+      if (rooms[id].land) rooms[id].land();
     }
 
     async function pickerNow() {

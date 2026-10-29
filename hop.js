@@ -6,9 +6,9 @@
    from foot to foot with excitement as the lines get written, and throws
    the sheet at the screen; the resume page then fades in from
    it. Any other page gets a couple of happy hops. Links back to the home
-   page (the era picker) play its own loading screen; so the trip there is
-   the mark flying down from the nav to where that screen draws it, turning
-   to pixels as it lands. New tabs,
+   page (the era picker) or to the standard site play that page's own
+   loading screen; so the trip there is the mark flying down from the nav to
+   where that screen draws it (turning to pixels on the way to the picker). New tabs,
    downloads, mail links and anything on another site are left alone. With
    reduced motion the page simply changes.
 
@@ -793,30 +793,49 @@
     }).then(ended);
   };
 
+  /* Where the standard site's loading screen draws its mark. This page carries
+     the same stylesheet, so the loader's own markup is laid out here unseen
+     and measured: whatever size the screen gives the mark and its bar, the
+     flight lands on it. Its paper runs the large viewport's height, unless
+     the page opens on a #link. */
+  const homeMarkBox = (u) => {
+    const probe = document.createElement('div');
+    probe.className = 'page-loader is-fixed';
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText = `visibility:hidden;pointer-events:none;bottom:auto;height:${u.hash ? '100vh' : '100lvh'}`;
+    probe.innerHTML = '<div class="loader-card"><div class="m-load"><span class="m-load-mark"></span>' +
+      '<span class="m-load-bar"><span class="m-load-line"></span></span></div></div>';
+    document.body.appendChild(probe);
+    const rect = probe.querySelector('.m-load-mark').getBoundingClientRect();
+    probe.remove();
+    return { vb: [8, 8, 48, 42], rect };
+  };
+
   const go = (url) => {
     if (going) return;
     if (reduce.matches) { location.href = url; return; }
     const u = new URL(url, location.href);
     const forResume = /resume\.html$/i.test(u.pathname);
     const forHome = isHome(u);
+    const forClassic = isClassic(u);
     going = true;
     lock(true);
     injectCss();
     const veil = document.createElement('div');
-    veil.className = `hop ${forResume || forHome ? 'hop-lead' : 'hop-p'}${forHome ? ' hop-px' : ''}`;
+    veil.className = `hop ${forResume || forHome || forClassic ? 'hop-lead' : 'hop-p'}${forHome ? ' hop-px' : ''}`;
     veil.setAttribute('aria-hidden', 'true');
     // For the resume and home the paper only fades in here, under the mark
     // in flight: the scene itself plays on the next page.
-    if (!forResume && !forHome) veil.innerHTML = mark;
+    if (!forResume && !forHome && !forClassic) veil.innerHTML = mark;
     document.body.appendChild(veil);
     // Fades in from the very next style change, not after a frame or two,
     // so the paper is never late under the flying mark.
     void veil.offsetWidth;
     veil.classList.add('is-on');
-    if (forResume || forHome) {
-      try { sessionStorage.setItem(forResume ? 'hop-scene' : 'hop-px', '1'); } catch { location.href = url; return; }
+    if (forResume || forHome || forClassic) {
+      try { sessionStorage.setItem(forResume ? 'hop-scene' : forHome ? 'hop-px' : 'hop-home', '1'); } catch { location.href = url; return; }
       if (forResume) warm();
-      (forResume ? fly(resumeMarkBox()) : pixelFly()).then(() => { location.href = url; });
+      (forResume ? fly(resumeMarkBox()) : forHome ? pixelFly() : fly(homeMarkBox(u))).then(() => { location.href = url; });
       return;
     }
     setTimeout(() => { location.href = url; }, DANCE + 60);
@@ -933,6 +952,8 @@
   });
 
   const isHome = (u) => /\/(index\.html)?$/.test(u.pathname);
+  // The standard site, which has its own loading screen to land on.
+  const isClassic = (u) => /\/classic\.html$/.test(u.pathname);
 
   // Arriving from a click on Resume (see resume.html's head): start once the
   // fonts are in, so the layout the sheet lands on has stopped moving.

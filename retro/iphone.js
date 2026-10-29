@@ -75,7 +75,10 @@ window.IPHONE = { start(room, exit) {
 
   /* The photographed handset, when it is there. */
   const photo = new Image();
-  photo.onload = () => { dev.classList.add('is-photo'); dev.style.setProperty('--photo', `url("${new URL(PHOTO, location.href).href}")`); fit(); };
+  room.ready = new Promise((done) => {
+    photo.onload = () => { dev.classList.add('is-photo'); dev.style.setProperty('--photo', `url("${new URL(PHOTO, location.href).href}")`); fit(); done(); };
+    photo.onerror = done;
+  });
   photo.src = PHOTO;
 
   /* Same size and shape as ever, scaled to the room the browser leaves
@@ -1509,7 +1512,7 @@ window.IPHONE = { start(room, exit) {
   /* The silver mark: it settles, a shine crosses it, a sparkle glints on
      its corner, then it swells and fades into the lock screen. */
   drawBoard();
-  (window.READY || Promise.resolve()).then(() => {
+  Promise.all([window.READY, room.landed]).then(() => {
     boot.classList.add('is-on');
     setTimeout(() => boot.classList.add('is-shine'), 250);
     setTimeout(() => boot.classList.add('is-out'), 1150);

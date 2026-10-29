@@ -204,6 +204,7 @@ window.NOKIA = { start(room, exit) {
 
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   (async () => {
+    await room.landed;
     await wait(250);
     light();
     view.className = 'nk-view t-boot';

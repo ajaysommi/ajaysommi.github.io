@@ -317,10 +317,17 @@ window.RETRO = (function () {
     img.src = src;
   });
 
+  /* What a visitor does on the machines (messages read, notes written,
+     icons moved, settings changed) lasts while the page is open; a reload
+     starts every machine fresh. Kept as JSON so a value read back is a
+     copy, as it was when this was stored in the browser. What older
+     visits left in the browser is cleared away. */
+  const kept = new Map();
   const store = {
-    get(k, d) { try { const v = localStorage.getItem('retro-' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem('retro-' + k, JSON.stringify(v)); } catch (e) {} }
+    get(k, d) { return kept.has(k) ? JSON.parse(kept.get(k)) : d; },
+    set(k, v) { kept.set(k, JSON.stringify(v)); }
   };
+  try { Object.keys(localStorage).filter((k) => k.startsWith('retro-')).forEach((k) => localStorage.removeItem(k)); } catch (e) {}
 
   /* The space a phone really has: the small viewport height (browser bars
      showing, as svh measures it) minus the safe areas, the same allowance
@@ -362,7 +369,10 @@ window.RETRO = (function () {
       return;
     }
     r.setProperty('--tw', W + 'px'); r.setProperty('--th', H + 'px');
-    r.setProperty('--vvh', (vv ? vv.height : innerHeight) + 'px');
+    /* Never taller than the small viewport: where a browser's bar floats
+       over the page (Safari's bottom bar), nothing is drawn under it. */
+    viewport();
+    r.setProperty('--vvh', Math.min(vv ? vv.height : innerHeight, probe.offsetHeight || Infinity) + 'px');
     r.setProperty('--vvt', (vv ? Math.max(0, vv.offsetTop) : 0) + 'px');
     dispatchEvent(new Event('retro-fit'));
   };
