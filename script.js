@@ -4155,18 +4155,16 @@ console.log(
 
 
 /* ==========================================================================
-   The way into the eras (the banner over the hero). It waits for the page
-   to finish loading, then the AJ mark serves it: the mark hops down out of
-   the nav (on a phone, where the nav is at the bottom, it drops in from
-   the top of the screen) and stops over where the banner goes, the page
-   eases down to make room, the banner is set down under the mark like a
-   tray, and it lands with a shine, a glow and a few sparkles while the
-   mark gives a little bounce; then the mark hops home. If the page has
-   already been scrolled, or motion is reduced, the banner is simply there
-   (scrolled for, so nothing jumps). Once up, the year in its headline
-   moves through the eras of this visitor's kind of device, scrambling
-   through digits and landing in each era's type, and the matching machine
-   lifts. Closed, it stays away until the page is loaded again.
+   The way into the eras (the banner over the hero; on a phone, a pill
+   floating over the bottom nav). It waits for the page to finish loading;
+   then the nav's AJ mark glances toward it and it launches out from the
+   mark's direction (on desktop the page eases down to make room), landing
+   with a shine and a glow. If the page has already been scrolled, or
+   motion is reduced, it is simply there (scrolled for, so nothing jumps).
+   Once up, the year in it moves through the eras of this visitor's kind
+   of device, scrambling through digits and landing in each era's type,
+   and the matching machine lifts. Closed, it stays away until the page is
+   loaded again.
    ========================================================================== */
 (function eraBanner() {
   const wrap = document.getElementById('eraAd');
@@ -4264,85 +4262,38 @@ console.log(
   const serve = async () => {
     const mark = navMark();
     if (reduce || !mark || (!phone.matches && scrollY > 40)) { instantly(); return; }
-    const nr = mark.getBoundingClientRect();
-    /* The copy is the nav mark itself, drawn larger: the same drawing in a
-       box of the same shape, scaled from its top left corner, so at home
-       it covers the real mark exactly and the hand back is seamless. */
-    const S = phone.matches ? 34 : 38, Hh = S * nr.height / nr.width;
-    const home = { x: nr.left, y: nr.top, s: nr.width / S };
-    let spot;
-    if (phone.matches) {
-      const br = box.getBoundingClientRect();
-      spot = { x: br.left + 30, y: br.top - Hh + 5, s: 1 };
-    } else {
-      const br = box.getBoundingClientRect(), top = wrap.getBoundingClientRect().top + padPx();
-      spot = { x: br.left + 48, y: top - Hh + 5, s: 1 };
-    }
-    const w = document.createElement('div');
-    w.className = 'era-waiter';
-    w.setAttribute('aria-hidden', 'true');
-    w.innerHTML = `<div class="ew-y"><div class="ew-s" style="transform-origin:0 0"><div class="ew-b" style="width:${S}px;height:${Hh}px;transform-origin:50% 100%"><svg viewBox="${mark.getAttribute('viewBox')}" style="width:100%;height:100%">${mark.innerHTML}</svg></div></div></div>`;
-    document.body.appendChild(w);
-    const wy = w.firstChild, ws = wy.firstChild, body = ws.firstChild;
-    const place = (p) => {
-      w.style.transform = `translateX(${p.x}px)`;
-      wy.style.transform = `translateY(${p.y}px)`;
-      ws.style.transform = `scale(${p.s})`;
-    };
-    place(home);
-    mark.style.visibility = 'hidden';
-    /* A hop as a thrown thing moves: steady across, rising to its peak
-       easing off, falling from it speeding up, and the peak timed by how
-       far it has to rise and to fall. Each motion is its own smooth curve,
-       so the path has no kink and the speed no jolt. */
-    const hop = (a, b, dur, rise) => {
-      // never higher than just inside the top of the window
-      const apex = Math.max(Math.min(a.y, b.y) - rise, Math.min(a.y, b.y, 6));
-      const up = Math.sqrt(a.y - apex), down = Math.sqrt(b.y - apex), at = up / (up + down);
-      const o = { duration: dur, fill: 'forwards' };
-      return Promise.all([
-        w.animate([{ transform: `translateX(${a.x}px)` }, { transform: `translateX(${b.x}px)` }], { ...o, easing: 'cubic-bezier(.35,.1,.65,.9)' }).finished,
-        wy.animate([
-          { transform: `translateY(${a.y}px)`, easing: 'cubic-bezier(.33,.67,.67,1)' },
-          { transform: `translateY(${apex}px)`, offset: at, easing: 'cubic-bezier(.33,0,.67,.33)' },
-          { transform: `translateY(${b.y}px)` }
-        ], o).finished,
-        ws.animate([{ transform: `scale(${a.s})` }, { transform: `scale(${b.s})` }], { ...o, easing: 'cubic-bezier(.4,0,.2,1)' }).finished
-      ]);
-    };
-    const squash = (sx, sy, dur) => body.animate([{ transform: 'none' }, { transform: `scale(${sx}, ${sy})`, offset: .35 }, { transform: 'none' }], { duration: dur, easing: 'cubic-bezier(.3,.7,.4,1)' }).finished;
-
-    // a crouch, then away
-    await squash(1.12, .86, 160);
-    await hop(home, spot, 640, phone.matches ? 46 : 40);
-    squash(1.16, .82, 240);
-    // the page makes room (on a phone nothing moves: it floats), and the
-    // banner is set down by the mark like a tray
+    /* The mark stays where it is. Its eye glances toward the banner's spot,
+       the banner launches out from the mark's direction, and the eye comes
+       back to rest. */
+    const nr = mark.getBoundingClientRect(), mx = nr.left + nr.width / 2, my = nr.top + nr.height / 2;
+    const br = box.getBoundingClientRect();
+    const top = phone.matches ? br.top : wrap.getBoundingClientRect().top + padPx();
+    const h = phone.matches ? br.height : 70;
+    const tx = br.left + Math.min(br.width / 2, 260) - mx, ty = top + h / 2 - my, len = Math.hypot(tx, ty) || 1;
+    box.style.setProperty('--ox', `${mx - br.left}px`);
+    box.style.setProperty('--oy', `${my - top}px`);
+    const eye = mark.querySelector('circle');
+    // in the drawing's own units: a clear look, most of the eye's own width
+    const look = eye && eye.animate([{ transform: 'none' }, { transform: `translate(${(tx / len * 6).toFixed(2)}px, ${(ty / len * 6).toFixed(2)}px)` }],
+      { duration: 320, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' });
+    await wait(420);
     wrap.classList.add('is-open');
-    body.animate([{ transform: 'none' }, { transform: 'rotate(-12deg)', offset: .4 }, { transform: 'rotate(4deg)', offset: .75 }, { transform: 'none' }], { duration: 760, easing: 'ease-in-out' });
-    await wait(phone.matches ? 140 : 260);
+    await wait(phone.matches ? 0 : 120);
     wrap.classList.add('is-served');
-    await wait(520);
-    // landing: shine, glow, sparkles, and a happy bounce from the mark
+    await wait(700);
+    // landing: a shine and a glow (and on a phone, a few sparkles)
     const shine = document.createElement('span');
     shine.className = 'era-ad-shine';
     ad.appendChild(shine);
     ad.classList.add('is-glow');
     wrap.classList.add('is-done');
-    sparkle();
-    await body.animate([
-      { transform: 'none', easing: 'cubic-bezier(.33,.67,.67,1)' },
-      { transform: 'translateY(-14px)', offset: .45, easing: 'cubic-bezier(.33,0,.67,.33)' },
-      { transform: 'none' }
-    ], { duration: 420 }).finished;
-    await squash(1.12, .88, 200);
+    if (phone.matches) sparkle();
     setTimeout(() => { ad.classList.remove('is-glow'); shine.remove(); }, 1100);
-    await wait(380);
-    // home again, landing exactly on the real mark, which takes over
-    await squash(1.1, .88, 150);
-    await hop(spot, home, 600, phone.matches ? 30 : 34);
-    mark.style.visibility = '';
-    w.remove();
+    await wait(500);
+    if (look) {
+      look.reverse();
+      look.finished.then(() => look.cancel());
+    }
     cycle();
   };
 
