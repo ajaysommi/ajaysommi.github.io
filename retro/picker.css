@@ -11,15 +11,18 @@
    within the visible height, so the extra only shows more room. */
 .phone-host { bottom: auto; top: var(--vvt, 0px); height: calc(100vh + 80px); height: calc(100lvh + 80px); overflow: hidden; }
 html.is-turned .phone-host { height: var(--vvh, 100%); }
-.picker.is-phones::before { content: ''; position: fixed; inset: 0 0 auto; height: calc(100vh + 80px); height: calc(100lvh + 80px); z-index: -1; pointer-events: none;
-  background: radial-gradient(70% 50% at 50% 38%, rgba(255,255,255,.07), transparent 70%), linear-gradient(180deg, #2a2a2c, #121214); }
-html.is-turned .picker.is-phones::before { height: 100%; }
+/* Safari 26 tints its bars with the background of a fixed box touching the
+   top or bottom edge (even an invisible one), and only otherwise shows the
+   page itself through them, as on the standard site. So on a phone the
+   full screen layers are not fixed: the page doesn't scroll, so placed
+   from its top they sit exactly where fixed ones would. */
+html.is-mobile .phone-host, html.is-mobile .picker { position: absolute; }
 .os-screen { position: absolute; inset: 0; overflow: hidden; }
 .phone-host { background: radial-gradient(90% 60% at 50% 30%, #4a3f33, #1c1915 75%); }
 .phone-room { position: absolute; inset: 0; }
 .is-desk .phone-host, .is-mobile .os-host { display: none; }
 
-.curtain { position: fixed; inset: 0; z-index: 9000; background: #000; opacity: 0; pointer-events: none; transition: opacity .38s ease; }
+.curtain { position: fixed; inset: 0; z-index: 9000; background: #000; opacity: 0; pointer-events: none; transition: opacity .38s ease; display: none; }
 .curtain.is-on { opacity: 1; pointer-events: auto; }
 
 .picker {
@@ -72,7 +75,11 @@ html.is-turned .picker.is-phones::before { height: 100%; }
 
 /* ---------------------------------------------------------------- phones */
 
-.picker.is-phones { inset: auto 0; top: var(--vvt, 0px); height: var(--vvh, 100svh); place-items: stretch; display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: calc(env(safe-area-inset-top) + 20px) 0 calc(env(safe-area-inset-bottom) + 20px); overflow: hidden; }
+.picker.is-phones { inset: auto 0; top: var(--vvt, 0px); box-sizing: border-box; place-items: stretch; display: flex; flex-direction: column; justify-content: center; gap: 18px; overflow: hidden;
+  /* Runs on under the bottom bar like the rooms, its cards centred in the
+     part of it the browser shows. */
+  height: calc(100lvh + 80px); padding: calc(env(safe-area-inset-top) + 20px) 0 calc(100lvh + 80px - var(--vvh, 100svh) + env(safe-area-inset-bottom) + 20px); }
+html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: calc(env(safe-area-inset-bottom) + 20px); }
 .mp-head { text-align: center; padding: 0 20px; }
 .mp-head svg { width: 32px; height: 32px; image-rendering: pixelated; color: #eee; }
 .mp-head h1 { margin: 8px 0 4px; font: 600 24px var(--pixel); }

@@ -32,11 +32,16 @@
   document.addEventListener('sfx-mute', sndDraw);
   document.body.appendChild(snd);
   const osOn = (on) => root.classList.toggle('os-on', on);
+  /* The curtain is only in the page while it is used: Safari 26 would
+     otherwise read its black, even invisible, as the colour for its bars. */
   const fade = async (fn) => {
+    curtain.style.display = 'block';
+    void curtain.offsetWidth;
     curtain.classList.add('is-on');
     await wait(380);
     await fn();
     curtain.classList.remove('is-on');
+    setTimeout(() => { if (!curtain.classList.contains('is-on')) curtain.style.display = ''; }, 420);
   };
 
   /* Behind both pickers: small filled shapes from every era, with
