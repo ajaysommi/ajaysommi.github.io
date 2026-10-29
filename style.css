@@ -5404,24 +5404,24 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .card p { margin-bottom: 18px; }
 
 
-/* "Step into another era": ringed in the six stripes of the old rainbow
-   logo; on hover the stripes run around the ring, the glow picks up their
-   colours and the label gets a one-pixel misregistered print shadow. */
-.btn.btn-era {
-  border: 2px solid transparent;
-  background:
-    linear-gradient(var(--surface), var(--surface)) padding-box,
-    linear-gradient(90deg, #61bb46, #fdb827, #f5821f, #e03a3e, #963d97, #009ddc, #61bb46) border-box;
-  background-size: 100% 100%, 300% 100%;
-  background-position: 0 0, 0 0;
-  transition: box-shadow .3s ease, transform .2s ease;
+/* "Step into another era": the ghost button, ringed in the six stripes of
+   the old rainbow logo. The ring is its own layer, cut down to an outline,
+   so the button keeps the ghost's own fill in either theme rather than a
+   painted one. With a mouse, hovering runs the stripes once round to the
+   right, gently, and they slow to a stop where they began (300% of the
+   travel is one whole turn); the glow picks up their colours. A tap does
+   what any other button's does. */
+.btn.btn-era { border-color: transparent; transition: box-shadow .3s ease, transform .2s ease; }
+.btn.btn-era::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none;
+  background: linear-gradient(90deg, #61bb46, #fdb827, #f5821f, #e03a3e, #963d97, #009ddc, #61bb46) 0 0 / 300% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
 }
-/* Hovered, the ring runs its colours once round to the right, gently, and
-   slows to a stop where it began. (300% of the travel is one whole turn.) */
-.btn.btn-era:hover {
-  box-shadow: -3px 0 14px rgba(97,187,70,.35), 3px 0 14px rgba(0,157,220,.35), 0 0 22px rgba(224,58,62,.25), 0 14px 32px rgba(0,0,0,.28);
-  text-shadow: 1px 0 0 rgba(224,58,62,.65), -1px 0 0 rgba(0,157,220,.65);
-  animation: era-run 1.6s cubic-bezier(.3, .1, .25, 1) 1;
+@media (hover: hover) {
+  .btn.btn-era:hover { box-shadow: -3px 0 14px rgba(97,187,70,.35), 3px 0 14px rgba(0,157,220,.35), 0 0 22px rgba(224,58,62,.25), 0 14px 32px rgba(0,0,0,.28); }
+  .btn.btn-era:hover::before { animation: era-run 1.6s cubic-bezier(.3, .1, .25, 1) 1; }
 }
-@keyframes era-run { from { background-position: 0 0, 300% 0; } to { background-position: 0 0, 0 0; } }
-@media (prefers-reduced-motion: reduce) { .btn.btn-era:hover { animation: none; } }
+@keyframes era-run { from { background-position: 300% 0; } to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .btn.btn-era:hover::before { animation: none; } }
