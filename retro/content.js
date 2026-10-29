@@ -355,6 +355,12 @@ window.RETRO = (function () {
      back a quarter turn against the turn, so nothing reflows into a
      landscape (or desktop) layout. */
   const turned = () => document.documentElement.classList.contains('is-turned');
+  /* Safari zooms on a pinch even when the page asks it not to; on a phone
+     the pinch is simply refused. */
+  if (document.documentElement.dataset.mode === 'mobile') {
+    ['gesturestart', 'gesturechange'].forEach((t) => document.addEventListener(t, (e) => e.preventDefault(), { passive: false }));
+    document.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  }
   const sync = () => {
     const vv = window.visualViewport, root = document.documentElement, r = root.style;
     const W = vv ? vv.width : innerWidth, H = vv ? vv.height : innerHeight;

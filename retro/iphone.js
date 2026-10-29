@@ -1,6 +1,6 @@
 /* ==========================================================================
    iPhone 2G, one of the phones on the era picker. The handset is a
-   photograph (retro/dev/iphone-2g.webp, kept out of git) when it is
+   photograph (assets/images/iphone-2g.webp) when it is
    present, with the live screen laid exactly over its display: in that
    photo the display is the 661 by 991 pixel box at (68, 262), a 2:3 box
    the 320 by 480 point screen fills at 2.0656 pixels a point. Without the
@@ -16,7 +16,7 @@ window.IPHONE = { start(room, exit) {
   const P = window.PORTFOLIO;
   const { esc, store, usedAt } = window.RETRO;
   const SFX = window.SFX;
-  const PHOTO = 'retro/dev/iphone-2g.webp';
+  const PHOTO = 'assets/images/iphone-2g.webp';
   const WALL = 'assets/images/iphone-wallpaper.webp';
   const HV = 'font-family="Helvetica,Helvetica Neue,Arial,sans-serif"';
 
@@ -87,11 +87,11 @@ window.IPHONE = { start(room, exit) {
     const v = window.RETRO.viewport();
     const w = dev.classList.contains('is-photo') ? 385 : 396;
     const h = dev.classList.contains('is-photo') ? 730 : 748;
-    /* 56 points clear for the buttons on top, 26 at the bottom so a
-       browser's toolbar never touches the phone. */
-    const s = Math.min(1.3, (v.h - 82) / h, (v.w - 24) / w);
+    /* 16 points clear at the top, 72 at the bottom for the row of
+       buttons under the phone (which sits above any browser toolbar). */
+    const s = Math.min(1.3, (v.h - 88) / h, (v.w - 24) / w);
     scaleBox.style.transform = `scale(${s})`;
-    scaleBox.style.marginTop = v.top + 56 + Math.max(0, (v.h - 82 - h * s) / 2) + 'px';
+    scaleBox.style.marginTop = v.top + 16 + Math.max(0, (v.h - 88 - h * s) / 2) + 'px';
   };
   fit();
   addEventListener('retro-fit', fit);
@@ -1487,12 +1487,15 @@ window.IPHONE = { start(room, exit) {
     if (state === 'locked') knob.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(16px)' }, { transform: 'translateX(0)' }], { duration: 380, easing: 'ease-out' });
   });
   const wake = () => { asleep = false; off.classList.remove('on'); if (state === 'locked') armSleep(); };
-  /* Left on the lock screen, the display goes dark after a few seconds,
-     as the real one did; the home or sleep button wakes it. */
-  let sleepT = 0;
+  /* Left on the lock screen, the display goes dark after a while, as the
+     real one did; the home or sleep button wakes it. Just after start up
+     there is longer to take in the lock screen and its notifications. */
+  let sleepT = 0, firstSleep = true;
   function armSleep() {
     clearTimeout(sleepT);
-    sleepT = setTimeout(() => { if (state === 'locked' && !asleep && !drag) { asleep = true; off.classList.add('on'); } }, 5000);
+    const ms = firstSleep ? 20000 : 10000;
+    firstSleep = false;
+    sleepT = setTimeout(() => { if (state === 'locked' && !asleep && !drag) { asleep = true; off.classList.add('on'); } }, ms);
   }
   room.querySelector('.ip-sleep').addEventListener('click', () => {
     if (state === 'boot') return;

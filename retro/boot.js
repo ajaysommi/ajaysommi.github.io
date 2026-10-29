@@ -458,7 +458,25 @@
     const pick = document.getElementById('picker');
     const rooms = {};
     let cur = null;
-    let sel = Math.max(0, PHONES.findIndex((p) => p.id === store.get('phone', 'iphone')));
+    let sel = Math.max(0, PHONES.findIndex((p) => p.id === store.get('phone', 'pocket')));
+
+    /* The browser's own bars, above and below the page, take the colours
+       of whatever is on screen: its top edge for the status bar, its
+       bottom edge for the toolbar, so the room runs on under them. */
+    const EDGE = {
+      pick: ['#2a2a2c', '#121214'], nokia: ['#9aa8c6', '#74859e'], iphone: ['#515257', '#2e2f33'],
+      pocket: ['#dcd6e8', '#beb4d0'], 'pocket-sky': ['#d2e1f3', '#a8bfdc'], 'pocket-mint': ['#d3ece0', '#a5d2b7'],
+      'pocket-sand': ['#ece2cf', '#d0bf9f'], 'pocket-slate': ['#3e434d', '#202228']
+    };
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    const tint = (id) => {
+      const bg = id === 'pocket' && rooms.pocket && rooms.pocket.dataset.bg;
+      const [top, bottom] = EDGE[bg && EDGE['pocket-' + bg] ? 'pocket-' + bg : id] || EDGE.pick;
+      if (themeMeta) themeMeta.content = top;
+      document.documentElement.style.background = bottom;
+      document.body.style.background = `linear-gradient(${top}, ${bottom})`;
+    };
+    tint('pick');
 
     pick.classList.add('is-phones');
     pick.innerHTML = TIMEART(true) + `
@@ -509,7 +527,7 @@
 
     /* The tile's drawing becomes the phone (and back), by the same flight
        as the computers, its photograph sharpening in mid-air. */
-    const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702, [232, 452, 470, 342, 40, '#a9c262']], pocket: ['assets/images/isommi-classic.webp', 947, 1661, [168, 151, 600, 489, 6, '#b3c0da']], iphone: ['retro/dev/iphone-2g.webp', 795, 1508, [68, 262, 661, 991, 0, '#000']] };
+    const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702, [232, 452, 470, 342, 40, '#a9c262']], pocket: ['assets/images/isommi-classic.webp', 947, 1661, [168, 151, 600, 489, 6, '#b3c0da']], iphone: ['assets/images/iphone-2g.webp', 795, 1508, [68, 262, 661, 991, 0, '#000']] };
     /* The photographs are fetched and decoded while the picker is up, so
        the first flight has its picture as surely as every later one. */
     const SHOTS = {};
@@ -570,9 +588,11 @@
           host.appendChild(r);
           rooms[id] = r;
           p.mod().start(r, () => showPicker());
+          new MutationObserver(() => { if (cur === id) tint(id); }).observe(r, { attributes: true, attributeFilter: ['data-bg'] });
           r.insertAdjacentHTML('afterbegin', window.SHAPES.layer(id, { count: 30, color: LOOK[id][0], opacity: LOOK[id][1], size: [24, 50], seed: id.length * 7 }));
         } else rooms[id].hidden = false;
         document.documentElement.dataset.phone = id;
+        tint(id);
         back.hidden = false;
         std.hidden = false;
         history.replaceState(null, '', '#' + id);
@@ -594,6 +614,7 @@
         cur = null;
         SFX.music(null);
         delete document.documentElement.dataset.phone;
+        tint('pick');
         back.hidden = true;
         std.hidden = true;
         history.replaceState(null, '', location.pathname + location.search);
