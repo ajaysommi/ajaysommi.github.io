@@ -512,14 +512,6 @@
   box-shadow: none;
   filter: drop-shadow(0 28px 50px rgba(0,0,0,.55));
 }
-/* The photo's black is lifted a hair, only where the handset is, so an
-   OLED screen lights the bezel too and the home button doesn't float in
-   switched off pixels. */
-.ip.is-photo::before { content: ''; position: absolute; inset: 0; pointer-events: none; }
-.ip.is-photo::before {
-  background: #0c0c0d; mix-blend-mode: lighten;
-  -webkit-mask: var(--photo) 0 0 / 100% 100% no-repeat; mask: var(--photo) 0 0 / 100% 100% no-repeat;
-}
 .ip.is-photo .ip-face { background: none; border-radius: 0; box-shadow: none; overflow: visible; }
 .ip.is-photo .ip-face::after, .ip.is-photo .ip-ear, .ip.is-photo .ip-ring, .ip.is-photo .ip-vol { display: none; }
 .ip.is-photo .ip-screen { left: 32.92px; top: 126.84px; }
