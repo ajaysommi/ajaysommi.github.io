@@ -413,6 +413,13 @@ html.is-turned .mp-art { height: min(calc(var(--th) * .36), 260px); }
 .os-host, .phone-host, .picker { -webkit-user-select: none; user-select: none; }
 .os-host .os-screen input, .os-host .os-screen textarea, .os-host .os-screen [contenteditable] { -webkit-user-select: text; user-select: text; }
 .bz-dev img { pointer-events: none; -webkit-user-drag: none; }
+/* On a phone, a press held or a finger dragged never selects the page or
+   brings up the copy menu (only fields that take typing can be selected),
+   and nothing zooms: no double tap, no pinch. The panning default is set
+   on every element with no weight, so anything with its own gestures
+   keeps them. */
+html.is-mobile *:not(input):not(textarea):not([contenteditable="true"]) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+:where(html.is-mobile, html.is-mobile *) { touch-action: pan-x pan-y; }
 
 /* The empty CD tray, in the system's own dialog style. */
 .cd-alert { position: absolute; inset: 0; z-index: 900; display: grid; place-items: center; background: rgba(0,0,0,.15); }
