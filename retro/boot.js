@@ -534,7 +534,7 @@
 
     /* The tile's drawing becomes the phone (and back), by the same flight
        as the computers, its photograph sharpening in mid-air. */
-    const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702, [232, 452, 470, 342, 40, '#a9c262']], pocket: ['assets/images/isommi-classic.webp', 947, 1661, [168, 151, 600, 489, 6, '#b3c0da']], iphone: ['assets/images/iphone-2g.webp?v=2', 795, 1508, [68, 262, 661, 991, 0, '#000']] };
+    const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702, [232, 452, 470, 342, 40, '#a9c262']], pocket: ['assets/images/isommi-classic.webp', 947, 1661, [168, 151, 600, 489, 6, '#b3c0da']], iphone: ['assets/images/iphone-2g.webp?v=3', 795, 1508, [68, 262, 661, 991, 0, '#000']] };
     /* The photographs are fetched and decoded while the picker is up, so
        the first flight has its picture as surely as every later one. */
     const SHOTS = {};
