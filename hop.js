@@ -6,8 +6,9 @@
    from foot to foot with excitement as the lines get written, and throws
    the sheet at the screen; the resume page then fades in from
    it. Any other page gets a couple of happy hops. Links back to the home
-   page play its own loading screen; so the trip there is only the mark
-   flying down from the nav to where that screen draws it. New tabs,
+   page (the standard site) or on to the era picker play that page's own
+   loading screen; so the trip there is the mark flying down from the nav to
+   where that screen draws it (turning to pixels on the way to the picker). New tabs,
    downloads, mail links and anything on another site are left alone. With
    reduced motion the page simply changes.
 
@@ -55,6 +56,8 @@
       transition: opacity .45s cubic-bezier(.4, 0, .2, 1);
     }
     .hop.is-on { opacity: 1; }
+    /* On the way to the era picker the paper is its loading screen's. */
+    .hop.hop-px::before { background: #16130f; }
     /* On the resume page the scene is already up when the page shows. */
     .hop.hop-live { opacity: 1; transition: none; }
     /* The sheet and the batter, together, so they can dissolve as one. */
@@ -653,7 +656,7 @@
      path bends gently and the speed never dips midway. The copy is drawn at
      its final size and scaled down to start, so it is sharp where it lands.
      Resolves when it has landed (at once if there is no mark to fly). */
-  const fly = (to) => new Promise((done) => {
+  const fly = (to, dress) => new Promise((done) => {
     const src = navMark();
     if (!src) { done(); return; }
     const svb = src.viewBox.baseVal;
@@ -674,6 +677,7 @@
     const f = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     f.setAttribute('viewBox', to.vb.join(' '));
     f.innerHTML = src.innerHTML;
+    if (dress) dress(f);
     Object.assign(f.style, { display: 'block', width: '100%', height: '100%', overflow: 'visible', transformOrigin: '50% 50%', willChange: 'transform' });
     frame.appendChild(f);
     document.body.appendChild(frame);
@@ -703,7 +707,93 @@
     return { vb: [3, 2.5, 57, 54], rect };
   };
 
-  /* Where the home page's loading screen draws its mark. This page carries
+  /* The era picker opens on its pixel mark, alone in the middle of a dark
+     screen. So the trip there flies the nav's mark to that very spot and,
+     as it settles, redraws it in pixels: square by square the pixel mark
+     comes in over the smooth one, which fades out from under it, until only
+     the pixel mark is left, exactly where the next page draws its own. That
+     page then opens with it already in place (see eras.html's loader). */
+  const PX = [
+    '.......##.......', '......####...bb.', '......####..bbbb', '.....######.bbbb',
+    '.....######..bb.', '....########....', '....########.bbb', '...####..###.bbb',
+    '...####..####bbb', '..####...####bbb', '..####rrrr...rrr', '.####..rrrrrrrrr',
+    '####...rrrrrrrr.', '........rrrrrr..', '..........rr....', '................'
+  ];
+  const PX_INK = { '#': '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
+  // The part of the smooth mark's drawing that the 16 by 16 grid covers.
+  const PX_VB = [8.86, 8.82, 44, 44];
+  const MORPH = 1180;   // ms from lift off to the last pixel
+  const pixelBox = () => {
+    const s = 112, w = document.documentElement.clientWidth, h = innerHeight;
+    return { left: (w - s) / 2, top: (h - s) / 2, width: s, height: s };
+  };
+  const pixelGrid = (box) => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    if (box) { g.setAttribute('x', box[0]); g.setAttribute('y', box[1]); g.setAttribute('width', box[2]); g.setAttribute('height', box[3]); }
+    g.setAttribute('viewBox', '0 0 16 16');
+    g.setAttribute('shape-rendering', 'crispEdges');
+    g.style.overflow = 'visible';
+    const cells = [];
+    PX.forEach((row, y) => [...row].forEach((ch, x) => {
+      if (!PX_INK[ch]) return;
+      const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1.02); r.setAttribute('height', 1.02);
+      r.setAttribute('fill', PX_INK[ch]);
+      r.dataset.ch = ch;
+      r.style.opacity = '0';
+      g.appendChild(r);
+      cells.push(r);
+    }));
+    // Shuffled, but roughly top to bottom, the way the loader draws them.
+    cells.sort((a, b) => (+a.getAttribute('y') + Math.random() * 6) - (+b.getAttribute('y') + Math.random() * 6));
+    return { g, cells };
+  };
+  /* Each piece of the smooth mark fades as its own pixels come in over it,
+     so it is never missing before they are there. */
+  const pixelate = (cells, smooth, from) => {
+    const span = MORPH - from - 140;
+    const at = new Map();
+    cells.forEach((c, i) => {
+      const t = from + span * Math.pow(i / cells.length, .85);
+      at.set(c, t);
+      c.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 90, delay: t, fill: 'forwards' });
+    });
+    // Which pixels draw which piece: the A, the dot, the stem, the smile.
+    const piece = (n) => (n.classList.contains('am-a') ? (c) => c.dataset.ch === '#'
+      : n.tagName === 'circle' ? (c) => c.dataset.ch === 'b' && +c.getAttribute('y') < 5
+      : n.tagName === 'rect' ? (c) => c.dataset.ch === 'b' && +c.getAttribute('y') >= 5
+      : (c) => c.dataset.ch === 'r');
+    smooth.forEach((n) => {
+      const times = cells.filter(piece(n)).map((c) => at.get(c)).sort((a, b) => a - b);
+      if (!times.length) return;
+      const start = times[Math.floor(times.length * .45)], end = times[times.length - 1] + 90;
+      n.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.max(80, end - start), delay: start, easing: 'ease-in', fill: 'forwards' });
+    });
+  };
+  const pixelFly = () => {
+    const rect = pixelBox();
+    const t0 = performance.now();
+    const ended = () => new Promise((r) => setTimeout(r, Math.max(0, MORPH + 60 - (performance.now() - t0))));
+    if (!navMark()) {
+      // No mark in view to carry over: the pixel one simply comes in there.
+      const { g, cells } = pixelGrid();
+      g.classList.add('hop-fly');
+      Object.assign(g.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
+      document.body.appendChild(g);
+      pixelate(cells, [], 120);
+      return ended();
+    }
+    return fly({ vb: PX_VB, rect }, (f) => {
+      const smooth = [...f.children];
+      // The smooth mark's ink turns to the pixel mark's as the room darkens.
+      f.querySelectorAll('.am-a').forEach((a) => a.animate([{ fill: getComputedStyle(a).fill }, { fill: PX_INK['#'] }], { duration: 420, easing: 'ease', fill: 'forwards' }));
+      const { g, cells } = pixelGrid(PX_VB);
+      f.appendChild(g);
+      pixelate(cells, smooth, 300);
+    }).then(ended);
+  };
+
+  /* Where the standard site's loading screen draws its mark. This page carries
      the same stylesheet, so the loader's own markup is laid out here unseen
      and measured: whatever size the screen gives the mark and its bar, the
      flight lands on it. Its paper runs the large viewport's height, unless
@@ -726,25 +816,26 @@
     if (reduce.matches) { location.href = url; return; }
     const u = new URL(url, location.href);
     const forResume = /resume\.html$/i.test(u.pathname);
-    const forHome = isHome(u);
+    const forHome = isEras(u);
+    const forClassic = isClassic(u);
     going = true;
     lock(true);
     injectCss();
     const veil = document.createElement('div');
-    veil.className = `hop ${forResume || forHome ? 'hop-lead' : 'hop-p'}`;
+    veil.className = `hop ${forResume || forHome || forClassic ? 'hop-lead' : 'hop-p'}${forHome ? ' hop-px' : ''}`;
     veil.setAttribute('aria-hidden', 'true');
     // For the resume and home the paper only fades in here, under the mark
     // in flight: the scene itself plays on the next page.
-    if (!forResume && !forHome) veil.innerHTML = mark;
+    if (!forResume && !forHome && !forClassic) veil.innerHTML = mark;
     document.body.appendChild(veil);
     // Fades in from the very next style change, not after a frame or two,
     // so the paper is never late under the flying mark.
     void veil.offsetWidth;
     veil.classList.add('is-on');
-    if (forResume || forHome) {
-      try { sessionStorage.setItem(forResume ? 'hop-scene' : 'hop-home', '1'); } catch { location.href = url; return; }
+    if (forResume || forHome || forClassic) {
+      try { sessionStorage.setItem(forResume ? 'hop-scene' : forHome ? 'hop-px' : 'hop-home', '1'); } catch { location.href = url; return; }
       if (forResume) warm();
-      fly(forResume ? resumeMarkBox() : homeMarkBox(u)).then(() => { location.href = url; });
+      (forResume ? fly(resumeMarkBox()) : forHome ? pixelFly() : fly(homeMarkBox(u))).then(() => { location.href = url; });
       return;
     }
     setTimeout(() => { location.href = url; }, DANCE + 60);
@@ -860,7 +951,10 @@
     if (src) src.style.visibility = '';
   });
 
-  const isHome = (u) => /\/(index\.html)?$/.test(u.pathname);
+  // The era picker, and the standard site (the home page) with its own
+  // loading screen to land on.
+  const isEras = (u) => /\/eras\.html$/.test(u.pathname);
+  const isClassic = (u) => /\/(index\.html)?$/.test(u.pathname);
 
   // Arriving from a click on Resume (see resume.html's head): start once the
   // fonts are in, so the layout the sheet lands on has stopped moving.
@@ -881,7 +975,7 @@
     if (u.origin !== location.origin || !/^https?:$/.test(u.protocol)) return;
     if (u.pathname === location.pathname) return;          // same page, an anchor
     if (/\.pdf$/i.test(u.pathname)) return;
-    if (isHome(u) && isHome(location)) return;             // home to itself
+    if (isClassic(u) && isClassic(location)) return;       // home to itself
     e.preventDefault();
     go(u.href);
   });

@@ -1,0 +1,434 @@
+/* ==========================================================================
+   The pickers: a startup disk for computers, a handset for phones. Dark,
+   quiet, and out of the way of whatever is chosen.
+   ========================================================================== */
+
+.os-host, .phone-host { position: fixed; inset: 0; }
+.phone-host { bottom: auto; top: var(--vvt, 0px); height: var(--vvh, 100%); overflow: hidden; }
+.os-screen { position: absolute; inset: 0; overflow: hidden; }
+.phone-host { background: radial-gradient(90% 60% at 50% 30%, #4a3f33, #1c1915 75%); }
+.phone-room { position: absolute; inset: 0; }
+.is-desk .phone-host, .is-mobile .os-host { display: none; }
+
+.curtain { position: fixed; inset: 0; z-index: 9000; background: #000; opacity: 0; pointer-events: none; transition: opacity .38s ease; }
+.curtain.is-on { opacity: 1; pointer-events: auto; }
+
+.picker {
+  position: fixed; inset: 0; z-index: 8000; overflow: auto;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(70% 50% at 50% 38%, rgba(255,255,255,.07), transparent 70%),
+    linear-gradient(180deg, #2a2a2c, #121214);
+  color: #eee; font-family: var(--read);
+}
+
+/* --------------------------------------------------------------- desktop */
+
+.pk-in { width: min(1100px, 94vw); padding: 40px 0; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+.pk-head { display: flex; align-items: center; gap: 16px; }
+.pk-head svg { width: 40px; height: 40px; image-rendering: pixelated; color: #eee; }
+.pk-head h1 { margin: 0; font: 600 26px var(--pixel); letter-spacing: .01em; }
+.pk-head p { margin: 4px 0 0; color: #a8a8ad; font-size: 15px; }
+.pk-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; width: 100%; }
+.pk-d {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 26px 14px 54px; border: 0; border-radius: 18px; background: transparent; color: inherit; cursor: pointer;
+  font: inherit; text-align: center; transition: background .2s, transform .2s;
+}
+.pk-d.is-sel { background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
+.pk-d:focus-visible { outline: 2px solid #7fb0ff; outline-offset: 2px; }
+.pk-art { width: 128px; height: 128px; display: grid; place-items: center; margin-bottom: 8px; transition: transform .25s cubic-bezier(.3,1.4,.5,1); }
+.pk-art svg { width: 116px; height: 116px; filter: drop-shadow(0 10px 14px rgba(0,0,0,.55)); }
+.pk-art .px-ico { image-rendering: pixelated; }
+.pk-d.is-sel .pk-art { transform: translateY(-4px) scale(1.04); }
+.pk-d b { font: 600 15px var(--pixel); color: #d9d9de; }
+.pk-d b em { font-style: normal; color: #8d8d93; font-weight: 400; }
+.pk-y { color: #fff; font: 600 34px/1 var(--pixel); letter-spacing: .02em; }
+.pk-n { color: #8d8d93; font-size: 13.5px; line-height: 1.4; max-width: 220px; }
+.pk-go {
+  position: absolute; left: 50%; bottom: 12px; width: 30px; height: 30px; margin-left: -15px; border-radius: 50%;
+  display: grid; place-items: center; color: #222;
+  background: linear-gradient(180deg, #fafafa, #bdbdbd); box-shadow: 0 2px 6px rgba(0,0,0,.6), inset 0 1px 0 #fff;
+  opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s;
+}
+.pk-go svg { width: 18px; height: 18px; }
+.pk-d.is-sel .pk-go { opacity: 1; transform: none; }
+.pk-foot { margin: 0; color: #77777d; font: 13px var(--pixel); }
+.pk-classic { color: #8d8d93; font-size: 13px; }
+.pk-classic:hover { color: #ddd; }
+
+@media (max-width: 900px) {
+  .pk-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------------------------------------------------------------- phones */
+
+.picker.is-phones { inset: auto 0; top: var(--vvt, 0px); height: var(--vvh, 100svh); place-items: stretch; display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: calc(env(safe-area-inset-top) + 20px) 0 calc(env(safe-area-inset-bottom) + 20px); overflow: hidden; }
+.mp-head { text-align: center; padding: 0 20px; }
+.mp-head svg { width: 32px; height: 32px; image-rendering: pixelated; color: #eee; }
+.mp-head h1 { margin: 8px 0 4px; font: 600 24px var(--pixel); }
+.mp-head p { margin: 0; color: #a8a8ad; font-size: 14px; }
+.mp-rail {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 18vw;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.mp-rail::-webkit-scrollbar { display: none; }
+.mp-card {
+  flex: 0 0 64vw; max-width: 300px; scroll-snap-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 22px 16px 18px; border: 0; border-radius: 22px; color: inherit; font: inherit; text-align: center;
+  background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  transition: transform .25s, background .25s, opacity .25s; opacity: .6; transform: scale(.93);
+}
+.mp-card.is-sel { background: rgba(255,255,255,.09); box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); opacity: 1; transform: none; }
+/* Sized from the height the browser actually leaves (its bars, top or
+   bottom, already taken off), giving the rest of the card what it needs. */
+.mp-art { height: min(260px, max(96px, calc(var(--vvh, 100svh) - 440px))); display: grid; place-items: center; margin-bottom: 8px; }
+.mp-art svg { height: 100%; width: auto; filter: drop-shadow(0 12px 18px rgba(0,0,0,.55)); }
+.mp-card b { font: 600 16px var(--pixel); color: #d9d9de; }
+.mp-y { font: 600 34px/1 var(--pixel); color: #fff; letter-spacing: .02em; margin-top: 4px; }
+.mp-n { font-size: 13.5px; color: #8d8d93; line-height: 1.4; min-height: 2.8em; }
+.mp-on { margin-top: 6px; padding: 8px 20px; border-radius: 999px; background: #f1ece2; color: #1a1712; font: 600 14px var(--pixel); }
+.mp-card:not(.is-sel) .mp-on { visibility: hidden; }
+.mp-dots { display: flex; justify-content: center; gap: 8px; }
+.mp-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.25); }
+.mp-dots i.on { background: #fff; }
+.picker.is-phones .pk-classic { text-align: center; }
+
+.mp-back {
+  position: fixed; left: 10px; top: calc(env(safe-area-inset-top) + 8px); z-index: 7000;
+  border: 0; border-radius: 999px; padding: 6px 12px; font: 13px var(--pixel); color: #eee;
+  background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12);
+}
+
+/* The sound switch: a speaker in the top right corner, everywhere but
+   inside a desktop system, which has its own. */
+.snd-toggle {
+  position: fixed; right: max(10px, env(safe-area-inset-right)); top: calc(env(safe-area-inset-top) + 8px); z-index: 9500;
+  display: flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 6px 12px 6px 10px;
+  font: 13px var(--pixel); color: #eee; background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12); cursor: pointer;
+}
+.snd-toggle svg { width: 16px; height: 16px; }
+.snd-toggle[aria-pressed="false"] { opacity: .75; }
+.snd-toggle:hover { opacity: 1; }
+.os-on .snd-toggle { display: none; }
+.is-loading .snd-toggle { display: none; }
+
+/* Desktop: a startup screen. Near black, the choices in one row, each one
+   the computer it ran on; a soft rounded highlight marks the selection. */
+.picker.is-desk-pick { background: radial-gradient(70% 55% at 50% 45%, #1a1a1c, #0a0a0b 70%); }
+.is-desk-pick .pk-in { width: min(1180px, 96vw); gap: 26px; }
+.is-desk-pick .pk-head { flex-direction: column; gap: 6px; text-align: center; }
+.is-desk-pick .pk-head h1 { margin: 6px 0 0; font: 600 24px var(--pixel); }
+.is-desk-pick .pk-head p { margin: 0; font-size: 14.5px; }
+.is-desk-pick .pk-row { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.is-desk-pick .pk-d { padding: 18px 10px 20px; gap: 4px; border-radius: 16px; }
+.is-desk-pick .pk-d.is-sel { background: rgba(255,255,255,.075); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.is-desk-pick .pk-art { width: 150px; height: 150px; margin-bottom: 6px; }
+.is-desk-pick .pk-art svg { width: 146px; height: 146px; filter: drop-shadow(0 12px 18px rgba(0,0,0,.6)); }
+.is-desk-pick .pk-y { font-size: 28px; }
+.is-desk-pick .pk-d b { font: 600 14px var(--pixel); color: #d9d9de; }
+.is-desk-pick .pk-n { font-size: 12.5px; max-width: 190px; }
+.is-desk-pick .pk-d.is-now .pk-y { color: #ffd7c4; }
+.is-desk-pick .pk-d.is-now b { color: #fff; }
+.is-desk-pick .pk-go { display: none; }
+.sm-status { position: absolute; top: 14px; right: 120px; display: flex; align-items: center; gap: 12px; color: #ddd; font: 13px -apple-system, 'Helvetica Neue', Arial, sans-serif; }
+.sm-bat { width: 22px; height: 11px; border: 1.5px solid #ddd; border-radius: 3px; position: relative; }
+.sm-bat::after { content: ''; position: absolute; right: -4px; top: 2.5px; width: 2px; height: 4px; background: #ddd; border-radius: 0 1px 1px 0; }
+.sm-bat i { position: absolute; inset: 1.5px 3px 1.5px 1.5px; background: #ddd; border-radius: 1px; }
+.sm-power { position: absolute; left: 0; right: 0; bottom: 28px; display: flex; justify-content: center; gap: 40px; }
+.sm-power button { display: flex; flex-direction: column; align-items: center; gap: 6px; border: 0; background: none; color: #ddd; font: 12px -apple-system, 'Helvetica Neue', Arial, sans-serif; cursor: pointer; opacity: .8; }
+.sm-power button:hover { opacity: 1; }
+.sm-power svg { width: 24px; height: 24px; }
+.sm-off { position: fixed; inset: 0; z-index: 9800; border: 0; background: #000; color: #333; font: 13px var(--pixel); cursor: pointer; display: grid; place-items: end center; padding-bottom: 40px; }
+@media (max-width: 1100px) { .is-desk-pick .pk-row { grid-template-columns: repeat(3, 1fr); } .sm-power { position: static; margin: 10px 0 30px; } }
+@media (max-height: 760px) { .sm-power { position: static; margin: 0 0 24px; } }
+
+/* Phones: the standard site as a clear button under the eras. */
+.mp-std { align-self: center; display: inline-flex; align-items: center; gap: 6px; padding: 11px 22px; border-radius: 999px; color: #f1ece2; font: 600 15px var(--pixel); text-decoration: none; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
+.mp-std span { font-size: 18px; line-height: 1; }
+.mp-std:active { background: rgba(255,255,255,.16); }
+
+/* Behind each phone, a faint pattern from its era: snakes for the 2000
+   candybar, discs, notes and files for the music player, icons, home
+   buttons and droplets for the touchscreen. Each on its own dark tone. */
+.phone-host .nk-room { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22260%22 viewBox=%220 0 260 260%22%3E%3Cg fill=%22%23243a6e%22 opacity=%22.11%22%3E%3Crect x=%2230%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2236%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2242%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2248%22 y=%2230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2248%22 y=%2236%22 width=%225%22 height=%225%22/%3E%3Crect x=%2248%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%2254%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%2260%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%2266%22 y=%2242%22 width=%225%22 height=%225%22/%3E%3Crect x=%22150%22 y=%2290%22 width=%225%22 height=%225%22/%3E%3Crect x=%22150%22 y=%2296%22 width=%225%22 height=%225%22/%3E%3Crect x=%22150%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22156%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22162%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22168%22 y=%22102%22 width=%225%22 height=%225%22/%3E%3Crect x=%22168%22 y=%22108%22 width=%225%22 height=%225%22/%3E%3Crect x=%22168%22 y=%22114%22 width=%225%22 height=%225%22/%3E%3Crect x=%2240%22 y=%22170%22 width=%225%22 height=%225%22/%3E%3Crect x=%2246%22 y=%22170%22 width=%225%22 height=%225%22/%3E%3Crect x=%2252%22 y=%22170%22 width=%225%22 height=%225%22/%3E%3Crect x=%2252%22 y=%22164%22 width=%225%22 height=%225%22/%3E%3Crect x=%2252%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2258%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2264%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2270%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2276%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%2282%22 y=%22158%22 width=%225%22 height=%225%22/%3E%3Crect x=%22190%22 y=%22200%22 width=%225%22 height=%225%22/%3E%3Crect x=%22196%22 y=%22200%22 width=%225%22 height=%225%22/%3E%3Crect x=%22196%22 y=%22206%22 width=%225%22 height=%225%22/%3E%3Crect x=%22196%22 y=%22212%22 width=%225%22 height=%225%22/%3E%3Crect x=%22202%22 y=%22212%22 width=%225%22 height=%225%22/%3E%3Crect x=%22208%22 y=%22212%22 width=%225%22 height=%225%22/%3E%3C/g%3E%3Cg fill=%22%23243a6e%22 opacity=%22.16%22%3E%3Crect x=%22110%22 y=%2240%22 width=%225%22 height=%225%22/%3E%3Crect x=%22230%22 y=%22150%22 width=%225%22 height=%225%22/%3E%3Crect x=%22120%22 y=%22230%22 width=%225%22 height=%225%22/%3E%3Crect x=%2220%22 y=%22110%22 width=%225%22 height=%225%22/%3E%3C/g%3E%3C/svg%3E") 0 0 / 260px 260px, radial-gradient(90% 60% at 50% 32%, #c3cee2, #8d9dbd 82%); }
+.phone-host .pocket-room { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22280%22 viewBox=%220 0 280 280%22%3E%3Cg fill=%22none%22 stroke=%22%235b4a86%22 stroke-width=%221.6%22 opacity=%22.12%22%3E%3Ccircle cx=%2260%22 cy=%2270%22 r=%2230%22/%3E%3Ccircle cx=%2260%22 cy=%2270%22 r=%227%22/%3E%3Ccircle cx=%2260%22 cy=%2270%22 r=%2218%22 stroke-dasharray=%223 5%22/%3E%3Ccircle cx=%22215%22 cy=%22210%22 r=%2224%22/%3E%3Ccircle cx=%22215%22 cy=%22210%22 r=%225%22/%3E%3Cpath d=%22M180 40h26l10 10v34h-36z M206 40v10h10%22/%3E%3Cpath d=%22M186 62h20M186 70h24M186 78h16%22/%3E%3Cpath d=%22M40 190h30v40H40z M44 196h22v14H44z%22/%3E%3C/g%3E%3Cg fill=%22%235b4a86%22 opacity=%22.12%22%3E%3Cg transform=%22translate%28130 120%29%22%3E%3Cpath d=%22M0 0v20a6 6 0 1 1-3-5V0h14v4H0z%22/%3E%3C/g%3E%3Cg transform=%22translate%28240 90%29%22%3E%3Cpath d=%22M0 2l16-3v20a6 6 0 1 1-3-5V5L3 7v15a6 6 0 1 1-3-5z%22/%3E%3C/g%3E%3Cg transform=%22translate%28110 250%29%22%3E%3Cpath d=%22M0 0v18a5 5 0 1 1-3-4V0z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 0 0 / 280px 280px, radial-gradient(90% 60% at 50% 32%, #f4f2f7, #d9d4e2 80%); }
+.phone-host .iphone-room { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22240%22 viewBox=%220 0 240 240%22%3E%3Cg fill=%22none%22 stroke=%22%23ffffff%22 opacity=%22.055%22 stroke-width=%221.5%22%3E%3Crect x=%2220%22 y=%2224%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3Crect x=%2270%22 y=%2224%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3Crect x=%2220%22 y=%2274%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3Ccircle cx=%22180%22 cy=%2260%22 r=%2222%22/%3E%3Crect x=%22171%22 y=%2251%22 width=%2218%22 height=%2218%22 rx=%224%22/%3E%3Crect x=%22150%22 y=%22150%22 width=%2240%22 height=%2240%22 rx=%229%22/%3E%3C/g%3E%3Cg fill=%22%23ffffff%22 opacity=%22.05%22%3E%3Ccircle cx=%2270%22 cy=%22180%22 r=%226%22/%3E%3Ccircle cx=%2288%22 cy=%22196%22 r=%223.5%22/%3E%3Ccircle cx=%2256%22 cy=%22204%22 r=%222.5%22/%3E%3Ccircle cx=%22214%22 cy=%22128%22 r=%224%22/%3E%3Ccircle cx=%22130%22 cy=%22110%22 r=%222.5%22/%3E%3C/g%3E%3C/svg%3E") 0 0 / 240px 240px, radial-gradient(90% 60% at 50% 32%, #77787d, #45464b 80%); }
+
+/* On phones, the two buttons over a device are bigger and easier to see. */
+.is-mobile .mp-back, .is-mobile .snd-toggle { padding: 10px 16px; font-size: 15px; background: rgba(20,18,16,.78); box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.is-mobile .snd-toggle svg { width: 19px; height: 19px; }
+.is-mobile .mp-back { left: 12px; }
+.mp-card.is-now .mp-y { color: #ffd7c4; }
+
+/* ==========================================================================
+   Inside a desktop system: a close-up of its computer. The body runs off
+   the top and bottom of the window, its sides fade into a backdrop of the
+   era, the screen sits in a recessed frame, and the chin carries the AJ
+   mark where the maker's logo was (plus a floppy or CD slot).
+   ========================================================================== */
+.os-host[data-era] { --side: 2.6vw; --st: 34px; --sx: 34px; --sb: 15vh; --fw: 12px; --sr: 8px; background: var(--bg); }
+.os-host[data-era] .os-screen { top: var(--st); left: calc(var(--side) + var(--sx)); right: calc(var(--side) + var(--sx)); bottom: var(--sb); border-radius: var(--sr); z-index: 1; }
+.bz { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.bz:empty { display: none; }
+.bz-body { position: absolute; left: var(--side); right: var(--side); top: -60px; bottom: -60px; border-radius: 34px; background: var(--mat); box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 0 70px 10px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.25); }
+.bz-frame { position: absolute; top: calc(var(--st) - var(--fw)); bottom: calc(var(--sb) - var(--fw)); left: calc(var(--side) + var(--sx) - var(--fw)); right: calc(var(--side) + var(--sx) - var(--fw)); border-radius: calc(var(--sr) + var(--fw)); background: var(--frame); box-shadow: var(--frame-sh, inset 0 3px 8px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.5)); }
+.bz-chin { position: absolute; left: calc(var(--side) + var(--sx)); right: calc(var(--side) + var(--sx)); bottom: 0; height: calc(var(--sb) - var(--fw)); display: flex; align-items: center; }
+.bz .aj-mark { width: 100%; height: 100%; display: block; }
+
+/* 1983: a beige monitor with a curved green tube. */
+.os-host[data-era="1983"] { --bg: radial-gradient(80% 70% at 50% 40%, #3b3125, #120e0a 80%); --mat: linear-gradient(180deg, #e2d8bd, #cdc2a2); --frame: #24231f; --sr: 26px; --fw: 16px; --sb: 13vh; }
+.os-host[data-era="1983"] .bz-chin { justify-content: space-between; padding: 0 10px; }
+.os-host[data-era="1983"] .bz-badge { display: flex; align-items: center; gap: 10px; height: 34%; color: #6b604a; font: 700 15px var(--pixel); letter-spacing: .12em; }
+.os-host[data-era="1983"] .bz-badge .aj-mark { width: auto; aspect-ratio: 1; filter: saturate(.85); }
+.bz-led { width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #b8ff9a, #2bb52b 70%); box-shadow: 0 0 8px #3ddc3d; }
+
+/* 1991: the compact Mac's beige face, the badge bottom left and the
+   floppy slot on the right. */
+.os-host[data-era="1991"] { --bg: radial-gradient(90% 80% at 50% 35%, #d9d4c8, #8e887b 85%); --mat: linear-gradient(180deg, #ece7d8 0%, #e0dac8 60%, #d3ccb8 100%); --frame: linear-gradient(180deg, #4b4943, #2f2e2a); --st: 46px; --sx: 52px; --sb: 19vh; --fw: 14px; --sr: 10px; }
+.os-host[data-era="1991"] .bz-chin { justify-content: space-between; align-items: flex-end; padding: 0 0 4.2vh; }
+.os-host[data-era="1991"] .bz-badge { width: 4.4vh; height: 4.4vh; padding: .55vh; background: linear-gradient(180deg, #d9d3c1, #cbc4ae); border-radius: 4px; box-shadow: inset 0 1px 2px rgba(0,0,0,.25), 0 1px 0 rgba(255,255,255,.7); }
+.bz-floppy { width: 26vw; max-width: 330px; height: 4.6vh; border-radius: 6px; background: linear-gradient(180deg, #d2cbb6, #e6e0ce); box-shadow: inset 0 2px 3px rgba(0,0,0,.28), 0 1px 0 rgba(255,255,255,.75); display: flex; align-items: center; padding: 0 10%; position: relative; }
+.bz-floppy i { flex: 1; height: 26%; border-radius: 2px; background: #141412; box-shadow: inset 0 1px 2px #000; }
+.bz-floppy::after { content: ''; position: absolute; right: 5%; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: #29271f; }
+
+/* 1998: the translucent striped iMac, Bondi at the edges, speakers and
+   a CD slot in the chin. */
+.os-host[data-era="1998"] { --bg: radial-gradient(90% 80% at 50% 35%, #7fd3de, #0f5f72 85%); --mat: repeating-linear-gradient(90deg, rgba(255,255,255,.95) 0 2px, rgba(226,233,236,.95) 2px 4px), linear-gradient(180deg, #f2f6f7, #d7e1e5); --frame: linear-gradient(180deg, #5a5f63, #303437); --st: 40px; --sx: 46px; --sb: 18vh; --fw: 12px; --sr: 6px; }
+.os-host[data-era="1998"] .bz-body { box-shadow: inset 26px 0 26px -16px rgba(30,150,175,.75), inset -26px 0 26px -16px rgba(30,150,175,.75), 0 0 70px 10px rgba(0,30,40,.45); }
+.os-host[data-era="1998"] .bz-chin { justify-content: space-between; padding: 0 2vw; }
+.bz-spk { width: 9vh; height: 9vh; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.35) 1.2px, transparent 1.6px) 0 0 / 7px 7px, radial-gradient(circle at 45% 40%, #63d2e3, #1797b1 60%, #0b6a80); box-shadow: inset 0 0 0 4px rgba(255,255,255,.55), inset 0 2px 8px rgba(0,0,0,.35), 0 1px 0 #fff; }
+.bz-mid { display: flex; flex-direction: column; align-items: center; gap: 1.6vh; height: 100%; justify-content: center; }
+.bz-mid .aj-mark { width: 4.2vh; height: 4.2vh; }
+.bz-cd { width: 22vw; max-width: 300px; height: 1.6vh; border-radius: 1vh; background: linear-gradient(180deg, #2c9cb6, #7fd8e8); box-shadow: inset 0 1px 3px rgba(0,0,0,.45), 0 1px 0 #fff; }
+
+/* 2007: black glass edge to edge, a thin aluminium rim, the aluminium chin
+   with a black AJ. */
+.os-host[data-era="2007"] { --bg: radial-gradient(90% 80% at 50% 35%, #3a3f48, #0d0f12 85%); --mat: linear-gradient(180deg, #dfe2e5 0%, #c9cdd1 100%); --frame: #070708; --frame-sh: inset 0 0 0 1px rgba(255,255,255,.08); --st: 30px; --sx: 26px; --sb: 13vh; --fw: 22px; --sr: 0px; }
+.os-host[data-era="2007"] .bz-body { border-radius: 20px; }
+.os-host[data-era="2007"] .bz-chin { justify-content: center; height: calc(var(--sb) - var(--fw)); top: auto; }
+.os-host[data-era="2007"] .bz-badge { width: 4.6vh; height: 4.6vh; color: #1a1a1c; }
+.os-host[data-era="2007"] .bz-frame { top: -60px; left: calc(var(--side) + 3px); right: calc(var(--side) + 3px); border-radius: 0; background: linear-gradient(180deg, #121214, #050506); }
+
+/* The music player's room, in the colour chosen in its Settings. */
+.phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(90% 60% at 50% 32%, #eef5fc, #c3d6ee 70%, #a8bfdc 104%); }
+.phone-host .pocket-room[data-bg="mint"] { background: radial-gradient(90% 60% at 50% 32%, #eefaf3, #c3e6d1 70%, #a5d2b7 104%); }
+.phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(90% 60% at 50% 32%, #fbf6ec, #e4d6bc 70%, #d0bf9f 104%); }
+.phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(90% 60% at 50% 32%, #5e6470, #2d3038 70%, #202228 104%); }
+
+/* The time shapes behind the pickers. */
+.pk-time { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0; animation: pk-time-in 2.4s ease .2s forwards; }
+.pk-time .tm { position: absolute; width: calc(46px * var(--s)); height: calc(55px * var(--s)); opacity: .1; transform: translate(-50%, -50%); animation: pk-drift var(--d) ease-in-out infinite alternate; }
+@keyframes pk-drift { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, calc(-50% - 14px)) rotate(var(--r)); } }
+@keyframes pk-time-in { to { opacity: 1; } }
+.reduced .pk-time .tm { animation: none; }
+.picker > .pk-in, .picker .mp-head, .picker .mp-rail, .picker .mp-dots, .picker .sm-power, .picker .sm-status { position: relative; z-index: 1; }
+
+/* The way back to the eras on a computer: low on the left, on the backdrop. */
+.dk-eras { position: fixed; left: 14px; bottom: 14px; z-index: 7000; border: 0; border-radius: 999px; padding: 9px 16px; font: 14px var(--pixel); color: #eee; background: rgba(20,18,16,.72); box-shadow: 0 0 0 1px rgba(255,255,255,.25), 0 4px 12px rgba(0,0,0,.35); cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.dk-eras:hover { background: rgba(40,36,32,.85); }
+.is-mobile .dk-eras { display: none; }
+
+/* Arriving from the loader: everything but the mark rises in, quickly. */
+.picker.is-arriving .pk-head h1, .picker.is-arriving .pk-head p, .picker.is-arriving .pk-d, .picker.is-arriving .pk-foot, .picker.is-arriving .sm-power,
+.picker.is-arriving .mp-head h1, .picker.is-arriving .mp-head p, .picker.is-arriving .mp-card, .picker.is-arriving .mp-dots { animation: pk-arrive .5s cubic-bezier(.2,.7,.3,1) both; }
+.picker.is-arriving .pk-d:nth-child(1), .picker.is-arriving .mp-card:nth-child(1) { animation-delay: .32s; }
+.picker.is-arriving .pk-d:nth-child(2), .picker.is-arriving .mp-card:nth-child(2) { animation-delay: .38s; }
+.picker.is-arriving .pk-d:nth-child(3), .picker.is-arriving .mp-card:nth-child(3) { animation-delay: .44s; }
+.picker.is-arriving .pk-d:nth-child(4), .picker.is-arriving .mp-card:nth-child(4) { animation-delay: .5s; }
+.picker.is-arriving .pk-d:nth-child(5) { animation-delay: .56s; }
+.picker.is-arriving .pk-head h1, .picker.is-arriving .mp-head h1 { animation-delay: .22s; }
+.picker.is-arriving .pk-head p, .picker.is-arriving .mp-head p { animation-delay: .27s; }
+.picker.is-arriving .pk-foot, .picker.is-arriving .sm-power, .picker.is-arriving .mp-dots { animation-delay: .6s; }
+@keyframes pk-arrive { from { opacity: 0; transform: translateY(12px); } }
+
+/* 1983, revised: barely any bezel, just a dark rim around a rounded tube
+   whose glass bows out, with the glare and falloff of curved glass. */
+.os-host[data-era="1983"] { --side: 1.4vw; --st: 22px; --sx: 22px; --sb: 8vh; --fw: 10px; --sr: 46px / 38px;
+  --mat: linear-gradient(180deg, #1f1d19, #141310); --frame: #070707; --frame-sh: inset 0 0 0 1px rgba(255,255,255,.05), 0 0 0 1px rgba(0,0,0,.6); }
+.os-host[data-era="1983"] .bz-body { border-radius: 40px; box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 0 80px 20px rgba(0,0,0,.6); }
+.os-host[data-era="1983"] .bz-frame { border-radius: 56px / 48px; }
+.os-host[data-era="1983"] .os-screen { border-radius: 46px / 38px; }
+.os-host[data-era="1983"] .bz-badge { color: #5d564a; height: 40%; font-size: 12px; }
+.os-host[data-era="1983"]::after { content: ''; position: absolute; z-index: 2; pointer-events: none; top: var(--st); bottom: var(--sb); left: calc(var(--side) + var(--sx)); right: calc(var(--side) + var(--sx)); border-radius: 46px / 38px;
+  background: radial-gradient(120% 90% at 30% 18%, rgba(255,255,255,.07), transparent 40%), radial-gradient(140% 120% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.6), inset 0 0 6px rgba(0,0,0,.8); }
+.os-host:not([data-era])::after { display: none; }
+
+/* Photographed machines. */
+.os-host.is-photo .os-screen { left: var(--pl); top: var(--pt); width: var(--pw); height: var(--ph); right: auto; bottom: auto; border-radius: var(--pr); }
+.bz-dev { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: drop-shadow(0 30px 60px rgba(0,0,0,.55)); }
+.bz-dev img { display: block; width: 100%; height: 100%; -webkit-user-drag: none; }
+.bz-aj { position: absolute; display: block; }
+.os-host.is-photo[data-era="2007"] .bz-aj { color: #141416; }
+.os-host.is-photo[data-era="2007"] { --bg: radial-gradient(70% 60% at 50% 40%, #3a2d5a, #120d22 75%), #0d0a18; }
+
+/* Era backdrops behind the photographed machines. */
+.os-host.is-photo[data-era="1991"] { --bg: radial-gradient(60% 55% at 50% 45%, rgba(255,255,255,.55), transparent 70%), repeating-conic-gradient(#d8d4c9 0 25%, #cfcabd 0 50%) 0 0 / 4px 4px; }
+.os-host.is-photo[data-era="1998"] { --bg: radial-gradient(circle at 18% 30%, rgba(255,255,255,.22) 0 60px, transparent 61px), radial-gradient(circle at 82% 70%, rgba(255,255,255,.16) 0 90px, transparent 91px), radial-gradient(circle at 70% 18%, rgba(255,255,255,.14) 0 34px, transparent 35px), radial-gradient(90% 80% at 50% 40%, #59c3d3, #0d5568 85%); }
+.os-host[data-era="1983"] { --bg: radial-gradient(70% 60% at 50% 45%, rgba(60,200,90,.16), transparent 70%), repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 4px), radial-gradient(90% 80% at 50% 40%, #1d231c, #070907 85%); }
+
+/* The choices sit on solid tiles; the clock and battery sit top right. */
+.is-desk-pick .pk-d { background: #1c1c1f; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+.is-desk-pick .pk-d.is-sel { background: #2a2a2e; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
+.mp-card { background: #262628; opacity: 1; }
+.mp-card:not(.is-sel) { opacity: .75; }
+.mp-card.is-sel { background: #303033; }
+.picker .sm-status { position: absolute; top: 14px; right: 130px; left: auto; z-index: 2; }
+
+/* ==========================================================================
+   Shapes, the morph into a machine, era rooms and their buttons.
+   ========================================================================== */
+.bg-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bg-shapes svg { position: absolute; transform: translate(-50%, -50%) rotate(var(--rot)); animation: shp-float var(--d) ease-in-out var(--dl) infinite alternate; }
+@keyframes shp-float { to { transform: translate(-50%, calc(-50% - 12px)) rotate(calc(var(--rot) + 10deg)); } }
+.reduced .bg-shapes svg { animation: none; }
+
+.shape-burst { position: fixed; inset: 0; z-index: 8600; pointer-events: none; overflow: hidden; }
+.shape-burst i { position: absolute; display: block; }
+.shape-burst svg { width: 100%; height: 100%; display: block; }
+
+/* Picker tiles show the machines' photographs. */
+.pk-art img { width: 146px; height: 146px; object-fit: contain; filter: drop-shadow(0 12px 16px rgba(0,0,0,.6)); -webkit-user-drag: none; }
+.mp-art img { height: 100%; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 12px 18px rgba(0,0,0,.55)); }
+
+/* The flight from tile to machine. */
+.pk-fly { position: fixed; z-index: 8700; transform-origin: 0 0; pointer-events: none; margin: 0; object-fit: contain; }
+.picker.is-leaving { transition: opacity .45s ease; opacity: 0; pointer-events: none; }
+.os-host.is-morph .bz, .os-host.is-morph .os-screen { opacity: 0; }
+.os-host .bz, .os-host .os-screen { transition: opacity .3s ease; }
+.os-host .dk-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.os-host .bz { z-index: 0; }
+.os-host .os-screen { z-index: 1; }
+
+/* Era rooms on the desktop: light for the pale machines, dark for 1983. */
+.os-host[data-era="1983"] { --bg: radial-gradient(70% 60% at 50% 45%, rgba(60,200,90,.14), transparent 70%), radial-gradient(90% 80% at 50% 40%, #16221a, #060906 85%); }
+.os-host.is-photo[data-era="1991"] { --bg: radial-gradient(80% 70% at 50% 35%, #f6f1e4, #ddd3bb 70%, #c8bb9a 108%); }
+.os-host.is-photo[data-era="1998"] { --bg: radial-gradient(80% 70% at 50% 35%, #f1fbfd, #a9dde6 72%, #86c6d2 108%); }
+.os-host.is-photo[data-era="2007"] { --bg: radial-gradient(80% 70% at 50% 35%, #fbfcfd, #cfd8e4 72%, #b3bfd0 108%); }
+.os-host.is-photo[data-era="2007"] .bz-aj { color: #c7cacf; filter: drop-shadow(0 1px 0 rgba(255,255,255,.8)) drop-shadow(0 -1px 0 rgba(0,0,0,.08)); }
+.os-host.is-photo .bz-dev { filter: drop-shadow(0 30px 50px rgba(40,40,60,.35)); }
+/* 1983, drawn, sized like the others: room above, running off the bottom. */
+.os-host[data-era="1983"] { --side: 10vw; --st: calc(14vh + 22px); --sb: 10vh; }
+.os-host[data-era="1983"] .bz-body { top: 14vh; bottom: -60px; }
+.os-host[data-era="1983"] .bz-frame { top: calc(14vh + 12px); }
+.os-host[data-era="1983"]::after { top: var(--st); }
+
+/* The bar over a machine. */
+.dk-bar { position: fixed; left: 0; right: 0; top: 0; z-index: 7000; display: flex; align-items: center; gap: 10px; padding: 16px 20px; pointer-events: none; }
+.dk-bar[hidden] { display: none; }
+.dk-bar span { flex: 1; }
+.dk-chip { pointer-events: auto; border: 1px solid var(--chip-bd, rgba(255,255,255,.25)); border-radius: 999px; padding: 8px 16px; font: 14px var(--pixel); color: var(--chip-fg, #eee); background: var(--chip-bg, rgba(20,18,16,.7)); text-decoration: none; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.dk-chip:hover { filter: brightness(1.06); }
+[data-era="1983"] .dk-chip { --chip-bg: rgba(8,26,10,.82); --chip-fg: #8dff98; --chip-bd: rgba(92,255,107,.35); }
+[data-era="1991"] .dk-chip { --chip-bg: #f6f1e4; --chip-fg: #3c372b; --chip-bd: #b8ad92; }
+[data-era="1998"] .dk-chip { --chip-bg: rgba(255,255,255,.88); --chip-fg: #0b5b6e; --chip-bd: #59bfd1; }
+[data-era="2007"] .dk-chip { --chip-bg: linear-gradient(180deg, #ffffff, #e6ebf2); --chip-fg: #2c3e57; --chip-bd: #a7b6c9; }
+
+/* Phones: their rooms' gradients (the shapes are their own layer now),
+   the handset above the shapes, and buttons in the phone's colours. */
+.phone-host .nk-room { background: radial-gradient(90% 60% at 50% 32%, #c9d4e7, #8d9dbd 70%, #75869f 104%); }
+.phone-host .pocket-room { background: radial-gradient(90% 60% at 50% 32%, #f6f3fa, #d6cfe3 70%, #bfb5d1 104%); }
+.phone-host .iphone-room { background: radial-gradient(90% 60% at 50% 32%, #7c7d82, #46474c 68%, #333438 104%); }
+.nk-scale, .pk-scale, .ip-scale { position: relative; z-index: 1; }
+.is-mobile .snd-toggle span { display: none; }
+.is-mobile .snd-toggle { padding: 10px 12px; }
+.mp-site { position: fixed; top: calc(env(safe-area-inset-top) + 8px); right: calc(max(10px, env(safe-area-inset-right)) + 54px); z-index: 7000; border-radius: 999px; padding: 10px 14px; font: 15px var(--pixel); color: #eee; text-decoration: none; background: rgba(20,18,16,.78); box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.mp-site[hidden] { display: none; }
+[data-phone="nokia"] .mp-back, [data-phone="nokia"] .mp-site, [data-phone="nokia"] .snd-toggle { background: rgba(31,45,85,.88); color: #e6ecf7; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(20,30,60,.3); }
+[data-phone="pocket"] .mp-back, [data-phone="pocket"] .mp-site, [data-phone="pocket"] .snd-toggle { background: rgba(255,255,255,.9); color: #3b3352; box-shadow: 0 0 0 1px #c5bcd9, 0 4px 12px rgba(60,50,90,.15); }
+[data-phone="iphone"] .mp-back, [data-phone="iphone"] .mp-site, [data-phone="iphone"] .snd-toggle { background: rgba(28,28,30,.82); color: #f2f2f2; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.3); }
+
+.bg-shapes svg { translate: calc(var(--mx, 0px) * var(--z, .5)) calc(var(--my, 0px) * var(--z, .5)); transition: translate .6s ease-out; }
+
+/* The copyright, tiny, at the foot of the picker. */
+.pk-copy { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 10px); margin: 0; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px; font: 11px var(--read); color: #6f6f75; }
+.pk-copy .aj-mark { width: 12px; height: 12px; }
+.is-phones .pk-copy { position: static; margin-top: 4px; }
+
+/* Glass under the screen of a photographed machine: the black gap between
+   picture tube or panel and the case. */
+.bz-glass { position: absolute; display: block; background: #050506; box-shadow: inset 0 0 18px rgba(0,0,0,.9); }
+
+/* Flights and landings. */
+.pk-fly { position: fixed; z-index: 8700; transform-origin: 0 0; pointer-events: none; margin: 0; display: block; }
+.picker.is-returning { animation: pk-ret .6s ease both; }
+@keyframes pk-ret { from { opacity: 0; } }
+.tl-glow, .tl-ring { position: fixed; z-index: 8650; pointer-events: none; border-radius: 50%; }
+.tl-glow { background: radial-gradient(closest-side, rgba(255,255,255,.75), color-mix(in srgb, var(--c) 35%, transparent) 45%, transparent 72%); mix-blend-mode: screen; }
+.tl-ring { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 85%, transparent), 0 0 24px 6px color-mix(in srgb, var(--c) 40%, transparent), inset 0 0 24px 4px color-mix(in srgb, var(--c) 35%, transparent); }
+
+.picker > .bg-shapes { opacity: 0; animation: pk-time-in 4.5s cubic-bezier(.4,0,.2,1) 1s forwards; }
+.pk-copy { font: 15px var(--read); color: #8a8a90; gap: 8px; bottom: 18px; }
+.pk-copy .aj-mark { width: 18px; height: 18px; }
+.mp-card, .mp-card:not(.is-sel) { opacity: 1; background: #262628; }
+.mp-card:not(.is-sel) { background: #1f1f21; }
+.mp-card.is-sel { background: #303033; }
+
+/* Arriving by morph, the music player is already full size. */
+.no-intro .pk.is-off { transform: none; transition: none; }
+.pk-fly { background-repeat: no-repeat; }
+div.pk-fly { position: fixed; }
+
+/* The Bondi iMac's power button, and the tube going dark: the picture
+   collapses to a line, then a dot, then nothing. */
+.bz-power { position: absolute; border: 0; border-radius: 50%; background: none; padding: 0; cursor: pointer; pointer-events: auto; }
+.bz-power:active { background: rgba(0,0,0,.12); }
+.os-host .os-screen::after { content: ''; position: absolute; inset: 0; z-index: 99999; pointer-events: none; background: #050506; opacity: 0; transform: scale(1); transition: opacity .25s; }
+.os-host.is-dark .os-screen { background: #050506; }
+.os-host.is-dark .os-screen > * { visibility: hidden; transition: visibility 0s .45s; }
+.os-host.is-dark .os-screen::after { opacity: 1; pointer-events: auto; transition: none; animation: crt-off .45s ease-in forwards; }
+@keyframes crt-off { 0% { opacity: 0; } 1% { opacity: 1; clip-path: inset(0 0 0 0); background: #050506; } 30% { background: #fff; clip-path: inset(49.5% 0 49.5% 0); } 60% { background: #fff; clip-path: inset(49.5% 48% 49.5% 48%); } 100% { background: #050506; clip-path: inset(0 0 0 0); opacity: 1; } }
+
+/* The two picture tubes bow out a little: rounder corners, a sheen high
+   on the glass and a darker rim. */
+.os-host.is-photo[data-era="1991"] .os-screen, .os-host.is-photo[data-era="1998"] .os-screen { border-radius: calc(var(--pr) * 1.8) / calc(var(--pr) * 2.4); }
+.os-host.is-photo[data-era="1991"]::after, .os-host.is-photo[data-era="1998"]::after { content: ''; position: absolute; z-index: 2; pointer-events: none; left: var(--pl); top: var(--pt); width: var(--pw); height: var(--ph); border-radius: calc(var(--pr) * 1.8) / calc(var(--pr) * 2.4);
+  background: radial-gradient(130% 120% at 50% 50%, transparent 62%, rgba(0,0,0,.35) 100%);
+  box-shadow: inset 0 0 22px rgba(0,0,0,.45); }
+
+/* Phones: the page itself never scrolls, bounces or zooms. */
+html.is-mobile, html.is-mobile body { position: fixed; inset: 0; overflow: hidden; overscroll-behavior: none; touch-action: pan-x pan-y; }
+/* Turned sideways: drawn upright across the long side. */
+html.is-turned body { position: fixed; inset: auto; top: 0; left: 0; width: var(--tw); height: var(--th); transform-origin: 0 0; }
+html.is-turned[data-turn="l"] body { transform: rotate(-90deg) translateX(-100%); }
+html.is-turned[data-turn="r"] body { transform: rotate(90deg) translateY(-100%); }
+html.is-turned .mp-card { flex-basis: calc(var(--tw) * .64); }
+html.is-turned .mp-rail { padding: 10px calc(var(--tw) * .18); }
+html.is-turned .mp-art { height: min(calc(var(--th) * .36), 260px); }
+
+/* The light behind an arriving machine: a soft, shapeless glow. */
+.tl-back { position: absolute; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(30px);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 75%, transparent), color-mix(in srgb, var(--c) 40%, transparent) 40%, color-mix(in srgb, var(--c) 12%, transparent) 65%, transparent 82%); }
+.os-host .tl-back { position: fixed; }
+.phone-room .tl-back { position: fixed; }
+/* While a machine flies in or out, nothing of it shows in the room. */
+.os-host.is-morph::after { opacity: 0; }
+.os-host::after { transition: opacity .3s ease; }
+/* The machines can't be selected or dragged. */
+.os-host, .phone-host, .picker { -webkit-user-select: none; user-select: none; }
+.os-host .os-screen input, .os-host .os-screen textarea, .os-host .os-screen [contenteditable] { -webkit-user-select: text; user-select: text; }
+.bz-dev img { pointer-events: none; -webkit-user-drag: none; }
+
+/* The empty CD tray, in the system's own dialog style. */
+.cd-alert { position: absolute; inset: 0; z-index: 900; display: grid; place-items: center; background: rgba(0,0,0,.15); }
+.cd-box { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: start; max-width: 340px; padding: 14px 16px 12px; background: #dcdcdc; border: 1px solid #000; box-shadow: 2px 2px 0 rgba(0,0,0,.45), inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; font: 13px/1.35 var(--pixel); color: #000; }
+.cd-box svg { image-rendering: pixelated; }
+.cd-box b { display: block; margin-bottom: 4px; }
+.cd-box p { margin: 0; }
+.cd-box button { grid-column: 2; justify-self: end; min-width: 70px; padding: 3px 12px; font: 13px var(--pixel); background: #dcdcdc; border: 2px solid #000; border-radius: 6px; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; cursor: pointer; }
+
+/* Picker tiles: a little narrower, a little more room between them. */
+.is-desk-pick .pk-in { width: min(1060px, 92vw); }
+.is-desk-pick .pk-row { gap: 22px; }
+/* Returning to the phone picker, the chosen card is already full size. */
+.picker.is-returning .mp-card { transition: none !important; }
+
+.tl-halo { position: fixed; z-index: 0; pointer-events: none; border-radius: 22% / 14%; opacity: 0; transform: scale(.94);
+  box-shadow: 0 0 70px 10px color-mix(in srgb, var(--c) 75%, transparent), 0 0 180px 50px color-mix(in srgb, var(--c) 35%, transparent); }
+.os-host .tl-halo { border-radius: 4%; }
+/* 1983 under the same top line as the others, and a little larger. */
+.os-host[data-era="1983"] { --side: 6vw; --st: 88px; --sb: 9vh; }
+.os-host[data-era="1983"] .bz-body { top: 66px; }
+.os-host[data-era="1983"] .bz-frame { top: 78px; }
