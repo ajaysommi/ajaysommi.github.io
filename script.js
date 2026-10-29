@@ -4152,3 +4152,37 @@ console.log(
     }
   }, { once: true });
 })();
+
+
+/* ==========================================================================
+   The way into the eras (under the hero buttons): the device and year move
+   through the eras every few seconds. The year scrambles through digits for
+   a moment and lands in its era's type; the device word fades across.
+   Paused while off screen or the tab is hidden; still with reduced motion.
+   ========================================================================== */
+(function eraTeaser() {
+  const line = document.querySelector('.era-try');
+  if (!line) return;
+  const dev = line.querySelector('.era-dev'), yr = line.querySelector('.era-yr');
+  const ERAS = [['a terminal', '1983'], ['a Macintosh', '1991'], ['an iMac', '1998'], ['an iPod', '2004'], ['an iPhone', '2007']];
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let k = 0, seen = true, timer = 0;
+  const step = () => {
+    k = (k + 1) % ERAS.length;
+    const [d, y] = ERAS[k];
+    dev.classList.add('is-out');
+    setTimeout(() => { dev.textContent = d; dev.classList.remove('is-out'); }, 250);
+    yr.classList.add('is-scramble');
+    let n = 0;
+    const roll = setInterval(() => {
+      n++;
+      // digits settle left to right
+      yr.textContent = y.split('').map((c, i) => (n > 3 + i * 2 ? c : Math.floor(Math.random() * 10))).join('');
+      if (n > 3 + 3 * 2) { clearInterval(roll); yr.textContent = y; yr.dataset.y = y; yr.classList.remove('is-scramble'); }
+    }, 45);
+  };
+  const run = () => { clearInterval(timer); if (seen && !document.hidden) timer = setInterval(step, 2600); };
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(); }).observe(line);
+  document.addEventListener('visibilitychange', run);
+  run();
+})();

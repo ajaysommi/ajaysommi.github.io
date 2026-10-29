@@ -3241,9 +3241,6 @@
        reads as one deliberate row instead. */
     .actions { display: flex; flex-wrap: wrap; gap: 10px; }
     .actions .btn { flex: 1 1 0; }
-    /* Resume and Get in touch stay a pair; the era button takes its own
-       full-width row beneath them. */
-    .actions .btn-era { flex: 1 0 100%; }
 
     .section { padding-inline: 14px; }
 
@@ -5404,24 +5401,48 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .card p { margin-bottom: 18px; }
 
 
-/* "Step into another era": the ghost button, ringed in the six stripes of
-   the old rainbow logo. The ring is its own layer, cut down to an outline,
-   so the button keeps the ghost's own fill in either theme rather than a
-   painted one. With a mouse, hovering runs the stripes once round to the
-   right, gently, and they slow to a stop where they began (300% of the
-   travel is one whole turn); the glow picks up their colours. A tap does
-   what any other button's does. */
-.btn.btn-era { border-color: transparent; transition: box-shadow .3s ease, transform .2s ease; }
-.btn.btn-era::before {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none;
-  background: linear-gradient(90deg, #61bb46, #fdb827, #f5821f, #e03a3e, #963d97, #009ddc, #61bb46) 0 0 / 300% 100%;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+/* The way into the eras: a quiet line under the buttons rather than a
+   button of its own. "See this portfolio on a terminal from 1983": the
+   device and the year keep moving through the eras, the year flickering
+   through scrambled digits and landing in the type of its time (green
+   phosphor, the Mac's pixels, a blue nineties link, the iPod's LCD, a glossy
+   2007 aqua). A small tag marks it as experimental, its dot breathing in
+   the rainbow's colours. */
+.era-try {
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;
+  margin-top: 14px; padding: 6px 2px; color: var(--ink-2); text-decoration: none;
+  font-size: .9rem; -webkit-tap-highlight-color: transparent;
 }
-@media (hover: hover) {
-  .btn.btn-era:hover { box-shadow: -3px 0 14px rgba(97,187,70,.35), 3px 0 14px rgba(0,157,220,.35), 0 0 22px rgba(224,58,62,.25), 0 14px 32px rgba(0,0,0,.28); }
-  .btn.btn-era:hover::before { animation: era-run 1.6s cubic-bezier(.3, .1, .25, 1) 1; }
+.era-tag {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 7px;
+  border: 1px solid var(--stroke); border-radius: 999px;
+  font: 500 .66rem/1.2 "Geist Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2);
 }
-@keyframes era-run { from { background-position: 300% 0; } to { background-position: 0 0; } }
-@media (prefers-reduced-motion: reduce) { .btn.btn-era:hover::before { animation: none; } }
+.era-tag i { width: 6px; height: 6px; border-radius: 50%; background: #61bb46; animation: era-dot 7.2s linear infinite; }
+@keyframes era-dot {
+  0%, 100% { background: #61bb46; box-shadow: 0 0 0 0 rgba(97,187,70,.45); }
+  16% { background: #fdb827; } 33% { background: #f5821f; box-shadow: 0 0 0 4px rgba(245,130,31,0); }
+  50% { background: #e03a3e; } 66% { background: #963d97; box-shadow: 0 0 0 0 rgba(150,61,151,.4); } 83% { background: #009ddc; }
+}
+.era-line { position: relative; }
+.era-line::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px;
+  background: linear-gradient(90deg, #61bb46, #fdb827, #f5821f, #e03a3e, #963d97, #009ddc);
+  transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.2, .7, .2, 1);
+}
+.era-dev { color: var(--ink); transition: opacity .25s ease; }
+.era-dev.is-out { opacity: 0; }
+.era-yr { display: inline-block; min-width: 4ch; color: var(--ink); font-variant-numeric: tabular-nums; transition: color .3s ease, text-shadow .3s ease; }
+.era-yr[data-y="1983"] { font: 1.22em/1 "VT323", ui-monospace, monospace; color: #3fbf5f; text-shadow: 0 0 6px rgba(63,191,95,.45); }
+[data-theme="daylight"] .era-yr[data-y="1983"] { color: #1f8a3c; text-shadow: none; }
+.era-yr[data-y="1991"] { font: .78em/1 "Silkscreen", ui-monospace, monospace; letter-spacing: .02em; }
+.era-yr[data-y="1998"] { font: 1.04em/1 "Times New Roman", Times, serif; color: #4f7bff; text-decoration: underline; text-underline-offset: 2px; }
+[data-theme="daylight"] .era-yr[data-y="1998"] { color: #0000ee; }
+.era-yr[data-y="2004"] { font: 600 .8em/1 "Silkscreen", ui-monospace, monospace; padding: 2px 4px; border-radius: 3px; background: #b8c6e2; color: #1b2149; }
+.era-yr[data-y="2007"] { font: 700 1em/1 Helvetica, Arial, sans-serif; background: linear-gradient(180deg, #8fd0ff, #2f7fe0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.era-yr.is-scramble { font: 500 1em/1 "Geist Mono", ui-monospace, monospace; color: var(--ink-2); background: none; text-shadow: none; text-decoration: none; padding: 0; -webkit-text-fill-color: currentColor; }
+.era-go { color: var(--ink-2); transition: transform .3s cubic-bezier(.2, .7, .2, 1), color .3s ease; }
+.era-try:hover .era-line::after, .era-try:focus-visible .era-line::after { transform: scaleX(1); }
+.era-try:hover .era-go, .era-try:focus-visible .era-go { transform: translateX(3px); color: var(--ink); }
+.era-try:active { opacity: .75; }
+@media (prefers-reduced-motion: reduce) { .era-tag i { animation: none; } }
