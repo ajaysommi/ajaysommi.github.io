@@ -16,7 +16,7 @@ window.IPHONE = { start(room, exit) {
   const P = window.PORTFOLIO;
   const { esc, store, usedAt } = window.RETRO;
   const SFX = window.SFX;
-  const PHOTO = 'assets/images/iphone-2g.webp?v=2';
+  const PHOTO = 'assets/images/iphone-2g.webp?v=3';
   const WALL = 'assets/images/iphone-wallpaper.webp';
   const HV = 'font-family="Helvetica,Helvetica Neue,Arial,sans-serif"';
 

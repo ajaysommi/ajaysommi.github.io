@@ -61,6 +61,11 @@
       display: grid; place-items: center;
       background: #16130f; color: #e9e4d8;
       transition: opacity .6s ease, visibility .6s;
+      /* Nothing on it takes a tap; and Safari 26 passes over an untappable
+         pinned layer when it colours its status bar, so it reads the page
+         beneath instead of locking the bar to this dark (the page never
+         scrolls, so Safari would not look again). */
+      pointer-events: none;
     }
     /* Its paper carries on under Safari's bottom bar. */
     .boot-ld::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 160px; background: inherit; }
@@ -77,15 +82,17 @@
     @keyframes ldblink { 50% { opacity: 0; } }
     /* The room behind it comes up like a lamp being switched on. */
     .is-loading .picker, .is-loading .os-host, .is-loading .phone-host { filter: brightness(.2); }
+    /* The loader lets taps through, so the room holds still under it. */
+    .is-loading .picker, .is-loading .os-host, .is-loading .phone-host { pointer-events: none; }
     .picker, .os-host, .phone-host { transition: filter 1s ease; }
   </style>
 
-  <link rel="stylesheet" href="retro/os.css?v=43" />
-  <link rel="stylesheet" href="retro/osx.css?v=43" />
-  <link rel="stylesheet" href="retro/picker.css?v=43" />
-  <link rel="stylesheet" href="retro/pocket.css?v=43" />
-  <link rel="stylesheet" href="retro/iphone.css?v=43" />
-  <link rel="stylesheet" href="retro/nokia.css?v=43" />
+  <link rel="stylesheet" href="retro/os.css?v=44" />
+  <link rel="stylesheet" href="retro/osx.css?v=44" />
+  <link rel="stylesheet" href="retro/picker.css?v=44" />
+  <link rel="stylesheet" href="retro/pocket.css?v=44" />
+  <link rel="stylesheet" href="retro/iphone.css?v=44" />
+  <link rel="stylesheet" href="retro/nokia.css?v=44" />
 
   <script type="application/ld+json">
   {
@@ -237,20 +244,20 @@
 
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
-  <script src="retro/content.js?v=43"></script>
-  <script src="retro/sound.js?v=43"></script>
-  <script src="retro/icons.js?v=43"></script>
-  <script src="retro/eggs.js?v=43"></script>
-  <script src="retro/oldweb.js?v=43"></script>
-  <script src="retro/term.js?v=43"></script>
-  <script src="retro/finder.js?v=43"></script>
-  <script src="retro/web.js?v=43"></script>
-  <script src="retro/osx.js?v=43"></script>
-  <script src="retro/pocket.js?v=43"></script>
-  <script src="retro/iphone.js?v=43"></script>
-  <script src="retro/nokia.js?v=43"></script>
-  <script src="retro/shapes.js?v=43"></script>
-  <script src="retro/boot.js?v=43"></script>
+  <script src="retro/content.js?v=44"></script>
+  <script src="retro/sound.js?v=44"></script>
+  <script src="retro/icons.js?v=44"></script>
+  <script src="retro/eggs.js?v=44"></script>
+  <script src="retro/oldweb.js?v=44"></script>
+  <script src="retro/term.js?v=44"></script>
+  <script src="retro/finder.js?v=44"></script>
+  <script src="retro/web.js?v=44"></script>
+  <script src="retro/osx.js?v=44"></script>
+  <script src="retro/pocket.js?v=44"></script>
+  <script src="retro/iphone.js?v=44"></script>
+  <script src="retro/nokia.js?v=44"></script>
+  <script src="retro/shapes.js?v=44"></script>
+  <script src="retro/boot.js?v=44"></script>
 
 </body>
 </html>
