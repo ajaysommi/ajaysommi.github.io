@@ -5447,13 +5447,13 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-spark { position: fixed; z-index: 70; width: 12px; height: 12px; margin: -6px 0 0 -6px; pointer-events: none;
   background: var(--c); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
 /* The mark that serves it. */
-.era-waiter { position: fixed; z-index: 70; left: 0; top: 0; pointer-events: none; transform-origin: 50% 100%; }
+.era-waiter { position: fixed; z-index: 70; left: 0; top: 0; pointer-events: none; transform-origin: 0 0; will-change: transform; }
 .era-waiter svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .era-waiter .am-a { fill: var(--ink); }
 .era-ad {
   position: relative; overflow: hidden; isolation: isolate;
   display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 18px;
-  padding: 14px 56px 14px 0; border-radius: 18px; text-decoration: none; color: var(--ink);
+  padding: 14px 56px 14px 0; border-radius: var(--r-pill); text-decoration: none; color: var(--ink);
   background: #151513; border: 1px solid rgba(255, 255, 255, .1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
   transition: transform .3s cubic-bezier(.2, .7, .2, 1), box-shadow .9s ease, border-color .3s ease;
@@ -5473,7 +5473,7 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   animation: era-ad-run 14s linear infinite;
 }
 @keyframes era-ad-run { to { background-position: 200% 0; } }
-.era-ad-stripes { align-self: stretch; display: flex; transform: skewX(-14deg); margin: -14px 4px -14px -8px; padding-left: 14px; }
+.era-ad-stripes { align-self: stretch; display: flex; transform: skewX(-14deg); margin: -14px 4px -14px -8px; padding-left: 34px; }
 .era-ad-stripes i { width: 7px; }
 .era-ad-stripes i:nth-child(1) { background: #61bb46; } .era-ad-stripes i:nth-child(2) { background: #fdb827; }
 .era-ad-stripes i:nth-child(3) { background: #f5821f; } .era-ad-stripes i:nth-child(4) { background: #e03a3e; }
@@ -5509,27 +5509,41 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 }
 .era-ad:active { transform: scale(.99); }
 .for-phone { display: none; }
-/* On a phone it is one slim strip: the stripes, the NEW tag and the line
-   side by side, a small button and the close. No machines, no kicker. */
-@media (max-width: 760px) {
-  .era-ad-wrap { --spec: #2f4372, #a9c262, #b8a9d9, #c9ccd1, #2f7fe0; --cta: #b9d37a, #cdbfe8, #dfe2e6, #9cc6ff; --pad: max(10px, env(safe-area-inset-top)); }
+/* On a phone it is a small pill floating just above the bottom nav (same
+   radius, same side margins), staying put as the page scrolls; it says
+   only "Step into" and a year, the rest is for the visitor to find. It
+   takes no room in the page, so nothing shifts; it rises from the nav. */
+@media (max-width: 719px) {
+  .era-ad-wrap {
+    --spec: #2f4372, #a9c262, #b8a9d9, #c9ccd1, #2f7fe0; --cta: #b9d37a, #cdbfe8, #dfe2e6, #9cc6ff;
+    position: fixed; left: 12px; right: 12px; bottom: var(--ad-bottom, calc(var(--mobile-nav-clear) + 4px)); z-index: 59;
+    display: block; padding: 0; transition: none; pointer-events: none;
+  }
+  .era-ad-wrap.is-open { padding: 0; }
+  .era-ad-box { width: 100%; pointer-events: auto; }
+  .era-ad-wrap:not(.is-done) .era-ad-box { overflow: visible; }
+  .era-ad-wrap:not(.is-served) .era-ad-box { visibility: hidden; }
   .for-desk { display: none; }
   .for-phone { display: revert; }
-  .era-ad { grid-template-columns: auto 1fr auto; gap: 8px; padding: 8px 32px 8px 0; border-radius: 14px; }
-  .era-ad-stripes { margin: -8px 0 -8px -8px; padding-left: 8px; }
+  .era-ad { grid-template-columns: auto 1fr auto; gap: 10px; padding: 7px 40px 7px 0;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .35); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .era-ad-stripes { margin: -7px 0 -7px -8px; padding-left: 26px; }
   .era-ad-stripes i { width: 3px; }
-  .era-ad-copy { display: flex; align-items: center; gap: 7px; }
+  .era-ad-copy { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .era-ad-kicker { font-size: .6rem; }
   .era-ad-kicker b { margin-right: 0; }
   .era-ad-exp, .era-ad-devs { display: none; }
-  .era-ad-title { font-size: .86rem; font-weight: 600; line-height: 1.25; }
-  .era-ad-copy { min-width: 0; }
-  .era-ad-cta { width: 28px; height: 28px; padding: 0; justify-content: center; }
+  .era-ad-title { font-size: .95rem; font-weight: 650; line-height: 1.2; white-space: nowrap; }
+  .era-ad-cta { width: 30px; height: 30px; padding: 0; justify-content: center; }
   .era-ad-cta-t { display: none; }
-  .era-ad-x { right: 5px; width: 24px; height: 24px; }
+  .era-ad-x { right: 6px; width: 28px; height: 28px; }
   .era-ad::after { height: 2px; }
+  .era-ad-wrap.is-served .era-ad { animation-name: era-ad-rise; }
+  @keyframes era-ad-rise {
+    from { opacity: 0; transform: translateY(16px) scale(.9, .6); transform-origin: 14% 100%; }
+    to { opacity: 1; transform: none; transform-origin: 14% 100%; }
+  }
 }
-@media (max-width: 340px) { .era-ad-title { font-size: .8rem; } }
 @media (prefers-reduced-motion: reduce) { .era-ad-wrap { transition: none; } .era-ad::after, .era-ad-wrap.is-served .era-ad { animation: none; } }
 .era-yr { display: inline-block; min-width: 4ch; color: var(--ink); font-variant-numeric: tabular-nums; transition: color .3s ease, text-shadow .3s ease; }
 .era-yr[data-y="1983"] { font: 1.22em/1 "VT323", ui-monospace, monospace; color: #3fbf5f; text-shadow: 0 0 6px rgba(63,191,95,.45); }

@@ -4183,7 +4183,7 @@ console.log(
 
   /* ---- the year ---- */
   const yr = wrap.querySelector('.era-yr');
-  const phone = matchMedia('(max-width: 760px)');
+  const phone = matchMedia('(max-width: 719px)');
   const years = () => (phone.matches ? ['2000', '2004', '2007'] : ['1983', '1991', '1998', '2007']);
   const light = (y) => wrap.querySelectorAll('.era-dv').forEach((d) => d.classList.toggle('is-on', d.dataset.y === y && getComputedStyle(d).display !== 'none'));
   const land = (y) => { yr.textContent = y; yr.dataset.y = y; yr.classList.remove('is-scramble'); light(y); };
@@ -4221,11 +4221,23 @@ console.log(
     t.remove();
     return v;
   };
+  const navMark = () => {
+    const m = document.querySelector('header.nav .brand-mark svg.brand-aj');
+    const r = m && m.getBoundingClientRect();
+    return r && r.width > 0 && r.bottom > 0 && r.top < innerHeight ? m : null;
+  };
+  // on a phone the pill floats a little above the bottom nav, wherever that is
+  const dock = () => {
+    const n = document.getElementById('siteNav');
+    if (phone.matches && n) wrap.style.setProperty('--ad-bottom', `${Math.round(innerHeight - n.getBoundingClientRect().top + 10)}px`);
+  };
+  dock();
+  addEventListener('resize', dock);
   const instantly = () => {
     const before = wrap.getBoundingClientRect().height, above = wrap.getBoundingClientRect().top < 0;
     wrap.style.transition = 'none';
     wrap.classList.add('is-open', 'is-served', 'is-done');
-    if (above || scrollY > 40) scrollBy(0, wrap.getBoundingClientRect().height - before);
+    if (!phone.matches && (above || scrollY > 40)) scrollBy(0, wrap.getBoundingClientRect().height - before);
     requestAnimationFrame(() => { wrap.style.transition = ''; });
     cycle();
   };
@@ -4250,40 +4262,65 @@ console.log(
     }
   };
   const serve = async () => {
-    if (reduce || scrollY > 40) { instantly(); return; }
-    // the mark at home: the nav's, if it is up top; on a phone it drops in from above the screen
-    const navMark = document.querySelector('header.nav .brand-mark svg.brand-aj');
-    const nr = navMark && navMark.getBoundingClientRect();
-    const fromNav = nr && nr.width > 0 && nr.top < innerHeight / 3;
-    const S = phone.matches ? 30 : 36;
-    const br = box.getBoundingClientRect(), top = wrap.getBoundingClientRect().top + padPx();
-    const spot = phone.matches ? { x: br.left + 6, y: top - S * .55 } : { x: br.left + 44, y: top - S + 4 };
-    const home = fromNav ? { x: nr.left + nr.width / 2 - S / 2, y: nr.top + nr.height / 2 - S / 2, s: nr.width / S } : { x: spot.x + 20, y: -S - 20, s: 1 };
+    const mark = navMark();
+    if (reduce || !mark || (!phone.matches && scrollY > 40)) { instantly(); return; }
+    const nr = mark.getBoundingClientRect();
+    /* The copy is the nav mark itself, drawn larger: the same drawing in a
+       box of the same shape, scaled from its top left corner, so at home
+       it covers the real mark exactly and the hand back is seamless. */
+    const S = phone.matches ? 34 : 38, Hh = S * nr.height / nr.width;
+    const home = { x: nr.left, y: nr.top, s: nr.width / S };
+    let spot;
+    if (phone.matches) {
+      const br = box.getBoundingClientRect();
+      spot = { x: br.left + 30, y: br.top - Hh + 5, s: 1 };
+    } else {
+      const br = box.getBoundingClientRect(), top = wrap.getBoundingClientRect().top + padPx();
+      spot = { x: br.left + 48, y: top - Hh + 5, s: 1 };
+    }
     const w = document.createElement('div');
     w.className = 'era-waiter';
     w.setAttribute('aria-hidden', 'true');
-    w.style.cssText = `width:${S}px;height:${S}px`;
-    const vb = navMark && navMark.getAttribute('viewBox') || '9 8.5 45 42';
-    w.innerHTML = `<div class="era-waiter-b" style="width:100%;height:100%;transform-origin:50% 100%"><svg viewBox="${vb}">${navMark ? navMark.innerHTML : ''}</svg></div>`;
+    w.innerHTML = `<div class="ew-y"><div class="ew-s" style="transform-origin:0 0"><div class="ew-b" style="width:${S}px;height:${Hh}px;transform-origin:50% 100%"><svg viewBox="${mark.getAttribute('viewBox')}" style="width:100%;height:100%">${mark.innerHTML}</svg></div></div></div>`;
     document.body.appendChild(w);
-    const body = w.firstChild;
-    if (fromNav) navMark.style.visibility = 'hidden';
-    const at = (p, s = 1) => `translate(${p.x}px, ${p.y}px) scale(${s})`;
-    // a hop along an arc, rising over the halfway mark
-    const hop = (a, b, dur, rise = 34) => w.animate([
-      { transform: at(a, a.s || 1) },
-      { transform: at({ x: (a.x + b.x) / 2, y: Math.min(a.y, b.y) - rise }, ((a.s || 1) + (b.s || 1)) / 2), offset: .5, easing: 'cubic-bezier(.3,0,.6,1)' },
-      { transform: at(b, b.s || 1) }
-    ], { duration: dur, easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' }).finished;
-    const squash = (sx, sy, dur) => body.animate([{ transform: 'none' }, { transform: `scale(${sx}, ${sy})` }, { transform: 'none' }], { duration: dur, easing: 'ease-out' }).finished;
+    const wy = w.firstChild, ws = wy.firstChild, body = ws.firstChild;
+    const place = (p) => {
+      w.style.transform = `translateX(${p.x}px)`;
+      wy.style.transform = `translateY(${p.y}px)`;
+      ws.style.transform = `scale(${p.s})`;
+    };
+    place(home);
+    mark.style.visibility = 'hidden';
+    /* A hop as a thrown thing moves: steady across, rising to its peak
+       easing off, falling from it speeding up, and the peak timed by how
+       far it has to rise and to fall. Each motion is its own smooth curve,
+       so the path has no kink and the speed no jolt. */
+    const hop = (a, b, dur, rise) => {
+      // never higher than just inside the top of the window
+      const apex = Math.max(Math.min(a.y, b.y) - rise, Math.min(a.y, b.y, 6));
+      const up = Math.sqrt(a.y - apex), down = Math.sqrt(b.y - apex), at = up / (up + down);
+      const o = { duration: dur, fill: 'forwards' };
+      return Promise.all([
+        w.animate([{ transform: `translateX(${a.x}px)` }, { transform: `translateX(${b.x}px)` }], { ...o, easing: 'cubic-bezier(.35,.1,.65,.9)' }).finished,
+        wy.animate([
+          { transform: `translateY(${a.y}px)`, easing: 'cubic-bezier(.33,.67,.67,1)' },
+          { transform: `translateY(${apex}px)`, offset: at, easing: 'cubic-bezier(.33,0,.67,.33)' },
+          { transform: `translateY(${b.y}px)` }
+        ], o).finished,
+        ws.animate([{ transform: `scale(${a.s})` }, { transform: `scale(${b.s})` }], { ...o, easing: 'cubic-bezier(.4,0,.2,1)' }).finished
+      ]);
+    };
+    const squash = (sx, sy, dur) => body.animate([{ transform: 'none' }, { transform: `scale(${sx}, ${sy})`, offset: .35 }, { transform: 'none' }], { duration: dur, easing: 'cubic-bezier(.3,.7,.4,1)' }).finished;
 
-    await hop(home, spot, 620, phone.matches ? 10 : 40);
-    squash(1.18, .8, 220);
-    // the page makes room, and the banner is set down under the mark
+    // a crouch, then away
+    await squash(1.12, .86, 160);
+    await hop(home, spot, 640, phone.matches ? 46 : 40);
+    squash(1.16, .82, 240);
+    // the page makes room (on a phone nothing moves: it floats), and the
+    // banner is set down by the mark like a tray
     wrap.classList.add('is-open');
-    // a little "here you go": a lean toward the banner and back
-    body.animate([{ transform: 'none' }, { transform: 'rotate(-14deg) translateX(-2px)', offset: .4 }, { transform: 'rotate(4deg)', offset: .75 }, { transform: 'none' }], { duration: 760, easing: 'ease-in-out' });
-    await wait(260);
+    body.animate([{ transform: 'none' }, { transform: 'rotate(-12deg)', offset: .4 }, { transform: 'rotate(4deg)', offset: .75 }, { transform: 'none' }], { duration: 760, easing: 'ease-in-out' });
+    await wait(phone.matches ? 140 : 260);
     wrap.classList.add('is-served');
     await wait(520);
     // landing: shine, glow, sparkles, and a happy bounce from the mark
@@ -4293,14 +4330,18 @@ console.log(
     ad.classList.add('is-glow');
     wrap.classList.add('is-done');
     sparkle();
-    w.animate([{ transform: at(spot) }, { transform: at({ x: spot.x, y: spot.y - 16 }), offset: .45 }, { transform: at(spot) }], { duration: 420, easing: 'cubic-bezier(.3,.7,.4,1)' });
-    await wait(450);
-    squash(1.12, .88, 180);
+    await body.animate([
+      { transform: 'none', easing: 'cubic-bezier(.33,.67,.67,1)' },
+      { transform: 'translateY(-14px)', offset: .45, easing: 'cubic-bezier(.33,0,.67,.33)' },
+      { transform: 'none' }
+    ], { duration: 420 }).finished;
+    await squash(1.12, .88, 200);
     setTimeout(() => { ad.classList.remove('is-glow'); shine.remove(); }, 1100);
-    await wait(520);
-    // home again
-    await hop(spot, home, 560, phone.matches ? 6 : 36);
-    if (fromNav) navMark.style.visibility = '';
+    await wait(380);
+    // home again, landing exactly on the real mark, which takes over
+    await squash(1.1, .88, 150);
+    await hop(spot, home, 600, phone.matches ? 30 : 34);
+    mark.style.visibility = '';
     w.remove();
     cycle();
   };
