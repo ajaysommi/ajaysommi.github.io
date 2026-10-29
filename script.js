@@ -4210,14 +4210,6 @@ console.log(
   };
 
   /* ---- arriving ---- */
-  const padPx = () => {
-    const t = document.createElement('div');
-    t.style.cssText = 'position:absolute;visibility:hidden;padding-top:var(--pad)';
-    wrap.appendChild(t);
-    const v = parseFloat(getComputedStyle(t).paddingTop) || 0;
-    t.remove();
-    return v;
-  };
   const navMark = () => {
     const m = document.querySelector('header.nav .brand-mark svg.brand-aj');
     const r = m && m.getBoundingClientRect();
@@ -4261,13 +4253,6 @@ console.log(
   const serve = async () => {
     const mark = navMark();
     if (reduce || !mark || (!phone.matches && scrollY > 40)) { instantly(); return; }
-    /* The mark stays where it is and the banner launches out from its
-       direction. */
-    const nr = mark.getBoundingClientRect(), mx = nr.left + nr.width / 2, my = nr.top + nr.height / 2;
-    const br = box.getBoundingClientRect();
-    const top = phone.matches ? br.top : wrap.getBoundingClientRect().top + padPx();
-    box.style.setProperty('--ox', `${mx - br.left}px`);
-    box.style.setProperty('--oy', `${my - top}px`);
     await wait(120);
     wrap.classList.add('is-open');
     await wait(phone.matches ? 0 : 120);

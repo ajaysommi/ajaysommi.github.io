@@ -5424,14 +5424,21 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-ad-wrap.is-off { display: none; }
 .era-ad-box { position: relative; min-height: 0; width: min(calc(100vw - 2 * var(--gutter)), var(--maxw)); }
 .era-ad-box > .era-ad, .era-ad-box > .era-ad-x { opacity: 0; }
-/* Launched from where the AJ mark is looking from (--ox, --oy: the mark's
-   place, measured from the banner's corner). */
-.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .7s cubic-bezier(.2, .85, .25, 1.08) both; }
+/* It pops out from its own middle like something with a little give: it
+   stretches as it shoots out in the direction it is opening (down on a
+   computer, up off the nav on a phone, --dir), overshoots, and jiggles to
+   rest along that same line. */
+.era-ad-wrap { --dir: 1; }
+.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .95s linear both; }
 .era-ad-wrap.is-served .era-ad-x { opacity: 1; transition: opacity .4s ease .4s; }
 @keyframes era-ad-launch {
-  from { opacity: 0; transform: scale(.08); transform-origin: var(--ox, 0) var(--oy, 0); }
-  35% { opacity: 1; }
-  to { opacity: 1; transform: none; transform-origin: var(--ox, 0) var(--oy, 0); }
+  0%   { opacity: 0; transform: translateY(calc(var(--dir) * -10px)) scale(.42, .18); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  16%  { opacity: 1; }
+  30%  { transform: translateY(calc(var(--dir) * 5px)) scale(.96, 1.14); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  48%  { transform: translateY(calc(var(--dir) * -2px)) scale(1.04, .9); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  64%  { transform: translateY(calc(var(--dir) * 1px)) scale(.985, 1.04); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  80%  { transform: scale(1.008, .985); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  100% { opacity: 1; transform: none; }
 }
 .era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }
 /* Landing: a shine runs across it, it glows in its colours for a moment,
@@ -5531,6 +5538,7 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 @media (max-width: 719px) {
   .era-ad-wrap {
     --spec: #2f4372, #a9c262, #b8a9d9, #c9ccd1, #2f7fe0; --cta: #b9d37a, #cdbfe8, #dfe2e6, #9cc6ff;
+    --dir: -1;
     position: fixed; left: 12px; right: 12px; bottom: var(--ad-bottom, calc(var(--mobile-nav-clear) + 4px)); z-index: 59;
     display: block; padding: 0; transition: none; pointer-events: none;
   }

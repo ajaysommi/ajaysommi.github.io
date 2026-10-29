@@ -17,8 +17,10 @@
 
   const curtain = document.getElementById('curtain');
 
-  /* Sound starts off. A small speaker in the corner turns it on (and off
-     again); inside a desktop system the system's own menu bar has one. */
+  /* Sound starts off. A small speaker in the bottom right corner turns it
+     on (and off again); inside a desktop system the system's own menu bar
+     has one. On the pickers the way back to the portfolio sits in the
+     bottom left corner, opposite it. */
   const snd = document.createElement('button');
   snd.type = 'button';
   snd.className = 'snd-toggle';
@@ -46,7 +48,8 @@
 
   /* Behind both pickers: small filled shapes from every era, with
      hourglasses and clocks among them, shaded in softly. */
-  const TIMEART = (mobile) => window.SHAPES.layer('time', mobile ? { count: 36, opacity: 0.034, size: [22, 42], seed: 11 } : { count: 60, opacity: 0.032, size: [26, 56], seed: 5 });
+  const LIGHT = root.dataset.theme === 'daylight';
+  const TIMEART = (mobile) => window.SHAPES.layer('time', { ...(mobile ? { count: 36, opacity: LIGHT ? 0.05 : 0.034, size: [22, 42], seed: 11 } : { count: 60, opacity: LIGHT ? 0.045 : 0.032, size: [26, 56], seed: 5 }), color: LIGHT ? '#1c1a17' : '#fff' });
 
   /* The morph between a tile's drawing and the real machine. The drawing
      and the photograph fly the same path together: the drawing grows into
@@ -153,7 +156,7 @@
     { year: '2007', name: 'SommiOS X Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ART[2007] }
   ];
   /* The standard site sits in the same row, as the newest machine. */
-  const OPTS = [...ERAS, { year: 'Today', name: 'Standard site', note: 'The regular portfolio, no time travel.', href: 'index.html', art: ART.now }];
+  const OPTS = ERAS;
 
   const desk = () => {
     const host = document.getElementById('osHost');
@@ -177,7 +180,7 @@
         <div class="pk-head">${I.pxmark(36)}<h1>Choose an era</h1><p>Each one is the portfolio on a computer from its year.</p></div>
         <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.year}</span><b>${esc(e.name)}</b><span class="pk-n">${esc(e.note)}</span></button>`).join('')}</div>
         <p class="pk-foot">Click one to start it up · or use ← → and Return</p>
-      </div>`;
+      </div><a class="pk-home" href="index.html">‹ Portfolio</a>`;
     const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
     tick(); setInterval(tick, 15000);
     const disks = [...pick.querySelectorAll('.pk-d')];
@@ -457,7 +460,7 @@
     { id: 'iphone', name: 'iSommi 2G', year: '2007', note: 'Slide to unlock. The home button goes back.', mod: () => window.IPHONE, cls: 'iphone-room' }
   ];
 
-  const PICKS = [...PHONES, { id: 'now', name: 'Standard site', year: 'Today', note: 'The regular portfolio, no time travel.', href: 'index.html' }];
+  const PICKS = PHONES;
   const phones = () => {
     const host = document.getElementById('phoneHost');
     const pick = document.getElementById('picker');
@@ -469,7 +472,7 @@
        of whatever is on screen: its top edge for the status bar, its
        bottom edge for the toolbar, so the room runs on under them. */
     const EDGE = {
-      pick: ['#2a2a2c', '#121214'], nokia: ['#9aa8c6', '#74859e'], iphone: ['#515257', '#2e2f33'],
+      pick: LIGHT ? ['#f4f2ed', '#e4e1da'] : ['#2a2a2c', '#121214'], nokia: ['#9aa8c6', '#74859e'], iphone: ['#515257', '#2e2f33'],
       pocket: ['#dcd6e8', '#beb4d0'], 'pocket-sky': ['#d2e1f3', '#a8bfdc'], 'pocket-mint': ['#d3ece0', '#a5d2b7'],
       'pocket-sand': ['#ece2cf', '#d0bf9f'], 'pocket-slate': ['#3e434d', '#202228']
     };
@@ -489,7 +492,7 @@
     pick.innerHTML = TIMEART(true) + `
       <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a device from its year.</p></div>
       <div class="mp-rail" role="listbox" aria-label="Eras">${PICKS.map((p, i) => `<button type="button" class="mp-card${p.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><span class="mp-y">${p.year}</span><b>${esc(p.name)}</b><span class="mp-n">${esc(p.note)}</span><span class="mp-on">${p.href ? 'Open' : 'Power on'}</span></button>`).join('')}</div>
-      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div>`;
+      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div><a class="pk-home" href="index.html">‹ Portfolio</a>`;
     const rail = pick.querySelector('.mp-rail');
     const cards = [...pick.querySelectorAll('.mp-card')];
     const dots = [...pick.querySelectorAll('.mp-dots i')];

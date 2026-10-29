@@ -58,6 +58,7 @@
     .hop.is-on { opacity: 1; }
     /* On the way to the era picker the paper is its loading screen's. */
     .hop.hop-px::before { background: #16130f; }
+    [data-theme="daylight"] .hop.hop-px::before { background: #f1efe9; }
     /* On the resume page the scene is already up when the page shows. */
     .hop.hop-live { opacity: 1; transition: none; }
     /* The sheet and the batter, together, so they can dissolve as one. */
@@ -720,6 +721,8 @@
     '####...rrrrrrrr.', '........rrrrrr..', '..........rr....', '................'
   ];
   const PX_INK = { '#': '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
+  // in light mode the picker's loading screen is light, its ink dark
+  const pxInk = () => (document.documentElement.dataset.theme === 'daylight' ? '#1c1a17' : '#e9e4d8');
   // The part of the smooth mark's drawing that the 16 by 16 grid covers.
   const PX_VB = [8.86, 8.82, 44, 44];
   const MORPH = 1180;   // ms from lift off to the last pixel
@@ -738,7 +741,7 @@
       if (!PX_INK[ch]) return;
       const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1.02); r.setAttribute('height', 1.02);
-      r.setAttribute('fill', PX_INK[ch]);
+      r.setAttribute('fill', ch === '#' ? pxInk() : PX_INK[ch]);
       r.dataset.ch = ch;
       r.style.opacity = '0';
       g.appendChild(r);
@@ -786,7 +789,7 @@
     return fly({ vb: PX_VB, rect }, (f) => {
       const smooth = [...f.children];
       // The smooth mark's ink turns to the pixel mark's as the room darkens.
-      f.querySelectorAll('.am-a').forEach((a) => a.animate([{ fill: getComputedStyle(a).fill }, { fill: PX_INK['#'] }], { duration: 420, easing: 'ease', fill: 'forwards' }));
+      f.querySelectorAll('.am-a').forEach((a) => a.animate([{ fill: getComputedStyle(a).fill }, { fill: pxInk() }], { duration: 420, easing: 'ease', fill: 'forwards' }));
       const { g, cells } = pixelGrid(PX_VB);
       f.appendChild(g);
       pixelate(cells, smooth, 300);

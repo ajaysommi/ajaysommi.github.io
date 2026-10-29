@@ -78,8 +78,8 @@ html.is-mobile .phone-host, html.is-mobile .picker { position: absolute; }
 .picker.is-phones { inset: auto 0; top: var(--vvt, 0px); box-sizing: border-box; place-items: stretch; display: flex; flex-direction: column; justify-content: center; gap: 18px; overflow: hidden;
   /* Runs on under the bottom bar like the rooms, its cards centred in the
      part of it the browser shows. */
-  height: calc(100lvh + 80px); padding: calc(env(safe-area-inset-top) + 20px) 0 calc(100lvh + 80px - var(--vvh, 100svh) + env(safe-area-inset-bottom) + 20px); }
-html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: calc(env(safe-area-inset-bottom) + 20px); }
+  height: calc(100lvh + 80px); padding: calc(env(safe-area-inset-top) + 20px) 0 calc(100lvh + 80px - var(--vvh, 100svh) + env(safe-area-inset-bottom) + 70px); }
+html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: calc(env(safe-area-inset-bottom) + 70px); }
 .mp-head { text-align: center; padding: 0 20px; }
 .mp-head svg { width: 32px; height: 32px; image-rendering: pixelated; color: #eee; }
 .mp-head h1 { margin: 8px 0 4px; font: 600 24px var(--pixel); }
@@ -117,10 +117,20 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
   background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12);
 }
 
-/* The sound switch: a speaker in the top right corner, everywhere but
-   inside a desktop system, which has its own. */
+/* The sound switch: a speaker in the bottom right corner, everywhere but
+   inside a desktop system, which has its own. Across from it on the
+   pickers, the way back to the portfolio. Both sit at the bottom of what
+   the browser shows, above any toolbar it has there. */
+.snd-toggle, .pk-home { --edge: calc(var(--vvt, 0px) + var(--vvh, 100svh) - env(safe-area-inset-bottom) - 14px); }
+.pk-home {
+  position: fixed; left: max(12px, env(safe-area-inset-left)); top: var(--edge); transform: translateY(-100%); z-index: 9500;
+  display: inline-flex; align-items: center; border-radius: 999px; padding: 6px 13px; text-decoration: none;
+  font: 13px var(--pixel); color: #eee; background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12);
+}
+.pk-home:hover { background: rgba(40,36,32,.8); }
+.is-mobile .pk-home { padding: 10px 16px; font-size: 15px; background: rgba(20,18,16,.78); box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.35); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .snd-toggle {
-  position: fixed; right: max(10px, env(safe-area-inset-right)); top: calc(env(safe-area-inset-top) + 8px); z-index: 9500;
+  position: fixed; right: max(12px, env(safe-area-inset-right)); top: var(--edge); transform: translateY(-100%); z-index: 9500;
   display: flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 6px 12px 6px 10px;
   font: 13px var(--pixel); color: #eee; background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12); cursor: pointer;
 }
@@ -137,7 +147,7 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .is-desk-pick .pk-head { flex-direction: column; gap: 6px; text-align: center; }
 .is-desk-pick .pk-head h1 { margin: 6px 0 0; font: 600 24px var(--pixel); }
 .is-desk-pick .pk-head p { margin: 0; font-size: 14.5px; }
-.is-desk-pick .pk-row { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.is-desk-pick .pk-row { grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .is-desk-pick .pk-d { padding: 18px 10px 20px; gap: 4px; border-radius: 16px; }
 .is-desk-pick .pk-d.is-sel { background: rgba(255,255,255,.075); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
 .is-desk-pick .pk-art { width: 150px; height: 150px; margin-bottom: 6px; }
@@ -157,7 +167,8 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .sm-power button:hover { opacity: 1; }
 .sm-power svg { width: 24px; height: 24px; }
 .sm-off { position: fixed; inset: 0; z-index: 9800; border: 0; background: #000; color: #333; font: 13px var(--pixel); cursor: pointer; display: grid; place-items: end center; padding-bottom: 40px; }
-@media (max-width: 1100px) { .is-desk-pick .pk-row { grid-template-columns: repeat(3, 1fr); } .sm-power { position: static; margin: 10px 0 30px; } }
+@media (max-width: 820px) { .is-desk-pick .pk-row { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1100px) { .sm-power { position: static; margin: 10px 0 30px; } }
 @media (max-height: 760px) { .sm-power { position: static; margin: 0 0 24px; } }
 
 /* Phones: the standard site as a clear button under the eras. */
@@ -354,7 +365,7 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .mp-site[hidden] { display: none; }
 /* Inside a phone the controls sit in a row under it, at the bottom of what
    the browser shows (above its toolbar), where a thumb reaches them. */
-html[data-phone] .mp-back, html[data-phone] .mp-site, html[data-phone] .snd-toggle { top: calc(var(--vvt, 0px) + var(--vvh, 100svh) - env(safe-area-inset-bottom) - 12px); transform: translateY(-100%); }
+html[data-phone] .mp-back, html[data-phone] .mp-site { top: calc(var(--vvt, 0px) + var(--vvh, 100svh) - env(safe-area-inset-bottom) - 14px); transform: translateY(-100%); }
 [data-phone="nokia"] .mp-back, [data-phone="nokia"] .mp-site, [data-phone="nokia"] .snd-toggle { background: rgba(31,45,85,.88); color: #e6ecf7; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(20,30,60,.3); }
 [data-phone="pocket"] .mp-back, [data-phone="pocket"] .mp-site, [data-phone="pocket"] .snd-toggle { background: rgba(255,255,255,.9); color: #3b3352; box-shadow: 0 0 0 1px #c5bcd9, 0 4px 12px rgba(60,50,90,.15); }
 [data-phone="iphone"] .mp-back, [data-phone="iphone"] .mp-site, [data-phone="iphone"] .snd-toggle { background: rgba(28,28,30,.82); color: #f2f2f2; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.3); }
@@ -450,7 +461,7 @@ html.is-mobile *:not(input):not(textarea):not([contenteditable="true"]) { -webki
 .cd-box button { grid-column: 2; justify-self: end; min-width: 70px; padding: 3px 12px; font: 13px var(--pixel); background: #dcdcdc; border: 2px solid #000; border-radius: 6px; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; cursor: pointer; }
 
 /* Picker tiles: a little narrower, a little more room between them. */
-.is-desk-pick .pk-in { width: min(1060px, 92vw); }
+.is-desk-pick .pk-in { width: min(1060px, 92vw); padding-bottom: 76px; }
 .is-desk-pick .pk-row { gap: 22px; }
 /* Returning to the phone picker, the chosen card is already full size. */
 .picker.is-returning .mp-card { transition: none !important; }
@@ -462,3 +473,31 @@ html.is-mobile *:not(input):not(textarea):not([contenteditable="true"]) { -webki
 .os-host[data-era="1983"] { --side: 6vw; --st: 88px; --sb: 9vh; }
 .os-host[data-era="1983"] .bz-body { top: 66px; }
 .os-host[data-era="1983"] .bz-frame { top: 78px; }
+
+/* ------------------------------------------------------------ light mode
+   The pickers in daylight, matching the standard site's light theme: warm
+   paper instead of near black, white cards, dark ink. The rooms and the
+   machines are untouched. */
+[data-theme="daylight"] .picker { background: radial-gradient(70% 50% at 50% 38%, rgba(255,255,255,.7), transparent 70%), linear-gradient(180deg, #f4f2ed, #e4e1da); color: #1c1a17; }
+[data-theme="daylight"] .picker.is-desk-pick { background: radial-gradient(70% 55% at 50% 45%, #faf9f6, #e6e3dc 75%); }
+[data-theme="daylight"] .pk-head svg, [data-theme="daylight"] .mp-head svg { color: #1c1a17; }
+[data-theme="daylight"] .mp-head p, [data-theme="daylight"] .is-desk-pick .pk-head p { color: #6b6760; }
+[data-theme="daylight"] .pk-d b, [data-theme="daylight"] .is-desk-pick .pk-d b, [data-theme="daylight"] .mp-card b { color: #2a2723; }
+[data-theme="daylight"] .pk-y, [data-theme="daylight"] .mp-y { color: #1c1a17; }
+[data-theme="daylight"] .pk-n, [data-theme="daylight"] .mp-n, [data-theme="daylight"] .pk-foot { color: #7a766e; }
+[data-theme="daylight"] .pk-d.is-sel, [data-theme="daylight"] .is-desk-pick .pk-d.is-sel { background: rgba(255,255,255,.85); box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 10px 26px rgba(60,50,30,.1); }
+[data-theme="daylight"] .is-desk-pick .pk-d { background: rgba(255,255,255,.45); box-shadow: inset 0 0 0 1px rgba(0,0,0,.05); }
+[data-theme="daylight"] .pk-art svg, [data-theme="daylight"] .is-desk-pick .pk-art svg, [data-theme="daylight"] .mp-art svg { filter: drop-shadow(0 10px 14px rgba(60,50,30,.22)); }
+[data-theme="daylight"] .mp-card, [data-theme="daylight"] .mp-card:not(.is-sel) { background: rgba(255,255,255,.6); box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+[data-theme="daylight"] .mp-card.is-sel { background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 12px 30px rgba(60,50,30,.12); }
+[data-theme="daylight"] .mp-on { background: #1c1a17; color: #f4f2ed; }
+[data-theme="daylight"] .mp-dots i { background: rgba(0,0,0,.18); }
+[data-theme="daylight"] .mp-dots i.on { background: #1c1a17; }
+[data-theme="daylight"] .sm-status, [data-theme="daylight"] .sm-power button { color: #3a3631; }
+[data-theme="daylight"] .sm-bat, [data-theme="daylight"] .sm-bat::after, [data-theme="daylight"] .sm-bat i { border-color: #3a3631; }
+[data-theme="daylight"] .sm-bat::after, [data-theme="daylight"] .sm-bat i { background: #3a3631; }
+/* The corner buttons over the pickers (inside a phone they wear its colours). */
+html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight"] .pk-home {
+  color: #2a2723; background: rgba(255,255,255,.85); box-shadow: 0 0 0 1px rgba(0,0,0,.12), 0 4px 12px rgba(60,50,30,.12);
+}
+[data-theme="daylight"] .pk-home:hover { background: #fff; }
