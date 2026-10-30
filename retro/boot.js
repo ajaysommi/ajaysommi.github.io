@@ -595,7 +595,8 @@
       const visRight = (innerWidth - ox) / k, visBottom = (innerHeight - oy) / k;
       // The plug's tail, which is where the wire starts.
       const REST = { x: Math.max(1340, visRight - 56), y: Math.max(560, Math.min(860, visBottom - 300)) };
-      const TUCK = { x: 1262, y: 640 };
+      // Low on the back of the machine, out of sight.
+      const TUCK = { x: 1200, y: 930 };
       const END = { x: visRight + 90, y: visBottom + 90 };
       const el = document.createElement('div');
       el.className = 'bz-cable' + (netOn ? ' is-on is-behind' : '');
@@ -656,7 +657,7 @@
         tucking = true;
         el.classList.add('is-going');
         // Round the side of the machine first, then in behind it.
-        if (P0.x < 1460) await moveTo({ x: 1470, y: Math.max(420, Math.min(860, P0.y)) }, 230, (q) => 1 - (1 - q) * (1 - q));
+        if (P0.x < 1460) await moveTo({ x: 1470, y: Math.max(420, Math.min(1000, P0.y)) }, 230, (q) => 1 - (1 - q) * (1 - q));
         await moveTo({ x: 1470, y: TUCK.y }, 200, (q) => q * (2 - q));
         el.classList.add('is-behind');
         await moveTo(TUCK, 520, (q) => q * q * (3 - 2 * q));

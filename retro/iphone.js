@@ -1061,7 +1061,7 @@ window.IPHONE = { start(room, exit) {
       scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
       incoming(title);
     };
-    backT = setTimeout(ringIn, 4000 + Math.random() * 3000);
+    backT = setTimeout(ringIn, 10000);
   }
   function incoming(title) {
     kb.hide();
@@ -1954,8 +1954,9 @@ window.IPHONE = { start(room, exit) {
       b.style.top = 19.2 + r * 90.4 + 'px';
       pages[p].appendChild(b);
       // Only the page on show flies; the others simply wait in place, out of sight.
-      if (p === pageNo) place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
-      else { b.classList.add('is-away'); b.dataset.d = 0; }
+      // Every page knows its way to the middle, so it can open and close alike.
+      place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
+      if (p !== pageNo) { b.classList.add('is-away'); b.style.transform = ''; b.style.transition = ''; }
     }));
     DOCK.forEach((id, i) => {
       const b = iconBtn(id);
@@ -2026,7 +2027,7 @@ window.IPHONE = { start(room, exit) {
      the screen's rectangle. Stretching the grid as one keeps the icons off
      each other too. So they begin far apart beyond the display's edges, close
      in around the screen as it goes, and hit home as it vanishes. */
-  const HOME_MS = 760, HOME_K = 5, HOME_N = 48;
+  const HOME_MS = 380, HOME_K = 5, HOME_N = 30;
   const flyHome = (appEl) => {
     const E = (t) => (Math.exp(HOME_K * t) - 1) / (Math.exp(HOME_K) - 1);
     const size = (t) => 1 - E(t);
@@ -2037,17 +2038,16 @@ window.IPHONE = { start(room, exit) {
     appEl.animate(af, { duration: HOME_MS, easing: 'linear', fill: 'forwards' }).finished.then(() => appEl.remove());
     board.classList.remove('is-flying');
     const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')].map((b) => ({ b, x: -(parseFloat(b.style.getPropertyValue('--cx')) || 0), y: -(parseFloat(b.style.getPropertyValue('--cy')) || 0) }));
-    // Its half size, name included. Rows level with the middle clear it sideways; the rest above and below.
-    const HW = 33, HH = 40, PAD = 5;
-    const level = icons.filter((i) => Math.abs(i.y) < HH + PAD).map((i) => Math.abs(i.x));
-    const minX = level.length ? Math.min(...level) : 0, minY = Math.min(...icons.filter((i) => Math.abs(i.y) >= HH + PAD).map((i) => Math.abs(i.y)));
+    // Half an icon, name included, and the nearest icon to the middle on the
+    // home screen's grid: the same stretch whichever page is showing.
+    const HW = 33, HH = 40, PAD = 5, minX = 37.5, minY = 81.9;
     icons.forEach(({ b, x, y }) => {
       b.style.transition = 'none';
       b.style.transform = '';
       const frames = [];
       for (let i = 0; i <= HOME_N; i++) {
         const z = size(i / HOME_N), grow = 1 + .3 * z;
-        const mx = minX ? Math.max(1, (160 * z + HW * grow + PAD) / minX) : 1, my = Math.max(1, (240 * z + HH * grow + PAD) / minY);
+        const mx = Math.max(1, (160 * z + HW * grow + PAD) / minX), my = Math.max(1, (240 * z + HH * grow + PAD) / minY);
         frames.push({ transform: `translate(${x * (mx - 1)}px, ${y * (my - 1)}px) scale(${grow})` });
       }
       b.animate(frames, { duration: HOME_MS, easing: 'linear' }).finished.then(() => { b.style.transition = ''; }).catch(() => {});
