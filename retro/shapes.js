@@ -89,15 +89,22 @@ window.SHAPES = (function () {
   const arrive = (el, x, y, { stagger = 900 } = {}) => {
     if (!el || document.documentElement.classList.contains('reduced')) return;
     const box = el.getBoundingClientRect();
+    /* Each shape is hidden outright until its turn (Safari lets a shape's
+       own CSS animation show through a scripted fade's waiting time), then
+       flies in from (x, y). */
     [...el.querySelectorAll('svg')].forEach((s, i) => {
       const b = s.getBoundingClientRect();
       const dx = x - (b.left + b.width / 2), dy = y - (b.top + b.height / 2);
       const o = +s.style.opacity || 0.1;
-      s.animate([
-        { translate: `${dx}px ${dy}px`, scale: '0.3', opacity: 0 },
-        { opacity: Math.min(1, o * 2), offset: 0.25 },
-        { translate: '0 0', scale: '1', opacity: o }
-      ], { duration: 1500 + Math.random() * 700, delay: Math.random() * stagger, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+      s.style.visibility = 'hidden';
+      setTimeout(() => {
+        s.style.visibility = '';
+        s.animate([
+          { translate: `${dx}px ${dy}px`, scale: '0.3', opacity: 0 },
+          { opacity: Math.min(1, o * 2), offset: 0.25 },
+          { translate: '0 0', scale: '1', opacity: o }
+        ], { duration: 1500 + Math.random() * 700, easing: 'cubic-bezier(.16, 1, .3, 1)' });
+      }, Math.random() * stagger);
     });
     void box;
   };

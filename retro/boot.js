@@ -183,8 +183,8 @@
   const clearShapes = (pick, on) => {
     const ps = pick && pick.querySelector(':scope > .bg-shapes');
     if (!ps) return;
-    ps.getAnimations().filter((a) => a.id === 'clear').forEach((a) => a.cancel());
-    if (on) { const a = ps.animate([{ opacity: getComputedStyle(ps).opacity }, { opacity: 0 }], { duration: 160, easing: 'ease-out', fill: 'forwards' }); a.id = 'clear'; }
+    // Hidden outright: Safari would let the layer's own CSS fade-in show through a scripted fade.
+    ps.style.visibility = on ? 'hidden' : '';
   };
   const fit = (box, w, h) => { const k = Math.min(box.width / w, box.height / h); return { left: box.left + (box.width - w * k) / 2, top: box.top + (box.height - h * k) / 2, width: w * k, height: h * k }; };
   /* A shadow (or any filter) with its lengths multiplied: a copy drawn at

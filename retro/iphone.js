@@ -1055,8 +1055,8 @@ window.IPHONE = { start(room, exit) {
       const lvl = Math.min(1, g.score / 160);
       const r = 14 + Math.random() * (26 - lvl * 8);
       const red = g.score >= 30 && Math.random() < 0.16 + lvl * 0.1;
-      g.b.push({ x: r + Math.random() * (W - 2 * r), y: H + r, r, v: (0.035 + Math.random() * 0.03 + lvl * 0.07) * (1.2 - r / 60), w: Math.random() * 6.28, c: red ? '#ff4a3d' : COLS[Math.floor(Math.random() * COLS.length)], red });
-      g.next = now + Math.max(240, 900 - g.score * 5) * (0.6 + Math.random() * 0.6);
+      g.b.push({ x: r + Math.random() * (W - 2 * r), y: H + r, r, v: (0.05 + Math.random() * 0.035 + lvl * 0.08) * (1.2 - r / 60), w: Math.random() * 6.28, c: red ? '#ff4a3d' : COLS[Math.floor(Math.random() * COLS.length)], red });
+      g.next = now + Math.max(200, 720 - g.score * 5) * (0.6 + Math.random() * 0.6);
     };
     const hud = () => { root.querySelector('.s').textContent = g.score; root.querySelector('.l').textContent = '●'.repeat(Math.max(0, g.lives)) + '○'.repeat(3 - Math.max(0, g.lives)); };
     const lose = () => {
@@ -1531,7 +1531,11 @@ window.IPHONE = { start(room, exit) {
 
   /* The original grid: icons 57 points square, columns 75 apart starting
      19 in, rows 90 apart starting 19 under the status bar. */
-  const GRID = ['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin', 'bubbles'];
+  /* Two home screens, as the original had once you had enough apps: a
+     sideways swipe moves between them, the dots above the dock say which. */
+  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'], ['bubbles']];
+  const GRID = PAGES.flat();
+  let pageNo = 0;
   const DOCK = ['contact', 'email', 'resume', 'about'];
   const iconBtn = (id) => {
     const b = h('button', 'ip-icon', `<span class="ic">${ICON[APPS[id].icon]()}</span><span class="lbl">${esc(APPS[id].name)}</span>`);
@@ -1553,16 +1557,17 @@ window.IPHONE = { start(room, exit) {
     b.style.transform = `translate(${-cx * 1.6}px, ${-cy * 1.6}px) scale(1.5)`;
   };
   const drawBoard = () => {
-    grid.innerHTML = '';
+    grid.innerHTML = `<div class="ip-pages" style="transform:translateX(${-pageNo * 320}px)">${PAGES.map(() => '<div class="ip-page"></div>').join('')}</div><div class="ip-dots">${PAGES.map((_, i) => `<i class="${i === pageNo ? 'on' : ''}"></i>`).join('')}</div>`;
     dock.innerHTML = '';
-    GRID.forEach((id, i) => {
+    const pages = grid.querySelectorAll('.ip-page');
+    PAGES.forEach((ids, p) => ids.forEach((id, i) => {
       const b = iconBtn(id);
       const c = i % 4, r = Math.floor(i / 4);
       b.style.left = 19.4 - 8.5 + c * 75 + 'px';
       b.style.top = 19.2 + r * 90.4 + 'px';
-      grid.appendChild(b);
+      pages[p].appendChild(b);
       place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
-    });
+    }));
     DOCK.forEach((id, i) => {
       const b = iconBtn(id);
       b.style.left = 19.4 - 8.5 + i * 75 + 'px';
@@ -1572,6 +1577,43 @@ window.IPHONE = { start(room, exit) {
     });
     showUnread();
   };
+  /* Paging: the strip of home screens follows the finger, and on letting
+     go it glides to the nearer page (a quick flick is enough). */
+  const goPage = (p, from) => {
+    pageNo = Math.max(0, Math.min(PAGES.length - 1, p));
+    const strip = grid.querySelector('.ip-pages');
+    const to = -pageNo * 320;
+    strip.style.transform = `translateX(${to}px)`;
+    if (from != null) strip.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${to}px)` }], { duration: 320, easing: 'cubic-bezier(.25, .8, .3, 1)' });
+    grid.querySelectorAll('.ip-dots i').forEach((d, i) => d.classList.toggle('on', i === pageNo));
+  };
+  let pg = null;
+  grid.addEventListener('pointerdown', (e) => {
+    if (state !== 'home') return;
+    pg = { x: e.clientX, y: e.clientY, t: performance.now(), k: scr.getBoundingClientRect().width / 320, dx: 0, on: false, id: e.pointerId };
+  });
+  grid.addEventListener('pointermove', (e) => {
+    if (!pg || e.pointerId !== pg.id) return;
+    const dx = (e.clientX - pg.x) / pg.k, dy = (e.clientY - pg.y) / pg.k;
+    if (!pg.on) { if (Math.abs(dx) < 8) return; if (Math.abs(dy) > Math.abs(dx)) { pg = null; return; } pg.on = true; try { grid.setPointerCapture(e.pointerId); } catch (x) {} }
+    let x = -pageNo * 320 + dx;
+    const lo = -(PAGES.length - 1) * 320;
+    if (x > 0) x *= 0.35; else if (x < lo) x = lo + (x - lo) * 0.35;   // resists past the ends
+    pg.dx = dx; pg.x0 = x;
+    grid.querySelector('.ip-pages').style.transform = `translateX(${x}px)`;
+  });
+  const pgEnd = () => {
+    if (!pg) return;
+    const p = pg; pg = null;
+    if (!p.on) return;
+    quietUntil = performance.now() + 250;   // the lift that ends a swipe opens nothing
+    const fast = Math.abs(p.dx) / Math.max(1, performance.now() - p.t) > 0.35;
+    const d = Math.abs(p.dx) > 110 || (fast && Math.abs(p.dx) > 20) ? (p.dx < 0 ? 1 : -1) : 0;
+    goPage(pageNo + d, p.x0);
+  };
+  grid.addEventListener('pointerup', pgEnd);
+  grid.addEventListener('pointercancel', pgEnd);
+
   const flyIn = (unlocking) => {
     const icons = [...room.querySelectorAll('.ip-icon')];
     const far = Math.max(...icons.map((b) => +b.dataset.d));
