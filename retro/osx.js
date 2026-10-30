@@ -287,7 +287,7 @@ window.OSX = (function () {
         b.innerHTML = `<div class="fx-side"><h6>DEVICES</h6><button type="button" class="on" data-v="apps">${ICON.hd()}Ajay HD</button><h6>PLACES</h6><button type="button" data-v="apps">${ICON.folder()}Applications</button><button type="button" data-v="docs">${ICON.folder()}Documents</button><button type="button" data-v="desk">${ICON.folder()}Desktop</button></div><div class="fx-main"></div>`;
         const main = b.querySelector('.fx-main');
         const show = (v) => {
-          const items = v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', 'Education.rtf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : v === 'desk' ? [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon]);
+          const items = v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', 'Education.rtf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc'], ['brochure07', window.PAPERS[2007].brochure.file, 'doc']] : v === 'desk' ? [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon]);
           main.innerHTML = items.map(([a, n, i]) => `<button type="button" class="fx-ico" data-open="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
           b.querySelectorAll('.fx-side button').forEach((x) => x.classList.toggle('on', x.dataset.v === v && x.textContent.trim() !== 'Ajay HD' || (v === 'apps' && x.textContent.trim() === 'Ajay HD')));
         };
@@ -443,7 +443,10 @@ window.OSX = (function () {
       }
     }),
     education: () => doc('Education.rtf', () => { const e = P.education; return `<h1>${esc(e.school)}</h1><p><b>${esc(e.degree)}</b><br/>${esc(e.college)}<br/>Graduating ${esc(e.when)}</p><p>${esc(e.text)}</p><p>${e.tags.map(esc).join(' · ')}</p>`; }),
-    welcome: () => doc('Welcome.rtf', () => `<h1>Welcome to Gator.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Have a look around.</p><p>Ajay</p>`),
+    welcome: () => doc('Welcome.rtf', () => `<h1>Welcome to SommiOS X.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Have a look around.</p><p>Ajay</p>`),
+    /* The papers of 2007: the year's headlines and a product brochure. */
+    news07: () => { const d = window.PAPERS[2007].news; return doc(d.file, () => `<h1>${esc(d.title)}</h1><p><i>${esc(d.sub)}</i></p>${d.items.map(([h, t]) => `<p><b>${esc(h)}.</b> ${esc(t)}</p>`).join('')}<p style="color:#888">${esc(d.foot)}</p>`); },
+    brochure07: () => { const d = window.PAPERS[2007].brochure; return { ...doc(d.file, () => `<div class="bro07"><div class="bro07-hero"><div><h1>${esc(d.title)}</h1><p>${esc(d.sub)}</p></div><svg viewBox="0 0 120 80" aria-hidden="true"><defs><linearGradient id="b7a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef0f2"/><stop offset="1" stop-color="#a9aeb5"/></linearGradient><linearGradient id="b7s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb0e0"/><stop offset="1" stop-color="#1f3f8f"/></linearGradient></defs><path d="M22 6h76a4 4 0 0 1 4 4v50H18V10a4 4 0 0 1 4-4z" fill="url(#b7a)"/><rect x="23" y="11" width="74" height="45" fill="url(#b7s)"/><path d="M6 60h108l-6 8H12z" fill="url(#b7a)"/><rect x="50" y="61" width="20" height="2" rx="1" fill="#8b9098"/></svg></div>${d.items.map(([h, t]) => `<div class="bro07-r"><b>${esc(h)}</b><span>${esc(t)}</span></div>`).join('')}<p class="bro07-f">${esc(d.foot)}</p></div>`), w: 560 }; },
     terminal: () => ({ title: 'Terminal — bash — 80×24', w: 640, h: 400, cls: 'is-term', render: term }),
     safari: (url) => ({
       title: 'Ajay Sommi · Software Engineer', w: Math.min(1060, SW() - 80), h: SH() - 140, cls: 'is-safari',
@@ -675,6 +678,8 @@ window.OSX = (function () {
     P.projects.forEach((p) => r.push(['Projects', p.full, ICON.projects(), () => open('projects'), (p.full + ' ' + p.stack).toLowerCase()]));
     P.skills.forEach(([g, l]) => l.forEach((s) => r.push(['Skills', s, ICON.skills(), () => open('skills'), (s + ' ' + g).toLowerCase()])));
     r.push(['Documents', 'Ajay_Sommi_Resume.pdf', ICON.doc(), () => open('preview'), 'resume cv pdf']);
+    r.push(['Documents', window.PAPERS[2007].news.file, ICON.doc(), () => open('news07'), 'news headlines 2007 iphone kindle android']);
+    r.push(['Documents', window.PAPERS[2007].brochure.file, ICON.doc(), () => open('brochure07'), 'brochure sommibook laptop']);
     return r;
   };
   const toggleSpot = (on) => {
@@ -747,7 +752,7 @@ window.OSX = (function () {
     dockEl = root.querySelector('.ox-dock');
     spot = root.querySelector('.ox-spot');
 
-    deskEl.innerHTML = [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']].map(([a, n, i]) => `<button type="button" class="dt-i" data-open="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
+    deskEl.innerHTML = [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc'], ['brochure07', window.PAPERS[2007].brochure.file, 'doc']].map(([a, n, i]) => `<button type="button" class="dt-i" data-open="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
     buildDock();
 
     const clk = menubar.querySelector('.clk');

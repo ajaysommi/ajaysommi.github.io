@@ -48,7 +48,19 @@ window.WEB = (function () {
         <li><b>May 2026:</b> Finished a co-op at <a href="#" data-go="work/hunter">Hunter Engineering</a>: remote resets for 100,000+ machines.</li>
         <li><b>Dec 2026:</b> Graduating from <a href="#" data-go="school">UF</a>, AI Certificate included.</li>
         <li>Brought a <a href="#" data-go="garage/macbook">MacBook back from the dead</a>. Pictures inside!</li>
-      </ul>`),
+      </ul>
+      <table class="lay"><tr><td style="vertical-align:top"><h3>Hot off the wire</h3><p class="small"><a href="#" data-go="news">What’s New on the Web in 1998</a>: Windows 98, a search engine called Google, and the iMac.</p></td>
+      <td style="width:230px;vertical-align:top"><a href="#" data-go="shop" class="ad98"><b>SommiNet 56K!</b><span>Surf at top speed. Click here!</span></a></td></tr></table>`),
+
+    /* The papers of 1998: a news page of the year, and an advert. */
+    news: () => {
+      const d = window.PAPERS[1998].news;
+      return shell(d.title, `<h1>${esc(d.title)}</h1><p class="center"><i>${esc(d.sub)}</i></p><hr/>${d.items.map(([h, t]) => `<h3><span class="new">NEW!</span> ${esc(h)}</h3><p>${esc(t)}</p>`).join('')}<hr/><p class="small center">${esc(d.foot)} &nbsp;|&nbsp; <a href="#" data-go="index">&laquo; Home</a></p>`);
+    },
+    shop: () => {
+      const d = window.PAPERS[1998].brochure;
+      return shell(d.title, `<div class="ad98-page"><h1>${esc(d.title)}</h1><p class="center"><b>${esc(d.sub)}</b></p><table class="ad98-t">${d.items.map(([h, t]) => `<tr><td>★ <b>${esc(h)}</b></td><td>${esc(t)}</td></tr>`).join('')}</table><p class="small center">${esc(d.foot)}</p></div><p class="center"><a href="#" data-go="index">&laquo; Back to my home page</a></p>`);
+    },
 
     work: (id) => {
       if (id) {

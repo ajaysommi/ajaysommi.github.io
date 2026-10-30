@@ -506,3 +506,20 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
   color: #2a2723; background: rgba(255,255,255,.85); box-shadow: 0 0 0 1px rgba(0,0,0,.12), 0 4px 12px rgba(60,50,30,.12);
 }
 [data-theme="daylight"] .pk-home:hover { background: #fff; }
+
+/* The startup disk beside the Macintosh, and the drive it goes into. */
+.bz-drive { position: absolute; left: 0; top: 0; perspective: 2400px; pointer-events: none; }
+.bz-drive.is-in { clip-path: polygon(0 0, 596px 0, 596px 706px, 888px 706px, 888px 0, 100% 0, 100% 100%, 0 100%); }
+.bz-disk { position: absolute; transform-origin: 50% 0; pointer-events: auto; cursor: grab; outline: none; will-change: transform; }
+.bz-drive.is-held .bz-disk { cursor: grabbing; }
+.bz-drive.is-going .bz-disk { pointer-events: none; }
+.bz-disk-in { width: 100%; height: 100%; animation: bz-bob 2.6s ease-in-out infinite; }
+.bz-drive.is-going .bz-disk-in, .bz-drive.is-held .bz-disk-in { animation: none; }
+/* Drawn shutter-first for the slot; turned round to rest label up. */
+.bz-disk svg { display: block; width: 100%; height: 100%; transform: rotate(180deg); filter: drop-shadow(0 -10px 14px rgba(40, 30, 10, .35)); }
+.bz-drive.is-in .bz-disk svg { filter: none; }
+.bz-disk:focus-visible svg { outline: 4px solid #3d68ff; outline-offset: 6px; border-radius: 6px; }
+@keyframes bz-bob { 50% { transform: translateY(8px); } }
+.bz-hint { position: absolute; transform: translateX(-50%); white-space: nowrap; font: 24px var(--pixel); color: #5f5645; opacity: 0; transition: opacity .4s ease .3s; pointer-events: none; }
+.bz-drive.is-on .bz-hint { opacity: 1; }
+.bz-drive.is-going .bz-hint { opacity: 0; transition-delay: 0s; transition-duration: .2s; }

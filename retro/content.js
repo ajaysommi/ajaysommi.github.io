@@ -364,7 +364,12 @@ window.RETRO = (function () {
   const sync = () => {
     const vv = window.visualViewport, root = document.documentElement, r = root.style;
     const W = vv ? vv.width : innerWidth, H = vv ? vv.height : innerHeight;
-    const side = root.dataset.mode === 'mobile' && matchMedia('(pointer: coarse)').matches && W > H;
+    /* Sideways is what the device itself says, not the shape of what is
+       visible: an on-screen keyboard leaves a short, wide strip, which is
+       not a phone on its side. */
+    const so = screen.orientation && screen.orientation.type;
+    const land = so ? /landscape/.test(so) : typeof window.orientation === 'number' ? Math.abs(window.orientation) === 90 : screen.width > screen.height;
+    const side = root.dataset.mode === 'mobile' && matchMedia('(pointer: coarse)').matches && land && W > H;
     root.classList.toggle('is-turned', side);
     if (side) {
       const a = screen.orientation ? screen.orientation.angle : (window.orientation || 90);

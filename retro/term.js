@@ -98,6 +98,8 @@ window.TERM = (function () {
     `  ${cmd('view me', pad('VIEW ME', 12))}a photo, in text mode`,
     `  ${cmd('github', pad('GITHUB', 12))}open GitHub`,
     `  ${cmd('linkedin', pad('LINKEDIN', 12))}open LinkedIn`,
+    `  ${cmd('news', pad('NEWS', 12))}the users group news sheet, fall 1983`,
+    `  ${cmd('catalog', pad('CATALOG', 12))}the SOMMI //e brochure`,
     `  ${cmd('era', pad('ERA', 12))}start up from another era`,
     `  ${cmd('clear', pad('CLEAR', 12))}clear the screen`,
     '',
@@ -249,6 +251,18 @@ window.TERM = (function () {
     return L;
   };
 
+  /* The papers on the disk: the users group's news sheet and the
+     catalogue page, word wrapped to the screen. */
+  const paper = (k) => {
+    const d = window.PAPERS[1983][k];
+    const wrapTo = (t, n = 58) => t.split(' ').reduce((a, w) => { const l = a[a.length - 1]; if ((l + ' ' + w).trim().length > n) a.push(w); else a[a.length - 1] = (l + ' ' + w).trim(); return a; }, ['']);
+    const L = [`${d.file} \u00b7 ${esc(d.title)}`, [esc(d.sub), 'dim'], rule()];
+    d.items.forEach(([h, t]) => { L.push(`  ${esc(h)}`); wrapTo(t).forEach((l) => L.push(['    ' + esc(l), 'dim'])); L.push(''); });
+    L.push(esc(d.foot));
+    L.push('');
+    return L;
+  };
+
   const contact = () => [
     'CONTACT',
     rule(48),
@@ -266,6 +280,7 @@ window.TERM = (function () {
     ['ABOUT.TXT', 'about', 1204], ['WORK.DAT', 'work', 8192], ['PROJECTS.BAS', 'projects', 4410],
     ['GARAGE.LOG', 'garage', 6120], ['SKILLS.SYS', 'skills', 980], ['SCHOOL.TXT', 'school', 512],
     ['REFS.TXT', 'refs', 3301], ['CONTACT.TXT', 'contact', 256], ['RESUME.PDF', 'resume', 88213],
+    ['NEWS.TXT', 'news', 2210], ['CATALOG.TXT', 'catalog', 1180],
     ['AUTOEXEC.BAT', 'home', 64], ['SECRETS.TXT', 'secrets', 42]
   ];
 
@@ -341,6 +356,8 @@ window.TERM = (function () {
     school: () => print(school()),
     refs: () => print(refs(), 8),
     contact: () => print(contact()),
+    news: () => print(paper('news'), 8),
+    catalog: () => print(paper('brochure'), 8),
     resume: () => { window.open(P.resume, '_blank', 'noopener'); return print(['OPENING RESUME.PDF IN A NEW WINDOW...', '']); },
     github: () => { window.open(P.github, '_blank', 'noopener'); return print(['DIALING GITHUB...', '']); },
     linkedin: () => { window.open(P.linkedin, '_blank', 'noopener'); return print(['DIALING LINKEDIN...', '']); },

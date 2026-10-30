@@ -485,8 +485,8 @@ window.IPHONE = { start(room, exit) {
     a.def.onClose && a.def.onClose();
     scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
     a.el.classList.add('is-closing');
-    setTimeout(() => { flyOut(); board.classList.remove('is-converge'); requestAnimationFrame(flyIn); }, 140);
-    setTimeout(() => a.el.remove(), 320);
+    setTimeout(() => { flyOut(); board.classList.remove('is-converge'); requestAnimationFrame(flyIn); }, 70);
+    setTimeout(() => a.el.remove(), 160);
     setBar('black');
     state = 'home';
     tickClock();
@@ -566,7 +566,12 @@ window.IPHONE = { start(room, exit) {
     let cur = 0, token = 0;
     const marks = store.get('ip-marks', null) || [['Portfolio', 'index.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Wikipedia', 'https://en.m.wikipedia.org/']];
     app.el.classList.add('is-safari');
-    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark"><svg viewBox="0 0 22 22" width="22" height="22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="3.6" stroke-linecap="square"/></svg></button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
+    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="sfw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#e3e7ee"/></linearGradient></defs></svg>`
+      + `<button type="button" data-a="b" aria-label="Back"><svg viewBox="0 0 15 15" width="15" height="15"><path d="M.4 7.5 14.6.4v14.2z" fill="url(#sfw)"/></svg></button>`
+      + `<button type="button" data-a="f" aria-label="Forward"><svg viewBox="0 0 15 15" width="15" height="15"><path d="M14.6 7.5 .4.4v14.2z" fill="url(#sfw)"/></svg></button>`
+      + `<button type="button" data-a="add" aria-label="Add bookmark"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M8 0h4v8h8v4h-8v8H8v-8H0V8h8z" fill="url(#sfw)"/></svg></button>`
+      + `<button type="button" data-a="bm" aria-label="Bookmarks"><svg class="bk" viewBox="0 0 24 16" width="24" height="16"><path d="M12 3.2C9 1.2 4.6 1 1.2 2.4v11.8c3.4-1.3 7.8-1.1 10.8 1 3-2.1 7.4-2.3 10.8-1V2.4C19.4 1 15 1.2 12 3.2zM12 3.2v11.9" fill="none" stroke="#fff" stroke-width="1.9" stroke-linejoin="round"/></svg></button>`
+      + `<button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><svg viewBox="0 0 22 22" width="22" height="22"><rect x="1.3" y="1.3" width="13.4" height="13.4" rx="2.6" fill="none" stroke="#fff" stroke-width="1.7"/><rect x="6.6" y="6.6" width="14.6" height="14.6" rx="2.4" fill="#7a89a7"/><rect x="7.4" y="7.4" width="13.6" height="13.6" rx="2" fill="#fff"/></svg><b>1</b></span></button></div>`;
     const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b'), prog = app.el.querySelector('.saf-prog');
     /* Our own pages load directly; everything typed goes through OLDWEB,
        which finds the site as it was in 2007 (or today's, failing that)
@@ -585,6 +590,8 @@ window.IPHONE = { start(room, exit) {
       const t = tabsList[cur];
       addr.value = pretty(t.url); addr.render();
       cnt.textContent = tabsList.length;
+      app.el.querySelector('[data-a="b"]').classList.toggle('off', t.pos <= 0);
+      app.el.querySelector('[data-a="f"]').classList.toggle('off', t.pos >= t.hist.length - 1);
       load(t.url);
     };
     const go = (u) => {
@@ -647,14 +654,17 @@ window.IPHONE = { start(room, exit) {
     return { start: p(a), end: p(b || a) };
   };
 
-  const roleDetail = (e) => (pg) => {
+  const roleDetail = (e, app) => (pg) => {
     pg.classList.add('pin');
     pg.innerHTML = `${group([['', `${esc(e.role)}<br/><span style="font-weight:normal;color:#4c566c">${esc(e.org)}</span>`]])}
       ${group([['starts', esc(e.when.split(' to ')[0]), 1], ['ends', esc(e.when.split(' to ')[1] || ''), 1], ['location', esc(e.where), 1]])}
       <div class="gp"><div class="txt">${esc(e.text)}</div></div>
       ${e.stats.length ? group(e.stats.map(([a, b]) => [a, esc(b), 1])) : ''}
       <div class="gp"><div class="txt sub">${e.tags.map(esc).join(' · ')}</div></div>
-      ${e.photos.length ? `<div class="gp"><div class="thumbs">${e.photos.map((p) => `<img src="${p}" alt="" />`).join('')}</div></div>` : ''}`;
+      ${e.photos.length ? `<div class="gp"><div class="thumbs">${e.photos.map((p, k) => `<img src="${p}" data-k="${k}" alt="" />`).join('')}</div></div>` : ''}`;
+    /* Its photos open full screen, to swipe through. */
+    const album = { steps: e.photos.map((p, k) => [p, e.org, `${e.role} · ${k + 1} of ${e.photos.length}`]) };
+    pg.addEventListener('click', (ev) => { const im = ev.target.closest('.thumbs img[data-k]'); if (im && app) { SFX.click(); viewer(app, album, +im.dataset.k, scr.dataset.bar || 'gray'); } });
   };
 
   /* A little form: labelled fields that the keyboard fills in. */
@@ -676,7 +686,7 @@ window.IPHONE = { start(room, exit) {
       roles.forEach((e, i, arr) => {
         if (i === 0 || arr[i - 1].year !== e.year) rows.push({ header: String(e.year) });
         const s = span(e);
-        rows.push({ text: e.short, lead: `<span class="cal-t">${MONTHS[s.start.m]}<br/><em>${MONTHS[s.end.m]}</em></span>`, cls: 'cal-row', go: () => app.push(e.short, roleDetail(e), { back: 'Calendar' }) });
+        rows.push({ text: e.short, lead: `<span class="cal-t">${MONTHS[s.start.m]}<br/><em>${MONTHS[s.end.m]}</em></span>`, cls: 'cal-row', go: () => app.push(e.short, roleDetail(e, app), { back: 'Calendar' }) });
       });
       plain(pg, rows);
     };
@@ -687,7 +697,7 @@ window.IPHONE = { start(room, exit) {
         ${roles.map((e, i) => { const s = span(e); const a = (s.start.y - y0 + s.start.m / 12) * H + 10, b = (s.end.y - y0 + (s.end.m + 1) / 12) * H + 10; return `<button type="button" class="ev" data-i="${i}" style="top:${a}px;height:${Math.max(22, b - a - 2)}px;left:${i % 2 ? 150 : 56}px">${esc(e.short)}<span>${esc(e.role)}</span></button>`; }).join('')}</div>`;
       pg.addEventListener('click', (ev) => {
         const b = ev.target.closest('.ev');
-        if (b) { SFX.click(); const e = roles[+b.dataset.i]; app.push(e.short, roleDetail(e), { back: 'Calendar' }); }
+        if (b) { SFX.click(); const e = roles[+b.dataset.i]; app.push(e.short, roleDetail(e, app), { back: 'Calendar' }); }
         const y = ev.target.closest('[data-y]');
         if (y) pg.scrollBy({ top: +y.dataset.y * H * 2, behavior: 'smooth' });
       });
@@ -834,14 +844,14 @@ window.IPHONE = { start(room, exit) {
       field(p.querySelector('.note-body'), { value: notes[i][1], multi: true, onChange: (v) => { notes[i][1] = v; save(); } });
       if (fresh) setTimeout(() => p.querySelector('.note-body').click(), 340);
       /* Swipe sideways to move between notes. */
-      let x0 = null;
-      p.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-      p.addEventListener('pointerup', (e) => {
-        if (x0 === null || Math.abs(e.clientX - x0) < 60) { x0 = null; return; }
-        const j = i + (e.clientX < x0 ? 1 : -1);
-        x0 = null;
-        if (j >= 0 && j < notes.length) { app.pop(); setTimeout(() => open(j), 320); }
-      });
+      const paper = p.querySelector('.note');
+      swipe(p, () => paper, (d, from) => {
+        const j = i + d;
+        if (j < 0 || j >= notes.length) { paper.style.transform = ''; paper.animate([{ transform: `translateX(${from}px)` }, { transform: 'none' }], { duration: 240, easing: SLIDE }); return; }
+        paper.style.transform = '';
+        paper.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${-d * 330}px)` }], { duration: 180, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' })
+          .finished.then(() => { app.pop(); setTimeout(() => open(j), 320); });
+      }, () => !p.querySelector('.note-body.is-on, .note-body:focus'));
       entry.opts.tools = [
         ['<svg viewBox="0 0 22 18" width="22" height="18"><path d="M2 6.5v9.5h15.5V12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 12c1-4.5 4.5-6.5 9-6.5V2.5L20.5 7 15 11.5V8.5C11.5 8.5 8.5 9.5 6 12z" fill="#fff"/></svg>', 'Email this note', () => writeMail(named(notes[i]), notes[i][1])],
         ['<svg viewBox="0 0 16 19" width="16" height="19"><path d="M1 4h14M5.5 4V1.8h5V4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M2.6 5.6h10.8l-1 12.4H3.6z" fill="#fff"/><path d="M6 8v8M8 8v8M10 8v8" stroke="#8a5d2a" stroke-width="1"/></svg>', 'Delete note', async () => {
@@ -1290,11 +1300,9 @@ window.IPHONE = { start(room, exit) {
         const c = e.target.closest('[data-c]');
         if (c) { k = +c.dataset.c; flipped = false; draw(); return; }
         const dot = e.target.closest('.wx-dots i');
-        if (dot) { k = [...dots.children].indexOf(dot); draw(); }
+        if (dot) { const j = [...dots.children].indexOf(dot); if (j !== k) slideOver(card, j > k ? 1 : -1, 0, () => { k = j; draw(); }); }
       });
-      let x0 = null;
-      app.el.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-      app.el.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40 && !flipped) step(e.clientX < x0 ? 1 : -1); x0 = null; });
+      swipe(app.el, () => card, (d, from) => slideOver(card, d, from, () => { k = (k + d + C.length) % C.length; SFX.click(); draw(); }), () => !flipped);
       draw();
     } },
     skills: { name: 'Settings', icon: 'settings', open(app) {
@@ -1345,12 +1353,82 @@ window.IPHONE = { start(room, exit) {
     resume: { name: 'Web', icon: 'safari', bare: true, bar: 'gray', open(app) { safari(app, P.resume + '#view=FitH', 'ajaysommi.github.io/' + P.resume); } }
   };
 
+  /* Swiping between things (photos, cities): what is showing follows the
+     finger, and let go past a little way it carries on off the side as the
+     next one slides in behind it; short of that it springs back. `area`
+     takes the touches, `target()` is what moves, `go(dir)` changes over to
+     the next (1) or previous (-1), `ok()` says whether a swipe may start. */
+  const SLIDE = 'cubic-bezier(.25, .8, .3, 1)';
+  const swipe = (area, target, go, ok = () => true) => {
+    let d = null;
+    area.addEventListener('pointerdown', (e) => {
+      if (!ok() || e.button > 0 || e.target.closest('button, a, input, .ip-kb')) return;
+      d = { x: e.clientX, y: e.clientY, k: scr.getBoundingClientRect().width / 320, dx: 0, on: false, id: e.pointerId };
+    });
+    area.addEventListener('pointermove', (e) => {
+      if (!d || e.pointerId !== d.id) return;
+      const dx = (e.clientX - d.x) / d.k, dy = (e.clientY - d.y) / d.k;
+      if (!d.on) {
+        if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { d = null; return; }
+        if (Math.abs(dx) < 6) return;
+        d.on = true;
+        try { area.setPointerCapture(e.pointerId); } catch (x) {}
+      }
+      d.dx = dx;
+      target().style.transform = `translateX(${dx}px)`;
+    });
+    const end = (e) => {
+      if (!d || !d.on) { d = null; return; }
+      const { dx } = d;
+      d = null;
+      e.preventDefault();
+      const el = target();
+      if (Math.abs(dx) < 50) {
+        el.style.transform = '';
+        el.animate([{ transform: `translateX(${dx}px)` }, { transform: 'none' }], { duration: 240, easing: SLIDE });
+        return;
+      }
+      go(dx < 0 ? 1 : -1, dx);
+    };
+    area.addEventListener('pointerup', end);
+    area.addEventListener('pointercancel', end);
+  };
+  /* One card out to the side and the next in from the other, as one move. */
+  const slideOver = (el, dir, from, change) => {
+    el.style.transform = '';
+    const out = el.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${-dir * 330}px)` }], { duration: 170, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' });
+    out.finished.then(() => {
+      change();
+      out.cancel();
+      el.animate([{ transform: `translateX(${dir * 330}px)` }, { transform: 'none' }], { duration: 300, easing: 'cubic-bezier(0, 0, .2, 1)' });
+    });
+  };
+
+  /* The photo viewer: the photos lie side by side on a strip, the one
+     before and after just off the edges, so a swipe drags the neighbour in
+     and letting go slides the strip on to it. */
   const viewer = (app, s, k, bar = 'gray') => {
     const v = h('div', 'photo-view');
-    let auto = 0;
+    const n = s.steps.length;
+    let auto = 0, busy = false;
     const api = {};
-    const draw = () => { v.innerHTML = `<div class="pv-top"><button type="button" data-x>Done</button><b>${k + 1} of ${s.steps.length}</b><span></span></div><img src="${s.steps[k][0].replace('-480', '-960')}" alt="${esc(s.steps[k][1])}" /><div class="cap"><b>${esc(s.steps[k][1])}</b>${esc(s.steps[k][2])}</div><div class="tbar"><button type="button" data-d="-1">◀</button><button type="button" data-p>${auto ? '❙❙' : '▶'}</button><button type="button" data-d="1">▶▶</button></div>`; };
-    const step = (d) => { k = (k + d + s.steps.length) % s.steps.length; draw(); };
+    const big = (i) => s.steps[(i + n) % n][0].replace('-480', '-960');
+    v.innerHTML = `<div class="pv-strip"></div><div class="pv-top"><button type="button" data-x>Done</button><b></b><span></span></div><div class="cap"></div><div class="tbar"><button type="button" data-d="-1">◀</button><button type="button" data-p></button><button type="button" data-d="1">▶▶</button></div>`;
+    const strip = v.querySelector('.pv-strip');
+    const draw = () => {
+      strip.style.transform = '';
+      strip.innerHTML = (n > 1 ? [-1, 0, 1] : [0]).map((o) => `<div class="pv-ph" style="left:${o * 330}px"><img src="${big(k + o)}" alt="${o ? '' : esc(s.steps[k][1])}" /></div>`).join('');
+      v.querySelector('.pv-top b').textContent = `${k + 1} of ${n}`;
+      v.querySelector('.cap').innerHTML = `<b>${esc(s.steps[k][1])}</b>${esc(s.steps[k][2] || '')}`;
+      v.querySelector('[data-p]').textContent = auto ? '❙❙' : '▶';
+    };
+    const step = (d, from = 0) => {
+      if (busy || n < 2) return;
+      busy = true;
+      strip.style.transform = '';
+      strip.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${-d * 330}px)` }], { duration: Math.max(180, 320 * (1 - Math.abs(from) / 330)), easing: SLIDE, fill: 'forwards' })
+        .finished.then((a) => { k = (k + d + n) % n; draw(); strip.getAnimations().forEach((x) => x.cancel()); busy = false; });
+    };
     draw();
     v.addEventListener('click', (ev) => {
       const b = ev.target.closest('button');
@@ -1359,9 +1437,7 @@ window.IPHONE = { start(room, exit) {
       if (b.hasAttribute('data-p')) { if (auto) { clearInterval(auto); auto = 0; } else auto = setInterval(() => step(1), 2200); draw(); return; }
       step(+b.dataset.d);
     });
-    let x0 = null;
-    v.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-    v.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) step(e.clientX < x0 ? 1 : -1); x0 = null; });
+    swipe(v, () => strip, (d, from) => step(d, from), () => !busy);
     app.el.appendChild(v);
     setBar('black');
     api.play = () => { auto = setInterval(() => step(1), 2200); draw(); };
@@ -1422,11 +1498,11 @@ window.IPHONE = { start(room, exit) {
        places: an ease-in with no settle, the outer ring a beat ahead. */
     icons.forEach((b) => {
       /* Unlocking takes its time, a smooth sweep in; Home is quicker. */
-      b.style.transition = unlocking ? 'transform .5s cubic-bezier(.32, 0, .58, 1), opacity .3s ease' : 'transform .2s cubic-bezier(.97, 0, 1, .02), opacity .06s linear';
-      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * (unlocking ? 50 : 20)) + 'ms';
+      b.style.transition = unlocking ? 'transform .5s cubic-bezier(.32, 0, .58, 1), opacity .3s ease' : 'transform .1s cubic-bezier(.97, 0, 1, .02), opacity .03s linear';
+      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * (unlocking ? 50 : 10)) + 'ms';
       b.style.transform = '';
     });
-    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), unlocking ? 650 : 360);
+    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), unlocking ? 650 : 180);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
 
@@ -1456,6 +1532,13 @@ window.IPHONE = { start(room, exit) {
   knob.addEventListener('pointerup', release);
   knob.addEventListener('pointercancel', release);
   knob.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'Enter') unlock(); });
+  /* Tapping the messages notification unlocks straight into Messages. */
+  const lkNote = room.querySelector('.ip-lk-note');
+  lkNote.addEventListener('click', () => {
+    if (state !== 'locked' || asleep) return;
+    unlock();
+    setTimeout(() => { quietUntil = 0; openApp('guestbook', grid.querySelector('[data-id="guestbook"]')); }, 720);
+  });
 
   function unlock() {
     if (state !== 'locked') return;

@@ -45,6 +45,9 @@ window.FINDER = (function () {
     jquery: { name: 'jquery.min.js', icon: 'doc', kind: 'document' },
     dontopen: { name: 'Don’t Open Me', icon: 'app', kind: 'application' }
   };
+  ITEMS.papers = { name: 'News & Brochures', icon: 'folder', kind: 'folder', keys: 'news brochure 1991 newsletter papers' };
+  ITEMS['paper:news'] = { name: window.PAPERS[1991].news.file, icon: 'doc', kind: 'document', keys: 'news newsletter 1991 system 7 linux web' };
+  ITEMS['paper:brochure'] = { name: window.PAPERS[1991].brochure.file, icon: 'doc', kind: 'document', keys: 'brochure sommios 7' };
   P.experience.forEach((e) => { ITEMS['role:' + e.id] = { name: e.short, icon: 'doc', kind: 'document', keys: (e.org + ' ' + e.role + ' ' + e.tags.join(' ')).toLowerCase(), year: e.year }; });
   P.projects.forEach((p) => { ITEMS['project:' + p.id] = { name: p.name, icon: 'app', kind: 'application', keys: (p.full + ' ' + p.stack).toLowerCase() }; });
   P.offclock.forEach((s) => { ITEMS['story:' + s.id] = { name: s.name, icon: 'photo', kind: 'slideshow', keys: s.title.toLowerCase() }; });
@@ -216,7 +219,7 @@ window.FINDER = (function () {
   const viewer = (slides, startAt = 0, lede) => (body, rec) => {
     let i = startAt, color = false;
     body.innerHTML = `<div class="viewer">${lede ? `<div class="cap" style="border:0;border-bottom:1px solid #000;font-size:14px">${esc(lede)}</div>` : ''}<div class="stage"><img alt="" /></div><div class="cap"></div><div class="ctl"><button class="btn" data-a="prev" type="button">◀</button><label><input type="checkbox" data-a="color" /> Show in colour</label><span class="n"></span><button class="btn is-default" data-a="next" type="button">▶</button></div></div>`;
-    body.style.overflow = 'hidden';
+    body.style.overflow = 'auto';
     const img = body.querySelector('.stage img');
     const cap = body.querySelector('.cap:not([style])');
     const n = body.querySelector('.n');
@@ -246,15 +249,25 @@ window.FINDER = (function () {
     hd: () => ({
       title: 'Ajay HD', w: 560, h: 380,
       info: `<span>${DESKTOP.length + 1} items</span><span>1.3 MB in disk</span><span>18 MB available</span>`,
-      render: folderGrid(['about', 'experience', 'projects', 'offclock', 'skills', 'education', 'recs', 'contact', 'resume', 'system'])
+      render: folderGrid(['about', 'experience', 'projects', 'offclock', 'skills', 'education', 'recs', 'contact', 'resume', 'papers', 'system'])
     }),
+    papers: () => ({ title: 'News & Brochures', w: 380, h: 200, info: '<span>2 items</span><span>from the dealer’s counter</span>', render: folderGrid(['paper:news', 'paper:brochure']) }),
+    /* The newsletter as a folded sheet, the brochure as a dealer's leaflet. */
+    'paper:news': () => {
+      const d = window.PAPERS[1991].news;
+      return { title: d.file, w: 470, h: Math.min(520, SH() - 70), render: (b) => { b.innerHTML = `<div class="doc paper"><div class="pp-mast"><h1>${esc(d.title)}</h1><div class="meta">${esc(d.sub)}</div></div>${d.items.map(([h, t]) => `<h3>${esc(h)}</h3><p>${esc(t)}</p>`).join('')}<p class="meta" style="margin-top:14px">${esc(d.foot)}</p></div>`; } };
+    },
+    'paper:brochure': () => {
+      const d = window.PAPERS[1991].brochure;
+      return { title: d.file, w: 440, h: Math.min(460, SH() - 70), render: (b) => { b.innerHTML = `<div class="doc paper is-ad"><div class="pp-hero">${I.pxmark(48)}<div><h1>${esc(d.title)}</h1><div class="meta" style="margin:0">${esc(d.sub)}</div></div></div>${d.items.map(([h, t]) => `<div class="pp-row"><b>${esc(h)}</b><span>${esc(t)}</span></div>`).join('')}<p class="meta" style="margin-top:14px;text-align:center">${esc(d.foot)}</p></div>`; } };
+    },
     system: () => ({ title: 'System Folder', w: 420, h: 240, info: '<span>4 items</span><span>please don’t touch</span>', render: folderGrid(['eggs', 'computer', 'readme', 'scrapbook']) }),
     readme: () => ({
       title: 'Read Me First', w: 470, h: 430, x: 40, y: 50,
       render: (b) => {
         b.innerHTML = `<div class="doc"><h2>Welcome to SommiOS.</h2>
           <p>This is the portfolio as it would have looked on a desktop in 1991.</p>
-          <p>• <b>Double-click</b> any icon to open it.<br/>• Drag windows by their <b>title bars</b>. The box at the top left closes one.<br/>• Press <b>⌘F</b> (or Ctrl+F) and just type what you want to see.<br/>• <b>Special › Restart in Another Era</b> starts up from a different year.</p>
+          <p>• <b>Double-click</b> any icon to open it.<br/>• Drag windows by their <b>title bars</b>. The box at the top left closes one.<br/>• Press <b>⌘F</b> (or Ctrl+F) and just type what you want to see.<br/>• <b>Special › Restart in Another Era</b> starts up from a different year.<br/>• The newsletter and brochures that came with it are in <b>Ajay HD</b>.</p>
           <p>Some things here are not what they seem. The Trash is a good place to start.</p>
           <div class="btns"><button class="btn is-default" data-open="about">Start with About Me</button><button class="btn" data-open="find">Find…</button></div></div>`;
       }
@@ -675,7 +688,22 @@ window.FINDER = (function () {
 
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  async function bootSeq() {
+  /* Switched on with no disk in the drive, the Macintosh shows a disk
+     with a question mark, blinking, until one goes in. */
+  const NODISK = (() => {
+    const q = ['.###.', '#...#', '....#', '...#.', '..#..', '.....', '..#..'];
+    let px = '';
+    q.forEach((r, y) => [...r].forEach((c, x) => { if (c === '#') px += `<rect x="${11 + x * 2}" y="${14 + y * 2}" width="2" height="2"/>`; }));
+    return `<svg viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true"><path d="M4 3h22l3 3v23H4z" fill="#fff" stroke="#000" stroke-width="1"/><rect x="9.5" y="3.5" width="13" height="8" fill="#fff" stroke="#000"/><rect x="18" y="5" width="3" height="5" fill="#000"/><g class="q" fill="#000">${px}</g></svg>`;
+  })();
+  async function bootSeq(first) {
+    if (first && api && api.disk) {
+      const nd = h('div', 'fd-boot fd-nodisk', `<div class="nodisk">${NODISK}</div>`);
+      root.appendChild(nd);
+      await api.disk();
+      await wait(700);
+      nd.remove();
+    }
     const b = h('div', 'fd-boot');
     b.innerHTML = `<div class="hello">${I.pxmark(64)}</div>`;
     root.appendChild(b);
@@ -837,7 +865,7 @@ window.FINDER = (function () {
 
   return {
     build,
-    async boot() { await bootSeq(); await drawDesktop(); },
+    async boot() { await bootSeq(true); await drawDesktop(); },
     enter() { active = true; },
     leave() { active = false; closeMenus(); },
     resize() { if (!menubar.hidden) layoutIcons(); }

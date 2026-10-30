@@ -132,7 +132,7 @@ window.POCKET = { start(room, exit) {
         [li('Resume', '↗'), () => window.open(P.resume, '_blank', 'noopener')],
         [li('Extras'), () => open('extras')],
         [li('Settings'), () => open('settings')],
-        [li('Switch phone', '\u21c4'), () => exit()]
+        [li('Switch device', '\u21c4'), () => exit()]
       ]
     }),
     about: () => textScreen('About', `<img data-src="${P.photo}" alt="Ajay Sommi outdoors in front of green hills" /><h2>Ajay Sommi</h2><div class="m">Software Engineer · ${esc(P.citizen)}</div><p>${esc(P.about[0])}</p><p>${esc(P.about[1])}</p><div class="hint">turn the wheel to scroll · MENU goes back</div>`),
@@ -208,7 +208,7 @@ window.POCKET = { start(room, exit) {
         [li('Sound', window.SFX.muted ? 'Off' : 'On'), () => { window.SFX.toggle(); refresh(); }],
         [li('Backlight', store.get('backlight', 'auto') === 'auto' ? 'Auto' : 'Always'), () => { store.set('backlight', store.get('backlight', 'auto') === 'auto' ? 'always' : 'auto'); wake(); refresh(); }],
         [li('About'), () => open('aboutdev')],
-        [li('Switch phone', '\u21c4'), () => exit()]
+        [li('Switch device', '\u21c4'), () => exit()]
       ]
     }),
     aboutdev: () => textScreen('About', `<h2>iSommi Classic</h2><div class="m">Model AJ-26 · firmware 1.0</div><p>Capacity: one portfolio.<br/>Battery: 80%, forever.</p><p>Built in 2026 by Ajay Sommi.</p><div class="hint">try the HOLD switch on top</div>`)
