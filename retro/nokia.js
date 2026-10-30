@@ -193,7 +193,8 @@ window.NOKIA = { start(room, exit) {
 
   /* A word comes up, and it has to be keyed in the old way before the bar
      runs out: 2 for A, 2 2 for B, 2 2 2 for C. Wait a moment or press
-     another key and the letter sets. C rubs one out. */
+     another key and the letter sets. C rubs one out; with nothing left to rub
+     out, it leaves the game. */
   const LETTERS = { 2: 'abc', 3: 'def', 4: 'ghi', 5: 'jkl', 6: 'mno', 7: 'pqrs', 8: 'tuv', 9: 'wxyz' };
   const WORDS = ['hello', 'call', 'home', 'later', 'phone', 'text', 'meet', 'soon', 'snake', 'menu', 'thanks', 'friend', 'signal', 'battery', 'tomorrow'];
   let tap = null;
@@ -204,7 +205,7 @@ window.NOKIA = { start(room, exit) {
       const live = t.cur != null ? t.cur : '';
       box.innerHTML = t.on || t.over
         ? `<div class="nk-tap-w">${esc(t.word.toUpperCase())}</div><div class="nk-tap-t">${esc((t.typed + live).toUpperCase())}<i></i></div><div class="nk-tap-b"><i style="width:${Math.max(0, t.left / t.all * 100)}%"></i></div>`
-        : '<p>Key in each word on the number keys before time runs out.</p>';
+        : '<p>Key in each word on the number keys before time runs out. C deletes, or leaves.</p>';
       const hd = view.querySelector('.nk-hd span:last-child');
       if (hd) hd.textContent = t.score;
       soft.textContent = t.over ? 'Again' : t.on ? 'Skip' : 'Start';
@@ -233,7 +234,7 @@ window.NOKIA = { start(room, exit) {
         t.curK = k; t.curAt = now;
         draw(); check();
       },
-      back: () => { if (!t.on) return false; if (t.cur != null) t.cur = null; else t.typed = t.typed.slice(0, -1); draw(); return true; },
+      back: () => { if (!t.on || (t.cur == null && !t.typed)) return false; if (t.cur != null) t.cur = null; else t.typed = t.typed.slice(0, -1); draw(); return true; },
       navi: () => { if (t.on) { next(); return; } t.score = t.over ? 0 : t.score; t.over = false; t.on = true; t.last = performance.now(); next(); }
     };
     draw();
