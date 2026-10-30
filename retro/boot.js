@@ -576,9 +576,9 @@
 
     /* The network cable: it floats at the lower right of the 1998 machine,
        which starts up without it and says it has no connection. Its port is
-       on the back, out of sight: drag the plug (the wire follows like a
-       rope, a chain of points under gravity) to the machine's side, or click
-       it, and it tucks in behind the machine and the machine goes online. */
+       on the back, out of sight: tap the plug and it tucks in behind the
+       machine, the wire (a rope, a chain of points under gravity) drawing
+       up after it, and the machine goes online. */
     let netCb = null, netOn = false;
     api.cable = (cb) => { netCb = cb; if (host.dataset.era === '1998' && photo) showCable(); };
     const RJ45 = `<g class="bz-plug" tabindex="0" role="button" aria-label="Plug in the network cable"><rect class="hit" x="-160" y="-46" width="176" height="92" fill="transparent"/>`
@@ -596,24 +596,27 @@
       // The plug's tail, which is where the wire starts.
       const REST = { x: Math.max(1340, visRight - 56), y: Math.max(560, Math.min(860, visBottom - 300)) };
       // Low on the back of the machine, out of sight.
-      const TUCK = { x: 1200, y: 930 };
+      const TUCK = { x: 1200, y: Math.min(930, visBottom - 220) };
       const END = { x: visRight + 90, y: visBottom + 90 };
       const el = document.createElement('div');
       el.className = 'bz-cable' + (netOn ? ' is-on is-behind' : '');
       el.style.transform = dev.style.transform;
       el.innerHTML = `<svg width="${photo.w}" height="${photo.h}" aria-hidden="true"><defs><linearGradient id="rjB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4aa2f4"/><stop offset=".55" stop-color="#1a6fdc"/><stop offset="1" stop-color="#0f55b4"/></linearGradient><linearGradient id="rjC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".5" stop-color="#dfe8ee" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity=".7"/></linearGradient><linearGradient id="rjG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f6df8a"/><stop offset="1" stop-color="#b98a2a"/></linearGradient></defs>`
-        + `<path class="bz-wire w0" fill="none" stroke="#0d4c9c" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w1" fill="none" stroke="#1f78e4" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w2" fill="none" stroke="#8cc6ff" stroke-opacity=".75" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>${RJ45}</svg><span class="bz-hint" style="left:${Math.min(REST.x - 60, visRight - 150)}px;top:${REST.y - 120}px">Plug in the cable</span>`;
+        + `<path class="bz-wire w0" fill="none" stroke="#0d4c9c" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w1" fill="none" stroke="#1f78e4" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w2" fill="none" stroke="#8cc6ff" stroke-opacity=".75" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>${RJ45}</svg><span class="bz-hint" style="left:${Math.min(REST.x - 60, visRight - 150)}px;top:${REST.y - 120}px">Tap to plug in</span>`;
       // Under the machine's picture when behind it, so the shell really hides it.
       host.insertBefore(el, bezel);
       const plug = el.querySelector('.bz-plug'), wires = el.querySelectorAll('.bz-wire');
       const N = 18;
       const P0 = netOn ? { ...TUCK } : { ...REST };
-      const seg = Math.max(Math.hypot(REST.x - END.x, REST.y - END.y), Math.hypot(TUCK.x - END.x, TUCK.y - END.y)) * 1.12 / (N - 1);
+      const span = (a) => Math.hypot(a.x - END.x, a.y - END.y) / (N - 1);
+      // Plugged in, the wire draws nearly straight, so it stays up in view.
+      let seg = netOn ? span(TUCK) * 1.02 : span(REST) * 1.12;
       const rope = [...Array(N)].map((_, i) => { const f = i / (N - 1), x = P0.x + (END.x - P0.x) * f, y = P0.y + (END.y - P0.y) * f; return { x, y, ox: x, oy: y }; });
-      let drag = null, tucking = false, angle = 0, stillSince = 0;
+      let tucking = false, angle = 0, stillSince = 0;
       const t0 = performance.now();
       const step = (now) => {
-        const bob = !drag && !netOn ? Math.sin((now - t0) / 2600 * 6.283) * 8 : 0;
+        if (tucking) seg += (span(P0) * 1.02 - seg) * .12;
+        const bob = !tucking && !netOn ? Math.sin((now - t0) / 2600 * 6.283) * 8 : 0;
         const head = rope[0];
         for (let i = 1; i < N - 1; i++) {
           const n = rope[i], vx = (n.x - n.ox) * .965, vy = (n.y - n.oy) * .965;
@@ -628,7 +631,7 @@
           const f = (d - seg) / d, wa = i === 0 ? 0 : .5, wb = i + 1 === N - 1 ? 0 : (i === 0 ? 1 : .5);
           a.x += dx * f * wa; a.y += dy * f * wa; b.x -= dx * f * wb; b.y -= dy * f * wb;
         }
-        const want = tucking || netOn ? 0 : Math.max(drag ? -1.2 : -.4, Math.min(drag ? 1.2 : .4, Math.atan2(rope[2].y - head.y, rope[2].x - head.x)));
+        const want = tucking || netOn ? 0 : Math.max(-.4, Math.min(.4, Math.atan2(rope[2].y - head.y, rope[2].x - head.x)));
         angle += (want - angle) * .14;
         // The first stretch of wire leaves straight out of the boot.
         rope[1].x += (head.x + Math.cos(angle) * seg - rope[1].x) * .5;
@@ -667,30 +670,7 @@
         SFX.click();
         netCb && netCb();
       };
-      plug.addEventListener('pointerdown', (e) => {
-        if (netOn || tucking) return;
-        e.preventDefault();
-        try { plug.setPointerCapture(e.pointerId); } catch (x) {}
-        drag = { x: e.clientX, y: e.clientY, P: { ...P0 }, kk: dev.getBoundingClientRect().width / photo.w, moved: 0 };
-        el.classList.add('is-held');
-      });
-      plug.addEventListener('pointermove', (e) => {
-        if (!drag) return;
-        const dx = (e.clientX - drag.x) / drag.kk, dy = (e.clientY - drag.y) / drag.kk;
-        drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
-        P0.x = drag.P.x + dx; P0.y = drag.P.y + dy;
-      });
-      const up = () => {
-        if (!drag) return;
-        const { moved } = drag;
-        drag = null;
-        el.classList.remove('is-held');
-        // Anywhere around the machine's side counts; the port is round the back.
-        const tip = P0.x - 150;
-        if (moved < 6 || (tip < 1400 && P0.y > 120 && P0.y < 1080)) connect();
-      };
-      plug.addEventListener('pointerup', up);
-      plug.addEventListener('pointercancel', up);
+      plug.addEventListener('click', connect);
       plug.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); connect(); } });
     }
 

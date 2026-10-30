@@ -732,8 +732,7 @@ img { display: block; max-width: 100%; }
 .bz-cable.is-behind { z-index: 0; }
 .os-host.is-morph > .bz-cable { opacity: 0; }
 .bz-cable svg { position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(0 6px 8px rgba(0,40,60,.3)); }
-.bz-plug { pointer-events: auto; cursor: grab; outline: none; }
-.bz-cable.is-held .bz-plug { cursor: grabbing; }
+.bz-plug { pointer-events: auto; cursor: pointer; outline: none; }
 .bz-cable.is-going .bz-plug, .bz-cable.is-on .bz-plug { pointer-events: none; }
 .bz-cable .bz-hint { opacity: 1; color: #0b5b72; }
-.bz-cable.is-held .bz-hint, .bz-cable.is-going .bz-hint, .bz-cable.is-on .bz-hint { display: none; }
+.bz-cable.is-going .bz-hint, .bz-cable.is-on .bz-hint { display: none; }

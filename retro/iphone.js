@@ -2027,7 +2027,7 @@ window.IPHONE = { start(room, exit) {
      the screen's rectangle. Stretching the grid as one keeps the icons off
      each other too. So they begin far apart beyond the display's edges, close
      in around the screen as it goes, and hit home as it vanishes. */
-  const HOME_MS = 380, HOME_K = 5, HOME_N = 30;
+  const HOME_MS = 540, HOME_K = 5, HOME_N = 36;
   const flyHome = (appEl) => {
     const E = (t) => (Math.exp(HOME_K * t) - 1) / (Math.exp(HOME_K) - 1);
     const size = (t) => 1 - E(t);
