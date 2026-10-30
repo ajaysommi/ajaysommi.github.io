@@ -15,7 +15,10 @@ window.IPHONE = { start(room, exit) {
 
   const P = window.PORTFOLIO;
   const { esc, store, usedAt } = window.RETRO;
-  const SFX = window.SFX;
+  /* This phone makes only the sounds the real one made: no click on every
+     tap, its own keyboard tock, lock and unlock sounds, real touch tones. */
+  const SYS = window.SFX;
+  const SFX = { click() {}, beep() {}, key() { SYS.sample('tock'); }, error() {}, get muted() { return SYS.muted; }, toggle() { return SYS.toggle(); } };
   const PHOTO = 'assets/images/iphone-2g.webp?v=3';
   const WALL = 'assets/images/iphone-wallpaper.webp';
   const HV = 'font-family="Helvetica,Helvetica Neue,Arial,sans-serif"';
@@ -49,7 +52,7 @@ window.IPHONE = { start(room, exit) {
       <div class="ip-face">
         <span class="ip-ear" aria-hidden="true"></span>
         <div class="ip-screen" data-bar="trans" role="application" aria-label="Phone screen">
-          <div class="ip-status"><span class="l"><span class="ip-sig"><i></i><i></i><i></i><i></i><i></i></span><b class="car">SOMMI</b><span class="ip-edge">E</span></span><span class="c"></span><span class="r"><span class="ip-bat"><i></i></span></span></div>
+          <div class="ip-status"><span class="l"><span class="ip-sig"><i></i><i></i><i></i><i></i><i></i></span><b class="car">AJ&amp;T</b><span class="ip-edge">E</span></span><span class="c"></span><span class="r"><span class="ip-bat"><i></i></span></span></div>
           <div class="ip-board is-flying"><div class="ip-grid"></div><div class="ip-dock"></div></div>
           <div class="ip-lock" style="background-image:url(${WALL})"><div class="top"><div class="time"></div><div class="date"></div></div><div class="ip-lk-note" hidden><img src="assets/images/ios/sms.webp" alt="" /><b></b><span>now</span></div><div class="bot"><div class="ip-slider"><div class="txt">slide to unlock</div><div class="ip-knob" role="slider" aria-label="Slide to unlock" tabindex="0"><svg viewBox="0 0 40 28"><defs><linearGradient id="kar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4c4c4"/><stop offset=".48" stop-color="#9a9a9a"/><stop offset=".52" stop-color="#7f7f7f"/><stop offset="1" stop-color="#6a6a6a"/></linearGradient><linearGradient id="kgl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity=".05"/></linearGradient><clipPath id="kcl"><path d="M3.5 9.5h17.5V3l16 11-16 11v-6.5H3.5z"/></clipPath></defs><path d="M3.5 10.5h17.5V4l16 11-16 11v-6.5H3.5z" fill="#fff" opacity=".9"/><path d="M3.5 9.5h17.5V3l16 11-16 11v-6.5H3.5z" fill="url(#kar)" stroke="#5a5a5a" stroke-width=".8" stroke-linejoin="round"/><rect x="0" y="0" width="40" height="14" fill="url(#kgl)" clip-path="url(#kcl)"/></svg></div></div></div></div>
           <div class="ip-boot">${SILVER}</div>
@@ -107,11 +110,13 @@ window.IPHONE = { start(room, exit) {
   /* ---------------------------------------------------------------- clock */
 
   const now = () => new Date();
+  let statusLent = false;
   const hm = (d, ampm = true) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(ampm ? /$/ : / ?[AP]M$/, '');
   const tickClock = () => {
     const d = now();
     lock.querySelector('.time').textContent = hm(d, false);
     lock.querySelector('.date').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    if (statusLent) return;
     statusC.innerHTML = state === 'locked' ? '<svg class="ip-lockglyph" viewBox="0 0 9 11"><path d="M2 5V3.4a2.5 2.5 0 0 1 5 0V5" fill="none" stroke="currentColor" stroke-width="1.4"/><rect y="5" width="9" height="6" rx="1" fill="currentColor"/></svg>' : hm(d);
   };
 
@@ -186,6 +191,11 @@ window.IPHONE = { start(room, exit) {
     /* Bubbles: a glossy blue tile with bubbles rising through it. */
     bubbles: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><circle cx="20" cy="36" r="10" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="37" cy="22" r="7" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="40" cy="41" r="4.5" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="17" cy="32" r="3" fill="#fff" opacity=".85"/><circle cx="35" cy="19.5" r="2" fill="#fff" opacity=".85"/>`,
       lg('bg', [[0, '#6fd3ff'], [0.5, '#1d8fe0'], [1, '#0a4fa8']]) + rg('bb', [[0, '#ffffff', 0.15], [0.7, '#bfe9ff', 0.35], [1, '#ffffff', 0.75]], 0.35, 0.3, 0.7)),
+    signal: () => ic(`<rect width="57" height="57" fill="url(#bg)"/>${[0, 1, 2, 3, 4].map((i) => `<rect x="${9 + i * 8.4}" y="${40 - i * 6.6}" width="6" height="${8 + i * 6.6}" rx="1" fill="#fff"/>`).join('')}`, lg('bg', [[0, '#7fe08c'], [0.5, '#22a544'], [1, '#0e6e2a']])),
+    balancer: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="9" y="19" width="35" height="19" rx="3" fill="none" stroke="#fff" stroke-width="2.6"/><rect x="45" y="24.5" width="3.6" height="8" rx="1" fill="#fff"/><rect x="12.4" y="22.4" width="14" height="12" fill="#ffd84a"/>`, lg('bg', [[0, '#ffb45e'], [0.5, '#e8760f'], [1, '#a84a02']])),
+    defender: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><path d="M28.5 8 47 15v14c0 11-8 17-18.5 21C18 46 10 40 10 29V15z" fill="#fff"/><path d="M28.5 13 42 18.4v10.8c0 8-5.6 12.6-13.5 15.8z" fill="#c62a2a"/>`, lg('bg', [[0, '#8fa6d8'], [0.5, '#3a5aa8'], [1, '#1c2f6a']])),
+    onebar: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="10" y="38" width="7" height="9" rx="1" fill="#fff"/>${[1, 2, 3, 4].map((i) => `<rect x="${10 + i * 9}" y="${38 - i * 6.6}" width="7" height="${9 + i * 6.6}" rx="1" fill="#fff" opacity=".25"/>`).join('')}`, lg('bg', [[0, '#6d6d78'], [0.5, '#34343c'], [1, '#111116']])),
+    chicken: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="9" y="19" width="35" height="19" rx="3" fill="#fff"/><rect x="45" y="24.5" width="3.6" height="8" rx="1" fill="#fff"/><path d="M29 15 19 30h8l-3 12 12-16h-8z" fill="#f2b705" stroke="#a87400" stroke-width=".8"/>`, lg('bg', [[0, '#ff8a80'], [0.5, '#d9342b'], [1, '#8a0f0a']])),
     clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="40" text-anchor="middle" ${HV} font-weight="bold" font-size="30" fill="#fff" letter-spacing="-1">in</text>`,
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
@@ -231,6 +241,15 @@ window.IPHONE = { start(room, exit) {
     const a = h('div', 'ip-alert', `<b>${esc(title)}</b>${msg ? `<p>${msg}</p>` : ''}<div class="ip-al-btns${buttons.length === 2 ? ' two' : ''}">${buttons.map((b, i) => `<button type="button" class="${i === buttons.length - 1 && buttons.length > 1 ? 'dflt' : ''}">${esc(b)}</button>`).join('')}</div>`);
     s.appendChild(a);
     scr.appendChild(s);
+    /* One line where a slightly smaller size allows it; wrapped if not. */
+    a.querySelectorAll('b, p').forEach((el) => {
+      if (el.querySelector('br')) return;
+      const base = parseFloat(getComputedStyle(el).fontSize);
+      el.style.whiteSpace = 'nowrap';
+      let size = base;
+      while (el.scrollWidth > el.clientWidth && size > base * .82) { size -= .5; el.style.fontSize = size + 'px'; }
+      if (el.scrollWidth > el.clientWidth) { el.style.whiteSpace = ''; el.style.fontSize = ''; }
+    });
     SFX.beep();
     a.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
       a.classList.add('is-out');
@@ -487,9 +506,14 @@ window.IPHONE = { start(room, exit) {
     current = null;
     a.def.onClose && a.def.onClose();
     scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
+    /* The app shrinks away at its own pace while the icons, already on
+       their way in from the edges, gather speed. */
     a.el.classList.add('is-closing');
-    setTimeout(() => { flyOut(); board.classList.remove('is-converge'); requestAnimationFrame(flyIn); }, 70);
-    setTimeout(() => a.el.remove(), 160);
+    flyOut();
+    board.classList.remove('is-converge');
+    flyHome();
+    setTimeout(() => a.el.remove(), 340);
+    quietUntil = performance.now() + 600;
     setBar('black');
     state = 'home';
     tickClock();
@@ -579,24 +603,36 @@ window.IPHONE = { start(room, exit) {
     /* Our own pages load directly; everything typed goes through OLDWEB,
        which finds the site as it was in 2007 (or today's, failing that)
        and dresses searches as that year's Google. */
-    const local = (u) => u === 'index.html' || /\.pdf(#|$)/i.test(u);
-    const pretty = (u) => !u ? '' : local(u) ? 'ajaysommi.github.io/' + (u === 'index.html' ? '' : u.replace(/#.*$/, '')) : window.OLDWEB.shown(u);
+    const local = (u) => /^[\w-]+\.html([?#]|$)/.test(u) || /\.pdf(#|$)/i.test(u);
+    const pretty = (u) => !u ? '' : local(u) ? 'ajaysommi.github.io/' + u.replace(/^index\.html/, '') : window.OLDWEB.shown(u);
     const resolve = (v) => { v = v.trim(); return v || null; };
     const progress = (on) => { prog.classList.toggle('on', on); if (!on) { prog.classList.add('done'); setTimeout(() => prog.classList.remove('done'), 300); } };
     const load = async (u) => {
       const my = ++token;
       note.hidden = true;
-      if (!u || local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.dataset.kind = ''; fr.onload = null; fr.src = u || 'about:blank'; progress(false); return; }
+      if (!u || local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.dataset.kind = ''; fr.onload = u ? follow : null; fr.src = u || 'about:blank'; progress(false); return; }
       await window.OLDWEB.open(fr, u, 2007, { onNav: (x) => { if (my === token) go(x); }, onState: (st) => { if (my === token) progress(st === 'loading'); } });
     };
-    const show = (fresh) => {
+    /* Links followed inside one of our own pages never pass through here,
+       so its address is read back after each load: they join the history
+       and Back lights up, without loading the page a second time. */
+    const paint = () => {
       const t = tabsList[cur];
       addr.value = pretty(t.url); addr.render();
       cnt.textContent = tabsList.length;
       app.el.querySelector('[data-a="b"]').classList.toggle('off', t.pos <= 0);
       app.el.querySelector('[data-a="f"]').classList.toggle('off', t.pos >= t.hist.length - 1);
-      load(t.url);
     };
+    const here = () => { try { const l = fr.contentWindow.location; return (l.pathname.split('/').pop() || 'index.html') + l.search + l.hash; } catch (e) { return null; } };
+    const noted = () => {
+      const u = here(), t = tabsList[cur];
+      if (!u || u === 'blank' || u === t.url.replace(/#view=.*$/, '') || u === t.url) return;
+      t.hist = t.hist.slice(0, t.pos + 1);
+      t.hist.push(u); t.pos = t.hist.length - 1; t.url = u;
+      paint();
+    };
+    function follow() { noted(); try { fr.contentWindow.addEventListener('hashchange', noted); } catch (e) {} }
+    const show = () => { paint(); load(tabsList[cur].url); };
     const go = (u) => {
       const t = tabsList[cur];
       t.hist = t.hist.slice(0, t.pos + 1);
@@ -747,12 +783,12 @@ window.IPHONE = { start(room, exit) {
       seg: control,
       left: ['Today', () => { month = new Date(now().getFullYear(), now().getMonth(), 1); view = 2; control.querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', k === 2)); render(); }],
       right: ['+', () => app.push('Add Event', (pg, a, entry) => {
-        const [title, where] = form(pg, [['Title', 'Interview with Ajay'], ['Location', 'Your office, or a call']]);
+        const [title, where] = form(pg, [['Title', 'Title'], ['Location', 'Location']]);
         pg.insertAdjacentHTML('beforeend', `<div class="gp"><div class="row"><span class="k">Starts</span><span class="v n">${now().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div></div>`);
         setTimeout(() => title.focus(), 320);
         entry.opts.left = ['Cancel', () => app.pop()];
         entry.opts.right = ['Done', () => {
-          const t = title.value || 'Interview with Ajay';
+          const t = title.value || 'New Event';
           mine.push({ t, d: now().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), ts: Date.now() });
           store.set('ip-events', mine);
           void where;
@@ -824,7 +860,7 @@ window.IPHONE = { start(room, exit) {
 
   /* Notes: every note can be edited, new ones made, sent or thrown away. */
   const NOTES_DEFAULT = [
-    ['More eras', 'This phone is one of three in this portfolio (a 2000 Nokia-style candybar and a 2004 click-wheel player are the others: Eras, at the bottom).\n\nOn a laptop or desktop there are whole computers too: a 1983 terminal, a 1991 Macintosh, a 1998 iMac and a 2007 iMac, each one yours to click around, with a game on every one.\n\nOpen this page on a computer to try them.'],
+    ['More eras', 'This phone is one of three in this portfolio. Tap Eras, at the bottom, to see the others.\n\nOpen this page on a computer and there are four more machines to use.'],
     ['About me', `${P.about[0]}\n\n${P.about[1]}`],
     ['Education', `${P.education.school}\n${P.education.degree}\n${P.education.college}\nGraduating ${P.education.when}\n\n${P.education.text}`],
     ['Off the clock', `“${P.quote}”\n\nRepairs, teardowns and builds: see Builds.`],
@@ -869,8 +905,161 @@ window.IPHONE = { start(room, exit) {
     list();
   };
 
+  /* -------------------------------------------------------------- calling */
+
+  const fmtNum = (d) => d.length <= 3 ? d : d.length <= 7 ? `${d.slice(0, 3)}-${d.slice(3)}` : d.length <= 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : d;
+  const GLYPH = {
+    mute: '<svg viewBox="0 0 40 40"><rect x="15" y="5" width="10" height="19" rx="5" fill="currentColor"/><path d="M10 18c0 7 4 12 10 12s10-5 10-12M20 30v5M13 36h14" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M6 6l28 28" stroke="#1b2545" stroke-width="5"/><path d="M6 6l28 28" stroke="currentColor" stroke-width="2.4"/></svg>',
+    keypad: '<svg viewBox="0 0 40 40" fill="currentColor">' + [0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<rect x="${7.5 + c * 9}" y="${3.5 + r * 8.8}" width="7" height="6.8" rx="1"/>`).join('')).join('') + '</svg>',
+    speaker: '<svg viewBox="0 0 40 40" fill="currentColor"><path d="M4 15h7l10-8v26l-10-8H4z"/><path d="M25 14a8 8 0 0 1 0 12M28.5 9.5a14 14 0 0 1 0 21M32 5a20 20 0 0 1 0 30" fill="none" stroke="currentColor" stroke-width="2.6"/></svg>',
+    add: '<svg viewBox="0 0 40 40" fill="currentColor"><path d="M16 5h8v11h11v8H24v11h-8V24H5v-8h11z"/></svg>',
+    hold: '<svg viewBox="0 0 40 40" fill="currentColor"><rect x="9" y="6" width="8.5" height="28" rx="1"/><rect x="22.5" y="6" width="8.5" height="28" rx="1"/></svg>',
+    contacts: '<svg viewBox="0 0 40 40" fill="currentColor"><path d="M20 4a9 9 0 0 1 9 9c0 6-4 11-9 11s-9-5-9-11a9 9 0 0 1 9-9zM4 36c1-7 5-10 10-11 2 2 4 3 6 3s4-1 6-3c5 1 9 4 10 11z"/></svg>',
+    hang: '<svg viewBox="0 0 34 16"><path d="M1 11C7 2 27 2 33 11c.8 1.3.4 2.6-1 3.2l-5 1.5c-1.3.3-2.3-.2-2.7-1.4l-.9-3c-4-1.3-8.8-1.3-12.8 0l-.9 3c-.4 1.2-1.4 1.7-2.7 1.4l-5-1.5C.6 13.6.2 12.3 1 11z" fill="currentColor"/></svg>',
+    back: '<svg viewBox="0 0 24 24"><path d="M6.6 2.5c1.2-.8 2.4-.2 2.8 1l.9 2.4c.4 1.1-.2 1.8-1.1 2.3.5 2.1 2.1 4 4.1 4.9.5-.8 1.3-1.5 2.5-1.1l2.3 1c1.3.6 1.7 1.8.9 2.9-1 1.6-3 2.4-5 1.7C8.4 16 4.7 12.3 3.4 8 2.8 5.9 3.7 3.7 6.6 2.5z" fill="currentColor"/></svg>'
+  };
+  const LABEL = [['mute', 'mute'], ['keypad', 'keypad'], ['speaker', 'speaker'], ['add', 'add call'], ['hold', 'hold'], ['contacts', 'contacts']];
+  let callEl = null, closeNow = null;
+  function closeCall(instant) { if (closeNow) closeNow(instant); }
+  let barBefore = 'black', calledBack = false;
+  const callIn = (el) => {
+    barBefore = scr.dataset.bar || 'black';
+    setBar('trans');
+    SYS.music(null);
+    scr.insertBefore(el, scr.querySelector('.ip-status'));
+    callEl = el;
+  };
+  const slideIn = (el, ms) => {
+    el.querySelector('.top').animate([{ transform: 'translateY(-116px)' }, { transform: 'none' }], { duration: ms, easing: 'cubic-bezier(.2, .7, .3, 1)' });
+    el.querySelector('.bot').animate([{ transform: 'translateY(98px)' }, { transform: 'none' }], { duration: ms, easing: 'cubic-bezier(.2, .7, .3, 1)' });
+  };
+  const leaveCall = (el, instant, after) => {
+    if (callEl === el) { callEl = null; closeNow = null; }
+    const done = () => { el.remove(); if (!callEl) { setBar(barBefore); SYS.music(2007); } after && after(); };
+    if (instant) { done(); return; }
+    el.querySelector('.top').animate([{ transform: 'none' }, { transform: 'translateY(-116px)' }], { duration: 170, easing: 'ease-in', fill: 'forwards' });
+    el.querySelector('.bot').animate([{ transform: 'none' }, { transform: 'translateY(98px)' }], { duration: 170, easing: 'ease-in', fill: 'forwards' });
+    el.animate([{ opacity: 1 }, { opacity: 1, offset: .7 }, { opacity: 0 }], { duration: 180, fill: 'forwards' }).finished.then(done);
+  };
+
+  /* A call going out: the same glass bars as the lock screen slide in from
+     the top and bottom over the wallpaper, and the panel of controls is
+     simply there between them. Nobody picks up: after about four seconds
+     it fails. `connected` is a call that has already been answered. */
+  function placeCall(title, { dialled = false, connected = false, failNow = false, onEnd = null } = {}) {
+    closeCall(true);
+    kb.hide();
+    const el = h('div', 'ip-lock ip-call', `<div class="top"><div class="cl-num"></div><div class="cl-st"></div></div><div class="cl-mid"></div><div class="bot"><div class="cl-btns"></div></div>`);
+    el.style.backgroundImage = `url(${WALL})`;
+    const num = el.querySelector('.cl-num'), st = el.querySelector('.cl-st'), mid = el.querySelector('.cl-mid'), btns = el.querySelector('.cl-btns');
+    num.textContent = title;
+    const on = { mute: false, speaker: false, hold: false };
+    let ring = null, fail = 0, secs = 0, timer = 0, typed = '', adding = false, failed = false;
+    const volume = () => { if (ring) ring.gain(on.mute || on.hold ? 0 : on.speaker ? 1.6 : .6); };
+    const status = () => { st.textContent = on.hold ? 'on hold' : connected ? `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}` : 'calling mobile…'; };
+    const stopAll = () => { if (ring) ring.stop(); ring = null; clearTimeout(fail); clearInterval(timer); };
+    const end = (instant) => {
+      stopAll();
+      leaveCall(el, instant, onEnd);
+      if (dialled && !calledBack) armCallBack(title);
+    };
+    closeNow = (instant) => { const d = dialled; dialled = false; end(instant); dialled = d; };
+    const arm = () => { clearTimeout(fail); if (!connected) fail = setTimeout(failCall, 4000); };
+    const endBtn = () => `<button type="button" class="cl-end" data-a="end"><i>${GLYPH.hang}</i>End Call</button>`;
+    const panel = () => {
+      mid.className = 'cl-mid';
+      mid.innerHTML = LABEL.map(([k, l]) => `<button type="button" data-a="${k}" class="${on[k] ? 'on' : ''}"><i>${GLYPH[k]}</i><b>${l}</b></button>`).join('');
+      btns.innerHTML = endBtn();
+    };
+    const keys = () => {
+      mid.className = 'cl-mid is-keys';
+      mid.innerHTML = '123456789*0#'.split('').map((k) => `<button type="button" data-k="${k}"><b>${k}</b></button>`).join('');
+      btns.innerHTML = adding
+        ? `<button type="button" class="cl-green half" data-a="dial"><i>${GLYPH.back}</i>Call</button><button type="button" class="cl-dark half" data-a="hide">Cancel</button>`
+        : `<button type="button" class="cl-end half" data-a="end"><i>${GLYPH.hang}</i>End</button><button type="button" class="cl-dark half" data-a="hide">Hide Keypad</button>`;
+    };
+    const failCall = () => {
+      stopAll();
+      failed = true;
+      connected = false;
+      mid.remove();
+      st.textContent = 'Call Failed';
+      num.textContent = title;
+      btns.innerHTML = `<button type="button" class="cl-green half" data-a="again"><i>${GLYPH.back}</i>Call Back</button><button type="button" class="cl-dark half" data-a="cancel">Cancel</button>`;
+    };
+    el.addEventListener('click', async (e) => {
+      const d = e.target.closest('[data-k]');
+      if (d) {
+        SYS.dtmf(d.dataset.k);
+        typed += d.dataset.k;
+        num.textContent = adding ? fmtNum(typed) : typed;
+        return;
+      }
+      const b = e.target.closest('[data-a]');
+      if (!b) return;
+      const a = b.dataset.a;
+      if (a === 'end' || a === 'cancel') { end(); return; }
+      if (a === 'again') { const was = dialled; closeNow = null; stopAll(); leaveCall(el, true); placeCall(title, { dialled: was, onEnd }); return; }
+      if (a === 'mute' || a === 'speaker' || a === 'hold') {
+        on[a] = !on[a];
+        b.classList.toggle('on', on[a]);
+        volume();
+        if (a === 'hold') { status(); if (on.hold) clearTimeout(fail); else arm(); }
+        return;
+      }
+      if (a === 'keypad') { typed = ''; keys(); return; }
+      if (a === 'hide') { adding = false; num.textContent = title; panel(); return; }
+      if (a === 'add') { adding = true; typed = ''; on.hold = true; status(); volume(); clearTimeout(fail); num.textContent = ''; keys(); return; }
+      if (a === 'dial') { if (!typed) return; const next = fmtNum(typed.replace(/\D/g, '')); const wasD = dialled; closeNow = null; stopAll(); leaveCall(el, true); placeCall(next, { dialled: wasD }); return; }
+      if (a === 'contacts') {
+        const r = await alertBox('Ajay Sommi', '', ['Email', 'GitHub', 'LinkedIn', 'Cancel']);
+        if (r === 'Email') { closeCall(); writeMail('Hello'); }
+        if (r === 'GitHub') ext(P.github);
+        if (r === 'LinkedIn') ext(P.linkedin);
+      }
+    });
+    panel();
+    status();
+    callIn(el);
+    slideIn(el, 240);
+    if (failNow) { failCall(); return; }
+    if (connected) { timer = setInterval(() => { if (!on.hold) { secs++; status(); } }, 1000); return; }
+    ring = SYS.ringback();
+    volume();
+    arm();
+  }
+
+  /* Call a number and nobody picks up; a little later, it rings back. */
+  function armCallBack(title) {
+    calledBack = true;
+    const ringIn = () => { if (state === 'boot' || asleep || callEl) { setTimeout(ringIn, 3000); return; } incoming(title); };
+    setTimeout(ringIn, 5000 + Math.random() * 6000);
+  }
+  function incoming(title) {
+    kb.hide();
+    const el = h('div', 'ip-lock ip-call ip-in', `<i class="cl-bg" style="background-image:url(${WALL})"></i><div class="top"><div class="cl-num"></div><div class="cl-st">mobile</div></div><div class="bot"><div class="ip-slider"><div class="txt">slide to answer</div><div class="ip-knob" role="slider" aria-label="Slide to answer" tabindex="0"><svg viewBox="0 0 40 28"><path d="M3.5 9.5h17.5V3l16 11-16 11v-6.5H3.5z" fill="#eaf4ff" stroke="#3f7f2c" stroke-width=".8" stroke-linejoin="round"/></svg></div></div></div>`);
+    el.querySelector('.cl-num').textContent = title;
+    callIn(el);
+    SYS.music(2007);
+    slideIn(el, 420);
+    el.querySelector('.cl-bg').animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420 });
+    if (navigator.vibrate) navigator.vibrate([400, 300, 400]);
+    const k = el.querySelector('.ip-knob'), tx = el.querySelector('.txt');
+    let d = null;
+    const quit = setTimeout(() => leaveCall(el), 16000);
+    closeNow = (instant) => { clearTimeout(quit); leaveCall(el, instant); };
+    const answer = () => { clearTimeout(quit); SYS.music(null); closeNow = null; callEl = null; el.remove(); placeCall(title, { connected: true }); barBefore = barBeforeIn; };
+    const barBeforeIn = barBefore;
+    k.addEventListener('pointerdown', (e) => { k.setPointerCapture(e.pointerId); k.classList.remove('is-back'); d = { x: e.clientX, k: scr.getBoundingClientRect().width / 320 }; });
+    k.addEventListener('pointermove', (e) => { if (!d) return; const x = Math.max(0, Math.min(MAXX, (e.clientX - d.x) / d.k)); k.style.transform = `translateX(${x}px)`; tx.style.opacity = String(Math.max(0, 1 - x / 70)); });
+    const up = (e) => { if (!d) return; const x = (e.clientX - d.x) / d.k; d = null; if (x >= MAXX - 4) answer(); else { k.classList.add('is-back'); k.style.transform = ''; tx.style.opacity = ''; } };
+    k.addEventListener('pointerup', up);
+    k.addEventListener('pointercancel', up);
+    k.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'Enter') answer(); });
+  }
+
   /* Phone: Favorites, Recents, Contacts, Keypad and Voicemail all work.
-     The keypad dials anything, and the network politely declines. */
+     The keypad dials anything; nobody ever picks up. */
   const phoneApp = (app) => {
     const card = store.get('ip-card', null) || { email: P.email, home: 'github.com/ajaysommi', work: 'linkedin.com/in/ajay-sommi', notes: 'Software engineer. Graduating December 2026.' };
     delete card.mobile;
@@ -878,17 +1067,16 @@ window.IPHONE = { start(room, exit) {
     let toTab = () => {};
     const allRecents = () => [...P.experience].reverse().map((e) => [e.short, e.where, e.when.split(' to ')[1] || e.when]);
     let recents = allRecents();
-    const call = async (num) => {
+    const call = async (num, label) => {
       const digits = String(num).replace(/\D/g, '');
-      if (!digits) { alertBox('Enter a Number', 'Type a number on the keypad first.'); return; }
+      if (!digits && !label) { alertBox('Enter a Number', 'Type a number on the keypad first.'); return; }
       if (digits === '911') { alertBox('Emergency Calls Unavailable', 'This phone can’t place real calls.'); return; }
       if (['1983', '1991', '1998', '2007'].includes(digits)) {
         const r = await alertBox('Switch Era', `Dialing ${digits} opens the ${digits} version of this portfolio.`, ['Cancel', 'Go']);
         if (r === 'Go') exit();
         return;
       }
-      const r = await alertBox('Cellular Network Not Available', 'This phone can’t place calls. You can send an email instead.', ['Dismiss', 'Email']);
-      if (r === 'Email') writeMail('Hello');
+      placeCall(label || fmtNum(digits), { dialled: !label });
     };
     const F = [['email', 'email'], ['home page', 'home'], ['work', 'work'], ['notes', 'notes']];
     const showCard = (edit) => (pg, a, entry) => {
@@ -919,11 +1107,11 @@ window.IPHONE = { start(room, exit) {
       pg.innerHTML = `<div class="kp-num"></div><div class="kp-grid">${'123456789*0#'.split('').map((k, i) => `<button type="button" data-k="${k}"><b>${k}</b><span>${i < 9 ? L[i] : k === '0' ? '+' : ''}</span></button>`).join('')}<button type="button" class="kp-add" data-a="add" aria-label="Add contact"><svg viewBox="0 0 30 22" width="30" height="22"><path d="M18 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM8 21c1-5 5-7 10-7s9 2 10 7zM6 6v3H3v2h3v3h2v-3h3V9H8V6z" fill="currentColor"/></svg></button><button type="button" class="kp-call" data-a="call"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6.6 2.5c1.2-.8 2.4-.2 2.8 1l.9 2.4c.4 1.1-.2 1.8-1.1 2.3.5 2.1 2.1 4 4.1 4.9.5-.8 1.3-1.5 2.5-1.1l2.3 1c1.3.6 1.7 1.8.9 2.9-1 1.6-3 2.4-5 1.7C8.4 16 4.7 12.3 3.4 8 2.8 5.9 3.7 3.7 6.6 2.5z" fill="#fff"/></svg>Call</button><button type="button" class="kp-del" data-a="del" aria-label="Delete">⌫</button></div>`;
       let num = '';
       const out = pg.querySelector('.kp-num');
-      const fmt = (d) => d.length <= 3 ? d : d.length <= 7 ? `${d.slice(0, 3)}-${d.slice(3)}` : d.length <= 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : d;
+      const fmt = fmtNum;
       const draw = () => { out.textContent = /^\d+$/.test(num) ? fmt(num) : num; };
       pg.addEventListener('click', (e) => {
         const k = e.target.closest('[data-k]');
-        if (k) { num += k.dataset.k; draw(); SFX.beep(); return; }
+        if (k) { num += k.dataset.k; draw(); SYS.dtmf(k.dataset.k); return; }
         const a = e.target.closest('[data-a]');
         if (!a) return;
         if (a.dataset.a === 'del') { num = num.slice(0, -1); draw(); }
@@ -967,7 +1155,7 @@ window.IPHONE = { start(room, exit) {
         if (e.target.closest('.vm-i')) { const [n, c, q] = P.recs[i]; app.push(n.split(' ')[0], (p2) => { p2.innerHTML = `<div class="ml-h">From: <b>${esc(n)}</b><br/>${esc(c)}</div><div class="ml-b">“${esc(q)}”</div>`; }, { back: 'Voicemail' }); return; }
         play(i);
       });
-      pg.querySelector('.vm-call').addEventListener('click', () => { SFX.click(); call(sel >= 0 ? '0' : ''); });
+      pg.querySelector('.vm-call').addEventListener('click', () => { SFX.click(); if (sel < 0) { alertBox('No Message Selected', 'Tap a message first.'); return; } call('', P.recs[sel][0]); });
       pg.querySelector('.vm-del').addEventListener('click', () => {
         SFX.click();
         if (sel < 0) { alertBox('No Message Selected', 'Tap a message first.'); return; }
@@ -983,7 +1171,7 @@ window.IPHONE = { start(room, exit) {
       entry.opts.right = ['+', () => toTab(3)];
     };
     const recentsPage = (pg, a, entry) => {
-      const draw = () => { pg.innerHTML = ''; plain(pg, recents.length ? recents.map(([n, w, d]) => ({ text: n, sub: w, rt: d, go: () => call('0') })) : [{ text: 'No Recents', cls: 'none' }]); };
+      const draw = () => { pg.innerHTML = ''; plain(pg, recents.length ? recents.map(([n, w, d]) => ({ text: n, sub: w, rt: d, go: () => call('', n) })) : [{ text: 'No Recents', cls: 'none' }]); };
       draw();
       entry.opts.seg = seg(['All', 'Missed'], 0, (i) => { recents = i ? allRecents().filter((_, k) => k % 3 === 0) : allRecents(); draw(); }, 'small');
       entry.opts.right = ['Clear', async () => { const r = await alertBox('Clear All Recents', '', ['Cancel', 'Clear All Recents']); if (r !== 'Cancel') { recents = []; draw(); } }];
@@ -1024,7 +1212,7 @@ window.IPHONE = { start(room, exit) {
     const box = (name, rows) => app.push(name, (pg) => { plain(pg, rows.length ? rows : [{ text: 'No Mail', cls: 'none' }]); }, { back: 'Mailboxes' });
     app.push('Mailboxes', (pg) => plain(pg, [
       { text: 'Inbox', rt: unread() ? String(unread()) : '', go: () => app.push(inboxTitle(), inbox, { back: 'Mailboxes' }) },
-      { text: 'Drafts', go: () => box('Drafts', [{ text: 'Offer letter', sub: 'Dear Ajay, we’d love to have you…', go: () => compose(P.email, 'Offer') }]) },
+      { text: 'Drafts', go: () => box('Drafts', []) },
       { text: 'Sent', go: () => box('Sent', sent.map(([s, b]) => ({ text: s, sub: b }))) },
       { text: 'Trash', go: () => box('Trash', [{ text: 'Old resume (2019)', sub: 'Replaced by the current one.' }]) }
     ]));
@@ -1104,7 +1292,7 @@ window.IPHONE = { start(room, exit) {
         const b = g.b[i];
         if (Math.hypot(x - (b.sx || b.x), y - b.y) <= b.r + 8) {
           g.b.splice(i, 1);
-          if (b.red) { g.pops.push({ x: b.sx || b.x, y: b.y, r: b.r, t: 0, pts: '' }); lose(); }
+          if (b.red) { g.pops.push({ x: b.sx || b.x, y: b.y, r: b.r, t: 0, pts: '' }); const f = h('div', 'bb-flash'); root.appendChild(f); f.animate([{ opacity: .95 }, { opacity: 0 }], { duration: 420, easing: 'ease-out' }).finished.then(() => f.remove()); lose(); }
           else { const pts = Math.max(1, Math.round(40 / b.r)); g.score += pts; g.pops.push({ x: b.sx || b.x, y: b.y, r: b.r, t: 0, pts: '+' + pts }); SFX.key(); hud(); }
           return;
         }
@@ -1113,7 +1301,174 @@ window.IPHONE = { start(room, exit) {
     app.def.onClose = () => cancelAnimationFrame(raf);
   };
 
+  /* ---------------------------------------------------- status bar games */
+
+  /* These five play on the phone's own status bar: its signal bars, its
+     battery, its clock. Everything is put back when the app closes. */
+  const stat = {
+    sig(n) { room.querySelectorAll('.ip-sig i').forEach((b, i) => b.classList.toggle('off', i >= n)); room.querySelector('.car').textContent = n ? 'AJ&T' : 'No Service'; room.querySelector('.ip-edge').style.visibility = n ? '' : 'hidden'; },
+    bat(p) { const b = room.querySelector('.ip-bat'); b.querySelector('i').style.width = Math.max(0, Math.min(100, p)) + '%'; b.classList.toggle('low', p <= 20); },
+    lend() { statusLent = true; },
+    reset() { statusLent = false; stat.sig(5); stat.bat(100); room.querySelectorAll('.ip-status .gl-bad').forEach((x) => x.classList.remove('gl-bad')); room.querySelector('.ip-edge').style.visibility = ''; tickClock(); }
+  };
+  /* The frame every one of them shares: a card to start and end on, a
+     frame loop that stops with the app. */
+  const gameApp = (app, name, intro, hiKey, build) => {
+    app.el.innerHTML = `<div class="gm"><div class="gm-play"></div><div class="bb-msg"><b>${name}</b><p>${intro}</p><p class="hi"></p><span>Tap to start</span></div></div>`;
+    const rootEl = app.el.querySelector('.gm'), play = rootEl.querySelector('.gm-play'), msg = rootEl.querySelector('.bb-msg');
+    let raf = 0, running = false, last = 0, tick = null, stopT = 0;
+    const hiText = () => { const v = store.get(hiKey, null); msg.querySelector('.hi').textContent = v != null ? `Best: ${v}` : ''; };
+    hiText();
+    const frame = (t) => { raf = requestAnimationFrame(frame); if (!running) return; const dt = Math.min(50, t - last); last = t; tick && tick(dt, t); };
+    const over = (title, line, score, lowerIsBetter) => {
+      running = false;
+      if (score != null) { const b = store.get(hiKey, null); if (b == null || (lowerIsBetter ? score < b : score > b)) store.set(hiKey, score); }
+      msg.querySelector('b').textContent = title;
+      msg.querySelector('p').textContent = line;
+      hiText();
+      msg.querySelector('span').textContent = 'Tap to play again';
+      msg.hidden = false;
+    };
+    const start = () => { msg.hidden = true; play.innerHTML = ''; stat.lend(); tick = build(play, over); last = performance.now(); running = true; };
+    msg.addEventListener('click', start);
+    raf = requestAnimationFrame(frame);
+    stat.lend();
+    app.def.onClose = () => { cancelAnimationFrame(raf); clearTimeout(stopT); running = false; stat.reset(); };
+  };
+  /* Dragging a thing around the play area, in the screen's own points. */
+  const dragger = (area, el, pos, moved) => {
+    let on = false;
+    const to = (e) => { const r = area.getBoundingClientRect(), k = r.width / 320; pos.x = Math.max(0, Math.min(320, (e.clientX - r.left) / k)); pos.y = Math.max(0, Math.min(r.height / k, (e.clientY - r.top) / k)); el.style.transform = `translate(${pos.x}px, ${pos.y}px)`; moved && moved(); };
+    area.addEventListener('pointerdown', (e) => { on = true; try { area.setPointerCapture(e.pointerId); } catch (x) {} to(e); });
+    area.addEventListener('pointermove', (e) => { if (on) to(e); });
+    ['pointerup', 'pointercancel'].forEach((v) => area.addEventListener(v, () => { on = false; }));
+    el.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+  };
+  const GAMES = {
+    signal: (app) => gameApp(app, 'Signal Rescue', 'Drag the phone around the screen until all five bars in the status bar come back. Hold them there to connect.', 'ip-signal-hi', (play, over) => {
+      play.innerHTML = '<div class="gm-sky"></div><div class="gm-tip">Find the signal</div><div class="gm-bars"><i></i><i></i><i></i><i></i><i></i></div><div class="gm-phone"></div>';
+      const ph = play.querySelector('.gm-phone'), bars = [...play.querySelectorAll('.gm-bars i')], tip = play.querySelector('.gm-tip');
+      const pos = { x: 160, y: 260 }, spot = { x: 40 + Math.random() * 240, y: 90 + Math.random() * 300 };
+      let at5 = 0, t0 = performance.now();
+      dragger(play, ph, pos);
+      stat.sig(0);
+      return (dt) => {
+        const n = Math.max(0, Math.min(5, 5 - Math.floor(Math.hypot(pos.x - spot.x, pos.y - spot.y) / 42)));
+        stat.sig(n);
+        bars.forEach((b, i) => b.classList.toggle('on', i < n));
+        at5 = n === 5 ? at5 + dt : 0;
+        tip.textContent = n === 5 ? 'Hold it there…' : n ? 'Getting warmer' : 'No Service';
+        if (at5 > 1200) {
+          const secs = Math.round((performance.now() - t0) / 100) / 10;
+          over('Connected', `Five bars in ${secs} seconds.`, secs, true);
+          placeCall('Ajay Sommi', { connected: true, onEnd: () => stat.sig(5) });
+        }
+      };
+    }),
+    balancer: (app) => gameApp(app, 'Battery Balancer', 'Apps are eating the battery. Switch off the hungriest ones and keep the status bar battery alive for 40 seconds. They wake up again.', 'ip-balancer-hi', (play, over) => {
+      const A = [['Mail', 2.4], ['Maps', 4.2], ['Safari', 3.2], ['Camera', 5.2], ['Photos', 1.8], ['iPod', 1.2]];
+      play.innerHTML = `<div class="gm-batt"><b>100%</b><span>40s left</span></div><ul class="gm-procs">${A.map(([n], i) => `<li data-i="${i}"><span>${n}</span><em></em><button type="button" class="sw on"><span class="sw-on">ON</span><span class="sw-off">OFF</span><i></i></button></li>`).join('')}</ul>`;
+      const on = A.map(() => true), rows = [...play.querySelectorAll('li')], big = play.querySelector('.gm-batt b'), left = play.querySelector('.gm-batt span');
+      let p = 100, t = 40000, wake = 2500;
+      play.querySelector('.gm-procs').addEventListener('click', (e) => { const li = e.target.closest('li'); if (!li) return; const i = +li.dataset.i; on[i] = !on[i]; li.querySelector('.sw').classList.toggle('on', on[i]); });
+      return (dt) => {
+        t -= dt; wake -= dt;
+        if (wake <= 0) { wake = 1400 + Math.random() * 1800; const off = on.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0); if (off.length) { const i = off[Math.floor(Math.random() * off.length)]; on[i] = true; rows[i].querySelector('.sw').classList.add('on'); } }
+        const drain = A.reduce((a, [, r], i) => a + (on[i] ? r : 0), 0) * .42;
+        p -= drain * dt / 1000;
+        rows.forEach((li, i) => { li.querySelector('em').style.width = (on[i] ? A[i][1] * 11 : 0) + 'px'; });
+        stat.bat(p);
+        big.textContent = Math.max(0, Math.round(p)) + '%';
+        big.classList.toggle('low', p <= 20);
+        left.textContent = Math.max(0, Math.ceil(t / 1000)) + 's left';
+        if (p <= 0) over('Battery Dead', `You lasted ${Math.round((40000 - t) / 1000)} seconds.`, null);
+        else if (t <= 0) over('Still Running', `Finished with ${Math.round(p)}% left.`, Math.round(p));
+      };
+    }),
+    defender: (app) => gameApp(app, 'Status Bar Defender', 'Glitches are attacking the status bar. When something up there starts flashing, tap it (or just below it) before it fails. It gets faster.', 'ip-defender-hi', (play, over) => {
+      /* The targets run down from each item, since the bar itself is small. */
+      const P4 = [['.ip-sig', 8, 74, 'signal'], ['.ip-edge', 82, 50, 'network'], ['.ip-status .c', 132, 100, 'clock'], ['.ip-bat', 238, 82, 'battery']];
+      play.innerHTML = `<div class="gm-zones">${P4.map(([, x, w, n], i) => `<button type="button" data-i="${i}" style="left:${x}px;width:${w}px"><span>${n}</span></button>`).join('')}</div><div class="gm-score">0</div><div class="gm-lives">●●●</div>`;
+      const zones = [...play.querySelectorAll('.gm-zones button')], sc = play.querySelector('.gm-score'), lv = play.querySelector('.gm-lives');
+      let score = 0, lives = 3, cur = -1, left = 0, wait = 900, speed = 1600, bat = 100;
+      const el = (i) => room.querySelector(P4[i][0]);
+      const clear = () => { if (cur < 0) return; el(cur).classList.remove('gl-bad'); zones[cur].classList.remove('hot'); if (P4[cur][3] === 'clock') { statusC.textContent = hm(now()); } if (P4[cur][3] === 'signal') stat.sig(5); if (P4[cur][3] === 'battery') stat.bat(bat); cur = -1; };
+      statusC.textContent = hm(now());
+      play.querySelector('.gm-zones').addEventListener('pointerdown', (e) => { const b = e.target.closest('button'); if (!b) return; if (+b.dataset.i === cur) { clear(); score++; sc.textContent = score; speed = Math.max(520, speed - 45); wait = 200 + Math.random() * 500; } });
+      return (dt) => {
+        if (cur < 0) {
+          wait -= dt;
+          if (wait <= 0) { cur = Math.floor(Math.random() * 4); left = speed; el(cur).classList.add('gl-bad'); zones[cur].classList.add('hot'); }
+          return;
+        }
+        left -= dt;
+        const f = left / speed, kind = P4[cur][3];
+        if (kind === 'signal') stat.sig(Math.ceil(f * 5));
+        if (kind === 'battery') stat.bat(bat * f);
+        if (kind === 'clock') statusC.textContent = `${Math.floor(Math.random() * 12) + 1}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`;
+        if (left <= 0) {
+          clear();
+          lives--;
+          lv.textContent = '●'.repeat(Math.max(0, lives)) + '○'.repeat(3 - Math.max(0, lives));
+          wait = 500;
+          if (lives <= 0) over('Status Bar Lost', `You fixed ${score} glitches.`, score);
+        }
+      };
+    }),
+    onebar: (app) => gameApp(app, 'One-Bar Call', 'A call is trying to connect. Drag the ring over the drifting reception and keep at least three bars until it goes through. Fall too low for too long and the call fails.', 'ip-onebar-hi', (play, over) => {
+      play.innerHTML = '<div class="gm-sky"></div><div class="gm-tip">Calling…</div><div class="gm-prog"><i></i></div><div class="gm-spot"></div><div class="gm-ring"></div>';
+      const ring = play.querySelector('.gm-ring'), spotEl = play.querySelector('.gm-spot'), bar = play.querySelector('.gm-prog i'), tip = play.querySelector('.gm-tip');
+      const pos = { x: 160, y: 260 }, H = 440;
+      let t = 0, kept = 0, low = 0, noise = 0, nt = 0;
+      const NEED = 8000;
+      dragger(play, ring, pos);
+      return (dt) => {
+        t += dt;
+        const sx = 160 + Math.sin(t / 1300) * 120 + Math.sin(t / 470) * 26, sy = H / 2 + Math.cos(t / 1700) * 150 + Math.sin(t / 610) * 30;
+        spotEl.style.transform = `translate(${sx}px, ${sy}px)`;
+        nt -= dt;
+        if (nt <= 0) { nt = 300 + Math.random() * 500; noise = Math.random() < .25 ? -1 : 0; }
+        const n = Math.max(0, Math.min(5, 5 - Math.floor(Math.hypot(pos.x - sx, pos.y - sy) / 34) + noise));
+        stat.sig(n);
+        if (n >= 3) { kept += dt; low = 0; tip.textContent = 'Stay on it'; } else { low += dt; tip.textContent = 'Signal dropping!'; }
+        bar.style.width = Math.min(100, kept / NEED * 100) + '%';
+        if (kept >= NEED) { const s = Math.round(t / 100) / 10; over('Call Connected', `Connected in ${s} seconds.`, s, true); placeCall('Ajay Sommi', { connected: true, onEnd: () => stat.sig(5) }); }
+        else if (low > 2500) { over('Call Dropped', 'The signal fell too low.', null); placeCall('Ajay Sommi', { failNow: true, onEnd: () => stat.sig(5) }); }
+      };
+    }),
+    chicken: (app) => gameApp(app, 'Battery Chicken', 'The battery keeps draining. Press and hold to charge, let go to stop. Land as close to 100% as you dare: go over and it is ruined.', 'ip-chicken-hi', (play, over) => {
+      play.innerHTML = '<div class="gm-tip">Hold to charge</div><div class="gm-cell"><i></i></div><div class="gm-pct">40%</div>';
+      const fill = play.querySelector('.gm-cell i'), pct = play.querySelector('.gm-pct'), tip = play.querySelector('.gm-tip');
+      let p = 40, holding = false, rate = 0, started = false, done = false;
+      play.addEventListener('pointerdown', () => { if (done) return; holding = true; started = true; tip.textContent = 'Charging…'; });
+      const letGo = () => {
+        if (!holding || done) return;
+        holding = false; done = true;
+        const score = Math.round(p * 10) / 10;
+        if (p > 100) over('Overcharged!', `You hit ${score}%. Too far.`, null);
+        else over(p >= 99 ? 'Perfect' : 'Stopped', `You landed on ${score}%.`, score);
+      };
+      play.addEventListener('pointerup', letGo);
+      play.addEventListener('pointercancel', letGo);
+      return (dt) => {
+        if (holding) { rate = Math.min(62, rate + dt * .05); p += rate * dt / 1000; } else if (!started) p -= 3.4 * dt / 1000;
+        if (p <= 0 && !done) { done = true; over('Battery Dead', 'It ran out before you charged it.', null); }
+        if (p > 112 && !done) { done = true; holding = false; over('Overcharged!', 'It went far past 100%.', null); }
+        stat.bat(Math.min(100, p));
+        fill.style.width = Math.max(0, Math.min(100, p)) + '%';
+        fill.classList.toggle('low', p <= 20);
+        fill.classList.toggle('hot', p > 100);
+        pct.textContent = Math.max(0, Math.round(p)) + '%';
+      };
+    })
+  };
+
   const APPS = {
+    signal: { name: 'Signal', icon: 'signal', bare: true, bar: 'black', open: GAMES.signal },
+    balancer: { name: 'Balancer', icon: 'balancer', bare: true, bar: 'black', open: GAMES.balancer },
+    defender: { name: 'Defender', icon: 'defender', bare: true, bar: 'black', open: GAMES.defender },
+    onebar: { name: 'One-Bar', icon: 'onebar', bare: true, bar: 'black', open: GAMES.onebar },
+    chicken: { name: 'Chicken', icon: 'chicken', bare: true, bar: 'black', open: GAMES.chicken },
     guestbook: { name: 'Text', icon: 'sms', open: messages },
     experience: { name: 'Calendar', icon: 'calendar', open: calendar },
     bubbles: { name: 'Bubbles', icon: 'bubbles', bare: true, bar: 'black', open: bubbles },
@@ -1399,7 +1754,7 @@ window.IPHONE = { start(room, exit) {
           const sw = ev.target.closest('[data-sw]');
           if (sw) {
             if (sw.dataset.sw === 'sound') { SFX.toggle(); sw.classList.toggle('on', !SFX.muted); sw.setAttribute('aria-checked', String(!SFX.muted)); }
-            else { sw.classList.remove('on'); setTimeout(() => { sw.classList.add('on'); alertBox('Open to Work', 'This setting stays on.'); }, 250); }
+            else { sw.classList.toggle('on'); sw.setAttribute('aria-checked', String(sw.classList.contains('on'))); }
             return;
           }
           const r = ev.target.closest('.row');
@@ -1413,7 +1768,7 @@ window.IPHONE = { start(room, exit) {
               p.classList.add('pin');
               p.innerHTML = `<div class="gp"><div class="row chev" data-ab>${mini('#8e8e8e', 'i')}<span class="v">About</span></div><div class="row chev" data-rs>${mini('#d24b4b', '↺')}<span class="v">Reset</span></div></div>`;
               p.addEventListener('click', async (e2) => {
-                if (e2.target.closest('[data-ab]')) app.push('About', (q) => { q.classList.add('pin'); q.innerHTML = kv([['Name', 'Ajay Sommi'], ['Roles', String(P.experience.length)], ['Projects', String(P.projects.length)], ['Photos', String(photos)], ['Skills', String(P.skills.reduce((a, s) => a + s[1].length, 0))], ['Capacity', '1 portfolio'], ['Available', 'Dec 2026'], ['Version', '1.0 (26A543a)'], ['Model', 'AJ-26']]); });
+                if (e2.target.closest('[data-ab]')) app.push('About', (q) => { q.classList.add('pin'); q.innerHTML = kv([['Name', 'Ajay Sommi'], ['Roles', String(P.experience.length)], ['Projects', String(P.projects.length)], ['Photos', String(photos)], ['Skills', String(P.skills.reduce((a, s) => a + s[1].length, 0))], ['Capacity', '8 GB'], ['Available', '7.2 GB'], ['Version', '1.0 (26A543a)'], ['Model', 'AJ-26']]); });
                 if (e2.target.closest('[data-rs]')) {
                   const rr = await alertBox('Reset All Settings', 'Your notes, events and edits on this phone will be cleared.', ['Cancel', 'Reset']);
                   if (rr === 'Reset') { ['ip-notes', 'ip-events', 'ip-card', 'ip-read'].forEach((k) => store.set(k, null)); alertBox('Reset Complete'); }
@@ -1533,7 +1888,7 @@ window.IPHONE = { start(room, exit) {
      19 in, rows 90 apart starting 19 under the status bar. */
   /* Two home screens, as the original had once you had enough apps: a
      sideways swipe moves between them, the dots above the dock say which. */
-  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'], ['bubbles']];
+  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'], ['bubbles', 'signal', 'balancer', 'defender', 'onebar', 'chicken']];
   const GRID = PAGES.flat();
   let pageNo = 0;
   const DOCK = ['contact', 'email', 'resume', 'about'];
@@ -1633,6 +1988,25 @@ window.IPHONE = { start(room, exit) {
     setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), unlocking ? 650 : 180);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
+  /* Home: exponential all the way, barely moving at first and then faster
+     and faster until the icons hit their places. */
+  const HOME_MS = 620, HOME_K = 7;
+  const flyHome = () => {
+    const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')];
+    const E = (t) => (Math.exp(HOME_K * t) - 1) / (Math.exp(HOME_K) - 1);
+    board.classList.remove('is-flying');
+    icons.forEach((b) => {
+      const cx = parseFloat(b.style.getPropertyValue('--cx')) || 0, cy = parseFloat(b.style.getPropertyValue('--cy')) || 0;
+      b.style.transition = 'none';
+      b.style.transform = '';
+      const frames = [];
+      for (let i = 0; i <= 24; i++) {
+        const t = i / 24, k = 1 - E(t);
+        frames.push({ transform: `translate(${-cx * .85 * k}px, ${-cy * .85 * k}px) scale(${1 + .55 * k})`, opacity: Math.min(1, t * 3.2) });
+      }
+      b.animate(frames, { duration: HOME_MS, easing: 'linear' }).finished.then(() => { b.style.transition = ''; }).catch(() => {});
+    });
+  };
 
   /* ------------------------------------------------------------- unlocking */
 
@@ -1673,7 +2047,7 @@ window.IPHONE = { start(room, exit) {
     state = 'home';
     noteSeen = true;
     quietUntil = performance.now() + 600;
-    SFX.click();
+    SYS.unlock();
     lock.classList.add('is-gone');
     clearTimeout(sleepT);
     setBar('black');
@@ -1699,7 +2073,9 @@ window.IPHONE = { start(room, exit) {
   homeBtn.addEventListener('click', () => {
     if (state === 'boot') return;
     if (asleep) { wake(); return; }
+    if (callEl) return;
     if (state === 'app') { SFX.click(); closeApp(); return; }
+    if (state === 'home' && pageNo > 0) { goPage(0, -pageNo * 320); return; }
     if (state === 'locked') armSleep();
     if (state === 'locked') knob.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(16px)' }, { transform: 'translateX(0)' }], { duration: 380, easing: 'ease-out' });
   });
@@ -1719,13 +2095,33 @@ window.IPHONE = { start(room, exit) {
     if (asleep) { wake(); return; }
     asleep = true;
     off.classList.add('on');
-    SFX.click();
+    SYS.sample('lock');
+    closeCall(true);
     setTimeout(relock, 360);
   });
   room.querySelectorAll('.ip-vol').forEach((b) => b.addEventListener('click', () => SFX.beep()));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state === 'app' && shown()) { if (kb.target) kb.hide(); else closeApp(); } });
   /* Tapping anywhere outside a field puts the keyboard away. */
   scr.addEventListener('click', (e) => { if (kb.target && !e.target.closest('.kb, .fld, .nbb, .sms-send')) kb.hide(); });
+
+  /* A row only lights once it is clear the finger is pressing it and not
+     starting a scroll. */
+  const TAPPABLE = '.pl li, .gp .row.chev, .gbtn';
+  let tapEl = null, tapT = 0, tapX = 0, tapY = 0;
+  const unTap = () => { clearTimeout(tapT); if (tapEl) tapEl.classList.remove('is-down'); tapEl = null; };
+  scr.addEventListener('pointerdown', (e) => {
+    unTap();
+    const el = e.target.closest(TAPPABLE);
+    if (!el) return;
+    tapEl = el; tapX = e.clientX; tapY = e.clientY;
+    tapT = setTimeout(() => el.classList.add('is-down'), e.pointerType === 'touch' ? 130 : 0);
+  });
+  scr.addEventListener('pointermove', (e) => { if (tapEl && Math.hypot(e.clientX - tapX, e.clientY - tapY) > 6) unTap(); });
+  scr.addEventListener('pointercancel', unTap);
+  scr.addEventListener('scroll', unTap, true);
+  scr.addEventListener('pointerup', () => { if (!tapEl) return; const el = tapEl; clearTimeout(tapT); el.classList.add('is-down'); tapEl = null; setTimeout(() => el.classList.remove('is-down'), 110); });
+  window.RETRO.zoomPics(scr, '.ic, .kb, .pl, .thumbs, .grid4, .mp-view, .vf, .roll, .np-art, .photo-view, .ip-lk-note, .snap');
+  room.addEventListener('contextmenu', (e) => e.preventDefault());
 
   /* ------------------------------------------------------------------ boot */
 

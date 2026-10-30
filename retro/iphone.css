@@ -212,7 +212,7 @@
   transform-origin: 50% 50%;
   animation: ip-open .32s cubic-bezier(.2, .7, .3, 1) both;
 }
-.ip-screen .ip-app.is-closing { animation: ip-close .15s ease-in both; }
+.ip-screen .ip-app.is-closing { animation: ip-close .34s cubic-bezier(.45, 0, .8, .5) both; }
 @keyframes ip-open { from { transform: scale(.1); opacity: 0; } }
 @keyframes ip-close { to { transform: scale(.1); opacity: 0; } }
 
@@ -276,9 +276,9 @@
 .ip-screen .pl li .sub { display: block; font: 14px/1.25 Helvetica, Arial, sans-serif; color: #7a7a7a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0; }
 .ip-screen .pl li .rt { font: 14px Helvetica, Arial, sans-serif; color: #2f5cb8; letter-spacing: 0; }
 .ip-screen .pl li.chev::after { content: ''; width: 8px; height: 8px; border-top: 3px solid #8a8a8a; border-right: 3px solid #8a8a8a; transform: rotate(45deg); margin: 0 4px 0 2px; flex: none; }
-.ip-screen .pl li:active { background: linear-gradient(180deg, #058cf5, #015fe6); color: #fff; }
-.ip-screen .pl li:active .sub, .ip-screen .pl li:active .rt { color: #fff; }
-.ip-screen .pl li:active::after { border-color: #fff; }
+.ip-screen .pl li.is-down { background: linear-gradient(180deg, #058cf5, #015fe6); color: #fff; }
+.ip-screen .pl li.is-down .sub, .ip-screen .pl li.is-down .rt { color: #fff; }
+.ip-screen .pl li.is-down::after { border-color: #fff; }
 .ip-screen .pl li.two { padding-top: 6px; padding-bottom: 6px; }
 .ip-screen .pl li img { width: 43px; height: 43px; object-fit: cover; flex: none; margin-left: -10px; }
 .ip-screen .pl li.sh {
@@ -287,7 +287,7 @@
   background: linear-gradient(180deg, #a6b2bd, #8f9ba6); border-top: 1px solid #99a5af; border-bottom: 1px solid #8a96a0;
   position: sticky; top: 0; z-index: 2;
 }
-.ip-screen .pl li.sh:active { background: linear-gradient(180deg, #a6b2bd, #8f9ba6); }
+.ip-screen .pl li.sh.is-down { background: linear-gradient(180deg, #a6b2bd, #8f9ba6); }
 .ip-screen .pl li.unread .tx::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; background: radial-gradient(circle at 40% 35%, #9fd0ff, #1b6fe0); vertical-align: 2px; }
 
 /* Grouped tables on pinstripes. */
@@ -301,14 +301,14 @@
 .ip-screen .gp .row .v.n { font-weight: normal; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
 .ip-screen .gp .row.chev { cursor: pointer; }
 .ip-screen .gp .row.chev::after { content: ''; width: 8px; height: 8px; border-top: 3px solid #8a8a8a; border-right: 3px solid #8a8a8a; transform: rotate(45deg); margin-left: 6px; flex: none; }
-.ip-screen .gp .row.chev:active { background: linear-gradient(180deg, #058cf5, #015fe6); color: #fff; }
-.ip-screen .gp .row.chev:active .v, .ip-screen .gp .row.chev:active .rv { color: #fff; }
+.ip-screen .gp .row.chev.is-down { background: linear-gradient(180deg, #058cf5, #015fe6); color: #fff; }
+.ip-screen .gp .row.chev.is-down .v, .ip-screen .gp .row.chev.is-down .rv { color: #fff; }
 .ip-screen .gp .row .rv { margin-left: auto; color: #385487; font-weight: normal; font-size: 17px; }
 .ip-screen .gp .txt { padding: 10px 12px; font: 15px/1.4 Helvetica, Arial, sans-serif; }
 .ip-screen .gp .txt.sub { color: #4c566c; font-size: 14px; }
 .ip-screen .gl { margin: 0 20px 6px; font: bold 17px Helvetica, Arial, sans-serif; color: #4c566c; text-shadow: 0 1px 0 #fff; }
 .ip-screen .gbtn { display: grid; place-items: center; margin: 0 9px 12px; height: 44px; width: calc(100% - 18px); border: 1px solid #a9abae; border-radius: 10px; background: #fff; font: bold 17px Helvetica, Arial, sans-serif; color: #4c566c; cursor: pointer; }
-.ip-screen .gbtn:active { background: linear-gradient(180deg, #058cf5, #015fe6); color: #fff; }
+.ip-screen .gbtn.is-down { background: linear-gradient(180deg, #058cf5, #015fe6); color: #fff; }
 .ip-screen .thumbs { display: flex; gap: 6px; padding: 10px; overflow-x: auto; }
 .ip-screen .thumbs img { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; flex: none; }
 .ip-screen .mi { width: 29px; height: 29px; border-radius: 6px; flex: none; display: grid; place-items: center; color: #fff; font-size: 15px; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,.3); background: linear-gradient(180deg, color-mix(in srgb, var(--mi) 70%, #fff), var(--mi) 52%, color-mix(in srgb, var(--mi) 80%, #000)); box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); }
@@ -592,7 +592,7 @@
 .ip-screen .pl.editing li.chev::after { display: none; }
 .ip-screen .pl li.gone { transition: opacity .25s, transform .25s; opacity: 0; transform: translateX(-30px); }
 .ip-screen .pl li.none { color: #9a9a9a; font-weight: normal; cursor: default; justify-content: center; }
-.ip-screen .pl li.none:active { background: none; color: #9a9a9a; }
+.ip-screen .pl li.none.is-down { background: none; color: #9a9a9a; }
 
 /* Hand-drawn text fields and their caret. */
 .ip-screen .fld { cursor: text; position: relative; }
@@ -663,6 +663,7 @@
 .ip-screen .ip-alert p { overflow-wrap: anywhere; margin: 10px 8px 0; font: 16px/20px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
 .ip-screen .ip-al-btns { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
 .ip-screen .ip-al-btns.two { flex-direction: row; }
+.ip-screen .ip-al-btns:not(.two) button { flex: none; }
 .ip-screen .ip-al-btns button {
   flex: 1; height: 46px; border-radius: 6px; border: 1px solid rgba(12,18,36,.75); cursor: pointer;
   font: bold 18px Helvetica, Arial, sans-serif; color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.55);
@@ -1090,8 +1091,98 @@
 .ip-screen .ip-grid { overflow: hidden; touch-action: pan-y; }
 .ip-screen .ip-pages { position: absolute; left: 0; top: 0; height: 100%; width: 640px; display: flex; will-change: transform; }
 .ip-screen .ip-page { position: relative; flex: none; width: 320px; height: 100%; }
-.ip-screen .ip-dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 8px; pointer-events: none; }
+.ip-screen .ip-dots { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 8px; pointer-events: none; }
 .ip-screen .ip-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.32); }
 .ip-screen .ip-dots i.on { background: #fff; }
 /* Icons on a page not on show take no part in opening or closing an app. */
 .ip-screen .ip-board .ip-icon.is-away, .ip-screen .ip-board.is-converge .ip-icon.is-away, .ip-screen .ip-board.is-flying .ip-icon.is-away { transform: none !important; opacity: 1; transition: none; }
+
+/* Every page scrolls and bounces with the browser's own scrolling, even one
+   that fits: a single point taller than its window is all that takes. */
+.ip-screen { -webkit-tap-highlight-color: transparent; }
+.ip-screen .pg, .ip-screen .sms-pg .sms, .ip-screen .note-pg .note { -webkit-overflow-scrolling: touch; overscroll-behavior: auto; touch-action: pan-y; }
+.ip-screen .sms-pg .sms { position: relative; }
+.ip-screen .pg:not(.kp-pg, .sms-pg, .note-pg, .vm-pg)::after, .ip-screen .sms-pg .sms::after, .ip-screen .note-pg .note::after, .ip-screen .vm-list::after { content: ''; position: absolute; left: 0; top: 0; width: 1px; height: calc(100% + 1px); pointer-events: none; }
+.ip-screen .vm-list { position: relative; }
+
+/* Status bar, when a game has hold of it. */
+.ip-screen .ip-sig i.off { opacity: .18; }
+.ip-screen .ip-bat i { transition: width .1s linear; }
+.ip-screen .ip-bat.low i { background: #ff3b30 !important; }
+.ip-screen .gl-bad { animation: gl-bad .22s steps(2) infinite; }
+@keyframes gl-bad { 0% { opacity: 1; transform: translateX(0); filter: none; } 50% { opacity: .35; transform: translateX(1px); filter: drop-shadow(0 0 3px #ff3b30); } }
+
+/* The call screen: the lock screen's own glass bars over the wallpaper. */
+.ip-screen .ip-lock.ip-call { z-index: 58; }
+.ip-screen .cl-num { margin-top: 20px; padding: 0 10px; text-align: center; color: #fff; font: 33px/40px Helvetica, Arial, sans-serif; letter-spacing: -.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 -1px 0 rgba(0,0,0,.55); }
+.ip-screen .cl-st { margin-top: 2px; text-align: center; color: #fff; font: 16px/20px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.6); }
+/* The panel, measured off the real one: 274 by 209 points, six cells. */
+.ip-screen .cl-mid { position: absolute; left: 23px; top: 146px; width: 274px; height: 209px; display: grid; grid-template: 1fr 1fr / repeat(3, 1fr); overflow: hidden; border-radius: 10px; border: 1px solid rgba(255,255,255,.55);
+  background: linear-gradient(180deg, rgba(255,255,255,.22) 0, rgba(255,255,255,.1) 49.5%, rgba(255,255,255,0) 50%), rgba(24,32,70,.5); box-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.ip-screen .cl-mid button { position: relative; border: 0; padding: 0; color: #fff; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-right: 1px solid rgba(255,255,255,.2); border-bottom: 1px solid rgba(255,255,255,.2); text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
+.ip-screen .cl-mid button:nth-child(3n) { border-right: 0; }
+.ip-screen .cl-mid button:nth-child(n+4) { border-bottom: 0; }
+.ip-screen .cl-mid i { display: block; width: 46px; height: 46px; }
+.ip-screen .cl-mid svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 -1px 0 rgba(0,0,0,.45)); }
+.ip-screen .cl-mid b { font: bold 12.5px/15px Helvetica, Arial, sans-serif; }
+.ip-screen .cl-mid button.on { background: linear-gradient(180deg, #3a3cff 0, #1c1df2 50%, #0000e0 51%, #0a0ae8 100%); }
+.ip-screen .cl-mid button:active { background: rgba(255,255,255,.2); }
+.ip-screen .cl-mid.is-keys { grid-template: repeat(4, 1fr) / repeat(3, 1fr); }
+.ip-screen .cl-mid.is-keys button:nth-child(n+4) { border-bottom: 1px solid rgba(255,255,255,.2); }
+.ip-screen .cl-mid.is-keys button:nth-child(n+10) { border-bottom: 0; }
+.ip-screen .cl-mid.is-keys b { font: bold 26px/1 Helvetica, Arial, sans-serif; }
+.ip-screen .cl-btns { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 16px; }
+.ip-screen .cl-btns button { flex: 1; height: 50px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9px; cursor: pointer; color: #fff; font: bold 22px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); }
+.ip-screen .cl-btns i { display: block; flex: none; }
+.ip-screen .cl-btns button:active { filter: brightness(.82); }
+.ip-screen .cl-btns .half { font-size: 18px; }
+.ip-screen .cl-end { border: 1px solid #4a0808; background: linear-gradient(180deg, #f28a7e 0, #e2574a 48%, #cc1f12 50%, #d93a2c 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 1px 0 rgba(255,255,255,.12); }
+.ip-screen .cl-end i { width: 34px; height: 16px; color: #ffd9d4; }
+.ip-screen .cl-end svg, .ip-screen .cl-green svg { display: block; width: 100%; height: 100%; }
+.ip-screen .cl-green { border: 1px solid #124a0c; background: linear-gradient(180deg, #8fe06f 0, #57c33c 48%, #2e9e1a 50%, #3fb12a 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 1px 0 rgba(255,255,255,.12); }
+.ip-screen .cl-green i { width: 24px; height: 24px; }
+.ip-screen .cl-dark { border: 1px solid #000; background: linear-gradient(180deg, #6a6a6a 0, #3a3a3a 48%, #171717 50%, #262626 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 1px 0 rgba(255,255,255,.12); }
+/* Incoming: the wallpaper comes up under bars that slide in, and the slider
+   is the lock screen's, its knob green. */
+.ip-screen .ip-lock.ip-in { background: none; }
+.ip-screen .cl-bg { position: absolute; inset: 0; background: center / cover no-repeat; }
+.ip-screen .ip-in .ip-knob { background: linear-gradient(180deg, #a4eb8a 0%, #68cf4d 48%, #339f20 52%, #4cba38 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 1px 2px rgba(0,0,0,.6); }
+
+/* Bubbles: the flash for a red one. */
+.ip-screen .bb-flash { position: absolute; inset: 0; background: #ff1a10; pointer-events: none; z-index: 4; }
+
+/* The status bar games. */
+.ip-screen .gm { position: absolute; inset: 0; overflow: hidden; touch-action: none; color: #fff; background: radial-gradient(120% 80% at 50% 0%, #3b4560, #151a28 60%, #07090f); }
+.ip-screen .gm-play { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; touch-action: none; }
+.ip-screen .gm-sky { position: absolute; inset: 0; background: repeating-radial-gradient(circle at 50% 110%, rgba(255,255,255,.05) 0 2px, transparent 2px 34px); }
+.ip-screen .gm-tip { position: absolute; left: 0; right: 0; top: 14px; text-align: center; font: bold 17px Helvetica, Arial, sans-serif; text-shadow: 0 1px 2px #000; pointer-events: none; }
+.ip-screen .gm-bars { position: absolute; left: 50%; top: 46px; display: flex; align-items: flex-end; gap: 4px; height: 34px; transform: translateX(-50%); pointer-events: none; }
+.ip-screen .gm-bars i { width: 9px; background: rgba(255,255,255,.18); border-radius: 1px; }
+.ip-screen .gm-bars i:nth-child(1) { height: 20%; } .ip-screen .gm-bars i:nth-child(2) { height: 40%; } .ip-screen .gm-bars i:nth-child(3) { height: 60%; } .ip-screen .gm-bars i:nth-child(4) { height: 80%; } .ip-screen .gm-bars i:nth-child(5) { height: 100%; }
+.ip-screen .gm-bars i.on { background: #6dff8a; }
+.ip-screen .gm-phone { position: absolute; left: -15px; top: -28px; width: 30px; height: 56px; border-radius: 6px; border: 2px solid #d8dde4; background: linear-gradient(180deg, #2c3550, #0d1120); pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,.6); }
+.ip-screen .gm-phone::before { content: ''; position: absolute; left: 11px; top: -12px; width: 3px; height: 12px; background: #d8dde4; }
+.ip-screen .gm-spot { position: absolute; left: -26px; top: -26px; width: 52px; height: 52px; border-radius: 50%; background: radial-gradient(circle, rgba(109,255,138,.75), rgba(109,255,138,0) 70%); pointer-events: none; }
+.ip-screen .gm-ring { position: absolute; left: -34px; top: -34px; width: 68px; height: 68px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 10px rgba(255,255,255,.5); pointer-events: none; }
+.ip-screen .gm-prog { position: absolute; left: 30px; right: 30px; top: 44px; height: 10px; border-radius: 5px; background: rgba(255,255,255,.18); overflow: hidden; pointer-events: none; }
+.ip-screen .gm-prog i { display: block; height: 100%; width: 0; background: linear-gradient(180deg, #a4eb8a, #3fb12a); }
+.ip-screen .gm-batt { padding: 14px 0 8px; text-align: center; }
+.ip-screen .gm-batt b { display: block; font: 200 52px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+.ip-screen .gm-batt b.low { color: #ff5a50; }
+.ip-screen .gm-batt span { font: 13px Helvetica, Arial, sans-serif; color: #b5bdcc; }
+.ip-screen .gm-procs { list-style: none; margin: 8px 9px; padding: 0; border-radius: 10px; overflow: hidden; background: #fff; color: #000; }
+.ip-screen .gm-procs li { position: relative; height: 47px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-bottom: 1px solid #d9d9d9; font: bold 16px Helvetica, Arial, sans-serif; }
+.ip-screen .gm-procs li:last-child { border-bottom: 0; }
+.ip-screen .gm-procs em { display: block; height: 6px; border-radius: 3px; background: #e8501f; transition: width .15s; }
+.ip-screen .gm-zones { position: absolute; left: 0; right: 0; top: 0; height: 96px; }
+.ip-screen .gm-zones button { position: absolute; top: 0; height: 96px; border: 0; border-radius: 0 0 10px 10px; background: rgba(255,255,255,.05); color: #8d96a8; font: bold 10px Helvetica, Arial, sans-serif; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; cursor: pointer; }
+.ip-screen .gm-zones button.hot { background: linear-gradient(180deg, rgba(255,60,50,.75), rgba(255,60,50,.15)); color: #fff; }
+.ip-screen .gm-score { position: absolute; left: 0; right: 0; top: 170px; text-align: center; font: 200 90px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; pointer-events: none; }
+.ip-screen .gm-lives { position: absolute; left: 0; right: 0; top: 280px; text-align: center; font: 22px Helvetica, Arial, sans-serif; letter-spacing: 4px; pointer-events: none; }
+.ip-screen .gm-cell { position: absolute; left: 34px; right: 46px; top: 120px; height: 110px; border: 5px solid #fff; border-radius: 12px; padding: 5px; pointer-events: none; }
+.ip-screen .gm-cell::after { content: ''; position: absolute; right: -16px; top: 30px; width: 11px; height: 40px; background: #fff; border-radius: 0 4px 4px 0; }
+.ip-screen .gm-cell i { display: block; height: 100%; border-radius: 5px; background: linear-gradient(180deg, #d9ffd0, #74d65a 50%, #48b33a 51%, #6fd15a); }
+.ip-screen .gm-cell i.low { background: linear-gradient(180deg, #ffc9c4, #ff5a50 50%, #d4261c 51%, #f0463a); }
+.ip-screen .gm-cell i.hot { background: linear-gradient(180deg, #fff3a8, #ffb300 50%, #e87a00 51%, #ffa000); }
+.ip-screen .gm-pct { position: absolute; left: 0; right: 0; top: 250px; text-align: center; font: 200 64px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; pointer-events: none; }
+.ip-screen .gm .bb-msg { z-index: 3; }

@@ -56,6 +56,8 @@ window.POCKET = { start(room, exit) {
   fit();
   addEventListener('retro-fit', fit);
   const lcd = room.querySelector('.pk-lcd');
+  window.RETRO.zoomPics(lcd);
+  room.addEventListener('contextmenu', (e) => e.preventDefault());
   const view = room.querySelector('.lcd-view');
   const title = room.querySelector('.lcd-bar .t');
   const lock = room.querySelector('.lcd-bar .lk');
@@ -194,7 +196,7 @@ window.POCKET = { start(room, exit) {
       return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(F[Math.floor(Math.random() * F.length)])}”</p><div class="hint">MENU, then Fortune again for another</div>`);
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
-    desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 Macintosh, a 1998 iMac or a 2007 iMac, each one yours to click around, with a game on every one.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
+    desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
     games: () => ({ type: 'menu', title: 'Games', items: [[li('Orbit'), () => open('orbit')], [li('How to play'), () => open('orbithelp')], [li('Best score', String(store.get('pod-orbit-hi', 0))), () => say(`Best: ${store.get('pod-orbit-hi', 0)}`)]] }),
     orbithelp: () => textScreen('Orbit', '<h2>Orbit</h2><p>Turn the wheel to swing the paddle around the ring and keep the ball inside.</p><p>Every return speeds it up. Every five, the paddle gets shorter. At 15 a second ball joins in.</p><p>Press the centre to launch or pause. MENU quits.</p><div class="hint">three balls to lose · good luck</div>'),
     orbit: () => ({ type: 'game', title: 'Orbit' }),
@@ -215,7 +217,7 @@ window.POCKET = { start(room, exit) {
         [li('Switch device', '\u21c4'), () => exit()]
       ]
     }),
-    aboutdev: () => textScreen('About', `<h2>iSommi Classic</h2><div class="m">Model AJ-26 · firmware 1.0</div><p>Capacity: one portfolio.<br/>Battery: 80%, forever.</p><p>Built in 2026 by Ajay Sommi.</p><div class="hint">try the HOLD switch on top</div>`)
+    aboutdev: () => textScreen('About', `<h2>iSommi Classic</h2><div class="m">Model AJ-26 · firmware 1.0</div><p>Capacity: 20 GB</p><p>Built in 2026 by Ajay Sommi.</p><div class="hint">try the HOLD switch on top</div>`)
   };
 
   /* ---------------------------------------------------------------- Orbit */

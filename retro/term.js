@@ -105,7 +105,6 @@ window.TERM = (function () {
     `  ${cmd('clear', pad('CLEAR', 12))}clear the screen`,
     '',
     ['  WORK, PROJECTS and GARAGE take a number: WORK 5. TAB completes, \u2191 recalls.', 'dim'],
-    ['  There are other commands. Old habits are a good place to start.', 'dim'],
     ''
   ];
 
@@ -268,7 +267,6 @@ window.TERM = (function () {
     'CONTACT',
     rule(48),
     '  Email is the quickest way to reach me.',
-    ['  (most of them spent being a kid. see VIEW KID)', 'dim'],
     '',
     `  EMAIL     ${link('mailto:' + P.email, P.email)}`,
     `  GITHUB    ${link(P.github, P.github.replace('https://', ''))}`,
@@ -320,12 +318,7 @@ window.TERM = (function () {
   };
 
   const FORTUNES = [
-    P.quote,
-    'It works on my machine. This is that machine.',
-    'There are 10 kinds of people: those who read binary and those who don\u2019t.',
-    'Have you tried turning it off and on again? (Type REBOOT.)',
-    'The best error message is the one that never shows up.',
-    'A 2007 Civic and 200,000 miles: the fix is usually in a tutorial somewhere.'
+    P.quote
   ];
 
   const ALIASES = {
@@ -369,26 +362,26 @@ window.TERM = (function () {
     type: (a) => {
       const f = (a[0] || '').toLowerCase();
       if (!f) return print(['WHICH FILE? Try DIR.', '']);
-      if (f.startsWith('secret')) return print(['SECRETS.TXT', rule(24), 'There are eggs hidden on all three machines.', 'The terminal has a few. The Trash in 1991 has more.', ['(and the pocket version has its own.)', 'dim'], '']);
+      if (f.startsWith('secret')) return print(['SECRETS.TXT', rule(24), 'NO SECRETS ON THIS DISK.', '']);
       const hit = FILES.find(([n]) => n.toLowerCase().startsWith(f.replace(/\..*$/, '')));
       if (!hit) return print([`FILE NOT FOUND: ${esc(f.toUpperCase())}`, '']);
       return run(hit[1] === 'home' ? 'home' : hit[1]);
     },
-    cd: (a) => print([a[0] === '..' ? 'YOU ARE ALREADY AT THE TOP. IT IS A SMALL DISK.' : 'THERE IS ONLY ONE DIRECTORY. IT IS A SMALL DISK.', '']),
+    cd: (a) => print(['THERE IS ONLY ONE DIRECTORY.', '']),
     pwd: () => print(['A:\\PORTFOLIO', '']),
-    date: () => print([new Date().toDateString().toUpperCase() + '. OR 1983, DEPENDING ON WHO YOU ASK.', '']),
+    date: () => print([new Date().toDateString().toUpperCase(), '']),
     time: () => COMMANDS.date(),
-    whoami: () => print(['guest', [`  but you could be my next manager. Try ${cmd('about')} to see who I am.`, 'dim'], '']),
+    whoami: () => print(['guest', '']),
     hello: () => print(['HELLO! GLAD YOU\u2019RE HERE.', `  ${cmd('about', 'START WITH ABOUT')}  or  ${cmd('help', 'SEE EVERYTHING')}`, '']),
     version: () => print(['SOMMI-DOS VERSION 3.3 \u00b7 BUILD 1983.10.23', '']),
     history: () => print(hist.length ? hist.map((h, i) => `  ${i + 1}  ${esc(h)}`).concat(['']) : ['NO HISTORY YET.', '']),
     echo: (a, raw) => print([esc(raw.replace(/^\s*echo\s?/i, '')) || '', '']),
-    sudo: () => { window.EGGS.find('sudo'); return print(['guest is not in the sudoers file. This incident will be reported.', ['  (to Ajay. who will be delighted.)', 'dim'], '']); },
+    sudo: () => { window.EGGS.find('sudo'); return print(['guest is not in the sudoers file.', '']); },
     hire: () => {
       window.EGGS.find('hire');
-      return print(['EXCELLENT DECISION. PREPARING OFFER LETTER...', '[\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588] 100%', `  ${link('mailto:' + P.email + '?subject=' + encodeURIComponent("Let's talk"), '[ SEND IT ]')}`, '']);
+      return print(['CONTACT DETAILS:', '[\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588] 100%', `  ${link('mailto:' + P.email + '?subject=' + encodeURIComponent("Let's talk"), '[ SEND IT ]')}`, '']);
     },
-    xyzzy: () => { window.EGGS.find('xyzzy'); return print(['Nothing happens.', ['  ...but a hidden counter somewhere went up by one.', 'dim'], '']); },
+    xyzzy: () => { window.EGGS.find('xyzzy'); return print(['Nothing happens.', '']); },
     plugh: () => print(['A hollow voice says "Fool."', '']),
     color: (a) => {
       const order = ['green', 'amber', 'white', 'blue'];
@@ -402,16 +395,15 @@ window.TERM = (function () {
     beep: () => { window.SFX.beep(); return print(['\u0007BEEP.', '']); },
     sound: () => { window.SFX.toggle(); return print([window.SFX.muted ? 'SOUND OFF.' : 'SOUND ON. TYPE SOUND AGAIN TO MUTE.', '']); },
     fortune: () => print([`"${esc(FORTUNES[Math.floor(Math.random() * FORTUNES.length)])}"`, '']),
-    coffee: () => print(['BREWING... ERROR 418: I\u2019M A TEAPOT.', '']),
-    ping: () => print(['PING ajay (127.0.0.1): 56 data bytes', '64 bytes: icmp_seq=0 time=0.26 ms', '64 bytes: icmp_seq=1 time=0.24 ms', ['  He responds fast. Try CONTACT.', 'dim'], '']),
-    games: () => print(['SHALL WE PLAY A GAME?', `  ${cmd('bricks', 'BRICKS')}  break out the wall, one brick at a time.`, '']),
+    ping: () => print(['PING ajay (127.0.0.1): 56 data bytes', '64 bytes: icmp_seq=0 time=0.26 ms', '64 bytes: icmp_seq=1 time=0.24 ms', '']),
+    games: () => print(['GAMES:', `  ${cmd('bricks', 'BRICKS')}  break out the wall, one brick at a time.`, '']),
     bricks: () => bricks(),
-    vim: () => print(['STUCK? THE WAY OUT IS :q', '']),
+    vim: () => print(['NO SUCH EDITOR ON THIS DISK.', '']),
     emacs: () => COMMANDS.vim(),
-    ':q': () => print(['You weren\u2019t in vim. But nice reflex.', '']),
+    ':q': () => print(['NOTHING TO QUIT.', '']),
     ':wq': () => COMMANDS[':q'](),
-    rm: () => print(['PERMISSION DENIED. AND A LITTLE RUDE.', '']),
-    exit: () => print(['THERE IS NO EXIT. ONLY THE FUTURE.', `  ${cmd('1991', '[ TRAVEL TO 1991 ]')}`, '']),
+    rm: () => print(['PERMISSION DENIED.', '']),
+    exit: () => print(['TYPE ERA TO LEAVE.', `  ${cmd('1991', '[ TRAVEL TO 1991 ]')}`, '']),
     reboot: () => { COMMANDS.clear(); return boot(true); },
     logo: () => print([...BANNER.map((l) => [esc(l), 'big']), '']),
     '1983': () => print(['YOU ARE ALREADY IN 1983.', '']),
@@ -590,6 +582,7 @@ window.TERM = (function () {
     root = document.createElement('div');
     root.className = 'term';
     root.dataset.ph = store.get('ph', 'green');
+    window.RETRO.contextMenu(root, 'term-ctx', () => [['HELP', () => run('help')], ['ABOUT', () => run('about')], ['WORK', () => run('work')], ['CONTACT', () => run('contact')], '-', ['CLEAR', () => run('clear')], ['ERA', () => run('era')]]);
     root.innerHTML = `
       <div class="term-bar" hidden><span>SOMMI-DOS 3.3 \u00b7 A:\\PORTFOLIO</span><span>TYPE HELP \u00b7 ERA TO SWITCH \u00b7 <button type="button" class="term-snd" data-snd>SOUND OFF</button></span></div>
       <div class="term-out" role="log" aria-live="polite" aria-label="Terminal output">

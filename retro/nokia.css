@@ -170,3 +170,16 @@
 .nk-view.t-boot { position: static; }
 .nk-view.t-boot .nk-boot { z-index: 2; gap: 6px; }
 .nk-view.t-boot .nk-boot svg { width: 60px; height: 60px; }
+
+/* The dialler: big digits at the foot of the screen, as the 3310 set them. */
+.nk-dial { position: absolute; left: 6%; right: 6%; bottom: 22%; text-align: right; font: 700 34px/1.05 'Pixelify Sans', monospace; color: #1d2a10; overflow-wrap: anywhere; }
+/* Text Race. */
+.nk-tap { padding: 2px 8px; color: #1d2a10; font: 15px/1.2 'Pixelify Sans', monospace; }
+.nk-tap p { margin: 6px 0; }
+.nk-tap-w { font: 700 26px/1.1 'Pixelify Sans', monospace; text-align: center; margin-top: 4px; }
+.nk-tap-t { font: 700 22px/1.2 'Pixelify Sans', monospace; text-align: center; min-height: 28px; border-bottom: 2px solid #1d2a10; }
+.nk-tap-t i { display: inline-block; width: 2px; height: 18px; margin-left: 1px; vertical-align: -2px; background: #1d2a10; animation: nk-tap-c 1s steps(1) infinite; }
+@keyframes nk-tap-c { 50% { opacity: 0; } }
+.nk-tap-b { height: 8px; margin-top: 7px; border: 2px solid #1d2a10; }
+.nk-tap-b i { display: block; height: 100%; background: #1d2a10; }
+.nk-tap-o { text-align: center; font-weight: 700; }

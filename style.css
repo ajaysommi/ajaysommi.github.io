@@ -5438,15 +5438,8 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   100% { opacity: 1; transform: none; }
 }
 .era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }
-/* Landing: a shine runs across it, it glows in its colours for a moment,
-   and sparkles in the rainbow's colours fly off its edges. */
-.era-ad-shine { position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; overflow: hidden; }
-.era-ad-shine::before {
-  content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 35%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent); transform: skewX(-18deg);
-  animation: era-ad-shine 1s cubic-bezier(.4, 0, .2, 1) both;
-}
-@keyframes era-ad-shine { to { left: 120%; } }
+/* Landing: it glows in its colours for a moment, and sparkles in the
+   rainbow's colours fly off its edges. */
 .era-ad-box::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: var(--r-pill); pointer-events: none; opacity: 0; transition: opacity .9s ease; will-change: opacity;
   box-shadow: -12px 0 30px rgba(97, 187, 70, .35), 12px 0 30px rgba(0, 157, 220, .35); }
 .era-ad-box:has(.era-ad.is-glow)::before { opacity: 1; transition-duration: .35s; }
@@ -5538,7 +5531,7 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   .era-ad-wrap {
     --spec: #2f4372, #a9c262, #b8a9d9, #c9ccd1, #2f7fe0; --cta: #b9d37a, #cdbfe8, #dfe2e6, #9cc6ff;
     --dir: -1;
-    position: fixed; left: 12px; right: 12px; bottom: var(--ad-bottom, calc(var(--mobile-nav-clear) + 4px)); z-index: 59;
+    position: fixed; left: 12px; right: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); z-index: 59;
     display: block; padding: 0; transition: none; pointer-events: none;
   }
   .era-ad-wrap.is-open { padding: 0; }
@@ -5577,3 +5570,23 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-yr[data-y="2004"] { font: 600 .8em/1 "Silkscreen", ui-monospace, monospace; padding: 2px 4px; border-radius: 3px; background: #b8c6e2; color: #1b2149; }
 .era-yr[data-y="2007"] { font: 700 1em/1 Helvetica, Arial, sans-serif; color: #3f8cf0; text-shadow: 0 1px 0 rgba(255, 255, 255, .25), 0 0 10px rgba(63, 140, 240, .35); }
 .era-yr.is-scramble { font: 500 1em/1 "Geist Mono", ui-monospace, monospace; color: var(--ink-2); background: none; text-shadow: none; text-decoration: none; padding: 0; -webkit-text-fill-color: currentColor; }
+
+/* The banner folded away: a small chip that still leads to the eras. In the
+   bottom corner on a computer; on a phone, right above the search button,
+   measured from the same edge as the nav so they move as one. */
+.era-mini {
+  position: fixed; left: 18px; bottom: 18px; z-index: 58; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 0; overflow: hidden;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, .14); background: #151513; color: #f1efe9; text-decoration: none;
+  font: .68rem/1 "Silkscreen", "Geist Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .3); transition: transform .25s cubic-bezier(.2, .7, .2, 1); -webkit-tap-highlight-color: transparent;
+}
+[data-theme="daylight"] .era-mini { background: #fff; color: #1c1a17; border-color: rgba(0, 0, 0, .1); box-shadow: 0 8px 22px rgba(30, 30, 40, .14); }
+.era-mini-st { align-self: stretch; display: flex; transform: skewX(-14deg); margin-left: -6px; padding-left: 12px; }
+.era-mini-st i { width: 3px; }
+.era-mini-st i:nth-child(1) { background: #61bb46; } .era-mini-st i:nth-child(2) { background: #fdb827; } .era-mini-st i:nth-child(3) { background: #f5821f; }
+.era-mini-st i:nth-child(4) { background: #e03a3e; } .era-mini-st i:nth-child(5) { background: #963d97; } .era-mini-st i:nth-child(6) { background: #009ddc; }
+@media (hover: hover) { .era-mini:hover { transform: translateY(-2px); } }
+@media (max-width: 719px) {
+  .era-mini { left: auto; right: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); height: 32px; padding-right: 11px; z-index: 59; }
+}
+html { touch-action: pan-x pan-y; }

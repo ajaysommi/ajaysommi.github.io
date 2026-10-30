@@ -151,8 +151,8 @@
 
 .ox-dockwrap { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 4000; display: flex; justify-content: center; }
 .ox-shelf {
-  position: absolute; left: -46px; right: -46px; bottom: 0; height: 50px;
-  transform: perspective(260px) rotateX(62deg); transform-origin: 50% 100%;
+  position: absolute; left: calc(var(--ds, 54px) * -.85); right: calc(var(--ds, 54px) * -.85); bottom: 0; height: calc(var(--ds, 54px) * .93);
+  transform: perspective(calc(var(--ds, 54px) * 4.8)) rotateX(62deg); transform-origin: 50% 100%;
   background:
     linear-gradient(180deg, rgba(255,255,255,.7), rgba(235,238,245,.5) 40%, rgba(200,205,220,.55)),
     repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 2px, transparent 2px 6px);
@@ -160,7 +160,7 @@
   box-shadow: 0 0 0 1px rgba(0,0,0,.18), inset 0 2px 2px rgba(255,255,255,.7), 0 -4px 20px rgba(0,0,0,.25);
   border-radius: 4px;
 }
-.ox-dock { position: relative; display: flex; align-items: flex-end; gap: 4px; padding: 0 10px 14px; height: calc(var(--ds, 54px) * 1.9); }
+.ox-dock { position: relative; display: flex; align-items: flex-end; gap: calc(var(--ds, 54px) * .075); padding: 0 calc(var(--ds, 54px) * .18) calc(var(--ds, 54px) * .26); height: calc(var(--ds, 54px) * 1.9); }
 .dk-i { position: relative; border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; cursor: default; transition: width .12s ease-out; }
 .dk-ic { display: block; width: 100%; aspect-ratio: 1; }
 .dk-ic svg { width: 100%; height: 100%; filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
@@ -181,7 +181,7 @@
 .dk-i:hover .dk-lbl, .dk-i:focus-visible .dk-lbl { opacity: 1; }
 .dk-run { position: absolute; bottom: -9px; width: 6px; height: 4px; border-radius: 50%; background: radial-gradient(#fff, #9fd0ff 60%, transparent 70%); box-shadow: 0 0 6px 2px rgba(150, 200, 255, .9); opacity: 0; }
 .dk-i.is-run .dk-run { opacity: 1; }
-.dk-sep { width: 1px; align-self: stretch; margin: 6px 10px 0; background: linear-gradient(180deg, transparent, rgba(255,255,255,.7) 40%, rgba(255,255,255,.4)); }
+.dk-sep { width: 1px; align-self: stretch; margin: calc(var(--ds, 54px) * .11) calc(var(--ds, 54px) * .18) 0; background: linear-gradient(180deg, transparent, rgba(255,255,255,.7) 40%, rgba(255,255,255,.4)); }
 .dk-i:focus-visible { outline: none; }
 .dk-i:focus-visible .dk-ic { filter: drop-shadow(0 0 6px #9fd0ff); }
 
@@ -481,3 +481,30 @@
 .mm-c.is-up { transform: rotateY(180deg); }
 .mm-c.is-done .fc { box-shadow: inset 0 0 0 2px #5bbf4a, 0 0 10px rgba(91,191,74,.5); }
 .mm-best { margin: 10px 0 0; text-align: center; font-size: 12px; color: #555; }
+
+/* First start: the language card, drawn after the old login window, and the
+   glass progress bar on pinstripes that follows it. */
+.ox-setup { background: #24509a url(../assets/images/aqua-wallpaper.webp) center / cover no-repeat; display: grid; place-items: center; place-content: center; gap: 0; }
+.ox-card { width: 400px; max-width: 86vw;  box-sizing: border-box; padding: 26px 44px 22px; display: flex; flex-direction: column; align-items: center; color: #1a1a1a; text-align: center; font-family: var(--lg);
+  background: repeating-linear-gradient(180deg, #f7f7f7 0 2px, #eeeeee 2px 4px); box-shadow: 0 14px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.14); }
+.ox-glossy { width: 92px; height: 78px; filter: drop-shadow(0 2px 2px rgba(10,40,100,.4)); }
+.ox-card h1 { white-space: nowrap; margin: 8px 0 2px; font: 400 32px/1.1 'Hoefler Text', Garamond, 'Times New Roman', serif; letter-spacing: -.3px; }
+.ox-card > p { margin: 0 0 16px; font-size: 12px; color: #9a9a9a; }
+.ox-langs { width: min(230px, 100%); display: flex; flex-direction: column; gap: 4px; }
+.ox-langs button { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px 0 5px; border: 1px solid transparent; border-radius: 22px; background: none; cursor: default; font: 13px var(--lg); color: #1a1a1a; text-align: left; }
+.ox-langs i { width: 34px; height: 34px; flex: none; border-radius: 50%; display: grid; place-items: center; font: bold 11px var(--lg); color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); box-shadow: 0 1px 2px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.2);
+  background: linear-gradient(180deg, rgba(255,255,255,.75) 0, rgba(255,255,255,.2) 46%, transparent 48%), linear-gradient(180deg, #2f7de2, #1d5fc4 52%, #4ea3f4); }
+.ox-langs button.on { color: #fff; border-color: #2a62b8; text-shadow: 0 -1px 0 rgba(0,0,0,.3); background: linear-gradient(180deg, #a7cdf6 0, #6aa8ee 46%, #3a84e4 50%, #5fa7f2 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.3); }
+.ox-power { display: flex; gap: 22px; margin-top: 18px; }
+.ox-power button { white-space: nowrap; display: flex; flex-direction: column; align-items: center; gap: 3px; border: 0; background: none; font: 10px var(--lg); color: #333; cursor: default; }
+.ox-power i { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: #444; border: 1px solid #8f8f8f; background: linear-gradient(180deg, #fff, #dcdcdc 50%, #c6c6c6 52%, #efefef); }
+.ox-power svg { width: 15px; height: 15px; }
+.ox-power button:active i { filter: brightness(.8); }
+.ox-start { background: repeating-linear-gradient(180deg, #ededed 0 2px, #e2e2e2 2px 4px); gap: 22px; }
+.ox-start p { margin: 0; font: 15px var(--lg); color: #111; }
+.ox-bar { width: min(432px, 62vw); height: 30px; box-sizing: border-box; border: 1px solid #a5a5a5; border-radius: 3px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 0 #fff; background: linear-gradient(180deg, #fdfdfd, #dedede 50%, #d0d0d0 52%, #f1f1f1); }
+.ox-bar i { display: block; height: 100%; animation: ox-stripe .7s linear infinite; background: linear-gradient(180deg, rgba(255,255,255,.7) 0, rgba(255,255,255,.28) 48%, rgba(0,0,0,.05) 50%, rgba(255,255,255,.3) 100%), repeating-linear-gradient(90deg, #3a8cec 0 12px, #7fbcf8 12px 24px); box-shadow: 1px 0 1px rgba(0,0,0,.25); }
+@keyframes ox-stripe { to { background-position: 0 0, 24px 0; } }
+/* The dock's Trash with something in it. */
+.dk-i.is-full .dk-ic { position: relative; }
+.dk-i.is-full .dk-ic::after { content: ''; position: absolute; left: 30%; right: 30%; top: 8%; height: 30%; border-radius: 40% 50% 30% 60%; background: linear-gradient(135deg, #fff, #cfd6dd); box-shadow: 0 0 0 .5px rgba(0,0,0,.25); }

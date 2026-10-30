@@ -727,7 +727,8 @@
   const PX_VB = [8.86, 8.82, 44, 44];
   const MORPH = 1180;   // ms from lift off to the last pixel
   const pixelBox = () => {
-    const s = 112, w = document.documentElement.clientWidth, h = innerHeight;
+    // The eras page has no scrollbar, so its middle is the window's, scrollbar or not here.
+    const s = 112, w = innerWidth, h = innerHeight;
     return { left: (w - s) / 2, top: (h - s) / 2, width: s, height: s };
   };
   const pixelGrid = (box) => {

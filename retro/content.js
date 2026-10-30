@@ -435,5 +435,97 @@ window.RETRO = (function () {
     });
   };
 
-  return { esc, usedAt, dither, ditherAll, ascii, store, viewport, marquee };
+  /* Dragging an icon: a see-through copy follows the pointer, and on letting
+     go it was either dropped on the Trash or somewhere else. A click that
+     ends a drag opens nothing. */
+  const dragIcons = (area, { sel, trash, onTrash, onDrop }) => {
+    area.addEventListener('pointerdown', (e) => {
+      const el = e.button === 0 && e.target.closest(sel);
+      if (!el) return;
+      const sx = e.clientX, sy = e.clientY, r = el.getBoundingClientRect();
+      let ghost = null;
+      const over = (ev) => { const t = trash(); if (!t) return false; const b = t.getBoundingClientRect(); return ev.clientX > b.left && ev.clientX < b.right && ev.clientY > b.top && ev.clientY < b.bottom; };
+      const move = (ev) => {
+        const dx = ev.clientX - sx, dy = ev.clientY - sy;
+        if (!ghost && Math.hypot(dx, dy) < 5) return;
+        if (!ghost) {
+          ghost = el.cloneNode(true);
+          Object.assign(ghost.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: 0, opacity: .7, zIndex: 99999, pointerEvents: 'none' });
+          area.appendChild(ghost);
+        }
+        ghost.style.transform = `translate(${dx}px, ${dy}px)`;
+        const t = trash();
+        if (t) t.classList.toggle('is-drop', t !== el && over(ev));
+      };
+      const up = (ev) => {
+        removeEventListener('pointermove', move);
+        removeEventListener('pointerup', up);
+        if (!ghost) return;
+        ghost.remove();
+        const t = trash();
+        if (t) t.classList.remove('is-drop');
+        const eat = (c) => { c.stopPropagation(); c.preventDefault(); };
+        area.addEventListener('click', eat, { capture: true, once: true });
+        setTimeout(() => area.removeEventListener('click', eat, true), 60);
+        if (t && t !== el && over(ev)) onTrash(el); else if (onDrop) onDrop(el, ev.clientX - sx, ev.clientY - sy);
+      };
+      addEventListener('pointermove', move);
+      addEventListener('pointerup', up);
+    });
+  };
+
+  /* The system's own right-click menu, in its own menu style. `build` gets
+     the event and returns a list of [label, action] and '-' for a divider. */
+  const contextMenu = (area, cls, build) => {
+    let open = null;
+    const close = () => { if (open) open.remove(); open = null; };
+    area.addEventListener('contextmenu', (e) => {
+      if (e.target.closest('input, textarea, [contenteditable], iframe')) return;
+      e.preventDefault();
+      close();
+      const items = build(e);
+      if (!items || !items.length) return;
+      const m = document.createElement('div');
+      m.className = cls + ' rt-ctx';
+      items.forEach((it) => {
+        if (it === '-') { m.appendChild(document.createElement('hr')); return; }
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.innerHTML = `<span>${esc(it[0])}</span><span></span>`;
+        if (!it[1]) b.disabled = true;
+        b.addEventListener('click', () => { close(); it[1] && it[1](); });
+        m.appendChild(b);
+      });
+      area.appendChild(m);
+      const a = area.getBoundingClientRect();
+      m.style.left = Math.max(2, Math.min(e.clientX - a.left, a.width - m.offsetWidth - 4)) + 'px';
+      m.style.top = Math.max(2, Math.min(e.clientY - a.top, a.height - m.offsetHeight - 4)) + 'px';
+    });
+    document.addEventListener('pointerdown', (e) => { if (open && !e.target.closest('.rt-ctx')) close(); }, true);
+    area.addEventListener('contextmenu', () => { open = area.querySelector(':scope > .rt-ctx'); });
+  };
+
+  /* Any picture can be clicked to fill the screen it is on, and clicked
+     again to go back. It never leaves that screen. */
+  const zoomPics = (area, skip) => {
+    area.addEventListener('click', (e) => {
+      const im = e.target.closest('img');
+      if (!im || !area.contains(im) || e.target.closest('.rt-zoom')) return;
+      if (im.closest('button:not(.is-c), a') || (skip && im.closest(skip))) return;
+      e.stopPropagation();
+      const v = document.createElement('div');
+      v.className = 'rt-zoom';
+      const big = document.createElement('img');
+      big.alt = im.alt || '';
+      big.src = im.src.replace('-480.', '-960.').replace('-400.', '-960.');
+      big.onerror = () => { big.onerror = null; big.src = im.src; };
+      v.appendChild(big);
+      area.appendChild(v);
+      v.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160 });
+      big.animate([{ transform: 'scale(.82)' }, { transform: 'none' }], { duration: 220, easing: 'cubic-bezier(.2, .7, .3, 1)' });
+      v.addEventListener('click', (c) => { c.stopPropagation(); v.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140 }).finished.then(() => v.remove()); });
+    }, true);
+  };
+
+  return { esc, usedAt, dither, ditherAll, ascii, store, viewport, marquee, dragIcons, contextMenu, zoomPics };
 })();

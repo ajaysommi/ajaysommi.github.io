@@ -29,7 +29,7 @@ window.WEB = (function () {
       <p>You are visitor number <span class="counter" data-counter title="It counts.">${visits().split('').map((d) => `<span>${d}</span>`).join('')}</span></p>
       <p>Last updated: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
     </div>
-    <div class="ring">« <a href="#" data-ring="prev">Prev</a> | <b>The Engineers’ Webring</b> | <a href="#" data-ring="rand">Random</a> | <a href="#" data-ring="next">Next</a> »<br/><span class="small">This site is a proud member. Prev and Next lead to other decades.</span></div>`;
+    <div class="ring">« <a href="#" data-ring="prev">Prev</a> | <b>The Engineers’ Webring</b> | <a href="#" data-ring="rand">Random</a> | <a href="#" data-ring="next">Next</a> »<br/><span class="small">Prev and Next lead to other decades.</span></div>`;
 
   const shell = (title, body) => ({ title, html: `<div class="pg"><div class="pg-in">${body}${footer()}</div></div>` });
 
@@ -37,7 +37,7 @@ window.WEB = (function () {
     index: () => shell('Ajay Sommi’s Home Page', `
       <h1>~ Ajay Sommi ~</h1>
       <p class="center"><i>Software Engineer &middot; ${esc(P.citizen)} &middot; University of Florida, Computer Science</i></p>
-      <div class="mq"><span>★ Welcome to my corner of the Information Superhighway! ★ Now booking: full-time software engineering roles ★ Sign my guestbook! ★</span></div>
+      <div class="mq"><span>★ Welcome to my corner of the Information Superhighway! ★ Looking for full-time software engineering roles ★ Sign my guestbook! ★</span></div>
       <table class="lay"><tr><td style="width:240px"><span class="frame"><img class="slow" src="${P.photo}" width="220" height="220" alt="Ajay Sommi outdoors in front of green hills" /></span></td>
       <td><h2 style="margin-top:0">Welcome! <span class="new">NEW!</span></h2><p>${esc(P.about[0])}</p><p>${esc(P.about[1])}</p></td></tr></table>
       ${nav()}
@@ -49,7 +49,7 @@ window.WEB = (function () {
         <li><b>Dec 2026:</b> Graduating from <a href="#" data-go="school">UF</a>, AI Certificate included.</li>
         <li>Brought a <a href="#" data-go="garage/macbook">MacBook back from the dead</a>. Pictures inside!</li>
       </ul>
-      <table class="lay"><tr><td style="vertical-align:top"><h3>Hot off the wire</h3><p class="small"><a href="#" data-go="news">What’s New on the Web in 1998</a>: Windows 98, a search engine called Google, and the iMac.</p></td>
+      <table class="lay"><tr><td style="vertical-align:top"><h3>Hot off the wire</h3><p class="small"><a href="#" data-go="news">What’s New on the Web in 1998</a>: Windows 98 and a search engine called Google.</p></td>
       <td style="width:230px;vertical-align:top"><a href="#" data-go="shop" class="ad98"><b>SommiNet 56K!</b><span>Surf at top speed. Click here!</span></a></td></tr></table>`),
 
     /* The papers of 1998: a news page of the year, and an advert. */
@@ -150,7 +150,7 @@ window.WEB = (function () {
 </HEAD>
 <BODY BACKGROUND="stars.gif" TEXT="#000000" LINK="#0000EE">
 <CENTER><H1>~ Ajay Sommi ~</H1></CENTER>
-<MARQUEE>Now booking: full-time software engineering roles</MARQUEE>
+<MARQUEE>Looking for full-time software engineering roles</MARQUEE>
 <IMG SRC="me.jpg" WIDTH=220 HEIGHT=220>
 <!-- TODO: finish the site. (it is never finished.) -->
 <IMG SRC="counter.cgi">
@@ -159,7 +159,7 @@ window.WEB = (function () {
       return { title: `Source of ${from || 'index'}.html`, html: `<div class="pg" style="background:#fff"><div class="src">${esc(src)}</div></div>` };
     },
 
-    about: () => ({ title: 'About SurfBoard', html: `<div class="pg"><div class="pg-in center"><h1>SurfBoard 3.0</h1><p>A browser that exists only in this portfolio.</p><p>Built in 2026 by Ajay Sommi, with nostalgia for a time he was too young to remember.</p><p><a href="#" data-go="index">Back home</a></p></div></div>` })
+    about: () => ({ title: 'About SurfBoard', html: `<div class="pg"><div class="pg-in center"><h1>SurfBoard 3.0</h1><p>Built in 2026 by Ajay Sommi.</p><p><a href="#" data-go="index">Back home</a></p></div></div>` })
   };
 
   const ALIAS = {
@@ -193,13 +193,24 @@ window.WEB = (function () {
   };
 
   const notFound = (path) => ({ title: '404 Not Found', html: `<div class="pg" style="background:#fff"><div class="pg-in err"><h1>Not Found</h1><p>The requested URL /~ajay/${esc(path)} was not found on this server.</p><p>Maybe you meant one of these: ${['work', 'projects', 'garage', 'skills', 'school', 'guestbook', 'contact', 'resume'].map((p) => `<a href="#" data-go="${p}">${p}</a>`).join(', ')}?</p><hr/><address>Apache/1.3.3 Server at www.sommi.net Port 80</address></div></div>` });
-  const offline = (host) => ({ title: 'Unable to connect', html: `<div class="pg" style="background:#fff"><div class="pg-in err"><h1>Unable to connect</h1><p>SurfBoard can’t reach <b>${esc(host)}</b> from 1998.</p><p>The modem is busy dialling the only site on this desk. <a href="#" data-go="index">Go home</a>.</p></div></div>` });
+  const offline = (host) => ({ title: 'Unable to connect', html: `<div class="pg" style="background:#fff"><div class="pg-in err"><h1>Unable to connect</h1><p>SurfBoard can’t reach <b>${esc(host)}</b> from 1998.</p><p>This address could not be reached. <a href="#" data-go="index">Go home</a>.</p></div></div>` });
 
   /* -------------------------------------------------------------- loading */
 
   const setStatus = (t) => { status.textContent = t; };
 
+  /* No cable, no web: everything asks for the cable until it is plugged in. */
+  let online = false, wanted = 'index';
   const load = (raw, push = true) => {
+    if (!online) {
+      wanted = raw;
+      titleEl.textContent = 'SurfBoard: No connection';
+      loc.value = '';
+      setStatus('Not connected');
+      page.style.overflow = '';
+      page.innerHTML = `<div class="pg" style="background:#fff"><div class="pg-in err"><h1>No Internet Connection</h1><p>SurfBoard could not find a network.</p><p>Plug the network cable into the port on the side of the computer.</p></div></div>`;
+      return;
+    }
     let [a, b] = parse(raw);
     let pg;
     if (a === 'outside' || a === 'search') pg = outsidePage();
@@ -266,7 +277,7 @@ window.WEB = (function () {
     ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('To print the résumé, open the Résumé page and use Download.'); }, '⌘P']]],
     ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U']]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],
-    ['special', 'Special', [['Empty Trash…', () => note('Trash', ALERTS.trash, 'trash')], ['Open Macintosh HD', () => folder('hd')], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
+    ['special', 'Special', [['Empty Trash…', () => { FOLDERS.trash[1].length = 0; const w = wins['f-trash']; if (w) { w.remove(); delete wins['f-trash']; } root.querySelector('.nt-trash svg') && (root.querySelector('.nt-trash span').innerHTML = I.svg('trash', 32)); }], ['Open Sommi HD', () => folder('hd')], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
     ['bm', 'Bookmarks', [['GitHub', () => window.open(P.github, '_blank', 'noopener')], ['LinkedIn', () => window.open(P.linkedin, '_blank', 'noopener')], ['The Garage', () => load('garage')], ['Résumé', () => load('resume')]]]
   ];
 
@@ -316,20 +327,19 @@ window.WEB = (function () {
 
   /* What sits on the desk and in its folders. Codes: page: opens a page
      in SurfBoard, win: a folder, app: a program, alert: a note. */
-  const DESK = [['globe', 'SurfBoard', 'app:surf'], ['hd', 'Macintosh HD', 'win:hd'], ['folder', 'Documents', 'win:docs'], ['bomb', 'SommiSweeper', 'app:mines'], ['resume', 'Résumé', 'page:resume'], ['book', 'Guestbook', 'page:guestbook'], ['mail', 'E-mail', 'page:contact']];
+  const DESK = [['globe', 'SurfBoard', 'app:surf'], ['hd', 'Sommi HD', 'win:hd'], ['folder', 'Documents', 'win:docs'], ['bomb', 'SommiSweeper', 'app:mines'], ['resume', 'Résumé', 'page:resume'], ['book', 'Guestbook', 'page:guestbook'], ['mail', 'E-mail', 'page:contact']];
   const FOLDERS = {
-    hd: ['Macintosh HD', [['folder', 'Applications', 'win:apps'], ['folder', 'Documents', 'win:docs'], ['folder', 'System Folder', 'win:sys'], ['globe', 'SurfBoard', 'app:surf']], '4 items · 1.2 GB available'],
+    hd: ['Sommi HD', [['folder', 'Applications', 'win:apps'], ['folder', 'Documents', 'win:docs'], ['folder', 'System Folder', 'win:sys'], ['globe', 'SurfBoard', 'app:surf']], '4 items · 1.2 GB available'],
     apps: ['Applications', [['globe', 'SurfBoard', 'app:surf'], ['note', 'Note Pad', 'app:note'], ['chip', 'Calculator', 'app:calc'], ['bomb', 'SommiSweeper', 'app:mines'], ['puzzle', 'Appearance', 'app:appear']], '5 items'],
     docs: ['Documents', [['resume', 'Résumé', 'page:resume'], ['doc', 'What’s New ’98', 'page:news'], ['doc', '56K Modem Ad', 'page:shop'], ['folder', 'Projects', 'page:projects'], ['photo', 'Garage Photos', 'page:garage'], ['cap', 'School', 'page:school']], '6 items'],
-    sys: ['System Folder', [['mac', 'System', 'alert:sys'], ['app', 'Finder', 'alert:finder'], ['folder', 'Extensions', 'win:ext'], ['puzzle', 'Appearance', 'app:appear']], '4 items'],
-    ext: ['Extensions', [['chip', '56K Modem Enabler', 'alert:ext'], ['chip', 'QuickTime™ 3.0', 'alert:ext'], ['chip', 'Portfolio Accelerator', 'alert:ext'], ['chip', 'Nostalgia Driver', 'alert:ext']], '4 items'],
+    sys: ['System Folder', [['mac', 'System', 'alert:sys'], ['app', 'Desktop', 'alert:finder'], ['folder', 'Extensions', 'win:ext'], ['puzzle', 'Appearance', 'app:appear']], '4 items'],
+    ext: ['Extensions', [['chip', '56K Modem Enabler', 'alert:ext'], ['chip', 'Video Player', 'alert:ext'], ['chip', 'Network Driver', 'alert:ext']], '3 items'],
     trash: ['Trash', [], 'empty']
   };
   const ALERTS = {
-    sys: 'This is the System file. It is what makes this an Apple-style desk instead of a pile of icons. Best left where it is.',
-    finder: 'The Finder is already running. It is the desk you are looking at.',
-    ext: 'This extension loaded at start-up. If something goes wrong, restart with Shift held down. (Nothing will go wrong.)',
-    trash: 'The Trash is already empty. Nothing ever gets thrown away in this portfolio.'
+    sys: 'This is the System file. It runs this computer.',
+    finder: 'The desktop is already running.',
+    ext: 'This extension loaded at start-up.'
   };
   const icoBtn = (ic, n, go, cls = 'p8-ico') => `<button type="button" class="${cls}" data-open="${go}"><span>${I.svg(ic, 32)}</span><b>${esc(n)}</b></button>`;
 
@@ -346,12 +356,13 @@ window.WEB = (function () {
     el.className = 'p8 plat';
     w = Math.min(w, W - 24); h = Math.min(h, H - 40);
     el.style.cssText = `left:${Math.max(8, Math.min(W - w - 8, 30 + n * 22))}px;top:${Math.max(30, Math.min(H - h - 8, 40 + n * 20))}px;width:${w}px;height:${h}px`;
-    el.innerHTML = `<div class="br-title"><button type="button" class="tb l" data-x aria-label="Close window"></button><span class="ttl">${esc(title)}</span><button type="button" class="tb r" data-shade aria-label="Collapse window"></button></div>${info ? `<div class="p8-info">${info}</div>` : ''}<div class="p8-body bev-in"></div>`;
+    el.innerHTML = `<div class="br-title"><button type="button" class="tb l" data-x aria-label="Close window"></button><span class="ttl">${esc(title)}</span><button type="button" class="tb z" data-zoom aria-label="Full screen"></button><button type="button" class="tb r" data-shade aria-label="Collapse window"></button></div>${info ? `<div class="p8-info">${info}</div>` : ''}<div class="p8-body bev-in"></div>`;
     root.appendChild(el);
     wins[id] = el;
     front(el);
     el.querySelector('[data-x]').addEventListener('click', () => { window.SFX.click(); el.remove(); delete wins[id]; });
     el.querySelector('[data-shade]').addEventListener('click', () => { window.SFX.click(); el.classList.toggle('is-shaded'); });
+    el.querySelector('[data-zoom]').addEventListener('click', () => { window.SFX.click(); el.classList.remove('is-shaded'); el.classList.toggle('is-zoomed'); });
     const bar = el.querySelector('.br-title');
     bar.addEventListener('pointerdown', (e) => {
       if (e.target.closest('button')) return;
@@ -473,7 +484,7 @@ window.WEB = (function () {
     if (kind === 'page') { APPS98.surf(); load(arg); return; }
     if (kind === 'win') { folder(arg); return; }
     if (kind === 'app') { APPS98[arg](); return; }
-    if (kind === 'alert') note(arg === 'ext' ? 'Extension' : arg === 'finder' ? 'Finder' : 'System', ALERTS[arg] || '');
+    if (kind === 'alert') note(arg === 'ext' ? 'Extension' : arg === 'finder' ? 'Desktop' : 'System', ALERTS[arg] || '');
   };
 
   const build = (scr, deskApi) => {
@@ -487,7 +498,7 @@ window.WEB = (function () {
       </div>
       <div class="nt-desk">${DESK.map(([ic, n, go]) => icoBtn(ic, n, go, 'nt-ico')).join('')}</div>${icoBtn('trash', 'Trash', 'win:trash', 'nt-ico nt-trash')}
       <div class="br plat">
-        <div class="br-title"><button type="button" class="tb l" data-win="close" aria-label="Close window"></button><span class="ttl">SurfBoard</span><button type="button" class="tb r" data-win="shade" aria-label="Collapse window"></button></div>
+        <div class="br-title"><button type="button" class="tb l" data-win="close" aria-label="Close window"></button><span class="ttl">SurfBoard</span><button type="button" class="tb z" data-win="zoom" aria-label="Full screen"></button><button type="button" class="tb r" data-win="shade" aria-label="Collapse window"></button></div>
         <div class="br-tools">
           ${tbtn('back', 'Back', 'back')}${tbtn('fwd', 'Forward', 'fwd')}${tbtn('reload', 'Reload', 'reload')}${tbtn('home', 'Home', 'home')}
           <span class="sep"></span>
@@ -536,7 +547,7 @@ window.WEB = (function () {
     const win = root.querySelector('.br');
     root.addEventListener('click', (e) => {
       const w = e.target.closest('[data-win]');
-      if (w) { window.SFX.click(); if (w.dataset.win === 'close') win.classList.add('is-closed'); else win.classList.toggle('is-shaded'); return; }
+      if (w) { window.SFX.click(); if (w.dataset.win === 'close') win.classList.add('is-closed'); else if (w.dataset.win === 'zoom') { win.classList.remove('is-shaded'); win.classList.toggle('is-zoomed'); } else win.classList.toggle('is-shaded'); return; }
       /* Icons, on the desktop or in a folder: a click selects, a double
          click (or Return) opens, as the Finder had it. */
       const o = e.target.closest('[data-open]');
@@ -554,6 +565,44 @@ window.WEB = (function () {
       const w = e.target.closest('.p8, .br');
       if (w) front(w);
     }, true);
+    /* Icons can be dragged about the desk, and into the Trash from anywhere. */
+    const trashEl = () => root.querySelector('.nt-trash');
+    const fromList = (go) => { Object.values(FOLDERS).forEach((f) => { const i = f[1].findIndex((x) => x[2] === go); if (i >= 0) f[1].splice(i, 1); }); };
+    const toTrash = (el) => {
+      if (el.classList.contains('nt-trash')) return;
+      const go = el.dataset.open, name = el.querySelector('b').textContent, icon = el.querySelector('span').innerHTML;
+      const known = DESK.find((x) => x[2] === go) || Object.values(FOLDERS).flatMap((f) => f[1]).find((x) => x[2] === go);
+      fromList(go);
+      const inDesk = DESK.findIndex((x) => x[2] === go);
+      if (inDesk >= 0) DESK.splice(inDesk, 1);
+      root.querySelectorAll(`[data-open="${go}"]`).forEach((x) => { if (!x.classList.contains('nt-trash')) x.remove(); });
+      FOLDERS.trash[1].push(known || ['doc', name, go]);
+      void icon;
+      trashEl().querySelector('span').innerHTML = I.svg('trashFull', 32);
+      const w = wins['f-trash'];
+      if (w) { w.remove(); delete wins['f-trash']; folder('trash'); }
+      window.SFX.click();
+    };
+    const freeze = () => {
+      const d = root.querySelector('.nt-desk');
+      if (d.dataset.free) return;
+      d.dataset.free = '1';
+      const pos = [...d.children].map((c) => [c, c.offsetLeft, c.offsetTop]);
+      pos.forEach(([c, x, y]) => { c.style.position = 'absolute'; c.style.left = x + 'px'; c.style.top = y + 'px'; });
+      d.style.overflow = 'visible';
+    };
+    window.RETRO.dragIcons(root, { sel: '.nt-ico, .p8-ico', trash: trashEl, onTrash: toTrash, onDrop: (el, dx, dy) => { if (!el.parentElement.classList.contains('nt-desk')) return; freeze(); el.style.left = parseFloat(el.style.left) + dx + 'px'; el.style.top = parseFloat(el.style.top) + dy + 'px'; } });
+    const openIcon = (el) => { window.SFX.click(); act(el.dataset.open); };
+    window.RETRO.contextMenu(root, 'nt-drop', (e) => {
+      const ic = e.target.closest('.nt-ico, .p8-ico');
+      if (ic) return ic.classList.contains('nt-trash')
+        ? [['Open', () => openIcon(ic)], ['Empty Trash', () => { FOLDERS.trash[1].length = 0; const w = wins['f-trash']; if (w) { w.remove(); delete wins['f-trash']; } ic.querySelector('span').innerHTML = I.svg('trash', 32); }]]
+        : [['Open', () => openIcon(ic)], ['Get Info', () => note(ic.querySelector('b').textContent, 'Kind: ' + (ic.dataset.open.startsWith('win') ? 'folder' : ic.dataset.open.startsWith('app') ? 'application' : 'document'))], '-', ['Move to Trash', () => toTrash(ic)]];
+      const w = e.target.closest('.p8, .br');
+      if (w) return [['Close Window', () => { const x = w.querySelector('[data-x], [data-win="close"]'); x && x.click(); }], ['Zoom Window', () => { const x = w.querySelector('.tb.z'); x && x.click(); }], ['Collapse Window', () => { const x = w.querySelector('.tb.r'); x && x.click(); }]];
+      return [['Open Sommi HD', () => folder('hd')], ['Appearance', () => APPS98.appear()], '-', ['About This Computer', () => APPS98.about()], ['Restart in Another Era\u2026', () => api.picker()]];
+    });
+    window.RETRO.zoomPics(root);
     window.RETRO.marquee(root, { isBg: (t) => t === root || t.classList.contains('nt-desk'), items: () => [...root.querySelectorAll('.nt-ico')], sel: 'on', cls: 'sel-98' });
     const deskColor = store.get('nt-desk-color', null);
     if (deskColor) { root.style.setProperty('--desk', deskColor); root.classList.add('has-color'); }
@@ -584,8 +633,7 @@ window.WEB = (function () {
       }
       if (e.target.closest('[data-counter]')) {
         window.EGGS.find('counter');
-        setStatus('Hit counter: you clicked it. That counts as two visits now.');
-        store.set('visits', store.get('visits', 0) + 1);
+                store.set('visits', store.get('visits', 0) + 1);
       }
     });
     page.addEventListener('mouseover', (e) => {
@@ -621,14 +669,21 @@ window.WEB = (function () {
     b.remove();
     root.querySelector('.br').style.visibility = '';
     const d = document.createElement('div');
+    load('index');
+    api.cable && api.cable(goOnline);
+  };
+  const goOnline = async () => {
+    if (online) return;
+    const d = document.createElement('div');
     d.className = 'dial';
-    d.innerHTML = `<div class="t">Connecting to SommiNet</div><div class="b">${I.svg('globe', 32)}<div class="steps"><div>Dialing 555-0198...</div><div>Verifying username...</div><div>Connected at 56,000 bps</div></div></div>`;
+    d.innerHTML = `<div class="t">Connecting to SommiNet</div><div class="b">${I.svg('globe', 32)}<div class="steps"><div>Network cable detected...</div><div>Contacting SommiNet...</div><div>Verifying username...</div><div>Connected</div></div></div>`;
     root.appendChild(d);
     window.SFX.modem();
     const st = d.querySelectorAll('.steps div');
     for (let i = 0; i < st.length; i++) { st.forEach((s, k) => s.classList.toggle('on', k === i)); await wait(i === 1 ? 900 : 650); }
     d.remove();
-    load('index');
+    online = true;
+    load(wanted);
   };
 
   return {
