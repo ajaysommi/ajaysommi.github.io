@@ -1566,7 +1566,9 @@ window.IPHONE = { start(room, exit) {
       b.style.left = 19.4 - 8.5 + c * 75 + 'px';
       b.style.top = 19.2 + r * 90.4 + 'px';
       pages[p].appendChild(b);
-      place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
+      // Only the page on show flies; the others simply wait in place, out of sight.
+      if (p === pageNo) place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
+      else { b.classList.add('is-away'); b.dataset.d = 0; }
     }));
     DOCK.forEach((id, i) => {
       const b = iconBtn(id);
@@ -1586,6 +1588,7 @@ window.IPHONE = { start(room, exit) {
     strip.style.transform = `translateX(${to}px)`;
     if (from != null) strip.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${to}px)` }], { duration: 320, easing: 'cubic-bezier(.25, .8, .3, 1)' });
     grid.querySelectorAll('.ip-dots i').forEach((d, i) => d.classList.toggle('on', i === pageNo));
+    grid.querySelectorAll('.ip-page').forEach((pg, i) => pg.querySelectorAll('.ip-icon').forEach((b) => b.classList.toggle('is-away', i !== pageNo)));
   };
   let pg = null;
   grid.addEventListener('pointerdown', (e) => {
@@ -1615,7 +1618,7 @@ window.IPHONE = { start(room, exit) {
   grid.addEventListener('pointercancel', pgEnd);
 
   const flyIn = (unlocking) => {
-    const icons = [...room.querySelectorAll('.ip-icon')];
+    const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')];
     const far = Math.max(...icons.map((b) => +b.dataset.d));
     void board.offsetWidth;
     board.classList.remove('is-flying');

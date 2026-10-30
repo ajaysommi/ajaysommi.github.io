@@ -1093,3 +1093,5 @@
 .ip-screen .ip-dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 8px; pointer-events: none; }
 .ip-screen .ip-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.32); }
 .ip-screen .ip-dots i.on { background: #fff; }
+/* Icons on a page not on show take no part in opening or closing an app. */
+.ip-screen .ip-board .ip-icon.is-away, .ip-screen .ip-board.is-converge .ip-icon.is-away, .ip-screen .ip-board.is-flying .ip-icon.is-away { transform: none !important; opacity: 1; transition: none; }
