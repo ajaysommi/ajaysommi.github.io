@@ -309,7 +309,9 @@
   const ART = {
     1983: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="a2b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ece3cc"/><stop offset="1" stop-color="#c9bc9b"/></linearGradient></defs><rect x="22" y="10" width="76" height="62" rx="6" fill="url(#a2b)" stroke="#8d8063"/><rect x="29" y="16" width="62" height="46" rx="4" fill="#111"/><rect x="32" y="19" width="56" height="40" rx="3" fill="#0c1a0c"/><text x="36" y="32" font-family="VT323, monospace" font-size="9" fill="#5cff6b">SOMMI-DOS</text><text x="36" y="42" font-family="VT323, monospace" font-size="9" fill="#5cff6b">]_</text><rect x="52" y="72" width="16" height="6" fill="#b3a585"/><path d="M10 80h100l6 22a3 3 0 0 1-3 4H7a3 3 0 0 1-3-4z" fill="url(#a2b)" stroke="#8d8063"/>${[0, 1, 2].map((r) => `<rect x="${16 + r * 3}" y="${84 + r * 6}" width="${84 - r * 6}" height="4.5" rx="1" fill="#6d6250" opacity=".55"/>`).join('')}</svg>`,
     1991: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="mcb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1ecdf"/><stop offset="1" stop-color="#cfc7b3"/></linearGradient></defs><path d="M28 6h64a6 6 0 0 1 6 6v92H22V12a6 6 0 0 1 6-6z" fill="url(#mcb)" stroke="#968d78"/><rect x="22" y="104" width="76" height="8" rx="2" fill="#bdb49e" stroke="#968d78"/><rect x="32" y="14" width="56" height="46" rx="5" fill="#3a3a36"/><rect x="36" y="18" width="48" height="38" rx="2" fill="#f4f4f0"/><rect x="36" y="18" width="48" height="5" fill="#fff" stroke="#222" stroke-width=".6"/><rect x="42" y="30" width="22" height="14" fill="#fff" stroke="#222" stroke-width=".8"/><rect x="42" y="30" width="22" height="3" fill="#222"/><rect x="66" y="44" width="10" height="8" fill="#fff" stroke="#222" stroke-width=".8"/><rect x="58" y="80" width="26" height="3" rx="1.5" fill="#55503f"/><linearGradient id="mcR" gradientUnits="userSpaceOnUse" x1="0" y1="11.8" x2="0" y2="49.4">${[['#61bb46', 0], ['#fdb827', 1], ['#f5821f', 2], ['#e03a3e', 3], ['#963d97', 4], ['#009ddc', 5]].map(([c, i]) => `<stop offset="${i / 6}" stop-color="${c}"/><stop offset="${(i + 1) / 6}" stop-color="${c}"/>`).join('')}</linearGradient>${AJ(35, 79.2, .25, 'url(#mcR)')}</svg>`,
-    1998: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="g3b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd6e6"/><stop offset=".5" stop-color="#1f9fbd"/><stop offset="1" stop-color="#0e6f8a"/></linearGradient><linearGradient id="g3w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dee3"/></linearGradient></defs><path d="M60 6c26 0 44 4 46 14 3 17 3 46-2 66-3 12-20 18-44 18S19 98 16 86c-5-20-5-49-2-66C16 10 34 6 60 6z" fill="url(#g3b)" stroke="#0b5b72"/><path d="M60 10c22 0 38 3 40 11 2 14 2 34-1 49H21c-3-15-3-35-1-49 2-8 18-11 40-11z" fill="url(#g3w)"/><rect x="28" y="18" width="64" height="48" rx="3" fill="#1a1a1a"/><rect x="31" y="21" width="58" height="42" rx="1.5" fill="#2d6bd0"/><rect x="31" y="21" width="58" height="5" fill="#d8d8d8"/><rect x="38" y="31" width="44" height="26" fill="#fff"/><rect x="38" y="31" width="44" height="4" fill="#1e3f8a"/><path d="M28 78h64l-4 14H32z" fill="#0e6f8a" opacity=".5"/><linearGradient id="g3L" gradientUnits="userSpaceOnUse" x1="0" y1="11" x2="0" y2="50"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfeaf2"/></linearGradient>${AJ(60, 85, .19, '#0b5b72').replace('<g ', '<g opacity=".35" ').replace(/translate\(([\d.]+) ([\d.]+)\)/, (m, x, y) => `translate(${x} ${(+y + .5).toFixed(2)})`)}${AJ(60, 85, .19, 'url(#g3L)')}<path d="M44 104h32l4 10H40z" fill="url(#g3b)" stroke="#0b5b72"/></svg>`,
+    /* The Bondi iMac, reduced to its shapes: the rounded shell, the blue
+       showing at its sides, the screen, the two round speakers, the foot. */
+    1998: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="g3b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3cb6d2"/><stop offset="1" stop-color="#0d7c9c"/></linearGradient><linearGradient id="g3w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f9fa"/><stop offset="1" stop-color="#d8e0e4"/></linearGradient></defs><path d="M44 100h32l6 14a2 2 0 0 1-2 3H40a2 2 0 0 1-2-3z" fill="#0d7c9c"/><path d="M60 6c25 0 41 2 46 8 4 5 7 26 6 50-1 18-3 32-8 37-5 4-22 6-44 6s-39-2-44-6c-5-5-7-19-8-37-1-24 2-45 6-50 5-6 21-8 46-8z" fill="url(#g3b)"/><path d="M60 10c22 0 36 2 40 7 3 4 6 24 5 46-1 16-3 29-7 33-4 3-19 5-38 5s-34-2-38-5c-4-4-6-17-7-33-1-22 2-42 5-46 4-5 18-7 40-7z" fill="url(#g3w)"/><rect x="27" y="19" width="66" height="50" rx="5" fill="#26292d"/><rect x="31" y="23" width="58" height="42" rx="2.5" fill="#2f73cf"/><rect x="45" y="79" width="30" height="4" rx="2" fill="#aab6bc"/><ellipse cx="31" cy="86" rx="9" ry="6" fill="#1a93b1"/><ellipse cx="89" cy="86" rx="9" ry="6" fill="#1a93b1"/></svg>`,
     2007: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="imW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e6ea"/></linearGradient><linearGradient id="imQ" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb0e0"/><stop offset=".55" stop-color="#3f78c4"/><stop offset="1" stop-color="#1f3f8f"/></linearGradient><linearGradient id="imF" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9ccd1"/><stop offset=".5" stop-color="#f4f5f7"/><stop offset="1" stop-color="#c9ccd1"/></linearGradient></defs><path d="M47 96h26l5 18H42z" fill="url(#imF)" stroke="#b9bdc3" stroke-width=".6"/><rect x="34" y="113" width="52" height="3.2" rx="1.6" fill="#e3e6ea" stroke="#b9bdc3" stroke-width=".5"/><rect x="4" y="8" width="112" height="90" rx="5" fill="url(#imW)" stroke="#c3c7cc" stroke-width=".8"/><rect x="10" y="14" width="100" height="62" fill="#0b0b0c"/><rect x="12" y="16" width="96" height="58" fill="url(#imQ)"/><path d="M12 50c24-16 54-24 96-12v6C70 34 40 42 12 62z" fill="#fff" opacity=".18"/><path d="M40 16c10 18 20 34 38 58" stroke="#fff" stroke-opacity=".18" stroke-width="5" fill="none"/><rect x="12" y="16" width="96" height="2.6" fill="#f2f2f4"/><rect x="34" y="68" width="52" height="5" rx="1.5" fill="#fff" opacity=".4"/><circle cx="60" cy="11" r="1.1" fill="#222"/><linearGradient id="imL" gradientUnits="userSpaceOnUse" x1="0" y1="11" x2="0" y2="50"><stop offset="0" stop-color="#eef0f3"/><stop offset=".45" stop-color="#c4c8ce"/><stop offset=".55" stop-color="#aeb3ba"/><stop offset="1" stop-color="#cfd3d8"/></linearGradient>${AJ(60, 87.4, .3, '#ffffff').replace('<g ', '<g opacity=".9" ')}${AJ(60, 87, .3, 'url(#imL)')}</svg>`,
 
     now: `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="nwS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef1f5"/></linearGradient></defs><rect x="6" y="16" width="108" height="70" rx="4" fill="#1b1c1f" stroke="#55575c" stroke-width=".8"/><rect x="9" y="19" width="102" height="64" rx="1.5" fill="url(#nwS)"/><rect x="15" y="24" width="10" height="3" rx="1.5" fill="#ff6b35"/><rect x="78" y="24" width="27" height="3" rx="1.5" fill="#c9ced6"/><rect x="15" y="36" width="56" height="7" rx="2" fill="#1d1f24"/><rect x="15" y="46" width="44" height="7" rx="2" fill="#3d68ff"/><rect x="15" y="58" width="60" height="3" rx="1.5" fill="#aab1bc"/><rect x="15" y="64" width="50" height="3" rx="1.5" fill="#aab1bc"/><rect x="15" y="72" width="22" height="6" rx="3" fill="#1d1f24"/><circle cx="94" cy="54" r="12" fill="#e6ebf2"/>${AJ(94, 54, .38, '#1d1f24')}<path d="M52 86h16l3 14H49z" fill="#8a8d93" opacity=".45"/><rect x="40" y="100" width="40" height="3" rx="1.5" fill="#8a8d93" opacity=".35"/></svg>`
@@ -354,7 +356,7 @@
     const mark = () => disks.forEach((d, i) => { d.classList.toggle('is-sel', i === sel); d.setAttribute('aria-selected', i === sel); });
     mark();
     const choose = (i) => { if (OPTS[i].href) { fade(async () => { location.href = OPTS[i].href; await wait(5000); }); return; } launch(i); };
-    pick.addEventListener('pointerover', (e) => { const d = e.target.closest('.pk-d'); if (d) { sel = +d.dataset.i; mark(); } });
+    pick.addEventListener('pointerover', (e) => { const d = e.target.closest('.pk-d'); if (d && !pick.classList.contains('is-settling')) { sel = +d.dataset.i; mark(); } });
     pick.addEventListener('click', (e) => {
       const d = e.target.closest('.pk-d');
       if (d) { sel = +d.dataset.i; mark(); SFX.click(); choose(sel); return; }
@@ -429,8 +431,7 @@
       if (!photo) return;
       const { k, ox, oy } = place(photo);
       bezel.querySelector('.bz-dev').style.transform = `translate(${ox}px, ${oy}px) scale(${k})`;
-      const drv = host.querySelector(':scope > .bz-drive');
-      if (drv) drv.style.transform = `translate(${ox}px, ${oy}px) scale(${k})`;
+      host.querySelectorAll(':scope > .bz-drive, :scope > .bz-cable').forEach((d) => { d.style.transform = `translate(${ox}px, ${oy}px) scale(${k})`; });
       const [sx, sy, sw, sh] = photo.scr;
       Object.entries({ '--pl': ox + sx * k, '--pt': oy + sy * k, '--pw': sw * k, '--ph': sh * k, '--pr': photo.r * k }).forEach(([n, v]) => host.style.setProperty(n, v + 'px'));
     };
@@ -439,7 +440,7 @@
       bar.hidden = i < 0;
       photo = null;
       host.classList.remove('is-photo');
-      host.querySelectorAll(':scope > .bz-drive').forEach((x) => x.remove());
+      host.querySelectorAll(':scope > .bz-drive, :scope > .bz-cable').forEach((x) => x.remove());
       if (i < 0) { delete host.dataset.era; delete document.documentElement.dataset.era; bezel.innerHTML = ''; backdrop.innerHTML = ''; return; }
       const y = ERAS[i].year;
       host.dataset.era = y;
@@ -468,7 +469,7 @@
             if (!s || host.classList.contains('is-dark') || s.querySelector('.cd-alert')) return;
             const m = document.createElement('div');
             m.className = 'cd-alert';
-            m.innerHTML = `<div class="cd-box">${I.svg('alert', 32)}<div><b>The CD-ROM drive is empty.</b><p>Everything this portfolio needs is already on the hard disk. No discs were harmed.</p></div><button type="button">OK</button></div>`;
+            m.innerHTML = `<div class="cd-box">${I.svg('alert', 32)}<div><b>The CD-ROM drive is empty.</b></div><button type="button">OK</button></div>`;
             m.querySelector('button').addEventListener('click', () => { SFX.click(); m.remove(); });
             s.appendChild(m);
           });
@@ -477,6 +478,7 @@
         layout();
         // Left before the disk went in: it is waiting beside the machine again.
         if (y === '1991' && diskWaiting) showDisk();
+        if (y === '1998' && netCb) showCable();
         return;
       }
       bezel.innerHTML = `<div class="bz-body"></div><div class="bz-frame"></div>${BEZEL[y]}`;
@@ -570,6 +572,106 @@
       disk.addEventListener('pointerup', up);
       disk.addEventListener('pointercancel', up);
       disk.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); insert(); } });
+    }
+
+    /* The network cable: it floats at the lower right of the 1998 machine,
+       which starts up without it and says it has no connection. Its port is
+       on the back, out of sight: tap the plug and it tucks in behind the
+       machine, the wire (a rope, a chain of points under gravity) drawing
+       up after it, and the machine goes online. */
+    let netCb = null, netOn = false;
+    api.cable = (cb) => { netCb = cb; if (host.dataset.era === '1998' && photo) showCable(); };
+    const RJ45 = `<g class="bz-plug" tabindex="0" role="button" aria-label="Plug in the network cable"><rect class="hit" x="-160" y="-46" width="176" height="92" fill="transparent"/>`
+      + [0, 1, 2, 3, 4].map((i) => `<rect x="${-10 - i * 9}" y="${-13 - i * .9}" width="6.5" height="${26 + i * 1.8}" rx="1.6" fill="url(#rjB)" stroke="#0d4c9c" stroke-width=".8"/>`).join('')
+      + `<path d="M-50 -16H-92L-96 -21H-104V21H-96L-92 20H-50z" fill="url(#rjB)" stroke="#0d4c9c" stroke-width="1"/><path d="M-54 -16C-62 -35 -82 -35 -92 -24L-98 -19H-86C-78 -26 -68 -24 -64 -16z" fill="#2f86ec" stroke="#0d4c9c" stroke-width="1"/><path d="M-92 -8H-58" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>`
+      + `<path d="M-104 -20H-156a3 3 0 0 0-3 3V17a3 3 0 0 0 3 3H-104z" fill="url(#rjC)" stroke="#96a4ad" stroke-width="1.2"/>`
+      + ['#e8862c', '#e8d8c0', '#37a84a', '#2f7fe0', '#d8e2ea', '#3fbf60', '#a8723a', '#7a4f26'].map((c, i) => `<path d="M-104 ${-10 + i * 2.8}L-132 ${-14 + i * 4}" stroke="${c}" stroke-width="1.8"/>`).join('')
+      + [0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<rect x="-155" y="${-16.5 + i * 4.4}" width="23" height="2.6" fill="url(#rjG)"/>`).join('')
+      + `<path d="M-108 -20L-146 -30L-150 -22L-118 -13z" fill="#fff" fill-opacity=".62" stroke="#96a4ad" stroke-width="1"/><path d="M-158 -14H-106" stroke="#fff" stroke-opacity=".85" stroke-width="2.4"/></g>`;
+    function showCable() {
+      const dev = bezel.querySelector('.bz-dev');
+      if (!dev || host.querySelector(':scope > .bz-cable')) return;
+      const { k, ox, oy } = place(photo);
+      const visRight = (innerWidth - ox) / k, visBottom = (innerHeight - oy) / k;
+      // The plug's tail, which is where the wire starts.
+      const REST = { x: Math.max(1340, visRight - 56), y: Math.max(560, Math.min(860, visBottom - 300)) };
+      // Low on the back of the machine, out of sight.
+      const TUCK = { x: 1200, y: Math.min(930, visBottom - 220) };
+      const END = { x: visRight + 90, y: visBottom + 90 };
+      const el = document.createElement('div');
+      el.className = 'bz-cable' + (netOn ? ' is-on is-behind' : '');
+      el.style.transform = dev.style.transform;
+      el.innerHTML = `<svg width="${photo.w}" height="${photo.h}" aria-hidden="true"><defs><linearGradient id="rjB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4aa2f4"/><stop offset=".55" stop-color="#1a6fdc"/><stop offset="1" stop-color="#0f55b4"/></linearGradient><linearGradient id="rjC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".5" stop-color="#dfe8ee" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity=".7"/></linearGradient><linearGradient id="rjG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f6df8a"/><stop offset="1" stop-color="#b98a2a"/></linearGradient></defs>`
+        + `<path class="bz-wire w0" fill="none" stroke="#0d4c9c" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w1" fill="none" stroke="#1f78e4" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w2" fill="none" stroke="#8cc6ff" stroke-opacity=".75" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>${RJ45}</svg><span class="bz-hint" style="left:${Math.min(REST.x - 60, visRight - 150)}px;top:${REST.y - 120}px">Tap to plug in</span>`;
+      // Under the machine's picture when behind it, so the shell really hides it.
+      host.insertBefore(el, bezel);
+      const plug = el.querySelector('.bz-plug'), wires = el.querySelectorAll('.bz-wire');
+      const N = 18;
+      const P0 = netOn ? { ...TUCK } : { ...REST };
+      const span = (a) => Math.hypot(a.x - END.x, a.y - END.y) / (N - 1);
+      // Plugged in, the wire draws nearly straight, so it stays up in view.
+      let seg = netOn ? span(TUCK) * 1.02 : span(REST) * 1.12;
+      const rope = [...Array(N)].map((_, i) => { const f = i / (N - 1), x = P0.x + (END.x - P0.x) * f, y = P0.y + (END.y - P0.y) * f; return { x, y, ox: x, oy: y }; });
+      let tucking = false, angle = 0, stillSince = 0;
+      const t0 = performance.now();
+      const step = (now) => {
+        if (tucking) seg += (span(P0) * 1.02 - seg) * .12;
+        const bob = !tucking && !netOn ? Math.sin((now - t0) / 2600 * 6.283) * 8 : 0;
+        const head = rope[0];
+        for (let i = 1; i < N - 1; i++) {
+          const n = rope[i], vx = (n.x - n.ox) * .965, vy = (n.y - n.oy) * .965;
+          n.ox = n.x; n.oy = n.y;
+          n.x += vx; n.y += vy + .85;
+        }
+        head.x = P0.x; head.y = P0.y + bob;
+        rope[N - 1].x = END.x; rope[N - 1].y = END.y;
+        for (let it = 0; it < 6; it++) for (let i = 0; i < N - 1; i++) {
+          const a = rope[i], b = rope[i + 1], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
+          if (d <= seg) continue;   // a wire goes slack, it does not push
+          const f = (d - seg) / d, wa = i === 0 ? 0 : .5, wb = i + 1 === N - 1 ? 0 : (i === 0 ? 1 : .5);
+          a.x += dx * f * wa; a.y += dy * f * wa; b.x -= dx * f * wb; b.y -= dy * f * wb;
+        }
+        const want = tucking || netOn ? 0 : Math.max(-.4, Math.min(.4, Math.atan2(rope[2].y - head.y, rope[2].x - head.x)));
+        angle += (want - angle) * .14;
+        // The first stretch of wire leaves straight out of the boot.
+        rope[1].x += (head.x + Math.cos(angle) * seg - rope[1].x) * .5;
+        rope[1].y += (head.y + Math.sin(angle) * seg - rope[1].y) * .5;
+        plug.setAttribute('transform', `translate(${head.x} ${head.y}) rotate(${angle * 57.3})`);
+        let d = `M${head.x} ${head.y}`;
+        for (let i = 1; i < N - 1; i++) d += `Q${rope[i].x} ${rope[i].y} ${(rope[i].x + rope[i + 1].x) / 2} ${(rope[i].y + rope[i + 1].y) / 2}`;
+        d += `L${END.x} ${END.y}`;
+        wires.forEach((w) => w.setAttribute('d', d));
+      };
+      const loop = (now) => {
+        if (!el.isConnected) return;
+        step(now);
+        if (netOn && !tucking) { stillSince = stillSince || now; if (now - stillSince > 2500) return; }
+        requestAnimationFrame(loop);
+      };
+      for (let i = 0; i < 120; i++) step(t0);
+      requestAnimationFrame(loop);
+      const moveTo = (to, ms, ease) => new Promise((res) => {
+        const a = { ...P0 }, s = performance.now();
+        const f = (now) => { const q = Math.min(1, (now - s) / ms); const e = ease(q); P0.x = a.x + (to.x - a.x) * e; P0.y = a.y + (to.y - a.y) * e; if (q < 1) requestAnimationFrame(f); else res(); };
+        requestAnimationFrame(f);
+      });
+      const connect = async () => {
+        if (netOn || tucking) return;
+        tucking = true;
+        el.classList.add('is-going');
+        // Round the side of the machine first, then in behind it.
+        if (P0.x < 1460) await moveTo({ x: 1470, y: Math.max(420, Math.min(1000, P0.y)) }, 230, (q) => 1 - (1 - q) * (1 - q));
+        await moveTo({ x: 1470, y: TUCK.y }, 200, (q) => q * (2 - q));
+        el.classList.add('is-behind');
+        await moveTo(TUCK, 520, (q) => q * q * (3 - 2 * q));
+        netOn = true;
+        tucking = false;
+        el.classList.add('is-on');
+        SFX.click();
+        netCb && netCb();
+      };
+      plug.addEventListener('click', connect);
+      plug.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); connect(); } });
     }
 
     /* Where the machine is on screen: the photograph's whole frame, or for
@@ -717,7 +819,9 @@
         host.classList.add('is-morph');
         pick.hidden = false;
         clearShapes(pick, false);
-        pick.classList.add('is-returning');
+        /* Until the drawing is down, hovering another tile must not move the
+           one it is landing on, or the landing misses and snaps. */
+        pick.classList.add('is-returning', 'is-settling');
         osOn(false);
         mark();
         const to = restRect(art);
@@ -728,9 +832,10 @@
         screens[prev].hidden = true;
         dress(-1);
         art.style.visibility = '';
-        if (land) handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-out', fill: 'forwards' }).finished.then(() => land.remove());
         pick.classList.remove('is-returning');
         host.classList.remove('is-morph');
+        if (land) await handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-out', fill: 'forwards' }).finished.then(() => land.remove());
+        pick.classList.remove('is-settling');
         history.replaceState(null, '', location.pathname + location.search);
       } else {
         await fade(async () => {
@@ -976,6 +1081,7 @@
       if (card) {
         /* The phone shrinks back into its drawing on the tile. */
         sel = PICKS.findIndex((x) => x.id === id);
+        pick.classList.add('is-settling');
         pick.hidden = false;
         clearShapes(pick, false);
         center(sel, false);
@@ -990,9 +1096,10 @@
         const land = await left;
         done();
         art.style.visibility = '';
-        if (land) handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-out', fill: 'forwards' }).finished.then(() => land.remove());
         box.style.opacity = '';
         pick.classList.remove('is-returning');
+        if (land) await handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-out', fill: 'forwards' }).finished.then(() => land.remove());
+        pick.classList.remove('is-settling');
         return;
       }
       await fade(async () => { done(); pick.hidden = false; });
@@ -1016,7 +1123,7 @@
   let rz = 0;
   addEventListener('resize', () => {
     clearTimeout(rz);
-    rz = setTimeout(() => { if (MODE === 'mobile' && matchMedia('(pointer: coarse)').matches) return; if (root.dataset.forced !== '1' && want() !== MODE) location.reload(); }, 250);
+    rz = setTimeout(() => { if (matchMedia('(any-pointer: coarse)').matches || (window.visualViewport && visualViewport.scale !== 1)) return; if (root.dataset.forced !== '1' && want() !== MODE) location.reload(); }, 250);
   });
 
   if (MODE === 'mobile') phones(); else desk();

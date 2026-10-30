@@ -549,3 +549,9 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .os-host.sw-old { position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
 .os-host.sw-old::after { display: none; }
 .os-host.is-swap .os-screen { opacity: 0; }
+
+/* Coming back to the picker: nothing takes the pointer or a swipe until the
+   device is down on its tile. */
+.picker.is-settling { pointer-events: none; }
+.picker.is-settling .mp-rail { overflow: hidden; touch-action: none; }
+

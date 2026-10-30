@@ -712,3 +712,27 @@ img { display: block; max-width: 100%; }
 .ms-c.is-mine { color: #000; }
 .ms-c.is-boom { background: #f33; }
 .ms-c[data-n="1"] { color: #1a3ad0; } .ms-c[data-n="2"] { color: #1e7a1e; } .ms-c[data-n="3"] { color: #d01a1a; } .ms-c[data-n="4"] { color: #10107a; } .ms-c[data-n="5"] { color: #7a1010; } .ms-c[data-n="6"] { color: #107a7a; }
+
+/* Shared: a picture filling its machine's screen, and right-click menus. */
+.rt-zoom { position: absolute; inset: 0; z-index: 9500; display: grid; place-items: center; background: rgba(0,0,0,.88); cursor: zoom-out; }
+.rt-zoom img { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-drag: none; }
+.rt-ctx { position: absolute !important; z-index: 9600 !important; min-width: 170px; }
+.is-drop { filter: brightness(.75); }
+.term-ctx { display: flex; flex-direction: column; background: var(--ph-bg); border: 2px solid var(--ph); padding: 2px; font: inherit; }
+.term-ctx button { border: 0; background: none; color: var(--ph); font: inherit; text-align: left; padding: 1px 12px; cursor: pointer; }
+.term-ctx button:hover { background: var(--ph); color: var(--ph-bg); }
+.term-ctx hr { width: 100%; border: 0; border-top: 1px solid var(--ph-dim); margin: 2px 0; }
+/* The 1998 window's zoom box, and a window filling the desk. */
+.br-title .tb.z { right: 24px; }
+.br-title .tb.z::after { content: ''; position: absolute; left: 1px; top: 1px; width: 5px; height: 5px; border: 1px solid #555; }
+.nt .br.is-zoomed { position: absolute; left: 0; right: 0; top: 22px; bottom: 0; margin: 0; z-index: 9000; }
+.p8.is-zoomed { left: 0 !important; top: 22px !important; width: 100% !important; height: calc(100% - 22px) !important; }
+/* The network cable beside the 1998 machine. */
+.bz-cable { position: absolute; left: 0; top: 0; z-index: 60; transform-origin: 0 0; pointer-events: none; transition: opacity .35s; }
+.bz-cable.is-behind { z-index: 0; }
+.os-host.is-morph > .bz-cable { opacity: 0; }
+.bz-cable svg { position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(0 6px 8px rgba(0,40,60,.3)); }
+.bz-plug { pointer-events: auto; cursor: pointer; outline: none; }
+.bz-cable.is-going .bz-plug, .bz-cable.is-on .bz-plug { pointer-events: none; }
+.bz-cable .bz-hint { opacity: 1; color: #0b5b72; }
+.bz-cable.is-going .bz-hint, .bz-cable.is-on .bz-hint { display: none; }

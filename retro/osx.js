@@ -1,14 +1,15 @@
 /* ==========================================================================
-   2007: SommiOS X 10.4 "Gator". A parody of the desktop of its day:
+   2007: SommiOS X 10.4 "Gator". The desktop of its day:
    a translucent menu bar, Spotlight in the corner, a glass dock that
    swells under the pointer, Aqua windows with traffic lights. Every app in
    the dock is a part of the portfolio, and Time Machine goes back to the
    era picker.
    ========================================================================== */
 window.OSX = (function () {
-  const P = window.PORTFOLIO;
+  let P = window.PORTFOLIO;
   const { esc, store, usedAt } = window.RETRO;
   const I = window.ICONS;
+  const t = (s) => window.I18N.t(s);
   const SFX = window.SFX;
 
   let root, api, deskEl, dockEl, menubar, spot;
@@ -40,7 +41,7 @@ window.OSX = (function () {
   const HN = 'font-family="Lucida Grande,Helvetica Neue,Helvetica,Arial,sans-serif"';
 
   const ICON = {
-    /* Finder, with the AJ mark for a face: the A's diagonal is the
+    /* Files, with the AJ mark for a face: the A's diagonal is the
        profile between the two halves, the j's orange hook is the smile.
        It blinks now and then and grins under the pointer. */
     finder: () => art(`<rect x="8" y="8" width="112" height="112" rx="24" fill="url(#l)"/>
@@ -125,7 +126,7 @@ window.OSX = (function () {
   /* --------------------------------------------------------------- apps */
 
   const APPS = {
-    finder: { name: 'Finder', icon: 'finder' },
+    finder: { name: 'Files', icon: 'finder' },
     about: { name: 'About Me', icon: 'about', keys: 'bio who profile ajay' },
     experience: { name: 'Experience', icon: 'experience', keys: 'work jobs career roles internships' },
     companies: { name: 'Companies', icon: 'companies', keys: 'employers logos toyota jm hunter adt fics' },
@@ -135,7 +136,7 @@ window.OSX = (function () {
     guestbook: { name: 'Messages', icon: 'guestbook', keys: 'recommendations references testimonials chat guestbook' },
     education: { name: 'Education', icon: 'education', keys: 'school uf university florida degree' },
     terminal: { name: 'Terminal', icon: 'terminal', keys: 'shell command line' },
-    safari: { name: 'Safari', icon: 'safari', keys: 'web browser classic portfolio site' },
+    safari: { name: 'Web', icon: 'safari', keys: 'web browser classic portfolio site' },
     mail: { name: 'Mail', icon: 'mail', keys: 'contact email hello write' },
     preview: { name: 'Resume', icon: 'preview', keys: 'cv pdf preview resume' },
     timemachine: { name: 'Time Machine', icon: 'timemachine', keys: 'era switch 1983 1991 1998 back' },
@@ -148,13 +149,14 @@ window.OSX = (function () {
 
   /* ------------------------------------------------------------- windows */
 
+  const NAMES = Object.fromEntries(Object.entries(APPS).map(([k, a]) => [k, a.name]));
   const front = () => [...wins.values()].filter((w) => !w.min).sort((a, b) => b.z - a.z)[0];
   const focus = (w) => {
-    if (!w) { setAppName('Finder'); return; }
+    if (!w) { setAppName(APPS.finder.name); return; }
     w.z = ++z;
     w.el.style.zIndex = w.z;
     wins.forEach((o) => o.el.classList.toggle('is-front', o === w));
-    setAppName(APPS[w.app] ? APPS[w.app].name : 'Finder');
+    setAppName(APPS[w.app] ? APPS[w.app].name : APPS.finder.name);
   };
 
   /* Opens an app's window, or brings it forward if it is already open. */
@@ -177,7 +179,7 @@ window.OSX = (function () {
     const el = h('div', 'ox-win' + (spec.cls ? ' ' + spec.cls : ''));
     el.setAttribute('role', 'dialog');
     el.setAttribute('aria-label', spec.title);
-    el.innerHTML = `<div class="ox-tb${spec.toolbar ? ' has-tools' : ''}"><div class="ox-lights"><button class="lt close" type="button" aria-label="Close"></button><button class="lt min" type="button" aria-label="Minimize"></button><button class="lt zoom" type="button" aria-label="Zoom"></button></div><div class="ox-title">${esc(spec.title)}</div>${spec.toolbar ? `<div class="ox-tools">${spec.toolbar}</div>` : ''}</div><div class="ox-body"></div>${spec.status ? `<div class="ox-status">${spec.status}</div>` : ''}<div class="ox-grip" aria-hidden="true"></div>`;
+    el.innerHTML = `<div class="ox-tb${spec.toolbar ? ' has-tools' : ''}"><div class="ox-lights"><button class="lt close" type="button" aria-label="Close"></button><button class="lt min" type="button" aria-label="Minimize"></button><button class="lt zoom" type="button" aria-label="Zoom"></button></div><div class="ox-title">${esc(t(spec.title))}</div>${spec.toolbar ? `<div class="ox-tools">${spec.toolbar}</div>` : ''}</div><div class="ox-body"></div>${spec.status ? `<div class="ox-status">${spec.status}</div>` : ''}<div class="ox-grip" aria-hidden="true"></div>`;
     Object.assign(el.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: ht + 'px' });
     root.insertBefore(el, dockEl.parentElement);
     const rec = { key, app, el, body: el.querySelector('.ox-body'), z: 0, min: false, prev: null, spec };
@@ -254,11 +256,11 @@ window.OSX = (function () {
   /* An Aqua alert, centred, with the default button pulsing blue. */
   const alert = ({ title, text, buttons = ['OK'], icon }) => new Promise((resolve) => {
     const scrim = h('div', 'ox-scrim');
-    const d = h('div', 'ox-alert', `<div class="ox-alert-ico">${icon || I.mark(64)}</div><div><b>${title}</b><p>${text || ''}</p><div class="ox-btns">${buttons.map((b, i) => `<button type="button" class="ax-btn${i === buttons.length - 1 ? ' is-default' : ''}">${esc(b)}</button>`).join('')}</div></div>`);
+    const d = h('div', 'ox-alert', `<div class="ox-alert-ico">${icon || I.mark(64)}</div><div><b>${t(title)}</b><p>${t(text || '')}</p><div class="ox-btns">${buttons.map((b, i) => `<button type="button" class="ax-btn${i === buttons.length - 1 ? ' is-default' : ''}" data-v="${esc(b)}">${esc(t(b))}</button>`).join('')}</div></div>`);
     scrim.appendChild(d);
     root.appendChild(scrim);
     const done = (v) => { scrim.remove(); document.removeEventListener('keydown', key, true); resolve(v); };
-    d.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { SFX.click(); done(b.textContent); }));
+    d.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { SFX.click(); done(b.dataset.v); }));
     const key = (e) => { if (e.key === 'Enter') { e.preventDefault(); done(buttons[buttons.length - 1]); } if (e.key === 'Escape') { e.preventDefault(); done(null); } };
     document.addEventListener('keydown', key, true);
   });
@@ -293,23 +295,24 @@ window.OSX = (function () {
 
   const SPECS = {
     finder: (view) => ({
-      title: 'Ajay HD', w: 720, h: 440,
-      toolbar: '<div class="ox-seg"><button type="button" disabled>◀</button><button type="button" disabled>▶</button></div><div class="ox-search"><input type="search" placeholder="Search" aria-label="Search" data-spot /></div>',
+      title: 'Sommi HD', w: 720, h: 440,
+      toolbar: `<div class="ox-seg"><button type="button" disabled>◀</button><button type="button" disabled>▶</button></div><div class="ox-search"><input type="search" placeholder="${t('Search')}" aria-label="Search" data-spot /></div>`,
       view,
-      status: `${DOCK.filter((a) => !['|', 'trash', 'docs', 'downloads'].includes(a)).length} items, 112 GB available`,
+      status: `${DOCK.filter((a) => !['|', 'trash', 'docs', 'downloads'].includes(a)).length} ${t('items')}, 112 GB ${t('available')}`,
       render: (b, rec) => {
         b.classList.add('fx');
-        b.innerHTML = `<div class="fx-side"><h6>DEVICES</h6><button type="button" class="on" data-v="apps">${ICON.hd()}Ajay HD</button><h6>PLACES</h6><button type="button" data-v="apps">${ICON.folder()}Applications</button><button type="button" data-v="docs">${ICON.folder()}Documents</button><button type="button" data-v="desk">${ICON.folder()}Desktop</button></div><div class="fx-main"></div>`;
+        b.innerHTML = `<div class="fx-side"><h6>${t('DEVICES')}</h6><button type="button" class="on" data-v="hd">${ICON.hd()}Sommi HD</button><h6>${t('PLACES')}</h6><button type="button" data-v="apps">${ICON.folder()}${t('Applications')}</button><button type="button" data-v="docs">${ICON.folder()}${t('Documents')}</button><button type="button" data-v="desk">${ICON.folder()}${t('Desktop')}</button></div><div class="fx-main"></div>`;
         const main = b.querySelector('.fx-main');
         const show = (v) => {
-          const items = v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', 'Education.rtf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc'], ['brochure07', window.PAPERS[2007].brochure.file, 'doc']] : v === 'desk' ? [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc']] : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon]);
+          const items = (v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', 'Education.rtf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc']] : v === 'desk' ? deskItems() : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon])).filter(([a, n]) => !gone.has(a + n));
           main.innerHTML = items.map(([a, n, i]) => `<button type="button" class="fx-ico" data-open="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
-          b.querySelectorAll('.fx-side button').forEach((x) => x.classList.toggle('on', x.dataset.v === v && x.textContent.trim() !== 'Ajay HD' || (v === 'apps' && x.textContent.trim() === 'Ajay HD')));
+          b.querySelectorAll('.fx-side button').forEach((x) => x.classList.toggle('on', x.dataset.v === v));
+          rec.view = v;
         };
         b.querySelector('.fx-side').addEventListener('click', (e) => { const x = e.target.closest('[data-v]'); if (x) show(x.dataset.v); });
         main.addEventListener('dblclick', (e) => { const x = e.target.closest('[data-open]'); if (x) open(x.dataset.open); });
         main.addEventListener('click', (e) => { const x = e.target.closest('[data-open]'); main.querySelectorAll('.fx-ico').forEach((i) => i.classList.toggle('is-sel', i === x)); if (x && e.detail === 0) open(x.dataset.open); });
-        show(rec.spec.view || 'apps');
+        show(rec.spec.view || 'hd');
         rec.show = show;
       }
     }),
@@ -317,12 +320,12 @@ window.OSX = (function () {
       title: 'About Me', w: 620, h: 470, cls: 'is-plain',
       render: (b) => {
         b.innerHTML = `<div class="ab"><div class="ab-pic"><img src="${P.photo}" alt="Ajay Sommi outdoors in front of green hills" /></div><div><h1>Ajay Sommi</h1><p class="ab-sub">${esc(P.title)} · ${esc(P.citizen)} · UF Computer Science</p><p>${esc(P.about[0])}</p><p>${esc(P.about[1])}</p>
-          <div class="ox-btns left"><button type="button" class="ax-btn is-default" data-open="experience">See the work</button><button type="button" class="ax-btn" data-open="preview">Resume</button><button type="button" class="ax-btn" data-open="mail">Say hello</button></div></div></div>`;
+          <div class="ox-btns left"><button type="button" class="ax-btn is-default" data-open="experience">${t('See the work')}</button><button type="button" class="ax-btn" data-open="preview">${t('Resume')}</button><button type="button" class="ax-btn" data-open="mail">${t('Say hello')}</button></div></div></div>`;
       }
     }),
     experience: (arg) => ({
       title: 'Experience', w: 840, h: 660, arg,
-      toolbar: '<div class="ox-search"><input type="search" placeholder="Search roles" aria-label="Search roles" data-filter /></div>',
+      toolbar: `<div class="ox-search"><input type="search" placeholder="${t('Search roles')}" aria-label="Search roles" data-filter /></div>`,
       render: (b, rec) => {
         b.classList.add('xp');
         const years = [...new Set(P.experience.map((e) => e.year))].reverse();
@@ -343,7 +346,7 @@ window.OSX = (function () {
     }),
     companies: () => ({
       title: 'Companies', w: 740, h: 580, cls: 'is-dark',
-      status: 'Double-click a company to see the role',
+      status: t('Double-click a company to see the role'),
       render: (b) => {
         b.innerHTML = `<div class="co">${[...P.experience].reverse().map((e) => `<button type="button" class="co-t" data-id="${e.id}" style="--tint:${TINT[e.id]}"><span class="co-l">${LOGO[e.id] ? `<img src="assets/logos/opt/${LOGO[e.id]}.webp" alt="${esc(e.org)}" />` : `<b>${esc(e.short)}</b>`}</span><span class="co-n">${esc(e.org)}</span><span class="co-y">${e.year} · ${esc(e.where)}</span></button>`).join('')}</div>`;
         b.addEventListener('click', (e) => { const t = e.target.closest('.co-t'); b.querySelectorAll('.co-t').forEach((x) => x.classList.toggle('is-sel', x === t)); if (t && (e.detail === 0 || e.detail === 2)) openRole(t.dataset.id); });
@@ -353,12 +356,12 @@ window.OSX = (function () {
       title: 'Projects', w: 760, h: 470,
       render: (b) => {
         b.classList.add('xp');
-        b.innerHTML = `<div class="src"><h6>PROJECTS</h6>${P.projects.map((p, i) => `<button type="button" data-i="${i}"><i style="background:hsl(${i * 57 + 200} 60% 55%)"></i>${esc(p.name)}</button>`).join('')}</div><div class="xp-pane"></div>`;
+        b.innerHTML = `<div class="src"><h6>${t('PROJECTS')}</h6>${P.projects.map((p, i) => `<button type="button" data-i="${i}"><i style="background:hsl(${i * 57 + 200} 60% 55%)"></i>${esc(p.name)}</button>`).join('')}</div><div class="xp-pane"></div>`;
         const pane = b.querySelector('.xp-pane');
         const sel = (i) => {
           const p = P.projects[i];
           b.querySelectorAll('.src button').forEach((x) => x.classList.toggle('on', +x.dataset.i === i));
-          pane.innerHTML = `<div class="xp-head" style="--tint:hsl(${i * 57 + 200} 60% 55%)"><div class="xp-logo">${ICON.projects()}</div><div><h2>${esc(p.full)}</h2><p>${esc(p.kind)}</p><p class="xp-meta">${esc(p.stack)}</p></div></div><p class="xp-text">${esc(p.text)}</p>${tokens(p.stack.split(' / '))}<div class="ox-btns left">${p.url ? `<button type="button" class="ax-btn is-default" data-url="${p.url}">View on GitHub</button>` : '<span class="xp-meta">Source is private for now.</span>'}</div>`;
+          pane.innerHTML = `<div class="xp-head" style="--tint:hsl(${i * 57 + 200} 60% 55%)"><div class="xp-logo">${ICON.projects()}</div><div><h2>${esc(p.full)}</h2><p>${esc(p.kind)}</p><p class="xp-meta">${esc(p.stack)}</p></div></div><p class="xp-text">${esc(p.text)}</p>${tokens(p.stack.split(' / '))}<div class="ox-btns left">${p.url ? `<button type="button" class="ax-btn is-default" data-url="${p.url}">${t('View on GitHub')}</button>` : `<span class="xp-meta">${t('Source is private for now.')}</span>`}</div>`;
         };
         b.addEventListener('click', (e) => { const x = e.target.closest('[data-i]'); if (x) { SFX.click(); sel(+x.dataset.i); } const u = e.target.closest('[data-url]'); if (u) ext(u.dataset.url); });
         sel(0);
@@ -366,7 +369,7 @@ window.OSX = (function () {
     }),
     skills: () => ({
       title: 'Skills', w: 740, h: 620, cls: 'is-prefs',
-      toolbar: '<div class="ox-seg"><button type="button" data-all>Show All</button></div><div class="ox-search"><input type="search" placeholder="Search skills" aria-label="Search skills" data-find /></div>',
+      toolbar: `<div class="ox-seg"><button type="button" data-all>${t('Show All')}</button></div><div class="ox-search"><input type="search" placeholder="${t('Search skills')}" aria-label="Search skills" data-find /></div>`,
       render: (b, rec) => {
         const hue = (s) => [...s].reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
         const all = () => {
@@ -374,7 +377,7 @@ window.OSX = (function () {
         };
         const pane = (s) => {
           const at = usedAt(s);
-          b.innerHTML = `<div class="sp-pane"><span class="sp-ic big" style="--h:${hue(s)}">${esc(s.replace(/[^A-Za-z#+.]/g, '').slice(0, 2))}</span><h2>${esc(s)}</h2>${at.length ? `<p>Used at:</p><div class="ox-btns">${at.map((a) => { const e = P.experience.find((x) => x.short === a); return `<button type="button" class="ax-btn" data-role="${e.id}">${esc(a)}</button>`; }).join('')}</div>` : '<p>From coursework and side projects.</p>'}</div>`;
+          b.innerHTML = `<div class="sp-pane"><span class="sp-ic big" style="--h:${hue(s)}">${esc(s.replace(/[^A-Za-z#+.]/g, '').slice(0, 2))}</span><h2>${esc(s)}</h2>${at.length ? `<p>${t('Used at:')}</p><div class="ox-btns">${at.map((a) => { const e = P.experience.find((x) => x.short === a); return `<button type="button" class="ax-btn" data-role="${e.id}">${esc(a)}</button>`; }).join('')}</div>` : `<p>${t('From coursework and side projects.')}</p>`}</div>`;
         };
         all();
         b.addEventListener('click', (e) => { const s = e.target.closest('[data-s]'); if (s) { SFX.click(); pane(s.dataset.s); } const r = e.target.closest('[data-role]'); if (r) openRole(r.dataset.role); });
@@ -391,12 +394,12 @@ window.OSX = (function () {
     photos: () => ({
       title: 'Off the Clock', w: 840, h: 620, cls: 'is-photos',
       render: (b) => {
-        b.innerHTML = `<div class="ph-side"><h6>LIBRARY</h6><button type="button" data-a="all">🖼︎ Events</button><h6>ALBUMS</h6>${P.offclock.map((s, i) => `<button type="button" data-a="${i}">${esc(s.name)} <em>${s.steps.length}</em></button>`).join('')}</div><div class="ph-main"></div>`;
+        b.innerHTML = `<div class="ph-side"><h6>${t('LIBRARY')}</h6><button type="button" data-a="all">🖼︎ ${t('Events')}</button><h6>${t('ALBUMS')}</h6>${P.offclock.map((s, i) => `<button type="button" data-a="${i}">${esc(s.name)} <em>${s.steps.length}</em></button>`).join('')}</div><div class="ph-main"></div>`;
         const main = b.querySelector('.ph-main');
         const album = (i) => {
           b.querySelectorAll('.ph-side button').forEach((x) => x.classList.toggle('on', x.dataset.a === String(i)));
           if (i === 'all') {
-            main.innerHTML = `<div class="ph-events">${P.offclock.map((s, k) => `<button type="button" class="ph-ev" data-a="${k}"><img src="${s.cover}" alt="" /><b>${esc(s.title)}</b><span>${s.steps.length} photos</span></button>`).join('')}</div>`;
+            main.innerHTML = `<div class="ph-events">${P.offclock.map((s, k) => `<button type="button" class="ph-ev" data-a="${k}"><img src="${s.cover}" alt="" /><b>${esc(s.title)}</b><span>${s.steps.length} ${t('photos')}</span></button>`).join('')}</div>`;
             return;
           }
           const s = P.offclock[i];
@@ -429,7 +432,7 @@ window.OSX = (function () {
         const sent = store.get('ox-chat-sent', {});
         const WHEN = ['9:41 AM', '9:12 AM', '8:05 AM', 'Yesterday', 'Yesterday', 'Thursday', 'Wednesday', 'Monday', 'Sunday', 'Sunday'];
         const av = (n) => `<span class="ch-av ini">${esc(n.split(' ').map((w) => w[0]).join(''))}</span>`;
-        b.innerHTML = `<div class="ch-list"><div class="ch-find"><input type="search" placeholder="Search" aria-label="Search" /></div><div class="ch-people">${P.recs.map(([n, c, q], i) => `<button type="button" data-i="${i}" class="${read.has(i) ? '' : 'new'}">${av(n)}<span class="ch-tx"><b>${esc(n)}</b><em>${esc(q)}</em></span><time>${WHEN[i % WHEN.length]}</time></button>`).join('')}</div></div><div class="ch-main"></div>`;
+        b.innerHTML = `<div class="ch-list"><div class="ch-find"><input type="search" placeholder="${t('Search')}" aria-label="Search" /></div><div class="ch-people">${P.recs.map(([n, c, q], i) => `<button type="button" data-i="${i}" class="${read.has(i) ? '' : 'new'}">${av(n)}<span class="ch-tx"><b>${esc(n)}</b><em>${esc(q)}</em></span><time>${WHEN[i % WHEN.length]}</time></button>`).join('')}</div></div><div class="ch-main"></div>`;
         const main = b.querySelector('.ch-main');
         let cur = 0;
         const show = (i) => {
@@ -437,7 +440,7 @@ window.OSX = (function () {
           const [n, c, q] = P.recs[i];
           if (!read.has(i)) { read.add(i); store.set('ox-chat-read', [...read]); }
           b.querySelectorAll('.ch-people button').forEach((x) => { x.classList.toggle('on', +x.dataset.i === i); if (+x.dataset.i === i) x.classList.remove('new'); });
-          main.innerHTML = `<div class="ch-head"><span>To:</span> ${esc(n)} <em>${esc(c)}</em></div><div class="ch-msgs"><div class="ch-day">${WHEN[i % WHEN.length]}</div><div class="ch-m in">${av(n)}<p>${esc(q)}</p></div>${(sent[i] || []).map((t) => `<div class="ch-m out"><p>${esc(t)}</p><span class="ch-av"><img src="${P.photo}" alt="" /></span></div>`).join('')}</div><form class="ch-send"><input type="text" placeholder="Message" aria-label="Message" autocomplete="off" /></form>`;
+          main.innerHTML = `<div class="ch-head"><span>${t('To:')}</span> ${esc(n)} <em>${esc(c)}</em></div><div class="ch-msgs"><div class="ch-day">${WHEN[i % WHEN.length]}</div><div class="ch-m in">${av(n)}<p>${esc(q)}</p></div>${(sent[i] || []).map((t) => `<div class="ch-m out"><p>${esc(t)}</p><span class="ch-av"><img src="${P.photo}" alt="" /></span></div>`).join('')}</div><form class="ch-send"><input type="text" placeholder="${t('Message')}" aria-label="Message" autocomplete="off" /></form>`;
           const msgs = main.querySelector('.ch-msgs');
           msgs.scrollTop = msgs.scrollHeight;
           main.querySelector('.ch-send').addEventListener('submit', (e) => {
@@ -457,12 +460,11 @@ window.OSX = (function () {
         show(cur);
       }
     }),
-    education: () => doc('Education.rtf', () => { const e = P.education; return `<h1>${esc(e.school)}</h1><p><b>${esc(e.degree)}</b><br/>${esc(e.college)}<br/>Graduating ${esc(e.when)}</p><p>${esc(e.text)}</p><p>${e.tags.map(esc).join(' · ')}</p>`; }),
-    welcome: () => doc('Welcome.rtf', () => `<h1>Welcome to SommiOS X.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Have a look around.</p><p>Ajay</p>`),
-    /* The papers of 2007: the year's headlines and a product brochure. */
-    news07: () => { const d = window.PAPERS[2007].news; return doc(d.file, () => `<h1>${esc(d.title)}</h1><p><i>${esc(d.sub)}</i></p>${d.items.map(([h, t]) => `<p><b>${esc(h)}.</b> ${esc(t)}</p>`).join('')}<p style="color:#888">${esc(d.foot)}</p>`); },
-    brochure07: () => { const d = window.PAPERS[2007].brochure; return { ...doc(d.file, () => `<div class="bro07"><div class="bro07-hero"><div><h1>${esc(d.title)}</h1><p>${esc(d.sub)}</p></div><svg viewBox="0 0 120 80" aria-hidden="true"><defs><linearGradient id="b7a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef0f2"/><stop offset="1" stop-color="#a9aeb5"/></linearGradient><linearGradient id="b7s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb0e0"/><stop offset="1" stop-color="#1f3f8f"/></linearGradient></defs><path d="M22 6h76a4 4 0 0 1 4 4v50H18V10a4 4 0 0 1 4-4z" fill="url(#b7a)"/><rect x="23" y="11" width="74" height="45" fill="url(#b7s)"/><path d="M6 60h108l-6 8H12z" fill="url(#b7a)"/><rect x="50" y="61" width="20" height="2" rx="1" fill="#8b9098"/></svg></div>${d.items.map(([h, t]) => `<div class="bro07-r"><b>${esc(h)}</b><span>${esc(t)}</span></div>`).join('')}<p class="bro07-f">${esc(d.foot)}</p></div>`), w: 560 }; },
-    /* Concentration: sixteen cards face down, eight pairs of this Mac's
+    education: () => doc('Education.rtf', () => { const e = P.education; return `<h1>${esc(e.school)}</h1><p><b>${esc(e.degree)}</b><br/>${esc(e.college)}<br/>${t('Graduating')} ${esc(e.when)}</p><p>${esc(e.text)}</p><p>${e.tags.map(esc).join(' · ')}</p>`; }),
+    welcome: () => doc('Welcome.rtf', () => { const w = t('welcome'); return w !== 'welcome' ? w : `<h1>Welcome to SommiOS X.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Ajay</p>`; }),
+    /* The papers of 2007: the year's headlines. */
+    news07: () => { const d = window.I18N.news(); return doc(d.file, () => `<h1>${esc(d.title)}</h1><p><i>${esc(d.sub)}</i></p>${d.items.map(([h, t]) => `<p><b>${esc(h)}.</b> ${esc(t)}</p>`).join('')}<p style="color:#888">${esc(d.foot)}</p>`); },
+    /* Concentration: sixteen cards face down, eight pairs of this computer's
        own app icons. Turn two; a match stays up, a miss turns back. */
     memory: () => ({
       title: 'Concentration', w: 440, h: 500, cls: 'is-plain',
@@ -472,7 +474,7 @@ window.OSX = (function () {
         const deal = () => {
           deck = [...faces, ...faces].map((f) => ({ f, s: Math.random() })).sort((a, z) => a.s - z.s).map((x) => x.f);
           up = []; done = 0; moves = 0; t0 = 0; clearInterval(tick);
-          b.innerHTML = `<div class="mm"><div class="mm-bar"><span>Moves: <b class="mv">0</b></span><span>Time: <b class="tm">0:00</b></span><button type="button" class="ax-btn mm-new">New Game</button></div><div class="mm-grid">${deck.map((f, i) => `<button type="button" class="mm-c" data-i="${i}" aria-label="Card"><span class="bk"></span><span class="fc">${ICON[APPS[f].icon]()}</span></button>`).join('')}</div><p class="mm-best">${store.get('mm07', 0) ? `Best: ${store.get('mm07', 0)} moves` : 'Match all eight pairs.'}</p></div>`;
+          b.innerHTML = `<div class="mm"><div class="mm-bar"><span>${t('Moves')}: <b class="mv">0</b></span><span>${t('Time')}: <b class="tm">0:00</b></span><button type="button" class="ax-btn mm-new">${t('New Game')}</button></div><div class="mm-grid">${deck.map((f, i) => `<button type="button" class="mm-c" data-i="${i}" aria-label="Card"><span class="bk"></span><span class="fc">${ICON[APPS[f].icon]()}</span></button>`).join('')}</div><p class="mm-best">${store.get('mm07', 0) ? `${t('Best')}: ${store.get('mm07', 0)} ${t('moves')}` : t('Match all eight pairs.')}</p></div>`;
           b.querySelector('.mm-new').addEventListener('click', () => { SFX.click(); deal(); });
         };
         const time = () => { const s = Math.floor((Date.now() - t0) / 1000); const el = b.querySelector('.tm'); if (el) el.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -527,33 +529,35 @@ window.OSX = (function () {
     }),
     mail: () => ({
       title: 'New Message', w: 600, h: 480, cls: 'is-mail',
-      toolbar: '<div class="ox-seg"><button type="button" data-send>✈︎ Send</button></div><div class="ox-seg"><button type="button" data-copy>Copy Address</button></div>',
+      toolbar: `<div class="ox-seg"><button type="button" data-send>✈︎ ${t('Send')}</button></div><div class="ox-seg"><button type="button" data-copy>${t('Copy Address')}</button></div>`,
       render: (b, rec) => {
-        b.innerHTML = `<div class="ml-f"><label>To:</label><span class="ml-tok">Ajay Sommi &lt;${esc(P.email)}&gt;</span></div><div class="ml-f"><label for="mlS">Subject:</label><input id="mlS" type="text" value="Hello from your portfolio" /></div><textarea aria-label="Message">Hi Ajay,\n\n</textarea>`;
+        b.innerHTML = `<div class="ml-f"><label>${t('To:')}</label><span class="ml-tok">Ajay Sommi &lt;${esc(P.email)}&gt;</span></div><div class="ml-f"><label for="mlS">${t('Subject:')}</label><input id="mlS" type="text" value="Hello from your portfolio" /></div><textarea aria-label="Message">Hi Ajay,\n\n</textarea>`;
         const send = () => { const s = b.querySelector('#mlS').value, t = b.querySelector('textarea').value; location.href = `mailto:${P.email}?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(t)}`; };
         rec.el.querySelector('[data-send]').addEventListener('click', send);
-        rec.el.querySelector('[data-copy]').addEventListener('click', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} alert({ title: 'Address copied', text: `${esc(P.email)} is on the clipboard.`, icon: ICON.mail() }); });
+        rec.el.querySelector('[data-copy]').addEventListener('click', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} alert({ title: t('Address copied'), text: `${esc(P.email)} is on the clipboard.`, icon: ICON.mail() }); });
         setTimeout(() => { const t = b.querySelector('textarea'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); }, 60);
       }
     }),
     preview: () => ({
       title: 'Ajay_Sommi_Resume.pdf', w: 760, h: SH() - 130, cls: 'is-preview',
-      toolbar: `<div class="ox-seg"><a href="${P.resume}" target="_blank" rel="noopener">Open in Browser</a></div><div class="ox-seg"><a href="${P.resume}" download>Download</a></div>`,
+      toolbar: `<div class="ox-seg"><a href="${P.resume}" target="_blank" rel="noopener">${t('Open in Browser')}</a></div><div class="ox-seg"><a href="${P.resume}" download>${t('Download')}</a></div>`,
       render: (b) => { b.innerHTML = `<iframe title="Resume" src="${P.resume}#view=FitH"></iframe>`; }
     }),
     trash: () => {
       window.EGGS.find('trash');
       return {
-        title: 'Trash', w: 560, h: 320, status: '3 items',
-        render: (b) => {
+        title: 'Trash', w: 560, h: 320, status: `${2 + trashed.length} ${t('items')}`,
+        render: (b, rec) => {
           b.classList.add('fx');
-          b.innerHTML = `<div class="fx-main" style="grid-column:1/-1">${[['oldsite', 'Portfolio (2025)', 'folder'], ['bugs', 'bugs.txt', 'doc'], ['old', 'Resume (2019).doc', 'doc']].map(([a, n, i]) => `<button type="button" class="fx-ico" data-t="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('')}</div>`;
+          const draw = () => { b.innerHTML = `<div class="fx-main" style="grid-column:1/-1">${[['oldsite', 'Portfolio (2025)', 'folder'], ['old', 'Resume (2019).doc', 'doc'], ...trashed].map(([a, n, i]) => `<button type="button" class="fx-ico" data-t="${a}" data-n="${esc(n)}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('')}</div>`; };
+          draw();
+          rec.redraw = draw;
           b.addEventListener('dblclick', (e) => {
-            const t = e.target.closest('[data-t]');
-            if (!t) return;
-            if (t.dataset.t === 'oldsite') open('safari', 'index.html');
-            if (t.dataset.t === 'bugs') alert({ title: 'bugs.txt', text: 'Known bugs: none listed.', icon: ICON.doc() });
-            if (t.dataset.t === 'old') alert({ title: 'Resume_2019.pdf', text: 'An older resume, replaced by the current one.', icon: ICON.doc() });
+            const x = e.target.closest('[data-t]');
+            if (!x) return;
+            if (x.dataset.t === 'oldsite') open('safari', 'index.html');
+            else if (x.dataset.t === 'old') alert({ title: 'Resume_2019.pdf', text: 'An older resume, replaced by the current one.', icon: ICON.doc() });
+            else open(x.dataset.t);
           });
         }
       };
@@ -573,13 +577,13 @@ window.OSX = (function () {
 
   /* A small Terminal that knows its way around the dock. */
   function term(b, rec) {
-    b.innerHTML = '<div class="tm-out"></div><div class="tm-line"><span>ajay@SommiBook:~$&nbsp;</span><input type="text" aria-label="Command" spellcheck="false" autocomplete="off" /></div>';
+    b.innerHTML = '<div class="tm-out"></div><div class="tm-line"><span>ajay@sommi:~$&nbsp;</span><input type="text" aria-label="Command" spellcheck="false" autocomplete="off" /></div>';
     const out = b.querySelector('.tm-out'), inp = b.querySelector('input');
     const say = (t) => { const d = h('div', '', t); out.appendChild(d); b.scrollTop = b.scrollHeight; };
     say('Last login: ' + new Date().toString().slice(0, 24) + ' on ttys000');
     say('Type <b>help</b> to see what this machine can do.');
     const run = (raw) => {
-      say(`ajay@SommiBook:~$ ${esc(raw)}`);
+      say(`ajay@sommi:~$ ${esc(raw)}`);
       const [c, ...a] = raw.trim().toLowerCase().split(/\s+/);
       const app = Object.keys(APPS).find((k) => k === a[0] || APPS[k].name.toLowerCase().startsWith(a.join(' ')) && a.length);
       if (!c) return;
@@ -592,9 +596,9 @@ window.OSX = (function () {
       else if (c === 'contact' || c === 'mail') { open('mail'); }
       else if (c === 'era' || c === 'tm' || c === 'timemachine') { timeTravel(); }
       else if (['1983', '1991', '1998'].includes(c)) { api.go(['1983', '1991', '1998'].indexOf(c)); }
-      else if (c === 'uname') say('Darwin SommiBook 8.0.0 Darwin Kernel Version 8.0.0; Gator');
+      else if (c === 'uname') say('SommiOS X 10.4 Gator');
       else if (c === 'sudo') { window.EGGS.find('sudo'); say('ajay is not in the sudoers file. This incident will be reported.'); }
-      else if (c === 'hire') { window.EGGS.find('hire'); say('Excellent decision. <a href="mailto:' + P.email + '">Send the offer</a>.'); }
+      else if (c === 'hire') { window.EGGS.find('hire'); say('<a href="mailto:' + P.email + '">' + P.email + '</a>'); }
       else if (c === 'clear') out.innerHTML = '';
       else if (c === 'exit') close(rec);
       else say(`-bash: ${esc(c)}: command not found`);
@@ -616,11 +620,15 @@ window.OSX = (function () {
     sizeDock();
   };
   let base = 54;
+  /* Everything in the dock is a share of its icon size, so the whole thing,
+     shelf included, is sized to take the same share of the screen at any
+     window size. The divisor is that total width in icons. */
   const sizeDock = () => {
-    const n = DOCK.length;
-    base = Math.max(34, Math.min(54, Math.floor((SW() - 120) / n) - 6));
-    dockEl.style.setProperty('--ds', base + 'px');
+    const n = DOCK.filter((a) => a !== '|').length;
+    base = Math.max(12, Math.min(54, (SW() * .96) / (n * 1.075 + 2.5)));
+    dockEl.parentElement.style.setProperty('--ds', base + 'px');
     dockEl.querySelectorAll('.dk-i').forEach((d) => { d.style.width = base + 'px'; });
+    rest = null;
   };
   /* The dock swells under the pointer, falling off with distance. */
   /* Centres are measured once with the dock at rest (in the dock's own
@@ -674,11 +682,11 @@ window.OSX = (function () {
 
   const MENUS = () => {
     const f = front();
-    const appName = f && APPS[f.app] ? APPS[f.app].name : 'Finder';
+    const appName = f && APPS[f.app] ? APPS[f.app].name : APPS.finder.name;
     return {
       mark: [
-        ['About This Portfolio', () => alert({ title: 'SommiOS X', text: `Version 10.4 “Gator”<br/><br/>Built by Ajay Sommi<br/>${P.experience.length} roles, ${P.projects.length} projects<br/>Startup disk: Ajay HD`, icon: I.mark(64) })],
-        ['Software Update…', () => { window.EGGS.find('update'); alert({ title: 'Your software is up to date.', text: 'No updates are available for this portfolio.', icon: ICON.hd() }); }],
+        ['About This Computer', () => alert({ title: 'SommiOS X', text: `${t('Version')} 10.4 “Gator”<br/><br/>${t('Built by Ajay Sommi')}<br/>${P.experience.length} ${t('roles')}, ${P.projects.length} ${t('projects')}<br/>${t('Startup disk')}: Sommi HD`, icon: I.mark(64) })],
+        ['Software Update…', () => { window.EGGS.find('update'); alert({ title: 'Your software is up to date.', text: 'No updates are available.', icon: ICON.hd() }); }],
         '-',
         ['System Preferences…', () => open('skills')],
         ['Dock', null],
@@ -686,7 +694,7 @@ window.OSX = (function () {
         ['Restart in Another Era…', () => timeTravel()],
         ['Shut Down…', shutdown]
       ],
-      app: [[`About ${appName}`, () => alert({ title: appName, text: 'Part of the portfolio of Ajay Sommi.', icon: f ? ICON[APPS[f.app].icon]() : ICON.finder() })], '-', [`Hide ${appName}`, f ? () => minimize(f) : null], [`Quit ${appName}`, f ? () => close(f) : null]],
+      app: [[`${t('About')} ${appName}`, () => alert({ title: appName, text: t('Built by Ajay Sommi'), icon: f ? ICON[APPS[f.app].icon]() : ICON.finder() })], '-', [`${t('Hide')} ${appName}`, f ? () => minimize(f) : null], [`${t('Quit')} ${appName}`, f ? () => close(f) : null]],
       file: [['New Message', () => open('mail')], ['Open Resume', () => open('preview')], '-', ['Close Window', f ? () => close(f) : null, '⌘W']],
       edit: [['Undo', null, '⌘Z'], '-', ['Copy Email Address', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} }]],
       view: [['Show Dock', null], ['Enter Full Screen', () => { const d = document.documentElement; if (d.requestFullscreen) d.requestFullscreen().catch(() => {}); }]],
@@ -705,7 +713,7 @@ window.OSX = (function () {
     list.forEach((it) => {
       if (it === '-') { d.appendChild(h('hr')); return; }
       const [l, fn, k] = it;
-      const b = h('button', '', `<span>${esc(l)}</span><span class="k">${k || ''}</span>`);
+      const b = h('button', '', `<span>${esc(t(l))}</span><span class="k">${k || ''}</span>`);
       b.type = 'button';
       if (!fn) b.disabled = true;
       b.addEventListener('click', () => { closeMenus(); fn && fn(); });
@@ -721,14 +729,13 @@ window.OSX = (function () {
 
   const INDEX = () => {
     const r = [];
-    Object.entries(APPS).forEach(([k, a]) => { if (k !== 'trash') r.push(['Applications', a.name, ICON[a.icon](), () => open(k), (a.name + ' ' + (a.keys || '')).toLowerCase()]); });
-    P.experience.forEach((e) => r.push(['Roles', `${e.org} — ${e.role}`, `<i class="sp-dot" style="background:${TINT[e.id]}"></i>`, () => openRole(e.id), (e.org + ' ' + e.short + ' ' + e.role + ' ' + e.tags.join(' ')).toLowerCase()]));
-    P.projects.forEach((p) => r.push(['Projects', p.full, ICON.projects(), () => open('projects'), (p.full + ' ' + p.stack).toLowerCase()]));
-    P.skills.forEach(([g, l]) => l.forEach((s) => r.push(['Skills', s, ICON.skills(), () => open('skills'), (s + ' ' + g).toLowerCase()])));
-    r.push(['Documents', 'Ajay_Sommi_Resume.pdf', ICON.doc(), () => open('preview'), 'resume cv pdf']);
-    r.push(['Documents', window.PAPERS[2007].news.file, ICON.doc(), () => open('news07'), 'news headlines 2007 iphone kindle android']);
-    r.push(['Documents', window.PAPERS[2007].brochure.file, ICON.doc(), () => open('brochure07'), 'brochure sommibook laptop']);
-    return r;
+    Object.entries(APPS).forEach(([k, a]) => { if (k !== 'trash') r.push([t('Applications'), a.name, ICON[a.icon](), () => open(k), (a.name + ' ' + (a.keys || '')).toLowerCase()]); });
+    P.experience.forEach((e) => r.push([t('Roles'), `${e.org} — ${e.role}`, `<i class="sp-dot" style="background:${TINT[e.id]}"></i>`, () => openRole(e.id), (e.org + ' ' + e.short + ' ' + e.role + ' ' + e.tags.join(' ')).toLowerCase()]));
+    P.projects.forEach((p) => r.push([t('Projects'), p.full, ICON.projects(), () => open('projects'), (p.full + ' ' + p.stack).toLowerCase()]));
+    P.skills.forEach(([g, l]) => l.forEach((s) => r.push([t('Skills'), s, ICON.skills(), () => open('skills'), (s + ' ' + g).toLowerCase()])));
+    r.push([t('Documents'), 'Ajay_Sommi_Resume.pdf', ICON.doc(), () => open('preview'), 'resume cv pdf']);
+    r.push([t('Documents'), window.PAPERS[2007].news.file, ICON.doc(), () => open('news07'), 'news headlines 2007 iphone kindle android']);
+        return r;
   };
   const toggleSpot = (on) => {
     const want = on == null ? spot.hidden : on;
@@ -745,7 +752,7 @@ window.OSX = (function () {
     const groups = {};
     hits.forEach((x) => { (groups[x[0]] = groups[x[0]] || []).push(x); });
     let n = 0;
-    res.innerHTML = (hits.length ? `<div class="sp-g"><span>Top Hit</span><div><button type="button" class="on" data-n="0">${hits[0][2]}${esc(hits[0][1])}</button></div></div>` : '<div class="sp-none">No results</div>') +
+    res.innerHTML = (hits.length ? `<div class="sp-g"><span>Top Hit</span><div><button type="button" class="on" data-n="0">${hits[0][2]}${esc(hits[0][1])}</button></div></div>` : `<div class="sp-none">${t('No results')}</div>`) +
       Object.entries(groups).map(([g, l]) => `<div class="sp-g"><span>${g}</span><div>${l.map((x) => `<button type="button" data-n="${hits.indexOf(x)}">${x[2]}${esc(x[1])}</button>`).join('')}</div></div>`).join('');
     void n;
   };
@@ -764,7 +771,7 @@ window.OSX = (function () {
   }
 
   async function shutdown() {
-    const r = await alert({ title: 'Are you sure you want to shut down your portfolio?', text: 'You can start it again, or start up from another era.', buttons: ['Cancel', 'Restart in Another Era', 'Shut Down'], icon: I.mark(64) });
+    const r = await alert({ title: 'Are you sure you want to shut down your computer?', text: 'You can start it again, or start up from another era.', buttons: ['Cancel', 'Restart in Another Era', 'Shut Down'], icon: I.mark(64) });
     if (r === 'Shut Down' || r === 'Restart in Another Era') {
       root.classList.add('is-off');
       await wait(700);
@@ -772,6 +779,128 @@ window.OSX = (function () {
       api.picker();
     }
   }
+
+  /* ------------------------------------------------- icons and the Trash */
+
+  /* What has been thrown away, [app, name, icon], and what that takes off
+     the desk and out of its folders. */
+  const trashed = [];
+  const gone = new Set();
+  const deskItems = () => [['finder', 'Sommi HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc']];
+  const drawDesk = () => {
+    deskEl.innerHTML = deskItems().filter(([a, n]) => !gone.has(a + n)).map(([a, n, i]) => `<button type="button" class="dt-i" data-open="${a}" data-n="${esc(n)}" data-ic="${i}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
+  };
+  const refreshFiles = () => {
+    const f = wins.get('finder');
+    if (f && f.show) f.show(f.view || 'hd');
+    const tw = wins.get('trash');
+    if (tw && tw.redraw) tw.redraw();
+    const can = dockEl.querySelector('[data-app="trash"]');
+    if (can) can.classList.toggle('is-full', trashed.length > 0);
+  };
+  const toTrash = (el) => {
+    const a = el.dataset.open, n = el.dataset.n || el.querySelector('span').textContent;
+    const ic = el.dataset.ic || (APPS[a] ? APPS[a].icon : 'doc');
+    gone.add(a + n);
+    trashed.push([a, n, ic]);
+    if (el.classList.contains('dt-i')) el.remove();
+    refreshFiles();
+    SFX.click();
+  };
+  const putBack = (a, n) => {
+    gone.delete(a + n);
+    const i = trashed.findIndex((x) => x[0] === a && x[1] === n);
+    if (i >= 0) trashed.splice(i, 1);
+    drawDesk();
+    refreshFiles();
+  };
+  const emptyTrash = () => { trashed.length = 0; refreshFiles(); };
+  const info = (name, icon) => alert({ title: name, text: `${t('Kind')}: ${APPS[icon] ? t('Applications') : t('Documents')}<br/>${t('Location')}: Sommi HD`, icon: ICON[APPS[icon] ? APPS[icon].icon : icon]() });
+  const wireDrag = () => {
+    window.RETRO.dragIcons(root, {
+      sel: '.dt-i, .fx-main .fx-ico[data-open]',
+      trash: () => dockEl.querySelector('[data-app="trash"]'),
+      onTrash: toTrash,
+      onDrop: (el, dx, dy) => {
+        if (!el.classList.contains('dt-i')) return;
+        if (!deskEl.dataset.free) {
+          /* Once its icons are placed by hand the desk has nothing to size it,
+             so it keeps the box it had; every icon stays where it was. */
+          deskEl.dataset.free = '1';
+          const w = deskEl.offsetWidth, ht = deskEl.offsetHeight;
+          const at = [...deskEl.children].map((c) => [c, c.offsetLeft, c.offsetTop]);
+          Object.assign(deskEl.style, { width: w + 'px', height: ht + 'px', bottom: 'auto' });
+          at.forEach(([c, x, y]) => { c.style.position = 'absolute'; c.style.left = x + 'px'; c.style.top = y + 'px'; });
+        }
+        el.style.left = parseFloat(el.style.left) + dx + 'px';
+        el.style.top = parseFloat(el.style.top) + dy + 'px';
+      }
+    });
+    window.RETRO.contextMenu(root, 'ox-drop', (e) => {
+      const tr = e.target.closest('[data-t]');
+      if (tr) return [['Open', () => tr.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))], ...(trashed.some((x) => x[0] === tr.dataset.t) ? [['Put Back', () => putBack(tr.dataset.t, tr.dataset.n)]] : [])].map(([l, f]) => [t(l), f]);
+      const ic = e.target.closest('.dt-i, .fx-ico[data-open]');
+      if (ic) return [[t('Open'), () => open(ic.dataset.open)], [t('Get Info'), () => info(ic.querySelector('span').textContent, ic.dataset.ic || ic.dataset.open)], '-', [t('Move to Trash'), () => toTrash(ic)]];
+      const dk = e.target.closest('.dk-i');
+      if (dk) return dk.dataset.app === 'trash' ? [[t('Open'), () => open('trash')], [t('Empty Trash'), emptyTrash]] : [[t('Open'), () => open(dk.dataset.app)]];
+      const w = e.target.closest('.ox-win');
+      if (w) { const r = [...wins.values()].find((x) => x.el === w); return r ? [[t('Close'), () => close(r)], [t('Minimize'), () => minimize(r)], [t('Zoom'), () => w.querySelector('.lt.zoom').click()]] : null; }
+      return [[t('Clean Up'), () => { deskEl.removeAttribute('data-free'); deskEl.removeAttribute('style'); drawDesk(); }], '-', [t('About This Computer'), () => MENUS().mark[0][1]()], [t('Search Spotlight'), () => toggleSpot(true)], [t('Restart in Another Era…'), () => timeTravel()]];
+    });
+  };
+
+  /* ------------------------------------------------- setting up, language */
+
+  /* Everything the code wrote before a language was picked. */
+  const applyLang = (l) => {
+    window.I18N.set(l);
+    P = window.I18N.portfolio();
+    Object.keys(APPS).forEach((k) => { APPS[k].name = t(NAMES[k]); });
+    menubar.querySelectorAll('.m[data-m]').forEach((m) => {
+      if (m.dataset.m === 'app') m.textContent = APPS.finder.name;
+      const label = { file: 'File', edit: 'Edit', view: 'View', win: 'Window', help: 'Help' }[m.dataset.m];
+      if (label) m.textContent = t(label);
+    });
+    buildDock();
+    drawDesk();
+    markRunning();
+  };
+  const GLOSSY = () => {
+    const a = 'M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z', j = 'M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z', s = 'M43.83 24.6h8.74v11.79h-8.74z', d = 'M48.2 11.8a5.6 5.6 0 1 1 0 11.2a5.6 5.6 0 1 1 0-11.2z';
+    return `<svg class="ox-glossy" viewBox="6 6 52 44" aria-hidden="true"><defs><linearGradient id="oxgA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9e0ff"/><stop offset=".45" stop-color="#5aa9f2"/><stop offset=".55" stop-color="#2a7be0"/><stop offset="1" stop-color="#7cc0fa"/></linearGradient><linearGradient id="oxgL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity=".12"/></linearGradient><clipPath id="oxgC"><path d="${a}"/><path d="${j}"/><path d="${s}"/><path d="${d}"/></clipPath></defs><g fill="url(#oxgA)" stroke="#1d5fb4" stroke-width=".45" stroke-linejoin="round"><path d="${a}"/><path d="${j}"/><path d="${s}"/><path d="${d}"/></g><path d="M4 4H60V24Q32 34 4 30Z" fill="url(#oxgL)" clip-path="url(#oxgC)"/></svg>`;
+  };
+  /* Each language's flag on a round glass button. */
+  const FLAG = {
+    en: `<svg viewBox="0 0 34 34">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<rect y="${i * 4.86}" width="34" height="2.43" fill="#c8102e"/><rect y="${i * 4.86 + 2.43}" width="34" height="2.43" fill="#fff"/>`).join('')}<rect width="17" height="17" fill="#22408c"/>${[3, 8.5, 14].map((x) => [3.5, 8.5, 13.5].map((y) => `<circle cx="${x}" cy="${y}" r="1.1" fill="#fff"/>`).join('')).join('')}</svg>`,
+    es: '<svg viewBox="0 0 34 34"><rect width="34" height="34" fill="#c60b1e"/><rect y="8.5" width="34" height="17" fill="#ffc400"/><rect x="8" y="13" width="5" height="8" rx="1.5" fill="#ad1519"/></svg>',
+    fr: '<svg viewBox="0 0 34 34"><rect width="11.4" height="34" fill="#0a3a9c"/><rect x="11.3" width="11.4" height="34" fill="#fff"/><rect x="22.6" width="11.4" height="34" fill="#e1202e"/></svg>',
+    de: '<svg viewBox="0 0 34 34"><rect width="34" height="11.4" fill="#111"/><rect y="11.3" width="34" height="11.4" fill="#d80f1a"/><rect y="22.6" width="34" height="11.4" fill="#ffcc00"/></svg>'
+  };
+  const chooseLang = () => new Promise((resolve) => {
+    const s = h('div', 'ox-boot ox-setup');
+    const draw = () => {
+      s.innerHTML = `<div class="ox-card">${GLOSSY()}<h1>SommiOS X</h1><p>${t('Select your language')}</p><div class="ox-langs" role="listbox" aria-label="Language">${window.I18N.LANGS.map(([c, n], i) => `<button type="button" role="option" data-l="${c}"${i === 0 ? ' class="on"' : ''}><i>${FLAG[c]}</i><span>${esc(n)}</span></button>`).join('')}</div><div class="ox-power"><button type="button" data-p="r"><i><svg viewBox="0 0 20 20"><path d="M13 4 6 10l7 6z" fill="currentColor"/></svg></i>${t('Restart')}</button><button type="button" data-p="s"><i><svg viewBox="0 0 20 20"><path d="M10 2.5v7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M6 5.2a6.4 6.4 0 1 0 8 0" fill="none" stroke="currentColor" stroke-width="2"/></svg></i>${t('Shut Down')}</button></div></div>`;
+    };
+    draw();
+    root.appendChild(s);
+    const rows = () => [...s.querySelectorAll('[data-l]')];
+    /* Passing over a language shows the screen's words in it. */
+    s.addEventListener('pointerover', (e) => { const b = e.target.closest('[data-l]'); if (b) rows().forEach((x) => x.classList.toggle('on', x === b)); });
+    s.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-l]');
+      if (b) { SFX.click(); document.removeEventListener('keydown', key, true); resolve({ lang: b.dataset.l, s }); return; }
+      const p = e.target.closest('[data-p]');
+      if (p && p.dataset.p === 's') { SFX.click(); api.picker(); }
+      if (p && p.dataset.p === 'r') { SFX.chime(); s.firstChild.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500 }); }
+    });
+    const key = (e) => {
+      if (!s.isConnected || !s.offsetParent) return;
+      const list = rows(), i = list.findIndex((x) => x.classList.contains('on'));
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); const j = (i + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length; list.forEach((x, k) => x.classList.toggle('on', k === j)); }
+      if (e.key === 'Enter') { e.preventDefault(); list[Math.max(0, i)].click(); }
+    };
+    document.addEventListener('keydown', key, true);
+  });
 
   /* ------------------------------------------------------------- build */
 
@@ -782,7 +911,7 @@ window.OSX = (function () {
       <div class="ox-wall" aria-hidden="true"></div>
       <div class="ox-menubar" role="menubar">
         <button type="button" class="m mk" data-m="mark" aria-label="AJ menu">${I.mark(15, true)}</button>
-        <button type="button" class="m b" data-m="app">Finder</button>
+        <button type="button" class="m b" data-m="app">Files</button>
         <button type="button" class="m" data-m="file">File</button><button type="button" class="m" data-m="edit">Edit</button><button type="button" class="m" data-m="view">View</button><button type="button" class="m" data-m="win">Window</button><button type="button" class="m" data-m="help">Help</button>
         <span class="sp"></span>
         <span class="st" aria-hidden="true"><svg viewBox="0 -1.5 18 14.5" width="18" height="14.5" style="overflow:visible"><path d="M9 12.5 6.6 9.9a3.4 3.4 0 0 1 4.8 0zM4.4 7.6a6.4 6.4 0 0 1 9.2 0l1.5-1.6a8.6 8.6 0 0 0-12.2 0zM1.3 4.3a11 11 0 0 1 15.4 0L18 3A12.8 12.8 0 0 0 0 3z" fill="currentColor"/></svg></span>
@@ -801,8 +930,10 @@ window.OSX = (function () {
     dockEl = root.querySelector('.ox-dock');
     spot = root.querySelector('.ox-spot');
 
-    deskEl.innerHTML = [['finder', 'Ajay HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc'], ['brochure07', window.PAPERS[2007].brochure.file, 'doc']].map(([a, n, i]) => `<button type="button" class="dt-i" data-open="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
+    drawDesk();
     buildDock();
+    wireDrag();
+    window.RETRO.zoomPics(root, '.dk-ic, .ox-alert, .mm, .xp-logo, .ch-av, .co, .sl-ic, .ab-none');
 
     const clk = menubar.querySelector('.clk');
     const tick = () => { clk.textContent = new Date().toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).replace(',', ''); };
@@ -865,15 +996,28 @@ window.OSX = (function () {
   };
 
   const boot = async () => {
-    const b = h('div', 'ox-boot', `${I.mark(96, true)}<span class="ox-spin">${'<i></i>'.repeat(12)}</span>`);
-    root.appendChild(b);
     root.classList.add('is-booting');
     SFX.chime();
-    await wait(2200);
-    b.classList.add('is-gone');
+    const { lang, s } = await chooseLang();
+    applyLang(lang);
+    /* The window itself shrinks: the same card, now small, over the same
+       blue, holding the logo and the glass bar. */
+    const card = s.querySelector('.ox-card');
+    await Promise.all([...card.children].map((c) => c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 170, fill: 'forwards' }).finished));
+    const a = card.getBoundingClientRect();
+    card.classList.add('is-small');
+    card.innerHTML = `${GLOSSY()}<h1>SommiOS X</h1><div class="ox-bar"><i></i></div><p>${t('Starting SommiOS X…')}</p>`;
+    const z = card.getBoundingClientRect();
+    card.animate([{ width: a.width + 'px', height: a.height + 'px' }, { width: z.width + 'px', height: z.height + 'px' }], { duration: 480, easing: 'cubic-bezier(.3, .7, .2, 1)' });
+    [...card.children].forEach((c) => c.animate([{ opacity: 0 }, { opacity: 0, offset: .55 }, { opacity: 1 }], { duration: 480 }));
+    await wait(420);
+    const bar = card.querySelector('.ox-bar i');
+    bar.animate([{ width: '4%' }, { width: '100%' }], { duration: 1700, easing: 'cubic-bezier(.3, .2, .7, .9)', fill: 'forwards' });
+    await wait(1750);
+    s.classList.add('is-gone');
     root.classList.remove('is-booting');
     await wait(500);
-    b.remove();
+    s.remove();
     sizeDock();
     markRunning();
     if (!store.get('ox-welcome', false)) { store.set('ox-welcome', true); open('welcome'); }

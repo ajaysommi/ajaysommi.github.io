@@ -21,7 +21,7 @@ window.FINDER = (function () {
   /* ------------------------------------------------------------- catalog */
 
   const ITEMS = {
-    hd: { name: 'Ajay HD', icon: 'hd', kind: 'disk' },
+    hd: { name: 'Sommi HD', icon: 'hd', kind: 'disk' },
     readme: { name: 'Read Me First', icon: 'doc', kind: 'document' },
     about: { name: 'About Me', icon: 'person', kind: 'document', keys: 'bio who ajay me' },
     experience: { name: 'Experience', icon: 'folder', kind: 'folder', keys: 'work jobs path career roles' },
@@ -247,7 +247,7 @@ window.FINDER = (function () {
 
   const SPECS = {
     hd: () => ({
-      title: 'Ajay HD', w: 560, h: 380,
+      title: 'Sommi HD', w: 560, h: 380,
       info: `<span>${DESKTOP.length + 1} items</span><span>1.3 MB in disk</span><span>18 MB available</span>`,
       render: folderGrid(['about', 'experience', 'projects', 'offclock', 'skills', 'education', 'recs', 'contact', 'resume', 'papers', 'system'])
     }),
@@ -261,14 +261,14 @@ window.FINDER = (function () {
       const d = window.PAPERS[1991].brochure;
       return { title: d.file, w: 440, h: Math.min(460, SH() - 70), render: (b) => { b.innerHTML = `<div class="doc paper is-ad"><div class="pp-hero">${I.pxmark(48)}<div><h1>${esc(d.title)}</h1><div class="meta" style="margin:0">${esc(d.sub)}</div></div></div>${d.items.map(([h, t]) => `<div class="pp-row"><b>${esc(h)}</b><span>${esc(t)}</span></div>`).join('')}<p class="meta" style="margin-top:14px;text-align:center">${esc(d.foot)}</p></div>`; } };
     },
-    system: () => ({ title: 'System Folder', w: 420, h: 240, info: '<span>4 items</span><span>please don’t touch</span>', render: folderGrid(['eggs', 'computer', 'readme', 'scrapbook']) }),
+    system: () => ({ title: 'System Folder', w: 420, h: 240, info: '<span>4 items</span><span></span>', render: folderGrid(['eggs', 'computer', 'readme', 'scrapbook']) }),
     readme: () => ({
       title: 'Read Me First', w: 470, h: 430, x: 40, y: 50,
       render: (b) => {
         b.innerHTML = `<div class="doc"><h2>Welcome to SommiOS.</h2>
           <p>This is the portfolio as it would have looked on a desktop in 1991.</p>
-          <p>• <b>Double-click</b> any icon to open it.<br/>• Drag windows by their <b>title bars</b>. The box at the top left closes one.<br/>• Press <b>⌘F</b> (or Ctrl+F) and just type what you want to see.<br/>• <b>Special › Restart in Another Era</b> starts up from a different year.<br/>• The newsletter and brochures that came with it are in <b>Ajay HD</b>.</p>
-          <p>Some things here are not what they seem. The Trash is a good place to start.</p>
+          <p>• <b>Double-click</b> any icon to open it.<br/>• Drag windows by their <b>title bars</b>. The box at the top left closes one.<br/>• Press <b>⌘F</b> (or Ctrl+F) and just type what you want to see.<br/>• <b>Special › Restart in Another Era</b> starts up from a different year.<br/>• The newsletter and brochures that came with it are in <b>Sommi HD</b>.</p>
+          
           <div class="btns"><button class="btn is-default" data-open="about">Start with About Me</button><button class="btn" data-open="find">Find…</button></div></div>`;
       }
     }),
@@ -337,7 +337,7 @@ window.FINDER = (function () {
     }),
     trash: () => {
       window.EGGS.find('trash');
-      return { title: 'Trash', w: 440, h: 240, info: '<span>4 items</span><span>none of them can be thrown away</span>', render: folderGrid(['oldsite', 'bugs', 'jquery', 'dontopen']) };
+      return { title: 'Trash', w: 440, h: 240, info: `<span>${3 + thrown.length} items</span><span></span>`, render: folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown]) };
     },
     oldsite: () => ({
       action: async () => {
@@ -346,12 +346,12 @@ window.FINDER = (function () {
       }
     }),
     bugs: () => ({ title: 'bugs.txt', w: 360, h: 200, render: (b) => { b.innerHTML = '<div class="doc"><p>Known bugs: none listed.</p></div>'; } }),
-    jquery: () => ({ title: 'jquery.min.js', w: 380, h: 210, render: (b) => { b.innerHTML = '<div class="doc"><p>Retired with honours from the old site.</p><p class="meta">$(\'thank you\').fadeOut();</p></div>'; } }),
+    jquery: () => ({ title: 'jquery.min.js', w: 380, h: 210, render: (b) => { b.innerHTML = '<div class="doc"><p>A script from the old site.</p></div>'; } }),
     dontopen: () => ({
       action: async () => {
         window.EGGS.find('bomb');
         window.SFX.error();
-        const r = await dialog({ icon: 'bomb', cls: 'bombbox', html: '<p><b>Sorry, a system error occurred.</b></p><p>“Don’t Open Me”<br/>Error type 26: too much curiosity</p><p class="meta">Curiosity is not a bug. But you knew that.</p>', buttons: ['Restart', 'Resume'] });
+        const r = await dialog({ icon: 'bomb', cls: 'bombbox', html: '<p><b>Sorry, a system error occurred.</b></p><p>“Don’t Open Me”<br/>Error type 26</p>', buttons: ['Restart', 'Resume'] });
         if (r === 'Resume') openWin('resume');
         if (r === 'Restart') restart();
       }
@@ -527,7 +527,7 @@ window.FINDER = (function () {
 
   function iconEl(id) {
     const it = ITEMS[id];
-    const b = h('button', 'fd-icon', `${I.svg(id === 'trash' && window.EGGS.has('trash') ? 'trashFull' : it.icon, 32)}<span class="lbl">${esc(it.name)}</span>`);
+    const b = h('button', 'fd-icon', `${I.svg(id === 'trash' && (window.EGGS.has('trash') || thrown.length) ? 'trashFull' : it.icon, 32)}<span class="lbl">${esc(it.name)}</span>`);
     b.type = 'button';
     b.dataset.id = id;
     b.setAttribute('aria-label', `${it.name}, ${it.kind}`);
@@ -542,6 +542,7 @@ window.FINDER = (function () {
   };
 
   const positions = () => store.get('icons', {});
+  let thrown = [];
   const layoutIcons = () => {
     deskEl.innerHTML = '';
     const saved = positions();
@@ -550,11 +551,11 @@ window.FINDER = (function () {
        time, until every icon is on the screen. */
     const H = SH() - 25, W = SW();
     const cap = (c, rowH) => Math.max(1, Math.floor((H - (c === 0 ? 96 : 14)) / rowH));
-    const cols = (rowH) => { let n = DESKTOP.length, c = 0; while (n > 0) { n -= cap(c, rowH); c++; } return c; };
+    const cols = (rowH) => { let n = DESKTOP.length - thrown.length, c = 0; while (n > 0) { n -= cap(c, rowH); c++; } return c; };
     let colW = 104, rowH = 74;
     for (const [cw, rh] of [[104, 74], [96, 68], [88, 64], [82, 60], [76, 58]]) { colW = cw; rowH = rh; if (112 + (cols(rh) - 1) * cw <= W) break; }
     let col = 0, row = 0;
-    DESKTOP.forEach((id) => {
+    DESKTOP.filter((id) => !thrown.includes(id)).forEach((id) => {
       if (row >= cap(col, rowH)) { col++; row = 0; }
       const el = iconEl(id);
       let x = W - 112 - col * colW, y = 10 + row * rowH;
@@ -594,8 +595,13 @@ window.FINDER = (function () {
       trash.classList.remove('is-drop');
       const id = el.dataset.id;
       if (el !== trash && overTrash(ev)) {
-        if (id === 'resume') { window.EGGS.find('keepresume'); await dialog({ icon: 'resume', html: '<p><b>Are you sure?</b></p><p>Recruiters love this one. It’s staying right where it is.</p>', buttons: ['Keep It'] }); }
-        else await alert(`<p>“${esc(ITEMS[id].name)}” can’t be thrown away.</p><p>It’s part of the portfolio.</p>`);
+        if (id === 'resume') window.EGGS.find('keepresume');
+        thrown.push(id);
+        el.remove();
+        trash.innerHTML = iconEl('trash').innerHTML;
+        const tw = wins.get('trash');
+        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown])(tw.body); }
+        window.SFX.click();
         return;
       }
       const x = Math.max(0, Math.min(SW() - 100, Math.round((start.x + ev.clientX - sx) / 8) * 8));
@@ -630,7 +636,7 @@ window.FINDER = (function () {
       ['Get Info', () => selected && info(selected.dataset.id || selected.dataset.row), '⌘I'],
       ['Find…', find, '⌘F'],
       '-',
-      ['Print…', () => alert('<p><b>No printer is connected.</b></p><p>It’s 1991. Try the resume’s Download link instead.</p>'), '⌘P'],
+      ['Print…', () => alert('<p><b>No printer is connected.</b></p><p>Use the resume’s Download link instead.</p>'), '⌘P'],
       '-',
       ['Shut Down', shutdown]
     ]],
@@ -644,7 +650,7 @@ window.FINDER = (function () {
     ['view', 'View', PATTERNS.map(([k, n]) => [`Pattern: ${n}`, () => setPattern(k), '', root.dataset.pat === k])],
     ['special', 'Special', [
       ['Clean Up Desktop', () => { store.set('icons', {}); layoutIcons(); }],
-      ['Empty Trash…', () => alert('<p>The Trash contains 4 items that can’t be thrown away.</p><p>They’re load-bearing.</p>')],
+      ['Empty Trash…', () => { thrown = []; store.set('icons', positions()); layoutIcons(); const tw = wins.get('trash'); if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen'])(tw.body); } }],
       '-',
       ['Restart', restart],
       ['Restart in Another Era\u2026', () => api.picker()],
@@ -688,7 +694,7 @@ window.FINDER = (function () {
     if (!id || !ITEMS[id]) return;
     const it = ITEMS[id];
     const wid = 'info:' + id;
-    SPECS[wid] = () => ({ title: `${it.name} Info`, w: 340, h: 280, render: (b) => { b.innerHTML = `<div class="doc" style="font-size:14px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">${ico(id, 32)}<b style="font-family:var(--pixel);font-size:16px">${esc(it.name)}</b></div><p><b>Kind:</b> ${esc(it.kind)}<br/><b>Where:</b> Ajay HD<br/><b>Created:</b> ${it.year || 1991}<br/><b>Size:</b> ${(it.name.length * 37) % 900 + 12}K on disk</p><p class="meta">Comments: handle with curiosity.</p></div>`; } });
+    SPECS[wid] = () => ({ title: `${it.name} Info`, w: 340, h: 280, render: (b) => { b.innerHTML = `<div class="doc" style="font-size:14px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">${ico(id, 32)}<b style="font-family:var(--pixel);font-size:16px">${esc(it.name)}</b></div><p><b>Kind:</b> ${esc(it.kind)}<br/><b>Where:</b> Sommi HD<br/><b>Created:</b> ${it.year || 1991}<br/><b>Size:</b> ${(it.name.length * 37) % 900 + 12}K on disk</p><p class="meta">Comments:</p></div>`; } });
     openWin(wid);
   };
 
@@ -747,7 +753,7 @@ window.FINDER = (function () {
   }
 
   async function shutdown() {
-    const s = h('div', 'fd-shutdown', `<div class="dlg"><div class="dlg-in">${I.svg('mac', 32)}<div class="dlg-txt"><p>It is now safe to switch off your portfolio.</p><p class="meta" style="color:#555">Or start up from another era.</p><div class="btns"><button class="btn" type="button" data-a="fw">Another era</button><button class="btn is-default" type="button" data-a="r">Restart</button></div></div></div></div>`);
+    const s = h('div', 'fd-shutdown', `<div class="dlg"><div class="dlg-in">${I.svg('mac', 32)}<div class="dlg-txt"><p>It is now safe to switch off your computer.</p><p class="meta" style="color:#555">Or start up from another era.</p><div class="btns"><button class="btn" type="button" data-a="fw">Another era</button><button class="btn is-default" type="button" data-a="r">Restart</button></div></div></div></div>`);
     root.appendChild(s);
     s.querySelector('[data-a="r"]').addEventListener('click', restart);
     s.querySelector('[data-a="fw"]').addEventListener('click', () => { s.remove(); api.picker(); });
@@ -788,6 +794,15 @@ window.FINDER = (function () {
     root.appendChild(menubar);
     deskEl = h('div', 'fd-desk');
     root.appendChild(deskEl);
+    window.RETRO.zoomPics(root);
+    window.RETRO.contextMenu(root, 'fd-drop', (e) => {
+      const ic = e.target.closest('.fd-icon');
+      if (ic) return ic.dataset.id === 'trash'
+        ? [['Open', () => ic.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))], ['Empty Trash…', () => { thrown = []; layoutIcons(); }]]
+        : [['Open', () => ic.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))], ['Get Info', () => info(ic.dataset.id)]];
+      if (e.target.closest('.win')) return null;
+      return [['Clean Up Desktop', () => { store.set('icons', {}); layoutIcons(); }], ['About This Computer…', () => openWin('computer')], '-', ['Restart in Another Era\u2026', () => api.picker()]];
+    });
     window.RETRO.marquee(deskEl, { isBg: (t) => t === deskEl, items: () => [...deskEl.querySelectorAll('.fd-icon')], sel: 'is-sel', cls: 'sel-91' });
     scr.appendChild(root);
 
@@ -857,7 +872,7 @@ window.FINDER = (function () {
       if (mod && k === 'w') { e.preventDefault(); const f = front(); f && closeWin(f.id); return; }
       if (mod && k === 'o') { e.preventDefault(); openSel(); return; }
       if (mod && k === 'i') { e.preventDefault(); selected && info(selected.dataset.id || selected.dataset.row); return; }
-      if (mod && k === 'p') { e.preventDefault(); alert('<p><b>No printer is connected.</b></p><p>It’s 1991. Try the resume’s Download link instead.</p>'); return; }
+      if (mod && k === 'p') { e.preventDefault(); alert('<p><b>No printer is connected.</b></p><p>Use the resume’s Download link instead.</p>'); return; }
       if (e.key === 'Escape') { closeMenus(); return; }
       const f = front();
       if (f && f.key && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { f.key(e); return; }

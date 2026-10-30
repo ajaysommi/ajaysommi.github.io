@@ -2285,9 +2285,12 @@ function viewportProgress(el, { start = 1, end = 0 } = {}) {
   };
   ['pointerup', 'pointercancel'].forEach((t) => img.addEventListener(t, lift));
   // Safari's own page pinch, kept off while any viewer is open.
-  const noPagePinch = (e) => { if (root.classList.contains('is-modal')) e.preventDefault(); };
-  document.addEventListener('gesturestart', noPagePinch);
-  document.addEventListener('gesturechange', noPagePinch);
+  // On a phone the page never pinches at all: in-app browsers reload on it.
+  const onPhone = matchMedia('(any-pointer: coarse)').matches;
+  const noPagePinch = (e) => { if (onPhone || root.classList.contains('is-modal')) e.preventDefault(); };
+  document.addEventListener('gesturestart', noPagePinch, { passive: false });
+  document.addEventListener('gesturechange', noPagePinch, { passive: false });
+  if (onPhone) document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 && !root.classList.contains('is-modal')) e.preventDefault(); }, { passive: false });
   // Swiping between photos only when not zoomed in.
   ['lbPrev', 'lbNext'].forEach((id) => $(`#${id}`)?.addEventListener('click', resetZoom, true));
 
@@ -4158,12 +4161,12 @@ console.log(
    The way into the eras (the banner over the hero; on a phone, a pill
    floating over the bottom nav). It waits for the page to finish loading;
    then it launches out from the direction of the nav's AJ mark (on desktop the page eases down to make room), landing
-   with a shine and a glow while its machines give a short dance. If the page has already been scrolled, or
+   with a glow while its machines give a short dance. If the page has already been scrolled, or
    motion is reduced, it is simply there (scrolled for, so nothing jumps).
    Once up, the year in it moves through the eras of this visitor's kind
    of device, scrambling through digits and landing in each era's type,
-   and the matching machine lifts. Closed, it stays away until the page is
-   loaded again.
+   and the matching machine lifts. Closed, it folds into a small chip in the
+   corner (above the menu bar on a phone) until the page is loaded again.
    ========================================================================== */
 (function eraBanner() {
   const wrap = document.getElementById('eraAd');
@@ -4174,8 +4177,15 @@ console.log(
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const RAINBOW = ['#61bb46', '#fdb827', '#f5821f', '#e03a3e', '#963d97', '#009ddc'];
 
+  const mini = document.getElementById('eraMini');
+  const fold = (animate) => {
+    wrap.classList.add('is-off');
+    if (!mini) return;
+    mini.hidden = false;
+    if (animate) mini.animate([{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1.06)', offset: .7 }, { opacity: 1, transform: 'none' }], { duration: 340, easing: 'cubic-bezier(.2, .7, .3, 1)' });
+  };
   wrap.querySelector('.era-ad-x').addEventListener('click', () => {
-    wrap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in' }).finished.then(() => wrap.classList.add('is-off'));
+    wrap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in' }).finished.then(() => fold(true));
   });
 
   /* ---- the year ---- */
@@ -4215,13 +4225,6 @@ console.log(
     const r = m && m.getBoundingClientRect();
     return r && r.width > 0 && r.bottom > 0 && r.top < innerHeight ? m : null;
   };
-  // on a phone the pill floats a little above the bottom nav, wherever that is
-  const dock = () => {
-    const n = document.getElementById('siteNav');
-    if (phone.matches && n) wrap.style.setProperty('--ad-bottom', `${Math.round(innerHeight - n.getBoundingClientRect().top + 10)}px`);
-  };
-  dock();
-  addEventListener('resize', dock);
   const instantly = () => {
     const before = wrap.getBoundingClientRect().height, above = wrap.getBoundingClientRect().top < 0;
     wrap.style.transition = 'none';
@@ -4279,14 +4282,11 @@ console.log(
       const t = setTimeout(() => { ad.removeEventListener('animationend', end); r(); }, 600);
       ad.addEventListener('animationend', end);
     });
-    // landing: a shine and a glow (and on a phone, a few sparkles)
-    const shine = document.createElement('span');
-    shine.className = 'era-ad-shine';
-    ad.appendChild(shine);
+    // landing: a glow (and on a phone, a few sparkles)
     ad.classList.add('is-glow');
     wrap.classList.add('is-done', 'is-dance');
     if (phone.matches) sparkle();
-    setTimeout(() => { ad.classList.remove('is-glow'); shine.remove(); }, 1100);
+    setTimeout(() => ad.classList.remove('is-glow'), 1100);
     cycle();
   };
 

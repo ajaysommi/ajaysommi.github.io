@@ -2,7 +2,7 @@
    SOMMIA 3310, one of the phones on the phone picker: a 2000 candybar with
    a green monochrome screen and nothing but keys. The big Navi key does
    whatever the word above it says, C goes back, the rocker scrolls, and
-   the number keys jump straight to a menu item.
+   the number keys bring up the dialler.
    ========================================================================== */
 window.NOKIA = { start(room, exit) {
   const P = window.PORTFOLIO;
@@ -49,6 +49,8 @@ window.NOKIA = { start(room, exit) {
   };
   fit();
   addEventListener('retro-fit', fit);
+  window.RETRO.zoomPics(lcd);
+  room.addEventListener('contextmenu', (e) => e.preventDefault());
 
   /* ------------------------------------------------------------- feedback */
 
@@ -82,10 +84,11 @@ window.NOKIA = { start(room, exit) {
     ['Education', 'cap', () => { const e = P.education; return txt('Education', `<p><b>${esc(e.school)}</b></p><p>${esc(e.degree)}<br/>${esc(e.when)}</p><p>${esc(e.text)}</p>`); }],
     ['Games', 'puzzle', () => list('Games', [
       ['Snake II', () => push(snake())],
-      ['Top score', () => push(txt('Top score', `<p class="nk-big">Snake II</p><p>${store.get('nk-snake-hi', 0)} points</p>`))]
+      ['Text Race', () => push({ type: 'tap', title: 'Text Race', soft: 'Start' })],
+      ['Top score', () => push(txt('Top score', `<p class="nk-big">Snake II</p><p>${store.get('nk-snake-hi', 0)} points</p><p class="nk-big">Text Race</p><p>${store.get('nk-tap-hi', 0)} words</p>`))]
     ])],
     ['Extras', 'egg', () => list('Extras', [
-      ['More eras', () => push(txt('More eras', '<p>This phone is one of three in this portfolio.</p><p>Open it on a computer and there are four more machines to use: a 1983 terminal, a 1991 Macintosh, a 1998 iMac and a 2007 iMac, each with its own game.</p>'))],
+      ['More eras', () => push(txt('More eras', '<p>This phone is one of three in this portfolio.</p><p>Open it on a computer and there are four more machines to use.</p>'))],
       ['Composer', () => { SFX.tune(); window.EGGS.find('tune'); push(txt('Composer', '<p>♪ 8e2 8g2 8b2 8g2<br/>8a2 8c3 8b2 8g2<br/>8e2 8d2 8e2</p><p class="nk-dim">Now playing.</p>')); }],
       ['Clock', () => push(clock())],
       ['Fortune', () => push(txt('Fortune', `<p>“${esc(P.quote)}”</p>`))],
@@ -94,7 +97,7 @@ window.NOKIA = { start(room, exit) {
     ['Settings', 'mac', () => list('Settings', [
       [`Key tones: ${store.get('nk-tones', true) ? 'On' : 'Off'}`, () => { store.set('nk-tones', !store.get('nk-tones', true)); refresh(); }],
       ['Switch device', () => exit()],
-      ['Phone info', () => push(txt('Info', '<p><b>SOMMIA 3310</b></p><p>Software: v1.0<br/>Battery: 3 bars,<br/>forever.</p><p class="nk-dim">Built in 2026 by Ajay Sommi.</p>'))]
+      ['Phone info', () => push(txt('Info', '<p><b>SOMMIA 3310</b></p><p>Software: v1.0</p><p class="nk-dim">Built in 2026 by Ajay Sommi.</p>'))]
     ])]
   ];
 
@@ -186,6 +189,75 @@ window.NOKIA = { start(room, exit) {
   };
   const stopSnake = () => { if (game) game.stop(); };
 
+  /* ------------------------------------------------------------ Text Race */
+
+  /* A word comes up, and it has to be keyed in the old way before the bar
+     runs out: 2 for A, 2 2 for B, 2 2 2 for C. Wait a moment or press
+     another key and the letter sets. C rubs one out; with nothing left to rub
+     out, it leaves the game. */
+  const LETTERS = { 2: 'abc', 3: 'def', 4: 'ghi', 5: 'jkl', 6: 'mno', 7: 'pqrs', 8: 'tuv', 9: 'wxyz' };
+  const WORDS = ['hello', 'call', 'home', 'later', 'phone', 'text', 'meet', 'soon', 'snake', 'menu', 'thanks', 'friend', 'signal', 'battery', 'tomorrow'];
+  let tap = null;
+  const startTap = () => {
+    const box = view.querySelector('.nk-tap');
+    const t = { score: 0, word: '', typed: '', cur: null, curK: '', curAt: 0, left: 0, all: 0, on: false, last: 0, raf: 0, over: false };
+    const draw = () => {
+      const live = t.cur != null ? t.cur : '';
+      box.innerHTML = t.on || t.over
+        ? `<div class="nk-tap-w">${esc(t.word.toUpperCase())}</div><div class="nk-tap-t">${esc((t.typed + live).toUpperCase())}<i></i></div><div class="nk-tap-b"><i style="width:${Math.max(0, t.left / t.all * 100)}%"></i></div>`
+        : '<p>Key in each word on the number keys before time runs out. C deletes, or leaves.</p>';
+      const hd = view.querySelector('.nk-hd span:last-child');
+      if (hd) hd.textContent = t.score;
+      soft.textContent = t.over ? 'Again' : t.on ? 'Skip' : 'Start';
+      if (t.over) box.insertAdjacentHTML('beforeend', `<p class="nk-tap-o">Time! ${t.score} words · best ${store.get('nk-tap-hi', 0)}</p>`);
+    };
+    const next = () => { t.word = WORDS[Math.floor(Math.random() * WORDS.length)]; t.typed = ''; t.cur = null; t.all = Math.max(5000, 16000 - t.score * 700) + t.word.length * 300; t.left = t.all; draw(); };
+    const set = () => { if (t.cur != null) { t.typed += t.cur; t.cur = null; } };
+    const check = () => { if (t.typed + (t.cur || '') === t.word) { t.score++; set(); beep(); next(); } };
+    const frame = (now) => {
+      if (!tap || tap.t !== t) return;
+      t.raf = requestAnimationFrame(frame);
+      if (!t.on) return;
+      t.left -= now - t.last; t.last = now;
+      if (t.cur != null && now - t.curAt > 1000) { set(); draw(); }
+      const b = box.querySelector('.nk-tap-b i');
+      if (b) b.style.width = Math.max(0, t.left / t.all * 100) + '%';
+      if (t.left <= 0) { t.on = false; t.over = true; if (t.score > store.get('nk-tap-hi', 0)) store.set('nk-tap-hi', t.score); SFX.error && SFX.error(); draw(); }
+    };
+    tap = {
+      t,
+      key: (k) => {
+        if (!t.on || !LETTERS[k]) return;
+        const now = performance.now();
+        if (t.curK === k && t.cur != null && now - t.curAt < 1000) { const L = LETTERS[k]; t.cur = L[(L.indexOf(t.cur) + 1) % L.length]; }
+        else { set(); t.cur = LETTERS[k][0]; }
+        t.curK = k; t.curAt = now;
+        draw(); check();
+      },
+      back: () => { if (!t.on || (t.cur == null && !t.typed)) return false; if (t.cur != null) t.cur = null; else t.typed = t.typed.slice(0, -1); draw(); return true; },
+      navi: () => { if (t.on) { next(); return; } t.score = t.over ? 0 : t.score; t.over = false; t.on = true; t.last = performance.now(); next(); }
+    };
+    draw();
+    t.raf = requestAnimationFrame(frame);
+  };
+  const stopTap = () => { tap = null; };
+
+  /* -------------------------------------------------------------- dialler */
+
+  const dialler = () => ({ type: 'dial', num: '', soft: 'Call' });
+  let callT = 0;
+  const placeCall = (num) => {
+    clearTimeout(callT);
+    const end = () => { clearTimeout(callT); stack.splice(1); render(); };
+    push({ type: 'text', title: 'Calling', html: `<p class="nk-big">${esc(num)}</p><p>Calling...</p>`, soft: 'End', act: end });
+    const mine = stack[stack.length - 1];
+    callT = setTimeout(() => {
+      if (stack[stack.length - 1] !== mine) return;
+      mine.s = { type: 'text', title: 'Call', html: `<p class="nk-big">${esc(num)}</p><p>No answer</p>`, soft: 'OK', act: end };
+      render();
+    }, 4000);
+  };
+
   /* --------------------------------------------------------------- engine */
 
   const stack = [];
@@ -193,6 +265,9 @@ window.NOKIA = { start(room, exit) {
 
   const push = (s) => { stack.push({ s, sel: 0 }); render(); };
   const back = () => {
+    const t0 = stack[stack.length - 1];
+    if (t0 && t0.s.type === 'dial' && t0.s.num) { t0.s.num = t0.s.num.slice(0, -1); render(); return; }
+    if (t0 && t0.s.type === 'tap' && tap && tap.back()) return;
     if (stack.length > 1) { stack.pop(); render(); }
     else if (stack[0].s.type !== 'standby') { stack[0] = { s: STANDBY(), sel: 0 }; render(); }
   };
@@ -225,6 +300,10 @@ window.NOKIA = { start(room, exit) {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>${top.sel + 1}</span></div><ul class="nk-list">${s.items.slice(first, first + per).map(([t], k) => `<li class="${first + k === top.sel ? 'on' : ''}">${esc(t)}</li>`).join('')}</ul>${scrollbar(top.sel, s.items.length)}`;
     } else if (s.type === 'text') {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span></div><div class="nk-txt">${s.html}</div>`;
+    } else if (s.type === 'dial') {
+      html = `<div class="nk-dial">${esc(s.num)}</div>`;
+    } else if (s.type === 'tap') {
+      html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>0</span></div><div class="nk-tap"></div>`;
     } else if (s.type === 'game') {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>0</span></div>`;
     } else if (s.type === 'photo') {
@@ -232,9 +311,11 @@ window.NOKIA = { start(room, exit) {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>${s.i + 1}/${s.story.steps.length}</span></div><div class="nk-txt"><img data-src="${src}" alt="" /><p><b>${esc(t)}</b> ${esc(d)}</p></div>`;
     }
     stopSnake();
+    stopTap();
     view.innerHTML = html;
     soft.textContent = s.soft || '';
     if (s.type === 'game') startSnake();
+    if (s.type === 'tap') startTap();
     view.querySelectorAll('img[data-src]').forEach((im) => dither(im.dataset.src, 180).then((u) => { im.src = u; }));
   };
 
@@ -264,6 +345,8 @@ window.NOKIA = { start(room, exit) {
     if (s.type === 'menu') { push(MENU[top.sel][2]()); return; }
     if (s.type === 'list') { s.items[top.sel][1](); return; }
     if (s.type === 'game') { if (game) game.navi(); return; }
+    if (s.type === 'tap') { if (tap) tap.navi(); return; }
+    if (s.type === 'dial') { if (s.num) placeCall(s.num); return; }
     if (s.act) { s.act(); return; }
     back();
   };
@@ -271,11 +354,11 @@ window.NOKIA = { start(room, exit) {
   const digit = (k) => {
     const top = stack[stack.length - 1];
     if (top.s.type === 'game') { if (game) game.dir(k); return; }
-    const n = k === '0' ? 10 : +k;
-    if (!n) return;
-    if (top.s.type === 'standby') { stack.push({ s: MENUS(), sel: Math.min(n, MENU.length) - 1 }); render(); return; }
-    if (top.s.type === 'menu' && n <= MENU.length) { top.sel = n - 1; render(); navi(); return; }
-    if (top.s.type === 'list' && n <= top.s.items.length) { top.sel = n - 1; render(); }
+    if (top.s.type === 'tap') { if (tap) tap.key(k); return; }
+    if (top.s.type === 'dial') { if (top.s.num.length < 18) { top.s.num += k; render(); } return; }
+    const d = dialler();
+    d.num = k;
+    push(d);
   };
 
   /* ---------------------------------------------------------------- keys */
@@ -293,7 +376,7 @@ window.NOKIA = { start(room, exit) {
     const map = inGame ? { ArrowUp: () => digit('2'), ArrowDown: () => digit('8'), ArrowLeft: () => digit('4'), ArrowRight: () => digit('6'), Enter: navi, ' ': navi, Backspace: back, Escape: back }
       : { ArrowUp: () => move(-1), ArrowDown: () => move(1), Enter: navi, Backspace: back, Escape: back };
     if (map[e.key]) { e.preventDefault(); press(map[e.key])(); }
-    else if (/^[0-9]$/.test(e.key)) press(() => digit(e.key))();
+    else if (/^[0-9*#]$/.test(e.key)) press(() => digit(e.key))();
   });
 
   /* ---------------------------------------------------------------- boot */

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Sound, all of it synthesised on the spot: no audio files. The machines
+   Sound, nearly all of it synthesised on the spot. The machines
    make the noises old machines made (a disk clunking in, a drive seeking, a
    key clicking, a startup chord, a modem shaking hands) quietly, and only
    after the visitor's first press, which is when browsers allow it. The
@@ -86,8 +86,51 @@ window.SFX = (function () {
     songT = setInterval(schedule, 100);
   };
 
+  /* The handful of real recordings: the first iPhone's own system sounds.
+     Fetched and decoded once, the first time each is wanted. */
+  const samples = {};
+  const sampleBuf = (name) => { if (!samples[name]) samples[name] = fetch(`assets/audio/ios/${name}.m4a`).then((r) => r.arrayBuffer()).then((a) => ctx.decodeAudioData(a)); return samples[name]; };
+
   const api = {
     get muted() { return muted; },
+    sample(name, gain = 2) {
+      if (!ready()) return;
+      sampleBuf(name).then((b) => {
+        const s = ctx.createBufferSource(), g = ctx.createGain();
+        s.buffer = b; g.gain.value = gain;
+        s.connect(g); g.connect(master);
+        s.start();
+      }).catch(() => {});
+    },
+    /* The phone ringing at the other end: loops until stopped. */
+    ringback() {
+      let src = null, g = null, stopped = false;
+      if (ready()) sampleBuf('ringback').then((b) => {
+        if (stopped) return;
+        src = ctx.createBufferSource(); g = ctx.createGain();
+        src.buffer = b; src.loop = true; g.gain.value = 1;
+        src.connect(g); g.connect(master);
+        src.start();
+      }).catch(() => {});
+      return { gain(v) { if (g) g.gain.value = v; }, stop() { stopped = true; if (src) src.stop(); } };
+    },
+    /* A keypad's two real touch tones. */
+    dtmf(k) {
+      if (!ready()) return;
+      const R = { 1: 0, 2: 0, 3: 0, 4: 1, 5: 1, 6: 1, 7: 2, 8: 2, 9: 2, '*': 3, 0: 3, '#': 3 }, C = { 1: 0, 4: 0, 7: 0, '*': 0, 2: 1, 5: 1, 8: 1, 0: 1, 3: 2, 6: 2, 9: 2, '#': 2 };
+      if (R[k] == null) return;
+      const t = ctx.currentTime;
+      tone(t, [697, 770, 852, 941][R[k]], 0.16, { gain: 0.09 });
+      tone(t, [1209, 1336, 1477][C[k]], 0.16, { gain: 0.09 });
+    },
+    /* Slide to unlock's clack: a latch let go, then its catch. */
+    unlock() {
+      if (!ready()) return;
+      const t = ctx.currentTime;
+      tick(t, { dur: 0.018, freq: 3400, q: 2.5, gain: 0.8 });
+      tick(t + 0.012, { dur: 0.05, freq: 1100, q: 1.2, gain: 0.6 });
+      tick(t + 0.085, { dur: 0.03, freq: 2300, q: 3, gain: 0.55 });
+    },
     setMuted(v) {
       muted = !!v;
       window.RETRO.store.set('sound-on', !muted);
