@@ -89,6 +89,9 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
   scrollbar-width: none; -webkit-overflow-scrolling: touch;
 }
 .mp-rail::-webkit-scrollbar { display: none; }
+/* Room under the cards for the selected one's shadow, which the rail would
+   otherwise cut off in a straight line (a scroller clips what overflows it). */
+.picker .mp-rail { padding-bottom: 40px; margin-bottom: -30px; }
 .mp-card {
   flex: 0 0 64vw; max-width: 300px; scroll-snap-align: center;
   display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -135,6 +138,8 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
   font: 13px var(--pixel); color: #eee; background: rgba(20,16,12,.6); box-shadow: 0 0 0 1px rgba(255,255,255,.12); cursor: pointer;
 }
 .snd-toggle svg { width: 16px; height: 16px; }
+/* On a computer both go back up to the top corners, out of the way. */
+.is-desk .snd-toggle, .is-desk .pk-home { top: calc(env(safe-area-inset-top) + 10px); transform: none; }
 .snd-toggle[aria-pressed="false"] { opacity: .75; }
 .snd-toggle:hover { opacity: 1; }
 .os-on .snd-toggle { display: none; }

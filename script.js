@@ -4254,10 +4254,27 @@ console.log(
     const mark = navMark();
     if (reduce || !mark || (!phone.matches && scrollY > 40)) { instantly(); return; }
     await wait(120);
-    wrap.classList.add('is-open');
-    await wait(phone.matches ? 0 : 120);
+    if (phone.matches) wrap.classList.add('is-open');
+    else {
+      /* The row opens in one step, and the page under it is slid from
+         where it was down into its new place, as a transform the
+         compositor runs: easing the row's own height laid the whole page
+         out again on every frame. */
+      const below = [];
+      for (let n = wrap.nextElementSibling; n; n = n.nextElementSibling) below.push(n);
+      const foot = document.querySelector('body > footer');
+      if (foot) below.push(foot);
+      const h0 = wrap.offsetHeight;
+      wrap.style.transition = 'none';
+      wrap.classList.add('is-open');
+      const h = wrap.offsetHeight - h0;
+      requestAnimationFrame(() => { wrap.style.transition = ''; });
+      below.forEach((n) => n.animate([{ translate: `0 ${-h}px` }, { translate: '0 0' }], { duration: 720, easing: 'cubic-bezier(.3, .8, .25, 1)' }));
+      await wait(90);
+    }
     wrap.classList.add('is-served');
-    await wait(700);
+    // the pop plays out in full before it is set down
+    await new Promise((r) => { const t = setTimeout(r, 1000); ad.addEventListener('animationend', (e) => { if (e.animationName === 'era-ad-launch') { clearTimeout(t); r(); } }, { once: true }); });
     // landing: a shine and a glow (and on a phone, a few sparkles)
     const shine = document.createElement('span');
     shine.className = 'era-ad-shine';

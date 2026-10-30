@@ -17,10 +17,10 @@
 
   const curtain = document.getElementById('curtain');
 
-  /* Sound starts off. A small speaker in the bottom right corner turns it
-     on (and off again); inside a desktop system the system's own menu bar
-     has one. On the pickers the way back to the portfolio sits in the
-     bottom left corner, opposite it. */
+  /* Sound starts off. A small speaker in a corner turns it on (and off
+     again): top right on a computer, bottom right on a phone; inside a
+     desktop system the system's own menu bar has one. On the pickers the
+     way back to the standard site sits in the corner opposite it. */
   const snd = document.createElement('button');
   snd.type = 'button';
   snd.className = 'snd-toggle';
@@ -45,6 +45,125 @@
     curtain.classList.remove('is-on');
     setTimeout(() => { if (!curtain.classList.contains('is-on')) curtain.style.display = ''; }, 420);
   };
+
+  /* Back to the standard site: the trip here run backwards. The paper of
+     the standard site's loading screen comes up over the picker, and the
+     pixel mark at the top lifts off and flies to where that screen draws
+     its own mark, growing as it goes and turning, piece by piece, from
+     pixels back into the smooth mark. The standard site then opens with it
+     already standing there (its loader's mk-landed), finishes its bar and
+     sends the mark up into the nav as usual. */
+  const SMOOTH = '<path class="sm-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/>' +
+    '<path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/>' +
+    '<rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/>';
+  const PX_VB = [8.86, 8.82, 44, 44];   // where the 16 by 16 pixel mark sits over the smooth one
+  let leaving = false;
+  const toClassic = (href) => {
+    const pick = document.getElementById('picker');
+    const src = pick && !pick.hidden && pick.querySelector('.pk-head svg, .mp-head svg');
+    if (leaving) return;
+    if (!src || root.classList.contains('reduced')) { location.href = href; return; }
+    leaving = true;
+    const light = root.dataset.theme === 'daylight';
+    const paperC = light ? '#f2f0eb' : '#121212', inkC = light ? '#141414' : '#edebe6';
+    // The standard site's loader: its mark, then a 30px gap and an 11px bar
+    // (86 by 75, 25px and 9px on a phone), centred in the large viewport.
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100vh;height:100lvh;visibility:hidden';
+    document.body.appendChild(probe);
+    const lvh = probe.offsetHeight;
+    probe.remove();
+    const small = innerWidth <= 719;
+    const mw = small ? 86 : 112, mh = small ? 75 : 97, col = mh + (small ? 34 : 41);
+    const box = { left: (root.clientWidth - mw) / 2, top: (lvh - col) / 2, width: mw, height: mh };
+    const VB = [8, 8, 48, 42];
+    const k1 = Math.min(box.width / VB[2], box.height / VB[3]);
+    const L = box.left + (box.width - VB[2] * k1) / 2, T = box.top + (box.height - VB[3] * k1) / 2;
+    // the pixel grid's centre, in the frame, and how much smaller it starts
+    const gx = (PX_VB[0] + PX_VB[2] / 2 - VB[0]) * k1, gy = (PX_VB[1] + PX_VB[3] / 2 - VB[1]) * k1;
+    const r = src.getBoundingClientRect();
+    const k0 = r.width / (PX_VB[2] * k1);
+    const dx = r.left + r.width / 2 - (L + gx), dy = r.top + r.height / 2 - (T + gy);
+
+    const paper = document.createElement('div');
+    paper.style.cssText = `position:fixed;inset:0;z-index:2147483000;background:${paperC};opacity:0;transition:opacity .38s ease`;
+    document.body.appendChild(paper);
+    const frame = document.createElement('div');
+    frame.style.cssText = `position:fixed;z-index:2147483001;pointer-events:none;left:${L}px;top:${T}px;width:${VB[2] * k1}px;height:${VB[3] * k1}px;will-change:transform`;
+    const NS = 'http://www.w3.org/2000/svg';
+    const f = document.createElementNS(NS, 'svg');
+    f.setAttribute('viewBox', VB.join(' '));
+    f.innerHTML = SMOOTH;
+    f.style.cssText = `display:block;width:100%;height:100%;overflow:visible;transform-origin:${gx}px ${gy}px;will-change:transform`;
+    f.querySelector('.sm-a').setAttribute('fill', inkC);
+    const smooth = [...f.children];
+    smooth.forEach((n) => { n.style.opacity = '0'; });
+    const g = document.createElementNS(NS, 'svg');
+    ['x', 'y', 'width', 'height'].forEach((a, i) => g.setAttribute(a, PX_VB[i]));
+    g.setAttribute('viewBox', '0 0 16 16');
+    g.setAttribute('shape-rendering', 'crispEdges');
+    const pxInk = { '#': light ? '#1c1a17' : '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
+    const cells = [];
+    (window.AJ_PX || []).forEach((row, y) => [...row].forEach((ch, x) => {
+      if (!pxInk[ch]) return;
+      const c = document.createElementNS(NS, 'rect');
+      c.setAttribute('x', x); c.setAttribute('y', y); c.setAttribute('width', 1.02); c.setAttribute('height', 1.02);
+      c.setAttribute('fill', pxInk[ch]);
+      c.dataset.ch = ch;
+      g.appendChild(c);
+      cells.push(c);
+    }));
+    f.appendChild(g);
+    frame.appendChild(f);
+    document.body.appendChild(frame);
+
+    const FLY = 760;
+    // Pixels go in a shuffled order, roughly bottom to top; each piece of
+    // the smooth mark comes up as its own pixels start to go, so the mark
+    // is never missing.
+    cells.sort((a, b) => (+b.getAttribute('y') + Math.random() * 6) - (+a.getAttribute('y') + Math.random() * 6));
+    const at = new Map();
+    cells.forEach((c, i) => {
+      const t = 140 + (FLY - 260) * Math.pow(i / cells.length, .85);
+      at.set(c, t);
+      c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, delay: t, fill: 'forwards' });
+    });
+    const piece = (n) => (n.classList.contains('sm-a') ? (c) => c.dataset.ch === '#'
+      : n.tagName === 'circle' ? (c) => c.dataset.ch === 'b' && +c.getAttribute('y') < 5
+      : n.tagName === 'rect' ? (c) => c.dataset.ch === 'b' && +c.getAttribute('y') >= 5
+      : (c) => c.dataset.ch === 'r');
+    smooth.forEach((n) => {
+      const times = cells.filter(piece(n)).map((c) => at.get(c)).sort((a, b) => a - b);
+      if (!times.length) return;
+      const start = Math.max(0, times[0] - 60), end = times[Math.floor(times.length * .55)] + 110;
+      n.animate([{ opacity: 0 }, { opacity: 1 }], { duration: Math.max(80, end - start), delay: start, easing: 'ease-out', fill: 'forwards' });
+    });
+
+    src.style.visibility = 'hidden';
+    void paper.offsetWidth;
+    paper.style.opacity = '1';
+    if (themeColor) themeColor.content = paperC;
+    root.style.backgroundColor = paperC;
+    // Across and down on their own curves, as on the way here.
+    frame.animate([{ transform: `translateX(${dx}px)` }, { transform: 'none' }], { duration: FLY, easing: 'cubic-bezier(.45, 0, .2, 1)', fill: 'forwards' });
+    f.animate([{ transform: `translateY(${dy}px) scale(${k0})` }, { transform: 'none' }], { duration: FLY, easing: 'cubic-bezier(.55, 0, .25, 1.06)', fill: 'forwards' })
+      .finished.then(() => {
+        try { sessionStorage.setItem('hop-home', '1'); } catch (e) {}
+        location.href = href;
+      });
+    // Back here from the standard site with the back button: the picker as it was.
+    addEventListener('pageshow', (e) => {
+      if (!e.persisted) return;
+      paper.remove(); frame.remove(); src.style.visibility = ''; leaving = false;
+    }, { once: true });
+  };
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('.pk-home');
+    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    toClassic(a.href);
+  });
 
   /* Behind both pickers: small filled shapes from every era, with
      hourglasses and clocks among them, shaded in softly. */
@@ -180,7 +299,7 @@
         <div class="pk-head">${I.pxmark(36)}<h1>Choose an era</h1><p>Each one is the portfolio on a computer from its year.</p></div>
         <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.year}</span><b>${esc(e.name)}</b><span class="pk-n">${esc(e.note)}</span></button>`).join('')}</div>
         <p class="pk-foot">Click one to start it up · or use ← → and Return</p>
-      </div><a class="pk-home" href="index.html">‹ Portfolio</a>`;
+      </div><a class="pk-home" href="index.html">‹ Standard site</a>`;
     const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
     tick(); setInterval(tick, 15000);
     const disks = [...pick.querySelectorAll('.pk-d')];
@@ -492,7 +611,7 @@
     pick.innerHTML = TIMEART(true) + `
       <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a device from its year.</p></div>
       <div class="mp-rail" role="listbox" aria-label="Eras">${PICKS.map((p, i) => `<button type="button" class="mp-card${p.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><span class="mp-y">${p.year}</span><b>${esc(p.name)}</b><span class="mp-n">${esc(p.note)}</span><span class="mp-on">${p.href ? 'Open' : 'Power on'}</span></button>`).join('')}</div>
-      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div><a class="pk-home" href="index.html">‹ Portfolio</a>`;
+      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div><a class="pk-home" href="index.html">‹ Standard site</a>`;
     const rail = pick.querySelector('.mp-rail');
     const cards = [...pick.querySelectorAll('.mp-card')];
     const dots = [...pick.querySelectorAll('.mp-dots i')];
