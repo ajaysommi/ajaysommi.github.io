@@ -112,10 +112,14 @@ window.OSX = (function () {
       lg('bk', [[0, '#9fcdf5'], [1, '#5f9fdf']]) + lg('fr', [[0, '#c4e3fe'], [.5, '#8fc4f5'], [1, '#5fa2e8']]) + lg('sg', [[0, '#3f7ec8', .75], [1, '#2a62ad', .8]])),
   };
 
+  ICON.memory = () => art(`<g transform="rotate(-12 50 70)"><rect x="18" y="22" width="56" height="78" rx="8" fill="url(#bk)" stroke="#1d4f9e" stroke-width="2"/><rect x="25" y="29" width="42" height="64" rx="4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2"/><path d="M46 44l3 8 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="#fff" opacity=".6"/></g>
+      <g transform="rotate(10 80 66)"><rect x="52" y="20" width="56" height="78" rx="8" fill="url(#fc)" stroke="#9aa3ad" stroke-width="2"/><path d="M80 40l5.5 12.5 13.5 1.2-10.2 9 3 13.3L80 69l-11.8 7 3-13.3-10.2-9 13.5-1.2z" fill="url(#st)"/></g>`,
+    lg('bk', [[0, '#76b3f5'], [1, '#2463c9']]) + lg('fc', [[0, '#ffffff'], [1, '#e3e8ee']]) + lg('st', [[0, '#ffd75a'], [1, '#f39a12']]));
+
   /* Snow Leopard's own icons, from Apple's 2009 Mac OS X pages, wherever
-     the app has a match. Finder keeps the AJ face; folders and the Trash
-     stay drawn. */
-  const SL = { about: 'about', experience: 'ical', guestbook: 'ichat', skills: 'prefs', safari: 'safari', mail: 'mail', preview: 'preview', terminal: 'terminal', timemachine: 'timemachine', education: 'dictionary', photos: 'photobooth', projects: 'automator' };
+     the app has a match, the Finder's face among them; folders and the
+     Trash stay drawn. */
+  const SL = { finder: 'finder', about: 'about', experience: 'ical', guestbook: 'ichat', skills: 'prefs', safari: 'safari', mail: 'mail', preview: 'preview', terminal: 'terminal', timemachine: 'timemachine', education: 'dictionary', photos: 'photobooth', projects: 'automator' };
   Object.entries(SL).forEach(([k, f]) => { ICON[k] = () => `<img class="sl-ic" src="assets/images/snowleopard/${f}.webp" alt="" draggable="false" />`; });
 
   /* --------------------------------------------------------------- apps */
@@ -135,11 +139,12 @@ window.OSX = (function () {
     mail: { name: 'Mail', icon: 'mail', keys: 'contact email hello write' },
     preview: { name: 'Resume', icon: 'preview', keys: 'cv pdf preview resume' },
     timemachine: { name: 'Time Machine', icon: 'timemachine', keys: 'era switch 1983 1991 1998 back' },
+    memory: { name: 'Concentration', icon: 'memory', keys: 'game play memory match cards concentration' },
     docs: { name: 'Documents', icon: 'docs', keys: 'files documents' },
     downloads: { name: 'Downloads', icon: 'downloads', keys: 'download resume pdf' },
     trash: { name: 'Trash', icon: 'trash' }
   };
-  const DOCK = ['finder', 'about', 'safari', 'mail', 'guestbook', 'experience', 'photos', 'preview', 'companies', 'projects', 'education', 'terminal', 'timemachine', 'skills', '|', 'docs', 'downloads', 'trash'];
+  const DOCK = ['finder', 'about', 'safari', 'mail', 'guestbook', 'experience', 'photos', 'preview', 'companies', 'projects', 'education', 'terminal', 'timemachine', 'memory', 'skills', '|', 'docs', 'downloads', 'trash'];
 
   /* ------------------------------------------------------------- windows */
 
@@ -457,6 +462,39 @@ window.OSX = (function () {
     /* The papers of 2007: the year's headlines and a product brochure. */
     news07: () => { const d = window.PAPERS[2007].news; return doc(d.file, () => `<h1>${esc(d.title)}</h1><p><i>${esc(d.sub)}</i></p>${d.items.map(([h, t]) => `<p><b>${esc(h)}.</b> ${esc(t)}</p>`).join('')}<p style="color:#888">${esc(d.foot)}</p>`); },
     brochure07: () => { const d = window.PAPERS[2007].brochure; return { ...doc(d.file, () => `<div class="bro07"><div class="bro07-hero"><div><h1>${esc(d.title)}</h1><p>${esc(d.sub)}</p></div><svg viewBox="0 0 120 80" aria-hidden="true"><defs><linearGradient id="b7a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef0f2"/><stop offset="1" stop-color="#a9aeb5"/></linearGradient><linearGradient id="b7s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb0e0"/><stop offset="1" stop-color="#1f3f8f"/></linearGradient></defs><path d="M22 6h76a4 4 0 0 1 4 4v50H18V10a4 4 0 0 1 4-4z" fill="url(#b7a)"/><rect x="23" y="11" width="74" height="45" fill="url(#b7s)"/><path d="M6 60h108l-6 8H12z" fill="url(#b7a)"/><rect x="50" y="61" width="20" height="2" rx="1" fill="#8b9098"/></svg></div>${d.items.map(([h, t]) => `<div class="bro07-r"><b>${esc(h)}</b><span>${esc(t)}</span></div>`).join('')}<p class="bro07-f">${esc(d.foot)}</p></div>`), w: 560 }; },
+    /* Concentration: sixteen cards face down, eight pairs of this Mac's
+       own app icons. Turn two; a match stays up, a miss turns back. */
+    memory: () => ({
+      title: 'Concentration', w: 440, h: 500, cls: 'is-plain',
+      render: (b) => {
+        const faces = ['safari', 'mail', 'experience', 'guestbook', 'terminal', 'timemachine', 'preview', 'photos'];
+        let deck, up, done, moves, t0, tick;
+        const deal = () => {
+          deck = [...faces, ...faces].map((f) => ({ f, s: Math.random() })).sort((a, z) => a.s - z.s).map((x) => x.f);
+          up = []; done = 0; moves = 0; t0 = 0; clearInterval(tick);
+          b.innerHTML = `<div class="mm"><div class="mm-bar"><span>Moves: <b class="mv">0</b></span><span>Time: <b class="tm">0:00</b></span><button type="button" class="ax-btn mm-new">New Game</button></div><div class="mm-grid">${deck.map((f, i) => `<button type="button" class="mm-c" data-i="${i}" aria-label="Card"><span class="bk"></span><span class="fc">${ICON[APPS[f].icon]()}</span></button>`).join('')}</div><p class="mm-best">${store.get('mm07', 0) ? `Best: ${store.get('mm07', 0)} moves` : 'Match all eight pairs.'}</p></div>`;
+          b.querySelector('.mm-new').addEventListener('click', () => { SFX.click(); deal(); });
+        };
+        const time = () => { const s = Math.floor((Date.now() - t0) / 1000); const el = b.querySelector('.tm'); if (el) el.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+        b.addEventListener('click', (e) => {
+          const c = e.target.closest('.mm-c');
+          if (!c || c.classList.contains('is-up') || up.length === 2) return;
+          if (!t0) { t0 = Date.now(); tick = setInterval(time, 500); }
+          SFX.click();
+          c.classList.add('is-up');
+          up.push(c);
+          if (up.length < 2) return;
+          moves++; b.querySelector('.mv').textContent = moves;
+          const [a, z] = up;
+          if (deck[a.dataset.i] === deck[z.dataset.i]) {
+            setTimeout(() => { a.classList.add('is-done'); z.classList.add('is-done'); up = []; done++;
+              if (done === faces.length) { clearInterval(tick); time(); const best = store.get('mm07', 0); if (!best || moves < best) store.set('mm07', moves); b.querySelector('.mm-best').textContent = `All matched in ${moves} moves${!best || moves < best ? ': a new best!' : `. Best: ${best}.`}`; }
+            }, 380);
+          } else setTimeout(() => { a.classList.remove('is-up'); z.classList.remove('is-up'); up = []; }, 850);
+        });
+        deal();
+      }
+    }),
     terminal: () => ({ title: 'Terminal — bash — 80×24', w: 640, h: 400, cls: 'is-term', render: term }),
     safari: (url) => ({
       title: 'Ajay Sommi · Software Engineer', w: Math.min(1060, SW() - 80), h: SH() - 140, cls: 'is-safari',

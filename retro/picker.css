@@ -536,9 +536,9 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
    top. Laid over each room's own colour, under its shapes and machine. */
 .os-host .dk-shapes {
   background:
-    radial-gradient(ellipse 62% 55% at 50% 50%, rgba(255,255,255,.12), transparent 72%),
-    radial-gradient(ellipse 125% 105% at 50% 58%, transparent 48%, rgba(0,0,0,.15) 100%),
-    linear-gradient(180deg, rgba(0,0,0,.08), transparent 26%);
+    radial-gradient(ellipse 58% 52% at 50% 48%, rgba(255,255,255,.26), rgba(255,255,255,.08) 55%, transparent 78%),
+    radial-gradient(ellipse 120% 100% at 50% 58%, transparent 42%, rgba(0,0,0,.24) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.13), transparent 30%);
 }
 .phone-host .phone-room { box-shadow: inset 0 0 170px 30px rgba(0,0,0,.13), inset 0 110px 110px -70px rgba(0,0,0,.08); }
 .picker { box-shadow: inset 0 0 180px 30px rgba(0,0,0,.10); }

@@ -100,6 +100,7 @@ window.TERM = (function () {
     `  ${cmd('linkedin', pad('LINKEDIN', 12))}open LinkedIn`,
     `  ${cmd('news', pad('NEWS', 12))}the users group news sheet, fall 1983`,
     `  ${cmd('catalog', pad('CATALOG', 12))}the SOMMI //e brochure`,
+    `  ${cmd('bricks', pad('BRICKS', 12))}a game: break out the wall`,
     `  ${cmd('era', pad('ERA', 12))}start up from another era`,
     `  ${cmd('clear', pad('CLEAR', 12))}clear the screen`,
     '',
@@ -403,7 +404,8 @@ window.TERM = (function () {
     fortune: () => print([`"${esc(FORTUNES[Math.floor(Math.random() * FORTUNES.length)])}"`, '']),
     coffee: () => print(['BREWING... ERROR 418: I\u2019M A TEAPOT.', '']),
     ping: () => print(['PING ajay (127.0.0.1): 56 data bytes', '64 bytes: icmp_seq=0 time=0.26 ms', '64 bytes: icmp_seq=1 time=0.24 ms', ['  He responds fast. Try CONTACT.', 'dim'], '']),
-    games: () => print(['SHALL WE PLAY A GAME?', ['  ...on second thought, how about a resume? Type RESUME.', 'dim'], '']),
+    games: () => print(['SHALL WE PLAY A GAME?', `  ${cmd('bricks', 'BRICKS')}  break out the wall, one brick at a time.`, '']),
+    bricks: () => bricks(),
     vim: () => print(['STUCK? THE WAY OUT IS :q', '']),
     emacs: () => COMMANDS.vim(),
     ':q': () => print(['You weren\u2019t in vim. But nice reflex.', '']),
@@ -451,6 +453,115 @@ window.TERM = (function () {
   const echo = (text) => {
     out.insertBefore(line(`A:\\&gt; ${esc(text)}`), promptEl());
   };
+  /* BRICKS: the wall-breaking game, in characters. A wall of bricks along
+     the top, a ball, a paddle on the bottom row: ← and → (or A and D, or
+     the mouse, or the on-screen arrows) move it. Every brick is worth a
+     point, more for the higher rows; the ball quickens as the wall comes
+     down. Three balls. ESC or Q quits. */
+  let game = null;
+  const bricks = () => new Promise((resolve) => {
+    const C = 38, R = 17, ROWS = 5, BW = 3;
+    const wall = [...Array(ROWS)].map(() => [...Array(Math.floor(C / BW))].map(() => 1));
+    const g = { px: Math.floor(C / 2) - 3, pw: 7, bx: C / 2, by: R - 3, dx: 1, dy: -1, score: 0, lives: 3, tick: 95, t: 0, held: 0, wait: true, over: false };
+    const box = document.createElement('div');
+    box.className = 'term-game';
+    box.innerHTML = `<pre class="tg-field" aria-label="Bricks"></pre><div class="tg-ctl"><button type="button" data-g="-1">&lt;</button><button type="button" data-g="go">LAUNCH</button><button type="button" data-g="1">&gt;</button><button type="button" data-g="q">QUIT</button></div>`;
+    out.insertBefore(box, promptEl());
+    promptEl().hidden = true;
+    scrollDown();
+    const pre = box.querySelector('.tg-field');
+    const draw = () => {
+      const rows = [];
+      rows.push('+' + '-'.repeat(C) + '+' + `  SCORE ${String(g.score).padStart(3, '0')}  BALLS ${'O'.repeat(g.lives)}`);
+      for (let y = 0; y < R; y++) {
+        let line = '';
+        for (let x = 0; x < C; x++) {
+          let ch = ' ';
+          const wy = y - 1;
+          if (wy >= 0 && wy < ROWS) { const k = Math.floor(x / BW); if (k < wall[wy].length && wall[wy][k]) ch = x % BW === 0 ? '[' : x % BW === BW - 1 ? ']' : (wy < 2 ? '#' : wy < 4 ? '=' : '-'); }
+          if (y === R - 1 && x >= g.px && x < g.px + g.pw) ch = '=';
+          if (Math.round(g.by) === y && Math.round(g.bx) === x) ch = 'O';
+          line += ch;
+        }
+        rows.push('|' + line + '|');
+      }
+      rows.push('+' + '-'.repeat(C) + '+' + (g.over ? '  GAME OVER. LAUNCH TO PLAY AGAIN' : g.wait ? '  ARROWS MOVE, SPACE LAUNCHES' : ''));
+      pre.textContent = rows.join('\n');
+    };
+    const reset = (all) => {
+      if (all) { wall.forEach((r) => r.fill(1)); Object.assign(g, { score: 0, lives: 3, tick: 95, over: false }); }
+      Object.assign(g, { bx: g.px + g.pw / 2, by: R - 2, dx: Math.random() < 0.5 ? -1 : 1, dy: -1, wait: true });
+    };
+    const step = () => {
+      let nx = g.bx + g.dx, ny = g.by + g.dy;
+      if (nx < 0 || nx > C - 1) { g.dx = -g.dx; nx = g.bx + g.dx; window.SFX.key(); }
+      if (ny < 0) { g.dy = 1; ny = g.by + g.dy; window.SFX.key(); }
+      const wy = Math.round(ny) - 1, k = Math.floor(Math.round(nx) / BW);
+      if (wy >= 0 && wy < ROWS && k < wall[wy].length && wall[wy][k]) {
+        wall[wy][k] = 0; g.dy = -g.dy; ny = g.by + g.dy;
+        g.score += ROWS - wy; g.tick = Math.max(38, g.tick - 1.4); window.SFX.click();
+        if (wall.every((r) => r.every((b) => !b))) { wall.forEach((r) => r.fill(1)); g.tick = Math.max(38, g.tick - 10); reset(false); return; }
+      }
+      if (Math.round(ny) >= R - 1 && g.dy > 0) {
+        const hit = Math.round(nx) - g.px;
+        if (hit >= -1 && hit <= g.pw) {
+          g.dy = -1; ny = R - 2;
+          g.dx = hit < 2 ? -1 : hit > g.pw - 3 ? 1 : g.dx;
+          window.SFX.detent ? window.SFX.detent() : window.SFX.key();
+        } else if (ny > R) {
+          g.lives--; window.SFX.error();
+          if (g.lives <= 0) { g.over = true; g.wait = true; draw(); return; }
+          reset(false); return;
+        }
+      }
+      g.bx = nx; g.by = ny;
+    };
+    const move = (d) => { g.px = Math.max(0, Math.min(C - g.pw, g.px + d * 2)); if (g.wait && !g.over) g.bx = g.px + g.pw / 2; };
+    const launch = () => { if (g.over) { reset(true); return; } g.wait = false; };
+    let raf = 0;
+    const loop = (now) => {
+      raf = requestAnimationFrame(loop);
+      if (g.held) move(g.held * 0.5);
+      if (!g.wait && now - g.t > g.tick) { g.t = now; step(); }
+      draw();
+    };
+    raf = requestAnimationFrame(loop);
+    const quit = () => {
+      cancelAnimationFrame(raf);
+      game = null;
+      box.remove();
+      promptEl().hidden = false;
+      print([`BRICKS: ${g.score} POINTS.${g.score > store.get('bricks-hi', 0) ? ' A NEW HIGH SCORE!' : ` HIGH SCORE: ${store.get('bricks-hi', 0)}.`}`, '']).then(resolve);
+      if (g.score > store.get('bricks-hi', 0)) store.set('bricks-hi', g.score);
+      focus();
+    };
+    game = {
+      key: (e) => {
+        const k = e.key.toLowerCase();
+        if (k === 'arrowleft' || k === 'a') { move(-1); return true; }
+        if (k === 'arrowright' || k === 'd') { move(1); return true; }
+        if (k === ' ' || k === 'enter' || k === 'arrowup') { launch(); return true; }
+        if (k === 'escape' || k === 'q') { quit(); return true; }
+        return true;
+      }
+    };
+    // The mouse moves the paddle too, and the on-screen buttons can be held.
+    pre.addEventListener('pointermove', (e) => {
+      const r = pre.getBoundingClientRect(), cw = r.width / (C + 2);
+      const x = Math.floor((e.clientX - r.left) / cw) - 1 - Math.floor(g.pw / 2);
+      g.px = Math.max(0, Math.min(C - g.pw, x)); if (g.wait && !g.over) g.bx = g.px + g.pw / 2;
+    });
+    pre.addEventListener('click', launch);
+    box.querySelector('.tg-ctl').addEventListener('pointerdown', (e) => {
+      const b = e.target.closest('[data-g]'); if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      const v = b.dataset.g;
+      if (v === 'go') launch(); else if (v === 'q') quit(); else { g.held = +v; move(+v); }
+    });
+    addEventListener('pointerup', () => { g.held = 0; });
+    reset(true);
+  });
+
   const submit = (text, fromClick) => {
     flush();
     echo(text);
@@ -519,6 +630,7 @@ window.TERM = (function () {
     input.addEventListener('focus', () => root.classList.add('has-focus'));
     input.addEventListener('blur', () => root.classList.remove('has-focus'));
     input.addEventListener('keydown', (e) => {
+      if (game) { e.preventDefault(); game.key(e); return; }
       if (!ready) { e.preventDefault(); return; }
       if (queue.length) flush();
       if (e.key === 'Enter') { e.preventDefault(); submit(input.value); }

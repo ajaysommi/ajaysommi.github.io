@@ -272,3 +272,6 @@
 .pk.is-photo .pk-btns [data-b="next"] { left: 278.6px; }
 .pk.is-photo .pk-wheel-wrap { left: 62px; top: 330.5px; width: 215.3px; height: 215.3px; }
 .pk.is-photo .pk-hub { width: 74px; height: 74px; margin: -37px 0 0 -37px; }
+
+/* Orbit fills the screen under the title bar. */
+.lcd-pane canvas.pk-game { display: block; width: 100%; height: 100%; touch-action: none; }

@@ -1074,3 +1074,14 @@
 /* Sites from back then were built for desktops: shown 980 wide and zoomed
    out to the screen, as Safari on the first iPhone did. */
 .ip-screen .saf-frame[data-kind="site"] { position: absolute; left: 0; top: 0; width: 980px; height: 306.25%; flex: none; transform: scale(.32653); transform-origin: 0 0; }
+
+/* Bubbles: deep water, the score and lives in the corner, the card that
+   starts and ends a game. */
+.ip-screen .bb-app { position: absolute; inset: 0; overflow: hidden; touch-action: none; background: radial-gradient(120% 80% at 50% 0%, #2a8fd8, #0b4d94 55%, #062a5a); }
+.ip-screen .bb-app canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ip-screen .bb-hud { position: absolute; left: 10px; right: 10px; top: 28px; display: flex; justify-content: space-between; color: #fff; font: bold 18px Helvetica, Arial, sans-serif; text-shadow: 0 1px 2px rgba(0,0,0,.5); pointer-events: none; }
+.ip-screen .bb-msg { position: absolute; left: 30px; right: 30px; top: 30%; padding: 16px 14px 14px; border-radius: 12px; text-align: center; color: #fff; background: rgba(0,0,0,.45); border: 2px solid rgba(255,255,255,.7); font: 15px/1.35 Helvetica, Arial, sans-serif; }
+.ip-screen .bb-msg[hidden] { display: none; }
+.ip-screen .bb-msg b { display: block; font-size: 24px; margin-bottom: 4px; }
+.ip-screen .bb-msg p { margin: 6px 0; }
+.ip-screen .bb-msg span { display: inline-block; margin-top: 6px; font-weight: bold; color: #bfe6ff; }

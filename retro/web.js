@@ -262,7 +262,7 @@ window.WEB = (function () {
   /* -------------------------------------------------------------- menus */
 
   const MENUS = [
-    ['mark', I.pxmark(16), [['About This Computer', () => APPS98.about()], ['About SurfBoard', () => load('about:')], '-', ['Calculator', () => APPS98.calc()], ['Note Pad', () => APPS98.note()], ['Appearance', () => APPS98.appear()], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
+    ['mark', I.pxmark(16), [['About This Computer', () => APPS98.about()], ['About SurfBoard', () => load('about:')], '-', ['Calculator', () => APPS98.calc()], ['Note Pad', () => APPS98.note()], ['SommiSweeper', () => APPS98.mines()], ['Appearance', () => APPS98.appear()], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
     ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('To print the résumé, open the Résumé page and use Download.'); }, '⌘P']]],
     ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U']]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],
@@ -316,10 +316,10 @@ window.WEB = (function () {
 
   /* What sits on the desk and in its folders. Codes: page: opens a page
      in SurfBoard, win: a folder, app: a program, alert: a note. */
-  const DESK = [['globe', 'SurfBoard', 'app:surf'], ['hd', 'Macintosh HD', 'win:hd'], ['folder', 'Documents', 'win:docs'], ['resume', 'Résumé', 'page:resume'], ['book', 'Guestbook', 'page:guestbook'], ['mail', 'E-mail', 'page:contact']];
+  const DESK = [['globe', 'SurfBoard', 'app:surf'], ['hd', 'Macintosh HD', 'win:hd'], ['folder', 'Documents', 'win:docs'], ['bomb', 'SommiSweeper', 'app:mines'], ['resume', 'Résumé', 'page:resume'], ['book', 'Guestbook', 'page:guestbook'], ['mail', 'E-mail', 'page:contact']];
   const FOLDERS = {
     hd: ['Macintosh HD', [['folder', 'Applications', 'win:apps'], ['folder', 'Documents', 'win:docs'], ['folder', 'System Folder', 'win:sys'], ['globe', 'SurfBoard', 'app:surf']], '4 items · 1.2 GB available'],
-    apps: ['Applications', [['globe', 'SurfBoard', 'app:surf'], ['note', 'Note Pad', 'app:note'], ['chip', 'Calculator', 'app:calc'], ['puzzle', 'Appearance', 'app:appear']], '4 items'],
+    apps: ['Applications', [['globe', 'SurfBoard', 'app:surf'], ['note', 'Note Pad', 'app:note'], ['chip', 'Calculator', 'app:calc'], ['bomb', 'SommiSweeper', 'app:mines'], ['puzzle', 'Appearance', 'app:appear']], '5 items'],
     docs: ['Documents', [['resume', 'Résumé', 'page:resume'], ['doc', 'What’s New ’98', 'page:news'], ['doc', '56K Modem Ad', 'page:shop'], ['folder', 'Projects', 'page:projects'], ['photo', 'Garage Photos', 'page:garage'], ['cap', 'School', 'page:school']], '6 items'],
     sys: ['System Folder', [['mac', 'System', 'alert:sys'], ['app', 'Finder', 'alert:finder'], ['folder', 'Extensions', 'win:ext'], ['puzzle', 'Appearance', 'app:appear']], '4 items'],
     ext: ['Extensions', [['chip', '56K Modem Enabler', 'alert:ext'], ['chip', 'QuickTime™ 3.0', 'alert:ext'], ['chip', 'Portfolio Accelerator', 'alert:ext'], ['chip', 'Nostalgia Driver', 'alert:ext']], '4 items'],
@@ -409,6 +409,60 @@ window.WEB = (function () {
       const C = [['Jelly (picture)', ''], ['Bondi Blue', '#1a8ba3'], ['Grape', '#5d3f8e'], ['Tangerine', '#d9772b'], ['Lime', '#5c9c3a'], ['Strawberry', '#b8405a'], ['Graphite', '#5f6670'], ['Classic', '#3b6ea5']];
       const el = openWin('appear', 'Appearance', 300, 280, `<div class="p8-appear"><p>Desktop colour:</p>${C.map(([n, c]) => `<button type="button" class="bev sw" data-c="${c}"><i style="background:${c || 'url(assets/images/jelly-wallpaper.webp) center / cover'}"></i>${n}</button>`).join('')}</div>`);
       el.querySelector('.p8-appear').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (!b) return; window.SFX.click(); root.style.setProperty('--desk', b.dataset.c); root.classList.toggle('has-color', !!b.dataset.c); store.set('nt-desk-color', b.dataset.c); });
+    },
+    /* SommiSweeper: nine by nine, ten mines. The first click is always
+       safe; a number says how many mines touch that square; right click
+       (or Shift and click) plants a flag. The face starts a new game. */
+    mines: () => {
+      const N = 9, M = 10;
+      const el = openWin('mines', 'SommiSweeper', 214, 282, `<div class="ms"><div class="ms-top bev-in"><span class="ms-n">010</span><button type="button" class="ms-face bev">☺</button><span class="ms-t">000</span></div><div class="ms-grid bev-in"></div></div>`);
+      const grid = el.querySelector('.ms-grid'), face = el.querySelector('.ms-face'), nEl = el.querySelector('.ms-n'), tEl = el.querySelector('.ms-t');
+      let cells, started, over, flags, timer, secs;
+      const at = (i) => [i % N, Math.floor(i / N)];
+      const near = (i) => { const [x, y] = at(i), r = []; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const X = x + dx, Y = y + dy; if ((dx || dy) && X >= 0 && Y >= 0 && X < N && Y < N) r.push(Y * N + X); } return r; };
+      const pad3 = (v) => String(Math.max(0, Math.min(999, v))).padStart(3, '0');
+      const fresh = () => {
+        cells = [...Array(N * N)].map(() => ({ mine: false, open: false, flag: false, n: 0 }));
+        started = false; over = false; flags = 0; secs = 0; clearInterval(timer);
+        face.textContent = '☺'; nEl.textContent = pad3(M); tEl.textContent = '000';
+        grid.innerHTML = cells.map((_, i) => `<button type="button" class="ms-c bev" data-i="${i}"></button>`).join('');
+      };
+      const lay = (safe) => {
+        const ban = new Set([safe, ...near(safe)]);
+        let k = 0;
+        while (k < M) { const i = Math.floor(Math.random() * N * N); if (!ban.has(i) && !cells[i].mine) { cells[i].mine = true; k++; } }
+        cells.forEach((c, i) => { c.n = near(i).filter((j) => cells[j].mine).length; });
+        started = true;
+        timer = setInterval(() => { secs++; tEl.textContent = pad3(secs); }, 1000);
+      };
+      const paint = (i) => {
+        const c = cells[i], b = grid.children[i];
+        b.className = 'ms-c ' + (c.open ? 'is-open' : 'bev') + (c.flag && !c.open ? ' is-flag' : '') + (c.open && c.mine ? ' is-mine' : '');
+        b.textContent = c.open ? (c.mine ? '✹' : c.n || '') : c.flag ? '⚑' : '';
+        b.dataset.n = c.open && !c.mine ? c.n : '';
+      };
+      const open = (i) => {
+        const c = cells[i];
+        if (c.open || c.flag) return;
+        c.open = true; paint(i);
+        if (c.mine) { over = true; clearInterval(timer); face.textContent = '☹'; cells.forEach((d, j) => { if (d.mine) { d.open = true; paint(j); } }); grid.children[i].classList.add('is-boom'); window.SFX.error(); return; }
+        if (!c.n) near(i).forEach(open);
+      };
+      const won = () => cells.every((c) => c.mine || c.open);
+      grid.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-i]'); if (!b || over) return;
+        const i = +b.dataset.i;
+        if (e.shiftKey) { flag(i); return; }
+        if (!started) lay(i);
+        window.SFX.click();
+        open(i);
+        if (!over && won()) { over = true; clearInterval(timer); face.textContent = '☻'; const best = store.get('ms98', 0); if (!best || secs < best) store.set('ms98', secs); note('SommiSweeper', `Cleared in ${secs} seconds.${best && secs >= best ? ` Best: ${best}.` : ' A new best time!'}`, 'egg'); }
+      });
+      const flag = (i) => { const c = cells[i]; if (c.open || over) return; c.flag = !c.flag; flags += c.flag ? 1 : -1; nEl.textContent = pad3(M - flags); paint(i); window.SFX.key(); };
+      grid.addEventListener('contextmenu', (e) => { const b = e.target.closest('[data-i]'); if (!b) return; e.preventDefault(); flag(+b.dataset.i); });
+      face.addEventListener('click', () => { window.SFX.click(); fresh(); });
+      el.querySelector('[data-x]').addEventListener('click', () => clearInterval(timer));
+      fresh();
     },
     about: () => {
       openWin('about', 'About This Computer', 360, 180, `<div class="p8-about"><div class="hd">${I.pxmark(40)}<div><b>SommiNet 98</b><span>Built-in memory: 64 MB<br/>Virtual memory: Off<br/>Largest unused block: 41.2 MB</span></div></div><div class="mem"><span>SommiNet 98</span><i style="width:26%"></i><span>16.8 MB</span></div><div class="mem"><span>SurfBoard</span><i style="width:10%"></i><span>6.0 MB</span></div></div>`);

@@ -80,7 +80,12 @@ window.NOKIA = { start(room, exit) {
     ['Off the Clock', 'wrench', () => list('Off the Clock', P.offclock.map((s) => [s.name, () => push(photos(s))]))],
     ['Skills', 'chip', () => list('Skills', P.skills.map(([g, l]) => [g, () => push(list(g.split(' ')[0], l.map((sk) => [sk, () => { const at = usedAt(sk); push(txt(sk, `<p><b>${esc(sk)}</b></p><p>${at.length ? 'Used at:<br/>' + at.map(esc).join('<br/>') : 'Coursework and side projects.'}</p>`)); }])))]))],
     ['Education', 'cap', () => { const e = P.education; return txt('Education', `<p><b>${esc(e.school)}</b></p><p>${esc(e.degree)}<br/>${esc(e.when)}</p><p>${esc(e.text)}</p>`); }],
-    ['Extras', 'puzzle', () => list('Extras', [
+    ['Games', 'puzzle', () => list('Games', [
+      ['Snake II', () => push(snake())],
+      ['Top score', () => push(txt('Top score', `<p class="nk-big">Snake II</p><p>${store.get('nk-snake-hi', 0)} points</p>`))]
+    ])],
+    ['Extras', 'egg', () => list('Extras', [
+      ['More eras', () => push(txt('More eras', '<p>This phone is one of three in this portfolio.</p><p>Open it on a computer and there are four more machines to use: a 1983 terminal, a 1991 Macintosh, a 1998 iMac and a 2007 iMac, each with its own game.</p>'))],
       ['Composer', () => { SFX.tune(); window.EGGS.find('tune'); push(txt('Composer', '<p>♪ 8e2 8g2 8b2 8g2<br/>8a2 8c3 8b2 8g2<br/>8e2 8d2 8e2</p><p class="nk-dim">Now playing.</p>')); }],
       ['Clock', () => push(clock())],
       ['Fortune', () => push(txt('Fortune', `<p>“${esc(P.quote)}”</p>`))],
@@ -88,7 +93,7 @@ window.NOKIA = { start(room, exit) {
     ])],
     ['Settings', 'mac', () => list('Settings', [
       [`Key tones: ${store.get('nk-tones', true) ? 'On' : 'Off'}`, () => { store.set('nk-tones', !store.get('nk-tones', true)); refresh(); }],
-      ['Switch phone', () => exit()],
+      ['Switch device', () => exit()],
       ['Phone info', () => push(txt('Info', '<p><b>SOMMIA 3310</b></p><p>Software: v1.0<br/>Battery: 3 bars,<br/>forever.</p><p class="nk-dim">Built in 2026 by Ajay Sommi.</p>'))]
     ])]
   ];
@@ -98,6 +103,88 @@ window.NOKIA = { start(room, exit) {
   const confirm = (title, body, go) => ({ type: 'text', title, html: `<p class="nk-big">${body}</p>`, soft: 'Open', act: go });
   const clock = () => txt('Clock', `<p class="nk-clock">${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p><p>${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, '.')}</p>`);
   const open = (u) => window.open(u, '_blank', 'noopener');
+
+  /* ---------------------------------------------------------------- Snake */
+
+  /* Snake II, as the 3310 had it: the snake runs on a grid of square
+     pixels, 2 4 6 8 (or the arrows, or a swipe on the screen) steer it,
+     the rocker turns it left or right, each bite makes it longer and a
+     little faster, and running into itself ends the game. It goes through
+     the edges and comes out the other side. Navi pauses; C leaves. */
+  const snake = () => ({ type: 'game', title: 'Snake II', soft: 'Pause' });
+  let game = null;
+  const startSnake = () => {
+    const cv = document.createElement('canvas');
+    cv.className = 'nk-game';
+    view.appendChild(cv);
+    const box = view.getBoundingClientRect(), k = box.width / view.offsetWidth;
+    const CW = 22, CH = 12;
+    const px = Math.floor(Math.min((view.clientWidth - 8) / CW, (view.clientHeight - 20) / CH));
+    cv.width = CW * px; cv.height = CH * px;
+    const ctx = cv.getContext('2d');
+    const ink = '#1d2a10';
+    const g = { s: [[6, 6], [5, 6], [4, 6], [3, 6]], d: [1, 0], q: [], food: null, score: 0, tick: 190, over: false, paused: false, t: 0 };
+    const place = () => { let f; do { f = [Math.floor(Math.random() * CW), Math.floor(Math.random() * CH)]; } while (g.s.some(([x, y]) => x === f[0] && y === f[1])); g.food = f; };
+    place();
+    const draw = () => {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.fillStyle = ink;
+      g.s.forEach(([x, y]) => ctx.fillRect(x * px + 1, y * px + 1, px - 1, px - 1));
+      const [fx, fy] = g.food;
+      ctx.fillRect(fx * px + px / 2 - 1, fy * px + 1, 2, px - 2); ctx.fillRect(fx * px + 1, fy * px + px / 2 - 1, px - 2, 2);
+      soft.textContent = g.over ? 'Again' : g.paused ? 'Go on' : 'Pause';
+      const hd = view.querySelector('.nk-hd span:last-child');
+      if (hd) hd.textContent = g.score;
+      if (g.over) {
+        ctx.fillStyle = 'rgba(169,194,98,.85)'; ctx.fillRect(px * 3, px * 3, cv.width - px * 6, px * 6);
+        ctx.fillStyle = ink; ctx.font = `bold ${px * 1.6}px 'Pixelify Sans', monospace`; ctx.textAlign = 'center';
+        ctx.fillText('Game over', cv.width / 2, px * 5.4);
+        ctx.font = `${px * 1.3}px 'Pixelify Sans', monospace`; ctx.fillText(`${g.score} · best ${store.get('nk-snake-hi', 0)}`, cv.width / 2, px * 7.4);
+      }
+    };
+    const step = () => {
+      if (g.q.length) { const n = g.q.shift(); if (n[0] !== -g.d[0] || n[1] !== -g.d[1]) g.d = n; }
+      const [hx, hy] = g.s[0];
+      const nx = (hx + g.d[0] + CW) % CW, ny = (hy + g.d[1] + CH) % CH;
+      if (g.s.slice(0, -1).some(([x, y]) => x === nx && y === ny)) {
+        g.over = true;
+        if (g.score > store.get('nk-snake-hi', 0)) store.set('nk-snake-hi', g.score);
+        SFX.error && SFX.error();
+        if (navigator.vibrate) navigator.vibrate(120);
+        draw();
+        return;
+      }
+      g.s.unshift([nx, ny]);
+      if (nx === g.food[0] && ny === g.food[1]) { g.score += 7 + Math.floor(g.s.length / 5); g.tick = Math.max(70, g.tick - 6); place(); beep(); }
+      else g.s.pop();
+      draw();
+    };
+    const loop = (now) => {
+      if (!game || game.g !== g) return;
+      if (!g.over && !g.paused && now - g.t >= g.tick) { g.t = now; step(); }
+      requestAnimationFrame(loop);
+    };
+    const turn = (d) => { if (g.over) return; const last = g.q.length ? g.q[g.q.length - 1] : g.d; if ((d[0] !== last[0] || d[1] !== last[1]) && g.q.length < 3) g.q.push(d); };
+    /* A swipe across the screen steers too, for a thumb on a touchscreen. */
+    let sw = null;
+    cv.addEventListener('pointerdown', (e) => { sw = [e.clientX, e.clientY]; });
+    cv.addEventListener('pointerup', (e) => {
+      if (!sw) return;
+      const dx = e.clientX - sw[0], dy = e.clientY - sw[1]; sw = null;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 14) return;
+      turn(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]);
+    });
+    game = {
+      g,
+      dir: (k) => { const D = { 2: [0, -1], 8: [0, 1], 4: [-1, 0], 6: [1, 0] }; if (D[k]) turn(D[k]); },
+      rot: (s) => { const last = g.q.length ? g.q[g.q.length - 1] : g.d; turn(s < 0 ? [last[1], -last[0]] : [-last[1], last[0]]); },
+      navi: () => { if (g.over) { stopSnake(); view.innerHTML = '<div class="nk-hd"><span>Snake II</span><span>0</span></div>'; startSnake(); return; } g.paused = !g.paused; draw(); },
+      stop: () => { game = null; }
+    };
+    draw();
+    requestAnimationFrame(loop);
+  };
+  const stopSnake = () => { if (game) game.stop(); };
 
   /* --------------------------------------------------------------- engine */
 
@@ -111,7 +198,7 @@ window.NOKIA = { start(room, exit) {
   };
   const refresh = () => {
     const top = stack[stack.length - 1];
-    if (top.s.type === 'list' && top.s.title === 'Settings') top.s = MENU[9][2]();
+    if (top.s.type === 'list' && top.s.title === 'Settings') top.s = MENU.find((m) => m[0] === 'Settings')[2]();
     render();
   };
 
@@ -138,12 +225,16 @@ window.NOKIA = { start(room, exit) {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>${top.sel + 1}</span></div><ul class="nk-list">${s.items.slice(first, first + per).map(([t], k) => `<li class="${first + k === top.sel ? 'on' : ''}">${esc(t)}</li>`).join('')}</ul>${scrollbar(top.sel, s.items.length)}`;
     } else if (s.type === 'text') {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span></div><div class="nk-txt">${s.html}</div>`;
+    } else if (s.type === 'game') {
+      html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>0</span></div>`;
     } else if (s.type === 'photo') {
       const [src, t, d] = s.story.steps[s.i];
       html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>${s.i + 1}/${s.story.steps.length}</span></div><div class="nk-txt"><img data-src="${src}" alt="" /><p><b>${esc(t)}</b> ${esc(d)}</p></div>`;
     }
+    stopSnake();
     view.innerHTML = html;
     soft.textContent = s.soft || '';
+    if (s.type === 'game') startSnake();
     view.querySelectorAll('img[data-src]').forEach((im) => dither(im.dataset.src, 180).then((u) => { im.src = u; }));
   };
 
@@ -155,6 +246,7 @@ window.NOKIA = { start(room, exit) {
   const move = (d) => {
     const top = stack[stack.length - 1];
     const s = top.s;
+    if (s.type === 'game') { if (game) game.rot(d); return; }
     if (s.type === 'menu') { top.sel = (top.sel + d + MENU.length) % MENU.length; render(); }
     else if (s.type === 'list') { top.sel = (top.sel + d + s.items.length) % s.items.length; render(); }
     else if (s.type === 'text') textScroll(d);
@@ -171,12 +263,14 @@ window.NOKIA = { start(room, exit) {
     if (s.type === 'standby') { stack.push({ s: MENUS(), sel: 0 }); render(); return; }
     if (s.type === 'menu') { push(MENU[top.sel][2]()); return; }
     if (s.type === 'list') { s.items[top.sel][1](); return; }
+    if (s.type === 'game') { if (game) game.navi(); return; }
     if (s.act) { s.act(); return; }
     back();
   };
 
   const digit = (k) => {
     const top = stack[stack.length - 1];
+    if (top.s.type === 'game') { if (game) game.dir(k); return; }
     const n = k === '0' ? 10 : +k;
     if (!n) return;
     if (top.s.type === 'standby') { stack.push({ s: MENUS(), sel: Math.min(n, MENU.length) - 1 }); render(); return; }
@@ -195,7 +289,9 @@ window.NOKIA = { start(room, exit) {
   room.querySelector('.nk-power').addEventListener('click', () => { if (on) { beep(); exit(); } });
   document.addEventListener('keydown', (e) => {
     if (!on || !room.isConnected || room.offsetParent === null) return;
-    const map = { ArrowUp: () => move(-1), ArrowDown: () => move(1), Enter: navi, Backspace: back, Escape: back };
+    const inGame = stack.length && stack[stack.length - 1].s.type === 'game';
+    const map = inGame ? { ArrowUp: () => digit('2'), ArrowDown: () => digit('8'), ArrowLeft: () => digit('4'), ArrowRight: () => digit('6'), Enter: navi, ' ': navi, Backspace: back, Escape: back }
+      : { ArrowUp: () => move(-1), ArrowDown: () => move(1), Enter: navi, Backspace: back, Escape: back };
     if (map[e.key]) { e.preventDefault(); press(map[e.key])(); }
     else if (/^[0-9]$/.test(e.key)) press(() => digit(e.key))();
   });

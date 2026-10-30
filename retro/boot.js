@@ -177,6 +177,15 @@
      to sharpen into the real thing. Reversed, the machine shrinks back into
      its drawing. */
   const center = (r) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  /* The picker's own shapes clear away at once when a machine is picked,
+     so the room it opens into starts empty and its shapes fly in fresh;
+     back on the picker they are there again. */
+  const clearShapes = (pick, on) => {
+    const ps = pick && pick.querySelector(':scope > .bg-shapes');
+    if (!ps) return;
+    ps.getAnimations().filter((a) => a.id === 'clear').forEach((a) => a.cancel());
+    if (on) { const a = ps.animate([{ opacity: getComputedStyle(ps).opacity }, { opacity: 0 }], { duration: 160, easing: 'ease-out', fill: 'forwards' }); a.id = 'clear'; }
+  };
   const fit = (box, w, h) => { const k = Math.min(box.width / w, box.height / h); return { left: box.left + (box.width - w * k) / 2, top: box.top + (box.height - h * k) / 2, width: w * k, height: h * k }; };
   /* A shadow (or any filter) with its lengths multiplied: a copy drawn at
      one size and shown at another needs its shadow scaled to match. */
@@ -656,6 +665,7 @@
       if (prev < 0 && !pick.hidden && art) {
         /* The room comes up empty under the flying drawing; the machine
            lands, flashes in, and the era's shapes fly out and stick. */
+        clearShapes(pick, true);
         host.classList.add('is-morph');
         show();
         backdrop.querySelector('.bg-shapes').style.visibility = 'hidden';
@@ -706,6 +716,7 @@
         ERAS[prev].sys().leave();
         host.classList.add('is-morph');
         pick.hidden = false;
+        clearShapes(pick, false);
         pick.classList.add('is-returning');
         osOn(false);
         mark();
@@ -898,6 +909,7 @@
       art.style.visibility = 'hidden';
       box.style.opacity = '0';
       if (layer) layer.style.visibility = 'hidden';
+      clearShapes(pick, true);
       pick.classList.add('is-leaving');
       setTimeout(() => arrival(to, id === 'nokia' ? '#dbe7ff' : id === 'pocket' ? '#f3ecff' : '#ffffff', room), 340);
       const land = await flight({ glyph: art, glyphBox: from, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: to, shadow: shadowOf(dev), dur: 760 });
@@ -965,6 +977,7 @@
         /* The phone shrinks back into its drawing on the tile. */
         sel = PICKS.findIndex((x) => x.id === id);
         pick.hidden = false;
+        clearShapes(pick, false);
         center(sel, false);
         markDots();
         const { dev, box, shot, art } = parts(id);

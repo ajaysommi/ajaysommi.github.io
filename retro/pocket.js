@@ -130,6 +130,7 @@ window.POCKET = { start(room, exit) {
         [li('Guestbook'), () => open('recs')],
         [li('Contact'), () => open('contact')],
         [li('Resume', '↗'), () => window.open(P.resume, '_blank', 'noopener')],
+        [li('Games'), () => open('games')],
         [li('Extras'), () => open('extras')],
         [li('Settings'), () => open('settings')],
         [li('Switch device', '\u21c4'), () => exit()]
@@ -185,7 +186,7 @@ window.POCKET = { start(room, exit) {
         [li('Flashlight', ''), () => { lcd.classList.toggle('is-flash'); window.EGGS.find('light'); }],
         [li('Play a tune', '♪'), () => { window.SFX.tune(); window.EGGS.find('tune'); }],
         [li('Easter eggs', `${window.EGGS.count()}/${window.EGGS.total}`), () => open('eggs')],
-        [li('Desktop version'), () => open('desk')]
+        [li('More eras on a computer'), () => open('desk')]
       ]
     }),
     fortune: () => {
@@ -193,7 +194,10 @@ window.POCKET = { start(room, exit) {
       return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(F[Math.floor(Math.random() * F.length)])}”</p><div class="hint">MENU, then Fortune again for another</div>`);
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
-    desk: () => textScreen('Desktop version', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 desktop, the 1998 web or a 2007 desktop.</p><p>Open this page on a computer to try it.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
+    desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick: a 1983 terminal, a 1991 Macintosh, a 1998 iMac or a 2007 iMac, each one yours to click around, with a game on every one.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
+    games: () => ({ type: 'menu', title: 'Games', items: [[li('Orbit'), () => open('orbit')], [li('How to play'), () => open('orbithelp')], [li('Best score', String(store.get('pod-orbit-hi', 0))), () => say(`Best: ${store.get('pod-orbit-hi', 0)}`)]] }),
+    orbithelp: () => textScreen('Orbit', '<h2>Orbit</h2><p>Turn the wheel to swing the paddle around the ring and keep the ball inside.</p><p>Every return speeds it up. Every five, the paddle gets shorter. At 15 a second ball joins in.</p><p>Press the centre to launch or pause. MENU quits.</p><div class="hint">three balls to lose · good luck</div>'),
+    orbit: () => ({ type: 'game', title: 'Orbit' }),
     settings: () => ({
       type: 'menu', title: 'Settings',
       items: [
@@ -212,6 +216,92 @@ window.POCKET = { start(room, exit) {
       ]
     }),
     aboutdev: () => textScreen('About', `<h2>iSommi Classic</h2><div class="m">Model AJ-26 · firmware 1.0</div><p>Capacity: one portfolio.<br/>Battery: 80%, forever.</p><p>Built in 2026 by Ajay Sommi.</p><div class="hint">try the HOLD switch on top</div>`)
+  };
+
+  /* ---------------------------------------------------------------- Orbit */
+
+  /* A ring, a paddle on it, balls inside. The wheel is the only control:
+     the paddle follows the thumb around the ring exactly as far as the
+     thumb turns. A ball that reaches the ring off the paddle is lost. */
+  let game = null;
+  const orbit = (cv) => {
+    const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    const c = cv.getContext('2d');
+    c.scale(dpr, dpr);
+    const css = getComputedStyle(lcd), ink = css.getPropertyValue('--lcd-ink').trim() || '#1c2614';
+    const cx = W / 2, cy = H / 2 + 6, R = Math.min(W, H - 12) / 2 - 8;
+    const g = { pa: -Math.PI / 2, hw: 0.42, balls: [], score: 0, lives: 3, state: 'ready', hits: 0, t: performance.now(), speed: R / 1000, msg: 'press the centre' };
+    const launch = () => {
+      const a = Math.random() * Math.PI * 2;
+      g.balls.push({ x: cx, y: cy, vx: Math.cos(a) * g.speed, vy: Math.sin(a) * g.speed });
+    };
+    const norm = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
+    const draw = () => {
+      c.clearRect(0, 0, W, H);
+      c.fillStyle = ink; c.strokeStyle = ink;
+      c.font = `600 14px ${getComputedStyle(document.body).getPropertyValue('--pixel') || 'monospace'}`;
+      c.textAlign = 'left'; c.fillText(String(g.score), 6, 14);
+      c.textAlign = 'right'; c.fillText('●'.repeat(g.lives) + '○'.repeat(3 - g.lives), W - 6, 14);
+      c.lineWidth = 1; c.setLineDash([2, 3]); c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+      c.lineWidth = 6; c.lineCap = 'butt'; c.beginPath(); c.arc(cx, cy, R, g.pa - g.hw, g.pa + g.hw); c.stroke();
+      g.balls.forEach((b) => c.fillRect(b.x - 3, b.y - 3, 6, 6));
+      c.fillRect(cx - 1, cy - 1, 2, 2);
+      if (g.state !== 'play') {
+        c.textAlign = 'center';
+        c.font = `600 16px ${getComputedStyle(document.body).getPropertyValue('--pixel') || 'monospace'}`;
+        c.fillText(g.state === 'over' ? 'Game over' : g.state === 'paused' ? 'Paused' : 'Orbit', cx, cy - 14);
+        c.font = `13px ${getComputedStyle(document.body).getPropertyValue('--pixel') || 'monospace'}`;
+        c.fillText(g.msg, cx, cy + 22);
+      }
+    };
+    let raf = 0;
+    const frame = (now) => {
+      const dt = Math.min(40, now - g.t); g.t = now;
+      if (g.state === 'play') {
+        for (const b of g.balls.slice()) {
+          b.x += b.vx * dt; b.y += b.vy * dt;
+          const dx = b.x - cx, dy = b.y - cy, d = Math.hypot(dx, dy);
+          if (d >= R - 6 && dx * b.vx + dy * b.vy > 0) {
+            const a = Math.atan2(dy, dx), off = norm(a - g.pa);
+            if (Math.abs(off) <= g.hw + 0.06) {
+              // Back inward, angled by where it struck the paddle.
+              const out = a + Math.PI + (off / g.hw) * 0.75 + (Math.random() - 0.5) * 0.12;
+              const sp = Math.hypot(b.vx, b.vy) * 1.04;
+              b.vx = Math.cos(out) * sp; b.vy = Math.sin(out) * sp;
+              b.x = cx + Math.cos(a) * (R - 7); b.y = cy + Math.sin(a) * (R - 7);
+              g.score++; g.hits++; buzz(true);
+              if (g.hits % 5 === 0) g.hw = Math.max(0.16, g.hw * 0.88);
+              if (g.score === 15 || g.score === 40) { g.speed = Math.hypot(b.vx, b.vy) * 0.85; launch(); say('Another ball!'); }
+            } else if (d > R + 8) {
+              g.balls.splice(g.balls.indexOf(b), 1);
+              if (navigator.vibrate) navigator.vibrate(60);
+              window.SFX.error && window.SFX.error();
+              if (!g.balls.length) {
+                g.lives--;
+                if (g.lives <= 0) {
+                  g.state = 'over';
+                  const hi = store.get('pod-orbit-hi', 0);
+                  if (g.score > hi) { store.set('pod-orbit-hi', g.score); g.msg = `new best: ${g.score}`; } else g.msg = `best ${hi} · centre to retry`;
+                } else { g.state = 'ready'; g.msg = `${g.lives} left · press the centre`; }
+              }
+            }
+          }
+        }
+      }
+      draw();
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return {
+      turn: (deg) => { g.pa = norm(g.pa + deg * Math.PI / 180); },
+      press: () => {
+        if (g.state === 'over') { Object.assign(g, { hw: 0.42, balls: [], score: 0, lives: 3, hits: 0, speed: R / 1000, state: 'ready', msg: 'press the centre' }); return; }
+        if (g.state === 'ready') { g.speed = Math.max(g.speed, R / 1000); launch(); g.state = 'play'; return; }
+        g.state = g.state === 'play' ? 'paused' : 'play'; g.msg = 'press the centre';
+      },
+      stop: () => cancelAnimationFrame(raf)
+    };
   };
 
   /* ------------------------------------------------------------- render */
@@ -234,9 +324,12 @@ window.POCKET = { start(room, exit) {
       p.style.overflow = 'hidden';
       if (top.color) { const im = p.querySelector('img'); im.removeAttribute('data-src'); im.src = src; im.classList.add('is-color'); }
     }
+    if (game) { game.stop(); game = null; }
+    if (s.type === 'game') p.innerHTML = '<canvas class="pk-game" aria-label="Orbit: turn the wheel to move the paddle"></canvas>';
     view.innerHTML = '';
     view.appendChild(p);
     pane = p;
+    if (s.type === 'game') game = orbit(p.querySelector('canvas'));
     backBtn.hidden = stack.length <= 1;
     ditherIn(p);
     if (s.type === 'menu') scrollSel();
@@ -364,6 +457,8 @@ window.POCKET = { start(room, exit) {
     const r = wheel.getBoundingClientRect();
     dot.style.transform = `rotate(${a}deg) translate(${r.width * 0.33}px)`;
     if (wt.turned > 8) wheel.classList.add('is-turning');
+    // In a game the wheel steers continuously, degree for degree.
+    if (game && on && !held) { game.turn(d); wt.acc = 0; return; }
     while (Math.abs(wt.acc) >= 15) {
       const s = Math.sign(wt.acc);
       wt.acc -= s * 15;
@@ -382,6 +477,7 @@ window.POCKET = { start(room, exit) {
       if (!guard()) return;
       tap();
       const a = w.a0;
+      if (game && !(a < -45 && a >= -135)) return;
       if (a < -45 && a >= -135) back();
       else if (a >= -45 && a < 45) step(1);
       else if (a >= 45 && a < 135) play();
@@ -398,7 +494,7 @@ window.POCKET = { start(room, exit) {
     else if (z.classList.contains('r')) step(1);
     else play();
   }));
-  hub.addEventListener('click', () => { if (!guard()) return; tap(); select(); });
+  hub.addEventListener('click', () => { if (!guard()) return; tap(); if (game) { game.press(); return; } select(); });
   /* MENU goes all the way out to the main menu. */
   const home = () => { if (stack.length <= 1) return; stack.length = 1; render(-1); };
   /* The four touch buttons over the wheel, as the 2003 model had them. */
@@ -454,6 +550,11 @@ window.POCKET = { start(room, exit) {
   document.addEventListener('keydown', (e) => {
     if (!on) { if (e.key === 'Enter' || e.key === ' ') insert(); return; }
     if (!guard()) return;
+    if (game) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); game.turn(-14); return; }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); game.turn(14); return; }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); game.press(); return; }
+    }
     if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
     else if (e.key === 'ArrowRight') step(1);

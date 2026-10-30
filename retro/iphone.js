@@ -183,6 +183,9 @@ window.IPHONE = { start(room, exit) {
       lg('bg', [[0, '#3a3f4a'], [1, '#101318']])),
     clipGH: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g transform="translate(10 10.5) scale(2.32)"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" fill="#fff"/></g>`,
       lg('bg', [[0, '#5b5f66'], [0.5, '#2c2f35'], [1, '#121418']])),
+    /* Bubbles: a glossy blue tile with bubbles rising through it. */
+    bubbles: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><circle cx="20" cy="36" r="10" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="37" cy="22" r="7" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="40" cy="41" r="4.5" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="17" cy="32" r="3" fill="#fff" opacity=".85"/><circle cx="35" cy="19.5" r="2" fill="#fff" opacity=".85"/>`,
+      lg('bg', [[0, '#6fd3ff'], [0.5, '#1d8fe0'], [1, '#0a4fa8']]) + rg('bb', [[0, '#ffffff', 0.15], [0.7, '#bfe9ff', 0.35], [1, '#ffffff', 0.75]], 0.35, 0.3, 0.7)),
     clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="40" text-anchor="middle" ${HV} font-weight="bold" font-size="30" fill="#fff" letter-spacing="-1">in</text>`,
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
@@ -821,6 +824,7 @@ window.IPHONE = { start(room, exit) {
 
   /* Notes: every note can be edited, new ones made, sent or thrown away. */
   const NOTES_DEFAULT = [
+    ['More eras', 'This phone is one of three in this portfolio (a 2000 Nokia-style candybar and a 2004 click-wheel player are the others: Eras, at the bottom).\n\nOn a laptop or desktop there are whole computers too: a 1983 terminal, a 1991 Macintosh, a 1998 iMac and a 2007 iMac, each one yours to click around, with a game on every one.\n\nOpen this page on a computer to try them.'],
     ['About me', `${P.about[0]}\n\n${P.about[1]}`],
     ['Education', `${P.education.school}\n${P.education.degree}\n${P.education.college}\nGraduating ${P.education.when}\n\n${P.education.text}`],
     ['Off the clock', `“${P.quote}”\n\nRepairs, teardowns and builds: see Builds.`],
@@ -1031,9 +1035,88 @@ window.IPHONE = { start(room, exit) {
     app.el.querySelector('.ml-tb').addEventListener('click', (e) => { const b = e.target.closest('[data-a]'); if (!b) return; SFX.click(); if (b.dataset.a === 'c') compose(P.email, ''); else alertBox('No New Mail'); });
   };
 
+  /* Bubbles: they rise from the bottom; pop them before they float off
+     the top. Three get away and it is over. They come faster and closer
+     together as the score climbs, the small ones are worth more, and from
+     30 points on some are red: popping one of those costs a life. Fingers
+     at once all count. */
+  const bubbles = (app) => {
+    app.el.innerHTML = '<div class="bb-app"><canvas></canvas><div class="bb-hud"><span class="s">0</span><span class="l">●●●</span></div><div class="bb-msg"><b>Bubbles</b><p>Pop them before they float away.<br/>Don’t touch the red ones.</p><p class="hi"></p><span>Tap to start</span></div></div>';
+    const root = app.el.querySelector('.bb-app'), cv = root.querySelector('canvas'), msg = root.querySelector('.bb-msg');
+    const W = 320, H = root.clientHeight || 440, dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    const c = cv.getContext('2d'); c.scale(dpr, dpr);
+    const COLS = ['#7fd4ff', '#a7f0b4', '#ffd27a', '#e3b5ff', '#ff9fc6', '#9fd0ff'];
+    let g = null, raf = 0;
+    const hi = () => store.get('ip-bubbles-hi', 0);
+    msg.querySelector('.hi').textContent = hi() ? `Best: ${hi()}` : '';
+    const reset = () => { g = { b: [], pops: [], score: 0, lives: 3, t: performance.now(), next: 0, play: true }; };
+    const spawn = (now) => {
+      const lvl = Math.min(1, g.score / 160);
+      const r = 14 + Math.random() * (26 - lvl * 8);
+      const red = g.score >= 30 && Math.random() < 0.16 + lvl * 0.1;
+      g.b.push({ x: r + Math.random() * (W - 2 * r), y: H + r, r, v: (0.035 + Math.random() * 0.03 + lvl * 0.07) * (1.2 - r / 60), w: Math.random() * 6.28, c: red ? '#ff4a3d' : COLS[Math.floor(Math.random() * COLS.length)], red });
+      g.next = now + Math.max(240, 900 - g.score * 5) * (0.6 + Math.random() * 0.6);
+    };
+    const hud = () => { root.querySelector('.s').textContent = g.score; root.querySelector('.l').textContent = '●'.repeat(Math.max(0, g.lives)) + '○'.repeat(3 - Math.max(0, g.lives)); };
+    const lose = () => {
+      g.lives--; hud();
+      if (navigator.vibrate) navigator.vibrate(80);
+      if (g.lives > 0) return;
+      g.play = false;
+      if (g.score > hi()) store.set('ip-bubbles-hi', g.score);
+      msg.querySelector('b').textContent = 'Game over';
+      msg.querySelector('p').innerHTML = `You popped ${g.score} points’ worth.`;
+      msg.querySelector('.hi').textContent = `Best: ${hi()}`;
+      msg.querySelector('span').textContent = 'Tap to play again';
+      msg.hidden = false;
+    };
+    const frame = (now) => {
+      raf = requestAnimationFrame(frame);
+      if (!g) return;
+      const dt = Math.min(40, now - g.t); g.t = now;
+      if (g.play && now >= g.next) spawn(now);
+      c.clearRect(0, 0, W, H);
+      for (const b of g.b.slice()) {
+        if (g.play) { b.y -= b.v * dt; b.w += dt * 0.003; }
+        const x = b.x + Math.sin(b.w) * 4;
+        if (b.y < -b.r) { g.b.splice(g.b.indexOf(b), 1); if (!b.red && g.play) lose(); continue; }
+        const gr = c.createRadialGradient(x - b.r * 0.35, b.y - b.r * 0.4, b.r * 0.1, x, b.y, b.r);
+        gr.addColorStop(0, 'rgba(255,255,255,.9)'); gr.addColorStop(0.35, b.c + '55'); gr.addColorStop(0.9, b.c + 'aa'); gr.addColorStop(1, 'rgba(255,255,255,.85)');
+        c.fillStyle = gr; c.beginPath(); c.arc(x, b.y, b.r, 0, Math.PI * 2); c.fill();
+        c.fillStyle = 'rgba(255,255,255,.9)'; c.beginPath(); c.ellipse(x - b.r * 0.38, b.y - b.r * 0.42, b.r * 0.22, b.r * 0.13, -0.6, 0, Math.PI * 2); c.fill();
+        b.sx = x;
+      }
+      for (const p of g.pops.slice()) {
+        p.t += dt; const k = p.t / 260;
+        if (k >= 1) { g.pops.splice(g.pops.indexOf(p), 1); continue; }
+        c.strokeStyle = `rgba(255,255,255,${1 - k})`; c.lineWidth = 2;
+        for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.beginPath(); c.moveTo(p.x + Math.cos(a) * p.r * (0.6 + k), p.y + Math.sin(a) * p.r * (0.6 + k)); c.lineTo(p.x + Math.cos(a) * p.r * (0.9 + k * 1.2), p.y + Math.sin(a) * p.r * (0.9 + k * 1.2)); c.stroke(); }
+        if (p.pts) { c.fillStyle = `rgba(255,255,255,${1 - k})`; c.font = 'bold 15px Helvetica, Arial, sans-serif'; c.textAlign = 'center'; c.fillText(p.pts, p.x, p.y - 4 - k * 18); }
+      }
+    };
+    raf = requestAnimationFrame(frame);
+    root.addEventListener('pointerdown', (e) => {
+      if (!g || !g.play) { reset(); hud(); msg.hidden = true; return; }
+      const r = cv.getBoundingClientRect(), k = r.width / W;
+      const x = (e.clientX - r.left) / k, y = (e.clientY - r.top) / k;
+      for (let i = g.b.length - 1; i >= 0; i--) {
+        const b = g.b[i];
+        if (Math.hypot(x - (b.sx || b.x), y - b.y) <= b.r + 8) {
+          g.b.splice(i, 1);
+          if (b.red) { g.pops.push({ x: b.sx || b.x, y: b.y, r: b.r, t: 0, pts: '' }); lose(); }
+          else { const pts = Math.max(1, Math.round(40 / b.r)); g.score += pts; g.pops.push({ x: b.sx || b.x, y: b.y, r: b.r, t: 0, pts: '+' + pts }); SFX.key(); hud(); }
+          return;
+        }
+      }
+    });
+    app.def.onClose = () => cancelAnimationFrame(raf);
+  };
+
   const APPS = {
     guestbook: { name: 'Text', icon: 'sms', open: messages },
     experience: { name: 'Calendar', icon: 'calendar', open: calendar },
+    bubbles: { name: 'Bubbles', icon: 'bubbles', bare: true, bar: 'black', open: bubbles },
     builds: { name: 'Photos', icon: 'photos', cls: 'is-photos', open(app) {
       app.push('Photo Albums', (pg) => plain(pg, P.offclock.map((s) => ({ text: `${s.name} (${s.steps.length})`, img: s.cover, cls: 'alb', go: () => app.push(s.name, (p) => {
         p.classList.add('ph-pg');
@@ -1448,7 +1531,7 @@ window.IPHONE = { start(room, exit) {
 
   /* The original grid: icons 57 points square, columns 75 apart starting
      19 in, rows 90 apart starting 19 under the status bar. */
-  const GRID = ['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'];
+  const GRID = ['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin', 'bubbles'];
   const DOCK = ['contact', 'email', 'resume', 'about'];
   const iconBtn = (id) => {
     const b = h('button', 'ip-icon', `<span class="ic">${ICON[APPS[id].icon]()}</span><span class="lbl">${esc(APPS[id].name)}</span>`);

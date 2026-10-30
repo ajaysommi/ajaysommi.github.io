@@ -691,3 +691,24 @@ img { display: block; max-width: 100%; }
 .p8-about .hd b { display: block; font-size: 15px; }
 .p8-about .mem { display: grid; grid-template-columns: 90px 1fr 60px; align-items: center; gap: 8px; margin: 4px 0; }
 .p8-about .mem i { display: block; height: 10px; background: repeating-linear-gradient(90deg, #3a3aa8 0 6px, #6a6ad8 6px 8px); border: 1px solid #000; }
+
+/* BRICKS on the 1983 terminal: the field in the phosphor's own glyphs,
+   and big on-screen keys for anyone without arrows. */
+.term-game { margin: 6px 0 10px; }
+.tg-field { margin: 0; font: inherit; line-height: 1.02; white-space: pre; color: var(--ph); cursor: none; user-select: none; -webkit-user-select: none; }
+.tg-ctl { display: flex; gap: 10px; margin-top: 8px; }
+.tg-ctl button { font: inherit; color: var(--ph); background: transparent; border: 1px solid var(--ph-dim); padding: 2px 14px; cursor: pointer; }
+.tg-ctl button:active { background: var(--ph-dim); color: #000; }
+/* SommiSweeper, in Platinum. */
+.ms { padding: 6px; background: #dcdcdc; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; }
+.p8-body:has(.ms) { background: #dcdcdc; }
+.ms-top { display: flex; justify-content: space-between; align-items: center; padding: 3px 5px; }
+.ms-top span { font: bold 18px 'Courier New', monospace; color: #e01010; background: #000; padding: 0 4px; letter-spacing: 1px; }
+.ms-face { width: 28px; height: 28px; font-size: 19px; line-height: 1; background: #dcdcdc; cursor: default; padding: 0; }
+.ms-grid { display: grid; grid-template-columns: repeat(9, 20px); grid-auto-rows: 20px; justify-content: center; }
+.ms-c { width: 20px; height: 20px; padding: 0; background: #dcdcdc; font: bold 13px var(--pixel); cursor: default; }
+.ms-c.is-open { border: 0; border-right: 1px solid #a8a8a8; border-bottom: 1px solid #a8a8a8; background: #ececec; }
+.ms-c.is-flag { color: #d00; }
+.ms-c.is-mine { color: #000; }
+.ms-c.is-boom { background: #f33; }
+.ms-c[data-n="1"] { color: #1a3ad0; } .ms-c[data-n="2"] { color: #1e7a1e; } .ms-c[data-n="3"] { color: #d01a1a; } .ms-c[data-n="4"] { color: #10107a; } .ms-c[data-n="5"] { color: #7a1010; } .ms-c[data-n="6"] { color: #107a7a; }
