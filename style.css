@@ -5424,21 +5424,17 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-ad-wrap.is-off { display: none; }
 .era-ad-box { position: relative; min-height: 0; width: min(calc(100vw - 2 * var(--gutter)), var(--maxw)); }
 .era-ad-box > .era-ad, .era-ad-box > .era-ad-x { opacity: 0; }
-/* It pops out from its own middle like something with a little give: it
-   stretches as it shoots out in the direction it is opening (down on a
-   computer, up off the nav on a phone, --dir), overshoots, and jiggles to
-   rest along that same line. */
+/* It pops out from its own middle with a little give: a small stretch in
+   the direction it is opening (down on a computer, up off the nav on a
+   phone, --dir), and one small bounce back to its own shape. */
 .era-ad-wrap { --dir: 1; }
-.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .9s linear both; will-change: transform, opacity; }
-.era-ad-wrap.is-served .era-ad-x { opacity: 1; transition: opacity .4s ease .45s; }
+.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .5s linear both; will-change: transform, opacity; }
+.era-ad-wrap.is-served .era-ad-x { opacity: 1; transition: opacity .3s ease .25s; }
 .era-ad-box { z-index: 1; }
 @keyframes era-ad-launch {
-  0%   { opacity: 0; transform: translateY(calc(var(--dir) * -8px)) scale(.62, .4); animation-timing-function: cubic-bezier(.22, .75, .4, 1); }
-  14%  { opacity: 1; }
-  30%  { transform: translateY(calc(var(--dir) * 3px)) scale(.985, 1.1); animation-timing-function: cubic-bezier(.45, 0, .45, 1); }
-  48%  { transform: translateY(calc(var(--dir) * -1.5px)) scale(1.02, .94); animation-timing-function: cubic-bezier(.45, 0, .45, 1); }
-  66%  { transform: translateY(calc(var(--dir) * .5px)) scale(.995, 1.025); animation-timing-function: cubic-bezier(.45, 0, .45, 1); }
-  83%  { transform: scale(1.003, .992); animation-timing-function: cubic-bezier(.45, 0, .45, 1); }
+  0%   { opacity: 0; transform: translateY(calc(var(--dir) * -6px)) scale(.94, .7); animation-timing-function: cubic-bezier(.25, .8, .4, 1); }
+  30%  { opacity: 1; }
+  50%  { transform: translateY(calc(var(--dir) * 1px)) scale(.995, 1.04); animation-timing-function: cubic-bezier(.4, 0, .3, 1); }
   100% { opacity: 1; transform: none; }
 }
 .era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }

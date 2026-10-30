@@ -118,10 +118,10 @@
     document.body.appendChild(frame);
 
     const FLY = 760;
-    // Pixels go in a shuffled order, roughly bottom to top; each piece of
-    // the smooth mark comes up as its own pixels start to go, so the mark
-    // is never missing.
-    cells.sort((a, b) => (+b.getAttribute('y') + Math.random() * 6) - (+a.getAttribute('y') + Math.random() * 6));
+    // Pixels go in a shuffled order, but roughly top to bottom, as they
+    // came in; each piece of the smooth mark comes up as its own pixels
+    // start to go, so the mark is never missing.
+    cells.sort((a, b) => (+a.getAttribute('y') + Math.random() * 6) - (+b.getAttribute('y') + Math.random() * 6));
     const at = new Map();
     cells.forEach((c, i) => {
       const t = 140 + (FLY - 260) * Math.pow(i / cells.length, .85);

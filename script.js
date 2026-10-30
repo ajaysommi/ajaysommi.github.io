@@ -4274,7 +4274,11 @@ console.log(
     }
     wrap.classList.add('is-served');
     // the pop plays out in full before it is set down
-    await new Promise((r) => { const t = setTimeout(r, 1000); ad.addEventListener('animationend', (e) => { if (e.animationName === 'era-ad-launch') { clearTimeout(t); r(); } }, { once: true }); });
+    await new Promise((r) => {
+      const end = (e) => { if (e.animationName === 'era-ad-launch') { clearTimeout(t); ad.removeEventListener('animationend', end); r(); } };
+      const t = setTimeout(() => { ad.removeEventListener('animationend', end); r(); }, 600);
+      ad.addEventListener('animationend', end);
+    });
     // landing: a shine and a glow (and on a phone, a few sparkles)
     const shine = document.createElement('span');
     shine.className = 'era-ad-shine';
