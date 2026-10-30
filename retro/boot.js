@@ -178,17 +178,44 @@
      its drawing. */
   const center = (r) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
   const fit = (box, w, h) => { const k = Math.min(box.width / w, box.height / h); return { left: box.left + (box.width - w * k) / 2, top: box.top + (box.height - h * k) / 2, width: w * k, height: h * k }; };
-  const clone = (node, r, z) => {
-    const sh = node.isConnected ? getComputedStyle(node).filter : 'none';
+  /* A shadow (or any filter) with its lengths multiplied: a copy drawn at
+     one size and shown at another needs its shadow scaled to match. */
+  const scaleFilter = (f, k) => (!f || f === 'none' ? 'none' : f.replace(/(-?[\d.]+)px/g, (m, v) => `${(+v * k).toFixed(2)}px`));
+  /* Copies for a flight are always built at the larger of the two sizes
+     they travel between and only ever scaled down from there, so they are
+     drawn at full resolution the whole way: scaling a small copy up shows
+     a soft picture that then sharpens with a jump when the real one takes
+     over. */
+  const clone = (node, r, z, filter) => {
     const n = node.cloneNode(true);
-    if (sh && sh !== 'none') n.style.filter = sh;
+    n.style.filter = filter || 'none';
     n.removeAttribute('id');
     n.classList.add('pk-fly');
-    n.style.cssText += `;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${z};visibility:visible`;
+    n.style.cssText += `;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${z};visibility:visible;will-change:transform,opacity`;
     document.body.appendChild(n);
     return n;
   };
-  const go = (n, a, b, dur) => n.animate([{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${b.width / a.width})` }], { duration: dur, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).finished;
+  // An element's own shadow as it appears on screen, through any scale it is drawn at.
+  const shadowOf = (el) => (el ? scaleFilter(getComputedStyle(el).filter, el.getBoundingClientRect().width / (el.offsetWidth || 1)) : 'none');
+  /* A drawing's box where it will rest: any transition on its tile (the
+     selected tile lifts its drawing) is let finish at once first, so the
+     flight never lands on a box that is still on its way somewhere. */
+  const restRect = (el) => {
+    const p = el.parentElement, t = p.style.transition;
+    p.style.transition = 'none';
+    const r = el.getBoundingClientRect();
+    p.style.transition = t;
+    /* The page draws it on whole pixels; the copy lands on the same ones,
+       or it would be a pixel off when the two change places. */
+    const dpr = devicePixelRatio || 1, snap = (v) => Math.round(v * dpr) / dpr;
+    return { left: snap(r.left), top: snap(r.top), width: r.width, height: r.height };
+  };
+  /* The copy gives way to the real thing beneath it by fading; its own
+     shadow goes first, or the two shadows would add up while both show. */
+  const handOff = (el) => { el.style.filter = 'none'; return el; };
+  // Where a copy laid out at E has to be moved and scaled to cover r.
+  const at = (E, r) => `translate(${r.left - E.left}px, ${r.top - E.top}px) scale(${r.width / E.width})`;
+  const go = (n, E, a, b, dur) => n.animate([{ transform: at(E, a) }, { transform: at(E, b) }], { duration: dur, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).finished;
   /* A screen's corners: one radius, or [across, down] at the top and at the
      bottom, for a tube whose opening arches. In px, or as a share of the
      picture when given its size. */
@@ -197,7 +224,7 @@
     const x = (v) => (w ? `${v / w * 100}%` : `${v}px`), y = (v) => (h ? `${v / h * 100}%` : `${v}px`);
     return `${x(ta)} ${x(ta)} ${x(ba)} ${x(ba)} / ${y(td)} ${y(td)} ${y(bd)} ${y(bd)}`;
   };
-  const flight = async ({ glyph, glyphBox, photo, photoW, photoH, glass, device, focus, back = false, dur = 820 }) => {
+  const flight = async ({ glyph, glyphBox, photo, photoW, photoH, glass, device, focus, shadow, body, back = false, dur = 820 }) => {
     /* The drawing travels to the part of the machine it depicts (focus),
        keeping its own shape, never larger than the machine. Only opacity
        and transforms animate, so every frame stays cheap. */
@@ -212,10 +239,13 @@
     const [g0, g1] = back ? [gBig, glyphBox] : [glyphBox, gBig];
     const jobs = [];
     if (glyph) {
-      const g = clone(glyph, g0, 8710);
-      if (!photo) { jobs.push(go(g, g0, g1, dur).then(() => g)); if (back) g.animate([{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 1 }], { duration: dur, fill: 'forwards' }); }
+      /* Built at the big end; its shadow scaled so that at the drawing's own
+         size it is exactly the drawing's shadow. */
+      const g = clone(glyph, gBig, 8710, scaleFilter(getComputedStyle(glyph).filter, gBig.width / glyphBox.width));
+      if (!photo) { jobs.push(go(g, gBig, g0, g1, dur).then(() => g)); if (back) g.animate([{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 1 }], { duration: dur, fill: 'forwards' }); }
       else {
-        jobs.push(go(g, g0, g1, dur).then(() => g.remove()));
+        // Going back, the drawing is what lands: it is handed over by a short fade, not swapped.
+        jobs.push(go(g, gBig, g0, g1, dur).then(() => (back ? g : g.remove())));
         g.animate(back ? [{ opacity: 0 }, { opacity: 0, offset: .4 }, { opacity: 1, offset: .8 }, { opacity: 1 }]
           : [{ opacity: 1 }, { opacity: 1, offset: .2 }, { opacity: 0, offset: .6 }, { opacity: 0 }], { duration: dur, fill: 'forwards' });
       }
@@ -223,11 +253,19 @@
     if (photo) {
       const [p0, p1] = back ? [device, pStart] : [pStart, device];
       const im = document.createElement('div');
-      im.style.background = `url("${photo}") 0 0 / 100% 100% no-repeat`;
-      if (glass) im.innerHTML = `<i style="position:absolute;left:${glass[0] / photoW * 100}%;top:${glass[1] / photoH * 100}%;width:${glass[2] / photoW * 100}%;height:${glass[3] / photoH * 100}%;background:${glass[5] || '#050506'};border-radius:${round(glass[4], glass[2], glass[3])}"></i>`;
-      const q = clone(im, p0, 8711);
-      q.style.willChange = 'transform, opacity';
-      jobs.push(go(q, p0, p1, dur).then(() => q));
+      if (body) {
+        /* The machine itself, copied as it stands in the room (its picture,
+           glass and badge), so where the copy gives way to it nothing
+           changes. */
+        const c = body.cloneNode(true);
+        c.querySelectorAll('button, .bz-drive').forEach((x) => x.remove());
+        c.style.cssText += `;position:absolute;left:0;top:0;transform:scale(${device.width / body.offsetWidth});transform-origin:0 0;filter:none`;
+        im.appendChild(c);
+      } else im.style.background = `url("${photo}") 0 0 / 100% 100% no-repeat`;
+      if (glass && !body) im.innerHTML = `<i style="position:absolute;left:${glass[0] / photoW * 100}%;top:${glass[1] / photoH * 100}%;width:${glass[2] / photoW * 100}%;height:${glass[3] / photoH * 100}%;background:${glass[5] || '#050506'};border-radius:${round(glass[4], glass[2], glass[3])}"></i>`;
+      // At the machine's full size, with the machine's own shadow.
+      const q = clone(im, device, 8711, shadow);
+      jobs.push(go(q, device, p0, p1, dur).then(() => (back ? q.remove() : q)));
       q.animate(back ? [{ opacity: 1 }, { opacity: 1, offset: .25 }, { opacity: 0, offset: .65 }, { opacity: 0 }]
         : [{ opacity: 0 }, { opacity: 0, offset: .15 }, { opacity: 1, offset: .55 }, { opacity: 1 }], { duration: dur, fill: 'forwards' });
     }
@@ -350,7 +388,7 @@
     const bar = document.createElement('div');
     bar.className = 'dk-bar';
     bar.hidden = true;
-    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Eras</button><span></span><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
+    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
     bar.querySelector('[data-k="eras"]').addEventListener('click', () => { SFX.click(); showPicker(); });
     document.body.appendChild(bar);
     /* Shapes of the era behind the machine. */
@@ -382,6 +420,8 @@
       if (!photo) return;
       const { k, ox, oy } = place(photo);
       bezel.querySelector('.bz-dev').style.transform = `translate(${ox}px, ${oy}px) scale(${k})`;
+      const drv = host.querySelector(':scope > .bz-drive');
+      if (drv) drv.style.transform = `translate(${ox}px, ${oy}px) scale(${k})`;
       const [sx, sy, sw, sh] = photo.scr;
       Object.entries({ '--pl': ox + sx * k, '--pt': oy + sy * k, '--pw': sw * k, '--ph': sh * k, '--pr': photo.r * k }).forEach(([n, v]) => host.style.setProperty(n, v + 'px'));
     };
@@ -390,6 +430,7 @@
       bar.hidden = i < 0;
       photo = null;
       host.classList.remove('is-photo');
+      host.querySelectorAll(':scope > .bz-drive').forEach((x) => x.remove());
       if (i < 0) { delete host.dataset.era; delete document.documentElement.dataset.era; bezel.innerHTML = ''; backdrop.innerHTML = ''; return; }
       const y = ERAS[i].year;
       host.dataset.era = y;
@@ -425,6 +466,8 @@
           bezel.querySelector('.bz-dev').appendChild(cd);
         }
         layout();
+        // Left before the disk went in: it is waiting beside the machine again.
+        if (y === '1991' && diskWaiting) showDisk();
         return;
       }
       bezel.innerHTML = `<div class="bz-body"></div><div class="bz-frame"></div>${BEZEL[y]}`;
@@ -452,15 +495,25 @@
        shutter leads, tips flat to the angle of the slot, lines up with it
        and slides in, vanishing into the slit; then the drive clunks and
        the system starts up from it. */
+    let diskWaiting = null;
     api.disk = () => new Promise((resolve) => {
+      if (host.dataset.era !== '1991' || !photo) { resolve(); return; }
+      diskWaiting = () => { diskWaiting = null; resolve(); };
+      showDisk();
+    });
+    function showDisk() {
       const dev = bezel.querySelector('.bz-dev');
-      if (!dev || host.dataset.era !== '1991' || !photo) { resolve(); return; }
+      const resolve = () => diskWaiting && diskWaiting();
+      if (!dev || host.querySelector(':scope > .bz-drive')) return;
       const drive = document.createElement('div');
       drive.className = 'bz-drive';
       const cx = (SLOT.x0 + SLOT.x1) / 2;
       Object.assign(drive.style, { width: photo.w + 'px', height: photo.h + 'px', perspectiveOrigin: `${cx}px 600px` });
       drive.innerHTML = `<div class="bz-disk" role="button" tabindex="0" aria-label="Insert the startup disk" style="left:${cx - DISK_W / 2}px;top:${SLOT.y0 + 9}px;width:${DISK_W}px;height:${DISK_H}px"><div class="bz-disk-in">${FLOPPY}</div></div><span class="bz-hint">Insert the disk</span>`;
-      dev.appendChild(drive);
+      /* It lives above the screen (a disk waved in front of the glass
+         passes over it), placed by the same transform as the machine. */
+      drive.style.transform = dev.style.transform;
+      host.appendChild(drive);
       const disk = drive.querySelector('.bz-disk'), hint = drive.querySelector('.bz-hint');
       // Where it rests: beside the machine on the right, as far over as the window shows.
       const { k, ox } = place(photo);
@@ -508,7 +561,7 @@
       disk.addEventListener('pointerup', up);
       disk.addEventListener('pointercancel', up);
       disk.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); insert(); } });
-    });
+    }
 
     /* Where the machine is on screen: the photograph's whole frame, or for
        1983 (drawn) the body of the drawing. */
@@ -528,6 +581,55 @@
     const settle = (y) => {
       const r = deviceBox(y);
       window.SHAPES.arrive(backdrop.querySelector('.bg-shapes'), center(r).x, center(r).y);
+    };
+
+    /* From one machine straight to another (Time Machine, Restart in
+       Another Era, the ERA command): no trip through black. The old
+       machine's screen goes dark and it sinks back and fades, while the
+       room itself (its colour and its shapes) dissolves into the new
+       era's; the new machine rises into place in its arrival glow and its
+       screen comes up. */
+    const switchRooms = async (prev, i, show) => {
+      const y0 = ERAS[prev].year, y1 = ERAS[i].year;
+      /* The old room, frozen into a copy of the room itself (same era, same
+         classes, same measurements, its screen as it was), so it keeps its
+         own look while the real room beneath becomes the new era. The new
+         room is built before the next frame, while the copy looks exactly
+         like what was already there: the work never shows as a pause. */
+      const old = host.cloneNode(false);
+      old.removeAttribute('id');
+      old.classList.add('sw-old');
+      old.classList.remove('is-morph', 'is-swap');
+      old.appendChild(backdrop.cloneNode(true));
+      const oldBz = bezel.cloneNode(true);
+      oldBz.querySelectorAll('button').forEach((x) => x.remove());
+      old.appendChild(oldBz);
+      const s0 = screens[prev] && screens[prev].cloneNode(true);
+      if (s0) { s0.querySelectorAll('input, textarea, button, iframe').forEach((x) => { x.tabIndex = -1; }); s0.querySelectorAll('iframe').forEach((x) => x.remove()); old.appendChild(s0); }
+      const c0 = center(deviceBox(y0));
+      host.after(old);
+      // A copy starts scrolled to the top: put every scrolled part back where it was.
+      if (s0) { const a = [screens[prev], ...screens[prev].querySelectorAll('*')], b = [s0, ...s0.querySelectorAll('*')]; a.forEach((e, n) => { if (b[n] && (e.scrollTop || e.scrollLeft)) { b[n].scrollTop = e.scrollTop; b[n].scrollLeft = e.scrollLeft; } }); }
+      host.classList.add('is-swap');
+      show();
+      const c1 = center(deviceBox(y1));
+      const shapes = backdrop.querySelector('.bg-shapes');
+      if (shapes) shapes.style.visibility = 'hidden';
+      // The old screen goes out like a tube: down to a bright line, then nothing.
+      if (s0) s0.animate([{ transform: 'scale(1, 1)', filter: 'brightness(1)', opacity: 1 }, { transform: 'scale(1, .012)', filter: 'brightness(2.4)', opacity: 1, offset: .55 }, { transform: 'scale(0, .012)', filter: 'brightness(3)', opacity: 0 }], { duration: 380, easing: 'cubic-bezier(.5, 0, .6, 1)', fill: 'forwards' });
+      // Then the old machine sinks back and fades as the room dissolves.
+      oldBz.style.transformOrigin = `${c0.x}px ${c0.y}px`;
+      oldBz.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(4%) scale(.8)', opacity: 0 }], { duration: 640, delay: 300, easing: 'cubic-bezier(.5, 0, .75, .4)', fill: 'both' });
+      old.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 760, delay: 380, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'both' });
+      // The new machine rises into place in its arrival glow.
+      bezel.style.transformOrigin = `${c1.x}px ${c1.y}px`;
+      setTimeout(() => arrival(deviceBox(y1), GLOW[y1], host), 620);
+      await bezel.animate([{ transform: 'translateY(5%) scale(.82)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 820, delay: 480, easing: 'cubic-bezier(.2, .7, .2, 1)', fill: 'backwards' }).finished;
+      old.remove();
+      bezel.style.transformOrigin = '';
+      if (shapes) shapes.style.visibility = '';
+      settle(y1);
+      host.classList.remove('is-swap');
     };
 
     /* One transition at a time: clicks during a flight are ignored. */
@@ -557,12 +659,12 @@
         host.classList.add('is-morph');
         show();
         backdrop.querySelector('.bg-shapes').style.visibility = 'hidden';
-        const from = art.getBoundingClientRect();
+        const from = restRect(art);
         art.style.visibility = 'hidden';
         pick.classList.add('is-leaving');
         const ph = PHOTO[y];
         setTimeout(() => arrival(deviceBox(y), GLOW[y], host), 380);
-        const land = await flight({ glyph: art, glyphBox: from, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: deviceBox(y), focus: focusBox(y) });
+        const land = await flight({ glyph: art, glyphBox: from, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: deviceBox(y), focus: focusBox(y), shadow: shadowOf(bezel.querySelector('.bz-dev')), body: bezel.querySelector('.bz-dev') });
         pick.hidden = true;
         pick.classList.remove('is-leaving');
         art.style.visibility = '';
@@ -575,7 +677,9 @@
         host.classList.remove('is-morph');
         backdrop.querySelector('.bg-shapes').style.visibility = '';
         settle(y);
-        if (land) land.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => land.remove());
+        if (land) handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => land.remove());
+      } else if (prev >= 0 && !root.classList.contains('reduced')) {
+        await switchRooms(prev, i, show);
       } else {
         await fade(async () => { pick.hidden = true; show(); });
         settle(y);
@@ -605,15 +709,15 @@
         pick.classList.add('is-returning');
         osOn(false);
         mark();
-        const to = art.getBoundingClientRect();
+        const to = restRect(art);
         art.style.visibility = 'hidden';
         const ph = PHOTO[y];
-        const left = flight({ glyph: art, glyphBox: to, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: dev, focus: focusBox(y), back: true, dur: 720 });
+        const left = flight({ glyph: art, glyphBox: to, photo: ph && ph.src, photoW: ph && ph.w, photoH: ph && ph.h, glass: ph && ph.glass, device: dev, focus: focusBox(y), shadow: shadowOf(bezel.querySelector('.bz-dev')), body: bezel.querySelector('.bz-dev'), back: true, dur: 720 });
         const land = await left;
         screens[prev].hidden = true;
         dress(-1);
-        if (land) land.remove();
         art.style.visibility = '';
+        if (land) handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-out', fill: 'forwards' }).finished.then(() => land.remove());
         pick.classList.remove('is-returning');
         host.classList.remove('is-morph');
         history.replaceState(null, '', location.pathname + location.search);
@@ -658,7 +762,26 @@
        drawing and the photo match shape for shape as one becomes the
        other: the waisted body, the silver surround dipping into the
        navigation keys, and keys in rows that curve down at the sides. */
-    nokia: `<svg viewBox="100 14 724 1666" aria-hidden="true"><defs><linearGradient id="nkG" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset=".22" stop-color="#fff" stop-opacity=".07"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset=".78" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient><linearGradient id="nkS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6e8eb"/><stop offset="1" stop-color="#b7bbc1"/></linearGradient><radialGradient id="nkK" cx=".45" cy=".35" r=".7"><stop offset="0" stop-color="#f4f5f6"/><stop offset="1" stop-color="#b9bdc3"/></radialGradient></defs><path d="M462 24C640 24 742 40 768 140C798 262 811 500 811 800C811 1100 800 1300 782 1450C762 1600 700 1666 462 1666C224 1666 162 1600 142 1450C124 1300 112 1100 112 800C112 500 126 262 156 140C182 40 284 24 462 24Z" fill="#2c3a5e"/><path d="M462 24C640 24 742 40 768 140C798 262 811 500 811 800C811 1100 800 1300 782 1450C762 1600 700 1666 462 1666C224 1666 162 1600 142 1450C124 1300 112 1100 112 800C112 500 126 262 156 140C182 40 284 24 462 24Z" fill="url(#nkG)"/><path d="M462 44C632 44 728 58 742 150L748 770C748 960 622 1078 462 1078C302 1078 176 960 176 770L182 150C196 58 292 44 462 44Z" fill="url(#nkS)"/><path d="M462 70C618 70 704 84 714 164L718 760C718 842 668 868 610 868L314 868C256 868 206 842 206 760L210 164C220 84 306 70 462 70Z" fill="#2f3e64"/><path d="M462 70C618 70 704 84 714 164L718 760C718 842 668 868 610 868L314 868C256 868 206 842 206 760L210 164C220 84 306 70 462 70Z" fill="url(#nkG)" opacity=".6"/>${[92, 126, 160, 194, 228].map((y) => `<ellipse cx="462" cy="${y}" rx="15" ry="11" fill="#141a2a"/>`).join('')}<rect x="352" y="326" width="221" height="50" rx="4" fill="#15171b"/><text x="462" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#e8e8e8" letter-spacing="1">SOMMIA</text><rect x="222" y="450" width="486" height="348" rx="34" fill="#a9c262"/><rect x="222" y="450" width="486" height="348" rx="34" fill="#000" opacity=".06"/><g fill="#1d2a10" font-family="Pixelify Sans, monospace" font-weight="700"><text x="648" y="510" text-anchor="end" font-size="50">12:00</text><text x="465" y="772" text-anchor="middle" font-size="54">Menu</text></g><g fill="#1d2a10">${[0, 1, 2, 3].map((k) => `<rect x="244" y="${690 - k * 34}" width="${10 + k * 4}" height="24"/>`).join('')}<rect x="672" y="580" width="16" height="130"/></g><path d="M330 900C330 870 400 862 462 862C524 862 594 870 594 900C594 930 524 938 462 938C400 938 330 930 330 900Z" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/><rect x="408" y="890" width="108" height="9" rx="4.5" fill="#3aa4e6"/><rect x="222" y="910" width="126" height="78" rx="22" transform="rotate(14 285 949)" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/><rect x="510" y="930" width="190" height="96" rx="24" transform="rotate(-16 605 978)" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/>${[[1118, 1140, 1108], [1230, 1255, 1222], [1345, 1370, 1338], [1460, 1488, 1455]].map((r, k) => [[258 + k * 9, r[0], 9], [462, r[1], 0], [665 - k * 8, r[2], -9]].map(([x, y, a]) => `<ellipse cx="${x}" cy="${y}" rx="72" ry="42" transform="rotate(${a} ${x} ${y})" fill="url(#nkK)" stroke="#7d828a" stroke-width="3"/>`).join('')).join('')}</svg>`,
+    nokia: `<svg viewBox="100 14 724 1666" aria-hidden="true"><defs><linearGradient id="nkG" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".4"/><stop offset=".2" stop-color="#fff" stop-opacity=".06"/><stop offset=".5" stop-color="#fff" stop-opacity=".13"/><stop offset=".8" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></linearGradient><linearGradient id="nkS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eceef1"/><stop offset=".6" stop-color="#cdd1d6"/><stop offset="1" stop-color="#b3b8be"/></linearGradient><linearGradient id="nkK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfc"/><stop offset=".55" stop-color="#e2e5e8"/><stop offset="1" stop-color="#b9bec4"/></linearGradient></defs>`
+      /* The body: an oval, widest through the screen, narrowing to rounded ends. */
+      + `<path d="M462 30C660 30 770 50 792 170C812 300 818 560 814 860C810 1150 796 1390 772 1520C748 1640 640 1672 462 1672C284 1672 176 1640 152 1520C128 1390 114 1150 110 860C106 560 112 300 132 170C154 50 264 30 462 30Z" fill="#2b3a60"/>`
+      + `<path d="M462 30C660 30 770 50 792 170C812 300 818 560 814 860C810 1150 796 1390 772 1520C748 1640 640 1672 462 1672C284 1672 176 1640 152 1520C128 1390 114 1150 110 860C106 560 112 300 132 170C154 50 264 30 462 30Z" fill="url(#nkG)"/>`
+      /* The silver surround, dipping in a U under the screen into the keys. */
+      + `<path d="M462 50C640 50 732 64 748 160L754 760C756 900 690 1010 600 1040C560 1052 520 1062 462 1062C404 1062 364 1052 324 1040C234 1010 168 900 170 760L176 160C192 64 284 50 462 50Z" fill="url(#nkS)"/>`
+      + `<path d="M462 74C620 74 704 88 716 170L722 752C722 836 676 870 616 870H308C248 870 202 836 202 752L208 170C220 88 304 74 462 74Z" fill="#2e3d66"/><path d="M462 74C620 74 704 88 716 170L722 752C722 836 676 870 616 870H308C248 870 202 836 202 752L208 170C220 88 304 74 462 74Z" fill="url(#nkG)" opacity=".55"/>`
+      + `${[96, 128, 160, 192, 224].map((y) => `<ellipse cx="462" cy="${y}" rx="14" ry="10" fill="#131a2b"/>`).join('')}`
+      + `<rect x="352" y="326" width="221" height="50" rx="4" fill="#15171b"/><text x="462" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#e8e8e8" letter-spacing="1">SOMMIA</text>`
+      + `<rect x="222" y="448" width="482" height="334" rx="30" fill="#a9c262"/><rect x="222" y="448" width="482" height="334" rx="30" fill="#000" opacity=".06"/><g fill="#1d2a10" font-family="Pixelify Sans, monospace" font-weight="700"><text x="646" y="506" text-anchor="end" font-size="50">12:00</text><text x="463" y="760" text-anchor="middle" font-size="54">Menu</text></g><g fill="#1d2a10">${[0, 1, 2, 3].map((k) => `<rect x="244" y="${684 - k * 34}" width="${10 + k * 4}" height="24"/>`).join('')}<rect x="670" y="576" width="16" height="130"/></g>`
+      /* The navi key, and the C and call keys either side of it. */
+      + `<path d="M330 900C330 868 400 856 462 856S594 868 594 900 524 944 462 944 330 932 330 900Z" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/><rect x="410" y="886" width="104" height="10" rx="5" fill="#3aa4e6"/>`
+      + `<path d="M220 930C232 900 284 892 318 902C350 912 352 944 336 972C318 1000 270 1008 240 996C212 984 208 958 220 930Z" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/><path d="M286 924C266 928 262 962 286 966" fill="none" stroke="#2c4a2e" stroke-width="7" stroke-linecap="round"/>`
+      + `<path d="M512 958C520 922 580 900 640 902C688 904 712 928 704 962C696 996 640 1022 584 1024C532 1026 504 994 512 958Z" fill="url(#nkK)" stroke="#8e939a" stroke-width="3"/><path d="M586 990C590 960 610 950 626 948M626 948l-14-8M626 948l-6 14" fill="none" stroke="#2c4a2e" stroke-width="7" stroke-linecap="round"/>`
+      /* The keypad: four rows of three keys, the rows curving down at the
+         sides, each key a rounded pill printed with its number and letters. */
+      + `${[['1', '∞'], ['2', 'abc'], ['3', 'def'], ['4', 'ghi'], ['5', 'jkl'], ['6', 'mno'], ['7', 'pqrs'], ['8', 'tuv'], ['9', 'wxyz'], ['*', '+'], ['0', '␣'], ['#', '⌂']].map(([n, l], i) => {
+        const c = i % 3, r = Math.floor(i / 3), x = [272, 462, 652][c] + (c === 0 ? r * 6 : c === 2 ? -r * 6 : 0), y = 1112 + r * 116 + (c === 1 ? 18 : 0), a = c === 0 ? 11 : c === 2 ? -11 : 0;
+        return `<g transform="rotate(${a} ${x} ${y})"><rect x="${x - 76}" y="${y - 38}" width="152" height="80" rx="40" fill="#0d1424" opacity=".55"/><rect x="${x - 76}" y="${y - 42}" width="152" height="80" rx="40" fill="url(#nkK)" stroke="#7d828a" stroke-width="3"/><rect x="${x - 58}" y="${y - 36}" width="116" height="18" rx="9" fill="#fff" opacity=".55"/><text x="${x - (l.length > 1 ? 24 : 6)}" y="${y + 14}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="44" fill="#22402a">${n}</text><text x="${x + (l.length > 1 ? 22 : 24)}" y="${y + 14}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="${l.length > 3 ? 22 : 26}" fill="#22402a">${l}</text></g>`;
+      }).join('')}</svg>`,
     pocket: `<svg viewBox="0 0 74 122" aria-hidden="true"><rect x="2" y="2" width="70" height="118" rx="12" fill="#f3f1ec" stroke="#c9c3b6"/><rect x="9" y="9" width="56" height="48" rx="4" fill="#2b2e2a"/><rect x="12" y="12" width="50" height="42" rx="2" fill="#c9dcb6"/><rect x="14" y="18" width="46" height="5" fill="#1c2614"/><rect x="14" y="26" width="34" height="3" fill="#55603f"/><rect x="14" y="32" width="40" height="3" fill="#55603f"/><circle cx="37" cy="88" r="24" fill="#fbfaf7" stroke="#d9d4c8"/><circle cx="37" cy="88" r="8.5" fill="#ece9e2" stroke="#d9d4c8"/></svg>`,
     now: `<svg viewBox="0 0 66 122" aria-hidden="true"><rect x="1" y="1" width="64" height="120" rx="12" fill="#1b1c1f" stroke="#55575c" stroke-width=".8"/><rect x="4" y="4" width="58" height="114" rx="9" fill="#f5f7fa"/><rect x="24.5" y="7.2" width="17" height="5" rx="2.5" fill="#1b1c1f"/><rect x="10" y="20" width="8" height="2.6" rx="1.3" fill="#ff6b35"/><rect x="10" y="30" width="40" height="6" rx="2" fill="#1d1f24"/><rect x="10" y="39" width="30" height="6" rx="2" fill="#3d68ff"/><rect x="10" y="50" width="44" height="2.4" rx="1.2" fill="#aab1bc"/><rect x="10" y="55" width="36" height="2.4" rx="1.2" fill="#aab1bc"/><circle cx="33" cy="82" r="15" fill="#e6ebf2"/>${AJ(33, 82, .5, '#1d1f24')}<rect x="10" y="104" width="22" height="6" rx="3" fill="#1d1f24"/></svg>`,
     iphone: `<svg viewBox="0 0 66 122" aria-hidden="true"><defs><linearGradient id="ipR" x1="0" x2="1"><stop offset="0" stop-color="#8d9298"/><stop offset=".3" stop-color="#f2f3f4"/><stop offset=".7" stop-color="#c5c9ce"/><stop offset="1" stop-color="#7f848a"/></linearGradient></defs><rect x="1" y="1" width="64" height="120" rx="11" fill="url(#ipR)"/><rect x="2.6" y="2.6" width="60.8" height="116.8" rx="9.6" fill="#0b0b0b"/><rect x="27" y="10" width="12" height="2" rx="1" fill="#2b2b2b"/><rect x="7.5" y="21" width="51" height="76.5" fill="#000"/>${[0, 1, 2].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${10 + c * 12.2}" y="${25 + r * 14.5}" width="9" height="9" rx="2" fill="hsl(${(r * 4 + c) * 33} 70% 55%)"/>`).join('')).join('')}<rect x="7.5" y="84" width="51" height="13.5" fill="#a9a9a9"/>${[0, 1, 2, 3].map((c) => `<rect x="${10 + c * 12.2}" y="86.2" width="9" height="9" rx="2" fill="hsl(${120 + c * 70} 65% 55%)"/>`).join('')}<circle cx="33" cy="109" r="6.2" fill="#121212" stroke="#3a3a3a" stroke-width=".8"/><rect x="30.6" y="106.6" width="4.8" height="4.8" rx="1.2" fill="none" stroke="#9a9a9a" stroke-width=".7"/></svg>`
@@ -771,21 +894,20 @@
       const { room, dev, box, shot, art } = parts(id);
       const layer = room.querySelector('.bg-shapes');
       if (!art || !dev) return;
-      const from = art.getBoundingClientRect(), to = box.getBoundingClientRect();
+      const from = restRect(art), to = box.getBoundingClientRect();
       art.style.visibility = 'hidden';
       box.style.opacity = '0';
       if (layer) layer.style.visibility = 'hidden';
       pick.classList.add('is-leaving');
       setTimeout(() => arrival(to, id === 'nokia' ? '#dbe7ff' : id === 'pocket' ? '#f3ecff' : '#ffffff', room), 340);
-      const land = await flight({ glyph: art, glyphBox: from, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: to, dur: 760 });
-      box.style.transition = 'opacity .3s ease';
+      const land = await flight({ glyph: art, glyphBox: from, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: to, shadow: shadowOf(dev), dur: 760 });
+      // The copy covers it exactly: the device is simply there beneath it as the copy fades.
       box.style.opacity = '';
-      setTimeout(() => { box.style.transition = ''; }, 320);
       art.style.visibility = '';
       if (layer) layer.style.visibility = '';
       const c = { x: to.left + to.width / 2, y: to.top + to.height / 2 };
       window.SHAPES.arrive(layer, c.x, c.y);
-      if (land) land.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => land.remove());
+      if (land) handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => land.remove());
     };
 
     let busy = false;
@@ -846,16 +968,16 @@
         center(sel, false);
         markDots();
         const { dev, box, shot, art } = parts(id);
-        const to = art.getBoundingClientRect(), from = box.getBoundingClientRect();
+        const to = restRect(art), from = box.getBoundingClientRect();
         art.style.visibility = 'hidden';
         box.style.opacity = '0';
         pick.classList.add('is-returning');
         tint('pick');   // the bars start changing with the flight, not after it
-        const left = flight({ glyph: art, glyphBox: to, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: from, back: true, dur: 680 });
+        const left = flight({ glyph: art, glyphBox: to, photo: shot && shot[0], photoW: shot && shot[1], photoH: shot && shot[2], glass: shot && shot[3], device: from, shadow: shadowOf(dev), back: true, dur: 680 });
         const land = await left;
         done();
-        if (land) land.remove();
         art.style.visibility = '';
+        if (land) handOff(land).animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-out', fill: 'forwards' }).finished.then(() => land.remove());
         box.style.opacity = '';
         pick.classList.remove('is-returning');
         return;

@@ -545,12 +545,20 @@ window.FINDER = (function () {
   const layoutIcons = () => {
     deskEl.innerHTML = '';
     const saved = positions();
-    const colW = 104, rowH = 74;
-    const perCol = Math.max(3, Math.floor((SH() - 25 - 90) / rowH));
-    DESKTOP.forEach((id, n) => {
+    /* Columns from the right edge. Only the first keeps room at its foot
+       for the Trash; on a small screen the spacing tightens, a step at a
+       time, until every icon is on the screen. */
+    const H = SH() - 25, W = SW();
+    const cap = (c, rowH) => Math.max(1, Math.floor((H - (c === 0 ? 96 : 14)) / rowH));
+    const cols = (rowH) => { let n = DESKTOP.length, c = 0; while (n > 0) { n -= cap(c, rowH); c++; } return c; };
+    let colW = 104, rowH = 74;
+    for (const [cw, rh] of [[104, 74], [96, 68], [88, 64], [82, 60], [76, 58]]) { colW = cw; rowH = rh; if (112 + (cols(rh) - 1) * cw <= W) break; }
+    let col = 0, row = 0;
+    DESKTOP.forEach((id) => {
+      if (row >= cap(col, rowH)) { col++; row = 0; }
       const el = iconEl(id);
-      const col = Math.floor(n / perCol), row = n % perCol;
-      let x = SW() - 112 - col * colW, y = 10 + row * rowH;
+      let x = W - 112 - col * colW, y = 10 + row * rowH;
+      row++;
       if (saved[id]) { x = Math.min(saved[id][0], SW() - 100); y = Math.min(saved[id][1], SH() - 100); }
       el.style.left = x + 'px';
       el.style.top = y + 'px';
@@ -780,6 +788,7 @@ window.FINDER = (function () {
     root.appendChild(menubar);
     deskEl = h('div', 'fd-desk');
     root.appendChild(deskEl);
+    window.RETRO.marquee(deskEl, { isBg: (t) => t === deskEl, items: () => [...deskEl.querySelectorAll('.fd-icon')], sel: 'is-sel', cls: 'sel-91' });
     scr.appendChild(root);
 
     const clock = menubar.querySelector('.clock');

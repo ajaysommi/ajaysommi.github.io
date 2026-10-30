@@ -50,13 +50,8 @@ window.OSX = (function () {
         <circle cx="98" cy="22" r="6" fill="#3d68ff" stroke="#fff" stroke-width="2" opacity=".95"/>
         <path d="M8 32a24 24 0 0 1 24-24h64a24 24 0 0 1 24 24v14q-56 16-112 0z" fill="#fff" opacity=".22"/>`,
       lg('l', [[0, '#d2f0ff'], [1, '#62b6f3']]) + lg('r', [[0, '#66b9ff'], [1, '#1559c4']])),
-    docs: () => art(`<path d="M10 40a8 8 0 0 1 8-8h30l8 8h54a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#bk)"/>
-        <rect x="30" y="18" width="52" height="66" rx="3" fill="#fff" stroke="#bbb" transform="rotate(-10 56 51)"/><rect x="44" y="14" width="52" height="66" rx="3" fill="#fff" stroke="#bbb" transform="rotate(6 70 47)"/>${[28, 36, 44, 52, 60].map((y) => `<rect x="52" y="${y}" width="36" height="3" fill="#b8bec6" transform="rotate(6 70 47)"/>`).join('')}
-        <path d="M10 56h108v50a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#fr)"/><path d="M50 74h28v22H50z" fill="#2f6fc4" opacity=".35"/>`,
-      lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']])),
-    downloads: () => art(`<path d="M10 40a8 8 0 0 1 8-8h30l8 8h54a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#bk)"/><path d="M10 52h108v54a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#fr)"/>
-        <path d="M56 60h16v18h12L64 100 44 78h12z" fill="#2f6fc4" opacity=".55"/>`,
-      lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']])),
+    docs: () => ICON.folder('<path d="M50 66h20l8 8v24H50z"/><path d="M70 66v8h8" fill="none" stroke="#fff" stroke-opacity=".6"/>'),
+    downloads: () => ICON.folder('<path d="M56 62h16v18h12L64 100 44 80h12z"/>'),
     about: () => art(`<rect x="18" y="10" width="92" height="108" rx="8" fill="url(#lth)"/><rect x="18" y="10" width="14" height="108" rx="6" fill="#5a3410"/>${[20, 40, 60, 80, 100].map((y) => `<rect x="22" y="${y}" width="6" height="2" fill="#c49a62"/>`).join('')}
         <rect x="38" y="20" width="64" height="88" rx="4" fill="#fbf8f0"/><clipPath id="c"><circle cx="70" cy="52" r="20"/></clipPath><image href="${P.photo}" x="46" y="28" width="48" height="48" clip-path="url(#c)" preserveAspectRatio="xMidYMid slice"/><circle cx="70" cy="52" r="20" fill="none" stroke="#c9b48a" stroke-width="2"/>
         <rect x="48" y="80" width="44" height="5" rx="2" fill="#8a7a5a"/><rect x="54" y="90" width="32" height="4" rx="2" fill="#bba985"/>`,
@@ -64,9 +59,7 @@ window.OSX = (function () {
     experience: () => { const d = new Date(); return art(`<rect x="16" y="14" width="96" height="102" rx="8" fill="url(#pg)" stroke="#9a9a9a"/><path d="M16 22a8 8 0 0 1 8-8h80a8 8 0 0 1 8 8v20H16z" fill="url(#rd)"/><text x="64" y="37" text-anchor="middle" ${HN} font-weight="bold" font-size="17" fill="#fff">${d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}</text>
         <text x="64" y="98" text-anchor="middle" ${HN} font-weight="bold" font-size="52" fill="#222">${d.getDate()}</text>${[0, 1, 2, 3].map((i) => `<path d="M${32 + i * 21} 12v8" stroke="#555" stroke-width="3" stroke-linecap="round"/>`).join('')}`,
       lg('pg', [[0, '#fff'], [1, '#e2e2e2']]) + lg('rd', [[0, '#f26b6b'], [1, '#b81515']])); },
-    companies: () => art(`<path d="M10 34a8 8 0 0 1 8-8h30l8 8h54a8 8 0 0 1 8 8v62a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#bk)"/><path d="M10 46h108v58a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#fr)"/>
-        <g fill="#2a5fa8" opacity=".55"><rect x="48" y="58" width="32" height="44" rx="2"/><rect x="40" y="70" width="10" height="32"/><rect x="78" y="66" width="10" height="36"/></g><g fill="#cfe4fb">${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<rect x="${53 + c * 8}" y="${63 + r * 10}" width="5" height="6"/>`).join('')).join('')}</g>`,
-      lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']])),
+    companies: () => ICON.folder('<path d="M50 66h28v34H50z"/><path d="M42 78h10v22H42zM76 74h10v26H76z"/>'),
     projects: () => art(`<rect x="12" y="12" width="104" height="104" rx="18" fill="url(#bp)"/>${[30, 48, 66, 84, 102].map((v) => `<path d="M${v} 14v100M14 ${v}h100" stroke="#fff" stroke-opacity=".14"/>`).join('')}
         <text x="58" y="78" text-anchor="middle" font-family="Menlo,Monaco,monospace" font-weight="bold" font-size="30" fill="#e6f2ff">&lt;/&gt;</text><g transform="rotate(40 92 92)"><rect x="88" y="62" width="8" height="52" rx="3" fill="url(#hd)"/><rect x="74" y="54" width="36" height="14" rx="3" fill="url(#mt)"/></g>${gloss}`,
       lg('bp', [[0, '#3f8be0'], [1, '#123e8a']]) + lg('hd', [[0, '#b98250'], [1, '#6e4116']]) + lg('mt', [[0, '#e9edf2'], [1, '#8d96a2']])),
@@ -92,14 +85,31 @@ window.OSX = (function () {
       rg('gl', [[0, '#ffffff', 0.9], [1, '#bfe0ff', 0.6]], 0.4, 0.35)),
     timemachine: () => { let t = ''; for (let i = 0; i < 12; i++) t += `<line x1="64" y1="34" x2="64" y2="40" stroke="#333" stroke-width="2.5" transform="rotate(${i * 30} 64 64)"/>`; return art(`<circle cx="64" cy="64" r="56" fill="url(#rg)"/><path d="M64 14a50 50 0 1 1-46 30" fill="none" stroke="url(#ar)" stroke-width="9"/><path d="M8 40l12 10 8-14z" fill="#7be34a"/><circle cx="64" cy="64" r="34" fill="url(#fc)" stroke="#999"/>${t}<path d="M64 64V44M64 64l14 8" stroke="#222" stroke-width="4" stroke-linecap="round"/>`,
       rg('rg', [[0, '#2b4d4d'], [1, '#0e1f22']]) + lg('ar', [[0, '#b5ff7a'], [1, '#3aa51a']]) + rg('fc', [[0, '#ffffff'], [1, '#d6d6d6']])); },
-    trash: () => art(`<path d="M28 30h72l-8 86a6 6 0 0 1-6 5H42a6 6 0 0 1-6-5z" fill="url(#gl)" stroke="#9aa3ad" stroke-width="2"/>${[40, 52, 64, 76, 88].map((x) => `<path d="M${x} 36l${(x - 64) * 0.08} 78" stroke="#8f99a3" stroke-opacity=".6"/>`).join('')}${[50, 66, 82, 98].map((y) => `<path d="M${30 + (y - 30) * 0.08} ${y}h${68 - (y - 30) * 0.17}" stroke="#8f99a3" stroke-opacity=".45"/>`).join('')}
-        <ellipse cx="64" cy="30" rx="38" ry="7" fill="url(#rim)" stroke="#8f99a3"/>`,
-      lg('gl', [[0, '#eef2f6', 0.85], [1, '#aab3bd', 0.85]], 1, 0) + lg('rim', [[0, '#fafafa'], [1, '#b8c0c8']])),
-    hd: () => art(`<rect x="8" y="34" width="112" height="64" rx="8" fill="url(#al)" stroke="#8a8f96"/><rect x="8" y="34" width="112" height="16" rx="8" fill="#fff" opacity=".45"/><circle cx="100" cy="84" r="4" fill="#5bd16a"/><rect x="20" y="80" width="54" height="6" rx="3" fill="#7d838a"/>`,
-      lg('al', [[0, '#eef0f2'], [1, '#9ba1a8']])),
-    doc: () => art(`<path d="M28 10h52l22 22v86H28z" fill="#fff" stroke="#aaa" stroke-width="2"/><path d="M80 10v22h22" fill="#eee" stroke="#aaa" stroke-width="2"/>${[46, 56, 66, 76, 86, 96].map((y, i) => `<rect x="38" y="${y}" width="${i % 3 === 2 ? 30 : 52}" height="4" fill="#9fa6ae"/>`).join('')}`),
-    folder: () => art(`<path d="M10 34a8 8 0 0 1 8-8h30l8 8h54a8 8 0 0 1 8 8v62a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#bk)"/><path d="M10 46h108v58a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" fill="url(#fr)"/>`,
-      lg('bk', [[0, '#79b5ee'], [1, '#3f86d6']]) + lg('fr', [[0, '#a8d2fb'], [1, '#5ea5ec']]))
+    /* The wire mesh can: see-through, a tight grid of holes, a polished rim. */
+    trash: () => art(`<pattern id="mh" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#d9dee4" opacity=".55"/><circle cx="2.5" cy="2.5" r="1.45" fill="#5b6672" opacity=".55"/></pattern>
+        <path d="M24 30h80l-9 84a7 7 0 0 1-7 6H40a7 7 0 0 1-7-6z" fill="url(#gl)"/><path d="M24 30h80l-9 84a7 7 0 0 1-7 6H40a7 7 0 0 1-7-6z" fill="url(#mh)"/>
+        <path d="M27 32l9 82a7 7 0 0 0 4 5" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/><path d="M101 32l-9 82" fill="none" stroke="#6c7782" stroke-opacity=".5" stroke-width="2"/>
+        <ellipse cx="64" cy="117" rx="27" ry="4.5" fill="none" stroke="#8a949e" stroke-width="2.5"/>
+        <ellipse cx="64" cy="30" rx="42" ry="8" fill="url(#rim)" stroke="#7c8792" stroke-width="1.5"/><ellipse cx="64" cy="30.5" rx="36" ry="5" fill="#59636e" opacity=".55"/>`,
+      lg('gl', [[0, '#f4f6f8', 0.85], [0.5, '#c4cbd3', 0.7], [1, '#e9edf1', 0.85]], 1, 0) + lg('rim', [[0, '#ffffff'], [0.5, '#c9d0d7'], [1, '#97a1ab']])),
+    /* The internal disk: a slab of brushed aluminium seen a little from above. */
+    hd: () => art(`<path d="M18 46 30 32h68l12 14z" fill="url(#tp)"/><rect x="10" y="46" width="108" height="50" rx="5" fill="url(#al)" stroke="#7d838b"/>
+        <rect x="10" y="46" width="108" height="9" rx="4" fill="#fff" opacity=".55"/>${[20, 108].map((x) => `<circle cx="${x}" cy="86" r="3" fill="#8b929a" stroke="#5f666e" stroke-width=".8"/>`).join('')}
+        <rect x="30" y="80" width="56" height="6" rx="3" fill="#5f666e" opacity=".75"/><circle cx="98" cy="83" r="3.6" fill="#62e06f" stroke="#2d8a37" stroke-width=".8"/>
+        <path d="M10 92h108" stroke="#5f666e" stroke-opacity=".35"/>`,
+      lg('al', [[0, '#f2f4f6'], [0.45, '#d4d8dd'], [1, '#9fa5ad']]) + lg('tp', [[0, '#e3e7eb'], [1, '#c3c9cf']])),
+    /* A page with its corner turned down, the corner shading the page under it. */
+    doc: () => art(`<path d="M28 10h52l22 22v86H28z" fill="url(#pp)" stroke="#a6abb2" stroke-width="1.5"/><path d="M80 10l22 22H86a6 6 0 0 1-6-6z" fill="url(#cn)" stroke="#a6abb2" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M80 32h22" stroke="#000" stroke-opacity=".08" stroke-width="4"/>${[46, 54, 62, 70, 78, 86, 94, 102].map((y, i) => `<rect x="38" y="${y}" width="${i % 4 === 3 ? 30 : 52}" height="3" rx="1.5" fill="#a9b0b8"/>`).join('')}`,
+      lg('pp', [[0, '#ffffff'], [1, '#eef0f3']]) + lg('cn', [[0, '#ffffff'], [1, '#d7dbe0']], 1, 1)),
+    folder: (sign = '') => art(`<path d="M14 30a6 6 0 0 1 6-6h26a6 6 0 0 1 5 2.6L55 32h53a6 6 0 0 1 6 6v10H14z" fill="url(#bk)"/><path d="M14 38h100" stroke="#fff" stroke-opacity=".5"/>
+        <rect x="22" y="34" width="84" height="22" rx="2" fill="#fff" opacity=".85"/>
+        <path d="M8 46a4 4 0 0 1 4-4h104a4 4 0 0 1 4 4l-4.4 62a8 8 0 0 1-8 7.4H20.4a8 8 0 0 1-8-7.4z" fill="url(#fr)"/>
+        <path d="M9 47a4 4 0 0 1 4-4h102a4 4 0 0 1 4 4" fill="none" stroke="#fff" stroke-width="2" stroke-opacity=".9"/>
+        <path d="M8.6 54h110.8l-.6 8H9.2z" fill="#fff" opacity=".18"/>
+        <path d="M13 108a8 8 0 0 0 7.4 7.4h87.2a8 8 0 0 0 7.4-7.4" fill="none" stroke="#2f6db8" stroke-opacity=".35" stroke-width="2"/>
+        ${sign ? `<g transform="translate(0 1.4)" fill="#fff" opacity=".55">${sign}</g><g fill="url(#sg)">${sign}</g>` : ''}`,
+      lg('bk', [[0, '#9fcdf5'], [1, '#5f9fdf']]) + lg('fr', [[0, '#c4e3fe'], [.5, '#8fc4f5'], [1, '#5fa2e8']]) + lg('sg', [[0, '#3f7ec8', .75], [1, '#2a62ad', .8]])),
   };
 
   /* Snow Leopard's own icons, from Apple's 2009 Mac OS X pages, wherever
@@ -749,6 +759,7 @@ window.OSX = (function () {
     scr.appendChild(root);
     menubar = root.querySelector('.ox-menubar');
     deskEl = root.querySelector('.ox-desk');
+    window.RETRO.marquee(root, { isBg: (t) => t === root || t === deskEl, items: () => [...deskEl.querySelectorAll('.dt-i')], sel: 'is-sel', cls: 'sel-07' });
     dockEl = root.querySelector('.ox-dock');
     spot = root.querySelector('.ox-spot');
 

@@ -79,7 +79,7 @@ window.SHAPES = (function () {
       const x = ((col + 0.25 + r() * 0.5) / cols) * 100, y = ((row + 0.25 + r() * 0.5) / rows) * 100;
       const s = size[0] + r() * (size[1] - size[0]), rot = Math.round(r() * 60 - 30);
       const o = (opacity * (0.7 + r() * 0.5)).toFixed(3);
-      out += svg(keys[(i * 5 + Math.floor(r() * 3)) % keys.length], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
+      out += svg(keys[(i * 5 + Math.floor(r() * 3)) % keys.length], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--o:${o};--tw:${(10 + Math.random() * 6).toFixed(1)}s;--twd:${(-Math.random() * 16).toFixed(1)}s;--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
     }
     return `<div class="bg-shapes" aria-hidden="true" style="color:${color}">${out}</div>`;
   };

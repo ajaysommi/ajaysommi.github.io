@@ -394,5 +394,46 @@ window.RETRO = (function () {
   addEventListener('orientationchange', () => setTimeout(sync, 350));
   sync();
 
-  return { esc, usedAt, dither, ditherAll, ascii, store, viewport };
+  /* Dragging across an empty desktop draws the selection box, and the
+     icons it touches are selected, as on any desktop of the day. `isBg`
+     says where a drag may start (bare desktop only), `items` lists the
+     icons, `sel` is the class a selected icon wears, `cls` the box's own
+     class for each system's look. Works through any scale the screen is
+     drawn at. */
+  const marquee = (area, { isBg, items, sel, cls }) => {
+    // The click that ends a drag is not a click on the desktop (which would clear the selection).
+    let dragged = false;
+    area.addEventListener('click', (e) => { if (dragged) { dragged = false; e.stopPropagation(); } }, true);
+    area.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || !isBg(e.target)) return;
+      const r0 = area.getBoundingClientRect(), k = r0.width / (area.offsetWidth || 1);
+      const at = (ev) => ({ x: (ev.clientX - r0.left) / k, y: (ev.clientY - r0.top) / k });
+      const a = at(e);
+      let box = null;
+      const all = items();
+      all.forEach((x) => x.classList.remove(sel));
+      const move = (ev) => {
+        const b = at(ev);
+        if (!box) {
+          if (Math.abs(b.x - a.x) + Math.abs(b.y - a.y) < 4) return;
+          box = document.createElement('div');
+          box.className = 'sel-box ' + cls;
+          area.appendChild(box);
+        }
+        const L = Math.min(a.x, b.x), T = Math.min(a.y, b.y), W = Math.abs(b.x - a.x), H = Math.abs(b.y - a.y);
+        Object.assign(box.style, { left: L + 'px', top: T + 'px', width: W + 'px', height: H + 'px' });
+        all.forEach((x) => {
+          const r = x.getBoundingClientRect();
+          const xl = (r.left - r0.left) / k, xt = (r.top - r0.top) / k, xr = xl + r.width / k, xb = xt + r.height / k;
+          x.classList.toggle(sel, xl < L + W && xr > L && xt < T + H && xb > T);
+        });
+      };
+      const up = () => { dragged = !!box; setTimeout(() => { dragged = false; }, 0); removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); if (box) box.remove(); };
+      addEventListener('pointermove', move);
+      addEventListener('pointerup', up);
+      addEventListener('pointercancel', up);
+    });
+  };
+
+  return { esc, usedAt, dither, ditherAll, ascii, store, viewport, marquee };
 })();

@@ -307,13 +307,18 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .mp-card { background: #262628; opacity: 1; }
 .mp-card:not(.is-sel) { opacity: .75; }
 .mp-card.is-sel { background: #303033; }
-.picker .sm-status { position: absolute; top: 14px; right: 130px; left: auto; z-index: 2; }
+/* Level with the sound switch beside it. */
+.picker .sm-status { position: absolute; top: calc(env(safe-area-inset-top) + 10px); height: 28px; right: 132px; left: auto; z-index: 2; }
 
 /* ==========================================================================
    Shapes, the morph into a machine, era rooms and their buttons.
    ========================================================================== */
 .bg-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.bg-shapes svg { position: absolute; transform: translate(-50%, -50%) rotate(var(--rot)); animation: shp-float var(--d) ease-in-out var(--dl) infinite alternate; }
+/* Each shape drifts, and now and then glimmers: its ink deepens a little
+   over a second or so and eases back, each on its own slow clock, like a
+   faint star. */
+.bg-shapes svg { position: absolute; transform: translate(-50%, -50%) rotate(var(--rot)); animation: shp-float var(--d) ease-in-out var(--dl) infinite alternate, shp-tw var(--tw, 12s) ease-in-out var(--twd, 0s) infinite; }
+@keyframes shp-tw { 0%, 62%, 100% { opacity: var(--o); } 81% { opacity: calc(var(--o) * 1.5); } }
 @keyframes shp-float { to { transform: translate(-50%, calc(-50% - 12px)) rotate(calc(var(--rot) + 10deg)); } }
 .reduced .bg-shapes svg { animation: none; }
 
@@ -329,7 +334,8 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .pk-fly { position: fixed; z-index: 8700; transform-origin: 0 0; pointer-events: none; margin: 0; object-fit: contain; }
 .picker.is-leaving { transition: opacity .45s ease; opacity: 0; pointer-events: none; }
 .os-host.is-morph .bz, .os-host.is-morph .os-screen { opacity: 0; }
-.os-host .bz, .os-host .os-screen { transition: opacity .3s ease; }
+/* The machine is there at once under its landed copy; only its screen fades up. */
+.os-host .os-screen { transition: opacity .3s ease; }
 .os-host .dk-shapes { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .os-host .bz { z-index: 0; }
 .os-host .os-screen { z-index: 1; }
@@ -372,7 +378,7 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
    the browser shows (above its toolbar), where a thumb reaches them. */
 html[data-phone] .mp-back, html[data-phone] .mp-site { top: calc(var(--vvt, 0px) + var(--vvh, 100svh) - env(safe-area-inset-bottom) - 14px); transform: translateY(-100%); }
 [data-phone="nokia"] .mp-back, [data-phone="nokia"] .mp-site, [data-phone="nokia"] .snd-toggle { background: rgba(31,45,85,.88); color: #e6ecf7; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(20,30,60,.3); }
-[data-phone="pocket"] .mp-back, [data-phone="pocket"] .mp-site, [data-phone="pocket"] .snd-toggle { background: rgba(255,255,255,.9); color: #3b3352; box-shadow: 0 0 0 1px #c5bcd9, 0 4px 12px rgba(60,50,90,.15); }
+[data-phone="pocket"] .mp-back, [data-phone="pocket"] .mp-site, [data-phone="pocket"] .snd-toggle { background: rgba(236,229,248,.92); color: #3b3352; box-shadow: 0 0 0 1px #bcb0d6, 0 4px 12px rgba(60,50,90,.16); }
 [data-phone="iphone"] .mp-back, [data-phone="iphone"] .mp-site, [data-phone="iphone"] .snd-toggle { background: rgba(28,28,30,.82); color: #f2f2f2; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.3); }
 
 .bg-shapes svg { translate: calc(var(--mx, 0px) * var(--z, .5)) calc(var(--my, 0px) * var(--z, .5)); transition: translate .6s ease-out; }
@@ -508,7 +514,8 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 [data-theme="daylight"] .pk-home:hover { background: #fff; }
 
 /* The startup disk beside the Macintosh, and the drive it goes into. */
-.bz-drive { position: absolute; left: 0; top: 0; perspective: 2400px; pointer-events: none; }
+.bz-drive { position: absolute; left: 0; top: 0; z-index: 60; transform-origin: 0 0; perspective: 2400px; pointer-events: none; animation: bz-drive-in .5s ease both; }
+@keyframes bz-drive-in { from { opacity: 0; } }
 .bz-drive.is-in { clip-path: polygon(0 0, 596px 0, 596px 706px, 888px 706px, 888px 0, 100% 0, 100% 100%, 0 100%); }
 .bz-disk { position: absolute; transform-origin: 50% 0; pointer-events: auto; cursor: grab; outline: none; will-change: transform; }
 .bz-drive.is-held .bz-disk { cursor: grabbing; }
@@ -523,3 +530,22 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .bz-hint { position: absolute; transform: translateX(-50%); white-space: nowrap; font: 24px var(--pixel); color: #5f5645; opacity: 0; transition: opacity .4s ease .3s; pointer-events: none; }
 .bz-drive.is-on .bz-hint { opacity: 1; }
 .bz-drive.is-going .bz-hint { opacity: 0; transition-delay: 0s; transition-duration: .2s; }
+
+/* The rooms are lit like a backdrop, not painted flat: a little brighter
+   through the middle, falling off toward the edges and darker along the
+   top. Laid over each room's own colour, under its shapes and machine. */
+.os-host .dk-shapes {
+  background:
+    radial-gradient(ellipse 62% 55% at 50% 50%, rgba(255,255,255,.12), transparent 72%),
+    radial-gradient(ellipse 125% 105% at 50% 58%, transparent 48%, rgba(0,0,0,.15) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.08), transparent 26%);
+}
+.phone-host .phone-room { box-shadow: inset 0 0 170px 30px rgba(0,0,0,.13), inset 0 110px 110px -70px rgba(0,0,0,.08); }
+.picker { box-shadow: inset 0 0 180px 30px rgba(0,0,0,.10); }
+[data-theme="daylight"] .picker { box-shadow: inset 0 0 180px 30px rgba(60,50,30,.07); }
+
+/* Switching machines: the old room on top while it dissolves; the new
+   machine's screen waits until the machine has landed. */
+.os-host.sw-old { position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+.os-host.sw-old::after { display: none; }
+.os-host.is-swap .os-screen { opacity: 0; }
