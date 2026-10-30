@@ -48,7 +48,19 @@ window.WEB = (function () {
         <li><b>May 2026:</b> Finished a co-op at <a href="#" data-go="work/hunter">Hunter Engineering</a>: remote resets for 100,000+ machines.</li>
         <li><b>Dec 2026:</b> Graduating from <a href="#" data-go="school">UF</a>, AI Certificate included.</li>
         <li>Brought a <a href="#" data-go="garage/macbook">MacBook back from the dead</a>. Pictures inside!</li>
-      </ul>`),
+      </ul>
+      <table class="lay"><tr><td style="vertical-align:top"><h3>Hot off the wire</h3><p class="small"><a href="#" data-go="news">What’s New on the Web in 1998</a>: Windows 98, a search engine called Google, and the iMac.</p></td>
+      <td style="width:230px;vertical-align:top"><a href="#" data-go="shop" class="ad98"><b>SommiNet 56K!</b><span>Surf at top speed. Click here!</span></a></td></tr></table>`),
+
+    /* The papers of 1998: a news page of the year, and an advert. */
+    news: () => {
+      const d = window.PAPERS[1998].news;
+      return shell(d.title, `<h1>${esc(d.title)}</h1><p class="center"><i>${esc(d.sub)}</i></p><hr/>${d.items.map(([h, t]) => `<h3><span class="new">NEW!</span> ${esc(h)}</h3><p>${esc(t)}</p>`).join('')}<hr/><p class="small center">${esc(d.foot)} &nbsp;|&nbsp; <a href="#" data-go="index">&laquo; Home</a></p>`);
+    },
+    shop: () => {
+      const d = window.PAPERS[1998].brochure;
+      return shell(d.title, `<div class="ad98-page"><h1>${esc(d.title)}</h1><p class="center"><b>${esc(d.sub)}</b></p><table class="ad98-t">${d.items.map(([h, t]) => `<tr><td>★ <b>${esc(h)}</b></td><td>${esc(t)}</td></tr>`).join('')}</table><p class="small center">${esc(d.foot)}</p></div><p class="center"><a href="#" data-go="index">&laquo; Back to my home page</a></p>`);
+    },
 
     work: (id) => {
       if (id) {
@@ -250,10 +262,11 @@ window.WEB = (function () {
   /* -------------------------------------------------------------- menus */
 
   const MENUS = [
-    ['mark', I.pxmark(16), [['About SurfBoard', () => load('about:')], ['Easter Eggs found: ' + '?', null], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
+    ['mark', I.pxmark(16), [['About This Computer', () => APPS98.about()], ['About SurfBoard', () => load('about:')], '-', ['Calculator', () => APPS98.calc()], ['Note Pad', () => APPS98.note()], ['SommiSweeper', () => APPS98.mines()], ['Appearance', () => APPS98.appear()], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
     ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('To print the résumé, open the Résumé page and use Download.'); }, '⌘P']]],
     ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U']]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],
+    ['special', 'Special', [['Empty Trash…', () => note('Trash', ALERTS.trash, 'trash')], ['Open Macintosh HD', () => folder('hd')], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
     ['bm', 'Bookmarks', [['GitHub', () => window.open(P.github, '_blank', 'noopener')], ['LinkedIn', () => window.open(P.linkedin, '_blank', 'noopener')], ['The Garage', () => load('garage')], ['Résumé', () => load('resume')]]]
   ];
 
@@ -299,6 +312,170 @@ window.WEB = (function () {
 
   /* --------------------------------------------------------------- build */
 
+  /* ---------------------------------------------------------- the desk */
+
+  /* What sits on the desk and in its folders. Codes: page: opens a page
+     in SurfBoard, win: a folder, app: a program, alert: a note. */
+  const DESK = [['globe', 'SurfBoard', 'app:surf'], ['hd', 'Macintosh HD', 'win:hd'], ['folder', 'Documents', 'win:docs'], ['bomb', 'SommiSweeper', 'app:mines'], ['resume', 'Résumé', 'page:resume'], ['book', 'Guestbook', 'page:guestbook'], ['mail', 'E-mail', 'page:contact']];
+  const FOLDERS = {
+    hd: ['Macintosh HD', [['folder', 'Applications', 'win:apps'], ['folder', 'Documents', 'win:docs'], ['folder', 'System Folder', 'win:sys'], ['globe', 'SurfBoard', 'app:surf']], '4 items · 1.2 GB available'],
+    apps: ['Applications', [['globe', 'SurfBoard', 'app:surf'], ['note', 'Note Pad', 'app:note'], ['chip', 'Calculator', 'app:calc'], ['bomb', 'SommiSweeper', 'app:mines'], ['puzzle', 'Appearance', 'app:appear']], '5 items'],
+    docs: ['Documents', [['resume', 'Résumé', 'page:resume'], ['doc', 'What’s New ’98', 'page:news'], ['doc', '56K Modem Ad', 'page:shop'], ['folder', 'Projects', 'page:projects'], ['photo', 'Garage Photos', 'page:garage'], ['cap', 'School', 'page:school']], '6 items'],
+    sys: ['System Folder', [['mac', 'System', 'alert:sys'], ['app', 'Finder', 'alert:finder'], ['folder', 'Extensions', 'win:ext'], ['puzzle', 'Appearance', 'app:appear']], '4 items'],
+    ext: ['Extensions', [['chip', '56K Modem Enabler', 'alert:ext'], ['chip', 'QuickTime™ 3.0', 'alert:ext'], ['chip', 'Portfolio Accelerator', 'alert:ext'], ['chip', 'Nostalgia Driver', 'alert:ext']], '4 items'],
+    trash: ['Trash', [], 'empty']
+  };
+  const ALERTS = {
+    sys: 'This is the System file. It is what makes this an Apple-style desk instead of a pile of icons. Best left where it is.',
+    finder: 'The Finder is already running. It is the desk you are looking at.',
+    ext: 'This extension loaded at start-up. If something goes wrong, restart with Shift held down. (Nothing will go wrong.)',
+    trash: 'The Trash is already empty. Nothing ever gets thrown away in this portfolio.'
+  };
+  const icoBtn = (ic, n, go, cls = 'p8-ico') => `<button type="button" class="${cls}" data-open="${go}"><span>${I.svg(ic, 32)}</span><b>${esc(n)}</b></button>`;
+
+  /* Platinum windows: a title bar to drag them by, a close box on the
+     left, a box on the right that rolls the window up into its title. */
+  let zTop = 10;
+  const wins = {};
+  const front = (w) => { w.style.zIndex = ++zTop; root.querySelectorAll('.p8, .br').forEach((x) => x.classList.toggle('is-back', x !== w)); };
+  const openWin = (id, title, w, h, html, info) => {
+    if (wins[id]) { wins[id].classList.remove('is-closed', 'is-shaded'); front(wins[id]); return wins[id]; }
+    const n = Object.keys(wins).length % 6;
+    const W = root.clientWidth, H = root.clientHeight;
+    const el = document.createElement('div');
+    el.className = 'p8 plat';
+    w = Math.min(w, W - 24); h = Math.min(h, H - 40);
+    el.style.cssText = `left:${Math.max(8, Math.min(W - w - 8, 30 + n * 22))}px;top:${Math.max(30, Math.min(H - h - 8, 40 + n * 20))}px;width:${w}px;height:${h}px`;
+    el.innerHTML = `<div class="br-title"><button type="button" class="tb l" data-x aria-label="Close window"></button><span class="ttl">${esc(title)}</span><button type="button" class="tb r" data-shade aria-label="Collapse window"></button></div>${info ? `<div class="p8-info">${info}</div>` : ''}<div class="p8-body bev-in"></div>`;
+    root.appendChild(el);
+    wins[id] = el;
+    front(el);
+    el.querySelector('[data-x]').addEventListener('click', () => { window.SFX.click(); el.remove(); delete wins[id]; });
+    el.querySelector('[data-shade]').addEventListener('click', () => { window.SFX.click(); el.classList.toggle('is-shaded'); });
+    const bar = el.querySelector('.br-title');
+    bar.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      e.preventDefault();
+      const k = root.getBoundingClientRect().width / root.offsetWidth;
+      const sx = e.clientX, sy = e.clientY, ox = el.offsetLeft, oy = el.offsetTop;
+      const mv = (ev) => {
+        el.style.left = Math.max(-el.offsetWidth + 60, Math.min(root.clientWidth - 40, ox + (ev.clientX - sx) / k)) + 'px';
+        el.style.top = Math.max(24, Math.min(root.clientHeight - 20, oy + (ev.clientY - sy) / k)) + 'px';
+      };
+      const upd = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', upd); };
+      addEventListener('pointermove', mv); addEventListener('pointerup', upd);
+    });
+    const body = el.querySelector('.p8-body');
+    body.innerHTML = html;
+    return el;
+  };
+  const folder = (id) => {
+    const [t, items, info] = FOLDERS[id];
+    openWin('f-' + id, t, 340, 220, items.length ? `<div class="p8-grid">${items.map(([ic, n, go]) => icoBtn(ic, n, go)).join('')}</div>` : '<div class="p8-empty">The Trash is empty.</div>', `<span>${items.length} item${items.length === 1 ? '' : 's'}</span><span>${esc(info === 'empty' ? '' : info.split(' · ')[1] || '')}</span>`);
+  };
+  const note = (title, text, icon = 'alert') => {
+    const el = openWin('a-' + title, title, 320, 150, `<div class="p8-alert">${I.svg(icon, 32)}<p>${esc(text)}</p></div><div class="p8-btns"><button type="button" class="bev ok">OK</button></div>`);
+    el.querySelector('.ok').addEventListener('click', () => el.querySelector('[data-x]').click());
+    window.SFX.beep();
+  };
+  const APPS98 = {
+    surf: () => { const b = root.querySelector('.br'); b.classList.remove('is-closed', 'is-shaded'); front(b); if (!hist.length) load('index'); },
+    note: () => {
+      const el = openWin('note', 'Note Pad', 300, 240, `<textarea class="p8-note" spellcheck="false" aria-label="Note Pad"></textarea>`);
+      const ta = el.querySelector('textarea');
+      if (!ta.value) ta.value = store.get('np98', 'Notes to self, 1998:\n\n- Finish my home page\n- Sign up for more free hours\n- Ask about the 56K modem');
+      ta.addEventListener('input', () => store.set('np98', ta.value));
+    },
+    calc: () => {
+      const el = openWin('calc', 'Calculator', 190, 250, `<div class="p8-calc"><div class="d bev-in">0</div>${['C', '=', '/', '*', '7', '8', '9', '-', '4', '5', '6', '+', '1', '2', '3', '.', '0'].map((k) => `<button type="button" class="bev${k === '0' ? ' w' : ''}" data-k="${k}">${k}</button>`).join('')}</div>`);
+      const d = el.querySelector('.d');
+      let acc = null, op = null, cur = '0', fresh = true;
+      const calc = (a, b, o) => (o === '+' ? a + b : o === '-' ? a - b : o === '*' ? a * b : o === '/' ? (b === 0 ? NaN : a / b) : b);
+      const show = (v) => { d.textContent = Number.isFinite(+v) ? String(+(+v).toPrecision(10)) : 'Error'; };
+      el.querySelector('.p8-calc').addEventListener('click', (e) => {
+        const k = e.target.closest('[data-k]');
+        if (!k) return;
+        window.SFX.key();
+        const v = k.dataset.k;
+        if (/[0-9.]/.test(v)) { cur = fresh ? (v === '.' ? '0.' : v) : (v === '.' && cur.includes('.') ? cur : cur + v); fresh = false; show(cur); return; }
+        if (v === 'C') { acc = null; op = null; cur = '0'; fresh = true; show(cur); return; }
+        const n = parseFloat(cur);
+        acc = acc == null ? n : (fresh ? acc : calc(acc, n, op));
+        op = v === '=' ? null : v; fresh = true; cur = String(acc); show(acc);
+        if (v === '=') acc = null;
+      });
+    },
+    appear: () => {
+      const C = [['Jelly (picture)', ''], ['Bondi Blue', '#1a8ba3'], ['Grape', '#5d3f8e'], ['Tangerine', '#d9772b'], ['Lime', '#5c9c3a'], ['Strawberry', '#b8405a'], ['Graphite', '#5f6670'], ['Classic', '#3b6ea5']];
+      const el = openWin('appear', 'Appearance', 300, 280, `<div class="p8-appear"><p>Desktop colour:</p>${C.map(([n, c]) => `<button type="button" class="bev sw" data-c="${c}"><i style="background:${c || 'url(assets/images/jelly-wallpaper.webp) center / cover'}"></i>${n}</button>`).join('')}</div>`);
+      el.querySelector('.p8-appear').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (!b) return; window.SFX.click(); root.style.setProperty('--desk', b.dataset.c); root.classList.toggle('has-color', !!b.dataset.c); store.set('nt-desk-color', b.dataset.c); });
+    },
+    /* SommiSweeper: nine by nine, ten mines. The first click is always
+       safe; a number says how many mines touch that square; right click
+       (or Shift and click) plants a flag. The face starts a new game. */
+    mines: () => {
+      const N = 9, M = 10;
+      const el = openWin('mines', 'SommiSweeper', 214, 282, `<div class="ms"><div class="ms-top bev-in"><span class="ms-n">010</span><button type="button" class="ms-face bev">☺</button><span class="ms-t">000</span></div><div class="ms-grid bev-in"></div></div>`);
+      const grid = el.querySelector('.ms-grid'), face = el.querySelector('.ms-face'), nEl = el.querySelector('.ms-n'), tEl = el.querySelector('.ms-t');
+      let cells, started, over, flags, timer, secs;
+      const at = (i) => [i % N, Math.floor(i / N)];
+      const near = (i) => { const [x, y] = at(i), r = []; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const X = x + dx, Y = y + dy; if ((dx || dy) && X >= 0 && Y >= 0 && X < N && Y < N) r.push(Y * N + X); } return r; };
+      const pad3 = (v) => String(Math.max(0, Math.min(999, v))).padStart(3, '0');
+      const fresh = () => {
+        cells = [...Array(N * N)].map(() => ({ mine: false, open: false, flag: false, n: 0 }));
+        started = false; over = false; flags = 0; secs = 0; clearInterval(timer);
+        face.textContent = '☺'; nEl.textContent = pad3(M); tEl.textContent = '000';
+        grid.innerHTML = cells.map((_, i) => `<button type="button" class="ms-c bev" data-i="${i}"></button>`).join('');
+      };
+      const lay = (safe) => {
+        const ban = new Set([safe, ...near(safe)]);
+        let k = 0;
+        while (k < M) { const i = Math.floor(Math.random() * N * N); if (!ban.has(i) && !cells[i].mine) { cells[i].mine = true; k++; } }
+        cells.forEach((c, i) => { c.n = near(i).filter((j) => cells[j].mine).length; });
+        started = true;
+        timer = setInterval(() => { secs++; tEl.textContent = pad3(secs); }, 1000);
+      };
+      const paint = (i) => {
+        const c = cells[i], b = grid.children[i];
+        b.className = 'ms-c ' + (c.open ? 'is-open' : 'bev') + (c.flag && !c.open ? ' is-flag' : '') + (c.open && c.mine ? ' is-mine' : '');
+        b.textContent = c.open ? (c.mine ? '✹' : c.n || '') : c.flag ? '⚑' : '';
+        b.dataset.n = c.open && !c.mine ? c.n : '';
+      };
+      const open = (i) => {
+        const c = cells[i];
+        if (c.open || c.flag) return;
+        c.open = true; paint(i);
+        if (c.mine) { over = true; clearInterval(timer); face.textContent = '☹'; cells.forEach((d, j) => { if (d.mine) { d.open = true; paint(j); } }); grid.children[i].classList.add('is-boom'); window.SFX.error(); return; }
+        if (!c.n) near(i).forEach(open);
+      };
+      const won = () => cells.every((c) => c.mine || c.open);
+      grid.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-i]'); if (!b || over) return;
+        const i = +b.dataset.i;
+        if (e.shiftKey) { flag(i); return; }
+        if (!started) lay(i);
+        window.SFX.click();
+        open(i);
+        if (!over && won()) { over = true; clearInterval(timer); face.textContent = '☻'; const best = store.get('ms98', 0); if (!best || secs < best) store.set('ms98', secs); note('SommiSweeper', `Cleared in ${secs} seconds.${best && secs >= best ? ` Best: ${best}.` : ' A new best time!'}`, 'egg'); }
+      });
+      const flag = (i) => { const c = cells[i]; if (c.open || over) return; c.flag = !c.flag; flags += c.flag ? 1 : -1; nEl.textContent = pad3(M - flags); paint(i); window.SFX.key(); };
+      grid.addEventListener('contextmenu', (e) => { const b = e.target.closest('[data-i]'); if (!b) return; e.preventDefault(); flag(+b.dataset.i); });
+      face.addEventListener('click', () => { window.SFX.click(); fresh(); });
+      el.querySelector('[data-x]').addEventListener('click', () => clearInterval(timer));
+      fresh();
+    },
+    about: () => {
+      openWin('about', 'About This Computer', 360, 180, `<div class="p8-about"><div class="hd">${I.pxmark(40)}<div><b>SommiNet 98</b><span>Built-in memory: 64 MB<br/>Virtual memory: Off<br/>Largest unused block: 41.2 MB</span></div></div><div class="mem"><span>SommiNet 98</span><i style="width:26%"></i><span>16.8 MB</span></div><div class="mem"><span>SurfBoard</span><i style="width:10%"></i><span>6.0 MB</span></div></div>`);
+    }
+  };
+  const act = (code) => {
+    const [kind, arg] = code.split(':');
+    if (kind === 'page') { APPS98.surf(); load(arg); return; }
+    if (kind === 'win') { folder(arg); return; }
+    if (kind === 'app') { APPS98[arg](); return; }
+    if (kind === 'alert') note(arg === 'ext' ? 'Extension' : arg === 'finder' ? 'Finder' : 'System', ALERTS[arg] || '');
+  };
+
   const build = (scr, deskApi) => {
     api = deskApi;
     root = document.createElement('div');
@@ -308,7 +485,7 @@ window.WEB = (function () {
         ${MENUS.map(([k, l]) => `<button type="button" class="m" data-m="${k}" ${k === 'mark' ? 'aria-label="AJ menu"' : ''}>${l}</button>`).join('')}
         <span class="spacer"></span><button type="button" class="m spk" data-spk aria-label="Toggle sound">${window.ICONS.spk(window.SFX.muted)}</button><span class="clock"></span>
       </div>
-      <div class="nt-desk">${[['globe', 'SurfBoard', 'index'], ['resume', 'Résumé', 'resume'], ['book', 'Guestbook', 'guestbook'], ['mail', 'E-mail', 'contact'], ['folder', 'Projects', 'projects'], ['hd', 'Macintosh HD', 'work'], ['trash', 'Trash', '']].map(([ic, n, go]) => `<button type="button" class="nt-ico" data-open="${go}"><span>${I.svg(ic, 32)}</span><b>${n}</b></button>`).join('')}</div>
+      <div class="nt-desk">${DESK.map(([ic, n, go]) => icoBtn(ic, n, go, 'nt-ico')).join('')}</div>${icoBtn('trash', 'Trash', 'win:trash', 'nt-ico nt-trash')}
       <div class="br plat">
         <div class="br-title"><button type="button" class="tb l" data-win="close" aria-label="Close window"></button><span class="ttl">SurfBoard</span><button type="button" class="tb r" data-win="shade" aria-label="Collapse window"></button></div>
         <div class="br-tools">
@@ -360,16 +537,26 @@ window.WEB = (function () {
     root.addEventListener('click', (e) => {
       const w = e.target.closest('[data-win]');
       if (w) { window.SFX.click(); if (w.dataset.win === 'close') win.classList.add('is-closed'); else win.classList.toggle('is-shaded'); return; }
+      /* Icons, on the desktop or in a folder: a click selects, a double
+         click (or Return) opens, as the Finder had it. */
       const o = e.target.closest('[data-open]');
       if (o) {
-        window.SFX.click();
-        root.querySelectorAll('.nt-ico').forEach((x) => x.classList.toggle('on', x === o));
-        if (!o.dataset.open) { setStatus('The Trash is empty.'); return; }
-        win.classList.remove('is-closed', 'is-shaded');
-        load(o.dataset.open);
+        const scope = o.parentElement;
+        root.querySelectorAll('.nt-ico.on, .p8-ico.on').forEach((x) => { if (x !== o) x.classList.remove('on'); });
+        o.classList.add('on');
+        if (e.detail === 0 || e.detail === 2) { window.SFX.click(); act(o.dataset.open); }
+        void scope;
         return;
       }
+      if (e.target === root || e.target.classList.contains('nt-desk')) root.querySelectorAll('.nt-ico.on').forEach((x) => x.classList.remove('on'));
     });
+    root.addEventListener('pointerdown', (e) => {
+      const w = e.target.closest('.p8, .br');
+      if (w) front(w);
+    }, true);
+    window.RETRO.marquee(root, { isBg: (t) => t === root || t.classList.contains('nt-desk'), items: () => [...root.querySelectorAll('.nt-ico')], sel: 'on', cls: 'sel-98' });
+    const deskColor = store.get('nt-desk-color', null);
+    if (deskColor) { root.style.setProperty('--desk', deskColor); root.classList.add('has-color'); }
     root.addEventListener('click', (e) => {
       const g = e.target.closest('[data-go]');
       if (g) { e.preventDefault(); window.SFX.click(); load(g.dataset.go); return; }

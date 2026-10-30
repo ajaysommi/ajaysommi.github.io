@@ -79,7 +79,7 @@ window.SHAPES = (function () {
       const x = ((col + 0.25 + r() * 0.5) / cols) * 100, y = ((row + 0.25 + r() * 0.5) / rows) * 100;
       const s = size[0] + r() * (size[1] - size[0]), rot = Math.round(r() * 60 - 30);
       const o = (opacity * (0.7 + r() * 0.5)).toFixed(3);
-      out += svg(keys[(i * 5 + Math.floor(r() * 3)) % keys.length], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
+      out += svg(keys[(i * 5 + Math.floor(r() * 3)) % keys.length], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--o:${o};--tw:${(10 + Math.random() * 6).toFixed(1)}s;--twd:${(-Math.random() * 16).toFixed(1)}s;--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
     }
     return `<div class="bg-shapes" aria-hidden="true" style="color:${color}">${out}</div>`;
   };
@@ -89,15 +89,22 @@ window.SHAPES = (function () {
   const arrive = (el, x, y, { stagger = 900 } = {}) => {
     if (!el || document.documentElement.classList.contains('reduced')) return;
     const box = el.getBoundingClientRect();
+    /* Each shape is hidden outright until its turn (Safari lets a shape's
+       own CSS animation show through a scripted fade's waiting time), then
+       flies in from (x, y). */
     [...el.querySelectorAll('svg')].forEach((s, i) => {
       const b = s.getBoundingClientRect();
       const dx = x - (b.left + b.width / 2), dy = y - (b.top + b.height / 2);
       const o = +s.style.opacity || 0.1;
-      s.animate([
-        { translate: `${dx}px ${dy}px`, scale: '0.3', opacity: 0 },
-        { opacity: Math.min(1, o * 2), offset: 0.25 },
-        { translate: '0 0', scale: '1', opacity: o }
-      ], { duration: 1500 + Math.random() * 700, delay: Math.random() * stagger, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' });
+      s.style.visibility = 'hidden';
+      setTimeout(() => {
+        s.style.visibility = '';
+        s.animate([
+          { translate: `${dx}px ${dy}px`, scale: '0.3', opacity: 0 },
+          { opacity: Math.min(1, o * 2), offset: 0.25 },
+          { translate: '0 0', scale: '1', opacity: o }
+        ], { duration: 1500 + Math.random() * 700, easing: 'cubic-bezier(.16, 1, .3, 1)' });
+      }, Math.random() * stagger);
     });
     void box;
   };

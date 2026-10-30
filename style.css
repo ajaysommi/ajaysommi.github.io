@@ -3241,9 +3241,6 @@
        reads as one deliberate row instead. */
     .actions { display: flex; flex-wrap: wrap; gap: 10px; }
     .actions .btn { flex: 1 1 0; }
-    /* Resume and Get in touch stay a pair; the era button takes its own
-       full-width row beneath them. */
-    .actions .btn-era { flex: 1 0 100%; }
 
     .section { padding-inline: 14px; }
 
@@ -5404,24 +5401,179 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .card p { margin-bottom: 18px; }
 
 
-/* "Step into another era": the ghost button, ringed in the six stripes of
-   the old rainbow logo. The ring is its own layer, cut down to an outline,
-   so the button keeps the ghost's own fill in either theme rather than a
-   painted one. With a mouse, hovering runs the stripes once round to the
-   right, gently, and they slow to a stop where they began (300% of the
-   travel is one whole turn); the glow picks up their colours. A tap does
-   what any other button's does. */
-.btn.btn-era { border-color: transparent; transition: box-shadow .3s ease, transform .2s ease; }
-.btn.btn-era::before {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none;
-  background: linear-gradient(90deg, #61bb46, #fdb827, #f5821f, #e03a3e, #963d97, #009ddc, #61bb46) 0 0 / 300% 100%;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+/* The way into the eras: a banner over the hero, in the colours of the
+   machines this visitor would get. On a computer: terminal green, Mac
+   beige, Bondi blue, aqua. On a phone: Nokia navy and LCD green, iPod
+   lilac, iPhone silver and blue. The six stripes of the old rainbow logo
+   lead it in; the year in the headline keeps moving through the eras,
+   landing in each era's own type, and the matching machine lifts. It
+   slides in once the page is up, and its close button puts it away for
+   the rest of the visit. */
+/* It takes no room until it arrives: then its row opens (the page eases
+   down to make room) and the banner is set down in it. Without script it
+   simply stays shut. */
+.era-ad-wrap {
+  --spec: #3fe07a, #d9cfb4, #29a8c4, #3f78c4, #8fc2ff;
+  --cta: #6fe89a, #e4dcc4, #5cc4db, #8fc2ff;
+  --pad: clamp(6px, 2vw, 18px);
+  position: relative; display: grid; justify-content: center;
+  grid-template-rows: 0fr; padding: 0 var(--gutter);
+  transition: grid-template-rows .75s cubic-bezier(.3, .7, .2, 1), padding-top .75s cubic-bezier(.3, .7, .2, 1);
 }
+.era-ad-wrap.is-open { grid-template-rows: 1fr; padding-top: var(--pad); }
+.era-ad-wrap.is-off { display: none; }
+.era-ad-box { position: relative; min-height: 0; width: min(calc(100vw - 2 * var(--gutter)), var(--maxw)); }
+.era-ad-box > .era-ad, .era-ad-box > .era-ad-x { opacity: 0; }
+/* It pops out from its own middle with a little give: a small stretch in
+   the direction it is opening (down on a computer, up off the nav on a
+   phone, --dir), and one small bounce back to its own shape. */
+.era-ad-wrap { --dir: 1; }
+.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .5s linear both; will-change: transform, opacity; }
+.era-ad-wrap.is-served .era-ad-x { opacity: 1; transition: opacity .3s ease .25s; }
+.era-ad-box { z-index: 1; }
+@keyframes era-ad-launch {
+  0%   { opacity: 0; transform: translateY(calc(var(--dir) * -6px)) scale(.94, .7); animation-timing-function: cubic-bezier(.25, .8, .4, 1); }
+  30%  { opacity: 1; }
+  50%  { transform: translateY(calc(var(--dir) * 1px)) scale(.995, 1.04); animation-timing-function: cubic-bezier(.4, 0, .3, 1); }
+  100% { opacity: 1; transform: none; }
+}
+.era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }
+/* Landing: a shine runs across it, it glows in its colours for a moment,
+   and sparkles in the rainbow's colours fly off its edges. */
+.era-ad-shine { position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; overflow: hidden; }
+.era-ad-shine::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 35%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent); transform: skewX(-18deg);
+  animation: era-ad-shine 1s cubic-bezier(.4, 0, .2, 1) both;
+}
+@keyframes era-ad-shine { to { left: 120%; } }
+.era-ad-box::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: var(--r-pill); pointer-events: none; opacity: 0; transition: opacity .9s ease; will-change: opacity;
+  box-shadow: -12px 0 30px rgba(97, 187, 70, .35), 12px 0 30px rgba(0, 157, 220, .35); }
+.era-ad-box:has(.era-ad.is-glow)::before { opacity: 1; transition-duration: .35s; }
+.era-spark { position: fixed; z-index: 70; width: 12px; height: 12px; margin: -6px 0 0 -6px; pointer-events: none;
+  background: var(--c); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+/* The machines have faces. As the banner lands they give one short dance,
+   one after another, then just blink now and then and glance about. */
+.era-dv svg { transform-origin: 50% 100%; }
+.era-ad-wrap.is-dance .era-dv svg { animation: era-dance .9s ease-in-out 1 both; }
+.era-ad-wrap.is-dance .era-dv:nth-child(2) svg, .era-ad-wrap.is-dance .era-dv:nth-child(6) svg { animation-delay: .12s; }
+.era-ad-wrap.is-dance .era-dv:nth-child(3) svg, .era-ad-wrap.is-dance .era-dv:nth-child(7) svg { animation-delay: .24s; }
+.era-ad-wrap.is-dance .era-dv:nth-child(4) svg { animation-delay: .36s; }
+.era-dv .ev { transform-box: fill-box; transform-origin: 50% 50%; animation: era-blink 4.2s steps(1, end) infinite; }
+.era-dv:nth-child(even) .ev { animation-delay: -1.4s; }
+.era-dv:nth-child(3n) .ev { animation-delay: -2.7s; }
+.era-dv .pu { animation: era-look 6s ease-in-out infinite; }
+@keyframes era-dance {
+  0%, 100% { transform: none; }
+  20% { transform: scale(1.04, .95); }
+  45% { transform: translateY(-3px) rotate(-5deg); }
+  70% { transform: translateY(0) rotate(4deg) scale(1.03, .97); }
+}
+@keyframes era-blink { 0%, 93%, 100% { transform: none; } 95% { transform: scaleY(.1); } }
+@keyframes era-look { 0%, 30%, 100% { transform: translateX(0); } 40%, 60% { transform: translateX(.35px); } 70%, 85% { transform: translateX(-.35px); } }
+.era-ad {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 18px;
+  padding: 14px 56px 14px 0; border-radius: var(--r-pill); text-decoration: none; color: var(--ink);
+  background: #151513; border: 1px solid rgba(255, 255, 255, .1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  transition: transform .3s cubic-bezier(.2, .7, .2, 1), box-shadow .9s ease, border-color .3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-theme="daylight"] .era-ad { background: #fff; border-color: rgba(0, 0, 0, .08); box-shadow: 0 10px 30px rgba(30, 30, 40, .1); }
+/* A wash of the era colours behind, and their spectrum running slowly
+   along the bottom edge. */
+.era-ad::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .16;
+  background: linear-gradient(100deg, transparent 8%, var(--spec), transparent 92%);
+}
+[data-theme="daylight"] .era-ad::before { opacity: .12; }
+.era-ad::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: linear-gradient(90deg, var(--spec), #3fe07a) 0 0 / 200% 100%;
+  animation: era-ad-run 14s linear infinite;
+}
+@keyframes era-ad-run { to { background-position: 200% 0; } }
+.era-ad-stripes { align-self: stretch; display: flex; transform: skewX(-14deg); margin: -14px 4px -14px -8px; padding-left: 34px; }
+.era-ad-stripes i { width: 7px; }
+.era-ad-stripes i:nth-child(1) { background: #61bb46; } .era-ad-stripes i:nth-child(2) { background: #fdb827; }
+.era-ad-stripes i:nth-child(3) { background: #f5821f; } .era-ad-stripes i:nth-child(4) { background: #e03a3e; }
+.era-ad-stripes i:nth-child(5) { background: #963d97; } .era-ad-stripes i:nth-child(6) { background: #009ddc; }
+.era-ad-copy { display: grid; gap: 3px; min-width: 0; }
+.era-ad-kicker { font: .68rem/1.2 "Silkscreen", "Geist Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.era-ad-kicker b { font-weight: inherit; margin-right: 6px; padding: 1px 6px; border-radius: 4px; color: #111; background: linear-gradient(90deg, #fdb827, #f5821f); }
+.era-ad-title { font-size: clamp(1.02rem, 1.6vw, 1.25rem); font-weight: 650; letter-spacing: -.01em; }
+.era-ad-devs { display: flex; align-items: flex-end; gap: 10px; }
+.era-dv { display: block; height: 30px; opacity: .55; transform: translateY(2px) scale(.92); transform-origin: 50% 100%;
+  transition: opacity .4s ease, transform .5s cubic-bezier(.2, .9, .3, 1.3), filter .4s ease; }
+.era-dv svg { height: 100%; width: auto; display: block; }
+[data-theme="daylight"] .era-dv svg { filter: drop-shadow(0 0 .6px rgba(0, 0, 0, .5)); }
+.era-dv.is-on { opacity: 1; transform: translateY(-3px) scale(1.12); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .3)); }
+.era-ad-cta {
+  display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; border-radius: 999px;
+  font-weight: 650; font-size: .9rem; color: #111; white-space: nowrap;
+  background: linear-gradient(90deg, var(--cta)); background-size: 220% 100%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .2); transition: background-position .6s ease;
+}
+.era-ad-cta svg { transition: transform .3s cubic-bezier(.2, .7, .2, 1); }
+.era-ad-x {
+  position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
+  display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 50%; padding: 0;
+  color: var(--ink-2); background: transparent; cursor: pointer; transition: background .2s ease, color .2s ease;
+}
+.era-ad-x:hover { background: color-mix(in oklab, var(--ink) 10%, transparent); color: var(--ink); }
 @media (hover: hover) {
-  .btn.btn-era:hover { box-shadow: -3px 0 14px rgba(97,187,70,.35), 3px 0 14px rgba(0,157,220,.35), 0 0 22px rgba(224,58,62,.25), 0 14px 32px rgba(0,0,0,.28); }
-  .btn.btn-era:hover::before { animation: era-run 1.6s cubic-bezier(.3, .1, .25, 1) 1; }
+  .era-ad:hover { transform: translateY(-2px); box-shadow: 0 16px 38px rgba(0, 0, 0, .3); border-color: rgba(255, 255, 255, .2); }
+  [data-theme="daylight"] .era-ad:hover { box-shadow: 0 16px 38px rgba(30, 30, 40, .16); border-color: rgba(0, 0, 0, .14); }
+  .era-ad:hover .era-ad-cta { background-position: 100% 0; }
+  .era-ad:hover .era-ad-cta svg { transform: translateX(3px); }
 }
-@keyframes era-run { from { background-position: 300% 0; } to { background-position: 0 0; } }
-@media (prefers-reduced-motion: reduce) { .btn.btn-era:hover::before { animation: none; } }
+.era-ad:active { transform: scale(.99); }
+.for-phone { display: none; }
+/* On a phone it is a small pill floating just above the bottom nav (same
+   radius, same side margins), staying put as the page scrolls; it says
+   only "Step into" and a year, the rest is for the visitor to find. It
+   takes no room in the page, so nothing shifts; it rises from the nav. */
+@media (max-width: 719px) {
+  .era-ad-wrap {
+    --spec: #2f4372, #a9c262, #b8a9d9, #c9ccd1, #2f7fe0; --cta: #b9d37a, #cdbfe8, #dfe2e6, #9cc6ff;
+    --dir: -1;
+    position: fixed; left: 12px; right: 12px; bottom: var(--ad-bottom, calc(var(--mobile-nav-clear) + 4px)); z-index: 59;
+    display: block; padding: 0; transition: none; pointer-events: none;
+  }
+  .era-ad-wrap.is-open { padding: 0; }
+  .era-ad-box { width: 100%; pointer-events: auto; }
+  .era-ad-wrap:not(.is-served) .era-ad-box { visibility: hidden; }
+  .for-desk { display: none; }
+  .for-phone { display: revert; }
+  .era-ad { grid-template-columns: auto auto 1fr auto; gap: 10px; padding: 7px 40px 7px 0;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .35); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .era-ad-stripes { margin: -7px 0 -7px -8px; padding-left: 26px; }
+  .era-ad-stripes i { width: 3px; }
+  .era-ad-copy { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .era-ad-kicker { font-size: .6rem; }
+  .era-ad-kicker b { margin-right: 0; }
+  .era-ad-exp { display: none; }
+  .era-ad-devs { display: flex; gap: 7px; align-items: flex-end; margin-left: auto; padding-right: 2px; }
+  .era-dv { height: 24px; opacity: 1; transform: none; }
+  .era-dv.is-on { transform: translateY(-4px) scale(1.12); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .3)); }
+  .era-ad-title { font-size: .95rem; font-weight: 650; line-height: 1.2; white-space: nowrap; }
+  .era-ad-cta { width: 30px; height: 30px; padding: 0; justify-content: center; }
+  .era-ad-cta-t { display: none; }
+  .era-ad-x { right: 6px; width: 28px; height: 28px; }
+  .era-ad::after { height: 2px; }
+}
+/* Narrow phones: the NEW tag steps aside so the troupe keeps its room. */
+@media (max-width: 370px) { .era-ad-kicker { display: none; } .era-ad { gap: 8px; } }
+@media (max-width: 330px) { .era-dv { height: 21px; } .era-ad-devs { gap: 5px; } }
+@media (prefers-reduced-motion: reduce) { .era-ad-wrap { transition: none; } .era-ad::after, .era-ad-wrap.is-served .era-ad, .era-dv svg, .era-dv .ev, .era-dv .pu { animation: none; } }
+.era-yr { display: inline-block; min-width: 4ch; color: var(--ink); font-variant-numeric: tabular-nums; transition: color .3s ease, text-shadow .3s ease; }
+.era-yr[data-y="1983"] { font: 1.22em/1 "VT323", ui-monospace, monospace; color: #3fbf5f; text-shadow: 0 0 6px rgba(63,191,95,.45); }
+[data-theme="daylight"] .era-yr[data-y="1983"] { color: #1f8a3c; text-shadow: none; }
+.era-yr[data-y="1991"] { font: .78em/1 "Silkscreen", ui-monospace, monospace; letter-spacing: .02em; }
+.era-yr[data-y="1998"] { font: 1.04em/1 "Times New Roman", Times, serif; color: #4f7bff; text-decoration: underline; text-underline-offset: 2px; }
+[data-theme="daylight"] .era-yr[data-y="1998"] { color: #0000ee; }
+.era-yr[data-y="2000"] { font: .8em/1 "Silkscreen", ui-monospace, monospace; padding: 2px 4px; border-radius: 3px; background: #a9c262; color: #1d2a10; }
+.era-yr[data-y="2004"] { font: 600 .8em/1 "Silkscreen", ui-monospace, monospace; padding: 2px 4px; border-radius: 3px; background: #b8c6e2; color: #1b2149; }
+.era-yr[data-y="2007"] { font: 700 1em/1 Helvetica, Arial, sans-serif; color: #3f8cf0; text-shadow: 0 1px 0 rgba(255, 255, 255, .25), 0 0 10px rgba(63, 140, 240, .35); }
+.era-yr.is-scramble { font: 500 1em/1 "Geist Mono", ui-monospace, monospace; color: var(--ink-2); background: none; text-shadow: none; text-decoration: none; padding: 0; -webkit-text-fill-color: currentColor; }

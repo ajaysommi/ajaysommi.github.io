@@ -183,6 +183,9 @@ window.IPHONE = { start(room, exit) {
       lg('bg', [[0, '#3a3f4a'], [1, '#101318']])),
     clipGH: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g transform="translate(10 10.5) scale(2.32)"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" fill="#fff"/></g>`,
       lg('bg', [[0, '#5b5f66'], [0.5, '#2c2f35'], [1, '#121418']])),
+    /* Bubbles: a glossy blue tile with bubbles rising through it. */
+    bubbles: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><circle cx="20" cy="36" r="10" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="37" cy="22" r="7" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="40" cy="41" r="4.5" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="17" cy="32" r="3" fill="#fff" opacity=".85"/><circle cx="35" cy="19.5" r="2" fill="#fff" opacity=".85"/>`,
+      lg('bg', [[0, '#6fd3ff'], [0.5, '#1d8fe0'], [1, '#0a4fa8']]) + rg('bb', [[0, '#ffffff', 0.15], [0.7, '#bfe9ff', 0.35], [1, '#ffffff', 0.75]], 0.35, 0.3, 0.7)),
     clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="40" text-anchor="middle" ${HV} font-weight="bold" font-size="30" fill="#fff" letter-spacing="-1">in</text>`,
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
@@ -485,8 +488,8 @@ window.IPHONE = { start(room, exit) {
     a.def.onClose && a.def.onClose();
     scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
     a.el.classList.add('is-closing');
-    setTimeout(() => { flyOut(); board.classList.remove('is-converge'); requestAnimationFrame(flyIn); }, 140);
-    setTimeout(() => a.el.remove(), 320);
+    setTimeout(() => { flyOut(); board.classList.remove('is-converge'); requestAnimationFrame(flyIn); }, 70);
+    setTimeout(() => a.el.remove(), 160);
     setBar('black');
     state = 'home';
     tickClock();
@@ -566,7 +569,12 @@ window.IPHONE = { start(room, exit) {
     let cur = 0, token = 0;
     const marks = store.get('ip-marks', null) || [['Portfolio', 'index.html'], ['Resume', P.resume], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Wikipedia', 'https://en.m.wikipedia.org/']];
     app.el.classList.add('is-safari');
-    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><button type="button" data-a="b" aria-label="Back">◀</button><button type="button" data-a="f" aria-label="Forward">▶</button><button type="button" data-a="add" aria-label="Add bookmark"><svg viewBox="0 0 22 22" width="22" height="22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="3.6" stroke-linecap="square"/></svg></button><button type="button" data-a="bm" aria-label="Bookmarks"><span class="bk"></span></button><button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><b>1</b></span></button></div>`;
+    app.el.innerHTML = `<div class="saf-top"><span class="saf-url"></span><i class="saf-prog"></i><button type="button" class="saf-rl" aria-label="Reload">↻</button></div><div class="saf-view"><iframe class="saf-frame" title="${esc(label)}"></iframe><div class="saf-note" hidden><span>This page couldn’t be loaded.</span><a target="_blank" rel="noopener">Open it in a new tab</a></div></div><div class="saf-bot"><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="sfw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#e3e7ee"/></linearGradient></defs></svg>`
+      + `<button type="button" data-a="b" aria-label="Back"><svg viewBox="0 0 15 15" width="15" height="15"><path d="M.4 7.5 14.6.4v14.2z" fill="url(#sfw)"/></svg></button>`
+      + `<button type="button" data-a="f" aria-label="Forward"><svg viewBox="0 0 15 15" width="15" height="15"><path d="M14.6 7.5 .4.4v14.2z" fill="url(#sfw)"/></svg></button>`
+      + `<button type="button" data-a="add" aria-label="Add bookmark"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M8 0h4v8h8v4h-8v8H8v-8H0V8h8z" fill="url(#sfw)"/></svg></button>`
+      + `<button type="button" data-a="bm" aria-label="Bookmarks"><svg class="bk" viewBox="0 0 24 16" width="24" height="16"><path d="M12 3.2C9 1.2 4.6 1 1.2 2.4v11.8c3.4-1.3 7.8-1.1 10.8 1 3-2.1 7.4-2.3 10.8-1V2.4C19.4 1 15 1.2 12 3.2zM12 3.2v11.9" fill="none" stroke="#fff" stroke-width="1.9" stroke-linejoin="round"/></svg></button>`
+      + `<button type="button" data-a="pg" aria-label="Pages"><span class="pg2"><svg viewBox="0 0 22 22" width="22" height="22"><rect x="1.3" y="1.3" width="13.4" height="13.4" rx="2.6" fill="none" stroke="#fff" stroke-width="1.7"/><rect x="6.6" y="6.6" width="14.6" height="14.6" rx="2.4" fill="#7a89a7"/><rect x="7.4" y="7.4" width="13.6" height="13.6" rx="2" fill="#fff"/></svg><b>1</b></span></button></div>`;
     const fr = app.el.querySelector('.saf-frame'), note = app.el.querySelector('.saf-note'), cnt = app.el.querySelector('.pg2 b'), prog = app.el.querySelector('.saf-prog');
     /* Our own pages load directly; everything typed goes through OLDWEB,
        which finds the site as it was in 2007 (or today's, failing that)
@@ -585,6 +593,8 @@ window.IPHONE = { start(room, exit) {
       const t = tabsList[cur];
       addr.value = pretty(t.url); addr.render();
       cnt.textContent = tabsList.length;
+      app.el.querySelector('[data-a="b"]').classList.toggle('off', t.pos <= 0);
+      app.el.querySelector('[data-a="f"]').classList.toggle('off', t.pos >= t.hist.length - 1);
       load(t.url);
     };
     const go = (u) => {
@@ -647,14 +657,17 @@ window.IPHONE = { start(room, exit) {
     return { start: p(a), end: p(b || a) };
   };
 
-  const roleDetail = (e) => (pg) => {
+  const roleDetail = (e, app) => (pg) => {
     pg.classList.add('pin');
     pg.innerHTML = `${group([['', `${esc(e.role)}<br/><span style="font-weight:normal;color:#4c566c">${esc(e.org)}</span>`]])}
       ${group([['starts', esc(e.when.split(' to ')[0]), 1], ['ends', esc(e.when.split(' to ')[1] || ''), 1], ['location', esc(e.where), 1]])}
       <div class="gp"><div class="txt">${esc(e.text)}</div></div>
       ${e.stats.length ? group(e.stats.map(([a, b]) => [a, esc(b), 1])) : ''}
       <div class="gp"><div class="txt sub">${e.tags.map(esc).join(' · ')}</div></div>
-      ${e.photos.length ? `<div class="gp"><div class="thumbs">${e.photos.map((p) => `<img src="${p}" alt="" />`).join('')}</div></div>` : ''}`;
+      ${e.photos.length ? `<div class="gp"><div class="thumbs">${e.photos.map((p, k) => `<img src="${p}" data-k="${k}" alt="" />`).join('')}</div></div>` : ''}`;
+    /* Its photos open full screen, to swipe through. */
+    const album = { steps: e.photos.map((p, k) => [p, e.org, `${e.role} · ${k + 1} of ${e.photos.length}`]) };
+    pg.addEventListener('click', (ev) => { const im = ev.target.closest('.thumbs img[data-k]'); if (im && app) { SFX.click(); viewer(app, album, +im.dataset.k, scr.dataset.bar || 'gray'); } });
   };
 
   /* A little form: labelled fields that the keyboard fills in. */
@@ -676,7 +689,7 @@ window.IPHONE = { start(room, exit) {
       roles.forEach((e, i, arr) => {
         if (i === 0 || arr[i - 1].year !== e.year) rows.push({ header: String(e.year) });
         const s = span(e);
-        rows.push({ text: e.short, lead: `<span class="cal-t">${MONTHS[s.start.m]}<br/><em>${MONTHS[s.end.m]}</em></span>`, cls: 'cal-row', go: () => app.push(e.short, roleDetail(e), { back: 'Calendar' }) });
+        rows.push({ text: e.short, lead: `<span class="cal-t">${MONTHS[s.start.m]}<br/><em>${MONTHS[s.end.m]}</em></span>`, cls: 'cal-row', go: () => app.push(e.short, roleDetail(e, app), { back: 'Calendar' }) });
       });
       plain(pg, rows);
     };
@@ -687,7 +700,7 @@ window.IPHONE = { start(room, exit) {
         ${roles.map((e, i) => { const s = span(e); const a = (s.start.y - y0 + s.start.m / 12) * H + 10, b = (s.end.y - y0 + (s.end.m + 1) / 12) * H + 10; return `<button type="button" class="ev" data-i="${i}" style="top:${a}px;height:${Math.max(22, b - a - 2)}px;left:${i % 2 ? 150 : 56}px">${esc(e.short)}<span>${esc(e.role)}</span></button>`; }).join('')}</div>`;
       pg.addEventListener('click', (ev) => {
         const b = ev.target.closest('.ev');
-        if (b) { SFX.click(); const e = roles[+b.dataset.i]; app.push(e.short, roleDetail(e), { back: 'Calendar' }); }
+        if (b) { SFX.click(); const e = roles[+b.dataset.i]; app.push(e.short, roleDetail(e, app), { back: 'Calendar' }); }
         const y = ev.target.closest('[data-y]');
         if (y) pg.scrollBy({ top: +y.dataset.y * H * 2, behavior: 'smooth' });
       });
@@ -811,6 +824,7 @@ window.IPHONE = { start(room, exit) {
 
   /* Notes: every note can be edited, new ones made, sent or thrown away. */
   const NOTES_DEFAULT = [
+    ['More eras', 'This phone is one of three in this portfolio (a 2000 Nokia-style candybar and a 2004 click-wheel player are the others: Eras, at the bottom).\n\nOn a laptop or desktop there are whole computers too: a 1983 terminal, a 1991 Macintosh, a 1998 iMac and a 2007 iMac, each one yours to click around, with a game on every one.\n\nOpen this page on a computer to try them.'],
     ['About me', `${P.about[0]}\n\n${P.about[1]}`],
     ['Education', `${P.education.school}\n${P.education.degree}\n${P.education.college}\nGraduating ${P.education.when}\n\n${P.education.text}`],
     ['Off the clock', `“${P.quote}”\n\nRepairs, teardowns and builds: see Builds.`],
@@ -834,14 +848,14 @@ window.IPHONE = { start(room, exit) {
       field(p.querySelector('.note-body'), { value: notes[i][1], multi: true, onChange: (v) => { notes[i][1] = v; save(); } });
       if (fresh) setTimeout(() => p.querySelector('.note-body').click(), 340);
       /* Swipe sideways to move between notes. */
-      let x0 = null;
-      p.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-      p.addEventListener('pointerup', (e) => {
-        if (x0 === null || Math.abs(e.clientX - x0) < 60) { x0 = null; return; }
-        const j = i + (e.clientX < x0 ? 1 : -1);
-        x0 = null;
-        if (j >= 0 && j < notes.length) { app.pop(); setTimeout(() => open(j), 320); }
-      });
+      const paper = p.querySelector('.note');
+      swipe(p, () => paper, (d, from) => {
+        const j = i + d;
+        if (j < 0 || j >= notes.length) { paper.style.transform = ''; paper.animate([{ transform: `translateX(${from}px)` }, { transform: 'none' }], { duration: 240, easing: SLIDE }); return; }
+        paper.style.transform = '';
+        paper.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${-d * 330}px)` }], { duration: 180, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' })
+          .finished.then(() => { app.pop(); setTimeout(() => open(j), 320); });
+      }, () => !p.querySelector('.note-body.is-on, .note-body:focus'));
       entry.opts.tools = [
         ['<svg viewBox="0 0 22 18" width="22" height="18"><path d="M2 6.5v9.5h15.5V12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 12c1-4.5 4.5-6.5 9-6.5V2.5L20.5 7 15 11.5V8.5C11.5 8.5 8.5 9.5 6 12z" fill="#fff"/></svg>', 'Email this note', () => writeMail(named(notes[i]), notes[i][1])],
         ['<svg viewBox="0 0 16 19" width="16" height="19"><path d="M1 4h14M5.5 4V1.8h5V4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M2.6 5.6h10.8l-1 12.4H3.6z" fill="#fff"/><path d="M6 8v8M8 8v8M10 8v8" stroke="#8a5d2a" stroke-width="1"/></svg>', 'Delete note', async () => {
@@ -1021,9 +1035,88 @@ window.IPHONE = { start(room, exit) {
     app.el.querySelector('.ml-tb').addEventListener('click', (e) => { const b = e.target.closest('[data-a]'); if (!b) return; SFX.click(); if (b.dataset.a === 'c') compose(P.email, ''); else alertBox('No New Mail'); });
   };
 
+  /* Bubbles: they rise from the bottom; pop them before they float off
+     the top. Three get away and it is over. They come faster and closer
+     together as the score climbs, the small ones are worth more, and from
+     30 points on some are red: popping one of those costs a life. Fingers
+     at once all count. */
+  const bubbles = (app) => {
+    app.el.innerHTML = '<div class="bb-app"><canvas></canvas><div class="bb-hud"><span class="s">0</span><span class="l">●●●</span></div><div class="bb-msg"><b>Bubbles</b><p>Pop them before they float away.<br/>Don’t touch the red ones.</p><p class="hi"></p><span>Tap to start</span></div></div>';
+    const root = app.el.querySelector('.bb-app'), cv = root.querySelector('canvas'), msg = root.querySelector('.bb-msg');
+    const W = 320, H = root.clientHeight || 440, dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    const c = cv.getContext('2d'); c.scale(dpr, dpr);
+    const COLS = ['#7fd4ff', '#a7f0b4', '#ffd27a', '#e3b5ff', '#ff9fc6', '#9fd0ff'];
+    let g = null, raf = 0;
+    const hi = () => store.get('ip-bubbles-hi', 0);
+    msg.querySelector('.hi').textContent = hi() ? `Best: ${hi()}` : '';
+    const reset = () => { g = { b: [], pops: [], score: 0, lives: 3, t: performance.now(), next: 0, play: true }; };
+    const spawn = (now) => {
+      const lvl = Math.min(1, g.score / 160);
+      const r = 14 + Math.random() * (26 - lvl * 8);
+      const red = g.score >= 30 && Math.random() < 0.16 + lvl * 0.1;
+      g.b.push({ x: r + Math.random() * (W - 2 * r), y: H + r, r, v: (0.05 + Math.random() * 0.035 + lvl * 0.08) * (1.2 - r / 60), w: Math.random() * 6.28, c: red ? '#ff4a3d' : COLS[Math.floor(Math.random() * COLS.length)], red });
+      g.next = now + Math.max(200, 720 - g.score * 5) * (0.6 + Math.random() * 0.6);
+    };
+    const hud = () => { root.querySelector('.s').textContent = g.score; root.querySelector('.l').textContent = '●'.repeat(Math.max(0, g.lives)) + '○'.repeat(3 - Math.max(0, g.lives)); };
+    const lose = () => {
+      g.lives--; hud();
+      if (navigator.vibrate) navigator.vibrate(80);
+      if (g.lives > 0) return;
+      g.play = false;
+      if (g.score > hi()) store.set('ip-bubbles-hi', g.score);
+      msg.querySelector('b').textContent = 'Game over';
+      msg.querySelector('p').innerHTML = `You popped ${g.score} points’ worth.`;
+      msg.querySelector('.hi').textContent = `Best: ${hi()}`;
+      msg.querySelector('span').textContent = 'Tap to play again';
+      msg.hidden = false;
+    };
+    const frame = (now) => {
+      raf = requestAnimationFrame(frame);
+      if (!g) return;
+      const dt = Math.min(40, now - g.t); g.t = now;
+      if (g.play && now >= g.next) spawn(now);
+      c.clearRect(0, 0, W, H);
+      for (const b of g.b.slice()) {
+        if (g.play) { b.y -= b.v * dt; b.w += dt * 0.003; }
+        const x = b.x + Math.sin(b.w) * 4;
+        if (b.y < -b.r) { g.b.splice(g.b.indexOf(b), 1); if (!b.red && g.play) lose(); continue; }
+        const gr = c.createRadialGradient(x - b.r * 0.35, b.y - b.r * 0.4, b.r * 0.1, x, b.y, b.r);
+        gr.addColorStop(0, 'rgba(255,255,255,.9)'); gr.addColorStop(0.35, b.c + '55'); gr.addColorStop(0.9, b.c + 'aa'); gr.addColorStop(1, 'rgba(255,255,255,.85)');
+        c.fillStyle = gr; c.beginPath(); c.arc(x, b.y, b.r, 0, Math.PI * 2); c.fill();
+        c.fillStyle = 'rgba(255,255,255,.9)'; c.beginPath(); c.ellipse(x - b.r * 0.38, b.y - b.r * 0.42, b.r * 0.22, b.r * 0.13, -0.6, 0, Math.PI * 2); c.fill();
+        b.sx = x;
+      }
+      for (const p of g.pops.slice()) {
+        p.t += dt; const k = p.t / 260;
+        if (k >= 1) { g.pops.splice(g.pops.indexOf(p), 1); continue; }
+        c.strokeStyle = `rgba(255,255,255,${1 - k})`; c.lineWidth = 2;
+        for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.beginPath(); c.moveTo(p.x + Math.cos(a) * p.r * (0.6 + k), p.y + Math.sin(a) * p.r * (0.6 + k)); c.lineTo(p.x + Math.cos(a) * p.r * (0.9 + k * 1.2), p.y + Math.sin(a) * p.r * (0.9 + k * 1.2)); c.stroke(); }
+        if (p.pts) { c.fillStyle = `rgba(255,255,255,${1 - k})`; c.font = 'bold 15px Helvetica, Arial, sans-serif'; c.textAlign = 'center'; c.fillText(p.pts, p.x, p.y - 4 - k * 18); }
+      }
+    };
+    raf = requestAnimationFrame(frame);
+    root.addEventListener('pointerdown', (e) => {
+      if (!g || !g.play) { reset(); hud(); msg.hidden = true; return; }
+      const r = cv.getBoundingClientRect(), k = r.width / W;
+      const x = (e.clientX - r.left) / k, y = (e.clientY - r.top) / k;
+      for (let i = g.b.length - 1; i >= 0; i--) {
+        const b = g.b[i];
+        if (Math.hypot(x - (b.sx || b.x), y - b.y) <= b.r + 8) {
+          g.b.splice(i, 1);
+          if (b.red) { g.pops.push({ x: b.sx || b.x, y: b.y, r: b.r, t: 0, pts: '' }); lose(); }
+          else { const pts = Math.max(1, Math.round(40 / b.r)); g.score += pts; g.pops.push({ x: b.sx || b.x, y: b.y, r: b.r, t: 0, pts: '+' + pts }); SFX.key(); hud(); }
+          return;
+        }
+      }
+    });
+    app.def.onClose = () => cancelAnimationFrame(raf);
+  };
+
   const APPS = {
     guestbook: { name: 'Text', icon: 'sms', open: messages },
     experience: { name: 'Calendar', icon: 'calendar', open: calendar },
+    bubbles: { name: 'Bubbles', icon: 'bubbles', bare: true, bar: 'black', open: bubbles },
     builds: { name: 'Photos', icon: 'photos', cls: 'is-photos', open(app) {
       app.push('Photo Albums', (pg) => plain(pg, P.offclock.map((s) => ({ text: `${s.name} (${s.steps.length})`, img: s.cover, cls: 'alb', go: () => app.push(s.name, (p) => {
         p.classList.add('ph-pg');
@@ -1290,11 +1383,9 @@ window.IPHONE = { start(room, exit) {
         const c = e.target.closest('[data-c]');
         if (c) { k = +c.dataset.c; flipped = false; draw(); return; }
         const dot = e.target.closest('.wx-dots i');
-        if (dot) { k = [...dots.children].indexOf(dot); draw(); }
+        if (dot) { const j = [...dots.children].indexOf(dot); if (j !== k) slideOver(card, j > k ? 1 : -1, 0, () => { k = j; draw(); }); }
       });
-      let x0 = null;
-      app.el.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-      app.el.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40 && !flipped) step(e.clientX < x0 ? 1 : -1); x0 = null; });
+      swipe(app.el, () => card, (d, from) => slideOver(card, d, from, () => { k = (k + d + C.length) % C.length; SFX.click(); draw(); }), () => !flipped);
       draw();
     } },
     skills: { name: 'Settings', icon: 'settings', open(app) {
@@ -1345,12 +1436,82 @@ window.IPHONE = { start(room, exit) {
     resume: { name: 'Web', icon: 'safari', bare: true, bar: 'gray', open(app) { safari(app, P.resume + '#view=FitH', 'ajaysommi.github.io/' + P.resume); } }
   };
 
+  /* Swiping between things (photos, cities): what is showing follows the
+     finger, and let go past a little way it carries on off the side as the
+     next one slides in behind it; short of that it springs back. `area`
+     takes the touches, `target()` is what moves, `go(dir)` changes over to
+     the next (1) or previous (-1), `ok()` says whether a swipe may start. */
+  const SLIDE = 'cubic-bezier(.25, .8, .3, 1)';
+  const swipe = (area, target, go, ok = () => true) => {
+    let d = null;
+    area.addEventListener('pointerdown', (e) => {
+      if (!ok() || e.button > 0 || e.target.closest('button, a, input, .ip-kb')) return;
+      d = { x: e.clientX, y: e.clientY, k: scr.getBoundingClientRect().width / 320, dx: 0, on: false, id: e.pointerId };
+    });
+    area.addEventListener('pointermove', (e) => {
+      if (!d || e.pointerId !== d.id) return;
+      const dx = (e.clientX - d.x) / d.k, dy = (e.clientY - d.y) / d.k;
+      if (!d.on) {
+        if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { d = null; return; }
+        if (Math.abs(dx) < 6) return;
+        d.on = true;
+        try { area.setPointerCapture(e.pointerId); } catch (x) {}
+      }
+      d.dx = dx;
+      target().style.transform = `translateX(${dx}px)`;
+    });
+    const end = (e) => {
+      if (!d || !d.on) { d = null; return; }
+      const { dx } = d;
+      d = null;
+      e.preventDefault();
+      const el = target();
+      if (Math.abs(dx) < 50) {
+        el.style.transform = '';
+        el.animate([{ transform: `translateX(${dx}px)` }, { transform: 'none' }], { duration: 240, easing: SLIDE });
+        return;
+      }
+      go(dx < 0 ? 1 : -1, dx);
+    };
+    area.addEventListener('pointerup', end);
+    area.addEventListener('pointercancel', end);
+  };
+  /* One card out to the side and the next in from the other, as one move. */
+  const slideOver = (el, dir, from, change) => {
+    el.style.transform = '';
+    const out = el.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${-dir * 330}px)` }], { duration: 170, easing: 'cubic-bezier(.4, 0, 1, 1)', fill: 'forwards' });
+    out.finished.then(() => {
+      change();
+      out.cancel();
+      el.animate([{ transform: `translateX(${dir * 330}px)` }, { transform: 'none' }], { duration: 300, easing: 'cubic-bezier(0, 0, .2, 1)' });
+    });
+  };
+
+  /* The photo viewer: the photos lie side by side on a strip, the one
+     before and after just off the edges, so a swipe drags the neighbour in
+     and letting go slides the strip on to it. */
   const viewer = (app, s, k, bar = 'gray') => {
     const v = h('div', 'photo-view');
-    let auto = 0;
+    const n = s.steps.length;
+    let auto = 0, busy = false;
     const api = {};
-    const draw = () => { v.innerHTML = `<div class="pv-top"><button type="button" data-x>Done</button><b>${k + 1} of ${s.steps.length}</b><span></span></div><img src="${s.steps[k][0].replace('-480', '-960')}" alt="${esc(s.steps[k][1])}" /><div class="cap"><b>${esc(s.steps[k][1])}</b>${esc(s.steps[k][2])}</div><div class="tbar"><button type="button" data-d="-1">◀</button><button type="button" data-p>${auto ? '❙❙' : '▶'}</button><button type="button" data-d="1">▶▶</button></div>`; };
-    const step = (d) => { k = (k + d + s.steps.length) % s.steps.length; draw(); };
+    const big = (i) => s.steps[(i + n) % n][0].replace('-480', '-960');
+    v.innerHTML = `<div class="pv-strip"></div><div class="pv-top"><button type="button" data-x>Done</button><b></b><span></span></div><div class="cap"></div><div class="tbar"><button type="button" data-d="-1">◀</button><button type="button" data-p></button><button type="button" data-d="1">▶▶</button></div>`;
+    const strip = v.querySelector('.pv-strip');
+    const draw = () => {
+      strip.style.transform = '';
+      strip.innerHTML = (n > 1 ? [-1, 0, 1] : [0]).map((o) => `<div class="pv-ph" style="left:${o * 330}px"><img src="${big(k + o)}" alt="${o ? '' : esc(s.steps[k][1])}" /></div>`).join('');
+      v.querySelector('.pv-top b').textContent = `${k + 1} of ${n}`;
+      v.querySelector('.cap').innerHTML = `<b>${esc(s.steps[k][1])}</b>${esc(s.steps[k][2] || '')}`;
+      v.querySelector('[data-p]').textContent = auto ? '❙❙' : '▶';
+    };
+    const step = (d, from = 0) => {
+      if (busy || n < 2) return;
+      busy = true;
+      strip.style.transform = '';
+      strip.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${-d * 330}px)` }], { duration: Math.max(180, 320 * (1 - Math.abs(from) / 330)), easing: SLIDE, fill: 'forwards' })
+        .finished.then((a) => { k = (k + d + n) % n; draw(); strip.getAnimations().forEach((x) => x.cancel()); busy = false; });
+    };
     draw();
     v.addEventListener('click', (ev) => {
       const b = ev.target.closest('button');
@@ -1359,9 +1520,7 @@ window.IPHONE = { start(room, exit) {
       if (b.hasAttribute('data-p')) { if (auto) { clearInterval(auto); auto = 0; } else auto = setInterval(() => step(1), 2200); draw(); return; }
       step(+b.dataset.d);
     });
-    let x0 = null;
-    v.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-    v.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) step(e.clientX < x0 ? 1 : -1); x0 = null; });
+    swipe(v, () => strip, (d, from) => step(d, from), () => !busy);
     app.el.appendChild(v);
     setBar('black');
     api.play = () => { auto = setInterval(() => step(1), 2200); draw(); };
@@ -1372,7 +1531,11 @@ window.IPHONE = { start(room, exit) {
 
   /* The original grid: icons 57 points square, columns 75 apart starting
      19 in, rows 90 apart starting 19 under the status bar. */
-  const GRID = ['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'];
+  /* Two home screens, as the original had once you had enough apps: a
+     sideways swipe moves between them, the dots above the dock say which. */
+  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'], ['bubbles']];
+  const GRID = PAGES.flat();
+  let pageNo = 0;
   const DOCK = ['contact', 'email', 'resume', 'about'];
   const iconBtn = (id) => {
     const b = h('button', 'ip-icon', `<span class="ic">${ICON[APPS[id].icon]()}</span><span class="lbl">${esc(APPS[id].name)}</span>`);
@@ -1394,16 +1557,19 @@ window.IPHONE = { start(room, exit) {
     b.style.transform = `translate(${-cx * 1.6}px, ${-cy * 1.6}px) scale(1.5)`;
   };
   const drawBoard = () => {
-    grid.innerHTML = '';
+    grid.innerHTML = `<div class="ip-pages" style="transform:translateX(${-pageNo * 320}px)">${PAGES.map(() => '<div class="ip-page"></div>').join('')}</div><div class="ip-dots">${PAGES.map((_, i) => `<i class="${i === pageNo ? 'on' : ''}"></i>`).join('')}</div>`;
     dock.innerHTML = '';
-    GRID.forEach((id, i) => {
+    const pages = grid.querySelectorAll('.ip-page');
+    PAGES.forEach((ids, p) => ids.forEach((id, i) => {
       const b = iconBtn(id);
       const c = i % 4, r = Math.floor(i / 4);
       b.style.left = 19.4 - 8.5 + c * 75 + 'px';
       b.style.top = 19.2 + r * 90.4 + 'px';
-      grid.appendChild(b);
-      place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
-    });
+      pages[p].appendChild(b);
+      // Only the page on show flies; the others simply wait in place, out of sight.
+      if (p === pageNo) place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
+      else { b.classList.add('is-away'); b.dataset.d = 0; }
+    }));
     DOCK.forEach((id, i) => {
       const b = iconBtn(id);
       b.style.left = 19.4 - 8.5 + i * 75 + 'px';
@@ -1413,8 +1579,46 @@ window.IPHONE = { start(room, exit) {
     });
     showUnread();
   };
+  /* Paging: the strip of home screens follows the finger, and on letting
+     go it glides to the nearer page (a quick flick is enough). */
+  const goPage = (p, from) => {
+    pageNo = Math.max(0, Math.min(PAGES.length - 1, p));
+    const strip = grid.querySelector('.ip-pages');
+    const to = -pageNo * 320;
+    strip.style.transform = `translateX(${to}px)`;
+    if (from != null) strip.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${to}px)` }], { duration: 320, easing: 'cubic-bezier(.25, .8, .3, 1)' });
+    grid.querySelectorAll('.ip-dots i').forEach((d, i) => d.classList.toggle('on', i === pageNo));
+    grid.querySelectorAll('.ip-page').forEach((pg, i) => pg.querySelectorAll('.ip-icon').forEach((b) => b.classList.toggle('is-away', i !== pageNo)));
+  };
+  let pg = null;
+  grid.addEventListener('pointerdown', (e) => {
+    if (state !== 'home') return;
+    pg = { x: e.clientX, y: e.clientY, t: performance.now(), k: scr.getBoundingClientRect().width / 320, dx: 0, on: false, id: e.pointerId };
+  });
+  grid.addEventListener('pointermove', (e) => {
+    if (!pg || e.pointerId !== pg.id) return;
+    const dx = (e.clientX - pg.x) / pg.k, dy = (e.clientY - pg.y) / pg.k;
+    if (!pg.on) { if (Math.abs(dx) < 8) return; if (Math.abs(dy) > Math.abs(dx)) { pg = null; return; } pg.on = true; try { grid.setPointerCapture(e.pointerId); } catch (x) {} }
+    let x = -pageNo * 320 + dx;
+    const lo = -(PAGES.length - 1) * 320;
+    if (x > 0) x *= 0.35; else if (x < lo) x = lo + (x - lo) * 0.35;   // resists past the ends
+    pg.dx = dx; pg.x0 = x;
+    grid.querySelector('.ip-pages').style.transform = `translateX(${x}px)`;
+  });
+  const pgEnd = () => {
+    if (!pg) return;
+    const p = pg; pg = null;
+    if (!p.on) return;
+    quietUntil = performance.now() + 250;   // the lift that ends a swipe opens nothing
+    const fast = Math.abs(p.dx) / Math.max(1, performance.now() - p.t) > 0.35;
+    const d = Math.abs(p.dx) > 110 || (fast && Math.abs(p.dx) > 20) ? (p.dx < 0 ? 1 : -1) : 0;
+    goPage(pageNo + d, p.x0);
+  };
+  grid.addEventListener('pointerup', pgEnd);
+  grid.addEventListener('pointercancel', pgEnd);
+
   const flyIn = (unlocking) => {
-    const icons = [...room.querySelectorAll('.ip-icon')];
+    const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')];
     const far = Math.max(...icons.map((b) => +b.dataset.d));
     void board.offsetWidth;
     board.classList.remove('is-flying');
@@ -1422,11 +1626,11 @@ window.IPHONE = { start(room, exit) {
        places: an ease-in with no settle, the outer ring a beat ahead. */
     icons.forEach((b) => {
       /* Unlocking takes its time, a smooth sweep in; Home is quicker. */
-      b.style.transition = unlocking ? 'transform .5s cubic-bezier(.32, 0, .58, 1), opacity .3s ease' : 'transform .2s cubic-bezier(.97, 0, 1, .02), opacity .06s linear';
-      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * (unlocking ? 50 : 20)) + 'ms';
+      b.style.transition = unlocking ? 'transform .5s cubic-bezier(.32, 0, .58, 1), opacity .3s ease' : 'transform .1s cubic-bezier(.97, 0, 1, .02), opacity .03s linear';
+      b.style.transitionDelay = Math.round((1 - +b.dataset.d / far) * (unlocking ? 50 : 10)) + 'ms';
       b.style.transform = '';
     });
-    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), unlocking ? 650 : 360);
+    setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), unlocking ? 650 : 180);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
 
@@ -1456,6 +1660,13 @@ window.IPHONE = { start(room, exit) {
   knob.addEventListener('pointerup', release);
   knob.addEventListener('pointercancel', release);
   knob.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'Enter') unlock(); });
+  /* Tapping the messages notification unlocks straight into Messages. */
+  const lkNote = room.querySelector('.ip-lk-note');
+  lkNote.addEventListener('click', () => {
+    if (state !== 'locked' || asleep) return;
+    unlock();
+    setTimeout(() => { quietUntil = 0; openApp('guestbook', grid.querySelector('[data-id="guestbook"]')); }, 720);
+  });
 
   function unlock() {
     if (state !== 'locked') return;

@@ -161,3 +161,12 @@
 .nk.is-photo .nk-rock { left: 202.8px; top: 361.6px; width: 78px; height: 62.4px; }
 .nk.is-photo .nk-power { left: 160px; margin: 0; width: 50px; top: 0; }
 .nk.is-photo { filter: drop-shadow(0 24px 36px rgba(20,30,60,.35)); }
+
+/* Snake II on the LCD: square pixels, no smoothing. */
+.nk-view.t-game { display: flex; flex-direction: column; align-items: center; }
+.nk-game { display: block; margin-top: 2px; image-rendering: pixelated; touch-action: none; border: 1px solid rgba(29,42,16,.55); }
+.nk-view.t-game .nk-hd { display: flex; justify-content: space-between; align-self: stretch; }
+/* The start-up mark is centred on the whole screen, not just above the soft-key line. */
+.nk-view.t-boot { position: static; }
+.nk-view.t-boot .nk-boot { z-index: 2; gap: 6px; }
+.nk-view.t-boot .nk-boot svg { width: 60px; height: 60px; }

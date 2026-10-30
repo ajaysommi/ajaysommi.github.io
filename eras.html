@@ -49,6 +49,13 @@
       root.className = 'is-' + mode + ' js is-loading';
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('reduced');
       root.dataset.mode = mode;
+      /* Light or dark, as the standard site has it: the visitor's own pick
+         there, or else the device's setting. Only the pickers and the
+         loading screen follow it; the machines look as they always did. */
+      var th = null;
+      try { th = sessionStorage.getItem('as-theme'); } catch (e) {}
+      root.dataset.theme = th === 'daylight' || th === 'midnight' ? th : (matchMedia('(prefers-color-scheme: light)').matches ? 'daylight' : 'midnight');
+      if (root.dataset.theme === 'daylight') { var tm = document.querySelector('meta[name="theme-color"]'); if (tm) tm.content = '#f1efe9'; }
       root.dataset.forced = forced ? '1' : '';
       root.dataset.dev = dev ? '1' : '';
     })();
@@ -70,6 +77,7 @@
     /* Its paper carries on under Safari's bottom bar. */
     .boot-ld::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 160px; background: inherit; }
     .boot-ld.is-done { opacity: 0; visibility: hidden; }
+    [data-theme="daylight"] .boot-ld { background: #f1efe9; color: #1c1a17; }
     .boot-ld .in { display: flex; flex-direction: column; align-items: center; gap: 22px; }
     .boot-ld svg { width: 112px; height: 112px; display: block; shape-rendering: crispEdges; }
     .boot-ld svg rect { opacity: 0; transition: opacity .12s steps(1); }
@@ -85,14 +93,20 @@
     /* The loader lets taps through, so the room holds still under it. */
     .is-loading .picker, .is-loading .os-host, .is-loading .phone-host { pointer-events: none; }
     .picker, .os-host, .phone-host { transition: filter 1s ease; }
+    /* In daylight a dimmed room reads as grey, and a picker fading up let
+       the darker rooms behind it show through: so nothing under the paper
+       is dimmed or faded, and only the paper itself lifts away. */
+    [data-theme="daylight"].is-loading .picker, [data-theme="daylight"].is-loading .phone-host, [data-theme="daylight"].is-loading .os-host { filter: none; }
+    [data-theme="daylight"] .picker, [data-theme="daylight"] .phone-host, [data-theme="daylight"] .os-host { transition: none; }
+    [data-theme="daylight"] body { background: #f1efe9; }
   </style>
 
-  <link rel="stylesheet" href="retro/os.css?v=44" />
-  <link rel="stylesheet" href="retro/osx.css?v=44" />
-  <link rel="stylesheet" href="retro/picker.css?v=44" />
-  <link rel="stylesheet" href="retro/pocket.css?v=44" />
-  <link rel="stylesheet" href="retro/iphone.css?v=44" />
-  <link rel="stylesheet" href="retro/nokia.css?v=44" />
+  <link rel="stylesheet" href="retro/os.css?v=52" />
+  <link rel="stylesheet" href="retro/osx.css?v=52" />
+  <link rel="stylesheet" href="retro/picker.css?v=52" />
+  <link rel="stylesheet" href="retro/pocket.css?v=52" />
+  <link rel="stylesheet" href="retro/iphone.css?v=52" />
+  <link rel="stylesheet" href="retro/nokia.css?v=52" />
 
   <script type="application/ld+json">
   {
@@ -144,7 +158,7 @@
       var el = document.getElementById('bootLd');
       var svg = el.querySelector('svg');
       var txt = el.querySelector('.txt');
-      var C = { '#': '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
+      var C = { '#': document.documentElement.dataset.theme === 'daylight' ? '#1c1a17' : '#e9e4d8', b: '#3d68ff', r: '#ff6b35' };
       var cells = [];
       ROWS.forEach(function (row, y) {
         for (var x = 0; x < 16; x++) {
@@ -244,20 +258,21 @@
 
   <div class="sr-only" aria-live="polite" id="srLive"></div>
 
-  <script src="retro/content.js?v=44"></script>
-  <script src="retro/sound.js?v=44"></script>
-  <script src="retro/icons.js?v=44"></script>
-  <script src="retro/eggs.js?v=44"></script>
-  <script src="retro/oldweb.js?v=44"></script>
-  <script src="retro/term.js?v=44"></script>
-  <script src="retro/finder.js?v=44"></script>
-  <script src="retro/web.js?v=44"></script>
-  <script src="retro/osx.js?v=44"></script>
-  <script src="retro/pocket.js?v=44"></script>
-  <script src="retro/iphone.js?v=44"></script>
-  <script src="retro/nokia.js?v=44"></script>
-  <script src="retro/shapes.js?v=44"></script>
-  <script src="retro/boot.js?v=44"></script>
+  <script src="retro/content.js?v=52"></script>
+  <script src="retro/sound.js?v=52"></script>
+  <script src="retro/icons.js?v=52"></script>
+  <script src="retro/eggs.js?v=52"></script>
+  <script src="retro/papers.js?v=52"></script>
+  <script src="retro/oldweb.js?v=52"></script>
+  <script src="retro/term.js?v=52"></script>
+  <script src="retro/finder.js?v=52"></script>
+  <script src="retro/web.js?v=52"></script>
+  <script src="retro/osx.js?v=52"></script>
+  <script src="retro/pocket.js?v=52"></script>
+  <script src="retro/iphone.js?v=52"></script>
+  <script src="retro/nokia.js?v=52"></script>
+  <script src="retro/shapes.js?v=52"></script>
+  <script src="retro/boot.js?v=52"></script>
 
 </body>
 </html>

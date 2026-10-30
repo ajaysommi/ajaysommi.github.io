@@ -156,7 +156,7 @@
   background-image: linear-gradient(90deg, #6b6b6b 0, #6b6b6b 120px, #ffffff 160px, #6b6b6b 200px, #6b6b6b 360px);
   background-size: 360px 100%; background-repeat: repeat-x;
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: ip-shim 2.6s linear infinite;
+  animation: ip-shim 1.6s linear infinite;
   will-change: background-position;
 }
 @keyframes ip-shim { from { background-position: -200px 0; } to { background-position: 160px 0; } }
@@ -212,7 +212,7 @@
   transform-origin: 50% 50%;
   animation: ip-open .32s cubic-bezier(.2, .7, .3, 1) both;
 }
-.ip-screen .ip-app.is-closing { animation: ip-close .3s ease-in both; }
+.ip-screen .ip-app.is-closing { animation: ip-close .15s ease-in both; }
 @keyframes ip-open { from { transform: scale(.1); opacity: 0; } }
 @keyframes ip-close { to { transform: scale(.1); opacity: 0; } }
 
@@ -395,7 +395,11 @@
 .ip-screen .ph-lede { color: #aaa; font: 13px/1.4 Helvetica, Arial, sans-serif; padding: 10px 12px 20px; }
 .ip-screen .alb .tx { font-size: 18px; }
 .ip-screen .photo-view { position: absolute; inset: 0; background: #000; z-index: 6; display: grid; place-items: center; }
-.ip-screen .photo-view img { max-width: 100%; max-height: 100%; }
+.ip-screen .photo-view { overflow: hidden; touch-action: pan-y; }
+.ip-screen .pv-strip { position: absolute; inset: 0; will-change: transform; }
+.ip-screen .pv-ph { position: absolute; top: 0; width: 100%; height: 100%; display: grid; place-items: center; }
+.ip-screen .photo-view img { max-width: 100%; max-height: 100%; -webkit-user-drag: none; user-select: none; }
+.ip-screen .thumbs img[data-k] { cursor: pointer; }
 .ip-screen .pv-top { position: absolute; left: 0; right: 0; top: 0; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; background: linear-gradient(180deg, rgba(80,80,80,.7), rgba(0,0,0,.7)); color: #fff; font: bold 17px Helvetica, Arial, sans-serif; z-index: 2; }
 .ip-screen .pv-top button { height: 30px; padding: 0 10px; border-radius: 5px; border: 1px solid #000; color: #fff; font: bold 12px Helvetica, Arial, sans-serif; background: linear-gradient(180deg, #6a6a6a, #333 50%, #222 51%, #111); }
 .ip-screen .pv-top span { width: 52px; }
@@ -495,10 +499,12 @@
 .ip-screen .saf-url { flex: 1; height: 30px; border-radius: 6px; background: #fff; border: 1px solid #556; font: 13px/28px Helvetica, Arial, sans-serif; padding: 0 8px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: inset 0 1px 2px rgba(0,0,0,.25); }
 .ip-screen .saf-open { font: bold 12px/28px Helvetica, Arial, sans-serif; color: #fff; height: 30px; padding: 0 8px; border-radius: 5px; border: 1px solid #33496b; background: linear-gradient(180deg, #a3b5cd, #7690b4 50%, #5f7ea8 51%, #56769f); text-decoration: none; text-shadow: 0 -1px 0 rgba(0,0,0,.45); }
 .ip-screen .saf-frame { flex: 1; border: 0; width: 100%; background: #fff; }
-.ip-screen .saf-bot { flex: none; height: 44px; display: flex; align-items: center; justify-content: space-around; background: linear-gradient(180deg, #b2c0d2, #6e86a7); border-top: 1px solid #cdd5df; color: #fff; font: bold 20px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
+/* Safari's toolbar as iOS drew it (measured off a capture): a dark hairline,
+   a pale highlight under it, then steel blue darkening downwards; back,
+   forward, add, bookmarks and pages at their own fixed places. */
+.ip-screen .saf-bot { flex: none; position: relative; height: 44px; color: #fff;
+  background: linear-gradient(180deg, #868c96 0, #868c96 1px, #bec6cf 1px, #b4bec9 3px, #a9b7c7 7px, #9eb0c5 12px, #96aac1 16px, #8e9bb5 20px, #8691ad 23px, #8390aa 25px, #7f8ca7 30px, #798aa8 33px, #7586a5 38px, #7182a1 41px, #7283a1 44px); }
 .ip-screen .saf-bot .dim { opacity: .4; }
-.ip-screen .saf-bot .bk { width: 22px; height: 16px; border: 2px solid #fff; border-radius: 2px; box-shadow: inset 8px 0 0 -6px #fff; }
-.ip-screen .saf-bot .pg2 { width: 18px; height: 18px; border: 2px solid #fff; border-radius: 2px; box-shadow: 4px -4px 0 -1px #6e86a7, 4px -4px 0 1px #fff; }
 
 /* --------------------------------------------------------------------------
    The photographed handset. The image is 795 by 1508 pixels; drawn at
@@ -633,25 +639,37 @@
 .ip-screen .ip-alert-scrim { position: absolute; inset: 0; z-index: 75; display: grid; place-items: center; background: rgba(0,0,0,.35); animation: ip-fade .2s ease; }
 .ip-screen .ip-alert-scrim.is-out { opacity: 0; transition: opacity .2s; }
 @keyframes ip-fade { from { opacity: 0; } }
+/* As iOS drew it (measured off a capture of the real thing): a deep navy
+   panel, slightly see through, in a 2 point pale rim; a broad curved gloss
+   across the top, lightest at the top and cut off in a shallow arc a
+   little below the title; and its buttons almost at the rim, 5 points in,
+   glossy grey blue with the light in their upper half. */
 .ip-screen .ip-alert {
-  width: 284px; padding: 14px 12px 12px; border-radius: 10px; text-align: center; color: #fff;
-  background: linear-gradient(180deg, rgba(110,125,155,.92) 0%, rgba(40,52,82,.94) 30%, rgba(18,26,48,.95) 100%);
-  border: 2px solid rgba(255,255,255,.85); box-shadow: 0 6px 20px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.4);
+  position: relative; overflow: hidden; isolation: isolate;
+  width: 284px; box-sizing: border-box; padding: 11px 5px 5px; border-radius: 10px; text-align: center; color: #fff;
+  background: linear-gradient(180deg, rgba(38,50,88,.93) 0%, rgba(36,48,86,.93) 45%, rgba(31,43,81,.93) 100%);
+  border: 2px solid #b4b8c6;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.28), 0 4px 16px rgba(0,0,0,.55);
   animation: ip-pop .38s cubic-bezier(.2,1.6,.4,1);
+}
+.ip-screen .ip-alert::before {
+  content: ""; position: absolute; z-index: -1; left: -158px; top: -165px; width: 600px; height: 196px; border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,.5) 0, rgba(255,255,255,.5) 163px, rgba(255,255,255,.38) 175px, rgba(255,255,255,.2) 196px);
+  pointer-events: none;
 }
 .ip-screen .ip-alert.is-out { transform: scale(.9); transition: transform .2s; }
 @keyframes ip-pop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
-.ip-screen .ip-alert b { display: block; font: bold 17px/1.25 Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.6); }
-.ip-screen .ip-alert p { margin: 6px 4px 0; font: 15px/1.3 Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
-.ip-screen .ip-al-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.ip-screen .ip-alert b { display: block; padding: 0 8px; font: bold 18px/22px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.55); }
+.ip-screen .ip-alert p { overflow-wrap: anywhere; margin: 10px 8px 0; font: 16px/20px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
+.ip-screen .ip-al-btns { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
 .ip-screen .ip-al-btns.two { flex-direction: row; }
 .ip-screen .ip-al-btns button {
-  flex: 1; height: 42px; border-radius: 6px; border: 1px solid rgba(0,0,0,.6); cursor: pointer;
-  font: bold 17px Helvetica, Arial, sans-serif; color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.5);
-  background: linear-gradient(180deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.06) 51%, rgba(255,255,255,.14) 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+  flex: 1; height: 46px; border-radius: 6px; border: 1px solid rgba(12,18,36,.75); cursor: pointer;
+  font: bold 18px Helvetica, Arial, sans-serif; color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.55);
+  background: linear-gradient(180deg, #b1b6c5 0%, #a3a9bb 12%, #8c94aa 30%, #5f6a86 49%, #505a79 50%, #57617f 75%, #5f6883 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
 }
-.ip-screen .ip-al-btns button.dflt { background: linear-gradient(180deg, rgba(160,180,215,.6) 0%, rgba(110,135,180,.45) 50%, rgba(80,105,150,.45) 51%, rgba(100,125,170,.5) 100%); }
+.ip-screen .ip-al-btns button.dflt { background: linear-gradient(180deg, #b1b6c5 0%, #a3a9bb 12%, #8c94aa 30%, #5f6a86 49%, #505a79 50%, #57617f 75%, #5f6883 100%); }
 .ip-screen .ip-al-btns button:active { filter: brightness(.75); }
 
 /* Text messages: the field and Send sit at the very bottom. */
@@ -720,7 +738,15 @@
 .ip-screen .stk-tabs button { padding: 1px 7px; border-radius: 9px; font-weight: bold; }
 .ip-screen .stk-tabs button.on { background: #fff; color: #1c2b45; }
 .ip-screen .stk-foot button, .ip-screen .wx-foot button { font-weight: bold; font-size: 14px; }
-.ip-screen .saf-bot button { border: 0; background: none; color: #fff; font: bold 20px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.4); width: 50px; height: 40px; cursor: pointer; display: grid; place-items: center; }
+.ip-screen .saf-bot button { position: absolute; top: 2px; margin-left: -25px; border: 0; padding: 0; background: none; color: #fff; width: 50px; height: 40px; cursor: pointer; display: grid; place-items: center; }
+.ip-screen .saf-bot button[data-a="b"] { left: 29.5px; }
+.ip-screen .saf-bot button[data-a="f"] { left: 94.5px; }
+.ip-screen .saf-bot button[data-a="add"] { left: 158.5px; }
+.ip-screen .saf-bot button[data-a="bm"] { left: 220px; }
+.ip-screen .saf-bot button[data-a="pg"] { left: 283.5px; }
+.ip-screen .saf-bot button.off svg { opacity: .32; filter: none; }
+.ip-screen .saf-bot .pg2 { position: relative; display: block; width: 22px; height: 22px; }
+.ip-screen .saf-bot .pg2 b { position: absolute; left: 7.4px; top: 7.4px; width: 13.6px; height: 13.6px; display: grid; place-items: center; font: bold 9.5px/1 Helvetica, Arial, sans-serif; color: #4a5263; text-shadow: none; }
 .ip-screen .saf-bot button:active { opacity: .6; }
 .ip-screen .map-tb button + button { margin-left: 10px; }
 .ip-screen .cam .bar { grid-template-columns: 50px 1fr 50px; display: grid; justify-items: center; padding: 0 8px; }
@@ -740,8 +766,6 @@
 .ip-screen .saf-rl { flex: none; width: 30px; height: 30px; border: 1px solid #33496b; border-radius: 5px; color: #fff; font: bold 16px/1 Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); background: linear-gradient(180deg, #a3b5cd, #7690b4 50%, #5f7ea8 51%, #56769f); cursor: pointer; }
 .ip-screen .saf-note { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center; background: rgba(240,242,246,.97); border-top: 1px solid #c3c9d3; font: 13px Helvetica, Arial, sans-serif; color: #4c566c; }
 .ip-screen .saf-note a { font-weight: bold; color: #2f62c6; text-decoration: none; }
-.ip-screen .saf-bot .pg2 { position: relative; display: grid; place-items: center; }
-.ip-screen .saf-bot .pg2 b { font: bold 10px/1 Helvetica, Arial, sans-serif; text-shadow: none; }
 .ip-screen .saf-pages { position: absolute; inset: 20px 0 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: linear-gradient(180deg, #7f8ea3, #3d4a5d); animation: ip-fade .2s both; }
 @keyframes ip-fade { from { opacity: 0; } }
 .ip-screen .sp-card { position: relative; width: 200px; height: 260px; border-radius: 4px; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.5); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; padding: 0 14px; text-align: center; font: 13px Helvetica, Arial, sans-serif; color: #666; }
@@ -912,6 +936,7 @@
 /* A notification under the clock, glass like the bar above it, one short line. */
 .ip-screen .ip-lk-note { position: absolute; left: 0; right: 0; top: 117px; height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 10px 0 8px; color: #fff; font: 13px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.6); background: linear-gradient(180deg, rgba(70,70,70,.62), rgba(10,10,10,.72)); box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 1px 0 rgba(0,0,0,.6); }
 .ip-screen .ip-lk-note[hidden] { display: none; }
+.ip-screen .ip-lk-note { cursor: pointer; }
 .ip-screen .ip-lk-note img { width: 22px; height: 22px; border-radius: 4px; flex: none; }
 .ip-screen .ip-lk-note b { flex: 1; font-size: 14px; }
 .ip-screen .ip-lk-note span { font-weight: bold; font-size: 12px; opacity: .9; }
@@ -961,7 +986,7 @@
 /* The photo viewer starts under the status bar. */
 .ip-screen .photo-view { top: 20px; }
 /* Safari's toolbar: every glyph the same weight and size. */
-.ip-screen .saf-bot svg { display: block; filter: drop-shadow(0 -1px 0 rgba(0,0,0,.4)); }
+.ip-screen .saf-bot svg { display: block; filter: drop-shadow(0 -.5px 0 rgba(40,50,70,.45)); }
 
 /* Message tails: drawn as one piece with the bubble, so the outline runs
    from the bubble's edge out to the tip and back along the bottom. */
@@ -1049,3 +1074,24 @@
 /* Sites from back then were built for desktops: shown 980 wide and zoomed
    out to the screen, as Safari on the first iPhone did. */
 .ip-screen .saf-frame[data-kind="site"] { position: absolute; left: 0; top: 0; width: 980px; height: 306.25%; flex: none; transform: scale(.32653); transform-origin: 0 0; }
+
+/* Bubbles: deep water, the score and lives in the corner, the card that
+   starts and ends a game. */
+.ip-screen .bb-app { position: absolute; inset: 0; overflow: hidden; touch-action: none; background: radial-gradient(120% 80% at 50% 0%, #2a8fd8, #0b4d94 55%, #062a5a); }
+.ip-screen .bb-app canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ip-screen .bb-hud { position: absolute; left: 10px; right: 10px; top: 28px; display: flex; justify-content: space-between; color: #fff; font: bold 18px Helvetica, Arial, sans-serif; text-shadow: 0 1px 2px rgba(0,0,0,.5); pointer-events: none; }
+.ip-screen .bb-msg { position: absolute; left: 30px; right: 30px; top: 30%; padding: 16px 14px 14px; border-radius: 12px; text-align: center; color: #fff; background: rgba(0,0,0,.45); border: 2px solid rgba(255,255,255,.7); font: 15px/1.35 Helvetica, Arial, sans-serif; }
+.ip-screen .bb-msg[hidden] { display: none; }
+.ip-screen .bb-msg b { display: block; font-size: 24px; margin-bottom: 4px; }
+.ip-screen .bb-msg p { margin: 6px 0; }
+.ip-screen .bb-msg span { display: inline-block; margin-top: 6px; font-weight: bold; color: #bfe6ff; }
+
+/* The home screens side by side, and the page dots just above the dock. */
+.ip-screen .ip-grid { overflow: hidden; touch-action: pan-y; }
+.ip-screen .ip-pages { position: absolute; left: 0; top: 0; height: 100%; width: 640px; display: flex; will-change: transform; }
+.ip-screen .ip-page { position: relative; flex: none; width: 320px; height: 100%; }
+.ip-screen .ip-dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 8px; pointer-events: none; }
+.ip-screen .ip-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.32); }
+.ip-screen .ip-dots i.on { background: #fff; }
+/* Icons on a page not on show take no part in opening or closing an app. */
+.ip-screen .ip-board .ip-icon.is-away, .ip-screen .ip-board.is-converge .ip-icon.is-away, .ip-screen .ip-board.is-flying .ip-icon.is-away { transform: none !important; opacity: 1; transition: none; }
