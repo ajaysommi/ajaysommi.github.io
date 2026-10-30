@@ -4166,7 +4166,7 @@ console.log(
    Once up, the year in it moves through the eras of this visitor's kind
    of device, scrambling through digits and landing in each era's type,
    and the matching machine lifts. Closed, it folds into a small chip in the
-   corner (above the search button on a phone) for the rest of the visit.
+   corner (above the menu bar on a phone) until the page is loaded again.
    ========================================================================== */
 (function eraBanner() {
   const wrap = document.getElementById('eraAd');
@@ -4184,11 +4184,7 @@ console.log(
     mini.hidden = false;
     if (animate) mini.animate([{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1.06)', offset: .7 }, { opacity: 1, transform: 'none' }], { duration: 340, easing: 'cubic-bezier(.2, .7, .3, 1)' });
   };
-  let folded = false;
-  try { folded = sessionStorage.getItem('era-mini') === '1'; } catch (e) {}
-  if (folded) { fold(false); return; }
   wrap.querySelector('.era-ad-x').addEventListener('click', () => {
-    try { sessionStorage.setItem('era-mini', '1'); } catch (e) {}
     wrap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in' }).finished.then(() => fold(true));
   });
 

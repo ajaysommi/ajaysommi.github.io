@@ -191,11 +191,24 @@ window.IPHONE = { start(room, exit) {
     /* Bubbles: a glossy blue tile with bubbles rising through it. */
     bubbles: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><circle cx="20" cy="36" r="10" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="37" cy="22" r="7" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="40" cy="41" r="4.5" fill="url(#bb)" stroke="#fff" stroke-opacity=".7"/><circle cx="17" cy="32" r="3" fill="#fff" opacity=".85"/><circle cx="35" cy="19.5" r="2" fill="#fff" opacity=".85"/>`,
       lg('bg', [[0, '#6fd3ff'], [0.5, '#1d8fe0'], [1, '#0a4fa8']]) + rg('bb', [[0, '#ffffff', 0.15], [0.7, '#bfe9ff', 0.35], [1, '#ffffff', 0.75]], 0.35, 0.3, 0.7)),
-    signal: () => ic(`<rect width="57" height="57" fill="url(#bg)"/>${[0, 1, 2, 3, 4].map((i) => `<rect x="${9 + i * 8.4}" y="${40 - i * 6.6}" width="6" height="${8 + i * 6.6}" rx="1" fill="#fff"/>`).join('')}`, lg('bg', [[0, '#7fe08c'], [0.5, '#22a544'], [1, '#0e6e2a']])),
-    balancer: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="9" y="19" width="35" height="19" rx="3" fill="none" stroke="#fff" stroke-width="2.6"/><rect x="45" y="24.5" width="3.6" height="8" rx="1" fill="#fff"/><rect x="12.4" y="22.4" width="14" height="12" fill="#ffd84a"/>`, lg('bg', [[0, '#ffb45e'], [0.5, '#e8760f'], [1, '#a84a02']])),
-    defender: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><path d="M28.5 8 47 15v14c0 11-8 17-18.5 21C18 46 10 40 10 29V15z" fill="#fff"/><path d="M28.5 13 42 18.4v10.8c0 8-5.6 12.6-13.5 15.8z" fill="#c62a2a"/>`, lg('bg', [[0, '#8fa6d8'], [0.5, '#3a5aa8'], [1, '#1c2f6a']])),
-    onebar: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="10" y="38" width="7" height="9" rx="1" fill="#fff"/>${[1, 2, 3, 4].map((i) => `<rect x="${10 + i * 9}" y="${38 - i * 6.6}" width="7" height="${9 + i * 6.6}" rx="1" fill="#fff" opacity=".25"/>`).join('')}`, lg('bg', [[0, '#6d6d78'], [0.5, '#34343c'], [1, '#111116']])),
-    chicken: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="9" y="19" width="35" height="19" rx="3" fill="#fff"/><rect x="45" y="24.5" width="3.6" height="8" rx="1" fill="#fff"/><path d="M29 15 19 30h8l-3 12 12-16h-8z" fill="#f2b705" stroke="#a87400" stroke-width=".8"/>`, lg('bg', [[0, '#ff8a80'], [0.5, '#d9342b'], [1, '#8a0f0a']])),
+    /* The five status bar games, drawn the way the first App Store's icons
+       were: a little scene, thick with shading, under the glass. */
+    signal: () => ic(`<rect width="57" height="57" fill="url(#sky)"/><circle cx="44" cy="12" r="6" fill="url(#sun)"/><path d="M0 44q14-12 30-5t27-3v21H0z" fill="url(#hill)"/><path d="M0 49q18-8 57-2v10H0z" fill="#2f7a17"/>
+        <g fill="none" stroke="#cf2a22" stroke-width="2.2"><path d="M28.5 9 19 50M28.5 9 38 50M24 28h9M22 37h13M20.5 45h16"/></g><path d="M22 28 35 37M35 28 22 37M20.5 37l16 8M36.5 37l-16 8" stroke="#f2f2f2" stroke-width="1.1"/><circle cx="28.5" cy="9" r="3.2" fill="url(#rd)"/>
+        <g fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M20 3.5a12 12 0 0 0 0 11M37 3.5a12 12 0 0 1 0 11" /><path d="M14.5 .5a19 19 0 0 0 0 17M42.5 .5a19 19 0 0 1 0 17" opacity=".65"/></g>`,
+      lg('sky', [[0, '#3f93ea'], [0.7, '#9fd4fb'], [1, '#d9f0ff']]) + lg('hill', [[0, '#7ccb45'], [1, '#3e9420']]) + rg('sun', [[0, '#fff7b0'], [1, '#ffbc1a']]) + rg('rd', [[0, '#ff9a8a'], [1, '#c80f0f']], 0.35, 0.35)),
+    balancer: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><path d="M0 44h57v13H0z" fill="#3a2410"/><path d="M28.5 43 19 53h19z" fill="url(#mt)"/><g transform="rotate(-9 28.5 40)"><rect x="4" y="38" width="49" height="4.4" rx="2" fill="url(#mt)"/>
+        <rect x="6" y="21" width="17" height="17" rx="2.4" fill="url(#bat)" stroke="#123f0c"/><rect x="11.5" y="18.4" width="6" height="2.8" rx="1" fill="#d8d8d8" stroke="#555" stroke-width=".5"/><path d="M15 24l-4 7h3l-1.4 5 5-7.4h-3.2l1.8-4.6z" fill="#fff"/>
+        <rect x="35" y="29" width="14" height="9" rx="1.6" fill="url(#rdb)" stroke="#5a0a0a"/><rect x="39" y="26.8" width="6" height="2.4" rx="1" fill="#d8d8d8" stroke="#555" stroke-width=".5"/></g>`,
+      lg('bg', [[0, '#f7c356'], [0.6, '#e8821a'], [1, '#a84d06']]) + lg('mt', [[0, '#f3f3f3'], [1, '#7c7c7c']]) + lg('bat', [[0, '#a6ec7c'], [0.5, '#4cb82e'], [1, '#237a14']]) + lg('rdb', [[0, '#ff9a8a'], [0.5, '#d9281c'], [1, '#8a0f0a']])),
+    defender: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g fill="#fff" opacity=".8">${[[7, 8], [48, 12], [12, 43], [50, 44], [30, 5]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".9"/>`).join('')}</g><path d="M28.5 7 47 13.5V28C47 40 39 47 28.5 52 18 47 10 40 10 28V13.5z" fill="url(#sh)" stroke="#27306a" stroke-width="1.2"/><path d="M28.5 12 42.5 17V28C42.5 37 36.5 42.5 28.5 47z" fill="#c62a2a"/><path d="M28.5 12 14.5 17V28C14.5 37 20.5 42.5 28.5 47z" fill="#2c50b8"/><path d="M28.5 16v26M19 25h19" stroke="#ffe27a" stroke-width="3" stroke-linecap="round"/><path d="m6 37 7 3-4 3 6 2" fill="none" stroke="#ffe27a" stroke-width="1.8" stroke-linejoin="round"/><path d="m51 37-7 3 4 3-6 2" fill="none" stroke="#ffe27a" stroke-width="1.8" stroke-linejoin="round"/>`,
+      lg('bg', [[0, '#35406f'], [1, '#0c1030']]) + lg('sh', [[0, '#f5f7fb'], [1, '#a7aebf']])),
+    onebar: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g fill="#fff" opacity=".22"><rect x="31" y="22" width="5" height="8"/><rect x="38" y="16" width="5" height="14"/><rect x="45" y="9" width="5" height="21"/></g><rect x="24" y="25" width="5" height="5" fill="url(#gn)"/>
+        <path d="M6 43C8 28 20 17 30 15l3 7c-7 2-12 8-13 13l7 2-5 12c-6 2-12 0-15-3z" fill="url(#hs)" transform="rotate(4 20 32)" stroke="#000" stroke-width=".7"/><path d="M14 46q6-2 10-9" stroke="#fff" stroke-opacity=".4" stroke-width="1.4" fill="none"/>`,
+      lg('bg', [[0, '#6f7d8d'], [0.55, '#343c48'], [1, '#12151a']]) + lg('gn', [[0, '#a4f07c'], [1, '#34a81d']]) + lg('hs', [[0, '#f3e3b6'], [1, '#b8924e']])),
+    chicken: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="10" y="39" width="33" height="13" rx="2.4" fill="url(#bat)" stroke="#2c1608"/><rect x="43" y="42.5" width="3.4" height="6" rx="1" fill="#d6d6d6" stroke="#555" stroke-width=".5"/>
+        <ellipse cx="27" cy="29" rx="14" ry="11.5" fill="url(#wh)" stroke="#a88b4c" stroke-width=".7"/><circle cx="37" cy="17" r="8" fill="url(#wh)" stroke="#a88b4c" stroke-width=".7"/><path d="M33 9c1-4 3-3 3.6-1 .8-3 3.4-2.6 3.2 0 2-1.6 3.6.6 1.6 3z" fill="#e2261c" stroke="#8a0f0a" stroke-width=".5"/><path d="M44.5 15.5 51 18l-6.6 2.6z" fill="#f7a81a" stroke="#a86a06" stroke-width=".5"/><path d="M43.5 21c1.4 2.4-.8 4.4-2.4 2.8z" fill="#e2261c"/><circle cx="39.4" cy="15" r="2.4" fill="#fff" stroke="#333" stroke-width=".4"/><circle cx="40" cy="15.2" r="1.15" fill="#111"/><path d="M15 25c5 7 12 7 17 2-1 7-9 10-14 7z" fill="#d9c79c"/><path d="M28 40 22 49h5l-2 5 8-9h-5l3-5z" fill="#ffe14a" stroke="#a87400" stroke-width=".6"/>`,
+      lg('bg', [[0, '#a7e6ff'], [0.65, '#4aa8e8'], [1, '#2e7a30']]) + lg('bat', [[0, '#7a5a30'], [1, '#2c1a0a']]) + rg('wh', [[0, '#ffffff'], [1, '#ecdcb4']], 0.4, 0.35, 0.7)),
     clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="40" text-anchor="middle" ${HV} font-weight="bold" font-size="30" fill="#fff" letter-spacing="-1">in</text>`,
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
@@ -506,14 +519,10 @@ window.IPHONE = { start(room, exit) {
     current = null;
     a.def.onClose && a.def.onClose();
     scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
-    /* The app shrinks away at its own pace while the icons, already on
-       their way in from the edges, gather speed. */
-    a.el.classList.add('is-closing');
     flyOut();
     board.classList.remove('is-converge');
-    flyHome();
-    setTimeout(() => a.el.remove(), 340);
-    quietUntil = performance.now() + 600;
+    flyHome(a.el);
+    quietUntil = performance.now() + HOME_MS;
     setBar('black');
     state = 'home';
     tickClock();
@@ -908,6 +917,10 @@ window.IPHONE = { start(room, exit) {
   /* -------------------------------------------------------------- calling */
 
   const fmtNum = (d) => d.length <= 3 ? d : d.length <= 7 ? `${d.slice(0, 3)}-${d.slice(3)}` : d.length <= 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : d;
+  /* The one handset, traced off the original End Call button. Upright, for
+     placing a call, it is the same shape turned. */
+  const HANDSET = 'M130 348L238 322V240Q345 205 445 238L448 295L548 350Q590 322 592 285Q585 215 500 180Q345 120 190 180Q105 215 100 290Q103 325 130 348Z';
+  const HANDSET_UP = `<svg viewBox="75 -25 540 540"><path d="${HANDSET}" transform="rotate(225 345 245)" fill="currentColor"/></svg>`;
   const GLYPH = {
     mute: '<svg viewBox="0 0 40 40"><rect x="15" y="5" width="10" height="19" rx="5" fill="currentColor"/><path d="M10 18c0 7 4 12 10 12s10-5 10-12M20 30v5M13 36h14" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M6 6l28 28" stroke="#1b2545" stroke-width="5"/><path d="M6 6l28 28" stroke="currentColor" stroke-width="2.4"/></svg>',
     keypad: '<svg viewBox="0 0 40 40" fill="currentColor">' + [0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<rect x="${7.5 + c * 9}" y="${3.5 + r * 8.8}" width="7" height="6.8" rx="1"/>`).join('')).join('') + '</svg>',
@@ -915,13 +928,13 @@ window.IPHONE = { start(room, exit) {
     add: '<svg viewBox="0 0 40 40" fill="currentColor"><path d="M16 5h8v11h11v8H24v11h-8V24H5v-8h11z"/></svg>',
     hold: '<svg viewBox="0 0 40 40" fill="currentColor"><rect x="9" y="6" width="8.5" height="28" rx="1"/><rect x="22.5" y="6" width="8.5" height="28" rx="1"/></svg>',
     contacts: '<svg viewBox="0 0 40 40" fill="currentColor"><path d="M20 4a9 9 0 0 1 9 9c0 6-4 11-9 11s-9-5-9-11a9 9 0 0 1 9-9zM4 36c1-7 5-10 10-11 2 2 4 3 6 3s4-1 6-3c5 1 9 4 10 11z"/></svg>',
-    hang: '<svg viewBox="0 0 34 16"><path d="M1 11C7 2 27 2 33 11c.8 1.3.4 2.6-1 3.2l-5 1.5c-1.3.3-2.3-.2-2.7-1.4l-.9-3c-4-1.3-8.8-1.3-12.8 0l-.9 3c-.4 1.2-1.4 1.7-2.7 1.4l-5-1.5C.6 13.6.2 12.3 1 11z" fill="currentColor"/></svg>',
-    back: '<svg viewBox="0 0 24 24"><path d="M6.6 2.5c1.2-.8 2.4-.2 2.8 1l.9 2.4c.4 1.1-.2 1.8-1.1 2.3.5 2.1 2.1 4 4.1 4.9.5-.8 1.3-1.5 2.5-1.1l2.3 1c1.3.6 1.7 1.8.9 2.9-1 1.6-3 2.4-5 1.7C8.4 16 4.7 12.3 3.4 8 2.8 5.9 3.7 3.7 6.6 2.5z" fill="currentColor"/></svg>'
+    hang: `<svg viewBox="95 135 500 220"><path d="${HANDSET}" fill="currentColor"/></svg>`,
+    back: HANDSET_UP
   };
   const LABEL = [['mute', 'mute'], ['keypad', 'keypad'], ['speaker', 'speaker'], ['add', 'add call'], ['hold', 'hold'], ['contacts', 'contacts']];
   let callEl = null, closeNow = null;
   function closeCall(instant) { if (closeNow) closeNow(instant); }
-  let barBefore = 'black', calledBack = false;
+  let barBefore = 'black';
   const callIn = (el) => {
     barBefore = scr.dataset.bar || 'black';
     setBar('trans');
@@ -933,6 +946,7 @@ window.IPHONE = { start(room, exit) {
     el.querySelector('.top').animate([{ transform: 'translateY(-116px)' }, { transform: 'none' }], { duration: ms, easing: 'cubic-bezier(.2, .7, .3, 1)' });
     el.querySelector('.bot').animate([{ transform: 'translateY(98px)' }, { transform: 'none' }], { duration: ms, easing: 'cubic-bezier(.2, .7, .3, 1)' });
   };
+  const ARRIVE_MS = 360;
   const leaveCall = (el, instant, after) => {
     if (callEl === el) { callEl = null; closeNow = null; }
     const done = () => { el.remove(); if (!callEl) { setBar(barBefore); SYS.music(2007); } after && after(); };
@@ -946,8 +960,11 @@ window.IPHONE = { start(room, exit) {
      the top and bottom over the wallpaper, and the panel of controls is
      simply there between them. Nobody picks up: after about four seconds
      it fails. `connected` is a call that has already been answered. */
-  function placeCall(title, { dialled = false, connected = false, failNow = false, onEnd = null } = {}) {
+  function placeCall(title, { connected = false, failNow = false, onEnd = null } = {}) {
     closeCall(true);
+    // Every call that goes out unanswered gets rung back, wherever it was placed from.
+    const rings = !connected && !failNow;
+    if (rings) clearTimeout(backT);
     kb.hide();
     const el = h('div', 'ip-lock ip-call', `<div class="top"><div class="cl-num"></div><div class="cl-st"></div></div><div class="cl-mid"></div><div class="bot"><div class="cl-btns"></div></div>`);
     el.style.backgroundImage = `url(${WALL})`;
@@ -961,9 +978,9 @@ window.IPHONE = { start(room, exit) {
     const end = (instant) => {
       stopAll();
       leaveCall(el, instant, onEnd);
-      if (dialled && !calledBack) armCallBack(title);
+      if (rings && !failed) armCallBack(title);
     };
-    closeNow = (instant) => { const d = dialled; dialled = false; end(instant); dialled = d; };
+    closeNow = end;
     const arm = () => { clearTimeout(fail); if (!connected) fail = setTimeout(failCall, 4000); };
     const endBtn = () => `<button type="button" class="cl-end" data-a="end"><i>${GLYPH.hang}</i>End Call</button>`;
     const panel = () => {
@@ -982,6 +999,8 @@ window.IPHONE = { start(room, exit) {
       stopAll();
       failed = true;
       connected = false;
+      el.dataset.idle = '1';
+      if (rings) armCallBack(title);
       mid.remove();
       st.textContent = 'Call Failed';
       num.textContent = title;
@@ -999,7 +1018,7 @@ window.IPHONE = { start(room, exit) {
       if (!b) return;
       const a = b.dataset.a;
       if (a === 'end' || a === 'cancel') { end(); return; }
-      if (a === 'again') { const was = dialled; closeNow = null; stopAll(); leaveCall(el, true); placeCall(title, { dialled: was, onEnd }); return; }
+      if (a === 'again') { closeNow = null; stopAll(); leaveCall(el, true); placeCall(title, { onEnd }); return; }
       if (a === 'mute' || a === 'speaker' || a === 'hold') {
         on[a] = !on[a];
         b.classList.toggle('on', on[a]);
@@ -1010,7 +1029,7 @@ window.IPHONE = { start(room, exit) {
       if (a === 'keypad') { typed = ''; keys(); return; }
       if (a === 'hide') { adding = false; num.textContent = title; panel(); return; }
       if (a === 'add') { adding = true; typed = ''; on.hold = true; status(); volume(); clearTimeout(fail); num.textContent = ''; keys(); return; }
-      if (a === 'dial') { if (!typed) return; const next = fmtNum(typed.replace(/\D/g, '')); const wasD = dialled; closeNow = null; stopAll(); leaveCall(el, true); placeCall(next, { dialled: wasD }); return; }
+      if (a === 'dial') { if (!typed) return; const next = fmtNum(typed.replace(/\D/g, '')); closeNow = null; stopAll(); leaveCall(el, true); placeCall(next); return; }
       if (a === 'contacts') {
         const r = await alertBox('Ajay Sommi', '', ['Email', 'GitHub', 'LinkedIn', 'Cancel']);
         if (r === 'Email') { closeCall(); writeMail('Hello'); }
@@ -1021,7 +1040,7 @@ window.IPHONE = { start(room, exit) {
     panel();
     status();
     callIn(el);
-    slideIn(el, 240);
+    slideIn(el, ARRIVE_MS);
     if (failNow) { failCall(); return; }
     if (connected) { timer = setInterval(() => { if (!on.hold) { secs++; status(); } }, 1000); return; }
     ring = SYS.ringback();
@@ -1029,24 +1048,33 @@ window.IPHONE = { start(room, exit) {
     arm();
   }
 
-  /* Call a number and nobody picks up; a little later, it rings back. */
+  /* Call anyone and nobody picks up; a few seconds later, they ring back,
+     whatever is on the screen by then. Only a call in progress makes it wait. */
+  let backT = 0;
   function armCallBack(title) {
-    calledBack = true;
-    const ringIn = () => { if (state === 'boot' || asleep || callEl) { setTimeout(ringIn, 3000); return; } incoming(title); };
-    setTimeout(ringIn, 5000 + Math.random() * 6000);
+    clearTimeout(backT);
+    const ringIn = () => {
+      if (state === 'boot' || !shown() || (callEl && !callEl.dataset.idle)) { backT = setTimeout(ringIn, 1500); return; }
+      closeCall(true);
+      if (asleep) wake();
+      clearTimeout(sleepT);
+      scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
+      incoming(title);
+    };
+    backT = setTimeout(ringIn, 4000 + Math.random() * 3000);
   }
   function incoming(title) {
     kb.hide();
-    const el = h('div', 'ip-lock ip-call ip-in', `<i class="cl-bg" style="background-image:url(${WALL})"></i><div class="top"><div class="cl-num"></div><div class="cl-st">mobile</div></div><div class="bot"><div class="ip-slider"><div class="txt">slide to answer</div><div class="ip-knob" role="slider" aria-label="Slide to answer" tabindex="0"><svg viewBox="0 0 40 28"><path d="M3.5 9.5h17.5V3l16 11-16 11v-6.5H3.5z" fill="#eaf4ff" stroke="#3f7f2c" stroke-width=".8" stroke-linejoin="round"/></svg></div></div></div>`);
+    const el = h('div', 'ip-lock ip-call ip-in', `<i class="cl-bg" style="background-image:url(${WALL})"></i><div class="top"><div class="cl-num"></div><div class="cl-st">mobile</div></div><div class="bot"><div class="ip-slider"><div class="txt">slide to answer</div><div class="ip-knob" role="slider" aria-label="Slide to answer" tabindex="0"><svg viewBox="0 0 40 28"><path d="M3.5 9.5h17.5V3l16 11-16 11v-6.5H3.5z" fill="#eef3fd" stroke="#44802f" stroke-width=".9" stroke-linejoin="round"/></svg></div></div></div>`);
     el.querySelector('.cl-num').textContent = title;
     callIn(el);
     SYS.music(2007);
-    slideIn(el, 420);
-    el.querySelector('.cl-bg').animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420 });
+    slideIn(el, ARRIVE_MS);
+    el.querySelector('.cl-bg').animate([{ opacity: 0 }, { opacity: 1 }], { duration: ARRIVE_MS });
     if (navigator.vibrate) navigator.vibrate([400, 300, 400]);
     const k = el.querySelector('.ip-knob'), tx = el.querySelector('.txt');
     let d = null;
-    const quit = setTimeout(() => leaveCall(el), 16000);
+    const quit = setTimeout(() => { leaveCall(el); if (state === 'locked') armSleep(); }, 16000);
     closeNow = (instant) => { clearTimeout(quit); leaveCall(el, instant); };
     const answer = () => { clearTimeout(quit); SYS.music(null); closeNow = null; callEl = null; el.remove(); placeCall(title, { connected: true }); barBefore = barBeforeIn; };
     const barBeforeIn = barBefore;
@@ -1076,7 +1104,7 @@ window.IPHONE = { start(room, exit) {
         if (r === 'Go') exit();
         return;
       }
-      placeCall(label || fmtNum(digits), { dialled: !label });
+      placeCall(label || fmtNum(digits));
     };
     const F = [['email', 'email'], ['home page', 'home'], ['work', 'work'], ['notes', 'notes']];
     const showCard = (edit) => (pg, a, entry) => {
@@ -1104,7 +1132,7 @@ window.IPHONE = { start(room, exit) {
     const keypad = (pg) => {
       pg.classList.add('kp-pg');
       const L = ['', 'ABC', 'DEF', 'GHI', 'JKL', 'MNO', 'PQRS', 'TUV', 'WXYZ'];
-      pg.innerHTML = `<div class="kp-num"></div><div class="kp-grid">${'123456789*0#'.split('').map((k, i) => `<button type="button" data-k="${k}"><b>${k}</b><span>${i < 9 ? L[i] : k === '0' ? '+' : ''}</span></button>`).join('')}<button type="button" class="kp-add" data-a="add" aria-label="Add contact"><svg viewBox="0 0 30 22" width="30" height="22"><path d="M18 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM8 21c1-5 5-7 10-7s9 2 10 7zM6 6v3H3v2h3v3h2v-3h3V9H8V6z" fill="currentColor"/></svg></button><button type="button" class="kp-call" data-a="call"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6.6 2.5c1.2-.8 2.4-.2 2.8 1l.9 2.4c.4 1.1-.2 1.8-1.1 2.3.5 2.1 2.1 4 4.1 4.9.5-.8 1.3-1.5 2.5-1.1l2.3 1c1.3.6 1.7 1.8.9 2.9-1 1.6-3 2.4-5 1.7C8.4 16 4.7 12.3 3.4 8 2.8 5.9 3.7 3.7 6.6 2.5z" fill="#fff"/></svg>Call</button><button type="button" class="kp-del" data-a="del" aria-label="Delete">⌫</button></div>`;
+      pg.innerHTML = `<div class="kp-num"></div><div class="kp-grid">${'123456789*0#'.split('').map((k, i) => `<button type="button" data-k="${k}"><b>${k}</b><span>${i < 9 ? L[i] : k === '0' ? '+' : ''}</span></button>`).join('')}<button type="button" class="kp-add" data-a="add" aria-label="Add contact"><svg viewBox="0 0 30 22" width="30" height="22"><path d="M18 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM8 21c1-5 5-7 10-7s9 2 10 7zM6 6v3H3v2h3v3h2v-3h3V9H8V6z" fill="currentColor"/></svg></button><button type="button" class="kp-call" data-a="call"><i class="kp-ph">${HANDSET_UP}</i>Call</button><button type="button" class="kp-del" data-a="del" aria-label="Delete">⌫</button></div>`;
       let num = '';
       const out = pg.querySelector('.kp-num');
       const fmt = fmtNum;
@@ -1131,7 +1159,7 @@ window.IPHONE = { start(room, exit) {
       pg.classList.add('vm-pg');
       const heard = new Set(store.get('ip-vm-heard', []));
       let sel = -1, timer = 0, at = 0, speaker = false;
-      pg.innerHTML = `<ul class="vm-list"></ul><div class="vm-panel"><div class="vm-scrub"><span class="t0">0:00</span><div class="vm-track"><i class="fill"></i><b class="knob"></b></div><span class="t1">-0:00</span></div><div class="vm-btns"><button type="button" class="vm-call"><svg viewBox="0 0 20 20" width="17" height="17"><path d="M6 2.4c1-.6 2 0 2.4.9l.8 2c.3.9-.2 1.5-.9 1.9.5 1.7 1.8 3.2 3.4 4 .5-.7 1.1-1.2 2-.9l2 .8c1 .4 1.4 1.4.7 2.4-.9 1.3-2.5 1.9-4.1 1.3C8.6 13.5 5.6 10.4 4.6 7c-.5-1.7.2-3.5 1.4-4.6z" fill="#fff"/></svg>Call Back</button><button type="button" class="vm-del">Delete</button></div></div>`;
+      pg.innerHTML = `<ul class="vm-list"></ul><div class="vm-panel"><div class="vm-scrub"><span class="t0">0:00</span><div class="vm-track"><i class="fill"></i><b class="knob"></b></div><span class="t1">-0:00</span></div><div class="vm-btns"><button type="button" class="vm-call"><i class="kp-ph">${HANDSET_UP}</i>Call Back</button><button type="button" class="vm-del">Delete</button></div></div>`;
       const list = pg.querySelector('.vm-list'), fill = pg.querySelector('.fill'), knob = pg.querySelector('.knob'), t0 = pg.querySelector('.t0'), t1 = pg.querySelector('.t1');
       const scrub = () => { const d = sel >= 0 ? dur(sel) : 0, f = d ? at / d : 0; fill.style.width = f * 100 + '%'; knob.style.left = f * 100 + '%'; t0.textContent = clock(at); t1.textContent = '-' + clock(Math.max(0, d - at)); };
       const draw = () => {
@@ -1240,11 +1268,11 @@ window.IPHONE = { start(room, exit) {
     msg.querySelector('.hi').textContent = hi() ? `Best: ${hi()}` : '';
     const reset = () => { g = { b: [], pops: [], score: 0, lives: 3, t: performance.now(), next: 0, play: true }; };
     const spawn = (now) => {
-      const lvl = Math.min(1, g.score / 160);
-      const r = 14 + Math.random() * (26 - lvl * 8);
-      const red = g.score >= 30 && Math.random() < 0.16 + lvl * 0.1;
-      g.b.push({ x: r + Math.random() * (W - 2 * r), y: H + r, r, v: (0.05 + Math.random() * 0.035 + lvl * 0.08) * (1.2 - r / 60), w: Math.random() * 6.28, c: red ? '#ff4a3d' : COLS[Math.floor(Math.random() * COLS.length)], red });
-      g.next = now + Math.max(200, 720 - g.score * 5) * (0.6 + Math.random() * 0.6);
+      const lvl = Math.min(1, g.score / 90);
+      const r = 12 + Math.random() * (20 - lvl * 8);
+      const red = g.score >= 12 && Math.random() < 0.22 + lvl * 0.14;
+      g.b.push({ x: r + Math.random() * (W - 2 * r), y: H + r, r, v: (0.075 + Math.random() * 0.045 + lvl * 0.11) * (1.2 - r / 60), w: Math.random() * 6.28, c: red ? '#ff4a3d' : COLS[Math.floor(Math.random() * COLS.length)], red });
+      g.next = now + Math.max(150, 520 - g.score * 6) * (0.6 + Math.random() * 0.6);
     };
     const hud = () => { root.querySelector('.s').textContent = g.score; root.querySelector('.l').textContent = '●'.repeat(Math.max(0, g.lives)) + '○'.repeat(3 - Math.max(0, g.lives)); };
     const lose = () => {
@@ -1306,10 +1334,10 @@ window.IPHONE = { start(room, exit) {
   /* These five play on the phone's own status bar: its signal bars, its
      battery, its clock. Everything is put back when the app closes. */
   const stat = {
-    sig(n) { room.querySelectorAll('.ip-sig i').forEach((b, i) => b.classList.toggle('off', i >= n)); room.querySelector('.car').textContent = n ? 'AJ&T' : 'No Service'; room.querySelector('.ip-edge').style.visibility = n ? '' : 'hidden'; },
+    sig(n) { room.querySelectorAll('.ip-sig i').forEach((b, i) => b.classList.toggle('off', i >= n)); room.querySelector('.car').textContent = n ? 'AJ&T' : 'No Service'; room.querySelector('.ip-sig').style.display = n ? '' : 'none'; room.querySelector('.ip-edge').style.display = n ? '' : 'none'; },
     bat(p) { const b = room.querySelector('.ip-bat'); b.querySelector('i').style.width = Math.max(0, Math.min(100, p)) + '%'; b.classList.toggle('low', p <= 20); },
     lend() { statusLent = true; },
-    reset() { statusLent = false; stat.sig(5); stat.bat(100); room.querySelectorAll('.ip-status .gl-bad').forEach((x) => x.classList.remove('gl-bad')); room.querySelector('.ip-edge').style.visibility = ''; tickClock(); }
+    reset() { statusLent = false; stat.sig(5); stat.bat(100); room.querySelectorAll('.ip-status .gl-bad').forEach((x) => x.classList.remove('gl-bad')); tickClock(); }
   };
   /* The frame every one of them shares: a card to start and end on, a
      frame loop that stops with the app. */
@@ -1349,16 +1377,20 @@ window.IPHONE = { start(room, exit) {
       play.innerHTML = '<div class="gm-sky"></div><div class="gm-tip">Find the signal</div><div class="gm-bars"><i></i><i></i><i></i><i></i><i></i></div><div class="gm-phone"></div>';
       const ph = play.querySelector('.gm-phone'), bars = [...play.querySelectorAll('.gm-bars i')], tip = play.querySelector('.gm-tip');
       const pos = { x: 160, y: 260 }, spot = { x: 40 + Math.random() * 240, y: 90 + Math.random() * 300 };
-      let at5 = 0, t0 = performance.now();
+      let at5 = 0, t0 = performance.now(), drift = Math.random() * 6;
       dragger(play, ph, pos);
       stat.sig(0);
       return (dt) => {
-        const n = Math.max(0, Math.min(5, 5 - Math.floor(Math.hypot(pos.x - spot.x, pos.y - spot.y) / 42)));
+        // The good spot wanders, and it is small.
+        drift += dt / 1000;
+        spot.x = Math.max(20, Math.min(300, spot.x + Math.sin(drift * 1.3) * dt * .05));
+        spot.y = Math.max(70, Math.min(400, spot.y + Math.cos(drift * .9) * dt * .05));
+        const n = Math.max(0, Math.min(5, 5 - Math.floor(Math.hypot(pos.x - spot.x, pos.y - spot.y) / 22)));
         stat.sig(n);
         bars.forEach((b, i) => b.classList.toggle('on', i < n));
         at5 = n === 5 ? at5 + dt : 0;
         tip.textContent = n === 5 ? 'Hold it there…' : n ? 'Getting warmer' : 'No Service';
-        if (at5 > 1200) {
+        if (at5 > 2000) {
           const secs = Math.round((performance.now() - t0) / 100) / 10;
           over('Connected', `Five bars in ${secs} seconds.`, secs, true);
           placeCall('Ajay Sommi', { connected: true, onEnd: () => stat.sig(5) });
@@ -1390,11 +1422,11 @@ window.IPHONE = { start(room, exit) {
       const P4 = [['.ip-sig', 8, 74, 'signal'], ['.ip-edge', 82, 50, 'network'], ['.ip-status .c', 132, 100, 'clock'], ['.ip-bat', 238, 82, 'battery']];
       play.innerHTML = `<div class="gm-zones">${P4.map(([, x, w, n], i) => `<button type="button" data-i="${i}" style="left:${x}px;width:${w}px"><span>${n}</span></button>`).join('')}</div><div class="gm-score">0</div><div class="gm-lives">●●●</div>`;
       const zones = [...play.querySelectorAll('.gm-zones button')], sc = play.querySelector('.gm-score'), lv = play.querySelector('.gm-lives');
-      let score = 0, lives = 3, cur = -1, left = 0, wait = 900, speed = 1600, bat = 100;
+      let score = 0, lives = 3, cur = -1, left = 0, wait = 500, speed = 1050, bat = 100;
       const el = (i) => room.querySelector(P4[i][0]);
       const clear = () => { if (cur < 0) return; el(cur).classList.remove('gl-bad'); zones[cur].classList.remove('hot'); if (P4[cur][3] === 'clock') { statusC.textContent = hm(now()); } if (P4[cur][3] === 'signal') stat.sig(5); if (P4[cur][3] === 'battery') stat.bat(bat); cur = -1; };
       statusC.textContent = hm(now());
-      play.querySelector('.gm-zones').addEventListener('pointerdown', (e) => { const b = e.target.closest('button'); if (!b) return; if (+b.dataset.i === cur) { clear(); score++; sc.textContent = score; speed = Math.max(520, speed - 45); wait = 200 + Math.random() * 500; } });
+      play.querySelector('.gm-zones').addEventListener('pointerdown', (e) => { const b = e.target.closest('button'); if (!b) return; if (+b.dataset.i === cur) { clear(); score++; sc.textContent = score; speed = Math.max(330, speed - 55); wait = 90 + Math.random() * 260; } });
       return (dt) => {
         if (cur < 0) {
           wait -= dt;
@@ -1420,20 +1452,20 @@ window.IPHONE = { start(room, exit) {
       const ring = play.querySelector('.gm-ring'), spotEl = play.querySelector('.gm-spot'), bar = play.querySelector('.gm-prog i'), tip = play.querySelector('.gm-tip');
       const pos = { x: 160, y: 260 }, H = 440;
       let t = 0, kept = 0, low = 0, noise = 0, nt = 0;
-      const NEED = 8000;
+      const NEED = 12000;
       dragger(play, ring, pos);
       return (dt) => {
         t += dt;
-        const sx = 160 + Math.sin(t / 1300) * 120 + Math.sin(t / 470) * 26, sy = H / 2 + Math.cos(t / 1700) * 150 + Math.sin(t / 610) * 30;
+        const sx = 160 + Math.sin(t / 820) * 124 + Math.sin(t / 310) * 30, sy = H / 2 + Math.cos(t / 1060) * 160 + Math.sin(t / 390) * 40;
         spotEl.style.transform = `translate(${sx}px, ${sy}px)`;
         nt -= dt;
-        if (nt <= 0) { nt = 300 + Math.random() * 500; noise = Math.random() < .25 ? -1 : 0; }
-        const n = Math.max(0, Math.min(5, 5 - Math.floor(Math.hypot(pos.x - sx, pos.y - sy) / 34) + noise));
+        if (nt <= 0) { nt = 240 + Math.random() * 400; noise = Math.random() < .35 ? -1 : 0; }
+        const n = Math.max(0, Math.min(5, 5 - Math.floor(Math.hypot(pos.x - sx, pos.y - sy) / 24) + noise));
         stat.sig(n);
         if (n >= 3) { kept += dt; low = 0; tip.textContent = 'Stay on it'; } else { low += dt; tip.textContent = 'Signal dropping!'; }
         bar.style.width = Math.min(100, kept / NEED * 100) + '%';
         if (kept >= NEED) { const s = Math.round(t / 100) / 10; over('Call Connected', `Connected in ${s} seconds.`, s, true); placeCall('Ajay Sommi', { connected: true, onEnd: () => stat.sig(5) }); }
-        else if (low > 2500) { over('Call Dropped', 'The signal fell too low.', null); placeCall('Ajay Sommi', { failNow: true, onEnd: () => stat.sig(5) }); }
+        else if (low > 1400) { over('Call Dropped', 'The signal fell too low.', null); placeCall('Ajay Sommi', { failNow: true, onEnd: () => stat.sig(5) }); }
       };
     }),
     chicken: (app) => gameApp(app, 'Battery Chicken', 'The battery keeps draining. Press and hold to charge, let go to stop. Land as close to 100% as you dare: go over and it is ruined.', 'ip-chicken-hi', (play, over) => {
@@ -1988,21 +2020,35 @@ window.IPHONE = { start(room, exit) {
     setTimeout(() => icons.forEach((b) => { b.style.transition = ''; b.style.transitionDelay = ''; }), unlocking ? 650 : 180);
   };
   const flyOut = () => { board.classList.add('is-flying'); drawBoard(); };
-  /* Home: exponential all the way, barely moving at first and then faster
-     and faster until the icons hit their places. */
-  const HOME_MS = 620, HOME_K = 7;
-  const flyHome = () => {
-    const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')];
+  /* Home, worked out frame by frame as one motion. The screen shrinks on an
+     exponential curve, and the whole home screen is held stretched apart
+     around it, sideways and up and down, by just enough that nothing touches
+     the screen's rectangle. Stretching the grid as one keeps the icons off
+     each other too. So they begin far apart beyond the display's edges, close
+     in around the screen as it goes, and hit home as it vanishes. */
+  const HOME_MS = 760, HOME_K = 5, HOME_N = 48;
+  const flyHome = (appEl) => {
     const E = (t) => (Math.exp(HOME_K * t) - 1) / (Math.exp(HOME_K) - 1);
+    const size = (t) => 1 - E(t);
+    appEl.style.animation = 'none';
+    appEl.style.pointerEvents = 'none';
+    const af = [];
+    for (let i = 0; i <= HOME_N; i++) { const t = i / HOME_N, z = size(t); af.push({ transform: `scale(${z})`, opacity: z < .03 ? 0 : 1 }); }
+    appEl.animate(af, { duration: HOME_MS, easing: 'linear', fill: 'forwards' }).finished.then(() => appEl.remove());
     board.classList.remove('is-flying');
-    icons.forEach((b) => {
-      const cx = parseFloat(b.style.getPropertyValue('--cx')) || 0, cy = parseFloat(b.style.getPropertyValue('--cy')) || 0;
+    const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')].map((b) => ({ b, x: -(parseFloat(b.style.getPropertyValue('--cx')) || 0), y: -(parseFloat(b.style.getPropertyValue('--cy')) || 0) }));
+    // Its half size, name included. Rows level with the middle clear it sideways; the rest above and below.
+    const HW = 33, HH = 40, PAD = 5;
+    const level = icons.filter((i) => Math.abs(i.y) < HH + PAD).map((i) => Math.abs(i.x));
+    const minX = level.length ? Math.min(...level) : 0, minY = Math.min(...icons.filter((i) => Math.abs(i.y) >= HH + PAD).map((i) => Math.abs(i.y)));
+    icons.forEach(({ b, x, y }) => {
       b.style.transition = 'none';
       b.style.transform = '';
       const frames = [];
-      for (let i = 0; i <= 24; i++) {
-        const t = i / 24, k = 1 - E(t);
-        frames.push({ transform: `translate(${-cx * .85 * k}px, ${-cy * .85 * k}px) scale(${1 + .55 * k})`, opacity: Math.min(1, t * 3.2) });
+      for (let i = 0; i <= HOME_N; i++) {
+        const z = size(i / HOME_N), grow = 1 + .3 * z;
+        const mx = minX ? Math.max(1, (160 * z + HW * grow + PAD) / minX) : 1, my = Math.max(1, (240 * z + HH * grow + PAD) / minY);
+        frames.push({ transform: `translate(${x * (mx - 1)}px, ${y * (my - 1)}px) scale(${grow})` });
       }
       b.animate(frames, { duration: HOME_MS, easing: 'linear' }).finished.then(() => { b.style.transition = ''; }).catch(() => {});
     });

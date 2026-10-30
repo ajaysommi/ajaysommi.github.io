@@ -5572,21 +5572,20 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-yr.is-scramble { font: 500 1em/1 "Geist Mono", ui-monospace, monospace; color: var(--ink-2); background: none; text-shadow: none; text-decoration: none; padding: 0; -webkit-text-fill-color: currentColor; }
 
 /* The banner folded away: a small chip that still leads to the eras. In the
-   bottom corner on a computer; on a phone, right above the search button,
+   bottom corner on a computer; on a phone, on the left above the menu bar,
    measured from the same edge as the nav so they move as one. */
 .era-mini {
   position: fixed; left: 18px; bottom: 18px; z-index: 58; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 0; overflow: hidden;
-  border-radius: 999px; border: 1px solid rgba(255, 255, 255, .14); background: #151513; color: #f1efe9; text-decoration: none;
+  border-radius: 999px; color: var(--ink); text-decoration: none; background: color-mix(in oklab, var(--bg) 96%, transparent);
   font: .68rem/1 "Silkscreen", "Geist Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, .3); transition: transform .25s cubic-bezier(.2, .7, .2, 1); -webkit-tap-highlight-color: transparent;
+  transition: transform .25s cubic-bezier(.2, .7, .2, 1); -webkit-tap-highlight-color: transparent;
 }
-[data-theme="daylight"] .era-mini { background: #fff; color: #1c1a17; border-color: rgba(0, 0, 0, .1); box-shadow: 0 8px 22px rgba(30, 30, 40, .14); }
 .era-mini-st { align-self: stretch; display: flex; transform: skewX(-14deg); margin-left: -6px; padding-left: 12px; }
 .era-mini-st i { width: 3px; }
 .era-mini-st i:nth-child(1) { background: #61bb46; } .era-mini-st i:nth-child(2) { background: #fdb827; } .era-mini-st i:nth-child(3) { background: #f5821f; }
 .era-mini-st i:nth-child(4) { background: #e03a3e; } .era-mini-st i:nth-child(5) { background: #963d97; } .era-mini-st i:nth-child(6) { background: #009ddc; }
 @media (hover: hover) { .era-mini:hover { transform: translateY(-2px); } }
 @media (max-width: 719px) {
-  .era-mini { left: auto; right: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); height: 32px; padding-right: 11px; z-index: 59; }
+  .era-mini { left: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); height: 32px; padding-right: 11px; z-index: 59; }
 }
 html { touch-action: pan-x pan-y; }

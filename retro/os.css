@@ -729,12 +729,11 @@ img { display: block; max-width: 100%; }
 .p8.is-zoomed { left: 0 !important; top: 22px !important; width: 100% !important; height: calc(100% - 22px) !important; }
 /* The network cable beside the 1998 machine. */
 .bz-cable { position: absolute; left: 0; top: 0; z-index: 60; transform-origin: 0 0; pointer-events: none; transition: opacity .35s; }
+.bz-cable.is-behind { z-index: 0; }
 .os-host.is-morph > .bz-cable { opacity: 0; }
-.bz-cable svg { position: absolute; left: 0; top: 0; overflow: visible; }
-.bz-plug { pointer-events: auto; cursor: grab; }
+.bz-cable svg { position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(0 6px 8px rgba(0,40,60,.3)); }
+.bz-plug { pointer-events: auto; cursor: grab; outline: none; }
 .bz-cable.is-held .bz-plug { cursor: grabbing; }
+.bz-cable.is-going .bz-plug, .bz-cable.is-on .bz-plug { pointer-events: none; }
 .bz-cable .bz-hint { opacity: 1; color: #0b5b72; }
-.bz-cable.is-on .bz-hint { display: none; }
-.bz-port-led { fill: #5a3a10; }
-.bz-cable.is-on .bz-port-led { fill: #62ff7c; animation: bz-led 1.1s steps(2) infinite; }
-@keyframes bz-led { 50% { opacity: .35; } }
+.bz-cable.is-held .bz-hint, .bz-cable.is-going .bz-hint, .bz-cable.is-on .bz-hint { display: none; }

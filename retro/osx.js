@@ -824,8 +824,13 @@ window.OSX = (function () {
       onDrop: (el, dx, dy) => {
         if (!el.classList.contains('dt-i')) return;
         if (!deskEl.dataset.free) {
+          /* Once its icons are placed by hand the desk has nothing to size it,
+             so it keeps the box it had; every icon stays where it was. */
           deskEl.dataset.free = '1';
-          [...deskEl.children].map((c) => [c, c.offsetLeft, c.offsetTop]).forEach(([c, x, y]) => { c.style.position = 'absolute'; c.style.left = x + 'px'; c.style.top = y + 'px'; });
+          const w = deskEl.offsetWidth, ht = deskEl.offsetHeight;
+          const at = [...deskEl.children].map((c) => [c, c.offsetLeft, c.offsetTop]);
+          Object.assign(deskEl.style, { width: w + 'px', height: ht + 'px', bottom: 'auto' });
+          at.forEach(([c, x, y]) => { c.style.position = 'absolute'; c.style.left = x + 'px'; c.style.top = y + 'px'; });
         }
         el.style.left = parseFloat(el.style.left) + dx + 'px';
         el.style.top = parseFloat(el.style.top) + dy + 'px';
@@ -840,7 +845,7 @@ window.OSX = (function () {
       if (dk) return dk.dataset.app === 'trash' ? [[t('Open'), () => open('trash')], [t('Empty Trash'), emptyTrash]] : [[t('Open'), () => open(dk.dataset.app)]];
       const w = e.target.closest('.ox-win');
       if (w) { const r = [...wins.values()].find((x) => x.el === w); return r ? [[t('Close'), () => close(r)], [t('Minimize'), () => minimize(r)], [t('Zoom'), () => w.querySelector('.lt.zoom').click()]] : null; }
-      return [[t('Clean Up'), () => { deskEl.removeAttribute('data-free'); drawDesk(); }], '-', [t('About This Computer'), () => MENUS().mark[0][1]()], [t('Search Spotlight'), () => toggleSpot(true)], [t('Restart in Another Era…'), () => timeTravel()]];
+      return [[t('Clean Up'), () => { deskEl.removeAttribute('data-free'); deskEl.removeAttribute('style'); drawDesk(); }], '-', [t('About This Computer'), () => MENUS().mark[0][1]()], [t('Search Spotlight'), () => toggleSpot(true)], [t('Restart in Another Era…'), () => timeTravel()]];
     });
   };
 
@@ -864,10 +869,17 @@ window.OSX = (function () {
     const a = 'M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z', j = 'M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z', s = 'M43.83 24.6h8.74v11.79h-8.74z', d = 'M48.2 11.8a5.6 5.6 0 1 1 0 11.2a5.6 5.6 0 1 1 0-11.2z';
     return `<svg class="ox-glossy" viewBox="6 6 52 44" aria-hidden="true"><defs><linearGradient id="oxgA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9e0ff"/><stop offset=".45" stop-color="#5aa9f2"/><stop offset=".55" stop-color="#2a7be0"/><stop offset="1" stop-color="#7cc0fa"/></linearGradient><linearGradient id="oxgL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity=".12"/></linearGradient><clipPath id="oxgC"><path d="${a}"/><path d="${j}"/><path d="${s}"/><path d="${d}"/></clipPath></defs><g fill="url(#oxgA)" stroke="#1d5fb4" stroke-width=".45" stroke-linejoin="round"><path d="${a}"/><path d="${j}"/><path d="${s}"/><path d="${d}"/></g><path d="M4 4H60V24Q32 34 4 30Z" fill="url(#oxgL)" clip-path="url(#oxgC)"/></svg>`;
   };
+  /* Each language's flag on a round glass button. */
+  const FLAG = {
+    en: `<svg viewBox="0 0 34 34">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<rect y="${i * 4.86}" width="34" height="2.43" fill="#c8102e"/><rect y="${i * 4.86 + 2.43}" width="34" height="2.43" fill="#fff"/>`).join('')}<rect width="17" height="17" fill="#22408c"/>${[3, 8.5, 14].map((x) => [3.5, 8.5, 13.5].map((y) => `<circle cx="${x}" cy="${y}" r="1.1" fill="#fff"/>`).join('')).join('')}</svg>`,
+    es: '<svg viewBox="0 0 34 34"><rect width="34" height="34" fill="#c60b1e"/><rect y="8.5" width="34" height="17" fill="#ffc400"/><rect x="8" y="13" width="5" height="8" rx="1.5" fill="#ad1519"/></svg>',
+    fr: '<svg viewBox="0 0 34 34"><rect width="11.4" height="34" fill="#0a3a9c"/><rect x="11.3" width="11.4" height="34" fill="#fff"/><rect x="22.6" width="11.4" height="34" fill="#e1202e"/></svg>',
+    de: '<svg viewBox="0 0 34 34"><rect width="34" height="11.4" fill="#111"/><rect y="11.3" width="34" height="11.4" fill="#d80f1a"/><rect y="22.6" width="34" height="11.4" fill="#ffcc00"/></svg>'
+  };
   const chooseLang = () => new Promise((resolve) => {
     const s = h('div', 'ox-boot ox-setup');
     const draw = () => {
-      s.innerHTML = `<div class="ox-card">${GLOSSY()}<h1>SommiOS X</h1><p>${t('Select your language')}</p><div class="ox-langs" role="listbox" aria-label="Language">${window.I18N.LANGS.map(([c, n], i) => `<button type="button" role="option" data-l="${c}"${i === 0 ? ' class="on"' : ''}><i>${c.toUpperCase()}</i><span>${esc(n)}</span></button>`).join('')}</div><div class="ox-power"><button type="button" data-p="r"><i><svg viewBox="0 0 20 20"><path d="M13 4 6 10l7 6z" fill="currentColor"/></svg></i>${t('Restart')}</button><button type="button" data-p="s"><i><svg viewBox="0 0 20 20"><path d="M10 2.5v7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M6 5.2a6.4 6.4 0 1 0 8 0" fill="none" stroke="currentColor" stroke-width="2"/></svg></i>${t('Shut Down')}</button></div></div>`;
+      s.innerHTML = `<div class="ox-card">${GLOSSY()}<h1>SommiOS X</h1><p>${t('Select your language')}</p><div class="ox-langs" role="listbox" aria-label="Language">${window.I18N.LANGS.map(([c, n], i) => `<button type="button" role="option" data-l="${c}"${i === 0 ? ' class="on"' : ''}><i>${FLAG[c]}</i><span>${esc(n)}</span></button>`).join('')}</div><div class="ox-power"><button type="button" data-p="r"><i><svg viewBox="0 0 20 20"><path d="M13 4 6 10l7 6z" fill="currentColor"/></svg></i>${t('Restart')}</button><button type="button" data-p="s"><i><svg viewBox="0 0 20 20"><path d="M10 2.5v7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M6 5.2a6.4 6.4 0 1 0 8 0" fill="none" stroke="currentColor" stroke-width="2"/></svg></i>${t('Shut Down')}</button></div></div>`;
     };
     draw();
     root.appendChild(s);
@@ -876,7 +888,7 @@ window.OSX = (function () {
     s.addEventListener('pointerover', (e) => { const b = e.target.closest('[data-l]'); if (b) rows().forEach((x) => x.classList.toggle('on', x === b)); });
     s.addEventListener('click', (e) => {
       const b = e.target.closest('[data-l]');
-      if (b) { SFX.click(); document.removeEventListener('keydown', key, true); s.remove(); resolve(b.dataset.l); return; }
+      if (b) { SFX.click(); document.removeEventListener('keydown', key, true); resolve({ lang: b.dataset.l, s }); return; }
       const p = e.target.closest('[data-p]');
       if (p && p.dataset.p === 's') { SFX.click(); api.picker(); }
       if (p && p.dataset.p === 'r') { SFX.chime(); s.firstChild.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500 }); }
@@ -986,16 +998,26 @@ window.OSX = (function () {
   const boot = async () => {
     root.classList.add('is-booting');
     SFX.chime();
-    const lang = await chooseLang();
+    const { lang, s } = await chooseLang();
     applyLang(lang);
-    const b = h('div', 'ox-boot ox-start', `<div class="ox-bar"><i></i></div><p>${t('Starting SommiOS X…')}</p>`);
-    root.appendChild(b);
-    b.querySelector('.ox-bar i').animate([{ width: '4%' }, { width: '100%' }], { duration: 1700, easing: 'cubic-bezier(.3, .2, .7, .9)', fill: 'forwards' });
+    /* The window itself shrinks: the same card, now small, over the same
+       blue, holding the logo and the glass bar. */
+    const card = s.querySelector('.ox-card');
+    await Promise.all([...card.children].map((c) => c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 170, fill: 'forwards' }).finished));
+    const a = card.getBoundingClientRect();
+    card.classList.add('is-small');
+    card.innerHTML = `${GLOSSY()}<h1>SommiOS X</h1><div class="ox-bar"><i></i></div><p>${t('Starting SommiOS X…')}</p>`;
+    const z = card.getBoundingClientRect();
+    card.animate([{ width: a.width + 'px', height: a.height + 'px' }, { width: z.width + 'px', height: z.height + 'px' }], { duration: 480, easing: 'cubic-bezier(.3, .7, .2, 1)' });
+    [...card.children].forEach((c) => c.animate([{ opacity: 0 }, { opacity: 0, offset: .55 }, { opacity: 1 }], { duration: 480 }));
+    await wait(420);
+    const bar = card.querySelector('.ox-bar i');
+    bar.animate([{ width: '4%' }, { width: '100%' }], { duration: 1700, easing: 'cubic-bezier(.3, .2, .7, .9)', fill: 'forwards' });
     await wait(1750);
-    b.classList.add('is-gone');
+    s.classList.add('is-gone');
     root.classList.remove('is-booting');
-    await wait(400);
-    b.remove();
+    await wait(500);
+    s.remove();
     sizeDock();
     markRunning();
     if (!store.get('ox-welcome', false)) { store.set('ox-welcome', true); open('welcome'); }

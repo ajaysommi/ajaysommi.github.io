@@ -492,17 +492,21 @@
 .ox-card > p { margin: 0 0 16px; font-size: 12px; color: #9a9a9a; }
 .ox-langs { width: min(230px, 100%); display: flex; flex-direction: column; gap: 4px; }
 .ox-langs button { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px 0 5px; border: 1px solid transparent; border-radius: 22px; background: none; cursor: default; font: 13px var(--lg); color: #1a1a1a; text-align: left; }
-.ox-langs i { width: 34px; height: 34px; flex: none; border-radius: 50%; display: grid; place-items: center; font: bold 11px var(--lg); color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); box-shadow: 0 1px 2px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.2);
-  background: linear-gradient(180deg, rgba(255,255,255,.75) 0, rgba(255,255,255,.2) 46%, transparent 48%), linear-gradient(180deg, #2f7de2, #1d5fc4 52%, #4ea3f4); }
+.ox-langs i { position: relative; width: 34px; height: 34px; flex: none; border-radius: 50%; overflow: hidden; display: block; box-shadow: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.28); }
+.ox-langs i svg { display: block; width: 100%; height: 100%; }
+.ox-langs i::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(ellipse 72% 42% at 50% 22%, rgba(255,255,255,.82), rgba(255,255,255,.22) 72%, transparent 74%), radial-gradient(circle at 50% 118%, rgba(255,255,255,.42), transparent 48%); box-shadow: inset 0 0 3px rgba(0,0,0,.45); }
 .ox-langs button.on { color: #fff; border-color: #2a62b8; text-shadow: 0 -1px 0 rgba(0,0,0,.3); background: linear-gradient(180deg, #a7cdf6 0, #6aa8ee 46%, #3a84e4 50%, #5fa7f2 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.3); }
 .ox-power { display: flex; gap: 22px; margin-top: 18px; }
 .ox-power button { white-space: nowrap; display: flex; flex-direction: column; align-items: center; gap: 3px; border: 0; background: none; font: 10px var(--lg); color: #333; cursor: default; }
 .ox-power i { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: #444; border: 1px solid #8f8f8f; background: linear-gradient(180deg, #fff, #dcdcdc 50%, #c6c6c6 52%, #efefef); }
 .ox-power svg { width: 15px; height: 15px; }
 .ox-power button:active i { filter: brightness(.8); }
-.ox-start { background: repeating-linear-gradient(180deg, #ededed 0 2px, #e2e2e2 2px 4px); gap: 22px; }
-.ox-start p { margin: 0; font: 15px var(--lg); color: #111; }
-.ox-bar { width: min(432px, 62vw); height: 30px; box-sizing: border-box; border: 1px solid #a5a5a5; border-radius: 3px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 0 #fff; background: linear-gradient(180deg, #fdfdfd, #dedede 50%, #d0d0d0 52%, #f1f1f1); }
+/* The same window, small. */
+.ox-card.is-small { width: 300px; padding: 18px 26px 16px; overflow: hidden; }
+.ox-card.is-small .ox-glossy { width: 56px; height: 47px; }
+.ox-card.is-small h1 { margin: 5px 0 12px; font-size: 21px; }
+.ox-card.is-small p { margin: 9px 0 0; font-size: 11px; color: #333; }
+.ox-bar { width: 100%; flex: none; height: 18px; box-sizing: border-box; border: 1px solid #a5a5a5; border-radius: 3px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 0 #fff; background: linear-gradient(180deg, #fdfdfd, #dedede 50%, #d0d0d0 52%, #f1f1f1); }
 .ox-bar i { display: block; height: 100%; animation: ox-stripe .7s linear infinite; background: linear-gradient(180deg, rgba(255,255,255,.7) 0, rgba(255,255,255,.28) 48%, rgba(0,0,0,.05) 50%, rgba(255,255,255,.3) 100%), repeating-linear-gradient(90deg, #3a8cec 0 12px, #7fbcf8 12px 24px); box-shadow: 1px 0 1px rgba(0,0,0,.25); }
 @keyframes ox-stripe { to { background-position: 0 0, 24px 0; } }
 /* The dock's Trash with something in it. */

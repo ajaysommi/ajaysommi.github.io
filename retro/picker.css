@@ -514,8 +514,9 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 [data-theme="daylight"] .pk-home:hover { background: #fff; }
 
 /* The startup disk beside the Macintosh, and the drive it goes into. */
-.bz-drive { position: absolute; left: 0; top: 0; z-index: 60; transform-origin: 0 0; pointer-events: none; animation: bz-drive-in .5s ease both; }
+.bz-drive { position: absolute; left: 0; top: 0; z-index: 60; transform-origin: 0 0; perspective: 2400px; pointer-events: none; animation: bz-drive-in .5s ease both; }
 @keyframes bz-drive-in { from { opacity: 0; } }
+.bz-drive.is-in { clip-path: polygon(0 0, 596px 0, 596px 706px, 888px 706px, 888px 0, 100% 0, 100% 100%, 0 100%); }
 .bz-disk { position: absolute; transform-origin: 50% 0; pointer-events: auto; cursor: grab; outline: none; will-change: transform; }
 .bz-drive.is-held .bz-disk { cursor: grabbing; }
 .bz-drive.is-going .bz-disk { pointer-events: none; }
@@ -526,9 +527,6 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .bz-drive.is-in .bz-disk svg { filter: none; }
 .bz-disk:focus-visible svg { outline: 4px solid #3d68ff; outline-offset: 6px; border-radius: 6px; }
 @keyframes bz-bob { 50% { transform: translateY(8px); } }
-/* The disk seen edge on: black plastic, the seam between its two halves
-   along the middle, about 3 mm of a 90 mm disk. */
-.bz-disk-edge { position: absolute; height: 9px; opacity: 0; border-radius: 1.5px; pointer-events: none; background: linear-gradient(180deg, #6a6a70 0, #454549 22%, #2c2c30 46%, #08080a 50%, #2e2e32 56%, #1c1c1f 100%); box-shadow: 0 1px 1px rgba(0,0,0,.35); }
 .bz-hint { position: absolute; transform: translateX(-50%); white-space: nowrap; font: 24px var(--pixel); color: #5f5645; opacity: 0; transition: opacity .4s ease .3s; pointer-events: none; }
 .bz-drive.is-on .bz-hint { opacity: 1; }
 .bz-drive.is-going .bz-hint { opacity: 0; transition-delay: 0s; transition-duration: .2s; }
@@ -557,18 +555,3 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .picker.is-settling { pointer-events: none; }
 .picker.is-settling .mp-rail { overflow: hidden; touch-action: none; }
 
-/* The Bondi tile's small animations. */
-.g3a-sheen { animation: g3a-sheen 4.8s ease-in-out infinite; }
-@keyframes g3a-sheen { 0%, 30% { transform: skewX(-14deg) translateX(0); } 75%, 100% { transform: skewX(-14deg) translateX(190px); } }
-.g3a-scan { animation: g3a-scan 2.6s linear infinite; }
-@keyframes g3a-scan { from { transform: translateY(-8px); } to { transform: translateY(46px); } }
-.g3a-page rect { animation: g3a-row 5.2s steps(1) infinite; }
-.g3a-page .r2 { animation-name: g3a-row2; } .g3a-page .r3 { animation-name: g3a-row3; } .g3a-page .r4 { animation-name: g3a-row4; } .g3a-page .r5 { animation-name: g3a-row5; }
-@keyframes g3a-row { 0%, 8% { opacity: 0; } 9%, 92% { opacity: 1; } 93% { opacity: 0; } }
-@keyframes g3a-row2 { 0%, 18% { opacity: 0; } 19%, 92% { opacity: 1; } 93% { opacity: 0; } }
-@keyframes g3a-row3 { 0%, 28% { opacity: 0; } 29%, 92% { opacity: 1; } 93% { opacity: 0; } }
-@keyframes g3a-row4 { 0%, 36% { opacity: 0; } 37%, 92% { opacity: 1; } 93% { opacity: 0; } }
-@keyframes g3a-row5 { 0%, 46% { opacity: 0; } 47%, 92% { opacity: 1; } 93% { opacity: 0; } }
-.g3a-led { animation: g3a-led 2.4s ease-in-out infinite; }
-@keyframes g3a-led { 50% { opacity: .35; } }
-.reduced .g3a-sheen, .reduced .g3a-scan, .reduced .g3a-page rect, .reduced .g3a-led { animation: none; }
