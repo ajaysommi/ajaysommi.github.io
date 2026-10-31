@@ -683,26 +683,41 @@ window.OSX = (function () {
   /* Centres are measured once with the dock at rest (in the dock's own
      coordinates, so scaling the page doesn't matter), and every change is
      written in one frame: nothing is read while widths change. */
-  let rest = null, want = null, raf = 0;
+  let rest = null, want = null, raf = 0, cur = [], last = 0;
   let magOn = true;
-  const magnify = (x) => {
-    want = magOn ? x : null;
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      raf = 0;
-      const items = [...dockEl.querySelectorAll('.dk-i')];
-      if (want == null) { items.forEach((d) => { d.style.width = base + 'px'; }); rest = null; return; }
-      if (!rest) {
-        const r0 = dockEl.getBoundingClientRect(), k = r0.width / dockEl.offsetWidth || 1;
-        rest = { left: r0.left, k, c: items.map((d) => d.offsetLeft + d.offsetWidth / 2) };
-      }
+  /* Each icon eases toward the size it should be, every frame, whichever
+     way it is going: into the pointer, along with it, or back down at rest.
+     The icons near the pointer swell and the rest give up the room, so the
+     dock stays exactly as wide as it is at rest. */
+  const stepDock = (now) => {
+    raf = 0;
+    const items = [...dockEl.querySelectorAll('.dk-i')];
+    if (!rest) {
+      const r0 = dockEl.getBoundingClientRect(), k = r0.width / dockEl.offsetWidth || 1;
+      rest = { left: r0.left, k, c: items.map((d) => d.offsetLeft + d.offsetWidth / 2) };
+      cur = items.map(() => base);
+    }
+    let goal = items.map(() => base);
+    if (want != null) {
       const px = (want - rest.left) / rest.k;
-      /* The icons near the pointer swell and the rest give up the room, so
-         the dock stays exactly as wide as it is at rest. */
       const grow = rest.c.map((c) => 1 + 0.75 * Math.max(0, 1 - Math.abs(px - c) / (base * 3)));
       const fit = items.length / grow.reduce((a, g) => a + g, 0);
-      items.forEach((d, i) => { d.style.width = base * grow[i] * fit + 'px'; });
+      goal = grow.map((g) => base * g * fit);
+    }
+    const dt = last ? Math.min(50, now - last) : 16;
+    const ease = 1 - Math.exp(-dt / 70);
+    let moving = false;
+    items.forEach((d, i) => {
+      cur[i] += (goal[i] - cur[i]) * ease;
+      if (Math.abs(goal[i] - cur[i]) < .08) cur[i] = goal[i]; else moving = true;
+      d.style.width = cur[i] + 'px';
     });
+    last = moving ? now : 0;
+    if (moving) raf = requestAnimationFrame(stepDock);
+  };
+  const magnify = (x) => {
+    want = magOn ? x : null;
+    if (!raf) raf = requestAnimationFrame(stepDock);
   };
   const markRunning = () => {
     const run = new Set([...wins.values()].map((w) => w.app));

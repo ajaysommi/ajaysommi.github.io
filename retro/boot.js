@@ -403,7 +403,7 @@
     bar.querySelector('[data-k="eras"]').addEventListener('click', () => { SFX.click(); showPicker(); });
     document.body.appendChild(bar);
     /* Shapes of the era behind the machine. */
-    const LOOK = { 1983: ['#5cff6b', 0.07], 1991: ['#3a352a', 0.2], 1998: ['#1a8ba3', 0.2], 2007: ['#6f86a6', 0.17] };
+    const LOOK = { 1983: ['#5cff6b', 0.07], 1991: ['#8b7f62', 0.2], 1998: ['#1a8ba3', 0.2], 2007: ['#6f86a6', 0.17] };
     const backdrop = document.createElement('div');
     backdrop.className = 'dk-shapes';
     host.insertBefore(backdrop, host.firstChild);

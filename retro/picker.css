@@ -562,5 +562,3 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .mp-card.is-sel { background: #2c2c30; }
 [data-theme="daylight"] .is-desk-pick .pk-d, [data-theme="daylight"] .mp-card { background: rgba(251,250,247,.94); }
 [data-theme="daylight"] .mp-card.is-sel, [data-theme="daylight"] .is-desk-pick .pk-d.is-sel { background: #fff; }
-/* The 128K's room is a bitmap, like everything on that machine. */
-.os-host[data-era="1991"] .bg-shapes svg { shape-rendering: crispEdges; }
