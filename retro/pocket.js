@@ -213,6 +213,7 @@ window.POCKET = { start(room, exit) {
         [li('Clicker', store.get('clicker', true) ? 'On' : 'Off'), () => { store.set('clicker', !store.get('clicker', true)); refresh(); }],
         [li('Sound', window.SFX.muted ? 'Off' : 'On'), () => { window.SFX.toggle(); refresh(); }],
         [li('Backlight', store.get('backlight', 'auto') === 'auto' ? 'Auto' : 'Always'), () => { store.set('backlight', store.get('backlight', 'auto') === 'auto' ? 'always' : 'auto'); wake(); refresh(); }],
+        [li('Contrast', ['Low', 'Medium', 'High'][store.get('pod-contrast', 1)]), () => { const c = (store.get('pod-contrast', 1) + 1) % 3; store.set('pod-contrast', c); lcd.style.filter = `contrast(${[.82, 1, 1.25][c]})`; refresh(); }],
         [li('About'), () => open('aboutdev')],
         [li('Switch device', '\u21c4'), () => exit()]
       ]

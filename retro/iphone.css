@@ -1133,6 +1133,7 @@
 .ip-screen .cl-btns { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 16px; }
 .ip-screen .cl-btns button { flex: 1; height: 50px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9px; cursor: pointer; color: #fff; font: bold 22px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); }
 .ip-screen .cl-btns i { display: block; flex: none; }
+.ip-screen .cl-end, .ip-screen .cl-green, .ip-screen .cl-dark { border-width: 1.5px; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 0 0 .75px rgba(0,0,0,.45), 0 1.5px 0 rgba(255,255,255,.12); }
 .ip-screen .cl-btns button:active { filter: brightness(.82); }
 .ip-screen .cl-btns .half { font-size: 18px; }
 .ip-screen .cl-end { border: 1px solid #4a0808; background: linear-gradient(180deg, #f28a7e 0, #e2574a 48%, #cc1f12 50%, #d93a2c 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 1px 0 rgba(255,255,255,.12); }
@@ -1188,3 +1189,20 @@
 .ip-screen .gm-cell i.hot { background: linear-gradient(180deg, #fff3a8, #ffb300 50%, #e87a00 51%, #ffa000); }
 .ip-screen .gm-pct { position: absolute; left: 0; right: 0; top: 250px; text-align: center; font: 200 64px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; pointer-events: none; }
 .ip-screen .gm .bb-msg { z-index: 3; }
+
+/* Arrows anywhere on the phone: plain shapes, with the toolbar's shadow. */
+.ip-screen .arw { display: block; margin: auto; filter: drop-shadow(0 -.5px 0 rgba(0,0,0,.4)); }
+.ip-screen .tbar button { display: grid; place-items: center; }
+.ip-screen .sp-nav button, .ip-screen .cal-mh button, .ip-screen .cal-dh button { display: grid; place-items: center; }
+/* What closes is the app: nothing is painted in the band under the status bar. */
+.ip-screen .ip-app { background-clip: content-box; }
+/* Volume overlay. */
+.ip-screen .ip-hud { position: absolute; left: 50%; top: 50%; width: 156px; height: 156px; margin: -78px; z-index: 77; border-radius: 16px; background: rgba(0,0,0,.72); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font: bold 15px Helvetica, Arial, sans-serif; pointer-events: none; }
+.ip-screen .ip-hud[hidden] { display: none; }
+.ip-screen .ip-hud span { display: flex; gap: 2px; }
+.ip-screen .ip-hud i { width: 5.500px; height: 7px; background: rgba(255,255,255,.22); }
+.ip-screen .ip-hud i.on { background: #fff; }
+.ip-screen .row.bright input { flex: 1; min-width: 0; accent-color: #4f86e0; touch-action: pan-x; }
+.ip.is-photo .ip-vol { display: block; background: none; width: 26px; left: -12px; height: 42px; border-radius: 0; }
+.ip.is-photo .ip-vol.up { top: 172px; }
+.ip.is-photo .ip-vol.dn { top: 216px; }

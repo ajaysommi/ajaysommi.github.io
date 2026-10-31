@@ -109,6 +109,13 @@ window.IPHONE = { start(room, exit) {
 
   /* ---------------------------------------------------------------- clock */
 
+  /* Plain arrows, as Safari's toolbar has them: never the emoji a phone's
+     font would draw for these characters. */
+  const ARW = {
+    b: '<svg class="arw" viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M.4 7.5 14.6.4v14.2z" fill="currentColor"/></svg>',
+    f: '<svg class="arw" viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M14.6 7.5 .4.4v14.2z" fill="currentColor"/></svg>',
+    p: '<svg class="arw" viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M2 .5h4v14H2zM9 .5h4v14H9z" fill="currentColor"/></svg>'
+  };
   const now = () => new Date();
   let statusLent = false;
   const hm = (d, ampm = true) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(ampm ? /$/ : / ?[AP]M$/, '');
@@ -241,7 +248,7 @@ window.IPHONE = { start(room, exit) {
   const writeMail = (subject = '', body = '') => {
     pendingMail = { subject, body };
     if (current && current.def === APPS.email && current.compose) { current.compose(P.email, subject, body); pendingMail = null; return; }
-    if (current) { closeApp(); setTimeout(() => openApp('email', null), 380); } else openApp('email', null);
+    if (current) switchApp('email'); else openApp('email', null);
   };
   const mailto = (subject, body) => { location.href = `mailto:${P.email}?subject=${encodeURIComponent(subject || '')}${body ? '&body=' + encodeURIComponent(body) : ''}`; };
 
@@ -512,6 +519,8 @@ window.IPHONE = { start(room, exit) {
     current = makeApp(APPS[id], from);
     state = 'app';
   };
+  /* Close this app, and open another as soon as the close has finished. */
+  const switchApp = (id) => { closeApp(); setTimeout(() => { quietUntil = 0; openApp(id, null); }, HOME_MS + 30); };
   const closeApp = () => {
     if (!current) return;
     kb.hide();
@@ -654,7 +663,7 @@ window.IPHONE = { start(room, exit) {
     const pages = () => {
       const o = h('div', 'saf-pages');
       const draw = () => {
-        o.innerHTML = `<div class="sp-card"><button type="button" class="sp-x" aria-label="Close page">×</button><b>${esc(pretty(tabsList[cur].url) || 'Untitled')}</b><span>${cur + 1} of ${tabsList.length}</span></div><div class="sp-nav"><button type="button" data-d="-1">◀</button><span>${tabsList.map((_, i) => `<i class="${i === cur ? 'on' : ''}"></i>`).join('')}</span><button type="button" data-d="1">▶</button></div><div class="sp-bar"><button type="button" data-new>New Page</button><button type="button" data-done>Done</button></div>`;
+        o.innerHTML = `<div class="sp-card"><button type="button" class="sp-x" aria-label="Close page">×</button><b>${esc(pretty(tabsList[cur].url) || 'Untitled')}</b><span>${cur + 1} of ${tabsList.length}</span></div><div class="sp-nav"><button type="button" data-d="-1">${ARW.b}</button><span>${tabsList.map((_, i) => `<i class="${i === cur ? 'on' : ''}"></i>`).join('')}</span><button type="button" data-d="1">${ARW.f}</button></div><div class="sp-bar"><button type="button" data-new>New Page</button><button type="button" data-done>Done</button></div>`;
       };
       draw();
       o.addEventListener('click', (e) => {
@@ -741,7 +750,7 @@ window.IPHONE = { start(room, exit) {
     const dayView = (pg) => {
       const y0 = 2019, y1 = 2027, H = 62;
       pg.classList.add('cal-day');
-      pg.innerHTML = `<div class="cal-dh"><button type="button" data-y="-1">◀</button><b>Career</b><span>2019 – 2026</span><button type="button" data-y="1">▶</button></div><div class="cal-hrs" style="height:${(y1 - y0) * H + 20}px">${[...Array(y1 - y0)].map((_, i) => `<div class="hr" style="top:${i * H + 10}px"><span>${y0 + i}</span></div>`).join('')}
+      pg.innerHTML = `<div class="cal-dh"><button type="button" data-y="-1">${ARW.b}</button><b>Career</b><span>2019 – 2026</span><button type="button" data-y="1">${ARW.f}</button></div><div class="cal-hrs" style="height:${(y1 - y0) * H + 20}px">${[...Array(y1 - y0)].map((_, i) => `<div class="hr" style="top:${i * H + 10}px"><span>${y0 + i}</span></div>`).join('')}
         ${roles.map((e, i) => { const s = span(e); const a = (s.start.y - y0 + s.start.m / 12) * H + 10, b = (s.end.y - y0 + (s.end.m + 1) / 12) * H + 10; return `<button type="button" class="ev" data-i="${i}" style="top:${a}px;height:${Math.max(22, b - a - 2)}px;left:${i % 2 ? 150 : 56}px">${esc(e.short)}<span>${esc(e.role)}</span></button>`; }).join('')}</div>`;
       pg.addEventListener('click', (ev) => {
         const b = ev.target.closest('.ev');
@@ -769,7 +778,7 @@ window.IPHONE = { start(room, exit) {
           cells.push(`<button type="button" class="cd${inM ? '' : ' out'}${today ? ' today' : ''}" data-d="${inM ? d : ''}">${label}${inM && marks[d] ? '<i></i>' : ''}</button>`);
         }
         const rows = Math.ceil((first + days) / 7);
-        pg.innerHTML = `<div class="cal-mh"><button type="button" data-m="-1">◀</button><b>${month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</b><button type="button" data-m="1">▶</button></div><div class="cal-wd">${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((w) => `<span>${w}</span>`).join('')}</div><div class="cal-grid">${cells.slice(0, rows * 7).join('')}</div><ul class="pl cal-ev"></ul>`;
+        pg.innerHTML = `<div class="cal-mh"><button type="button" data-m="-1">${ARW.b}</button><b>${month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</b><button type="button" data-m="1">${ARW.f}</button></div><div class="cal-wd">${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((w) => `<span>${w}</span>`).join('')}</div><div class="cal-grid">${cells.slice(0, rows * 7).join('')}</div><ul class="pl cal-ev"></ul>`;
         const evs = pg.querySelector('.cal-ev');
         const show = (d) => { evs.innerHTML = (marks[d] || []).map((x) => `<li><span class="cal-t">All-day</span><span class="tx">${esc(x)}</span></li>`).join('') || '<li class="none"><span class="tx">No events</span></li>'; };
         pg.querySelectorAll('.cd').forEach((c) => c.addEventListener('click', () => {
@@ -1119,7 +1128,7 @@ window.IPHONE = { start(room, exit) {
         const r = e.target.closest('[data-k]');
         if (r) { const f = r.dataset.k; if (f === 'email') writeMail('Hello'); else if (f === 'home') ext(P.github); else if (f === 'work') ext(P.linkedin); else alertBox('Notes', esc(card.notes)); }
         const act = e.target.closest('[data-act]');
-        if (act && act.dataset.act === 'text') { closeApp(); setTimeout(() => openApp('guestbook', null), 360); }
+        if (act && act.dataset.act === 'text') switchApp('guestbook');
         if (act && act.dataset.act === 'fav') { if (!favs.some((f) => f[1] === 'email')) favs.push(['Ajay Sommi', 'email', P.email]); store.set('ip-favs', favs); alertBox('Added to Favorites'); }
       });
       entry.opts.right = [edit ? 'Done' : 'Edit', () => {
@@ -1364,9 +1373,10 @@ window.IPHONE = { start(room, exit) {
     app.def.onClose = () => { cancelAnimationFrame(raf); clearTimeout(stopT); running = false; stat.reset(); };
   };
   /* Dragging a thing around the play area, in the screen's own points. */
-  const dragger = (area, el, pos, moved) => {
+  const dragger = (area, el, pos, moved, above = 0) => {
     let on = false;
-    const to = (e) => { const r = area.getBoundingClientRect(), k = r.width / 320; pos.x = Math.max(0, Math.min(320, (e.clientX - r.left) / k)); pos.y = Math.max(0, Math.min(r.height / k, (e.clientY - r.top) / k)); el.style.transform = `translate(${pos.x}px, ${pos.y}px)`; moved && moved(); };
+    /* `above`: it rides that far over the fingertip, so the finger never hides it. */
+    const to = (e) => { const r = area.getBoundingClientRect(), k = r.width / 320; pos.x = Math.max(0, Math.min(320, (e.clientX - r.left) / k)); pos.y = Math.max(0, Math.min(r.height / k, (e.clientY - r.top) / k - above)); el.style.transform = `translate(${pos.x}px, ${pos.y}px)`; moved && moved(); };
     area.addEventListener('pointerdown', (e) => { on = true; try { area.setPointerCapture(e.pointerId); } catch (x) {} to(e); });
     area.addEventListener('pointermove', (e) => { if (on) to(e); });
     ['pointerup', 'pointercancel'].forEach((v) => area.addEventListener(v, () => { on = false; }));
@@ -1378,7 +1388,7 @@ window.IPHONE = { start(room, exit) {
       const ph = play.querySelector('.gm-phone'), bars = [...play.querySelectorAll('.gm-bars i')], tip = play.querySelector('.gm-tip');
       const pos = { x: 160, y: 260 }, spot = { x: 40 + Math.random() * 240, y: 90 + Math.random() * 300 };
       let at5 = 0, t0 = performance.now(), drift = Math.random() * 6;
-      dragger(play, ph, pos);
+      dragger(play, ph, pos, null, 60);
       stat.sig(0);
       return (dt) => {
         // The good spot wanders, and it is small.
@@ -1453,7 +1463,7 @@ window.IPHONE = { start(room, exit) {
       const pos = { x: 160, y: 260 }, H = 440;
       let t = 0, kept = 0, low = 0, noise = 0, nt = 0;
       const NEED = 12000;
-      dragger(play, ring, pos);
+      dragger(play, ring, pos, null, 76);
       return (dt) => {
         t += dt;
         const sx = 160 + Math.sin(t / 820) * 124 + Math.sin(t / 310) * 30, sy = H / 2 + Math.cos(t / 1060) * 160 + Math.sin(t / 390) * 40;
@@ -1495,6 +1505,13 @@ window.IPHONE = { start(room, exit) {
     })
   };
 
+  let airplane = false, bright = store.get('ip-bright', 100);
+  if (bright !== 100) scr.style.filter = `brightness(${bright / 100})`;
+  const setAir = () => {
+    room.querySelector('.ip-sig').style.display = airplane ? 'none' : '';
+    room.querySelector('.ip-edge').style.display = airplane ? 'none' : '';
+    room.querySelector('.car').innerHTML = airplane ? '<svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true"><path d="M15.5 6c0 .7-.8 1-1.6 1H10L6.8 12H5.3L7 7H3.6L2.4 8.5H1.3L2 6l-.7-2.500h1.100L3.600 5H7L5.300 0h1.500L10 5h3.900c.8 0 1.600.3 1.600 1z" fill="currentColor"/></svg>' : 'AJ&amp;T';
+  };
   const APPS = {
     signal: { name: 'Signal', icon: 'signal', bare: true, bar: 'black', open: GAMES.signal },
     balancer: { name: 'Balancer', icon: 'balancer', bare: true, bar: 'black', open: GAMES.balancer },
@@ -1615,7 +1632,7 @@ window.IPHONE = { start(room, exit) {
         const t = ev.target.closest('[data-r]'); if (t) { SFX.click(); range = +t.dataset.r; show(); return; }
         const a = ev.target.closest('[data-a]');
         if (a && a.dataset.a === 'i') alertBox('About Impact', 'Figures from internship work at Southeast Toyota, Hunter Engineering, JM Family and Shiva Robotics.');
-        if (a && a.dataset.a === 'aj') { closeApp(); setTimeout(() => openApp('experience', null), 360); }
+        if (a && a.dataset.a === 'aj') switchApp('experience');
       });
       show();
     } },
@@ -1779,12 +1796,14 @@ window.IPHONE = { start(room, exit) {
       const ICO = [['#3d7fe0', '⌨'], ['#5aa0e8', '☁'], ['#8a6ad8', '⧉'], ['#2fa36a', '⇄'], ['#f08b2a', '⚒'], ['#d24b4b', '♥']];
       app.push('Settings', (pg) => {
         pg.classList.add('pin');
-        pg.innerHTML = `<div class="gp"><div class="row sw-row">${mini('#f0941d', '✈')}<span class="v">Open to Work</span>${toggle(true, 'work')}</div><div class="row sw-row">${mini('#7a7a7a', '♪')}<span class="v">Sound</span>${toggle(!SFX.muted, 'sound')}</div></div>
+        pg.addEventListener('input', (ev) => { if (ev.target.type === 'range') { bright = +ev.target.value; store.set('ip-bright', bright); scr.style.filter = `brightness(${bright / 100})`; } });
+        pg.innerHTML = `<div class="gp"><div class="row sw-row">${mini('#f0941d', '✈')}<span class="v">Airplane Mode</span>${toggle(airplane, 'air')}</div><div class="row sw-row">${mini('#3f8fe0', '★')}<span class="v">Open to Work</span>${toggle(true, 'work')}</div><div class="row sw-row">${mini('#7a7a7a', '♪')}<span class="v">Sound</span>${toggle(!SFX.muted, 'sound')}</div></div>
           <div class="gp">${P.skills.map(([gname, list], i) => `<div class="row chev" data-s="${i}">${mini(ICO[i][0], ICO[i][1])}<span class="v">${esc(gname)}</span><span class="rv">${list.length}</span></div>`).join('')}</div>
-          <div class="gp"><div class="row chev" data-k="wall">${mini('#5f8f4a', '❀')}<span class="v">Wallpaper</span></div><div class="row chev" data-k="about">${mini('#8e8e8e', '⚙')}<span class="v">General</span></div><div class="row chev" data-k="switch">${mini('#c98a2e', '⇄')}<span class="v">Switch Era</span></div></div>`;
+          <div class="gp"><div class="row bright">${mini('#6d7fa0', '☼')}<input type="range" min="35" max="100" value="${bright}" aria-label="Brightness" /></div><div class="row chev" data-k="wall">${mini('#5f8f4a', '❀')}<span class="v">Wallpaper</span></div><div class="row chev" data-k="about">${mini('#8e8e8e', '⚙')}<span class="v">General</span></div><div class="row chev" data-k="switch">${mini('#c98a2e', '⇄')}<span class="v">Switch Era</span></div></div>`;
         pg.addEventListener('click', (ev) => {
           const sw = ev.target.closest('[data-sw]');
           if (sw) {
+            if (sw.dataset.sw === 'air') { airplane = !airplane; sw.classList.toggle('on', airplane); sw.setAttribute('aria-checked', String(airplane)); setAir(); return; }
             if (sw.dataset.sw === 'sound') { SFX.toggle(); sw.classList.toggle('on', !SFX.muted); sw.setAttribute('aria-checked', String(!SFX.muted)); }
             else { sw.classList.toggle('on'); sw.setAttribute('aria-checked', String(sw.classList.contains('on'))); }
             return;
@@ -1883,14 +1902,14 @@ window.IPHONE = { start(room, exit) {
     let auto = 0, busy = false;
     const api = {};
     const big = (i) => s.steps[(i + n) % n][0].replace('-480', '-960');
-    v.innerHTML = `<div class="pv-strip"></div><div class="pv-top"><button type="button" data-x>Done</button><b></b><span></span></div><div class="cap"></div><div class="tbar"><button type="button" data-d="-1">◀</button><button type="button" data-p></button><button type="button" data-d="1">▶▶</button></div>`;
+    v.innerHTML = `<div class="pv-strip"></div><div class="pv-top"><button type="button" data-x>Done</button><b></b><span></span></div><div class="cap"></div><div class="tbar"><button type="button" data-d="-1">${ARW.b}</button><button type="button" data-p></button><button type="button" data-d="1">${ARW.f}</button></div>`;
     const strip = v.querySelector('.pv-strip');
     const draw = () => {
       strip.style.transform = '';
       strip.innerHTML = (n > 1 ? [-1, 0, 1] : [0]).map((o) => `<div class="pv-ph" style="left:${o * 330}px"><img src="${big(k + o)}" alt="${o ? '' : esc(s.steps[k][1])}" /></div>`).join('');
       v.querySelector('.pv-top b').textContent = `${k + 1} of ${n}`;
       v.querySelector('.cap').innerHTML = `<b>${esc(s.steps[k][1])}</b>${esc(s.steps[k][2] || '')}`;
-      v.querySelector('[data-p]').textContent = auto ? '❙❙' : '▶';
+      v.querySelector('[data-p]').innerHTML = auto ? ARW.p : ARW.f;
     };
     const step = (d, from = 0) => {
       if (busy || n < 2) return;
@@ -2033,6 +2052,7 @@ window.IPHONE = { start(room, exit) {
     const size = (t) => 1 - E(t);
     appEl.style.animation = 'none';
     appEl.style.pointerEvents = 'none';
+    appEl.style.clipPath = 'inset(20px 0 0 0)';   // the band under the status bar is not part of what closes
     const af = [];
     for (let i = 0; i <= HOME_N; i++) { const t = i / HOME_N, z = size(t); af.push({ transform: `scale(${z})`, opacity: z < .03 ? 0 : 1 }); }
     appEl.animate(af, { duration: HOME_MS, easing: 'linear', fill: 'forwards' }).finished.then(() => appEl.remove());
@@ -2145,7 +2165,21 @@ window.IPHONE = { start(room, exit) {
     closeCall(true);
     setTimeout(relock, 360);
   });
-  room.querySelectorAll('.ip-vol').forEach((b) => b.addEventListener('click', () => SFX.beep()));
+  /* The volume rocker: the real overlay, and it really sets the volume. */
+  let vol = store.get('ip-vol', 12), hudT = 0;
+  const hud = h('div', 'ip-hud', `<svg viewBox="0 0 40 40" width="46" height="46" aria-hidden="true"><path d="M20 4c6 0 9 5 9 11 0 7 3 10 5 12H6c2-2 5-5 5-12 0-6 3-11 9-11zM16 30h8a4 4 0 0 1-8 0z" fill="currentColor"/></svg><b>Ringer</b><span></span>`);
+  hud.hidden = true;
+  scr.appendChild(hud);
+  room.querySelectorAll('.ip-vol').forEach((b) => b.addEventListener('click', () => {
+    vol = Math.max(0, Math.min(16, vol + (b.classList.contains('up') ? 1 : -1)));
+    store.set('ip-vol', vol);
+    SYS.volume(vol / 16);
+    hud.querySelector('span').innerHTML = [...Array(16)].map((_, i) => `<i class="${i < vol ? 'on' : ''}"></i>`).join('');
+    hud.hidden = false;
+    clearTimeout(hudT);
+    hudT = setTimeout(() => { hud.hidden = true; }, 1100);
+    SYS.sample('tock');
+  }));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state === 'app' && shown()) { if (kb.target) kb.hide(); else closeApp(); } });
   /* Tapping anywhere outside a field puts the keyboard away. */
   scr.addEventListener('click', (e) => { if (kb.target && !e.target.closest('.kb, .fld, .nbb, .sms-send')) kb.hide(); });

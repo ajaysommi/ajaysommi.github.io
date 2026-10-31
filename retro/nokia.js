@@ -90,6 +90,11 @@ window.NOKIA = { start(room, exit) {
     ['Extras', 'egg', () => list('Extras', [
       ['More eras', () => push(txt('More eras', '<p>This phone is one of three in this portfolio.</p><p>Open it on a computer and there are four more machines to use.</p>'))],
       ['Composer', () => { SFX.tune(); window.EGGS.find('tune'); push(txt('Composer', '<p>♪ 8e2 8g2 8b2 8g2<br/>8a2 8c3 8b2 8g2<br/>8e2 8d2 8e2</p><p class="nk-dim">Now playing.</p>')); }],
+      ['Profiles', () => push(list('Profiles', [
+        [`General${store.get('nk-tones', true) ? ' ✓' : ''}`, () => { store.set('nk-tones', true); beep(); back(); }],
+        [`Silent${store.get('nk-tones', true) ? '' : ' ✓'}`, () => { store.set('nk-tones', false); back(); }]
+      ]))],
+      ['Ringing tones', () => push(list('Tones', ['Nokia tune', 'Ring ring', 'Low', 'Fairy tale'].map((n, i) => [n, () => { SFX.tune(); if (navigator.vibrate && i === 2) navigator.vibrate(200); }])))],
       ['Clock', () => push(clock())],
       ['Fortune', () => push(txt('Fortune', `<p>“${esc(P.quote)}”</p>`))],
       ['Easter eggs', () => push(txt('Eggs', `<p>Found ${window.EGGS.count()} of ${window.EGGS.total}.</p>` + window.EGGS.list.map(([id, n]) => `<p>${window.EGGS.has(id) ? '★ ' + esc(n) : '☆ ???'}</p>`).join('')))]

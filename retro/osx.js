@@ -120,8 +120,15 @@ window.OSX = (function () {
   /* Snow Leopard's own icons, from Apple's 2009 Mac OS X pages, wherever
      the app has a match, the Finder's face among them; folders and the
      Trash stay drawn. */
-  const SL = { finder: 'finder', about: 'about', experience: 'ical', guestbook: 'ichat', skills: 'prefs', safari: 'safari', mail: 'mail', preview: 'preview', terminal: 'terminal', timemachine: 'timemachine', education: 'dictionary', photos: 'photobooth', projects: 'automator' };
+  const SL = { finder: 'finder', experience: 'ical', guestbook: 'ichat', skills: 'prefs', safari: 'safari', mail: 'mail', preview: 'preview', terminal: 'terminal', timemachine: 'timemachine', photos: 'photobooth', projects: 'automator' };
   Object.entries(SL).forEach(([k, f]) => { ICON[k] = () => `<img class="sl-ic" src="assets/images/snowleopard/${f}.webp" alt="" draggable="false" />`; });
+
+  /* The two whose only copies were too rough to use, redrawn: the red
+     dictionary and the leather address book. */
+  ICON.education = () => art(`<path d="M26 12 106 4a4 4 0 0 1 4 3l8 94a4 4 0 0 1-3 4l-3 1 1 8-79 9-7-11z" fill="#6e1414"/><path d="M28 100l85 -9 2 13-3 9-80 9c-5-3-6-14-4-22z" fill="url(#pg)"/><path d="M34 106l78-8M34 111l78-8M35 116l76-8" stroke="#b9b4a6" stroke-width=".8"/><path d="M14 19a8 8 0 0 1 7-8l83-8a5 5 0 0 1 5 4l8 88a4 4 0 0 1-4 4l-82 9c-6 1-11 3-12 9z" fill="url(#cv)"/><path d="M22 14l80-8" stroke="#fff" stroke-opacity=".3" stroke-width="1.500"/><text transform="rotate(-5.500 62 60)" x="62" y="72" text-anchor="middle" font-family="Times New Roman,Times,serif" font-size="50" fill="#f6eee0">Aa</text><text transform="rotate(-5.500 62 28)" x="62" y="28" text-anchor="middle" font-family="Times New Roman,Times,serif" font-size="8.500" fill="#e7d7c0">Dictionary | Thesaurus</text>`,
+    lg('cv', [[0, '#bb3a3a'], [0.5, '#a12929'], [1, '#7e1a1a']], 1, 1) + lg('pg', [[0, '#ffffff'], [1, '#cfc9bb']]));
+  ICON.about = () => art(`<path d="M20 12 96 4a6 6 0 0 1 6 5l11 96a5 5 0 0 1-4 6l-74 10a8 8 0 0 1-9-6z" fill="#3a2410"/><path d="M38 118l72-9-1 7-71 9z" fill="#f2f2ee" stroke="#8c8778" stroke-width=".7"/>${[0, 1, 2, 3, 4, 5, 6].map((i) => `<rect x="${44 + i * 9}" y="${118 - i * 1.1}" width="4" height="2" fill="#2a56b8" transform="rotate(-7 ${44 + i * 9} 118)"/>`).join('')}<path d="M36 9 97 3a6 6 0 0 1 6 5l10 96a4 4 0 0 1-3 5l-60 7a6 6 0 0 1-7-5z" fill="url(#gd)"/><path d="M18 13l19-3 12 107c-6 2-11 4-13 6-3-1-5-3-6-6z" fill="url(#sp)"/><path d="M38 12l60-6" stroke="#fff" stroke-opacity=".4" stroke-width="1.500"/><text transform="rotate(-6 76 62)" x="76" y="82" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="62" fill="#f4e3b4" fill-opacity=".9" stroke="#8a6420" stroke-width=".6">@</text>`,
+    lg('gd', [[0, '#d7ad59'], [0.5, '#bd8f3e'], [1, '#9a7029']], 1, 1) + lg('sp', [[0, '#4a3220'], [0.5, '#2d1c10'], [1, '#3f2a1a']], 1, 0));
 
   /* --------------------------------------------------------------- apps */
 
@@ -138,6 +145,7 @@ window.OSX = (function () {
     terminal: { name: 'Terminal', icon: 'terminal', keys: 'shell command line' },
     safari: { name: 'Web', icon: 'safari', keys: 'web browser classic portfolio site' },
     mail: { name: 'Mail', icon: 'mail', keys: 'contact email hello write' },
+    compose: { name: 'New Message', icon: 'mail', keys: 'write email' },
     preview: { name: 'Resume', icon: 'preview', keys: 'cv pdf preview resume' },
     timemachine: { name: 'Time Machine', icon: 'timemachine', keys: 'era switch 1983 1991 1998 back' },
     memory: { name: 'Concentration', icon: 'memory', keys: 'game play memory match cards concentration' },
@@ -320,7 +328,7 @@ window.OSX = (function () {
       title: 'About Me', w: 620, h: 470, cls: 'is-plain',
       render: (b) => {
         b.innerHTML = `<div class="ab"><div class="ab-pic"><img src="${P.photo}" alt="Ajay Sommi outdoors in front of green hills" /></div><div><h1>Ajay Sommi</h1><p class="ab-sub">${esc(P.title)} · ${esc(P.citizen)} · UF Computer Science</p><p>${esc(P.about[0])}</p><p>${esc(P.about[1])}</p>
-          <div class="ox-btns left"><button type="button" class="ax-btn is-default" data-open="experience">${t('See the work')}</button><button type="button" class="ax-btn" data-open="preview">${t('Resume')}</button><button type="button" class="ax-btn" data-open="mail">${t('Say hello')}</button></div></div></div>`;
+          <div class="ox-btns left"><button type="button" class="ax-btn is-default" data-open="experience">${t('See the work')}</button><button type="button" class="ax-btn" data-open="preview">${t('Resume')}</button><button type="button" class="ax-btn" data-open="compose">${t('Say hello')}</button></div></div></div>`;
       }
     }),
     experience: (arg) => ({
@@ -527,11 +535,52 @@ window.OSX = (function () {
         go(url || 'index.html');
       }
     }),
+    /* Mail as it was: capsule buttons over a list of mailboxes, a message
+       table with one row lit Aqua blue, the message below. */
     mail: () => ({
+      title: 'Mail', w: 820, h: 560, cls: 'is-mailbox',
+      toolbar: `<div class="ml-caps">${[['del', 'Delete', '<path d="M4 4l10 10M14 4 4 14" stroke="#c0392b" stroke-width="2.600" stroke-linecap="round"/>'], ['junk', 'Junk', '<path d="M3 9h12l-1.500 6h-9zM6 9V5h6v4" fill="#b98a3e" stroke="#7d5a1d"/>'], ['|'], ['reply', 'Reply', '<path d="M8 3 2 8l6 5v-3c4 0 6 1 7 4 0-5-2-8-7-8z" fill="#fff" stroke="#5d7396"/>'], ['fwd', 'Forward', '<path d="M10 3l6 5-6 5v-3c-4 0-6 1-7 4 0-5 2-8 7-8z" fill="#fff" stroke="#5d7396"/>'], ['|'], ['new', 'New', '<path d="M3 15 4 11l8-8 3 3-8 8z" fill="#ffd34a" stroke="#946f12"/>'], ['get', 'Get Mail', '<path d="M3 5h12v9H3zM3 5l6 5 6-5" fill="#fff" stroke="#5d7396"/>']].map(([k, l, i]) => k === '|' ? '<i class="sp"></i>' : `<button type="button" data-a="${k}"><span><svg viewBox="0 0 18 18" width="18" height="18">${i}</svg></span><em>${t(l)}</em></button>`).join('')}</div><div class="ox-search"><input type="search" placeholder="${t('Search')}" aria-label="Search" data-mfind /></div>`,
+      render: (b, rec) => {
+        const SEED = [['Ajay Sommi', 'Let’s talk', `Thanks for stopping by. I’m a software engineer graduating from UF in December 2026, and I’m looking for a team that cares about the people using what it builds.\n\nReply to this and it goes straight to me.\n\nAjay`, 'Today'], ...P.recs.map(([n, c, q], i) => [n, `Recommendation, ${c}`, q, ['Yesterday', 'Yesterday', 'Thursday', 'Wednesday', 'Monday', 'Sunday', 'Sunday', 'Oct 19', 'Oct 12'][i % 9]])];
+        const box = store.get('ox-mail', null) || { inbox: SEED.map((_, i) => i), trash: [], read: [] };
+        const BOXES = [['inbox', 'Inbox'], ['drafts', 'Drafts'], ['sent', 'Sent'], ['trash', 'Trash']];
+        let cur = 'inbox', sel = -1, q = '';
+        const list = () => { const ids = cur === 'inbox' ? box.inbox : cur === 'trash' ? box.trash : []; return ids.filter((i) => SEED[i] && (SEED[i][0] + SEED[i][1]).toLowerCase().includes(q)); };
+        const save = () => store.set('ox-mail', box);
+        b.innerHTML = `<div class="mb-side"></div><div class="mb-main"><div class="mb-tablehead"><span class="d"></span><span class="f">${t('From')}</span><span class="s">${t('Subject')}</span><span class="w">${t('Date Received')}</span></div><div class="mb-rows"></div><div class="mb-read"></div></div>`;
+        const side = b.querySelector('.mb-side'), rows = b.querySelector('.mb-rows'), read = b.querySelector('.mb-read');
+        const draw = () => {
+          side.innerHTML = `<h6>${t('MAILBOXES')}</h6>` + BOXES.map(([k, l]) => { const n = k === 'inbox' ? box.inbox.filter((i) => !box.read.includes(i)).length : 0; return `<button type="button" data-b="${k}" class="${k === cur ? 'on' : ''}"><i class="mi-${k}"></i>${t(l)}${n ? `<em>${n}</em>` : ''}</button>`; }).join('');
+          const ids = list();
+          rows.innerHTML = ids.length ? ids.map((i) => `<button type="button" data-m="${i}" class="${i === sel ? 'on' : ''}"><span class="d">${box.read.includes(i) ? '' : '<i></i>'}</span><span class="f">${esc(SEED[i][0])}</span><span class="s">${esc(SEED[i][1])}</span><span class="w">${esc(SEED[i][3])}</span></button>`).join('') : `<p class="mb-none">${t('No Messages')}</p>`;
+          const m = SEED[sel];
+          read.innerHTML = m && ids.includes(sel) ? `<div class="mb-h"><b>${esc(m[1])}</b><span>${t('From')}: ${esc(m[0])}</span></div><div class="mb-b">${esc(m[2]).replace(/\n/g, '<br/>')}</div>` : '';
+        };
+        const remove = () => { if (sel < 0) return; if (cur === 'inbox') { box.inbox = box.inbox.filter((i) => i !== sel); box.trash.unshift(sel); } else if (cur === 'trash') { box.trash = box.trash.filter((i) => i !== sel); } sel = -1; save(); draw(); };
+        b.addEventListener('click', (e) => {
+          const x = e.target.closest('[data-b]');
+          if (x) { cur = x.dataset.b; sel = -1; SFX.click(); draw(); return; }
+          const m = e.target.closest('[data-m]');
+          if (m) { sel = +m.dataset.m; if (!box.read.includes(sel)) { box.read.push(sel); save(); } draw(); }
+        });
+        rec.el.querySelector('.ml-caps').addEventListener('click', async (e) => {
+          const k = e.target.closest('[data-a]');
+          if (!k) return;
+          SFX.click();
+          const a = k.dataset.a;
+          if (a === 'del' || a === 'junk') remove();
+          if (a === 'new' || a === 'reply' || a === 'fwd') open('compose');
+          if (a === 'get') { rec.el.classList.add('is-getting'); await wait(1100); rec.el.classList.remove('is-getting'); alert({ title: 'No New Mail', text: 'Your Inbox is up to date.', icon: ICON.mail() }); }
+        });
+        rec.el.querySelector('[data-mfind]').addEventListener('input', (e) => { q = e.target.value.toLowerCase(); draw(); });
+        draw();
+      }
+    }),
+    compose: () => ({
       title: 'New Message', w: 600, h: 480, cls: 'is-mail',
       toolbar: `<div class="ox-seg"><button type="button" data-send>✈︎ ${t('Send')}</button></div><div class="ox-seg"><button type="button" data-copy>${t('Copy Address')}</button></div>`,
       render: (b, rec) => {
-        b.innerHTML = `<div class="ml-f"><label>${t('To:')}</label><span class="ml-tok">Ajay Sommi &lt;${esc(P.email)}&gt;</span></div><div class="ml-f"><label for="mlS">${t('Subject:')}</label><input id="mlS" type="text" value="Hello from your portfolio" /></div><textarea aria-label="Message">Hi Ajay,\n\n</textarea>`;
+        b.innerHTML = `<div class="ml-f"><label>${t('To:')}</label><span class="ml-tok">Ajay Sommi &lt;${esc(P.email)}&gt;</span></div><div class="ml-f"><label for="mlS">${t('Subject:')}</label><input id="mlS" type="text" value="Hello" /></div><textarea aria-label="Message">Hi Ajay,\n\n</textarea>`;
         const send = () => { const s = b.querySelector('#mlS').value, t = b.querySelector('textarea').value; location.href = `mailto:${P.email}?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(t)}`; };
         rec.el.querySelector('[data-send]').addEventListener('click', send);
         rec.el.querySelector('[data-copy]').addEventListener('click', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} alert({ title: t('Address copied'), text: `${esc(P.email)} is on the clipboard.`, icon: ICON.mail() }); });
@@ -593,7 +642,7 @@ window.OSX = (function () {
       else if (c === 'whoami') say('ajay');
       else if (c === 'about' || c === 'cat') { say(esc(P.about[1])); }
       else if (c === 'resume') { open('preview'); }
-      else if (c === 'contact' || c === 'mail') { open('mail'); }
+      else if (c === 'contact' || c === 'mail') { open('compose'); }
       else if (c === 'era' || c === 'tm' || c === 'timemachine') { timeTravel(); }
       else if (['1983', '1991', '1998'].includes(c)) { api.go(['1983', '1991', '1998'].indexOf(c)); }
       else if (c === 'uname') say('SommiOS X 10.4 Gator');
@@ -635,8 +684,9 @@ window.OSX = (function () {
      coordinates, so scaling the page doesn't matter), and every change is
      written in one frame: nothing is read while widths change. */
   let rest = null, want = null, raf = 0;
+  let magOn = true;
   const magnify = (x) => {
-    want = x;
+    want = magOn ? x : null;
     if (raf) return;
     raf = requestAnimationFrame(() => {
       raf = 0;
@@ -647,10 +697,11 @@ window.OSX = (function () {
         rest = { left: r0.left, k, c: items.map((d) => d.offsetLeft + d.offsetWidth / 2) };
       }
       const px = (want - rest.left) / rest.k;
-      items.forEach((d, i) => {
-        const dist = Math.abs(px - rest.c[i]);
-        d.style.width = base * (1 + 0.75 * Math.max(0, 1 - dist / (base * 3))) + 'px';
-      });
+      /* The icons near the pointer swell and the rest give up the room, so
+         the dock stays exactly as wide as it is at rest. */
+      const grow = rest.c.map((c) => 1 + 0.75 * Math.max(0, 1 - Math.abs(px - c) / (base * 3)));
+      const fit = items.length / grow.reduce((a, g) => a + g, 0);
+      items.forEach((d, i) => { d.style.width = base * grow[i] * fit + 'px'; });
     });
   };
   const markRunning = () => {
@@ -689,20 +740,38 @@ window.OSX = (function () {
         ['Software Update…', () => { window.EGGS.find('update'); alert({ title: 'Your software is up to date.', text: 'No updates are available.', icon: ICON.hd() }); }],
         '-',
         ['System Preferences…', () => open('skills')],
-        ['Dock', null],
+        [dockHidden ? 'Show Dock' : 'Hide Dock', toggleDock],
+        [magOn ? 'Turn Magnification Off' : 'Turn Magnification On', () => { magOn = !magOn; magnify(null); }],
         '-',
+        ['Force Quit All', () => { [...wins.values()].forEach(close); }],
         ['Restart in Another Era…', () => timeTravel()],
+        ['Log Out…', logOut],
         ['Shut Down…', shutdown]
       ],
       app: [[`${t('About')} ${appName}`, () => alert({ title: appName, text: t('Built by Ajay Sommi'), icon: f ? ICON[APPS[f.app].icon]() : ICON.finder() })], '-', [`${t('Hide')} ${appName}`, f ? () => minimize(f) : null], [`${t('Quit')} ${appName}`, f ? () => close(f) : null]],
-      file: [['New Message', () => open('mail')], ['Open Resume', () => open('preview')], '-', ['Close Window', f ? () => close(f) : null, '⌘W']],
-      edit: [['Undo', null, '⌘Z'], '-', ['Copy Email Address', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} }]],
-      view: [['Show Dock', null], ['Enter Full Screen', () => { const d = document.documentElement; if (d.requestFullscreen) d.requestFullscreen().catch(() => {}); }]],
-      win: [['Minimize', f ? () => minimize(f) : null, '⌘M'], ['Zoom', f ? () => f.el.querySelector('.lt.zoom').click() : null], '-', ...[...wins.values()].map((w) => [w.spec.title, () => { if (w.min) restore(w); focus(w); }])],
-      help: [['Search Spotlight', () => toggleSpot(true)], ['Read Welcome.rtf', () => open('welcome')]]
+      file: [['New Message', () => open('compose')], ['New Files Window', () => open('finder')], ['Open Resume', () => open('preview')], '-', ['Close Window', f ? () => close(f) : null, '⌘W'], ['Print…', () => { window.print(); }, '⌘P']],
+      edit: [['Undo', trashed.length ? () => { const x = trashed[trashed.length - 1]; putBack(x[0], x[1]); } : null, '⌘Z'], '-', ['Cut', () => document.execCommand('cut'), '⌘X'], ['Copy', () => document.execCommand('copy'), '⌘C'], ['Paste', async () => { try { const v = await navigator.clipboard.readText(); document.execCommand('insertText', false, v); } catch (e) {} }, '⌘V'], ['Select All', () => document.execCommand('selectAll'), '⌘A'], '-', ['Copy Email Address', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} alert({ title: 'Address copied', text: esc(P.email), icon: ICON.mail() }); }]],
+      view: [[filesAsList ? 'as Icons' : 'as List', () => { filesAsList = !filesAsList; root.classList.toggle('files-list', filesAsList); open('finder'); }], [dockHidden ? 'Show Dock' : 'Hide Dock', toggleDock], '-', ['Enter Full Screen', () => { const d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) d.requestFullscreen().catch(() => {}); }]],
+      go: [['Applications', () => goTo('apps')], ['Documents', () => goTo('docs')], ['Desktop', () => goTo('desk')], ['Sommi HD', () => goTo('hd')], '-', ['Trash', () => open('trash')]],
+      win: [['Minimize', f ? () => minimize(f) : null, '⌘M'], ['Zoom', f ? () => f.el.querySelector('.lt.zoom').click() : null], ['Bring All to Front', () => { [...wins.values()].forEach((w) => { if (w.min) restore(w); }); }], '-', ...[...wins.values()].map((w) => [t(w.spec.title), () => { if (w.min) restore(w); focus(w); }])],
+      help: [['Search Spotlight', () => toggleSpot(true)], ['Read Welcome.rtf', () => open('welcome')]],
+      wifi: [[wifiOn ? 'Turn Wi-Fi Off' : 'Turn Wi-Fi On', () => { wifiOn = !wifiOn; menubar.querySelector('[data-m="wifi"]').classList.toggle('is-dim', !wifiOn); }], '-', [`${wifiOn ? '✓ ' : ''}SommiNet`, wifiOn ? () => {} : null]],
+      bat: [['Battery: 82%', null], ['Power Source: Battery', null], '-', ['Energy Saver…', () => alert({ title: 'Energy Saver', text: 'Computer sleep: Never<br/>Display sleep: 10 minutes', icon: ICON.skills() })]],
+      clk: [[new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }), null], '-', ['Open Calendar', () => open('experience')]]
     };
   };
 
+  let dockHidden = false, filesAsList = false, wifiOn = true;
+  const toggleDock = () => { dockHidden = !dockHidden; root.classList.toggle('dock-off', dockHidden); };
+  const goTo = (v) => { const f = wins.get('finder'); if (f) { if (f.min) restore(f); focus(f); f.show(v); return; } open('finder', v); };
+  const logOut = async () => {
+    [...wins.values()].forEach(close);
+    closeMenus();
+    root.classList.add('is-off');
+    await wait(500);
+    root.classList.remove('is-off');
+    boot();
+  };
   let openMenu = null;
   const closeMenus = () => { root.querySelectorAll('.ox-drop').forEach((d) => d.remove()); menubar.querySelectorAll('.is-open').forEach((m) => m.classList.remove('is-open')); openMenu = null; };
   const showMenu = (btn) => {
@@ -719,8 +788,8 @@ window.OSX = (function () {
       b.addEventListener('click', () => { closeMenus(); fn && fn(); });
       d.appendChild(b);
     });
-    d.style.left = btn.offsetLeft + 'px';
     root.appendChild(d);
+    d.style.left = Math.max(2, Math.min(btn.offsetLeft, root.clientWidth - d.offsetWidth - 2)) + 'px';
     btn.classList.add('is-open');
     openMenu = btn;
   };
@@ -858,7 +927,7 @@ window.OSX = (function () {
     Object.keys(APPS).forEach((k) => { APPS[k].name = t(NAMES[k]); });
     menubar.querySelectorAll('.m[data-m]').forEach((m) => {
       if (m.dataset.m === 'app') m.textContent = APPS.finder.name;
-      const label = { file: 'File', edit: 'Edit', view: 'View', win: 'Window', help: 'Help' }[m.dataset.m];
+      const label = { file: 'File', edit: 'Edit', view: 'View', go: 'Go', win: 'Window', help: 'Help' }[m.dataset.m];
       if (label) m.textContent = t(label);
     });
     buildDock();
@@ -912,12 +981,12 @@ window.OSX = (function () {
       <div class="ox-menubar" role="menubar">
         <button type="button" class="m mk" data-m="mark" aria-label="AJ menu">${I.mark(15, true)}</button>
         <button type="button" class="m b" data-m="app">Files</button>
-        <button type="button" class="m" data-m="file">File</button><button type="button" class="m" data-m="edit">Edit</button><button type="button" class="m" data-m="view">View</button><button type="button" class="m" data-m="win">Window</button><button type="button" class="m" data-m="help">Help</button>
+        <button type="button" class="m" data-m="file">File</button><button type="button" class="m" data-m="edit">Edit</button><button type="button" class="m" data-m="view">View</button><button type="button" class="m" data-m="go">Go</button><button type="button" class="m" data-m="win">Window</button><button type="button" class="m" data-m="help">Help</button>
         <span class="sp"></span>
-        <span class="st" aria-hidden="true"><svg viewBox="0 -1.5 18 14.5" width="18" height="14.5" style="overflow:visible"><path d="M9 12.5 6.6 9.9a3.4 3.4 0 0 1 4.8 0zM4.4 7.6a6.4 6.4 0 0 1 9.2 0l1.5-1.6a8.6 8.6 0 0 0-12.2 0zM1.3 4.3a11 11 0 0 1 15.4 0L18 3A12.8 12.8 0 0 0 0 3z" fill="currentColor"/></svg></span>
+        <button type="button" class="st m" data-m="wifi" aria-label="Wi-Fi"><svg viewBox="0 -1.5 18 14.5" width="18" height="14.5" style="overflow:visible"><path d="M9 12.5 6.6 9.9a3.4 3.4 0 0 1 4.8 0zM4.4 7.6a6.4 6.4 0 0 1 9.2 0l1.5-1.6a8.6 8.6 0 0 0-12.2 0zM1.3 4.3a11 11 0 0 1 15.4 0L18 3A12.8 12.8 0 0 0 0 3z" fill="currentColor"/></svg></button>
         <button type="button" class="st snd" data-snd aria-label="Toggle sound">${I.spk(SFX.muted)}</button>
-        <span class="st bat" aria-hidden="true"><i></i></span>
-        <span class="st clk"></span>
+        <button type="button" class="st bat m" data-m="bat" aria-label="Battery"><i></i></button>
+        <button type="button" class="st clk m" data-m="clk"></button>
         <button type="button" class="st spot" data-spot aria-label="Spotlight"><svg viewBox="0 0 16 16" width="15" height="15"><circle cx="6.5" cy="6.5" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="m10 10 4.5 4.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
       </div>
       <div class="ox-desk"></div>

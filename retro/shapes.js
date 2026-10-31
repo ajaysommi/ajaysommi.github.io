@@ -50,13 +50,29 @@ window.SHAPES = (function () {
     home: 'M20 4a16 16 0 1 1 0 32a16 16 0 1 1 0-32zM20 8a12 12 0 1 0 0 24a12 12 0 1 0 0-24zM14 14h12v12H14zM16 16v8h8v-8z',
     ripple: 'M20 14a6 6 0 1 1 0 12a6 6 0 1 1 0-12zM20 6a14 14 0 1 1 0 28a14 14 0 1 1 0-28zM20 9a11 11 0 1 0 0 22a11 11 0 1 0 0-22z',
     slide: 'M4 16h18V9l14 11-14 11v-7H4z',
+    /* The 128K's own little pictures, AJ on the Mac's face. */
+    macaj: 'M10 3h20v34H10zM13 6v15h14V6zM20 8l6 11h-3.200l-.8-2h-4l-.8 2H14zM19 14.500h2l-1-2.500zM15 27h5v2h-5zM27 26h-3v5h3z',
+    bomb128: 'M15 13a11 11 0 1 1 0 22 11 11 0 1 1 0-22zM21 12l4-5 2.500 2-4 5zM30 3h2v4h-2zM35 8h4v2h-4zM33 5l3-3 1.500 1.500-3 3zM11 19a5 5 0 0 0-3 4h2.500a2.700 2.700 0 0 1 1.500-2z',
+    fontcase: 'M4 12h32v23H4zM14 6h12v6h-3V9h-6v3h-3zM20 15l7 16h-3.500l-1-3h-5l-1 3H13zM18.500 25h3l-1.500-5z',
+    drawhand: 'M20 2l18 18-18 18L2 20zM20 7.500L7.500 20 20 32.500 32.500 20zM13 19l7-2 9 8-4 4-8-5z',
+    doc128: 'M8 3h17l7 7v27H8zM12 14v2h16v-2zM12 19v2h16v-2zM12 24v2h16v-2zM12 29v2h11v-2z',
+    trash128: 'M8 8h24v3H8zM16 4h8v4h-8zM10 12h20l-1.500 25h-17zM15 15v19h2V15zM19 15v19h2V15zM23 15v19h2V15z',
+    cmd: 'M10 4a6 6 0 0 1 6 6v4h8v-4a6 6 0 1 1 6 6h-4v8h4a6 6 0 1 1-6 6v-4h-8v4a6 6 0 1 1-6-6h4v-8h-4a6 6 0 0 1 0-12zM10 8a2 2 0 0 0 0 4h2v-2a2 2 0 0 0-2-2zM30 8a2 2 0 0 0-2 2v2h2a2 2 0 0 0 0-4zM10 28a2 2 0 1 0 2 2v-2zM28 28v2a2 2 0 1 0 2-2zM16 16v8h8v-8z',
+    alert128: 'M4 4h32v32H4zM18 9v14h4V9zM18 26v4h4v-4z',
+    stack128: 'M20 3l15 9-15 9-15-9zM5 18l15 9 15-9v3l-15 9-15-9zM5 25l15 9 15-9v3l-15 9-15-9z',
+    /* 1998: the web, as it came down a phone line. */
+    browser: 'M3 6h34v28H3zM6 14v17h28V14zM6 9v3h3V9zM11 9v3h3V9zM16 9v3h15V9z',
+    modem: 'M3 19l4-9h26l4 9v11H3zM8 23v3h3v-3zM14 23v3h3v-3zM20 23v3h3v-3zM30 22a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5z',
+    link: 'M3 15h14a6 6 0 0 1 0 12h-3v-4h3a2 2 0 0 0 0-4H3a2 2 0 0 0 0 4h5v4H3a6 6 0 0 1 0-12zM23 13h14a6 6 0 0 1 0 12h-5v-4h5a2 2 0 0 0 0-4H23a2 2 0 0 0 0 4h3v4h-3a6 6 0 0 1 0-12z',
+    hand: 'M15 3a2.500 2.500 0 0 1 5 0v13h2V12a2.500 2.500 0 0 1 5 0v5h1.500v-3a2.500 2.500 0 0 1 5 0v11c0 7-4 12-11 12-5 0-8-2-11-7l-5-9c-1.500-3 2-5 4-2.500l2.500 3z',
+    rj: 'M9 5h22v20h-5v9H14v-9H9zM13 9v7h2V9zM17 9v7h2V9zM21 9v7h2V9zM25 9v7h2V9z',
     touch: 'M12 2h16a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4zM11 7v24h18V7z'
   };
   const SETS = {
     time: ['hourglass', 'clock', 'calendar', 'stopwatch', 'floppy525', 'cassette', 'happymac', 'floppy', 'cd', 'globe', 'candybar', 'ipod', 'touch'],
     1983: ['crt', 'prompt', 'floppy525', 'joystick', 'cassette', 'cursor'],
-    1991: ['floppy', 'happymac', 'bomb', 'watch', 'trash', 'brush'],
-    1998: ['cd', 'globe', 'at', 'envelope', 'puck', 'star', 'bars'],
+    1991: ['macaj', 'watch', 'bomb128', 'fontcase', 'drawhand', 'floppy', 'doc128', 'trash128', 'cmd', 'alert128', 'stack128'],
+    1998: ['globe', 'at', 'browser', 'modem', 'link', 'hand', 'envelope', 'rj', 'cd'],
     2007: ['ipod', 'pill', 'wifi', 'magnifier', 'usb', 'dock'],
     nokia: ['snake', 'envelope', 'bars', 'battery', 'note', 'candybar'],
     pocket: ['note', 'cd', 'headphones', 'play', 'ipod'],

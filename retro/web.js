@@ -272,13 +272,15 @@ window.WEB = (function () {
 
   /* -------------------------------------------------------------- menus */
 
+  let zoomT = 1;
   const MENUS = [
     ['mark', I.pxmark(16), [['About This Computer', () => APPS98.about()], ['About SurfBoard', () => load('about:')], '-', ['Calculator', () => APPS98.calc()], ['Note Pad', () => APPS98.note()], ['SommiSweeper', () => APPS98.mines()], ['Appearance', () => APPS98.appear()], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
-    ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Print…', () => { setStatus('To print the résumé, open the Résumé page and use Download.'); }, '⌘P']]],
-    ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U']]],
+    ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Close Window', () => { const w = root.querySelector('.p8:not(.is-back), .br:not(.is-back)'); if (w) { const x = w.querySelector('[data-x], [data-win="close"]'); x && x.click(); } }, '⌘W'], ['Print…', () => { window.print(); }, '⌘P'], '-', ['Shut Down', () => api.picker()]]],
+    ['edit', 'Edit', [['Cut', () => document.execCommand('cut'), '⌘X'], ['Copy', () => document.execCommand('copy'), '⌘C'], ['Paste', async () => { try { document.execCommand('insertText', false, await navigator.clipboard.readText()); } catch (e) {} }, '⌘V'], ['Select All', () => document.execCommand('selectAll'), '⌘A'], '-', ['Copy Email Address', async () => { try { await navigator.clipboard.writeText(P.email); setStatus('Copied ' + P.email); } catch (e) {} }]]],
+    ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U'], '-', ['Larger Text', () => { zoomT = Math.min(1.5, zoomT + .1); page.style.zoom = zoomT; }], ['Smaller Text', () => { zoomT = Math.max(.8, zoomT - .1); page.style.zoom = zoomT; }]]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],
     ['special', 'Special', [['Empty Trash…', () => { FOLDERS.trash[1].length = 0; const w = wins['f-trash']; if (w) { w.remove(); delete wins['f-trash']; } root.querySelector('.nt-trash svg') && (root.querySelector('.nt-trash span').innerHTML = I.svg('trash', 32)); }], ['Open Sommi HD', () => folder('hd')], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
-    ['bm', 'Bookmarks', [['GitHub', () => window.open(P.github, '_blank', 'noopener')], ['LinkedIn', () => window.open(P.linkedin, '_blank', 'noopener')], ['The Garage', () => load('garage')], ['Résumé', () => load('resume')]]]
+    ['bm', 'Bookmarks', [['Add Bookmark', () => { setStatus('Bookmark added: ' + (loc.value || 'this page')); const p = hist[hpos]; if (p && !MENUS.find((m) => m[0] === 'bm')[2].some((x) => x[0] === titleEl.textContent)) MENUS.find((m) => m[0] === 'bm')[2].push([titleEl.textContent, () => load(p)]); }], '-', ['GitHub', () => window.open(P.github, '_blank', 'noopener')], ['LinkedIn', () => window.open(P.linkedin, '_blank', 'noopener')], ['The Garage', () => load('garage')], ['Résumé', () => load('resume')]]]
   ];
 
   let openMenu = null;

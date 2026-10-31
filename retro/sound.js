@@ -93,6 +93,7 @@ window.SFX = (function () {
 
   const api = {
     get muted() { return muted; },
+    volume(v) { if (!ready()) return; master.gain.value = 0.32 * v; },
     sample(name, gain = 2) {
       if (!ready()) return;
       sampleBuf(name).then((b) => {

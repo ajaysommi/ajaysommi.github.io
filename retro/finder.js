@@ -616,6 +616,16 @@ window.FINDER = (function () {
 
   /* ------------------------------------------------------------------ menus */
 
+  /* New Folder: a real one on the desk, that opens and can be thrown away. */
+  let folders = 0;
+  const newFolder = () => {
+    folders++;
+    const id = 'folder' + folders, name = folders === 1 ? 'untitled folder' : `untitled folder ${folders}`;
+    ITEMS[id] = { name, icon: 'folder', kind: 'folder' };
+    SPECS[id] = () => ({ title: name, w: 320, h: 200, info: '<span>0 items</span><span></span>', render: (b) => { b.innerHTML = ''; } });
+    DESKTOP.push(id);
+    layoutIcons();
+  };
   const PATTERNS = [['violet', 'Twilight'], ['classic', 'Classic Grey'], ['teal', 'Lagoon'], ['dune', 'Dune'], ['bricks', 'Bricks'], ['weave', 'Weave']];
   const MENUS = () => [
     ['mark', I.pxmark(16), [
@@ -629,7 +639,7 @@ window.FINDER = (function () {
       ['Restart in Another Era\u2026', () => api.picker()]
     ]],
     ['file', 'File', [
-      ['New Folder', null, '⌘N'],
+      ['New Folder', newFolder, '⌘N'],
       ['Open', () => selected && openSel(), '⌘O'],
       ['Close Window', () => { const f = front(); f && closeWin(f.id); }, '⌘W'],
       '-',
@@ -641,9 +651,9 @@ window.FINDER = (function () {
       ['Shut Down', shutdown]
     ]],
     ['edit', 'Edit', [
-      ['Undo', null, '⌘Z'],
+      ['Undo', thrown.length ? () => { thrown.pop(); layoutIcons(); } : null, '⌘Z'],
       '-',
-      ['Cut', null, '⌘X'], ['Copy', null, '⌘C'], ['Paste', null, '⌘V'],
+      ['Cut', () => document.execCommand('cut'), '⌘X'], ['Copy', () => document.execCommand('copy'), '⌘C'], ['Paste', async () => { try { document.execCommand('insertText', false, await navigator.clipboard.readText()); } catch (e) {} }, '⌘V'],
       '-',
       ['Copy Email Address', copyEmail]
     ]],
