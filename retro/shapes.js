@@ -35,7 +35,7 @@ window.SHAPES = (function () {
     star: 'M20 2l4.5 11.5L37 14l-9.7 8 3.3 12.5L20 27.5 9.4 34.5 12.7 22 3 14l12.5-.5z',
     bars: 'M4 30h5v6H4zM12 24h5v12h-5zM20 17h5v19h-5zM28 9h5v27h-5z',
     ipod: 'M11 3h18a3 3 0 0 1 3 3v28a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zM12 7v11h16V7zM20 21a6.5 6.5 0 1 0 0 13a6.5 6.5 0 1 0 0-13z',
-    pill: 'M10 13h20a7 7 0 0 1 0 14H10a7 7 0 0 1 0-14z',
+    video: 'M3 7h34v26H3zM6 14v16h28V14zM16 17l10 5-10 5z',
     wifi: 'M20 29a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7zM10 21a14 14 0 0 1 20 0l-2.6 2.6a10.4 10.4 0 0 0-14.8 0zM4 15a22 22 0 0 1 32 0l-2.6 2.6a18.4 18.4 0 0 0-26.8 0z',
     magnifier: 'M17 4a12 12 0 1 1 0 24a12 12 0 1 1 0-24zM17 8a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM25 25l3-3 9 9-3 3z',
     usb: 'M18 2h4v24h-4zM14 26h12v6l-6 6-6-6zM11 8h4v6h-4zM25 11h4v4h-4z',
@@ -57,7 +57,7 @@ window.SHAPES = (function () {
     1983: ['crt', 'prompt', 'floppy525', 'joystick', 'cassette', 'cursor'],
     1991: ['floppy', 'happymac', 'bomb', 'watch', 'trash', 'brush'],
     1998: ['cd', 'globe', 'at', 'envelope', 'puck', 'star', 'bars'],
-    2007: ['ipod', 'pill', 'wifi', 'magnifier', 'usb', 'dock'],
+    2007: ['ipod', 'video', 'wifi', 'magnifier', 'usb', 'dock'],
     nokia: ['snake', 'envelope', 'bars', 'battery', 'note', 'candybar'],
     pocket: ['note', 'cd', 'headphones', 'play', 'ipod'],
     iphone: ['apps', 'home', 'wifi', 'ripple', 'slide', 'battery', 'touch']
@@ -112,9 +112,17 @@ window.SHAPES = (function () {
   /* The cursor pushes the shapes a few pixels, nearer ones more. */
   const follow = (el) => {
     if (!el || matchMedia('(pointer: coarse)').matches) return;
+    /* At most once a frame, and not at all once the layer is out of sight. */
+    let x = 0, y = 0, due = 0;
+    const write = () => {
+      due = 0;
+      el.style.setProperty('--mx', ((x / innerWidth - 0.5) * -14).toFixed(1) + 'px');
+      el.style.setProperty('--my', ((y / innerHeight - 0.5) * -14).toFixed(1) + 'px');
+    };
     addEventListener('pointermove', (e) => {
-      el.style.setProperty('--mx', ((e.clientX / innerWidth - 0.5) * -14).toFixed(1) + 'px');
-      el.style.setProperty('--my', ((e.clientY / innerHeight - 0.5) * -14).toFixed(1) + 'px');
+      if (document.documentElement.classList.contains('in-os')) return;
+      x = e.clientX; y = e.clientY;
+      if (!due) due = requestAnimationFrame(write);
     }, { passive: true });
   };
 

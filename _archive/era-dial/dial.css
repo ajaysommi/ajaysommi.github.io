@@ -1,0 +1,107 @@
+/* The way into the eras: a tuning dial for years, over the hero (on a phone,
+   floating above the bottom nav). It takes no room until it arrives; then its
+   row opens and the bar is set down in it. At rest it belongs to this site.
+   As the needle moves back it becomes each year it reaches. */
+.era-ad-wrap {
+  --pad: clamp(6px, 2vw, 18px); --dir: 1;
+  position: relative; display: grid; justify-content: center;
+  grid-template-rows: 0fr; padding: 0 var(--gutter);
+  transition: grid-template-rows .75s cubic-bezier(.3, .7, .2, 1), padding-top .75s cubic-bezier(.3, .7, .2, 1);
+}
+.era-ad-wrap.is-open { grid-template-rows: 1fr; padding-top: var(--pad); }
+.era-ad-wrap.is-off { display: none; }
+.era-ad-box { position: relative; z-index: 1; min-height: 0; width: min(calc(100vw - 2 * var(--gutter)), var(--maxw)); }
+.era-ad-box > .era-ad, .era-ad-box > .era-ad-x { opacity: 0; }
+.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .5s linear both; }
+.era-ad-wrap.is-served .era-ad-x { opacity: 1; transition: opacity .3s ease .25s; }
+.era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }
+@keyframes era-ad-launch {
+  0%   { opacity: 0; transform: translateY(calc(var(--dir) * -6px)) scale(.94, .7); animation-timing-function: cubic-bezier(.25, .8, .4, 1); }
+  30%  { opacity: 1; }
+  50%  { transform: translateY(calc(var(--dir) * 1px)) scale(.995, 1.04); animation-timing-function: cubic-bezier(.4, 0, .3, 1); }
+  100% { opacity: 1; transform: none; }
+}
+
+.era-ad {
+  --tick: color-mix(in oklab, var(--ink) 30%, transparent); --tick-on: var(--ink); --needle: #ff6b35;
+  display: flex; align-items: center; gap: clamp(14px, 2.4vw, 30px);
+  padding: 9px 58px 9px 24px; border-radius: 14px; color: var(--ink);
+  background: var(--bg); border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+  transition: background .28s ease, color .28s ease, border-color .28s ease, border-radius .28s ease, box-shadow .28s ease;
+  -webkit-user-select: none; user-select: none;
+}
+.ed-read { flex: none; display: grid; gap: 2px; width: 118px; color: inherit; text-decoration: none; line-height: 1; }
+.ed-year { font: 600 1.28rem/1 "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.ed-cap { font: .66rem/1.1 "Geist Mono", ui-monospace, monospace; opacity: .62; white-space: nowrap; }
+
+.ed-rail { position: relative; flex: 1; min-width: 0; height: 40px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 6px; }
+.ed-rail:focus-visible { box-shadow: 0 0 0 2px var(--needle); }
+.ed-ticks { position: absolute; inset: 0; }
+.ed-ticks i { position: absolute; top: 6px; width: 1px; height: 8px; background: var(--tick); transition: background .28s ease; }
+.ed-ticks i.is-era { top: 3px; height: 16px; width: 2px; margin-left: -.5px; background: var(--tick-on); }
+.ed-ticks span { position: absolute; top: 24px; translate: -50% 0; font: .62rem/1 "Geist Mono", ui-monospace, monospace; opacity: .62; white-space: nowrap; pointer-events: none; }
+.ed-ticks span:last-of-type { translate: -100% 0; }
+.ed-needle { position: absolute; top: 0; left: 0; width: 3px; height: 22px; margin-left: -1.5px; border-radius: 2px; background: var(--needle); box-shadow: 0 0 6px color-mix(in oklab, var(--needle) 60%, transparent); will-change: translate; }
+.ed-needle::after { content: ""; position: absolute; left: -10px; right: -10px; top: -6px; bottom: -20px; }   /* a finger-sized grip */
+
+/* The bar as each year would have drawn it. */
+.era-ad[data-y="1983"] { --tick: rgba(63, 224, 122, .4); --tick-on: #3fe07a; --needle: #d8ffe4; background: #07120a; color: #3fe07a; border-color: #17401f; border-radius: 3px; }
+.era-ad[data-y="1983"] .ed-year { font: 1.7rem/.8 "VT323", ui-monospace, monospace; text-shadow: 0 0 7px rgba(63, 224, 122, .55); }
+.era-ad[data-y="1983"] .ed-cap, .era-ad[data-y="1983"] .ed-ticks span { font-family: "VT323", ui-monospace, monospace; font-size: .8rem; opacity: .9; }
+.era-ad[data-y="1991"] { --tick: rgba(0, 0, 0, .45); --tick-on: #000; --needle: #000; background: #fff; color: #000; border: 2px solid #000; border-radius: 6px; box-shadow: 3px 3px 0 #000; }
+.era-ad[data-y="1991"] .ed-year { font: 1.05rem/1 "Silkscreen", ui-monospace, monospace; }
+.era-ad[data-y="1991"] .ed-cap, .era-ad[data-y="1991"] .ed-ticks span { font-family: "Silkscreen", ui-monospace, monospace; font-size: .52rem; opacity: 1; }
+.era-ad[data-y="1998"] { --tick: rgba(0, 0, 0, .4); --tick-on: #000; --needle: #0000ee; background: #c8c8c8; color: #000; border: 2px outset #eee; border-radius: 0; box-shadow: none; }
+.era-ad[data-y="1998"] .ed-year { font: 700 1.35rem/1 "Times New Roman", Times, serif; color: #0000ee; text-decoration: underline; }
+.era-ad[data-y="1998"] .ed-cap, .era-ad[data-y="1998"] .ed-ticks span { font-family: "Times New Roman", Times, serif; font-size: .72rem; opacity: 1; }
+.era-ad[data-y="2000"] { --tick: rgba(29, 42, 16, .5); --tick-on: #1d2a10; --needle: #1d2a10; background: #a9c262; color: #1d2a10; border-color: #6e8440; border-radius: 6px; box-shadow: inset 0 1px 5px rgba(29, 42, 16, .35); }
+.era-ad[data-y="2000"] .ed-year { font: 1.05rem/1 "Silkscreen", ui-monospace, monospace; }
+.era-ad[data-y="2000"] .ed-cap, .era-ad[data-y="2000"] .ed-ticks span { font-family: "Silkscreen", ui-monospace, monospace; font-size: .52rem; opacity: 1; }
+.era-ad[data-y="2004"] { --tick: rgba(27, 33, 73, .4); --tick-on: #1b2149; --needle: #1b2149; background: linear-gradient(180deg, #fbfbfd, #dcdde6); color: #1b2149; border-color: #b7b9c8; border-radius: 12px; }
+.era-ad[data-y="2004"] .ed-year { font: 700 1.25rem/1 Helvetica, Arial, sans-serif; }
+.era-ad[data-y="2007"] { --tick: rgba(255, 255, 255, .55); --tick-on: #fff; --needle: #fff; background: linear-gradient(180deg, #a7cdf6 0, #6aa8ee 46%, #3a84e4 50%, #5fa7f2 100%); color: #fff; border-color: #2a62b8; border-radius: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 6px 18px rgba(30, 90, 190, .35); }
+.era-ad[data-y="2007"] .ed-year { font: 700 1.25rem/1 "Lucida Grande", Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0, 40, 110, .4); }
+.era-ad[data-y="2007"] .ed-cap, .era-ad[data-y="2007"] .ed-ticks span { font-family: "Lucida Grande", Helvetica, Arial, sans-serif; opacity: .95; }
+.era-ad[data-y] ~ .era-ad-x { color: inherit; }
+.era-ad-box:has(.era-ad[data-y="1983"]) .era-ad-x { color: #3fe07a; }
+.era-ad-box:has(.era-ad[data-y="2007"]) .era-ad-x { color: #fff; }
+.era-ad-box:has(.era-ad[data-y="1991"]) .era-ad-x, .era-ad-box:has(.era-ad[data-y="1998"]) .era-ad-x { color: #000; }
+.era-ad-box:has(.era-ad[data-y="2000"]) .era-ad-x { color: #1d2a10; }
+.era-ad-box:has(.era-ad[data-y="2004"]) .era-ad-x { color: #1b2149; }
+
+.era-ad-x {
+  position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
+  display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 50%; padding: 0;
+  color: var(--ink-2); background: transparent; cursor: pointer; transition: background .2s ease, color .2s ease;
+}
+.era-ad-x:hover { background: color-mix(in oklab, var(--ink) 10%, transparent); color: var(--ink); }
+
+/* On a phone it floats just above the bottom nav and takes no room in the page. */
+@media (max-width: 719px) {
+  .era-ad-wrap {
+    --dir: -1;
+    position: fixed; left: 12px; right: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); z-index: 59;
+    display: block; padding: 0; transition: none; pointer-events: none;
+  }
+  .era-ad-wrap.is-open { padding: 0; }
+  .era-ad-box { width: 100%; pointer-events: auto; }
+  .era-ad-wrap:not(.is-served) .era-ad-box { visibility: hidden; }
+  .era-ad { gap: 12px; padding: 5px 38px 5px 14px; box-shadow: 0 8px 22px rgba(0, 0, 0, .2); }
+  .ed-read { width: 82px; }
+  .ed-year { font-size: 1.05rem; }
+  .ed-cap { font-size: .58rem; }
+  .era-ad-x { right: 5px; }
+}
+
+/* Folded away: a small chip showing the year, that still leads to the eras. */
+.era-mini {
+  position: fixed; left: 18px; bottom: 18px; z-index: 58; display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 13px;
+  border-radius: 999px; color: var(--ink); text-decoration: none; background: color-mix(in oklab, var(--bg) 96%, transparent);
+  font: 500 .76rem/1 "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums;
+  transition: transform .25s cubic-bezier(.2, .7, .2, 1); -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) { .era-mini:hover { transform: translateY(-2px); } }
+@media (max-width: 719px) {
+  .era-mini { left: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); height: 32px; z-index: 59; }
+}

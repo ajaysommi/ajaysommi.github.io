@@ -219,8 +219,6 @@ window.IPHONE = { start(room, exit) {
     chicken: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="10" y="39" width="33" height="13" rx="2.4" fill="url(#bat)" stroke="#2c1608"/><rect x="43" y="42.5" width="3.4" height="6" rx="1" fill="#d6d6d6" stroke="#555" stroke-width=".5"/>
         <ellipse cx="27" cy="29" rx="14" ry="11.5" fill="url(#wh)" stroke="#a88b4c" stroke-width=".7"/><circle cx="37" cy="17" r="8" fill="url(#wh)" stroke="#a88b4c" stroke-width=".7"/><path d="M33 9c1-4 3-3 3.6-1 .8-3 3.4-2.6 3.2 0 2-1.6 3.6.6 1.6 3z" fill="#e2261c" stroke="#8a0f0a" stroke-width=".5"/><path d="M44.5 15.5 51 18l-6.6 2.6z" fill="#f7a81a" stroke="#a86a06" stroke-width=".5"/><path d="M43.5 21c1.4 2.4-.8 4.4-2.4 2.8z" fill="#e2261c"/><circle cx="39.4" cy="15" r="2.4" fill="#fff" stroke="#333" stroke-width=".4"/><circle cx="40" cy="15.2" r="1.15" fill="#111"/><path d="M15 25c5 7 12 7 17 2-1 7-9 10-14 7z" fill="#d9c79c"/><path d="M28 40 22 49h5l-2 5 8-9h-5l3-5z" fill="#ffe14a" stroke="#a87400" stroke-width=".6"/>`,
       lg('bg', [[0, '#a7e6ff'], [0.65, '#4aa8e8'], [1, '#2e7a30']]) + lg('bat', [[0, '#7a5a30'], [1, '#2c1a0a']]) + rg('wh', [[0, '#ffffff'], [1, '#ecdcb4']], 0.4, 0.35, 0.7)),
-    beer: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><path d="M38 21h6a6 6 0 0 1 6 6v9a6 6 0 0 1-6 6h-6v-4.500h5a2.500 2.500 0 0 0 2.500-2.500v-8a2.500 2.500 0 0 0-2.500-2.500h-5z" fill="url(#gl)" stroke="#8a7a50" stroke-width=".6"/><path d="M12 14h27l-1.500 36a3 3 0 0 1-3 3h-18.500a3 3 0 0 1-3-3z" fill="url(#br)" stroke="#8a5a0a" stroke-width=".7"/><path d="M16 18l1 31M23 18v31M30 18l-1 31" stroke="#fff" stroke-opacity=".28" stroke-width="1.700"/><path d="M9 15c-3-6 3-10 7-7 2-5 10-5 12-1 4-3 11 0 10 5 4 1 4 7-1 8-2 3-6 2-7 0-2 3-7 3-9 0-3 3-9 1-9-3-2 0-3-1-3-2z" fill="url(#fm)" stroke="#d5c9a2" stroke-width=".5"/>`,
-      lg('bg', [[0, '#7b4a22'], [0.55, '#4b2a10'], [1, '#2a1606']]) + lg('br', [[0, '#fbcb3f'], [0.5, '#ee9f12'], [1, '#c26f06']]) + lg('gl', [[0, '#fff5d2', .85], [1, '#d9b768', .85]]) + lg('fm', [[0, '#ffffff'], [1, '#f1e6c6']])),
     clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="40" text-anchor="middle" ${HV} font-weight="bold" font-size="30" fill="#fff" letter-spacing="-1">in</text>`,
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
@@ -533,7 +531,7 @@ window.IPHONE = { start(room, exit) {
     current = null;
     a.def.onClose && a.def.onClose();
     scr.querySelectorAll('.ip-alert-scrim').forEach((x) => x.remove());
-    flyOut();
+    showUnread();
     board.classList.remove('is-converge');
     flyHome(a.el);
     quietUntil = performance.now() + HOME_MS;
@@ -963,7 +961,7 @@ window.IPHONE = { start(room, exit) {
   const ARRIVE_MS = 360;
   const leaveCall = (el, instant, after) => {
     if (callEl === el) { callEl = null; closeNow = null; }
-    const done = () => { el.remove(); if (!callEl) { setBar(barBefore); SYS.music(2007); } after && after(); };
+    const done = () => { el.remove(); if (!callEl) { setBar(barBefore); SYS.music(2007); if (state === 'locked') armSleep(); } after && after(); };
     if (instant) { done(); return; }
     el.querySelector('.top').animate([{ transform: 'none' }, { transform: 'translateY(-116px)' }], { duration: 170, easing: 'ease-in', fill: 'forwards' });
     el.querySelector('.bot').animate([{ transform: 'none' }, { transform: 'translateY(98px)' }], { duration: 170, easing: 'ease-in', fill: 'forwards' });
@@ -975,6 +973,7 @@ window.IPHONE = { start(room, exit) {
      simply there between them. Nobody picks up: after about four seconds
      it fails. `connected` is a call that has already been answered. */
   function placeCall(title, { connected = false, failNow = false, onEnd = null } = {}) {
+    if (airplane && !connected) { alertBox('Airplane Mode', 'Turn off Airplane Mode to make a call.'); return; }
     closeCall(true);
     // Every call that goes out unanswered gets rung back, wherever it was placed from.
     const rings = !connected && !failNow;
@@ -1068,7 +1067,7 @@ window.IPHONE = { start(room, exit) {
   function armCallBack(title) {
     clearTimeout(backT);
     const ringIn = () => {
-      if (state === 'boot' || !shown() || (callEl && !callEl.dataset.idle)) { backT = setTimeout(ringIn, 1500); return; }
+      if (state === 'boot' || airplane || !shown() || (callEl && !callEl.dataset.idle)) { backT = setTimeout(ringIn, 1500); return; }
       closeCall(true);
       if (asleep) wake();
       clearTimeout(sleepT);
@@ -1302,8 +1301,8 @@ window.IPHONE = { start(room, exit) {
       msg.hidden = false;
     };
     const frame = (now) => {
+      if (!g) { raf = 0; return; }
       raf = requestAnimationFrame(frame);
-      if (!g) return;
       const dt = Math.min(40, now - g.t); g.t = now;
       if (g.play && now >= g.next) spawn(now);
       c.clearRect(0, 0, W, H);
@@ -1327,7 +1326,7 @@ window.IPHONE = { start(room, exit) {
     };
     raf = requestAnimationFrame(frame);
     root.addEventListener('pointerdown', (e) => {
-      if (!g || !g.play) { reset(); hud(); msg.hidden = true; return; }
+      if (!g || !g.play) { reset(); hud(); msg.hidden = true; if (!raf) raf = requestAnimationFrame(frame); return; }
       const r = cv.getBoundingClientRect(), k = r.width / W;
       const x = (e.clientX - r.left) / k, y = (e.clientY - r.top) / k;
       for (let i = g.b.length - 1; i >= 0; i--) {
@@ -1351,17 +1350,20 @@ window.IPHONE = { start(room, exit) {
     sig(n) { room.querySelectorAll('.ip-sig i').forEach((b, i) => b.classList.toggle('off', i >= n)); room.querySelector('.car').textContent = n ? 'AJ&T' : 'No Service'; room.querySelector('.ip-sig').style.display = n ? '' : 'none'; room.querySelector('.ip-edge').style.display = n ? '' : 'none'; },
     bat(p) { const b = room.querySelector('.ip-bat'); b.querySelector('i').style.width = Math.max(0, Math.min(100, p)) + '%'; b.classList.toggle('low', p <= 20); },
     lend() { statusLent = true; },
-    reset() { statusLent = false; stat.sig(5); stat.bat(100); room.querySelectorAll('.ip-status .gl-bad').forEach((x) => x.classList.remove('gl-bad')); tickClock(); }
+    reset() { statusLent = false; stat.sig(5); stat.bat(100); room.querySelectorAll('.ip-status .gl-bad').forEach((x) => x.classList.remove('gl-bad')); if (airplane) setAir(); tickClock(); }
   };
   /* The frame every one of them shares: a card to start and end on, a
      frame loop that stops with the app. */
   const gameApp = (app, name, intro, hiKey, build) => {
     app.el.innerHTML = `<div class="gm"><div class="gm-play"></div><div class="bb-msg"><b>${name}</b><p>${intro}</p><p class="hi"></p><span>Tap to start</span></div></div>`;
-    const rootEl = app.el.querySelector('.gm'), play = rootEl.querySelector('.gm-play'), msg = rootEl.querySelector('.bb-msg');
+    const rootEl = app.el.querySelector('.gm'), msg = rootEl.querySelector('.bb-msg');
+    let play = rootEl.querySelector('.gm-play');
     let raf = 0, running = false, last = 0, tick = null, stopT = 0;
+    const lend = () => { if (app.def.lendsClock) stat.lend(); };
     const hiText = () => { const v = store.get(hiKey, null); msg.querySelector('.hi').textContent = v != null ? `Best: ${v}` : ''; };
     hiText();
-    const frame = (t) => { raf = requestAnimationFrame(frame); if (!running) return; const dt = Math.min(50, t - last); last = t; tick && tick(dt, t); };
+    /* The loop runs only during a round, not behind the start card. */
+    const frame = (t) => { if (!running) { raf = 0; return; } raf = requestAnimationFrame(frame); const dt = Math.min(50, t - last); last = t; tick && tick(dt, t); };
     const over = (title, line, score, lowerIsBetter) => {
       running = false;
       if (score != null) { const b = store.get(hiKey, null); if (b == null || (lowerIsBetter ? score < b : score > b)) store.set(hiKey, score); }
@@ -1371,10 +1373,10 @@ window.IPHONE = { start(room, exit) {
       msg.querySelector('span').textContent = 'Tap to play again';
       msg.hidden = false;
     };
-    const start = () => { msg.hidden = true; play.innerHTML = ''; stat.lend(); tick = build(play, over); last = performance.now(); running = true; };
+    /* A fresh play area each round, so a game's listeners don't pile up. */
+    const start = () => { msg.hidden = true; const fresh = play.cloneNode(false); play.replaceWith(fresh); play = fresh; lend(); tick = build(play, over); last = performance.now(); running = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); };
     msg.addEventListener('click', start);
-    raf = requestAnimationFrame(frame);
-    stat.lend();
+    lend();
     app.def.onClose = () => { cancelAnimationFrame(raf); clearTimeout(stopT); running = false; stat.reset(); };
   };
   /* Dragging a thing around the play area, in the screen's own points. */
@@ -1465,7 +1467,7 @@ window.IPHONE = { start(room, exit) {
     onebar: (app) => gameApp(app, 'One-Bar Call', 'A call is trying to connect. Drag the ring over the drifting reception and keep at least three bars until it goes through. Fall too low for too long and the call fails.', 'ip-onebar-hi', (play, over) => {
       play.innerHTML = '<div class="gm-sky"></div><div class="gm-tip">Calling…</div><div class="gm-prog"><i></i></div><div class="gm-spot"></div><div class="gm-ring"></div>';
       const ring = play.querySelector('.gm-ring'), spotEl = play.querySelector('.gm-spot'), bar = play.querySelector('.gm-prog i'), tip = play.querySelector('.gm-tip');
-      const pos = { x: 160, y: 260 }, H = 440;
+      const pos = { x: 160, y: 260 }, H = play.clientHeight || 440;
       let t = 0, kept = 0, low = 0, noise = 0, nt = 0;
       const NEED = 12000;
       dragger(play, ring, pos, null, 76);
@@ -1510,112 +1512,18 @@ window.IPHONE = { start(room, exit) {
     })
   };
 
-  let airplane = false, bright = store.get('ip-bright', 100);
+  let airplane = store.get('ip-air', false), bright = store.get('ip-bright', 100);
   if (bright !== 100) scr.style.filter = `brightness(${bright / 100})`;
   const setAir = () => {
     room.querySelector('.ip-sig').style.display = airplane ? 'none' : '';
     room.querySelector('.ip-edge').style.display = airplane ? 'none' : '';
     room.querySelector('.car').innerHTML = airplane ? '<svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true"><path d="M15.5 6c0 .7-.8 1-1.6 1H10L6.8 12H5.3L7 7H3.6L2.4 8.5H1.3L2 6l-.7-2.500h1.100L3.600 5H7L5.300 0h1.500L10 5h3.900c.8 0 1.600.3 1.600 1z" fill="currentColor"/></svg>' : 'AJ&amp;T';
   };
-  /* Beer: a full screen of it that stays level as the phone tilts, read from
-     the phone's own motion sensor. Tip far enough and it pours away; shake
-     or tap to fill it again. Where no sensor answers, dragging tilts it. */
-  const beerApp = (app) => {
-    app.el.innerHTML = '<div class="br-app"><canvas></canvas><div class="bb-msg"><b>Beer</b><p>Tilt your phone and drink.</p><span>Tap to pour</span></div></div>';
-    const root = app.el.querySelector('.br-app'), cv = root.querySelector('canvas'), msg = root.querySelector('.bb-msg');
-    const W = 320, H = root.clientHeight || 460, dpr = Math.min(2, devicePixelRatio || 1);
-    cv.width = W * dpr; cv.height = H * dpr;
-    const c = cv.getContext('2d'); c.scale(dpr, dpr);
-    const FULL = .84, CORNERS = [[0, 0], [W, 0], [W, H], [0, H]];
-    let want = 0, angle = 0, vol = 0, target = 0, live = false, heard = false, raf = 0, lastT = 0, drag = null, gLast = 0, foam = 26;
-    const bubbles = [...Array(34)].map(() => ({ x: Math.random() * W, y: Math.random() * H, r: .8 + Math.random() * 1.8, v: 18 + Math.random() * 46 }));
-    const iOS = /iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    /* What lies past a line across the screen, as a polygon. */
-    const clip = (nx, ny, d) => {
-      const o = [];
-      for (let i = 0; i < 4; i++) {
-        const a = CORNERS[i], b = CORNERS[(i + 1) % 4], da = a[0] * nx + a[1] * ny - d, db = b[0] * nx + b[1] * ny - d;
-        if (da >= 0) o.push(a);
-        if (da * db < 0) { const t = da / (da - db); o.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); }
-      }
-      return o;
-    };
-    const area = (p) => { let s = 0; for (let i = 0; i < p.length; i++) { const a = p[i], b = p[(i + 1) % p.length]; s += a[0] * b[1] - b[0] * a[1]; } return Math.abs(s) / 2; };
-    const path = (p) => { c.beginPath(); p.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.closePath(); };
-    const motion = (e) => {
-      const g = e.accelerationIncludingGravity;
-      if (!g || g.x == null) return;
-      if (!heard && live) msg.hidden = true;   // it answered after all
-      heard = true;
-      const s = iOS ? 1 : -1, gx = g.x * s, gy = g.y * s;
-      want = Math.atan2(gx, -gy);
-      const mag = Math.hypot(g.x, g.y, g.z || 0);
-      if (live && mag > 24 && performance.now() - gLast > 800) { gLast = performance.now(); fill(); }
-    };
-    const fill = () => { target = FULL; foam = 30; };
-    const frame = (t) => {
-      raf = requestAnimationFrame(frame);
-      const dt = Math.min(50, t - lastT || 16) / 1000; lastT = t;
-      angle += (want - angle) * (1 - Math.exp(-dt * 9));
-      if (vol < target) vol = Math.min(target, vol + dt * .55);
-      const nx = Math.sin(angle), ny = Math.cos(angle);
-      // Bisect for the line that leaves the right amount of beer below it.
-      let lo = -800, hi = 800;
-      for (let i = 0; i < 24; i++) { const m = (lo + hi) / 2; if (area(clip(nx, ny, m)) / (W * H) > vol) lo = m; else hi = m; }
-      const d = (lo + hi) / 2;
-      // Past the rim (the top of the screen) it runs out.
-      const over = Math.max(-d, W * nx - d);
-      if (live && target > 0 && over > 0 && vol >= target - .001) { vol = Math.max(0, vol - dt * Math.min(.5, over / 500)); target = vol; if (vol <= .004) { vol = target = 0; msg.querySelector('b').textContent = 'All Gone'; msg.querySelector('p').textContent = ''; msg.querySelector('span').textContent = 'Shake or tap to refill'; msg.hidden = false; } }
-      foam = Math.max(vol > .02 ? 12 : 0, foam - dt * 2);
-      c.clearRect(0, 0, W, H);
-      const bg = c.createLinearGradient(0, 0, W, 0);
-      bg.addColorStop(0, '#2a2a2c'); bg.addColorStop(.5, '#121214'); bg.addColorStop(1, '#2a2a2c');
-      c.fillStyle = bg; c.fillRect(0, 0, W, H);
-      if (vol > 0) {
-        const poly = clip(nx, ny, d);
-        const gr = c.createLinearGradient(d * nx, d * ny, (d + 460) * nx, (d + 460) * ny);
-        gr.addColorStop(0, '#fbc531'); gr.addColorStop(.35, '#ee9d10'); gr.addColorStop(1, '#a85a04');
-        c.save();
-        path(poly); c.fillStyle = gr; c.fill(); c.clip();
-        c.fillStyle = 'rgba(255,240,190,.55)';
-        bubbles.forEach((b) => {
-          b.x -= nx * b.v * dt; b.y -= ny * b.v * dt;
-          if (b.x * nx + b.y * ny < d) { b.x = Math.random() * W; b.y = H + 4; const q = Math.random() * 800 + d; b.x = q * nx + (Math.random() - .5) * 900 * ny; b.y = q * ny - (Math.random() - .5) * 900 * nx; }
-          c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill();
-        });
-        c.restore();
-        /* The head: a band of foam along the surface. */
-        const head = clip(nx, ny, d - foam), keep = head;
-        if (keep.length) { c.save(); path(poly); c.rect(0, 0, W, H); c.clip('evenodd'); path(keep); const fg = c.createLinearGradient((d - foam) * nx, (d - foam) * ny, d * nx, d * ny); fg.addColorStop(0, '#ffffff'); fg.addColorStop(1, '#efe3c0'); c.fillStyle = fg; c.fill(); c.restore(); }
-      }
-      /* The glass over it all. */
-      const gl = c.createLinearGradient(0, 0, W, 0);
-      gl.addColorStop(0, 'rgba(255,255,255,.28)'); gl.addColorStop(.08, 'rgba(255,255,255,.04)'); gl.addColorStop(.88, 'rgba(255,255,255,.02)'); gl.addColorStop(1, 'rgba(255,255,255,.2)');
-      c.fillStyle = gl; c.fillRect(0, 0, W, H);
-    };
-    const begin = async () => {
-      /* iPhones ask once, and only in answer to a tap. */
-      const ask = window.DeviceMotionEvent && DeviceMotionEvent.requestPermission;
-      if (ask) { try { await DeviceMotionEvent.requestPermission(); } catch (e) {} }
-      addEventListener('devicemotion', motion);
-      live = true;
-      fill();
-      msg.hidden = true;
-      setTimeout(() => { if (!heard && live) { msg.querySelector('b').textContent = 'No Motion Sensor'; msg.querySelector('p').textContent = 'This browser is not sharing one. Drag sideways to tilt.'; msg.querySelector('span').textContent = 'Tap to close'; msg.hidden = false; } }, 1800);
-    };
-    msg.addEventListener('click', (e) => { e.stopPropagation(); if (!live) begin(); else { msg.hidden = true; if (!vol) fill(); } });
-    root.addEventListener('pointerdown', (e) => { if (e.target.closest('.bb-msg')) return; if (live && !vol) { fill(); return; } drag = { x: e.clientX, a: want }; try { root.setPointerCapture(e.pointerId); } catch (x) {} });
-    root.addEventListener('pointermove', (e) => { if (drag && !heard) want = Math.max(-1.6, Math.min(1.6, drag.a + (e.clientX - drag.x) / 110)); });
-    ['pointerup', 'pointercancel'].forEach((t) => root.addEventListener(t, () => { drag = null; }));
-    raf = requestAnimationFrame(frame);
-    app.def.onClose = () => { cancelAnimationFrame(raf); removeEventListener('devicemotion', motion); };
-  };
-
+  if (airplane) setAir();
   const APPS = {
-    beer: { name: 'Beer', icon: 'beer', bare: true, bar: 'black', open: beerApp },
     signal: { name: 'Signal', icon: 'signal', bare: true, bar: 'black', open: GAMES.signal },
     balancer: { name: 'Balancer', icon: 'balancer', bare: true, bar: 'black', open: GAMES.balancer },
-    defender: { name: 'Defender', icon: 'defender', bare: true, bar: 'black', open: GAMES.defender },
+    defender: { name: 'Defender', icon: 'defender', bare: true, bar: 'black', lendsClock: true, open: GAMES.defender },
     onebar: { name: 'One-Bar', icon: 'onebar', bare: true, bar: 'black', open: GAMES.onebar },
     chicken: { name: 'Chicken', icon: 'chicken', bare: true, bar: 'black', open: GAMES.chicken },
     guestbook: { name: 'Text', icon: 'sms', open: messages },
@@ -1684,7 +1592,7 @@ window.IPHONE = { start(room, exit) {
         let drag = null;
         const apply = (e) => {
           if (drag === 'scrub') { at = len(list[k]) * along(v.querySelector('.np-track'), e); tick(); }
-          if (drag === 'vol') { const f = along(v.querySelector('.np-vt'), e); store.set('ip-vol', Math.round(f * 16)); SYS.volume(f); v.querySelector('.np-vt i').style.width = f * 100 + '%'; v.querySelector('.np-vt b').style.left = f * 100 + '%'; }
+          if (drag === 'vol') { const f = along(v.querySelector('.np-vt'), e); vol = Math.round(f * 16); store.set('ip-vol', vol); SYS.volume(f); v.querySelector('.np-vt i').style.width = f * 100 + '%'; v.querySelector('.np-vt b').style.left = f * 100 + '%'; }
         };
         v.addEventListener('pointerdown', (e) => { drag = e.target.closest('.np-track') ? 'scrub' : e.target.closest('.np-vol') ? 'vol' : null; if (drag) { try { v.setPointerCapture(e.pointerId); } catch (x) {} apply(e); } });
         v.addEventListener('pointermove', (e) => { if (drag) apply(e); });
@@ -1928,7 +1836,7 @@ window.IPHONE = { start(room, exit) {
         pg.addEventListener('click', (ev) => {
           const sw = ev.target.closest('[data-sw]');
           if (sw) {
-            if (sw.dataset.sw === 'air') { airplane = !airplane; sw.classList.toggle('on', airplane); sw.setAttribute('aria-checked', String(airplane)); setAir(); return; }
+            if (sw.dataset.sw === 'air') { airplane = !airplane; store.set('ip-air', airplane); sw.classList.toggle('on', airplane); sw.setAttribute('aria-checked', String(airplane)); setAir(); return; }
             if (sw.dataset.sw === 'sound') { SFX.toggle(); sw.classList.toggle('on', !SFX.muted); sw.setAttribute('aria-checked', String(!SFX.muted)); }
             else { sw.classList.toggle('on'); sw.setAttribute('aria-checked', String(sw.classList.contains('on'))); }
             return;
@@ -1973,8 +1881,18 @@ window.IPHONE = { start(room, exit) {
               p.addEventListener('click', async (e2) => {
                 if (e2.target.closest('[data-ab]')) app.push('About', (q) => { q.classList.add('pin'); q.innerHTML = kv([['Name', 'Ajay Sommi'], ['Roles', String(P.experience.length)], ['Projects', String(P.projects.length)], ['Photos', String(photos)], ['Skills', String(P.skills.reduce((a, s) => a + s[1].length, 0))], ['Capacity', '8 GB'], ['Available', '7.2 GB'], ['Version', '1.0 (26A543a)'], ['Model', 'AJ-26']]); });
                 if (e2.target.closest('[data-rs]')) {
-                  const rr = await alertBox('Reset All Settings', 'Your notes, events and edits on this phone will be cleared.', ['Cancel', 'Reset']);
-                  if (rr === 'Reset') { ['ip-notes', 'ip-events', 'ip-card', 'ip-read'].forEach((k) => store.set(k, null)); alertBox('Reset Complete'); }
+                  const rr = await alertBox('Reset All Settings', 'Your notes, events, edits, wallpaper and sound settings on this phone will go back to how they started.', ['Cancel', 'Reset']);
+                  if (rr === 'Reset') {
+                    ['ip-notes', 'ip-events', 'ip-card', 'ip-marks', 'ip-favs'].forEach((k) => store.set(k, null));
+                    ['ip-sms-read', 'ip-mail-read', 'ip-vm-del', 'ip-vm-heard'].forEach((k) => store.set(k, []));
+                    smsRead.clear(); mailRead.clear();
+                    WALL = WALLS[WALLS.length - 1][0]; store.set('ip-wall', WALL); lock.style.backgroundImage = `url(${WALL})`;
+                    bright = 100; store.set('ip-bright', 100); scr.style.filter = '';
+                    vol = 12; store.set('ip-vol', 12); SYS.volume(12 / 16);
+                    airplane = false; store.set('ip-air', false); stat.reset();
+                    showUnread();
+                    alertBox('Reset Complete');
+                  }
                 }
               });
             });
@@ -2052,11 +1970,14 @@ window.IPHONE = { start(room, exit) {
     const v = h('div', 'photo-view');
     const n = s.steps.length;
     let auto = 0, busy = false;
+    let zoom = 1, panX = 0, panY = 0, pinch = null, gesture = false, lastTap = 0;
+    const touches = new Map();
     const api = {};
     const big = (i) => s.steps[(i + n) % n][0].replace('-480', '-960');
     v.innerHTML = `<div class="pv-strip"></div><div class="pv-top"><button type="button" data-x>Done</button><b></b><span></span></div><div class="cap"></div><div class="tbar"><button type="button" data-d="-1">${ARW.b}</button><button type="button" data-p></button><button type="button" data-d="1">${ARW.f}</button></div>`;
     const strip = v.querySelector('.pv-strip');
     const draw = () => {
+      zoom = 1; panX = 0; panY = 0;
       strip.style.transform = '';
       strip.innerHTML = (n > 1 ? [-1, 0, 1] : [0]).map((o) => `<div class="pv-ph" style="left:${o * 330}px"><img src="${big(k + o)}" alt="${o ? '' : esc(s.steps[k][1])}" /></div>`).join('');
       v.querySelector('.pv-top b').textContent = `${k + 1} of ${n}`;
@@ -2066,6 +1987,8 @@ window.IPHONE = { start(room, exit) {
     const step = (d, from = 0) => {
       if (busy || n < 2) return;
       busy = true;
+      const shown = strip.querySelector('.pv-ph:nth-child(2) img');
+      if (shown) shown.style.transform = '';
       strip.style.transform = '';
       strip.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${-d * 330}px)` }], { duration: Math.max(180, 320 * (1 - Math.abs(from) / 330)), easing: SLIDE, fill: 'forwards' })
         .finished.then((a) => { k = (k + d + n) % n; draw(); strip.getAnimations().forEach((x) => x.cancel()); busy = false; });
@@ -2075,13 +1998,89 @@ window.IPHONE = { start(room, exit) {
       const b = ev.target.closest('button');
       if (!b) return;
       if (b.hasAttribute('data-x')) { clearInterval(auto); v.remove(); setBar(bar); api.onDone && api.onDone(); return; }
-      if (b.hasAttribute('data-p')) { if (auto) { clearInterval(auto); auto = 0; } else auto = setInterval(() => step(1), 2200); draw(); return; }
+      if (b.hasAttribute('data-p')) { if (auto) { clearInterval(auto); auto = 0; } else auto = setInterval(() => { if (zoom === 1) step(1); }, 2200); draw(); return; }
       step(+b.dataset.d);
     });
-    swipe(v, () => strip, (d, from) => step(d, from), () => !busy);
+    swipe(v, () => strip, (d, from) => step(d, from), () => !busy && zoom === 1 && touches.size < 2);
+    /* Two fingers zoom about the point between them; zoomed in, one finger
+       moves the photo around, and a double tap zooms in or back out. All of
+       it is handled before the swipe above would see it. */
+    const shownImg = () => strip.querySelector(n > 1 ? '.pv-ph:nth-child(2) img' : 'img');
+    const paintZoom = (ease) => {
+      const img = shownImg();
+      if (!img) return;
+      const mx = Math.max(0, (img.offsetWidth * zoom - v.clientWidth) / 2), my = Math.max(0, (img.offsetHeight * zoom - v.clientHeight) / 2);
+      if (ease) { panX = Math.max(-mx, Math.min(mx, panX)); panY = Math.max(-my, Math.min(my, panY)); }
+      img.style.transition = ease ? 'transform .24s cubic-bezier(.2, .8, .3, 1)' : 'none';
+      img.style.transform = zoom === 1 && !panX && !panY ? '' : `translate(${panX}px, ${panY}px) scale(${zoom})`;
+    };
+    const fromMiddle = (x, y) => { const r = v.getBoundingClientRect(), k = r.width / v.clientWidth; return { x: (x - r.left) / k - v.clientWidth / 2, y: (y - r.top) / k - v.clientHeight / 2, k }; };
+    const pair = () => { const [a, b] = [...touches.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y), mid: fromMiddle((a.x + b.x) / 2, (a.y + b.y) / 2) }; };
+    const settle = () => { if (zoom < 1.05) { zoom = 1; panX = 0; panY = 0; } zoom = Math.min(4, zoom); paintZoom(true); };
+    v.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now() });
+      try { v.setPointerCapture(e.pointerId); } catch (x) {}
+      if (touches.size === 2) {
+        const p = pair();
+        pinch = { d: p.d, mid: p.mid, zoom, x: panX, y: panY };
+        strip.style.transform = '';   // a swipe the first finger had begun is called off
+        gesture = true;
+      }
+    }, true);
+    v.addEventListener('pointermove', (e) => {
+      const t = touches.get(e.pointerId);
+      if (!t) return;
+      const was = { x: t.x, y: t.y };
+      t.x = e.clientX; t.y = e.clientY;
+      if (touches.size >= 2 && pinch) {
+        const p = pair();
+        zoom = Math.max(.8, Math.min(5, pinch.zoom * p.d / pinch.d));
+        panX = p.mid.x - (pinch.mid.x - pinch.x) * zoom / pinch.zoom;
+        panY = p.mid.y - (pinch.mid.y - pinch.y) * zoom / pinch.zoom;
+        paintZoom(false);
+        e.stopImmediatePropagation();
+      } else if (zoom > 1 || gesture) {
+        const k = fromMiddle(0, 0).k;
+        panX += (t.x - was.x) / k; panY += (t.y - was.y) / k;
+        if (zoom > 1) paintZoom(false);
+        e.stopImmediatePropagation();
+      }
+    }, true);
+    const lift = (e) => {
+      const t = touches.get(e.pointerId);
+      if (!t) return;
+      touches.delete(e.pointerId);
+      const swallow = gesture || zoom > 1;
+      if (touches.size < 2 && pinch) { pinch = null; settle(); }
+      if (!touches.size) {
+        const tap = e.type === 'pointerup' && !gesture && Math.hypot(t.x - t.sx, t.y - t.sy) < 10 && performance.now() - t.t < 300;
+        gesture = false;
+        if (tap) {
+          const now = performance.now();
+          if (now - lastTap < 320) {
+            lastTap = 0;
+            if (zoom > 1) { zoom = 1; panX = 0; panY = 0; } else { const c = fromMiddle(t.x, t.y); zoom = 2.5; panX = -c.x * 1.5; panY = -c.y * 1.5; }
+            paintZoom(true);
+          } else lastTap = now;
+        } else if (zoom > 1) paintZoom(true);
+      }
+      if (swallow) e.stopImmediatePropagation();
+    };
+    v.addEventListener('pointerup', lift, true);
+    v.addEventListener('pointercancel', lift, true);
+    /* A trackpad's pinch, and Safari's own, which would zoom the whole page. */
+    v.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      zoom = Math.max(1, Math.min(4, zoom * Math.exp(-e.deltaY / 100)));
+      if (zoom === 1) { panX = 0; panY = 0; }
+      paintZoom(true);
+    }, { passive: false });
+    v.addEventListener('gesturestart', (e) => e.preventDefault());
     app.el.appendChild(v);
     setBar('black');
-    api.play = () => { auto = setInterval(() => step(1), 2200); draw(); };
+    api.play = () => { auto = setInterval(() => { if (zoom === 1) step(1); }, 2200); draw(); };
     return api;
   };
 
@@ -2091,7 +2090,7 @@ window.IPHONE = { start(room, exit) {
      19 in, rows 90 apart starting 19 under the status bar. */
   /* Two home screens, as the original had once you had enough apps: a
      sideways swipe moves between them, the dots above the dock say which. */
-  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'], ['bubbles', 'signal', 'balancer', 'defender', 'onebar', 'chicken', 'beer']];
+  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'], ['bubbles', 'signal', 'balancer', 'defender', 'onebar', 'chicken']];
   const GRID = PAGES.flat();
   let pageNo = 0;
   const DOCK = ['contact', 'email', 'resume', 'about'];
@@ -2207,7 +2206,8 @@ window.IPHONE = { start(room, exit) {
     appEl.style.clipPath = 'inset(20px 0 0 0)';   // the band under the status bar is not part of what closes
     const af = [];
     for (let i = 0; i <= HOME_N; i++) { const t = i / HOME_N, z = size(t); af.push({ transform: `scale(${z})`, opacity: z < .03 ? 0 : 1 }); }
-    appEl.animate(af, { duration: HOME_MS, easing: 'linear', fill: 'forwards' }).finished.then(() => appEl.remove());
+    appEl.animate(af, { duration: HOME_MS, easing: 'linear', fill: 'forwards' }).finished.then(() => { appEl.remove(); board.classList.remove('is-homing'); });
+    board.classList.add('is-homing');
     board.classList.remove('is-flying');
     const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')].map((b) => ({ b, x: -(parseFloat(b.style.getPropertyValue('--cx')) || 0), y: -(parseFloat(b.style.getPropertyValue('--cy')) || 0) }));
     // Half an icon, name included, and the nearest icon to the middle on the
@@ -2326,7 +2326,7 @@ window.IPHONE = { start(room, exit) {
   });
   /* The volume rocker: the real overlay, and it really sets the volume. */
   let vol = store.get('ip-vol', 12), hudT = 0;
-  const hud = h('div', 'ip-hud', `<svg viewBox="0 0 40 40" width="46" height="46" aria-hidden="true"><path d="M20 4c6 0 9 5 9 11 0 7 3 10 5 12H6c2-2 5-5 5-12 0-6 3-11 9-11zM16 30h8a4 4 0 0 1-8 0z" fill="currentColor"/></svg><b>Ringer</b><span></span>`);
+  const hud = h('div', 'ip-hud', `<svg viewBox="0 0 40 40" width="46" height="46" aria-hidden="true"><path d="M6 15h7l10-8v26l-10-8H6z" fill="currentColor"/><path d="M28 13q5 7 0 14M32 9q8 11 0 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><b>Volume</b><span></span>`);
   hud.hidden = true;
   scr.appendChild(hud);
   room.querySelectorAll('.ip-vol').forEach((b) => b.addEventListener('click', () => {
@@ -2368,6 +2368,7 @@ window.IPHONE = { start(room, exit) {
      its corner, then it swells and fades into the lock screen. */
   drawBoard();
   Promise.all([window.READY, room.landed]).then(() => {
+    SYS.volume(vol / 16);
     boot.classList.add('is-on');
     setTimeout(() => boot.classList.add('is-shine'), 250);
     setTimeout(() => boot.classList.add('is-out'), 1150);
@@ -2375,7 +2376,8 @@ window.IPHONE = { start(room, exit) {
       boot.classList.add('is-gone');
       state = 'locked';
       tickClock();
-      setInterval(tickClock, 10000);
+      const onTheMinute = () => { tickClock(); setTimeout(onTheMinute, 60000 - Date.now() % 60000); };
+      setTimeout(onTheMinute, 60000 - Date.now() % 60000);
       armSleep();
     }, 1650);
   });

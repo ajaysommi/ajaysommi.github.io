@@ -4082,8 +4082,8 @@ function gatorStorm(n = 12) {
 /* ==========================================================================
    Console greeting for the curious
    ========================================================================== */
-console.log(
-  '%cAjay Sommi%c\nPoking around the console? Try pressing ~ on the page for a terminal,\nor ⌘K for the command palette.\n\nmailto:ajaysommi7@gmail.com',
+if (window.self === window.top) console.log(
+  '%cAjay Sommi%c\nPoking around the console? Say hello.\n\nmailto:ajaysommi7@gmail.com',
   'font-size:20px;font-weight:700;color:#71FFE9',
   'color:#9fb2c4;font-family:monospace;line-height:1.6'
 );

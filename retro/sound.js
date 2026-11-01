@@ -6,7 +6,7 @@
    speaker in each menu bar mutes it for good.
    ========================================================================== */
 window.SFX = (function () {
-  let ctx = null, master = null;
+  let ctx = null, master = null, level = 1;
   /* Silent until the visitor asks for sound, every visit, unless they
      turned it on before. */
   let muted = !window.RETRO.store.get('sound-on', false);
@@ -18,7 +18,7 @@ window.SFX = (function () {
       if (!AC) return null;
       ctx = new AC();
       master = ctx.createGain();
-      master.gain.value = 0.32;
+      master.gain.value = 0.32 * level;
       master.connect(ctx.destination);
     }
     if (ctx.state === 'suspended') ctx.resume();
@@ -93,7 +93,9 @@ window.SFX = (function () {
 
   const api = {
     get muted() { return muted; },
-    volume(v) { if (!ready()) return; master.gain.value = 0.32 * v; },
+    /* Kept even while muted or before any sound has played, and in force
+       from then on. */
+    volume(v) { level = v; if (master) master.gain.value = 0.32 * v; },
     sample(name, gain = 2) {
       if (!ready()) return;
       sampleBuf(name).then((b) => {

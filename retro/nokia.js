@@ -254,11 +254,11 @@ window.NOKIA = { start(room, exit) {
   const placeCall = (num) => {
     clearTimeout(callT);
     const end = () => { clearTimeout(callT); stack.splice(1); render(); };
-    push({ type: 'text', title: 'Calling', html: `<p class="nk-big">${esc(num)}</p><p>Calling...</p>`, soft: 'End', act: end });
+    push({ type: 'text', title: 'Calling', html: `<p class="nk-big">${esc(num)}</p><p>Calling...</p>`, soft: 'End', act: end, endCall: end });
     const mine = stack[stack.length - 1];
     callT = setTimeout(() => {
       if (stack[stack.length - 1] !== mine) return;
-      mine.s = { type: 'text', title: 'Call', html: `<p class="nk-big">${esc(num)}</p><p>No answer</p>`, soft: 'OK', act: end };
+      mine.s = { type: 'text', title: 'Call', html: `<p class="nk-big">${esc(num)}</p><p>No answer</p>`, soft: 'OK', act: end, endCall: end };
       render();
     }, 4000);
   };
@@ -271,7 +271,8 @@ window.NOKIA = { start(room, exit) {
   const push = (s) => { stack.push({ s, sel: 0 }); render(); };
   const back = () => {
     const t0 = stack[stack.length - 1];
-    if (t0 && t0.s.type === 'dial' && t0.s.num) { t0.s.num = t0.s.num.slice(0, -1); render(); return; }
+    if (t0 && t0.s.type === 'dial') { t0.s.num = t0.s.num.slice(0, -1); if (t0.s.num) { render(); return; } stack.pop(); render(); return; }
+    if (t0 && t0.s.endCall) { t0.s.endCall(); return; }
     if (t0 && t0.s.type === 'tap' && tap && tap.back()) return;
     if (stack.length > 1) { stack.pop(); render(); }
     else if (stack[0].s.type !== 'standby') { stack[0] = { s: STANDBY(), sel: 0 }; render(); }
@@ -398,6 +399,6 @@ window.NOKIA = { start(room, exit) {
     on = true;
     stack.push({ s: STANDBY(), sel: 0 });
     render();
-    setInterval(() => { const t = stack[stack.length - 1]; if (t && t.s.type === 'standby') render(); }, 20000);
+    setInterval(() => { const t = stack[stack.length - 1]; if (t && t.s.type === 'standby' && room.getClientRects().length) render(); }, 20000);
   })();
 } };

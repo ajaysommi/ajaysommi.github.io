@@ -5539,14 +5539,14 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   .era-ad-wrap:not(.is-served) .era-ad-box { visibility: hidden; }
   .for-desk { display: none; }
   .for-phone { display: revert; }
-  .era-ad { grid-template-columns: auto auto 1fr auto; gap: 10px; padding: 7px 40px 7px 0;
+  .era-ad { grid-template-columns: auto 1fr auto; gap: 10px; padding: 7px 40px 7px 0;
     box-shadow: 0 10px 28px rgba(0, 0, 0, .35); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
   .era-ad-stripes { margin: -7px 0 -7px -8px; padding-left: 26px; }
   .era-ad-stripes i { width: 3px; }
   .era-ad-copy { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .era-ad-kicker { font-size: .6rem; }
   .era-ad-kicker b { margin-right: 0; }
-  .era-ad-devs { display: flex; gap: 7px; align-items: flex-end; margin-left: auto; padding-right: 2px; }
+  .era-ad-devs { display: none; }
   .era-dv { height: 24px; opacity: 1; transform: none; }
   .era-dv.is-on { transform: translateY(-4px) scale(1.12); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .3)); }
   .era-ad-title { font-size: .95rem; font-weight: 650; line-height: 1.2; white-space: nowrap; }
@@ -5587,7 +5587,6 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 @media (max-width: 719px) {
   .era-mini { left: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); height: 32px; padding-right: 11px; z-index: 59; }
 }
-html { touch-action: pan-x pan-y; }
 
 /* The banner on a computer: one tight line, the tag beside the headline. */
 @media (min-width: 720px) {

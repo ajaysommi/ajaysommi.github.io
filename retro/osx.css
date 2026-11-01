@@ -19,33 +19,7 @@
 }
 /* The aurora: beams of light fanning up from low on the left, blurred
    soft, over a violet sky. Drawn, not photographed. */
-.ox-sky { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.ox-sky i { position: absolute; inset: -20%; }
-.ox-sky .b1 {
-  background: conic-gradient(from -78deg at 40% 92%,
-    transparent 0deg, rgba(255,215,250,.0) 6deg, rgba(255,215,250,.55) 9deg, transparent 13deg,
-    transparent 18deg, rgba(255,200,245,.45) 21deg, rgba(255,235,255,.7) 23deg, transparent 28deg,
-    transparent 33deg, rgba(255,190,240,.4) 36deg, transparent 41deg,
-    transparent 46deg, rgba(255,225,255,.75) 50deg, rgba(255,205,250,.4) 53deg, transparent 58deg,
-    transparent 64deg, rgba(240,190,255,.5) 67deg, transparent 72deg,
-    transparent 80deg, rgba(255,215,255,.45) 84deg, transparent 90deg,
-    transparent 98deg, rgba(220,180,255,.35) 102deg, transparent 108deg, transparent 360deg);
-  -webkit-mask: radial-gradient(85% 95% at 40% 92%, #000 15%, rgba(0,0,0,.7) 50%, transparent 85%);
-          mask: radial-gradient(85% 95% at 40% 92%, #000 15%, rgba(0,0,0,.7) 50%, transparent 85%);
-  filter: blur(4px) brightness(1.25);
-  animation: ox-sway 18s ease-in-out infinite alternate;
-  transform-origin: 40% 92%;
-}
-.ox-sky .b2 {
-  background: conic-gradient(from -70deg at 42% 95%, transparent 0deg, rgba(255,160,235,.35) 15deg, transparent 32deg, rgba(200,150,255,.3) 55deg, transparent 75deg, rgba(255,170,240,.28) 92deg, transparent 112deg, transparent 360deg);
-  filter: blur(26px);
-  animation: ox-sway 26s ease-in-out infinite alternate-reverse;
-  transform-origin: 42% 95%;
-}
-.ox-sky .b3 { background: radial-gradient(40% 18% at 22% 76%, rgba(255,150,220,.5), transparent 70%), radial-gradient(30% 14% at 70% 66%, rgba(200,140,255,.35), transparent 70%); filter: blur(20px); }
-.ox-sky .core { inset: auto; left: 40%; top: 92%; width: 46vw; height: 30vh; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(255,240,255,.85), rgba(255,180,240,.35) 45%, transparent 75%); filter: blur(10px); }
 @keyframes ox-sway { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
-.reduced .ox-sky i { animation: none; }
 
 .ox::before, .ox::after {
   /* Two drifting layers of stars. */
@@ -67,6 +41,7 @@
 .ox-boot { position: absolute; inset: 0; z-index: 9000; background: #c9c9c9; display: grid; place-content: center; justify-items: center; gap: 40px; transition: opacity .5s; }
 .ox-boot .aj-mark { color: #6d6d6d; }
 .ox-boot.is-gone { opacity: 0; }
+.ox-white { background: #f6f6f6; z-index: 9001; }
 .ox-spin { position: relative; width: 26px; height: 26px; animation: ox-spin 1s steps(12) infinite; }
 .ox-spin i { position: absolute; left: 11.5px; top: 0; width: 3px; height: 8px; border-radius: 2px; background: #5a5a5a; transform-origin: 1.5px 13px; }
 .ox-spin i:nth-child(n) { opacity: .2; }
@@ -455,18 +430,15 @@
 
 /* The dock, lighter to draw: no live reflection, no width transition. */
 .dk-ic { -webkit-box-reflect: none; }
-.dk-i { transition: none; }
+.dk-i { transition: none; transform-origin: 50% 100%; }
+/* `translate` runs before `scale`, so the shrink that undoes the icon's growth
+   can't also shrink the centring. */
+.dk-lbl { transform: none; translate: -50% 0; scale: calc(1 / var(--s, 1)); transform-origin: 50% 100%; }
+.dk-run { scale: calc(1 / var(--s, 1)); bottom: calc(-9px / var(--s, 1)); }
 .dk-ic .sl-ic, .dk-ic svg { filter: none; }
 .ox-dock { will-change: contents; }
 
 /* The SommiBook brochure: a product page of its day, brushed and glossy. */
-.bro07-hero { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; margin: -4px -4px 12px; border-radius: 8px; background: linear-gradient(180deg, #fdfdfd, #e6e9ed); box-shadow: inset 0 0 0 1px #d3d7dc; }
-.bro07-hero h1 { margin: 0; font: 300 30px 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif; letter-spacing: -.02em; }
-.bro07-hero p { margin: 4px 0 0; color: #5a6270; }
-.bro07-hero svg { width: 150px; height: 100px; flex: none; filter: drop-shadow(0 6px 8px rgba(0,0,0,.18)); }
-.bro07-r { display: grid; grid-template-columns: 150px 1fr; gap: 12px; padding: 8px 2px; border-bottom: 1px solid #e3e6ea; }
-.bro07-r b { color: #1f5fbf; }
-.bro07-f { margin-top: 12px; color: #8a8f96; font-size: 12px; text-align: center; }
 
 /* Concentration: cards that turn over in 3D, Aqua blue backs. */
 .mm { display: flex; flex-direction: column; height: 100%; padding: 12px 14px; box-sizing: border-box; background: linear-gradient(180deg, #f4f6f9, #dfe4ea); }
@@ -559,7 +531,11 @@
 .ox.files-list .fx-ico:nth-child(even) { background: #edf3fe; }
 .ox.files-list .fx-ico .sl-ic, .ox.files-list .fx-ico svg { width: 18px; height: 18px; }
 /* Mail. */
-.ml-caps { display: flex; align-items: flex-start; gap: 2px; }
+.ml-caps { display: flex; align-items: flex-start; gap: 2px; min-width: 0; flex: 0 1 auto; overflow: hidden; }
+.is-mailbox .ox-search { flex: 0 1 170px; min-width: 70px; }
+.is-mailbox .ox-search input { width: 100%; box-sizing: border-box; }
+.ox-desk.is-tight .dt-i { width: 70px; font-size: 11px; padding: 2px; }
+.ox-desk.is-tight .dt-i svg, .ox-desk.is-tight .dt-i img { width: 40px; height: 40px; }
 .ml-caps .sp { width: 10px; }
 .ml-caps button { border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; font: 10.5px var(--lg); color: #333; min-width: 54px; cursor: default; }
 .ml-caps span { display: grid; place-items: center; width: 48px; height: 24px; border-radius: 12px; border: 1px solid #7f8fa8; background: linear-gradient(180deg, #e8eef8 0%, #c4d0e2 46%, #a8b8d0 52%, #c6d3e6 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 1px 1px rgba(0,0,0,.15); }
