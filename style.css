@@ -5401,88 +5401,135 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .card p { margin-bottom: 18px; }
 
 
-/* The way into the eras: a tuning dial for years, over the hero (on a phone,
-   floating above the bottom nav). It takes no room until it arrives; then its
-   row opens and the bar is set down in it. At rest it belongs to this site.
-   As the needle moves back it becomes each year it reaches. */
+/* The way into the eras: a banner over the hero, in the colours of the
+   machines this visitor would get. On a computer: terminal green, Mac
+   beige, Bondi blue, aqua. On a phone: Nokia navy and LCD green, iPod
+   lilac, iPhone silver and blue. The six stripes of the old rainbow logo
+   lead it in; the year in the headline keeps moving through the eras,
+   landing in each era's own type, and the matching machine lifts. It
+   slides in once the page is up, and its close button puts it away for
+   the rest of the visit. */
+/* It takes no room until it arrives: then its row opens (the page eases
+   down to make room) and the banner is set down in it. Without script it
+   simply stays shut. */
 .era-ad-wrap {
-  --pad: clamp(6px, 2vw, 18px); --dir: 1;
+  --spec: #3fe07a, #d9cfb4, #29a8c4, #3f78c4, #8fc2ff;
+  --cta: #6fe89a, #e4dcc4, #5cc4db, #8fc2ff;
+  --pad: clamp(6px, 2vw, 18px);
   position: relative; display: grid; justify-content: center;
   grid-template-rows: 0fr; padding: 0 var(--gutter);
   transition: grid-template-rows .75s cubic-bezier(.3, .7, .2, 1), padding-top .75s cubic-bezier(.3, .7, .2, 1);
 }
 .era-ad-wrap.is-open { grid-template-rows: 1fr; padding-top: var(--pad); }
 .era-ad-wrap.is-off { display: none; }
-.era-ad-box { position: relative; z-index: 1; min-height: 0; width: min(calc(100vw - 2 * var(--gutter)), var(--maxw)); }
+.era-ad-box { position: relative; min-height: 0; width: min(calc(100vw - 2 * var(--gutter)), var(--maxw)); }
 .era-ad-box > .era-ad, .era-ad-box > .era-ad-x { opacity: 0; }
-.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .5s linear both; }
+/* It pops out from its own middle with a little give: a small stretch in
+   the direction it is opening (down on a computer, up off the nav on a
+   phone, --dir), and one small bounce back to its own shape. */
+.era-ad-wrap { --dir: 1; }
+.era-ad-wrap.is-served .era-ad { animation: era-ad-launch .5s linear both; will-change: transform, opacity; }
 .era-ad-wrap.is-served .era-ad-x { opacity: 1; transition: opacity .3s ease .25s; }
-.era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }
+.era-ad-box { z-index: 1; }
 @keyframes era-ad-launch {
   0%   { opacity: 0; transform: translateY(calc(var(--dir) * -6px)) scale(.94, .7); animation-timing-function: cubic-bezier(.25, .8, .4, 1); }
   30%  { opacity: 1; }
   50%  { transform: translateY(calc(var(--dir) * 1px)) scale(.995, 1.04); animation-timing-function: cubic-bezier(.4, 0, .3, 1); }
   100% { opacity: 1; transform: none; }
 }
-
-.era-ad {
-  --tick: color-mix(in oklab, var(--ink) 30%, transparent); --tick-on: var(--ink); --needle: #ff6b35;
-  display: flex; align-items: center; gap: clamp(14px, 2.4vw, 30px);
-  padding: 9px 58px 9px 24px; border-radius: 14px; color: var(--ink);
-  background: var(--bg); border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
-  transition: background .28s ease, color .28s ease, border-color .28s ease, border-radius .28s ease, box-shadow .28s ease;
-  -webkit-user-select: none; user-select: none;
+.era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }
+/* Landing: it glows in its colours for a moment, and sparkles in the
+   rainbow's colours fly off its edges. */
+.era-ad-box::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: var(--r-pill); pointer-events: none; opacity: 0; transition: opacity .9s ease; will-change: opacity;
+  box-shadow: -12px 0 30px rgba(97, 187, 70, .35), 12px 0 30px rgba(0, 157, 220, .35); }
+.era-ad-box:has(.era-ad.is-glow)::before { opacity: 1; transition-duration: .35s; }
+.era-spark { position: fixed; z-index: 70; width: 12px; height: 12px; margin: -6px 0 0 -6px; pointer-events: none;
+  background: var(--c); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+/* The machines have faces. As the banner lands they give one short dance,
+   one after another, then just blink now and then and glance about. */
+.era-dv svg { transform-origin: 50% 100%; }
+.era-ad-wrap.is-dance .era-dv svg { animation: era-dance .9s ease-in-out 1 both; }
+.era-ad-wrap.is-dance .era-dv:nth-child(2) svg, .era-ad-wrap.is-dance .era-dv:nth-child(6) svg { animation-delay: .12s; }
+.era-ad-wrap.is-dance .era-dv:nth-child(3) svg, .era-ad-wrap.is-dance .era-dv:nth-child(7) svg { animation-delay: .24s; }
+.era-ad-wrap.is-dance .era-dv:nth-child(4) svg { animation-delay: .36s; }
+.era-dv .ev { transform-box: fill-box; transform-origin: 50% 50%; animation: era-blink 4.2s steps(1, end) infinite; }
+.era-dv:nth-child(even) .ev { animation-delay: -1.4s; }
+.era-dv:nth-child(3n) .ev { animation-delay: -2.7s; }
+.era-dv .pu { animation: era-look 6s ease-in-out infinite; }
+@keyframes era-dance {
+  0%, 100% { transform: none; }
+  20% { transform: scale(1.04, .95); }
+  45% { transform: translateY(-3px) rotate(-5deg); }
+  70% { transform: translateY(0) rotate(4deg) scale(1.03, .97); }
 }
-.ed-read { flex: none; display: grid; gap: 2px; width: 118px; color: inherit; text-decoration: none; line-height: 1; }
-.ed-year { font: 600 1.28rem/1 "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.ed-cap { font: .66rem/1.1 "Geist Mono", ui-monospace, monospace; opacity: .62; white-space: nowrap; }
-
-.ed-rail { position: relative; flex: 1; min-width: 0; height: 40px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 6px; }
-.ed-rail:focus-visible { box-shadow: 0 0 0 2px var(--needle); }
-.ed-ticks { position: absolute; inset: 0; }
-.ed-ticks i { position: absolute; top: 6px; width: 1px; height: 8px; background: var(--tick); transition: background .28s ease; }
-.ed-ticks i.is-era { top: 3px; height: 16px; width: 2px; margin-left: -.5px; background: var(--tick-on); }
-.ed-ticks span { position: absolute; top: 24px; translate: -50% 0; font: .62rem/1 "Geist Mono", ui-monospace, monospace; opacity: .62; white-space: nowrap; pointer-events: none; }
-.ed-ticks span:last-of-type { translate: -100% 0; }
-.ed-needle { position: absolute; top: 0; left: 0; width: 3px; height: 22px; margin-left: -1.5px; border-radius: 2px; background: var(--needle); box-shadow: 0 0 6px color-mix(in oklab, var(--needle) 60%, transparent); will-change: translate; }
-.ed-needle::after { content: ""; position: absolute; left: -10px; right: -10px; top: -6px; bottom: -20px; }   /* a finger-sized grip */
-
-/* The bar as each year would have drawn it. */
-.era-ad[data-y="1983"] { --tick: rgba(63, 224, 122, .4); --tick-on: #3fe07a; --needle: #d8ffe4; background: #07120a; color: #3fe07a; border-color: #17401f; border-radius: 3px; }
-.era-ad[data-y="1983"] .ed-year { font: 1.7rem/.8 "VT323", ui-monospace, monospace; text-shadow: 0 0 7px rgba(63, 224, 122, .55); }
-.era-ad[data-y="1983"] .ed-cap, .era-ad[data-y="1983"] .ed-ticks span { font-family: "VT323", ui-monospace, monospace; font-size: .8rem; opacity: .9; }
-.era-ad[data-y="1991"] { --tick: rgba(0, 0, 0, .45); --tick-on: #000; --needle: #000; background: #fff; color: #000; border: 2px solid #000; border-radius: 6px; box-shadow: 3px 3px 0 #000; }
-.era-ad[data-y="1991"] .ed-year { font: 1.05rem/1 "Silkscreen", ui-monospace, monospace; }
-.era-ad[data-y="1991"] .ed-cap, .era-ad[data-y="1991"] .ed-ticks span { font-family: "Silkscreen", ui-monospace, monospace; font-size: .52rem; opacity: 1; }
-.era-ad[data-y="1998"] { --tick: rgba(0, 0, 0, .4); --tick-on: #000; --needle: #0000ee; background: #c8c8c8; color: #000; border: 2px outset #eee; border-radius: 0; box-shadow: none; }
-.era-ad[data-y="1998"] .ed-year { font: 700 1.35rem/1 "Times New Roman", Times, serif; color: #0000ee; text-decoration: underline; }
-.era-ad[data-y="1998"] .ed-cap, .era-ad[data-y="1998"] .ed-ticks span { font-family: "Times New Roman", Times, serif; font-size: .72rem; opacity: 1; }
-.era-ad[data-y="2000"] { --tick: rgba(29, 42, 16, .5); --tick-on: #1d2a10; --needle: #1d2a10; background: #a9c262; color: #1d2a10; border-color: #6e8440; border-radius: 6px; box-shadow: inset 0 1px 5px rgba(29, 42, 16, .35); }
-.era-ad[data-y="2000"] .ed-year { font: 1.05rem/1 "Silkscreen", ui-monospace, monospace; }
-.era-ad[data-y="2000"] .ed-cap, .era-ad[data-y="2000"] .ed-ticks span { font-family: "Silkscreen", ui-monospace, monospace; font-size: .52rem; opacity: 1; }
-.era-ad[data-y="2004"] { --tick: rgba(27, 33, 73, .4); --tick-on: #1b2149; --needle: #1b2149; background: linear-gradient(180deg, #fbfbfd, #dcdde6); color: #1b2149; border-color: #b7b9c8; border-radius: 12px; }
-.era-ad[data-y="2004"] .ed-year { font: 700 1.25rem/1 Helvetica, Arial, sans-serif; }
-.era-ad[data-y="2007"] { --tick: rgba(255, 255, 255, .55); --tick-on: #fff; --needle: #fff; background: linear-gradient(180deg, #a7cdf6 0, #6aa8ee 46%, #3a84e4 50%, #5fa7f2 100%); color: #fff; border-color: #2a62b8; border-radius: 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 6px 18px rgba(30, 90, 190, .35); }
-.era-ad[data-y="2007"] .ed-year { font: 700 1.25rem/1 "Lucida Grande", Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0, 40, 110, .4); }
-.era-ad[data-y="2007"] .ed-cap, .era-ad[data-y="2007"] .ed-ticks span { font-family: "Lucida Grande", Helvetica, Arial, sans-serif; opacity: .95; }
-.era-ad[data-y] ~ .era-ad-x { color: inherit; }
-.era-ad-box:has(.era-ad[data-y="1983"]) .era-ad-x { color: #3fe07a; }
-.era-ad-box:has(.era-ad[data-y="2007"]) .era-ad-x { color: #fff; }
-.era-ad-box:has(.era-ad[data-y="1991"]) .era-ad-x, .era-ad-box:has(.era-ad[data-y="1998"]) .era-ad-x { color: #000; }
-.era-ad-box:has(.era-ad[data-y="2000"]) .era-ad-x { color: #1d2a10; }
-.era-ad-box:has(.era-ad[data-y="2004"]) .era-ad-x { color: #1b2149; }
-
+@keyframes era-blink { 0%, 93%, 100% { transform: none; } 95% { transform: scaleY(.1); } }
+@keyframes era-look { 0%, 30%, 100% { transform: translateX(0); } 40%, 60% { transform: translateX(.35px); } 70%, 85% { transform: translateX(-.35px); } }
+.era-ad {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 18px;
+  padding: 14px 56px 14px 0; border-radius: var(--r-pill); text-decoration: none; color: var(--ink);
+  background: #151513; border: 1px solid rgba(255, 255, 255, .1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  transition: transform .3s cubic-bezier(.2, .7, .2, 1), box-shadow .9s ease, border-color .3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-theme="daylight"] .era-ad { background: #fff; border-color: rgba(0, 0, 0, .08); box-shadow: 0 10px 30px rgba(30, 30, 40, .1); }
+/* A wash of the era colours behind, and their spectrum running slowly
+   along the bottom edge. */
+.era-ad::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .16;
+  background: linear-gradient(100deg, transparent 8%, var(--spec), transparent 92%);
+}
+[data-theme="daylight"] .era-ad::before { opacity: .12; }
+.era-ad::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: linear-gradient(90deg, var(--spec), #3fe07a) 0 0 / 200% 100%;
+  animation: era-ad-run 14s linear infinite;
+}
+@keyframes era-ad-run { to { background-position: 200% 0; } }
+.era-ad-stripes { align-self: stretch; display: flex; transform: skewX(-14deg); margin: -14px 4px -14px -8px; padding-left: 34px; }
+.era-ad-stripes i { width: 7px; }
+.era-ad-stripes i:nth-child(1) { background: #61bb46; } .era-ad-stripes i:nth-child(2) { background: #fdb827; }
+.era-ad-stripes i:nth-child(3) { background: #f5821f; } .era-ad-stripes i:nth-child(4) { background: #e03a3e; }
+.era-ad-stripes i:nth-child(5) { background: #963d97; } .era-ad-stripes i:nth-child(6) { background: #009ddc; }
+.era-ad-copy { display: grid; gap: 3px; min-width: 0; }
+.era-ad-kicker { font: .68rem/1.2 "Silkscreen", "Geist Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.era-ad-kicker b { font-weight: inherit; margin-right: 6px; padding: 1px 6px; border-radius: 4px; color: #111; background: linear-gradient(90deg, #fdb827, #f5821f); }
+.era-ad-title { font-size: clamp(1.02rem, 1.6vw, 1.25rem); font-weight: 650; letter-spacing: -.01em; }
+.era-ad-devs { display: flex; align-items: flex-end; gap: 10px; }
+.era-dv { display: block; height: 30px; opacity: .55; transform: translateY(2px) scale(.92); transform-origin: 50% 100%;
+  transition: opacity .4s ease, transform .5s cubic-bezier(.2, .9, .3, 1.3), filter .4s ease; }
+.era-dv svg { height: 100%; width: auto; display: block; }
+[data-theme="daylight"] .era-dv svg { filter: drop-shadow(0 0 .6px rgba(0, 0, 0, .5)); }
+.era-dv.is-on { opacity: 1; transform: translateY(-3px) scale(1.12); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .3)); }
+.era-ad-cta {
+  display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; border-radius: 999px;
+  font-weight: 650; font-size: .9rem; color: #111; white-space: nowrap;
+  background: linear-gradient(90deg, var(--cta)); background-size: 220% 100%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .2); transition: background-position .6s ease;
+}
+.era-ad-cta svg { transition: transform .3s cubic-bezier(.2, .7, .2, 1); }
 .era-ad-x {
   position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
   display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 50%; padding: 0;
   color: var(--ink-2); background: transparent; cursor: pointer; transition: background .2s ease, color .2s ease;
 }
 .era-ad-x:hover { background: color-mix(in oklab, var(--ink) 10%, transparent); color: var(--ink); }
-
-/* On a phone it floats just above the bottom nav and takes no room in the page. */
+@media (hover: hover) {
+  .era-ad:hover { transform: translateY(-2px); box-shadow: 0 16px 38px rgba(0, 0, 0, .3); border-color: rgba(255, 255, 255, .2); }
+  [data-theme="daylight"] .era-ad:hover { box-shadow: 0 16px 38px rgba(30, 30, 40, .16); border-color: rgba(0, 0, 0, .14); }
+  .era-ad:hover .era-ad-cta { background-position: 100% 0; }
+  .era-ad:hover .era-ad-cta svg { transform: translateX(3px); }
+}
+.era-ad:active { transform: scale(.99); }
+.for-phone { display: none; }
+/* On a phone it is a small pill floating just above the bottom nav (same
+   radius, same side margins), staying put as the page scrolls; it says
+   only "Step into" and a year, the rest is for the visitor to find. It
+   takes no room in the page, so nothing shifts; it rises from the nav. */
 @media (max-width: 719px) {
   .era-ad-wrap {
+    --spec: #2f4372, #a9c262, #b8a9d9, #c9ccd1, #2f7fe0; --cta: #b9d37a, #cdbfe8, #dfe2e6, #9cc6ff;
     --dir: -1;
     position: fixed; left: 12px; right: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); z-index: 59;
     display: block; padding: 0; transition: none; pointer-events: none;
@@ -5490,21 +5537,67 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   .era-ad-wrap.is-open { padding: 0; }
   .era-ad-box { width: 100%; pointer-events: auto; }
   .era-ad-wrap:not(.is-served) .era-ad-box { visibility: hidden; }
-  .era-ad { gap: 12px; padding: 5px 38px 5px 14px; box-shadow: 0 8px 22px rgba(0, 0, 0, .2); }
-  .ed-read { width: 82px; }
-  .ed-year { font-size: 1.05rem; }
-  .ed-cap { font-size: .58rem; }
-  .era-ad-x { right: 5px; }
+  .for-desk { display: none; }
+  .for-phone { display: revert; }
+  .era-ad { grid-template-columns: auto 1fr auto; gap: 10px; padding: 7px 40px 7px 0;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .35); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .era-ad-stripes { margin: -7px 0 -7px -8px; padding-left: 26px; }
+  .era-ad-stripes i { width: 3px; }
+  .era-ad-copy { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .era-ad-kicker { font-size: .6rem; }
+  .era-ad-kicker b { margin-right: 0; }
+  .era-ad-devs { display: none; }
+  .era-dv { height: 24px; opacity: 1; transform: none; }
+  .era-dv.is-on { transform: translateY(-4px) scale(1.12); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .3)); }
+  .era-ad-title { font-size: .95rem; font-weight: 650; line-height: 1.2; white-space: nowrap; }
+  .era-ad-cta { width: 30px; height: 30px; padding: 0; justify-content: center; }
+  .era-ad-cta-t { display: none; }
+  .era-ad-x { right: 6px; width: 28px; height: 28px; }
+  .era-ad::after { height: 2px; }
 }
+/* Narrow phones: the NEW tag steps aside so the troupe keeps its room. */
+@media (max-width: 370px) { .era-ad-kicker { display: none; } .era-ad { gap: 8px; } }
+@media (max-width: 330px) { .era-dv { height: 21px; } .era-ad-devs { gap: 5px; } }
+@media (prefers-reduced-motion: reduce) { .era-ad-wrap { transition: none; } .era-ad::after, .era-ad-wrap.is-served .era-ad, .era-dv svg, .era-dv .ev, .era-dv .pu { animation: none; } }
+.era-yr { display: inline-block; min-width: 4ch; color: var(--ink); font-variant-numeric: tabular-nums; transition: color .3s ease, text-shadow .3s ease; }
+.era-yr[data-y="1983"] { font: 1.22em/1 "VT323", ui-monospace, monospace; color: #3fbf5f; text-shadow: 0 0 6px rgba(63,191,95,.45); }
+[data-theme="daylight"] .era-yr[data-y="1983"] { color: #1f8a3c; text-shadow: none; }
+.era-yr[data-y="1991"] { font: .78em/1 "Silkscreen", ui-monospace, monospace; letter-spacing: .02em; }
+.era-yr[data-y="1998"] { font: 1.04em/1 "Times New Roman", Times, serif; color: #4f7bff; text-decoration: underline; text-underline-offset: 2px; }
+[data-theme="daylight"] .era-yr[data-y="1998"] { color: #0000ee; }
+.era-yr[data-y="2000"] { font: .8em/1 "Silkscreen", ui-monospace, monospace; padding: 2px 4px; border-radius: 3px; background: #a9c262; color: #1d2a10; }
+.era-yr[data-y="2004"] { font: 600 .8em/1 "Silkscreen", ui-monospace, monospace; padding: 2px 4px; border-radius: 3px; background: #b8c6e2; color: #1b2149; }
+.era-yr[data-y="2007"] { font: 700 1em/1 Helvetica, Arial, sans-serif; color: #3f8cf0; text-shadow: 0 1px 0 rgba(255, 255, 255, .25), 0 0 10px rgba(63, 140, 240, .35); }
+.era-yr.is-scramble { font: 500 1em/1 "Geist Mono", ui-monospace, monospace; color: var(--ink-2); background: none; text-shadow: none; text-decoration: none; padding: 0; -webkit-text-fill-color: currentColor; }
 
-/* Folded away: a small chip showing the year, that still leads to the eras. */
+/* The banner folded away: a small chip that still leads to the eras. In the
+   bottom corner on a computer; on a phone, on the left above the menu bar,
+   measured from the same edge as the nav so they move as one. */
 .era-mini {
-  position: fixed; left: 18px; bottom: 18px; z-index: 58; display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 13px;
+  position: fixed; left: 18px; bottom: 18px; z-index: 58; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 0; overflow: hidden;
   border-radius: 999px; color: var(--ink); text-decoration: none; background: color-mix(in oklab, var(--bg) 96%, transparent);
-  font: 500 .76rem/1 "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums;
+  font: .68rem/1 "Silkscreen", "Geist Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase;
   transition: transform .25s cubic-bezier(.2, .7, .2, 1); -webkit-tap-highlight-color: transparent;
 }
+.era-mini-st { align-self: stretch; display: flex; transform: skewX(-14deg); margin-left: -6px; padding-left: 12px; }
+.era-mini-st i { width: 3px; }
+.era-mini-st i:nth-child(1) { background: #61bb46; } .era-mini-st i:nth-child(2) { background: #fdb827; } .era-mini-st i:nth-child(3) { background: #f5821f; }
+.era-mini-st i:nth-child(4) { background: #e03a3e; } .era-mini-st i:nth-child(5) { background: #963d97; } .era-mini-st i:nth-child(6) { background: #009ddc; }
 @media (hover: hover) { .era-mini:hover { transform: translateY(-2px); } }
 @media (max-width: 719px) {
-  .era-mini { left: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); height: 32px; z-index: 59; }
+  .era-mini { left: 12px; bottom: calc(var(--lg-dock-h) + max(10px, env(safe-area-inset-bottom)) + 10px); height: 32px; padding-right: 11px; z-index: 59; }
 }
+
+/* The banner on a computer: one tight line, the tag beside the headline. */
+@media (min-width: 720px) {
+  .era-ad { gap: 14px; padding: 6px 48px 6px 0; }
+  .era-ad-stripes { margin: -6px 4px -6px -8px; }
+  .era-ad-copy { display: flex; align-items: center; gap: 8px; }
+  .era-ad-kicker b { margin-right: 0; }
+  .era-ad-title { font-size: clamp(.95rem, 1.35vw, 1.08rem); line-height: 1.2; white-space: nowrap; }
+  .era-ad-devs { gap: 8px; }
+  .era-dv { height: 24px; }
+  .era-ad-cta { padding: 5px 13px; font-size: .84rem; }
+  .era-ad-x { right: 10px; }
+}
+@media (min-width: 720px) and (max-width: 960px) { .era-ad-title { white-space: normal; } .era-ad-devs { display: none; } }

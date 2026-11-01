@@ -4158,33 +4158,29 @@ if (window.self === window.top) console.log(
 
 
 /* ==========================================================================
-   The way into the eras: a tuning dial for years. The needle rests on this
-   year. Slide it back and the bar turns into each year it reaches; let go on
-   one and that machine starts up, let go near the end and it swings home.
-   A tap on the ruler does the same, and the arrow keys and Return work too.
-   Now and then the needle stirs back a little on its own, the only hint it
-   moves. Closed, it folds to a small chip until the page is loaded again.
+   The way into the eras (the banner over the hero; on a phone, a pill
+   floating over the bottom nav). It waits for the page to finish loading;
+   then it launches out from the direction of the nav's AJ mark (on desktop the page eases down to make room), landing
+   with a glow while its machines give a short dance. If the page has already been scrolled, or
+   motion is reduced, it is simply there (scrolled for, so nothing jumps).
+   Once up, the year in it moves through the eras of this visitor's kind
+   of device, scrambling through digits and landing in each era's type,
+   and the matching machine lifts. Closed, it folds into a small chip in the
+   corner (above the menu bar on a phone) until the page is loaded again.
    ========================================================================== */
 (function eraBanner() {
   const wrap = document.getElementById('eraAd');
   if (!wrap) return;
   const root = document.documentElement;
-  const dial = wrap.querySelector('.era-ad'), rail = wrap.querySelector('.ed-rail'), needle = wrap.querySelector('.ed-needle');
-  const read = wrap.querySelector('.ed-read'), yearEl = wrap.querySelector('.ed-year'), cap = wrap.querySelector('.ed-cap');
-  const ticks = wrap.querySelector('.ed-ticks');
+  const box = wrap.querySelector('.era-ad-box'), ad = wrap.querySelector('.era-ad');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const phone = matchMedia('(max-width: 719px)');
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const NOW = new Date().getFullYear();
-  const ERAS = () => (phone.matches
-    ? [[2000, 'Snake on it', 'nokia'], [2004, '1,000 songs', 'pocket'], [2007, 'Slide to unlock', 'iphone']]
-    : [[1983, 'A blinking cursor', '1983'], [1991, 'One-bit windows', '1991'], [1998, 'Dialing up', '1998'], [2007, 'A dock that swells', '2007']]);
+  const RAINBOW = ['#61bb46', '#fdb827', '#f5821f', '#e03a3e', '#963d97', '#009ddc'];
 
   const mini = document.getElementById('eraMini');
   const fold = (animate) => {
     wrap.classList.add('is-off');
     if (!mini) return;
-    document.getElementById('eraMiniY').textContent = NOW;
     mini.hidden = false;
     if (animate) mini.animate([{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1.06)', offset: .7 }, { opacity: 1, transform: 'none' }], { duration: 340, easing: 'cubic-bezier(.2, .7, .3, 1)' });
   };
@@ -4192,131 +4188,74 @@ if (window.self === window.top) console.log(
     wrap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in' }).finished.then(() => fold(true));
   });
 
-  /* ---- the ruler ---- */
-  let list = ERAS(), first = list[0][0], at = NOW, anim = 0, busy = false;
-  /* The stops sit evenly along the ruler, with the years between spread to fit,
-     so eras a few years apart don't crowd together. */
-  const stops = () => [...list.map((e) => e[0]), NOW];
-  const fx = (y) => {
-    const s = stops(), i = Math.max(0, s.findIndex((v, k) => y <= s[k + 1]));
-    return (i + (y - s[i]) / (s[i + 1] - s[i])) / (s.length - 1);
-  };
-  const fromX = (f) => {
-    const s = stops(), p = f * (s.length - 1), i = Math.min(s.length - 2, Math.floor(p));
-    return s[i] + (p - i) * (s[i + 1] - s[i]);
-  };
-  const nearest = (y) => list.reduce((b, e) => (Math.abs(e[0] - y) < Math.abs(b[0] - y) ? e : b));
-  const build = () => {
-    list = ERAS(); first = list[0][0];
-    let html = '';
-    for (let y = first; y <= NOW; y++) html += `<i style="left:${fx(y) * 100}%"${list.some((e) => e[0] === y) ? ' class="is-era"' : ''}></i>`;
-    list.forEach((e) => { html += `<span style="left:${fx(e[0]) * 100}%">${e[0]}</span>`; });
-    html += `<span style="left:100%">now</span>`;
-    ticks.innerHTML = html;
-    rail.setAttribute('aria-valuemin', first);
-    rail.setAttribute('aria-valuemax', NOW);
-    draw(NOW);
-  };
-  /* Close to a year with a machine, the needle's reading sticks to it. */
-  const draw = (y) => {
-    at = y;
-    needle.style.translate = `${fx(y) * rail.clientWidth}px 0`;
-    const n = nearest(y), on = Math.abs(fx(n[0]) - fx(y)) <= .05 ? n : null;
-    const shown = on ? on[0] : Math.round(y);
-    yearEl.textContent = shown;
-    if (on) dial.dataset.y = on[0]; else delete dial.dataset.y;
-    cap.textContent = on ? on[1] : y >= NOW - .05 ? 'slide back' : '';
-    rail.setAttribute('aria-valuenow', shown);
-    rail.setAttribute('aria-valuetext', on ? `${on[0]}. ${on[1]}` : String(shown));
-  };
-  const glide = (to, ms = 420) => new Promise((res) => {
-    cancelAnimationFrame(anim);
-    const from = at, t0 = performance.now();
-    if (reduce) { draw(to); res(); return; }
-    const f = (t) => {
-      const q = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - q, 3);
-      draw(from + (to - from) * e);
-      if (q < 1) anim = requestAnimationFrame(f); else res();
+  /* ---- the year ---- */
+  const yr = wrap.querySelector('.era-yr');
+  const phone = matchMedia('(max-width: 719px)');
+  const years = () => (phone.matches ? ['2000', '2004', '2007'] : ['1983', '1991', '1998', '2007']);
+  const light = (y) => wrap.querySelectorAll('.era-dv').forEach((d) => d.classList.toggle('is-on', d.dataset.y === y && getComputedStyle(d).display !== 'none'));
+  const land = (y) => { yr.textContent = y; yr.dataset.y = y; yr.classList.remove('is-scramble'); light(y); };
+  let k = 0;
+  land(years()[0]);
+  phone.addEventListener('change', () => { k = 0; land(years()[0]); });
+  const cycle = () => {
+    if (reduce) return;
+    let seen = true, timer = 0;
+    const step = () => {
+      const list = years();
+      k = (k + 1) % list.length;
+      const y = list[k];
+      yr.classList.add('is-scramble');
+      let n = 0;
+      const roll = setInterval(() => {
+        n++;
+        // the digits settle left to right
+        yr.textContent = y.split('').map((c, i) => (n > 3 + i * 2 ? c : Math.floor(Math.random() * 10))).join('');
+        if (n > 9) { clearInterval(roll); land(y); }
+      }, 45);
     };
-    anim = requestAnimationFrame(f);
-  });
-  const enter = async (era) => {
-    busy = true;
-    await glide(era[0], 300);
-    await wait(240);
-    location.href = `eras.html#${era[2]}`;
+    const run = () => { clearInterval(timer); if (seen && !document.hidden) timer = setInterval(step, 2400); };
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(); }).observe(wrap);
+    document.addEventListener('visibilitychange', run);
+    run();
   };
-  /* Letting go: past the halfway point back from now to the latest machine, it goes. */
-  const release = () => {
-    const n = nearest(at), last = list[list.length - 1][0];
-    if (at > (last + NOW) / 2) glide(NOW); else enter(n);
-  };
-  // Back from an era through the browser's history, the needle is home again.
-  addEventListener('pageshow', () => { busy = false; draw(NOW); });
-
-  let grab = null;
-  const toYear = (e) => { const r = rail.getBoundingClientRect(); return fromX(Math.max(0, Math.min(1, (e.clientX - r.left) / r.width))); };
-  rail.addEventListener('pointerdown', (e) => {
-    if (busy) return;
-    cancelAnimationFrame(anim);
-    calm();
-    grab = { x: e.clientX, moved: false };
-    try { rail.setPointerCapture(e.pointerId); } catch (x) {}
-  });
-  rail.addEventListener('pointermove', (e) => {
-    if (!grab) return;
-    if (!grab.moved && Math.abs(e.clientX - grab.x) < 3) return;
-    grab.moved = true;
-    draw(toYear(e));
-  });
-  const up = (e) => {
-    if (!grab) return;
-    const g = grab; grab = null;
-    if (e.type === 'pointerup' && !g.moved) { const y = toYear(e); if (y > (list[list.length - 1][0] + NOW) / 2) glide(NOW); else enter(nearest(y)); return; }
-    release();
-  };
-  rail.addEventListener('pointerup', up);
-  rail.addEventListener('pointercancel', up);
-  rail.addEventListener('keydown', (e) => {
-    if (busy) return;
-    const all = stops(), i = all.findIndex((y) => Math.abs(y - at) < .5);
-    const from = i >= 0 ? i : all.length - 1;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); calm(); glide(all[Math.max(0, from - 1)], 260); }
-    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); calm(); glide(all[Math.min(all.length - 1, from + 1)], 260); }
-    if (e.key === 'Enter' && at < NOW - .5) { e.preventDefault(); enter(nearest(at)); }
-  });
-  read.addEventListener('click', (e) => {
-    if (at < NOW - .5) { e.preventDefault(); enter(nearest(at)); }   // it goes to the year showing
-  });
-
-  /* ---- the stir: a little way back and home, while the bar is on screen ---- */
-  let stirT = 0, stirred = false;
-  const calm = () => { clearTimeout(stirT); stirred = true; };
-  const stir = async () => {
-    if (stirred || reduce || grab || busy) return;
-    if (!document.hidden && wrap.getBoundingClientRect().bottom > 0) {
-      await glide(NOW - 4 - Math.random() * 3, 900);
-      if (stirred) return;
-      await wait(260);
-      if (stirred) return;
-      await glide(NOW, 800);
-    }
-    if (!stirred) stirT = setTimeout(stir, 9000);
-  };
-  phone.addEventListener('change', build);
-  addEventListener('resize', () => draw(at), { passive: true });
 
   /* ---- arriving ---- */
+  const navMark = () => {
+    const m = document.querySelector('header.nav .brand-mark svg.brand-aj');
+    const r = m && m.getBoundingClientRect();
+    return r && r.width > 0 && r.bottom > 0 && r.top < innerHeight ? m : null;
+  };
   const instantly = () => {
     const before = wrap.getBoundingClientRect().height, above = wrap.getBoundingClientRect().top < 0;
     wrap.style.transition = 'none';
     wrap.classList.add('is-open', 'is-served', 'is-done');
     if (!phone.matches && (above || scrollY > 40)) scrollBy(0, wrap.getBoundingClientRect().height - before);
-    requestAnimationFrame(() => { wrap.style.transition = ''; draw(NOW); });
+    requestAnimationFrame(() => { wrap.style.transition = ''; });
+    cycle();
+  };
+  const sparkle = () => {
+    const r = ad.getBoundingClientRect();
+    for (let i = 0; i < 12; i++) {
+      const e = document.createElement('i');
+      e.className = 'era-spark';
+      // around the edge: along the top and bottom, and off both ends
+      const side = i % 4, f = Math.random();
+      const x = side < 2 ? r.left + f * r.width : side === 2 ? r.left : r.right;
+      const y = side === 0 ? r.top : side === 1 ? r.bottom : r.top + f * r.height;
+      const dx = side === 2 ? -1 : side === 3 ? 1 : (f - .5) * .8, dy = side === 0 ? -1 : side === 1 ? 1 : (Math.random() - .5);
+      const d = 16 + Math.random() * 22, sc = .6 + Math.random() * .7;
+      e.style.cssText = `left:${x}px;top:${y}px;--c:${RAINBOW[i % 6]}`;
+      document.body.appendChild(e);
+      e.animate([
+        { transform: 'translate(0,0) scale(0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx * d * .6}px,${dy * d * .6}px) scale(${sc}) rotate(45deg)`, opacity: 1, offset: .45 },
+        { transform: `translate(${dx * d}px,${dy * d}px) scale(0) rotate(90deg)`, opacity: 0 }
+      ], { duration: 700 + Math.random() * 300, delay: Math.random() * 180, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'both' }).finished.then(() => e.remove());
+    }
   };
   const serve = async () => {
-    build();
-    if (reduce || (!phone.matches && scrollY > 40)) { instantly(); stirT = setTimeout(stir, 1400); return; }
+    const mark = navMark();
+    if (reduce || !mark || (!phone.matches && scrollY > 40)) { instantly(); return; }
     await wait(120);
     if (phone.matches) wrap.classList.add('is-open');
     else {
@@ -4337,10 +4276,18 @@ if (window.self === window.top) console.log(
       await wait(90);
     }
     wrap.classList.add('is-served');
-    draw(NOW);
-    await wait(520);
-    wrap.classList.add('is-done');
-    stirT = setTimeout(stir, 1400);
+    // the pop plays out in full before it is set down
+    await new Promise((r) => {
+      const end = (e) => { if (e.animationName === 'era-ad-launch') { clearTimeout(t); ad.removeEventListener('animationend', end); r(); } };
+      const t = setTimeout(() => { ad.removeEventListener('animationend', end); r(); }, 600);
+      ad.addEventListener('animationend', end);
+    });
+    // landing: a glow (and on a phone, a few sparkles)
+    ad.classList.add('is-glow');
+    wrap.classList.add('is-done', 'is-dance');
+    if (phone.matches) sparkle();
+    setTimeout(() => ad.classList.remove('is-glow'), 1100);
+    cycle();
   };
 
   // after the page has loaded and its loading screen has gone

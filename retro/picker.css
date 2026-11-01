@@ -244,10 +244,10 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .os-host[data-era="2007"] .bz-frame { top: -60px; left: calc(var(--side) + 3px); right: calc(var(--side) + 3px); border-radius: 0; background: linear-gradient(180deg, #121214, #050506); }
 
 /* The music player's room, in the colour chosen in its Settings. */
-.phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(82% 58% at 50% 40%, #f3f8fd 0%, #bdd2ec 55%, #6f8db2 100%); }
-.phone-host .pocket-room[data-bg="mint"] { background: radial-gradient(82% 58% at 50% 40%, #f2fbf6 0%, #bde3cc 55%, #6ea384 100%); }
-.phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(82% 58% at 50% 40%, #fcf8f0 0%, #e0d1b5 55%, #a08d67 100%); }
-.phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(82% 58% at 50% 40%, #6a707d 0%, #2f323b 55%, #101115 100%); }
+.phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(82% 58% at 50% 40%, #f8fbfe 0%, #d5e3f6 55%, #7f9ec3 100%); }
+.phone-host .pocket-room[data-bg="mint"] { background: radial-gradient(82% 58% at 50% 40%, #f8fefb 0%, #d2efdd 55%, #7eb594 100%); }
+.phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(82% 58% at 50% 40%, #fefcf8 0%, #ece0c9 55%, #b29e77 100%); }
+.phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(82% 58% at 50% 40%, #777f91 0%, #3c4050 55%, #1d2029 100%); }
 
 /* The time shapes behind the pickers. */
 .pk-time { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0; animation: pk-time-in 2.4s ease .2s forwards; }
@@ -343,10 +343,10 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .os-host .os-screen { z-index: 1; }
 
 /* Era rooms on the desktop: light for the pale machines, dark for 1983. */
-.os-host[data-era="1983"] { --bg: radial-gradient(70% 60% at 50% 45%, rgba(60,200,90,.14), transparent 70%), radial-gradient(90% 80% at 50% 40%, #16221a, #060906 85%); }
-.os-host.is-photo[data-era="1991"] { --bg: radial-gradient(80% 70% at 50% 35%, #f6f1e4, #ddd3bb 70%, #c8bb9a 108%); }
-.os-host.is-photo[data-era="1998"] { --bg: radial-gradient(80% 70% at 50% 35%, #f1fbfd, #a9dde6 72%, #86c6d2 108%); }
-.os-host.is-photo[data-era="2007"] { --bg: radial-gradient(80% 70% at 50% 35%, #fbfcfd, #cfd8e4 72%, #b3bfd0 108%); }
+.os-host[data-era="1983"] { --bg: radial-gradient(70% 60% at 50% 45%, rgba(60,200,90,.14), transparent 70%), radial-gradient(90% 80% at 50% 40%, #1b2e22, #0c140c 85%); }
+.os-host.is-photo[data-era="1991"] { --bg: radial-gradient(80% 70% at 50% 35%, #fbf8f1, #e6dcc4 70%, #d2c4a2 108%); }
+.os-host.is-photo[data-era="1998"] { --bg: radial-gradient(80% 70% at 50% 35%, #f8fdff, #b3e5ee 72%, #8dd0dd 108%); }
+.os-host.is-photo[data-era="2007"] { --bg: radial-gradient(80% 70% at 50% 35%, #fafbfd, #d9e1ec 72%, #bcc8d9 108%); }
 .os-host.is-photo[data-era="2007"] .bz-aj { color: #c7cacf; filter: drop-shadow(0 1px 0 rgba(255,255,255,.8)) drop-shadow(0 -1px 0 rgba(0,0,0,.08)); }
 .os-host.is-photo .bz-dev { filter: drop-shadow(0 30px 50px rgba(40,40,60,.35)); }
 /* 1983, drawn, sized like the others: room above, running off the bottom. */
@@ -368,9 +368,9 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 
 /* Phones: their rooms' gradients (the shapes are their own layer now),
    the handset above the shapes, and buttons in the phone's colours. */
-.phone-host .nk-room { background: radial-gradient(82% 58% at 50% 40%, #dbe4f4 0%, #8d9dbd 55%, #37465f 100%); }
-.phone-host .pocket-room { background: radial-gradient(82% 58% at 50% 40%, #fbf9fd 0%, #d0c8e0 55%, #85789f 100%); }
-.phone-host .iphone-room { background: radial-gradient(82% 58% at 50% 40%, #97989e 0%, #4c4d53 55%, #141518 100%); }
+.phone-host .nk-room { background: radial-gradient(82% 58% at 50% 40%, #f3f7fc 0%, #9eaecd 55%, #3e5479 100%); }
+.phone-host .pocket-room { background: radial-gradient(82% 58% at 50% 40%, #fbf9fd 0%, #e2dced 55%, #9587b1 100%); }
+.phone-host .iphone-room { background: radial-gradient(82% 58% at 50% 40%, #a6a8af 0%, #5a5b66 55%, #22242c 100%); }
 .nk-scale, .pk-scale, .ip-scale { position: relative; z-index: 1; }
 .is-mobile .snd-toggle span { display: none; }
 .is-mobile .snd-toggle { padding: 10px 12px; }
