@@ -2279,7 +2279,14 @@ window.IPHONE = { start(room, exit) {
     setBar('trans');
     knob.style.transform = '';
     slideTxt.style.opacity = '';
+    /* The lock screen is simply there when the display comes back; it only
+       ever moves when it is slid away. And an app that was open leaves the
+       icons gathered in the middle, so they go back to waiting. */
+    lock.style.transition = 'none';
     lock.classList.remove('is-gone');
+    void lock.offsetWidth;
+    lock.style.transition = '';
+    board.classList.remove('is-converge');
     flyOut();
     armSleep();
     tickClock();
