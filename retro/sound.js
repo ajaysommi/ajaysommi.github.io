@@ -93,6 +93,7 @@ window.SFX = (function () {
 
   const api = {
     get muted() { return muted; },
+    volume(v) { if (!ready()) return; master.gain.value = 0.32 * v; },
     sample(name, gain = 2) {
       if (!ready()) return;
       sampleBuf(name).then((b) => {
@@ -122,6 +123,14 @@ window.SFX = (function () {
       const t = ctx.currentTime;
       tone(t, [697, 770, 852, 941][R[k]], 0.16, { gain: 0.09 });
       tone(t, [1209, 1336, 1477][C[k]], 0.16, { gain: 0.09 });
+    },
+    /* The sleep button's lock: a short, hard latch, as the first iPhones had it. */
+    lock() {
+      if (!ready()) return;
+      const t = ctx.currentTime;
+      tick(t, { dur: 0.012, freq: 4200, q: 3, gain: 0.8 });
+      tick(t + 0.006, { dur: 0.045, freq: 1500, q: 1.1, gain: 0.7 });
+      tick(t + 0.02, { dur: 0.03, freq: 520, q: 1, gain: 0.5, type: 'lowpass' });
     },
     /* Slide to unlock's clack: a latch let go, then its catch. */
     unlock() {

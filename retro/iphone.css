@@ -1133,6 +1133,7 @@
 .ip-screen .cl-btns { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 16px; }
 .ip-screen .cl-btns button { flex: 1; height: 50px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9px; cursor: pointer; color: #fff; font: bold 22px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); }
 .ip-screen .cl-btns i { display: block; flex: none; }
+.ip-screen .cl-end, .ip-screen .cl-green, .ip-screen .cl-dark { border-width: 1.5px; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 0 0 .75px rgba(0,0,0,.45), 0 1.5px 0 rgba(255,255,255,.12); }
 .ip-screen .cl-btns button:active { filter: brightness(.82); }
 .ip-screen .cl-btns .half { font-size: 18px; }
 .ip-screen .cl-end { border: 1px solid #4a0808; background: linear-gradient(180deg, #f28a7e 0, #e2574a 48%, #cc1f12 50%, #d93a2c 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 1px 0 rgba(255,255,255,.12); }
@@ -1188,3 +1189,67 @@
 .ip-screen .gm-cell i.hot { background: linear-gradient(180deg, #fff3a8, #ffb300 50%, #e87a00 51%, #ffa000); }
 .ip-screen .gm-pct { position: absolute; left: 0; right: 0; top: 250px; text-align: center; font: 200 64px/1 'Helvetica Neue', Helvetica, Arial, sans-serif; pointer-events: none; }
 .ip-screen .gm .bb-msg { z-index: 3; }
+
+/* Arrows anywhere on the phone: plain shapes, with the toolbar's shadow. */
+.ip-screen .arw { display: block; margin: auto; filter: drop-shadow(0 -.5px 0 rgba(0,0,0,.4)); }
+.ip-screen .tbar button { display: grid; place-items: center; }
+.ip-screen .sp-nav button, .ip-screen .cal-mh button, .ip-screen .cal-dh button { display: grid; place-items: center; }
+/* What closes is the app: nothing is painted in the band under the status bar. */
+.ip-screen .ip-app { background-clip: content-box; }
+/* Volume overlay. */
+.ip-screen .ip-hud { position: absolute; left: 50%; top: 50%; width: 156px; height: 156px; margin: -78px; z-index: 77; border-radius: 16px; background: rgba(0,0,0,.72); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font: bold 15px Helvetica, Arial, sans-serif; pointer-events: none; }
+.ip-screen .ip-hud[hidden] { display: none; }
+.ip-screen .ip-hud span { display: flex; gap: 2px; }
+.ip-screen .ip-hud i { width: 5.500px; height: 7px; background: rgba(255,255,255,.22); }
+.ip-screen .ip-hud i.on { background: #fff; }
+.ip-screen .row.bright input { flex: 1; min-width: 0; accent-color: #4f86e0; touch-action: pan-x; }
+.ip.is-photo .ip-vol { display: block; background: none; width: 26px; left: -12px; height: 42px; border-radius: 0; }
+.ip.is-photo .ip-vol.up { top: 172px; }
+.ip.is-photo .ip-vol.dn { top: 216px; }
+
+/* Settings › Wallpaper. */
+.ip-screen .pg.wall-pg { background: #000; }
+.ip-screen .wall-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 5px; }
+.ip-screen .wall-grid button { position: relative; border: 0; padding: 0; background: none; aspect-ratio: 2 / 3; cursor: pointer; overflow: hidden; }
+.ip-screen .wall-grid img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ip-screen .wall-grid button.on { outline: 2px solid #5a97ec; outline-offset: -2px; }
+.ip-screen .wall-set { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; z-index: 9; background: #000; animation: ip-in-r .22s ease-out both; }
+.ip-screen .wall-set .pv { position: absolute; inset: 0; background: center / cover no-repeat; }
+.ip-screen .wall-set .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; display: flex; gap: 12px; align-items: center; padding: 0 14px; background: linear-gradient(180deg, rgba(110,110,110,.55) 0%, rgba(70,70,70,.58) 49.500%, rgba(18,18,18,.72) 50%, rgba(0,0,0,.8) 100%); }
+.ip-screen .wall-set button { flex: 1; height: 44px; border-radius: 8px; border: 1.500px solid #000; color: #fff; font: bold 16px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); background: linear-gradient(180deg, #6a6a6a 0, #3a3a3a 48%, #171717 50%, #262626 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); cursor: pointer; }
+
+/* Now Playing, to the first iPod software. */
+.ip-screen .np2 .np-top { position: absolute; left: 0; right: 0; top: 0; height: 44px; z-index: 3; background: linear-gradient(180deg, #8a97ae 0%, #66748f 49%, #515f7c 51%, #5a6885 100%); border-bottom: 1px solid #2f3a4f; box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
+.ip-screen .np2 .np-ti { color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.45); }
+.ip-screen .np2 .np-ti b { font-size: 12.500px; }
+.ip-screen .np2 .np-ti span { color: #e2e7f0; font-size: 11.500px; }
+.ip-screen .np2 .np-back, .ip-screen .np2 .np-list { width: 38px; height: 30px; border-radius: 7px; border: 1px solid #3a465e; background: linear-gradient(180deg, #a7b2c6 0%, #7f8da8 49%, #65748f 51%, #7a89a5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.45); }
+.ip-screen .np2 .np-back::after { left: 10px; top: 8px; width: 18px; height: 13px; border: 0; transform: none; background: #fff; clip-path: polygon(0 50%, 42% 0, 42% 28%, 100% 28%, 100% 72%, 42% 72%, 42% 100%); }
+.ip-screen .np2 .np-list::after { left: 10px; top: 8px; width: 17px; height: 2.500px; box-shadow: 0 5px 0 #fff, 0 10px 0 #fff; }
+.ip-screen .np2 .np-art { top: 44px; height: 316px; background: #b9cbe4; }
+.ip-screen .np2 .np-words { inset: 74px 0 0; }
+.ip-screen .np-over { position: absolute; left: 0; right: 0; top: 44px; height: 74px; z-index: 2; color: #fff; background: rgba(82,97,138,.74); text-shadow: 0 -1px 0 rgba(0,0,0,.35); }
+.ip-screen .np-cnt { padding-top: 5px; text-align: center; font: bold 10.500px/13px Helvetica, Arial, sans-serif; }
+.ip-screen .np2 .np-scrub { position: static; height: 22px; padding: 0 10px; background: none; font: bold 11px Helvetica, Arial, sans-serif; touch-action: none; cursor: pointer; }
+.ip-screen .np2 .np-track { height: 7px; background: rgba(255,255,255,.55); box-shadow: inset 0 1px 1px rgba(0,0,0,.3); padding: 8px 0; background-clip: content-box; box-sizing: content-box; }
+.ip-screen .np2 .np-track i { top: 8px; bottom: 8px; background: linear-gradient(180deg, #fff, #cfd8e8); }
+.ip-screen .np2 .np-track b { width: 14px; height: 14px; margin: -7px 0 0 -7px; background: radial-gradient(circle at 50% 30%, #fff, #c8d0dc); }
+.ip-screen .np-mode { display: flex; justify-content: space-between; padding: 2px 10px; }
+.ip-screen .np-mode button { border: 0; background: none; width: 26px; height: 18px; padding: 0; color: #e8edf5; cursor: pointer; }
+.ip-screen .np-mode button.on { color: #7fc4ff; }
+.ip-screen .np-mode svg { display: block; width: 100%; height: 100%; }
+.ip-screen .np2 .np-ctl { top: 360px; bottom: auto; height: 52px; z-index: 2; border-top: 1px solid rgba(255,255,255,.3); justify-content: space-around; background: linear-gradient(180deg, rgba(92,104,125,.96) 0%, rgba(66,78,98,.96) 49%, rgba(48,58,76,.97) 51%, rgba(52,62,80,.97) 100%); }
+.ip-screen .np2 .np-ctl button { color: #eef1f6; width: 80px; height: 50px; }
+.ip-screen .np2 .np-ctl svg { width: 34px; height: 24px; filter: drop-shadow(0 -1px 0 rgba(0,0,0,.45)); }
+.ip-screen .np-vol { position: absolute; left: 0; right: 0; top: 412px; bottom: 0; z-index: 2; display: flex; align-items: center; padding: 0 28px; background: linear-gradient(180deg, #171a22, #0a0c11); touch-action: none; cursor: pointer; }
+.ip-screen .np-vt { position: relative; flex: 1; height: 8px; border-radius: 4px; background: linear-gradient(180deg, #d8dbe0, #fff); box-shadow: inset 0 1px 2px rgba(0,0,0,.45); }
+.ip-screen .np-vt i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: linear-gradient(180deg, #4d97dc, #8cc8f4); box-shadow: inset 0 1px 2px rgba(0,0,0,.35); }
+.ip-screen .np-vt b { position: absolute; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: radial-gradient(circle at 50% 30%, #fff, #d4d8de 70%, #aeb3bb); box-shadow: 0 1px 3px rgba(0,0,0,.7); }
+
+/* Beer. */
+.ip-screen .br-app { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; overflow: hidden; touch-action: none; background: #121214; }
+.ip-screen .br-app canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ip-screen .br-app .bb-msg { z-index: 3; cursor: pointer; }
+
+/* Playlists and video rows start at the screen's edge: their pictures keep their whole width. */
+.ip-screen .pl li.yt-row img { margin-left: 0; }
