@@ -38,6 +38,7 @@ window.TERM = (function () {
     if (done) { done(); return pump(); }
     const p = promptEl();
     out.insertBefore(line(it[0], it[1]), p);
+    while (out.children.length > 400) out.firstElementChild.remove();   // a long session keeps its latest screens
     scrollDown();
     if (delay && !document.documentElement.classList.contains('reduced')) setTimeout(pump, delay);
     else pump();
@@ -379,10 +380,9 @@ window.TERM = (function () {
     sudo: () => { window.EGGS.find('sudo'); return print(['guest is not in the sudoers file.', '']); },
     hire: () => {
       window.EGGS.find('hire');
-      return print(['CONTACT DETAILS:', '[\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588] 100%', `  ${link('mailto:' + P.email + '?subject=' + encodeURIComponent("Let's talk"), '[ SEND IT ]')}`, '']);
+      return print([`  ${link('mailto:' + P.email + '?subject=' + encodeURIComponent("Let's talk"), '[ SEND IT ]')}`, '']);
     },
     xyzzy: () => { window.EGGS.find('xyzzy'); return print(['Nothing happens.', '']); },
-    plugh: () => print(['A hollow voice says "Fool."', '']),
     color: (a) => {
       const order = ['green', 'amber', 'white', 'blue'];
       const now = root.dataset.ph || 'green';

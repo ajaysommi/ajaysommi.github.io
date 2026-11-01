@@ -350,7 +350,7 @@
         <p class="pk-foot">Click one to start it up · or use ← → and Return</p>
       </div><a class="pk-home" href="index.html">‹ Standard site</a>`;
     const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
-    tick(); setInterval(tick, 15000);
+    tick(); setInterval(() => { if (!pick.hidden) tick(); }, 15000);
     const disks = [...pick.querySelectorAll('.pk-d')];
     const N = OPTS.length;
     const mark = () => disks.forEach((d, i) => { d.classList.toggle('is-sel', i === sel); d.setAttribute('aria-selected', i === sel); });
@@ -595,6 +595,17 @@
       const visRight = (innerWidth - ox) / k, visBottom = (innerHeight - oy) / k;
       // The plug's tail, which is where the wire starts.
       const REST = { x: Math.max(1340, visRight - 56), y: Math.max(560, Math.min(860, visBottom - 300)) };
+      /* The window changing size moves the wire's far end and where it rests. */
+      const refit = () => {
+        if (!el.isConnected) { removeEventListener('resize', refit); return; }
+        const m = place(photo), right = (innerWidth - m.ox) / m.k, bottom = (innerHeight - m.oy) / m.k;
+        REST.x = Math.max(1340, right - 56); REST.y = Math.max(560, Math.min(860, bottom - 300));
+        TUCK.y = Math.min(930, bottom - 220);
+        END.x = right + 90; END.y = bottom + 90;
+        el.style.transform = dev.style.transform;
+        if (!netOn && !tucking) { Object.assign(P0, REST); seg = span(REST) * 1.12; }
+      };
+      addEventListener('resize', refit);
       // Low on the back of the machine, out of sight.
       const TUCK = { x: 1200, y: Math.min(930, visBottom - 220) };
       const END = { x: visRight + 90, y: visBottom + 90 };
@@ -602,7 +613,7 @@
       el.className = 'bz-cable' + (netOn ? ' is-on is-behind' : '');
       el.style.transform = dev.style.transform;
       el.innerHTML = `<svg width="${photo.w}" height="${photo.h}" aria-hidden="true"><defs><linearGradient id="rjB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4aa2f4"/><stop offset=".55" stop-color="#1a6fdc"/><stop offset="1" stop-color="#0f55b4"/></linearGradient><linearGradient id="rjC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".5" stop-color="#dfe8ee" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity=".7"/></linearGradient><linearGradient id="rjG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f6df8a"/><stop offset="1" stop-color="#b98a2a"/></linearGradient></defs>`
-        + `<path class="bz-wire w0" fill="none" stroke="#0d4c9c" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w1" fill="none" stroke="#1f78e4" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w2" fill="none" stroke="#8cc6ff" stroke-opacity=".75" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>${RJ45}</svg><span class="bz-hint" style="left:${Math.min(REST.x - 60, visRight - 150)}px;top:${REST.y - 120}px">Tap to plug in</span>`;
+        + `<path class="bz-wire" transform="translate(0 6)" fill="none" stroke="rgba(0,40,60,.14)" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w0" fill="none" stroke="#0d4c9c" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w1" fill="none" stroke="#1f78e4" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path class="bz-wire w2" fill="none" stroke="#8cc6ff" stroke-opacity=".75" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>${RJ45}</svg><span class="bz-hint" style="left:${Math.min(REST.x - 60, visRight - 150)}px;top:${REST.y - 120}px">Tap to plug in</span>`;
       // Under the machine's picture when behind it, so the shell really hides it.
       host.insertBefore(el, bezel);
       const plug = el.querySelector('.bz-plug'), wires = el.querySelectorAll('.bz-wire');
@@ -644,6 +655,7 @@
       };
       const loop = (now) => {
         if (!el.isConnected) return;
+        if (!host.getClientRects().length) { requestAnimationFrame(loop); return; }
         step(now);
         if (netOn && !tucking) { stillSince = stillSince || now; if (now - stillSince > 2500) return; }
         requestAnimationFrame(loop);
@@ -804,11 +816,13 @@
       if (cur !== i) return;
       sys.resize && sys.resize();
       sys.enter();
+      document.documentElement.classList.add('in-os');
     }
 
     /* Back to the eras: the machine shrinks into its drawing on the tile
        while the picker fades up around it. */
     async function pickerNow() {
+      document.documentElement.classList.remove('in-os');
       const prev = cur;
       cur = -1;
       const y = prev >= 0 ? ERAS[prev].year : null;
@@ -920,9 +934,9 @@
        of whatever is on screen: its top edge for the status bar, its
        bottom edge for the toolbar, so the room runs on under them. */
     const EDGE = {
-      pick: LIGHT ? ['#f4f2ed', '#e4e1da'] : ['#2a2a2c', '#121214'], nokia: ['#9aa8c6', '#74859e'], iphone: ['#515257', '#2e2f33'],
-      pocket: ['#dcd6e8', '#beb4d0'], 'pocket-sky': ['#d2e1f3', '#a8bfdc'], 'pocket-mint': ['#d3ece0', '#a5d2b7'],
-      'pocket-sand': ['#ece2cf', '#d0bf9f'], 'pocket-slate': ['#3e434d', '#202228']
+      pick: LIGHT ? ['#f4f2ed', '#e4e1da'] : ['#2a2a2c', '#121214'], nokia: ['#71819f', '#37465f'], iphone: ['#3a3b40', '#141518'],
+      pocket: ['#b5aac9', '#85789f'], 'pocket-sky': ['#a0b9d8', '#6f8db2'], 'pocket-mint': ['#9fcdb1', '#6ea384'],
+      'pocket-sand': ['#cdbd9d', '#a08d67'], 'pocket-slate': ['#262931', '#101115']
     };
     /* The rooms themselves run on under Safari's bars (see .phone-host);
        its status bar and the page behind take the matching colours. */
@@ -1123,7 +1137,9 @@
   let rz = 0;
   addEventListener('resize', () => {
     clearTimeout(rz);
-    rz = setTimeout(() => { if (matchMedia('(any-pointer: coarse)').matches || (window.visualViewport && visualViewport.scale !== 1)) return; if (root.dataset.forced !== '1' && want() !== MODE) location.reload(); }, 250);
+    rz = setTimeout(() => { /* A phone rotating or its keyboard opening is not a change of device; a
+       touch laptop's window being resized is. */
+    if (matchMedia('(pointer: coarse)').matches || (window.visualViewport && visualViewport.scale !== 1)) return; if (root.dataset.forced !== '1' && want() !== MODE) location.reload(); }, 250);
   });
 
   if (MODE === 'mobile') phones(); else desk();

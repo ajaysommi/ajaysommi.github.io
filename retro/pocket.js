@@ -104,7 +104,7 @@ window.POCKET = { start(room, exit) {
     clearTimeout(banT);
     banT = setTimeout(() => banner.classList.remove('is-on'), 2200);
   };
-  document.addEventListener('egg', () => say(`★ Egg found! ${window.EGGS.count()} of ${window.EGGS.total}`));
+  /* The shared toast already announces an egg; the screen needn't repeat it. */
 
   /* ------------------------------------------------------------- screens */
 
@@ -192,13 +192,12 @@ window.POCKET = { start(room, exit) {
       ]
     }),
     fortune: () => {
-      const F = [P.quote, 'It works on my machine. This is that machine.', 'Have you tried turning it off and on again?', 'The best error message is the one that never shows up.', 'A 2007 Civic and 200,000 miles: the fix is usually in a tutorial somewhere.'];
-      return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(F[Math.floor(Math.random() * F.length)])}”</p><div class="hint">MENU, then Fortune again for another</div>`);
+      return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(P.quote)}”</p>`);
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
     desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
     games: () => ({ type: 'menu', title: 'Games', items: [[li('Orbit'), () => open('orbit')], [li('How to play'), () => open('orbithelp')], [li('Best score', String(store.get('pod-orbit-hi', 0))), () => say(`Best: ${store.get('pod-orbit-hi', 0)}`)]] }),
-    orbithelp: () => textScreen('Orbit', '<h2>Orbit</h2><p>Turn the wheel to swing the paddle around the ring and keep the ball inside.</p><p>Every return speeds it up. Every five, the paddle gets shorter. At 15 a second ball joins in.</p><p>Press the centre to launch or pause. MENU quits.</p><div class="hint">three balls to lose · good luck</div>'),
+    orbithelp: () => textScreen('Orbit', '<h2>Orbit</h2><p>Turn the wheel to swing the paddle around the ring and keep the ball inside.</p><p>Every return speeds it up. Every five, the paddle gets shorter. At 15 a second ball joins in.</p><p>Press the centre to launch or pause. MENU quits.</p><div class="hint">three balls to lose</div>'),
     orbit: () => ({ type: 'game', title: 'Orbit' }),
     settings: () => ({
       type: 'menu', title: 'Settings',

@@ -41,7 +41,6 @@ window.FINDER = (function () {
     notepad: { name: 'Note Pad', icon: 'note', kind: 'desk accessory', keys: 'notes write' },
     scrapbook: { name: 'Scrapbook', icon: 'photo', kind: 'desk accessory', keys: 'photos pictures gallery' },
     oldsite: { name: 'Portfolio (2025)', icon: 'folder', kind: 'folder' },
-    bugs: { name: 'bugs.txt', icon: 'doc', kind: 'document' },
     jquery: { name: 'jquery.min.js', icon: 'doc', kind: 'document' },
     dontopen: { name: 'Don’t Open Me', icon: 'app', kind: 'application' }
   };
@@ -207,9 +206,9 @@ window.FINDER = (function () {
 
   /* ------------------------------------------------------------- renderers */
 
-  const folderGrid = (ids) => (body) => {
+  const folderGrid = (ids, isTrash) => (body) => {
     const g = h('div', 'fd-grid');
-    ids.forEach((id) => g.appendChild(iconEl(id)));
+    ids.filter((id) => isTrash || !thrown.includes(id)).forEach((id) => g.appendChild(iconEl(id)));
     body.appendChild(g);
   };
 
@@ -337,7 +336,7 @@ window.FINDER = (function () {
     }),
     trash: () => {
       window.EGGS.find('trash');
-      return { title: 'Trash', w: 440, h: 240, info: `<span>${3 + thrown.length} items</span><span></span>`, render: folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown]) };
+      return { title: 'Trash', w: 440, h: 240, info: `<span>${3 + thrown.length} items</span><span></span>`, render: folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown], true) };
     },
     oldsite: () => ({
       action: async () => {
@@ -345,7 +344,6 @@ window.FINDER = (function () {
         if (r === 'Open') window.open('index.html', '_blank', 'noopener');
       }
     }),
-    bugs: () => ({ title: 'bugs.txt', w: 360, h: 200, render: (b) => { b.innerHTML = '<div class="doc"><p>Known bugs: none listed.</p></div>'; } }),
     jquery: () => ({ title: 'jquery.min.js', w: 380, h: 210, render: (b) => { b.innerHTML = '<div class="doc"><p>A script from the old site.</p></div>'; } }),
     dontopen: () => ({
       action: async () => {
@@ -496,7 +494,7 @@ window.FINDER = (function () {
     const close = () => { scrim.remove(); d.remove(); };
     const search = () => {
       const q = inp.value.trim().toLowerCase();
-      const all = Object.keys(SPECS).filter((id) => ITEMS[id] && !['oldsite', 'bugs', 'jquery', 'dontopen', 'trash', 'system', 'hd'].includes(id));
+      const all = Object.keys(SPECS).filter((id) => ITEMS[id] && !['oldsite', 'jquery', 'dontopen', 'trash', 'system', 'hd'].includes(id));
       hits = q ? all.filter((id) => (ITEMS[id].name + ' ' + (ITEMS[id].keys || '')).toLowerCase().includes(q)) : [];
       if (q && !hits.length) {
         const sk = P.skills.flatMap((s) => s[1]).find((s) => s.toLowerCase().includes(q));
@@ -600,7 +598,7 @@ window.FINDER = (function () {
         el.remove();
         trash.innerHTML = iconEl('trash').innerHTML;
         const tw = wins.get('trash');
-        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown])(tw.body); }
+        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown], true)(tw.body); }
         window.SFX.click();
         return;
       }
@@ -660,7 +658,7 @@ window.FINDER = (function () {
     ['view', 'View', PATTERNS.map(([k, n]) => [`Pattern: ${n}`, () => setPattern(k), '', root.dataset.pat === k])],
     ['special', 'Special', [
       ['Clean Up Desktop', () => { store.set('icons', {}); layoutIcons(); }],
-      ['Empty Trash…', () => { thrown = []; store.set('icons', positions()); layoutIcons(); const tw = wins.get('trash'); if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen'])(tw.body); } }],
+      ['Empty Trash…', () => { thrown = []; store.set('icons', positions()); layoutIcons(); const tw = wins.get('trash'); if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen'], true)(tw.body); } }],
       '-',
       ['Restart', restart],
       ['Restart in Another Era\u2026', () => api.picker()],
@@ -813,12 +811,27 @@ window.FINDER = (function () {
       if (e.target.closest('.win')) return null;
       return [['Clean Up Desktop', () => { store.set('icons', {}); layoutIcons(); }], ['About This Computer…', () => openWin('computer')], '-', ['Restart in Another Era\u2026', () => api.picker()]];
     });
+    /* A folder window's icons go to the Trash the way the desktop's do. */
+    window.RETRO.dragIcons(root, {
+      sel: '.fd-grid .fd-icon',
+      trash: () => deskEl.querySelector('[data-id="trash"]'),
+      onTrash: (el) => {
+        const id = el.dataset.id, tw = wins.get('trash');
+        if (id === 'trash' || id === 'hd' || thrown.includes(id) || (tw && tw.body && tw.body.contains(el))) return;
+        if (id === 'resume') window.EGGS.find('keepresume');
+        thrown.push(id);
+        el.remove();
+        layoutIcons();
+        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown], true)(tw.body); }
+        window.SFX.click();
+      }
+    });
     window.RETRO.marquee(deskEl, { isBg: (t) => t === deskEl, items: () => [...deskEl.querySelectorAll('.fd-icon')], sel: 'is-sel', cls: 'sel-91' });
     scr.appendChild(root);
 
     const clock = menubar.querySelector('.clock');
     const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
-    tick(); setInterval(tick, 15000);
+    tick(); setInterval(() => { if (root.getClientRects().length) tick(); }, 15000);
     document.addEventListener('sfx-mute', (e) => { menubar.querySelector('[data-spk]').textContent = e.detail ? '🔇' : '🔈'; });
 
     menubar.addEventListener('pointerdown', (e) => {

@@ -25,7 +25,7 @@ window.WEB = (function () {
   };
 
   const footer = () => `<hr/><div class="center small">
-      <p>Best viewed with SurfBoard 3.0 at 800&times;600 &middot; Made with Notepad</p>
+      <p>Best viewed with SurfBoard 3.0 at 800&times;600</p>
       <p>You are visitor number <span class="counter" data-counter title="It counts.">${visits().split('').map((d) => `<span>${d}</span>`).join('')}</span></p>
       <p>Last updated: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
     </div>
@@ -275,7 +275,7 @@ window.WEB = (function () {
   let zoomT = 1;
   const MENUS = [
     ['mark', I.pxmark(16), [['About This Computer', () => APPS98.about()], ['About SurfBoard', () => load('about:')], '-', ['Calculator', () => APPS98.calc()], ['Note Pad', () => APPS98.note()], ['SommiSweeper', () => APPS98.mines()], ['Appearance', () => APPS98.appear()], '-', ['Restart in Another Era\u2026', () => api.picker()]]],
-    ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Close Window', () => { const w = root.querySelector('.p8:not(.is-back), .br:not(.is-back)'); if (w) { const x = w.querySelector('[data-x], [data-win="close"]'); x && x.click(); } }, '⌘W'], ['Print…', () => { window.print(); }, '⌘P'], '-', ['Shut Down', () => api.picker()]]],
+    ['file', 'File', [['Open Location…', () => { loc.focus(); loc.select(); }, '⌘L'], ['Close Window', () => { const w = root.querySelector('.p8:not(.is-back), .br:not(.is-back)'); if (w) { const x = w.querySelector('[data-x], [data-win="close"]'); x && x.click(); } }, '⌘W'], ['Print Resume…', () => window.open(P.resume, '_blank', 'noopener')], '-', ['Shut Down', () => api.picker()]]],
     ['edit', 'Edit', [['Cut', () => document.execCommand('cut'), '⌘X'], ['Copy', () => document.execCommand('copy'), '⌘C'], ['Paste', async () => { try { document.execCommand('insertText', false, await navigator.clipboard.readText()); } catch (e) {} }, '⌘V'], ['Select All', () => document.execCommand('selectAll'), '⌘A'], '-', ['Copy Email Address', async () => { try { await navigator.clipboard.writeText(P.email); setStatus('Copied ' + P.email); } catch (e) {} }]]],
     ['view', 'View', [['Reload', () => load(hist[hpos] || 'index', false), '⌘R'], ['Page Source', () => load('view-source:' + (hist[hpos] || 'index')), '⌘U'], '-', ['Larger Text', () => { zoomT = Math.min(1.5, zoomT + .1); page.style.zoom = zoomT; }], ['Smaller Text', () => { zoomT = Math.max(.8, zoomT - .1); page.style.zoom = zoomT; }]]],
     ['go', 'Go', [['Back', () => goBack(), '⌘['], ['Forward', () => goFwd(), '⌘]'], '-', ['Home', () => load('index')], ['Work', () => load('work')], ['Projects', () => load('projects')], ['Guestbook', () => load('guestbook')]]],
@@ -472,7 +472,7 @@ window.WEB = (function () {
         if (!over && won()) { over = true; clearInterval(timer); face.textContent = '☻'; const best = store.get('ms98', 0); if (!best || secs < best) store.set('ms98', secs); note('SommiSweeper', `Cleared in ${secs} seconds.${best && secs >= best ? ` Best: ${best}.` : ' A new best time!'}`, 'egg'); }
       });
       const flag = (i) => { const c = cells[i]; if (c.open || over) return; c.flag = !c.flag; flags += c.flag ? 1 : -1; nEl.textContent = pad3(M - flags); paint(i); window.SFX.key(); };
-      grid.addEventListener('contextmenu', (e) => { const b = e.target.closest('[data-i]'); if (!b) return; e.preventDefault(); flag(+b.dataset.i); });
+      grid.addEventListener('contextmenu', (e) => { const b = e.target.closest('[data-i]'); if (!b) return; e.preventDefault(); e.stopPropagation(); flag(+b.dataset.i); });
       face.addEventListener('click', () => { window.SFX.click(); fresh(); });
       el.querySelector('[data-x]').addEventListener('click', () => clearInterval(timer));
       fresh();
@@ -526,7 +526,7 @@ window.WEB = (function () {
 
     const clock = root.querySelector('.clock');
     const tick = () => { clock.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
-    tick(); setInterval(tick, 15000);
+    tick(); setInterval(() => { if (root.getClientRects().length) tick(); }, 15000);
     document.addEventListener('sfx-mute', (e) => { root.querySelector('[data-spk]').innerHTML = window.ICONS.spk(e.detail); });
 
     root.querySelector('.br-loc').addEventListener('submit', (e) => { e.preventDefault(); load(loc.value); page.focus({ preventScroll: true }); });

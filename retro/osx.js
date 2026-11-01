@@ -304,22 +304,44 @@ window.OSX = (function () {
   const SPECS = {
     finder: (view) => ({
       title: 'Sommi HD', w: 720, h: 440,
-      toolbar: `<div class="ox-seg"><button type="button" disabled>◀</button><button type="button" disabled>▶</button></div><div class="ox-search"><input type="search" placeholder="${t('Search')}" aria-label="Search" data-spot /></div>`,
+      toolbar: `<div class="ox-seg"><button type="button" data-fb aria-label="Back" disabled>◀</button><button type="button" data-ff aria-label="Forward" disabled>▶</button></div><div class="ox-search"><input type="search" placeholder="${t('Search')}" aria-label="Search" data-spot /></div>`,
       view,
-      status: `${DOCK.filter((a) => !['|', 'trash', 'docs', 'downloads'].includes(a)).length} ${t('items')}, 112 GB ${t('available')}`,
+      status: ' ',
       render: (b, rec) => {
         b.classList.add('fx');
         b.innerHTML = `<div class="fx-side"><h6>${t('DEVICES')}</h6><button type="button" class="on" data-v="hd">${ICON.hd()}Sommi HD</button><h6>${t('PLACES')}</h6><button type="button" data-v="apps">${ICON.folder()}${t('Applications')}</button><button type="button" data-v="docs">${ICON.folder()}${t('Documents')}</button><button type="button" data-v="desk">${ICON.folder()}${t('Desktop')}</button></div><div class="fx-main"></div>`;
         const main = b.querySelector('.fx-main');
-        const show = (v) => {
-          const items = (v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', 'Education.rtf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc']] : v === 'desk' ? deskItems() : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon])).filter(([a, n]) => !gone.has(a + n));
-          main.innerHTML = items.map(([a, n, i]) => `<button type="button" class="fx-ico" data-open="${a}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
+        const backB = rec.el.querySelector('[data-fb]'), fwdB = rec.el.querySelector('[data-ff]');
+        /* Back and Forward walk the places visited in this window. Redrawing
+           the same place (something went to the Trash) adds nothing. */
+        const hist = [];
+        let pos = -1;
+        const draw = (v) => {
+          if (v === 'hd') {
+            const folders = [['apps', t('Applications')], ['docs', t('Documents')], ['desk', t('Desktop')]];
+            main.innerHTML = folders.map(([g, n]) => `<button type="button" class="fx-ico" data-go="${g}">${ICON.folder()}<span>${esc(n)}</span></button>`).join('');
+            setStatus(folders.length);
+          } else {
+            const items = (v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', t('Education.rtf'), 'doc'], ['welcome', t('Welcome.rtf'), 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc']] : v === 'desk' ? deskItems() : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon])).filter(([a, n]) => !gone.has(a + n));
+            main.innerHTML = items.map(([a, n, i]) => `<button type="button" class="fx-ico" data-open="${a}"${a === 'finder' ? ' data-disk="1"' : ''}>${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
+            setStatus(items.length);
+          }
           b.querySelectorAll('.fx-side button').forEach((x) => x.classList.toggle('on', x.dataset.v === v));
           rec.view = v;
+          backB.disabled = pos <= 0;
+          fwdB.disabled = pos >= hist.length - 1;
         };
+        const setStatus = (n) => { rec.el.querySelector('.ox-status').textContent = `${n} ${t('items')}, 112 GB ${t('available')}`; };
+        const show = (v, again) => {
+          if (!again && hist[pos] !== v) { hist.length = pos + 1; hist.push(v); pos = hist.length - 1; }
+          draw(v);
+        };
+        backB.addEventListener('click', () => { if (pos > 0) draw(hist[--pos]); });
+        fwdB.addEventListener('click', () => { if (pos < hist.length - 1) draw(hist[++pos]); });
         b.querySelector('.fx-side').addEventListener('click', (e) => { const x = e.target.closest('[data-v]'); if (x) show(x.dataset.v); });
-        main.addEventListener('dblclick', (e) => { const x = e.target.closest('[data-open]'); if (x) open(x.dataset.open); });
-        main.addEventListener('click', (e) => { const x = e.target.closest('[data-open]'); main.querySelectorAll('.fx-ico').forEach((i) => i.classList.toggle('is-sel', i === x)); if (x && e.detail === 0) open(x.dataset.open); });
+        const act = (x) => { if (x.dataset.go) show(x.dataset.go); else open(x.dataset.open); };
+        main.addEventListener('dblclick', (e) => { const x = e.target.closest('[data-open], [data-go]'); if (x) act(x); });
+        main.addEventListener('click', (e) => { const x = e.target.closest('[data-open], [data-go]'); main.querySelectorAll('.fx-ico').forEach((i) => i.classList.toggle('is-sel', i === x)); if (x && e.detail === 0) act(x); });
         show(rec.spec.view || 'hd');
         rec.show = show;
       }
@@ -438,7 +460,7 @@ window.OSX = (function () {
            bubbles come in, blue ones go out; the box at the bottom sends. */
         const read = new Set(store.get('ox-chat-read', []));
         const sent = store.get('ox-chat-sent', {});
-        const WHEN = ['9:41 AM', '9:12 AM', '8:05 AM', 'Yesterday', 'Yesterday', 'Thursday', 'Wednesday', 'Monday', 'Sunday', 'Sunday'];
+        const WHEN = ['9:41 AM', '9:12 AM', '8:05 AM', t('Yesterday'), t('Yesterday'), t('Thursday'), t('Wednesday'), t('Monday'), t('Sunday'), t('Sunday')];
         const av = (n) => `<span class="ch-av ini">${esc(n.split(' ').map((w) => w[0]).join(''))}</span>`;
         b.innerHTML = `<div class="ch-list"><div class="ch-find"><input type="search" placeholder="${t('Search')}" aria-label="Search" /></div><div class="ch-people">${P.recs.map(([n, c, q], i) => `<button type="button" data-i="${i}" class="${read.has(i) ? '' : 'new'}">${av(n)}<span class="ch-tx"><b>${esc(n)}</b><em>${esc(q)}</em></span><time>${WHEN[i % WHEN.length]}</time></button>`).join('')}</div></div><div class="ch-main"></div>`;
         const main = b.querySelector('.ch-main');
@@ -468,8 +490,8 @@ window.OSX = (function () {
         show(cur);
       }
     }),
-    education: () => doc('Education.rtf', () => { const e = P.education; return `<h1>${esc(e.school)}</h1><p><b>${esc(e.degree)}</b><br/>${esc(e.college)}<br/>${t('Graduating')} ${esc(e.when)}</p><p>${esc(e.text)}</p><p>${e.tags.map(esc).join(' · ')}</p>`; }),
-    welcome: () => doc('Welcome.rtf', () => { const w = t('welcome'); return w !== 'welcome' ? w : `<h1>Welcome to SommiOS X.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Ajay</p>`; }),
+    education: () => doc(t('Education.rtf'), () => { const e = P.education; return `<h1>${esc(e.school)}</h1><p><b>${esc(e.degree)}</b><br/>${esc(e.college)}<br/>${t('Graduating')} ${esc(e.when)}</p><p>${esc(e.text)}</p><p>${e.tags.map(esc).join(' · ')}</p>`; }),
+    welcome: () => doc(t('Welcome.rtf'), () => { const w = t('welcome'); return w !== 'welcome' ? w : `<h1>Welcome to SommiOS X.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Ajay</p>`; }),
     /* The papers of 2007: the year's headlines. */
     news07: () => { const d = window.I18N.news(); return doc(d.file, () => `<h1>${esc(d.title)}</h1><p><i>${esc(d.sub)}</i></p>${d.items.map(([h, t]) => `<p><b>${esc(h)}.</b> ${esc(t)}</p>`).join('')}<p style="color:#888">${esc(d.foot)}</p>`); },
     /* Concentration: sixteen cards face down, eight pairs of this computer's
@@ -498,7 +520,7 @@ window.OSX = (function () {
           const [a, z] = up;
           if (deck[a.dataset.i] === deck[z.dataset.i]) {
             setTimeout(() => { a.classList.add('is-done'); z.classList.add('is-done'); up = []; done++;
-              if (done === faces.length) { clearInterval(tick); time(); const best = store.get('mm07', 0); if (!best || moves < best) store.set('mm07', moves); b.querySelector('.mm-best').textContent = `All matched in ${moves} moves${!best || moves < best ? ': a new best!' : `. Best: ${best}.`}`; }
+              if (done === faces.length) { clearInterval(tick); time(); const best = store.get('mm07', 0); if (!best || moves < best) store.set('mm07', moves); b.querySelector('.mm-best').textContent = `${t('Moves')}: ${moves}${!best || moves < best ? ` · ${t('A new best!')}` : ` · ${t('Best')}: ${best}`}`; }
             }, 380);
           } else setTimeout(() => { a.classList.remove('is-up'); z.classList.remove('is-up'); up = []; }, 850);
         });
@@ -541,50 +563,95 @@ window.OSX = (function () {
       title: 'Mail', w: 820, h: 560, cls: 'is-mailbox',
       toolbar: `<div class="ml-caps">${[['del', 'Delete', '<path d="M4 4l10 10M14 4 4 14" stroke="#c0392b" stroke-width="2.600" stroke-linecap="round"/>'], ['junk', 'Junk', '<path d="M3 9h12l-1.500 6h-9zM6 9V5h6v4" fill="#b98a3e" stroke="#7d5a1d"/>'], ['|'], ['reply', 'Reply', '<path d="M8 3 2 8l6 5v-3c4 0 6 1 7 4 0-5-2-8-7-8z" fill="#fff" stroke="#5d7396"/>'], ['fwd', 'Forward', '<path d="M10 3l6 5-6 5v-3c-4 0-6 1-7 4 0-5 2-8 7-8z" fill="#fff" stroke="#5d7396"/>'], ['|'], ['new', 'New', '<path d="M3 15 4 11l8-8 3 3-8 8z" fill="#ffd34a" stroke="#946f12"/>'], ['get', 'Get Mail', '<path d="M3 5h12v9H3zM3 5l6 5 6-5" fill="#fff" stroke="#5d7396"/>']].map(([k, l, i]) => k === '|' ? '<i class="sp"></i>' : `<button type="button" data-a="${k}"><span><svg viewBox="0 0 18 18" width="18" height="18">${i}</svg></span><em>${t(l)}</em></button>`).join('')}</div><div class="ox-search"><input type="search" placeholder="${t('Search')}" aria-label="Search" data-mfind /></div>`,
       render: (b, rec) => {
-        const SEED = [['Ajay Sommi', 'Let’s talk', `Thanks for stopping by. I’m a software engineer graduating from UF in December 2026, and I’m looking for a team that cares about the people using what it builds.\n\nReply to this and it goes straight to me.\n\nAjay`, 'Today'], ...P.recs.map(([n, c, q], i) => [n, `Recommendation, ${c}`, q, ['Yesterday', 'Yesterday', 'Thursday', 'Wednesday', 'Monday', 'Sunday', 'Sunday', 'Oct 19', 'Oct 12'][i % 9]])];
-        const box = store.get('ox-mail', null) || { inbox: SEED.map((_, i) => i), trash: [], read: [] };
-        const BOXES = [['inbox', 'Inbox'], ['drafts', 'Drafts'], ['sent', 'Sent'], ['trash', 'Trash']];
+        const SEED = mailSeed();
+        let box = mailBox();
+        const BOXES = [['inbox', 'Inbox'], ['drafts', 'Drafts'], ['sent', 'Sent'], ['junk', 'Junk'], ['trash', 'Trash']];
         let cur = 'inbox', sel = -1, q = '';
-        const list = () => { const ids = cur === 'inbox' ? box.inbox : cur === 'trash' ? box.trash : []; return ids.filter((i) => SEED[i] && (SEED[i][0] + SEED[i][1]).toLowerCase().includes(q)); };
+        /* Seeded mail is a number into SEED, mail written here a string id
+           into box.own. */
+        const msg = (i) => typeof i === 'string' ? box.own[i] : SEED[i];
+        const list = () => (box[cur] || []).filter((i) => msg(i) && (msg(i)[0] + msg(i)[1]).toLowerCase().includes(q));
         const save = () => store.set('ox-mail', box);
+        rec.reload = () => { box = mailBox(); draw(); };
         b.innerHTML = `<div class="mb-side"></div><div class="mb-main"><div class="mb-tablehead"><span class="d"></span><span class="f">${t('From')}</span><span class="s">${t('Subject')}</span><span class="w">${t('Date Received')}</span></div><div class="mb-rows"></div><div class="mb-read"></div></div>`;
         const side = b.querySelector('.mb-side'), rows = b.querySelector('.mb-rows'), read = b.querySelector('.mb-read');
         const draw = () => {
           side.innerHTML = `<h6>${t('MAILBOXES')}</h6>` + BOXES.map(([k, l]) => { const n = k === 'inbox' ? box.inbox.filter((i) => !box.read.includes(i)).length : 0; return `<button type="button" data-b="${k}" class="${k === cur ? 'on' : ''}"><i class="mi-${k}"></i>${t(l)}${n ? `<em>${n}</em>` : ''}</button>`; }).join('');
           const ids = list();
-          rows.innerHTML = ids.length ? ids.map((i) => `<button type="button" data-m="${i}" class="${i === sel ? 'on' : ''}"><span class="d">${box.read.includes(i) ? '' : '<i></i>'}</span><span class="f">${esc(SEED[i][0])}</span><span class="s">${esc(SEED[i][1])}</span><span class="w">${esc(SEED[i][3])}</span></button>`).join('') : `<p class="mb-none">${t('No Messages')}</p>`;
-          const m = SEED[sel];
-          read.innerHTML = m && ids.includes(sel) ? `<div class="mb-h"><b>${esc(m[1])}</b><span>${t('From')}: ${esc(m[0])}</span></div><div class="mb-b">${esc(m[2]).replace(/\n/g, '<br/>')}</div>` : '';
+          rows.innerHTML = ids.length ? ids.map((i) => `<button type="button" data-m="${i}" class="${i === sel ? 'on' : ''}"><span class="d">${typeof i === 'string' || box.read.includes(i) ? '' : '<i></i>'}</span><span class="f">${esc(msg(i)[0])}</span><span class="s">${esc(msg(i)[1])}</span><span class="w">${esc(msg(i)[3])}</span></button>`).join('') : `<p class="mb-none">${t('No Messages')}</p>`;
+          const m = msg(sel);
+          read.innerHTML = m && ids.includes(sel) ? `<div class="mb-h"><b>${esc(m[1])}</b><span>${t(cur === 'sent' || cur === 'drafts' ? 'To:' : 'From')}${cur === 'sent' || cur === 'drafts' ? '' : ':'} ${esc(cur === 'sent' || cur === 'drafts' ? 'Ajay Sommi' : m[0])}</span></div><div class="mb-b">${esc(m[2]).replace(/\n/g, '<br/>')}</div>` : '';
         };
-        const remove = () => { if (sel < 0) return; if (cur === 'inbox') { box.inbox = box.inbox.filter((i) => i !== sel); box.trash.unshift(sel); } else if (cur === 'trash') { box.trash = box.trash.filter((i) => i !== sel); } sel = -1; save(); draw(); };
+        /* Delete moves to the Trash and deletes for good from there; Junk moves
+           to Junk, and from Junk back to the Inbox. */
+        const moveTo = (to) => { if (!msg(sel)) return; box[cur] = box[cur].filter((i) => i !== sel); if (to) box[to].unshift(sel); else if (typeof sel === 'string') delete box.own[sel]; sel = -1; save(); draw(); };
         b.addEventListener('click', (e) => {
           const x = e.target.closest('[data-b]');
           if (x) { cur = x.dataset.b; sel = -1; SFX.click(); draw(); return; }
           const m = e.target.closest('[data-m]');
-          if (m) { sel = +m.dataset.m; if (!box.read.includes(sel)) { box.read.push(sel); save(); } draw(); }
+          if (m) {
+            sel = /^\d+$/.test(m.dataset.m) ? +m.dataset.m : m.dataset.m;
+            if (cur === 'drafts' && e.detail === 2) { open('compose', { draft: sel }); return; }
+            if (typeof sel === 'number' && !box.read.includes(sel)) { box.read.push(sel); save(); }
+            draw();
+          }
         });
         rec.el.querySelector('.ml-caps').addEventListener('click', async (e) => {
           const k = e.target.closest('[data-a]');
           if (!k) return;
           SFX.click();
           const a = k.dataset.a;
-          if (a === 'del' || a === 'junk') remove();
-          if (a === 'new' || a === 'reply' || a === 'fwd') open('compose');
+          if (a === 'del') moveTo(cur === 'trash' ? null : 'trash');
+          if (a === 'junk') { if (cur === 'junk') moveTo('inbox'); else if (cur === 'inbox') moveTo('junk'); }
+          if (a === 'new') open('compose');
+          if (a === 'reply' || a === 'fwd') {
+            const m = msg(sel);
+            if (m) open('compose', { subject: `${a === 'reply' ? 'Re' : 'Fwd'}: ${m[1]}`, body: `\n\n${m[0]}:\n${m[2].split('\n').map((l) => '> ' + l).join('\n')}` });
+            else open('compose');
+          }
           if (a === 'get') { rec.el.classList.add('is-getting'); await wait(1100); rec.el.classList.remove('is-getting'); alert({ title: 'No New Mail', text: 'Your Inbox is up to date.', icon: ICON.mail() }); }
         });
         rec.el.querySelector('[data-mfind]').addEventListener('input', (e) => { q = e.target.value.toLowerCase(); draw(); });
         draw();
       }
     }),
-    compose: () => ({
-      title: 'New Message', w: 600, h: 480, cls: 'is-mail',
+    compose: (arg) => ({
+      title: 'New Message', w: 600, h: 480, cls: 'is-mail', arg,
+      onClose: () => { const w = wins.get('compose'); if (w && w.keepDraft) w.keepDraft(); },
       toolbar: `<div class="ox-seg"><button type="button" data-send>✈︎ ${t('Send')}</button></div><div class="ox-seg"><button type="button" data-copy>${t('Copy Address')}</button></div>`,
       render: (b, rec) => {
-        b.innerHTML = `<div class="ml-f"><label>${t('To:')}</label><span class="ml-tok">Ajay Sommi &lt;${esc(P.email)}&gt;</span></div><div class="ml-f"><label for="mlS">${t('Subject:')}</label><input id="mlS" type="text" value="Hello" /></div><textarea aria-label="Message">Hi Ajay,\n\n</textarea>`;
-        const send = () => { const s = b.querySelector('#mlS').value, t = b.querySelector('textarea').value; location.href = `mailto:${P.email}?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(t)}`; };
+        const GREET = `${t('Hi Ajay,')}\n\n`, HELLO = t('Hello');
+        b.innerHTML = `<div class="ml-f"><label>${t('To:')}</label><span class="ml-tok">Ajay Sommi &lt;${esc(P.email)}&gt;</span></div><div class="ml-f"><label for="mlS">${t('Subject:')}</label><input id="mlS" type="text" /></div><textarea aria-label="Message"></textarea>`;
+        const subj = b.querySelector('#mlS'), text = b.querySelector('textarea');
+        let draftId = null, start = '';
+        /* Everything written here reaches Ajay, a reply to a recommendation
+           included: this is his computer, and his is the only address on it. */
+        const fill = (o) => {
+          const old = o && o.draft != null ? mailBox().own[o.draft] : null;
+          draftId = old ? o.draft : null;
+          subj.value = old ? old[1] : (o && o.subject) || HELLO;
+          text.value = old ? old[2] : GREET + ((o && o.body) || '');
+          start = subj.value + text.value;
+          const at = old || !(o && o.body) ? text.value.length : GREET.length - 1;
+          setTimeout(() => { text.focus(); text.setSelectionRange(at, at); text.scrollTop = 0; }, 60);
+        };
+        const file = (to) => {
+          const box = mailBox(), id = draftId || 'm' + Date.now();
+          box.drafts = box.drafts.filter((i) => i !== id);
+          box.own[id] = ['Ajay Sommi', subj.value || HELLO, text.value, t('Today')];
+          box[to].unshift(id);
+          store.set('ox-mail', box);
+          draftId = to === 'drafts' ? id : null;
+          start = subj.value + text.value;
+          const mw = wins.get('mail');
+          if (mw && mw.reload) mw.reload();
+        };
+        rec.keepDraft = () => { if (subj.value + text.value !== start) file('drafts'); };
+        rec.select = (o) => { rec.keepDraft(); fill(o); };
+        fill(rec.spec.arg);
+        const send = () => { location.href = `mailto:${P.email}?subject=${encodeURIComponent(subj.value)}&body=${encodeURIComponent(text.value)}`; file('sent'); close(rec); };
         rec.el.querySelector('[data-send]').addEventListener('click', send);
-        rec.el.querySelector('[data-copy]').addEventListener('click', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} alert({ title: t('Address copied'), text: `${esc(P.email)} is on the clipboard.`, icon: ICON.mail() }); });
-        setTimeout(() => { const t = b.querySelector('textarea'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); }, 60);
+        rec.el.querySelector('[data-copy]').addEventListener('click', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} alert({ title: t('Address copied'), text: esc(P.email), icon: ICON.mail() }); });
       }
     }),
     preview: () => ({
@@ -614,6 +681,11 @@ window.OSX = (function () {
   };
   SPECS.safari.multi = false;
 
+  /* The mailboxes, kept between visits. An older save has only the inbox,
+     Trash and read list; the rest start empty. */
+  const mailSeed = () => [['Ajay Sommi', t('Let’s talk'), t('mailHello'), t('Today')], ...P.recs.map(([n, c, q], i) => [n, `${t('Recommendation')}, ${c}`, q, [t('Yesterday'), t('Yesterday'), t('Thursday'), t('Wednesday'), t('Monday'), t('Sunday'), t('Sunday'), 'Oct 19', 'Oct 12'][i % 9]])];
+  const mailBox = () => ({ inbox: mailSeed().map((_, i) => i), trash: [], read: [], drafts: [], sent: [], junk: [], own: {}, ...store.get('ox-mail', null) });
+
   function doc(title, html) {
     return { title, w: 600, h: 480, cls: 'is-doc', render: (b) => { b.innerHTML = `<div class="te-ruler"></div><div class="te-page">${html()}</div>`; } };
   }
@@ -630,7 +702,7 @@ window.OSX = (function () {
     const out = b.querySelector('.tm-out'), inp = b.querySelector('input');
     const say = (t) => { const d = h('div', '', t); out.appendChild(d); b.scrollTop = b.scrollHeight; };
     say('Last login: ' + new Date().toString().slice(0, 24) + ' on ttys000');
-    say('Type <b>help</b> to see what this machine can do.');
+    say(t('Type <b>help</b> to see what this machine can do.'));
     const run = (raw) => {
       say(`ajay@sommi:~$ ${esc(raw)}`);
       const [c, ...a] = raw.trim().toLowerCase().split(/\s+/);
@@ -638,7 +710,7 @@ window.OSX = (function () {
       if (!c) return;
       if (c === 'help') say('open &lt;app&gt;  ls  whoami  about  resume  contact  era  clear  exit');
       else if (c === 'ls') say(DOCK.filter((x) => x !== '|').map((x) => APPS[x].name.replace(/ /g, '\\ ') + '.app').join('  '));
-      else if (c === 'open') { if (app) { open(app); say(`Opening ${APPS[app].name}…`); } else say(`open: no app called ${esc(a.join(' '))}. Try ls.`); }
+      else if (c === 'open') { if (app) { open(app); say(`${t('Opening')} ${APPS[app].name}…`); } else say(`open: ${t('no app called')} ${esc(a.join(' '))}. ${t('Try ls.')}`); }
       else if (c === 'whoami') say('ajay');
       else if (c === 'about' || c === 'cat') { say(esc(P.about[1])); }
       else if (c === 'resume') { open('preview'); }
@@ -650,7 +722,7 @@ window.OSX = (function () {
       else if (c === 'hire') { window.EGGS.find('hire'); say('<a href="mailto:' + P.email + '">' + P.email + '</a>'); }
       else if (c === 'clear') out.innerHTML = '';
       else if (c === 'exit') close(rec);
-      else say(`-bash: ${esc(c)}: command not found`);
+      else say(`-bash: ${esc(c)}: ${t('command not found')}`);
     };
     const hist = []; let hi = 0;
     inp.addEventListener('keydown', (e) => {
@@ -676,7 +748,7 @@ window.OSX = (function () {
     const n = DOCK.filter((a) => a !== '|').length;
     base = Math.max(12, Math.min(54, (SW() * .96) / (n * 1.075 + 2.5)));
     dockEl.parentElement.style.setProperty('--ds', base + 'px');
-    dockEl.querySelectorAll('.dk-i').forEach((d) => { d.style.width = base + 'px'; });
+    dockEl.querySelectorAll('.dk-i').forEach((d) => { d.style.width = base + 'px'; d.style.transform = ''; d.style.setProperty('--s', 1); });
     rest = null;
   };
   /* The dock swells under the pointer, falling off with distance. */
@@ -710,7 +782,15 @@ window.OSX = (function () {
     items.forEach((d, i) => {
       cur[i] += (goal[i] - cur[i]) * ease;
       if (Math.abs(goal[i] - cur[i]) < .08) cur[i] = goal[i]; else moving = true;
-      d.style.width = cur[i] + 'px';
+    });
+    /* Every button keeps its layout width; each is scaled and slid to where
+       the sizes so far put it, so no frame costs a layout. */
+    let sum = 0;
+    items.forEach((d, i) => {
+      const s = cur[i] / base, dx = sum + cur[i] / 2 - (i + .5) * base;
+      sum += cur[i];
+      d.style.transform = s === 1 && Math.abs(dx) < .01 ? '' : `translateX(${dx}px) scale(${s})`;
+      d.style.setProperty('--s', s);
     });
     last = moving ? now : 0;
     if (moving) raf = requestAnimationFrame(stepDock);
@@ -764,7 +844,7 @@ window.OSX = (function () {
         ['Shut Down…', shutdown]
       ],
       app: [[`${t('About')} ${appName}`, () => alert({ title: appName, text: t('Built by Ajay Sommi'), icon: f ? ICON[APPS[f.app].icon]() : ICON.finder() })], '-', [`${t('Hide')} ${appName}`, f ? () => minimize(f) : null], [`${t('Quit')} ${appName}`, f ? () => close(f) : null]],
-      file: [['New Message', () => open('compose')], ['New Files Window', () => open('finder')], ['Open Resume', () => open('preview')], '-', ['Close Window', f ? () => close(f) : null, '⌘W'], ['Print…', () => { window.print(); }, '⌘P']],
+      file: [['New Message', () => open('compose')], ['New Files Window', () => open('finder')], ['Open Resume', () => open('preview')], '-', ['Close Window', f ? () => close(f) : null, '⌘W'], ['Print Resume…', () => ext(P.resume)]],
       edit: [['Undo', trashed.length ? () => { const x = trashed[trashed.length - 1]; putBack(x[0], x[1]); } : null, '⌘Z'], '-', ['Cut', () => document.execCommand('cut'), '⌘X'], ['Copy', () => document.execCommand('copy'), '⌘C'], ['Paste', async () => { try { const v = await navigator.clipboard.readText(); document.execCommand('insertText', false, v); } catch (e) {} }, '⌘V'], ['Select All', () => document.execCommand('selectAll'), '⌘A'], '-', ['Copy Email Address', async () => { try { await navigator.clipboard.writeText(P.email); } catch (e) {} alert({ title: 'Address copied', text: esc(P.email), icon: ICON.mail() }); }]],
       view: [[filesAsList ? 'as Icons' : 'as List', () => { filesAsList = !filesAsList; root.classList.toggle('files-list', filesAsList); open('finder'); }], [dockHidden ? 'Show Dock' : 'Hide Dock', toggleDock], '-', ['Enter Full Screen', () => { const d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) d.requestFullscreen().catch(() => {}); }]],
       go: [['Applications', () => goTo('apps')], ['Documents', () => goTo('docs')], ['Desktop', () => goTo('desk')], ['Sommi HD', () => goTo('hd')], '-', ['Trash', () => open('trash')]],
@@ -772,11 +852,11 @@ window.OSX = (function () {
       help: [['Search Spotlight', () => toggleSpot(true)], ['Read Welcome.rtf', () => open('welcome')]],
       wifi: [[wifiOn ? 'Turn Wi-Fi Off' : 'Turn Wi-Fi On', () => { wifiOn = !wifiOn; menubar.querySelector('[data-m="wifi"]').classList.toggle('is-dim', !wifiOn); }], '-', [`${wifiOn ? '✓ ' : ''}SommiNet`, wifiOn ? () => {} : null]],
       bat: [['Battery: 82%', null], ['Power Source: Battery', null], '-', ['Energy Saver…', () => alert({ title: 'Energy Saver', text: 'Computer sleep: Never<br/>Display sleep: 10 minutes', icon: ICON.skills() })]],
-      clk: [[new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }), null], '-', ['Open Calendar', () => open('experience')]]
+      clk: [[new Date().toLocaleDateString(window.I18N.lang, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }), null], '-', ['Open Calendar', () => open('experience')]]
     };
   };
 
-  let dockHidden = false, filesAsList = false, wifiOn = true;
+  let dockHidden = false, filesAsList = false, wifiOn = true, drawClock = () => {};
   const toggleDock = () => { dockHidden = !dockHidden; root.classList.toggle('dock-off', dockHidden); };
   const goTo = (v) => { const f = wins.get('finder'); if (f) { if (f.min) restore(f); focus(f); f.show(v); return; } open('finder', v); };
   const logOut = async () => {
@@ -836,7 +916,7 @@ window.OSX = (function () {
     const groups = {};
     hits.forEach((x) => { (groups[x[0]] = groups[x[0]] || []).push(x); });
     let n = 0;
-    res.innerHTML = (hits.length ? `<div class="sp-g"><span>Top Hit</span><div><button type="button" class="on" data-n="0">${hits[0][2]}${esc(hits[0][1])}</button></div></div>` : `<div class="sp-none">${t('No results')}</div>`) +
+    res.innerHTML = (hits.length ? `<div class="sp-g"><span>${t('Top Hit')}</span><div><button type="button" class="on" data-n="0">${hits[0][2]}${esc(hits[0][1])}</button></div></div>` : `<div class="sp-none">${t('No results')}</div>`) +
       Object.entries(groups).map(([g, l]) => `<div class="sp-g"><span>${g}</span><div>${l.map((x) => `<button type="button" data-n="${hits.indexOf(x)}">${x[2]}${esc(x[1])}</button>`).join('')}</div></div>`).join('');
     void n;
   };
@@ -870,13 +950,13 @@ window.OSX = (function () {
      the desk and out of its folders. */
   const trashed = [];
   const gone = new Set();
-  const deskItems = () => [['finder', 'Sommi HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', 'Welcome.rtf', 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc']];
+  const deskItems = () => [['finder', 'Sommi HD', 'hd'], ['preview', 'Resume.pdf', 'doc'], ['welcome', t('Welcome.rtf'), 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc']];
   const drawDesk = () => {
     deskEl.innerHTML = deskItems().filter(([a, n]) => !gone.has(a + n)).map(([a, n, i]) => `<button type="button" class="dt-i" data-open="${a}" data-n="${esc(n)}" data-ic="${i}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
   };
   const refreshFiles = () => {
     const f = wins.get('finder');
-    if (f && f.show) f.show(f.view || 'hd');
+    if (f && f.show) f.show(f.view || 'hd', true);
     const tw = wins.get('trash');
     if (tw && tw.redraw) tw.redraw();
     const can = dockEl.querySelector('[data-app="trash"]');
@@ -884,6 +964,7 @@ window.OSX = (function () {
   };
   const toTrash = (el) => {
     const a = el.dataset.open, n = el.dataset.n || el.querySelector('span').textContent;
+    if (a === 'finder') { alert({ title: t('The disk “Sommi HD” can’t be moved to the Trash.'), text: t('It’s the disk this computer started up from.'), icon: ICON.hd() }); return; }
     const ic = el.dataset.ic || (APPS[a] ? APPS[a].icon : 'doc');
     gone.add(a + n);
     trashed.push([a, n, ic]);
@@ -924,7 +1005,8 @@ window.OSX = (function () {
       const tr = e.target.closest('[data-t]');
       if (tr) return [['Open', () => tr.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))], ...(trashed.some((x) => x[0] === tr.dataset.t) ? [['Put Back', () => putBack(tr.dataset.t, tr.dataset.n)]] : [])].map(([l, f]) => [t(l), f]);
       const ic = e.target.closest('.dt-i, .fx-ico[data-open]');
-      if (ic) return [[t('Open'), () => open(ic.dataset.open)], [t('Get Info'), () => info(ic.querySelector('span').textContent, ic.dataset.ic || ic.dataset.open)], '-', [t('Move to Trash'), () => toTrash(ic)]];
+      if (e.target.closest('.fx-ico[data-go]')) return [[t('Open'), () => e.target.closest('.fx-ico').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))]];
+      if (ic) return [[t('Open'), () => open(ic.dataset.open)], [t('Get Info'), () => info(ic.querySelector('span').textContent, ic.dataset.ic || ic.dataset.open)], ...(ic.dataset.open === 'finder' ? [] : ['-', [t('Move to Trash'), () => toTrash(ic)]])];
       const dk = e.target.closest('.dk-i');
       if (dk) return dk.dataset.app === 'trash' ? [[t('Open'), () => open('trash')], [t('Empty Trash'), emptyTrash]] : [[t('Open'), () => open(dk.dataset.app)]];
       const w = e.target.closest('.ox-win');
@@ -948,6 +1030,7 @@ window.OSX = (function () {
     buildDock();
     drawDesk();
     markRunning();
+    drawClock();
   };
   const GLOSSY = () => {
     const a = 'M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z', j = 'M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z', s = 'M43.83 24.6h8.74v11.79h-8.74z', d = 'M48.2 11.8a5.6 5.6 0 1 1 0 11.2a5.6 5.6 0 1 1 0-11.2z';
@@ -1020,8 +1103,8 @@ window.OSX = (function () {
     window.RETRO.zoomPics(root, '.dk-ic, .ox-alert, .mm, .xp-logo, .ch-av, .co, .sl-ic, .ab-none');
 
     const clk = menubar.querySelector('.clk');
-    const tick = () => { clk.textContent = new Date().toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).replace(',', ''); };
-    tick(); setInterval(tick, 15000);
+    drawClock = () => { clk.textContent = new Date().toLocaleString(window.I18N.lang, { weekday: 'short', hour: 'numeric', minute: '2-digit' }).replace(',', ''); };
+    drawClock(); setInterval(() => { if (active) drawClock(); }, 15000);
     document.addEventListener('sfx-mute', (e) => { menubar.querySelector('[data-snd]').innerHTML = I.spk(e.detail); });
 
     menubar.addEventListener('pointerdown', (e) => {
@@ -1056,6 +1139,42 @@ window.OSX = (function () {
     });
     spot.addEventListener('click', (e) => { const b = e.target.closest('[data-n]'); if (b) { toggleSpot(false); hits[+b.dataset.n][3](); } });
 
+    /* Left to the browser, a list scrolls ahead of the page and its Aqua bar,
+       painted by the page, trails behind. Scrolling from here moves both in
+       the same frame. A mouse wheel's big steps glide; a trackpad is direct. */
+    const canScroll = (el, d, axis) => {
+      const s = getComputedStyle(el), o = axis === 'y' ? s.overflowY : s.overflowX;
+      if (o !== 'auto' && o !== 'scroll') return false;
+      const pos = axis === 'y' ? el.scrollTop : el.scrollLeft, max = axis === 'y' ? el.scrollHeight - el.clientHeight : el.scrollWidth - el.clientWidth;
+      return max > 1 && (d < 0 ? pos > 0 : pos < max - 1);
+    };
+    let glide = null;
+    const glideOn = () => {
+      if (!glide) return;
+      const g = glide, at = g.axis === 'y' ? g.el.scrollTop : g.el.scrollLeft, next = at + (g.to - at) * .3;
+      const done = Math.abs(g.to - next) < 1;
+      if (g.axis === 'y') g.el.scrollTop = done ? g.to : next; else g.el.scrollLeft = done ? g.to : next;
+      if (done) glide = null; else requestAnimationFrame(glideOn);
+    };
+    root.addEventListener('wheel', (e) => {
+      if (e.ctrlKey) return;
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? root.clientHeight : 1;
+      const axis = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? 'x' : 'y', d = (axis === 'y' ? e.deltaY : e.deltaX) * unit;
+      if (!d) return;
+      let el = e.target;
+      while (el && el !== root && !canScroll(el, d, axis)) el = el.parentElement;
+      if (!el || el === root) return;
+      e.preventDefault();
+      const steppy = e.deltaMode !== 0 || (Math.abs(d) >= 50 && Number.isInteger(d));
+      const max = axis === 'y' ? el.scrollHeight - el.clientHeight : el.scrollWidth - el.clientWidth;
+      if (steppy || (glide && glide.el === el)) {
+        const from = glide && glide.el === el ? glide.to : (axis === 'y' ? el.scrollTop : el.scrollLeft);
+        const running = !!glide;
+        glide = { el, axis, to: Math.max(0, Math.min(max, from + d)) };
+        if (!running) requestAnimationFrame(glideOn);
+      } else if (axis === 'y') el.scrollTop += d; else el.scrollLeft += d;
+    }, { passive: false });
+
     dockEl.addEventListener('pointermove', (e) => magnify(e.clientX));
     dockEl.addEventListener('pointerleave', () => magnify(null));
     dockEl.addEventListener('click', (e) => {
@@ -1079,10 +1198,35 @@ window.OSX = (function () {
     });
   };
 
+  /* In a small window the icons shrink before they would leave the screen,
+     and any placed by hand are brought back on. */
+  const fitDesk = () => {
+    if (deskEl.dataset.free) {
+      [...deskEl.children].forEach((c) => {
+        const box = deskEl.getBoundingClientRect(), k = box.width / deskEl.offsetWidth || 1, r = c.getBoundingClientRect(), s = root.getBoundingClientRect();
+        if (r.left < s.left) c.style.left = parseFloat(c.style.left) + (s.left - r.left) / k + 'px';
+        if (r.right > s.right) c.style.left = parseFloat(c.style.left) - (r.right - s.right) / k + 'px';
+        if (r.bottom > s.bottom) c.style.top = parseFloat(c.style.top) - (r.bottom - s.bottom) / k + 'px';
+      });
+      return;
+    }
+    deskEl.classList.remove('is-tight');
+    const off = () => [...deskEl.children].some((c) => c.getBoundingClientRect().left < root.getBoundingClientRect().left);
+    if (off()) deskEl.classList.add('is-tight');
+  };
+
   const boot = async () => {
     root.classList.add('is-booting');
+    /* First the white screen with the mark and the spinning wheel, as a Mac
+       of the day started up; it fades to reveal the language choice. */
+    const white = h('div', 'ox-boot ox-white', `${I.mark(96, true)}<span class="ox-spin">${'<i></i>'.repeat(12)}</span>`);
+    root.appendChild(white);
     SFX.chime();
-    const { lang, s } = await chooseLang();
+    await wait(2400);
+    const chosen = chooseLang();
+    white.classList.add('is-gone');
+    setTimeout(() => white.remove(), 500);
+    const { lang, s } = await chosen;
     applyLang(lang);
     /* The window itself shrinks: the same card, now small, over the same
        blue, holding the logo and the glass bar. */
@@ -1103,6 +1247,7 @@ window.OSX = (function () {
     await wait(500);
     s.remove();
     sizeDock();
+    fitDesk();
     markRunning();
     if (!store.get('ox-welcome', false)) { store.set('ox-welcome', true); open('welcome'); }
   };
@@ -1110,8 +1255,8 @@ window.OSX = (function () {
   return {
     build,
     boot,
-    enter() { active = true; },
+    enter() { active = true; drawClock(); },
     leave() { active = false; closeMenus(); },
-    resize() { sizeDock(); }
+    resize() { sizeDock(); fitDesk(); }
   };
 })();
