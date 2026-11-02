@@ -1261,13 +1261,6 @@
 .ip-screen .ip-hud i { width: 6px; height: 7px; background: rgba(255, 255, 255, .2); }
 .ip-screen .ip-hud i.on { background: #fff; }
 
-/* Messages: Aqua's glass pills, in blue. */
-.ip-screen .bub span { padding: 7px 14px 8px; border-radius: 18px; }
-.ip-screen .bub.in span, .ip-screen .bub.out span { border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; }
-.ip-screen .bub.in span::after, .ip-screen .bub.out span::after { content: none; }
-.ip-screen .bub.in span { color: #0d2a52; border: 1px solid #8fb2de; background: linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .28)) 5px 2px / calc(100% - 10px) 46% no-repeat, linear-gradient(180deg, #e6f1fd 0%, #cfe3fa 48%, #b7d4f6 52%, #dbeafc 100%); box-shadow: inset 0 0 3px rgba(255, 255, 255, .7), 0 1px 2px rgba(20, 60, 120, .3); }
-.ip-screen .bub.out span { color: #fff; text-shadow: 0 -1px 0 rgba(0, 40, 110, .45); border: 1px solid #2a62b8; background: linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .14)) 5px 2px / calc(100% - 10px) 46% no-repeat, linear-gradient(180deg, #8bbcf5 0%, #5a97ec 48%, #3a7be0 52%, #62a2f1 100%); box-shadow: inset 0 0 3px rgba(255, 255, 255, .45), 0 1px 2px rgba(20, 60, 120, .4); }
-
 /* A photo with its words and buttons tapped away. */
 .ip-screen .photo-view .pv-top, .ip-screen .photo-view .cap, .ip-screen .photo-view .tbar { transition: opacity .25s ease; }
 .ip-screen .photo-view.is-bare .pv-top, .ip-screen .photo-view.is-bare .cap, .ip-screen .photo-view.is-bare .tbar { opacity: 0; pointer-events: none; }
