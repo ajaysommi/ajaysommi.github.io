@@ -337,7 +337,7 @@ window.TERM = (function () {
     next: '1991', gui: '1991', startx: '1991', win: '1991', desktop: '1991', finder: '1991',
     web: '1998', www: '1998', internet: '1998', netscape: '1998', browser: '1998',
     quit: 'era', logout: 'era', bye: 'era', shutdown: 'era', exit: 'era', eras: 'era', switch: 'era', restart: 'era',
-    hi: 'hello', hey: 'hello', yo: 'hello',
+    hi: 'hello', hey: 'hello', yo: 'hello', listings: 'tv', movies: 'tv', tonight: 'tv',
     ver: 'version', play: 'games', game: 'games', tea: 'coffee', java: 'coffee'
   };
 
@@ -351,7 +351,22 @@ window.TERM = (function () {
     school: () => print(school()),
     refs: () => print(refs(), 8),
     contact: () => print(contact()),
-    news: () => print(paper('news'), 8),
+    news: () => print([...paper('news'), ['  TONIGHT? TYPE TV.', 'dim'], ''], 8),
+    undelete: () => { window.EGGS.find('letter'); return print(['1 FILE RECOVERED: LETTER.TXT', '', ...window.STORY.paragraphs('1983').flatMap((p) => [esc(p), ''])]); },
+    tv: () => print([
+      'THE LISTINGS, 1983', rule(48),
+      '  ON THE TUBE',
+      ['    M*A*S*H signs off. Half the country watched.', 'dim'],
+      ['    The A-Team, Cheers, Knight Rider, Dallas', 'dim'], '',
+      '  AT THE DRIVE-IN',
+      ['    Return of the Jedi, WarGames, Flashdance,', 'dim'],
+      ['    Trading Places, Risky Business', 'dim'], '',
+      '  ON THE RADIO',
+      ['    Billie Jean, Every Breath You Take, Sweet Dreams', 'dim'], '',
+      '  AT THE ARCADE',
+      ['    Dragon\'s Lair costs 50 cents. It is worth it.', 'dim'], ''
+    ]),
+    joshua: () => print(['GREETINGS, PROFESSOR FALKEN.', '', 'SHALL WE PLAY A GAME?', '', `  ${cmd('bricks', '[ BRICKS ]')}`, '']),
     catalog: () => print(paper('brochure'), 8),
     resume: () => { window.open(P.resume, '_blank', 'noopener'); return print(['OPENING RESUME.PDF IN A NEW WINDOW...', '']); },
     github: () => { window.open(P.github, '_blank', 'noopener'); return print(['DIALING GITHUB...', '']); },

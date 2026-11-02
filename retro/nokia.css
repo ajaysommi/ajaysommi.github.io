@@ -183,3 +183,11 @@
 .nk-tap-b { height: 8px; margin-top: 7px; border: 2px solid #1d2a10; }
 .nk-tap-b i { display: block; height: 100%; background: #1d2a10; }
 .nk-tap-o { text-align: center; font-weight: 700; }
+
+/* Civic, in big plain LCD lines. */
+.nk-cv { text-align: center; line-height: 1.25; overflow: hidden; }
+.nk-cv b { display: block; margin: 2px 0 3px; }
+.nk-cv p { margin: 0 0 2px; }
+.nk-cv .m { font-family: monospace; font-size: 12px; letter-spacing: 0; white-space: nowrap; }
+.nk-cv .s { font-weight: bold; white-space: nowrap; }
+.nk-cv .d { font-size: .82em; opacity: .85; white-space: nowrap; }

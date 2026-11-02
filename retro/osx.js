@@ -347,7 +347,7 @@ window.OSX = (function () {
             main.innerHTML = folders.map(([g, n]) => `<button type="button" class="fx-ico" data-go="${g}">${ICON.folder()}<span>${esc(n)}</span></button>`).join('');
             setStatus(folders.length);
           } else {
-            const items = (v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', t('Education.rtf'), 'doc'], ['welcome', t('Welcome.rtf'), 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc']] : v === 'desk' ? deskItems() : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon])).filter(([a, n]) => !gone.has(a + n));
+            const items = (v === 'docs' ? [['preview', 'Resume.pdf', 'doc'], ['education', t('Education.rtf'), 'doc'], ['welcome', t('Welcome.rtf'), 'doc'], ['news07', window.PAPERS[2007].news.file, 'doc'], ['watch07', 'To Watch.rtf', 'doc']] : v === 'desk' ? deskItems() : DOCK.filter((a) => !['|', 'finder', 'docs', 'downloads', 'trash'].includes(a)).map((a) => [a, APPS[a].name, APPS[a].icon])).filter(([a, n]) => !gone.has(a + n));
             main.innerHTML = items.map(([a, n, i]) => `<button type="button" class="fx-ico" data-open="${a}"${a === 'finder' ? ' data-disk="1"' : ''}>${ICON[i]()}<span>${esc(n)}</span></button>`).join('');
             setStatus(items.length);
           }
@@ -519,6 +519,9 @@ window.OSX = (function () {
     welcome: () => doc(t('Welcome.rtf'), () => { const w = t('welcome'); return w !== 'welcome' ? w : `<h1>Welcome to SommiOS X.</h1><p>This is my portfolio, as it would have run on a desktop in 2007.</p><p>• Everything about me is an app in the <b>dock</b> at the bottom. Click one to open it.<br/>• Click the <b>magnifying glass</b> in the top right (or press Ctrl+Space) and type what you want to see.<br/>• Windows move by their title bars. The red light closes one, the yellow puts it in the dock.<br/>• <b>Time Machine</b> in the dock takes you to another era.</p><p>Ajay</p>`; }),
     /* The papers of 2007: the year's headlines. */
     news07: () => { const d = window.I18N.news(); return doc(d.file, () => `<h1>${esc(d.title)}</h1><p><i>${esc(d.sub)}</i></p>${d.items.map(([h, t]) => `<p><b>${esc(h)}.</b> ${esc(t)}</p>`).join('')}<p style="color:#888">${esc(d.foot)}</p>`); },
+    letter07: () => doc('Untitled.rtf', () => window.STORY.html('2007')),
+    /* A list kept for the couch. */
+    watch07: () => doc('To Watch.rtf', () => `<h1>To Watch</h1><p><b>Thursday night:</b> Grey’s Anatomy, The Office, 30 Rock. Don’t schedule anything.</p><p><b>Catch up on:</b> Lost (who is even on that island anymore), Heroes (save the cheerleader), Mad Men (everyone keeps saying it’s good).</p><p><b>In the DVD queue:</b> Ratatouille, Superbad, The Bourne Ultimatum. Mail back Transformers first.</p><p><b>On the iPod:</b> Umbrella, Stronger, 1234, Crank That.</p><p><b>Send to everyone:</b> Chocolate Rain. Charlie Bit My Finger.</p>`),
     /* Concentration: sixteen cards face down, eight pairs of this computer's
        own app icons. Turn two; a match stays up, a miss turns back. */
     memory: () => ({
@@ -687,10 +690,10 @@ window.OSX = (function () {
     trash: () => {
       window.EGGS.find('trash');
       return {
-        title: 'Trash', w: 560, h: 320, status: `${2 + trashed.length} ${t('items')}`,
+        title: 'Trash', w: 560, h: 320, status: `${3 + trashed.length} ${t('items')}`,
         render: (b, rec) => {
           b.classList.add('fx');
-          const draw = () => { b.innerHTML = `<div class="fx-main" style="grid-column:1/-1">${[['oldsite', 'Portfolio (2025)', 'folder'], ['old', 'Resume (2019).doc', 'doc'], ...trashed].map(([a, n, i]) => `<button type="button" class="fx-ico" data-t="${a}" data-n="${esc(n)}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('')}</div>`; };
+          const draw = () => { b.innerHTML = `<div class="fx-main" style="grid-column:1/-1">${[['oldsite', 'Portfolio (2025)', 'folder'], ['old', 'Resume (2019).doc', 'doc'], ['letter07', 'Untitled.rtf', 'doc'], ...trashed].map(([a, n, i]) => `<button type="button" class="fx-ico" data-t="${a}" data-n="${esc(n)}">${ICON[i]()}<span>${esc(n)}</span></button>`).join('')}</div>`; };
           draw();
           rec.redraw = draw;
           b.addEventListener('dblclick', (e) => {
@@ -926,6 +929,7 @@ window.OSX = (function () {
     P.skills.forEach(([g, l]) => l.forEach((s) => r.push([t('Skills'), s, ICON.skills(), () => open('skills'), (s + ' ' + g).toLowerCase()])));
     r.push([t('Documents'), 'Ajay_Sommi_Resume.pdf', ICON.doc(), () => open('preview'), 'resume cv pdf']);
     r.push([t('Documents'), window.PAPERS[2007].news.file, ICON.doc(), () => open('news07'), 'news headlines 2007 iphone kindle android']);
+    r.push([t('Documents'), 'To Watch.rtf', ICON.doc(), () => open('watch07'), 'to watch tv movies lost heroes office superbad ratatouille transformers grey']);
         return r;
   };
   const toggleSpot = (on) => {
@@ -1007,7 +1011,7 @@ window.OSX = (function () {
     refreshFiles();
   };
   const emptyTrash = () => { trashed.length = 0; refreshFiles(); };
-  const info = (name, icon) => alert({ title: name, text: `${t('Kind')}: ${APPS[icon] ? t('Applications') : t('Documents')}<br/>${t('Location')}: Sommi HD`, icon: ICON[APPS[icon] ? APPS[icon].icon : icon]() });
+  const info = (name, icon) => alert({ title: name, text: `${t('Kind')}: ${APPS[icon] ? t('Applications') : t('Documents')}<br/>${t('Location')}: Sommi HD`, icon: (ICON[APPS[icon] ? APPS[icon].icon : icon] || ICON.doc)() });
   const wireDrag = () => {
     window.RETRO.dragIcons(root, {
       sel: '.dt-i, .fx-main .fx-ico[data-open]',

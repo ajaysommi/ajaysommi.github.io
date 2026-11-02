@@ -368,8 +368,8 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 
 /* Phones: their rooms' gradients (the shapes are their own layer now),
    the handset above the shapes, and buttons in the phone's colours. */
-.phone-host .nk-room { background: radial-gradient(82% 58% at 50% 40%, #f9fbfd 0%, #abb9d4 55%, #455d86 100%); }
-.phone-host .pocket-room { background: radial-gradient(82% 58% at 50% 40%, #fbf9fd 0%, #ede9f4 55%, #a093b9 100%); }
+.phone-host .nk-room { background: radial-gradient(82% 58% at 50% 40%, #f8fafe 0%, #a5b0da 55%, #3b4f90 100%); }
+.phone-host .pocket-room { background: radial-gradient(82% 58% at 50% 40%, #fdf8fe 0%, #f1e7f6 55%, #ae8ac2 100%); }
 .phone-host .iphone-room { background: radial-gradient(82% 58% at 50% 40%, #b1b3b9 0%, #646571 55%, #2b2d38 100%); }
 .nk-scale, .pk-scale, .ip-scale { position: relative; z-index: 1; }
 .is-mobile .snd-toggle span { display: none; }
@@ -564,3 +564,6 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .mp-card.is-sel { background: #2c2c30; }
 [data-theme="daylight"] .is-desk-pick .pk-d, [data-theme="daylight"] .mp-card { background: rgba(251,250,247,.94); }
 [data-theme="daylight"] .mp-card.is-sel, [data-theme="daylight"] .is-desk-pick .pk-d.is-sel { background: #fff; }
+
+/* A small light on the tile of each machine already started. */
+.pk-d.is-seen b::after, .mp-card.is-seen b::after { content: ''; display: inline-block; width: 6px; height: 6px; margin-left: 7px; vertical-align: .15em; border-radius: 50%; background: #62d17f; box-shadow: 0 0 5px rgba(98, 209, 127, .8); }

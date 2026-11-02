@@ -5431,6 +5431,7 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-ad-wrap.is-served .era-ad { animation: era-ad-launch .5s linear both; will-change: transform, opacity; }
 .era-ad-wrap.is-served .era-ad-x { opacity: 1; transition: opacity .3s ease .25s; }
 .era-ad-box { z-index: 1; }
+@keyframes era-ad-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes era-ad-launch {
   0%   { opacity: 0; transform: translateY(calc(var(--dir) * -6px)) scale(.94, .7); animation-timing-function: cubic-bezier(.25, .8, .4, 1); }
   30%  { opacity: 1; }
@@ -5438,13 +5439,10 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   100% { opacity: 1; transform: none; }
 }
 .era-ad-wrap.is-done .era-ad { opacity: 1; animation: none; }
-/* Landing: it glows in its colours for a moment, and sparkles in the
-   rainbow's colours fly off its edges. */
+/* Landing: it glows in its colours for a moment. */
 .era-ad-box::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: var(--r-pill); pointer-events: none; opacity: 0; transition: opacity .9s ease; will-change: opacity;
   box-shadow: -12px 0 30px rgba(97, 187, 70, .35), 12px 0 30px rgba(0, 157, 220, .35); }
 .era-ad-box:has(.era-ad.is-glow)::before { opacity: 1; transition-duration: .35s; }
-.era-spark { position: fixed; z-index: 70; width: 12px; height: 12px; margin: -6px 0 0 -6px; pointer-events: none;
-  background: var(--c); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
 /* The machines have faces. As the banner lands they give one short dance,
    one after another, then just blink now and then and glance about. */
 .era-dv svg { transform-origin: 50% 100%; }
@@ -5553,6 +5551,9 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   .era-ad-cta { width: 30px; height: 30px; padding: 0; justify-content: center; }
   .era-ad-cta-t { display: none; }
   .era-ad-x { right: 6px; width: 28px; height: 28px; }
+  /* On a phone it eases in, rising a little as it fades up. */
+  .era-ad-wrap.is-served .era-ad { animation: era-ad-fade .9s cubic-bezier(.25, .7, .3, 1) both; }
+  .era-ad-wrap.is-served .era-ad-x { transition: opacity .6s ease .3s; }
   .era-ad::after { height: 2px; }
 }
 /* Narrow phones: the NEW tag steps aside so the troupe keeps its room. */
@@ -5606,7 +5607,7 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
    own width and shape, with a slim space held open in the page below. */
 @media (min-width: 720px) {
   .era-ad-wrap, .era-ad-wrap.is-open { display: block; padding: 0; height: 0; transition: none; }
-  .era-ad-wrap.is-open { height: 68px; }
+  .era-ad-wrap.is-open { height: 71px; }
   .era-ad-wrap.is-off { display: none; }
   .era-ad-wrap:not(.is-served) .era-ad-box { visibility: hidden; }
   .era-ad-box { position: fixed; z-index: 59; }

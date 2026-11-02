@@ -83,9 +83,10 @@ window.NOKIA = { start(room, exit) {
     ['Skills', 'chip', () => list('Skills', P.skills.map(([g, l]) => [g, () => push(list(g.split(' ')[0], l.map((sk) => [sk, () => { const at = usedAt(sk); push(txt(sk, `<p><b>${esc(sk)}</b></p><p>${at.length ? 'Used at:<br/>' + at.map(esc).join('<br/>') : 'Coursework and side projects.'}</p>`)); }])))]))],
     ['Education', 'cap', () => { const e = P.education; return txt('Education', `<p><b>${esc(e.school)}</b></p><p>${esc(e.degree)}<br/>${esc(e.when)}</p><p>${esc(e.text)}</p>`); }],
     ['Games', 'puzzle', () => list('Games', [
+      ['Fix the Car', () => push({ type: 'car', title: 'Fix the Car', soft: 'Select' })],
       ['Snake II', () => push(snake())],
       ['Text Race', () => push({ type: 'tap', title: 'Text Race', soft: 'Start' })],
-      ['Top score', () => push(txt('Top score', `<p class="nk-big">Snake II</p><p>${store.get('nk-snake-hi', 0)} points</p><p class="nk-big">Text Race</p><p>${store.get('nk-tap-hi', 0)} words</p>`))]
+      ['Top score', () => push(txt('Top score', `<p class="nk-big">Snake II</p><p>${store.get('nk-snake-hi', 0)} points</p><p class="nk-big">Text Race</p><p>${store.get('nk-tap-hi', 0)} words</p><p class="nk-big">Fix the Car</p><p>${store.get('nk-car-hi', 0).toLocaleString('en-US')} mi</p>`))]
     ])],
     ['Extras', 'egg', () => list('Extras', [
       ['More eras', () => push(txt('More eras', '<p>This phone is one of three in this portfolio.</p><p>Open it on a computer and there are four more machines to use.</p>'))],
@@ -97,6 +98,7 @@ window.NOKIA = { start(room, exit) {
       ['Ringing tones', () => push(list('Tones', ['Nokia tune', 'Ring ring', 'Low', 'Fairy tale'].map((n, i) => [n, () => { SFX.tune(); if (navigator.vibrate && i === 2) navigator.vibrate(200); }])))],
       ['Clock', () => push(clock())],
       ['Fortune', () => push(txt('Fortune', `<p>“${esc(P.quote)}”</p>`))],
+      ['Old draft', () => push(txt('Old draft', window.STORY.html('nokia')))],
       ['Easter eggs', () => push(txt('Eggs', `<p>Found ${window.EGGS.count()} of ${window.EGGS.total}.</p>` + window.EGGS.list.map(([id, n]) => `<p>${window.EGGS.has(id) ? '★ ' + esc(n) : '☆ ???'}</p>`).join('')))]
     ])],
     ['Settings', 'mac', () => list('Settings', [
@@ -193,6 +195,109 @@ window.NOKIA = { start(room, exit) {
     requestAnimationFrame(loop);
   };
   const stopSnake = () => { if (game) game.stop(); };
+
+  /* ---------------------------------------------------------- Fix the Car */
+
+  /* Keep an old car going, with nothing but keys. Up and down choose what
+     to reach for, Navi commits, and each repair is a job for the keypad. */
+  let car = null;
+  const startCar = () => {
+    const box = view.querySelector('.nk-cv');
+    const TOOLS = ['AC gauge', 'Spark plugs', 'Cleaner', 'Trans fluid'];
+    const SYM = [['AC blows warm', 0], ['Misfiring', 1], ['Rough idle', 2], ['Grinding gears', 3]];
+    const c = { state: 'intro', mi: 180000, lives: 3, prob: null, sel: 0, hp: 1, gap: 2200, fixes: 0, f: 0, seq: [], last: -1, t: performance.now(), note: '' };
+    const bar = (v) => '\u2588'.repeat(Math.round(Math.max(0, v) * 10)).padEnd(10, '\u2591');
+    const miles = () => Math.floor(c.mi).toLocaleString('en-US');
+    const lamps = () => '*'.repeat(c.lives);
+    const draw = () => {
+      if (!view.contains(box)) return;
+      const hd = view.querySelector('.nk-hd span:last-child');
+      if (hd) hd.textContent = lamps();
+      let h = '';
+      if (c.state === 'intro') h = `<b>Fix the Car</b><p>Old sedan, 180,000 mi. Fix it yourself.</p><p class="d">Navi: start</p>`;
+      else if (c.state === 'over') h = `<b>Towed</b><p>${miles()} mi</p><p class="d">Best ${store.get('nk-car-hi', 0).toLocaleString('en-US')}. Navi: retry</p>`;
+      else if (c.state === 'drive') {
+        const road = '. '.repeat(9).slice(Math.floor(c.mi / 8) % 2);
+        h = `<b>${miles()} mi</b>`;
+        if (c.prob === null) h += `<p>Running smooth</p><p class="d">${road}</p>`;
+        else h += `<p>${SYM[c.prob][0]}!</p><p class="m">${bar(c.hp)}</p><p class="s">${'\u25c4'} ${TOOLS[c.sel]} ${'\u25ba'}</p>`;
+      } else if (c.state === 'ac' || c.state === 'fill') {
+        const n = Math.round(c.f * 15);
+        h = `<b>${c.state === 'ac' ? 'Charge AC' : 'Refill'}</b><p class="m">${[...Array(16)].map((_, i) => (i === n ? '|' : i >= 10 && i <= 12 ? '=' : '-')).join('')}</p><p class="d">Navi on the ===</p>`;
+      } else if (c.state === 'plugs') {
+        h = `<b>Swap plug</b><p>Press ${c.seq[0]}</p><p class="d">${4 - c.seq.length} of 4 done</p>`;
+      } else if (c.state === 'clean') {
+        h = `<b>Throttle body</b><p class="m">${bar(1 - c.f)}</p><p class="d">Up, down: scrub</p>`;
+      } else if (c.state === 'drain') {
+        h = `<b>Transmission</b><p>Black, full of metal</p><p class="d">Navi: pull plug</p>`;
+      }
+      box.innerHTML = h;
+    };
+    const breakDown = () => {
+      c.lives--;
+      SFX.error && SFX.error();
+      if (navigator.vibrate) navigator.vibrate(120);
+      if (c.lives <= 0) {
+        c.state = 'over';
+        const m = Math.floor(c.mi);
+        if (m > store.get('nk-car-hi', 0)) store.set('nk-car-hi', m);
+      } else { c.state = 'drive'; c.prob = null; c.gap = 2000; }
+      draw();
+    };
+    const fixed = () => { c.fixes++; c.mi += 1200; c.prob = null; c.state = 'drive'; c.gap = Math.max(900, 2200 - c.fixes * 140); beep(); draw(); };
+    const loop = (now) => {
+      if (!car || car.c !== c) return;
+      const dt = Math.min(60, now - c.t); c.t = now;
+      if (c.state === 'drive') {
+        c.mi += dt * .3 * (1 + c.fixes * .06);
+        if (c.prob === null) {
+          c.gap -= dt;
+          if (c.gap <= 0) { let n; do n = Math.floor(Math.random() * 4); while (n === c.last); c.prob = c.last = n; c.hp = 1; c.sel = 0; }
+        } else { c.hp -= dt / Math.max(4800, 10000 - c.fixes * 400); if (c.hp <= 0) breakDown(); }
+      } else if (c.state === 'ac' || c.state === 'fill') {
+        c.f += c.dir * dt / 950;
+        if (c.f >= 1) { c.f = 1; c.dir = -1; } else if (c.f <= 0) { c.f = 0; c.dir = 1; }
+      }
+      draw();
+      requestAnimationFrame(loop);
+    };
+    car = {
+      c,
+      rot: (d) => {
+        if (c.state === 'drive' && c.prob !== null) { c.sel = (c.sel + d + 4) % 4; draw(); }
+        else if (c.state === 'clean') { if (d !== c.dirL) { c.dirL = d; c.f += .09; if (c.f >= 1) fixed(); else draw(); } }
+      },
+      key: (k) => {
+        if (c.state !== 'plugs') return;
+        if (String(c.seq[0]) === k) { c.seq.shift(); if (!c.seq.length) fixed(); else draw(); }
+        else { c.mi -= 200; }
+      },
+      navi: () => {
+        if (c.state === 'intro') { c.state = 'drive'; draw(); return; }
+        if (c.state === 'over') { Object.assign(c, { state: 'drive', mi: 180000, lives: 3, prob: null, gap: 2200, fixes: 0 }); draw(); return; }
+        if (c.state === 'drive') {
+          if (c.prob === null) return;
+          if (c.sel !== SYM[c.prob][1]) { c.hp -= .22; SFX.error && SFX.error(); return; }
+          c.f = 0; c.dir = 1;
+          if (c.prob === 0) c.state = 'ac';
+          else if (c.prob === 1) { c.state = 'plugs'; c.seq = [1, 2, 3, 4].sort(() => Math.random() - .5); }
+          else if (c.prob === 2) { c.state = 'clean'; c.dirL = 0; }
+          else c.state = 'drain';
+          draw();
+          return;
+        }
+        if (c.state === 'drain') { c.state = 'fill'; c.f = 0; c.dir = 1; draw(); return; }
+        if (c.state === 'ac' || c.state === 'fill') {
+          const n = Math.round(c.f * 15);
+          if (n >= 10 && n <= 12) fixed(); else { c.hp -= .12; if (c.navErr) SFX.error && SFX.error(); }
+        }
+      },
+      stop: () => { car = null; }
+    };
+    draw();
+    requestAnimationFrame(loop);
+  };
+  const stopCar = () => { if (car) car.stop(); };
 
   /* ------------------------------------------------------------ Text Race */
 
@@ -310,6 +415,8 @@ window.NOKIA = { start(room, exit) {
       html = `<div class="nk-dial">${esc(s.num)}</div>`;
     } else if (s.type === 'tap') {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>0</span></div><div class="nk-tap"></div>`;
+    } else if (s.type === 'car') {
+      html = `<div class="nk-hd"><span>${esc(s.title)}</span><span></span></div><div class="nk-cv"></div>`;
     } else if (s.type === 'game') {
       html = `<div class="nk-hd"><span>${esc(s.title)}</span><span>0</span></div>`;
     } else if (s.type === 'photo') {
@@ -318,10 +425,12 @@ window.NOKIA = { start(room, exit) {
     }
     stopSnake();
     stopTap();
+    stopCar();
     view.innerHTML = html;
     soft.textContent = s.soft || '';
     if (s.type === 'game') startSnake();
     if (s.type === 'tap') startTap();
+    if (s.type === 'car') startCar();
     view.querySelectorAll('img[data-src]').forEach((im) => dither(im.dataset.src, 180).then((u) => { im.src = u; }));
   };
 
@@ -334,6 +443,7 @@ window.NOKIA = { start(room, exit) {
     const top = stack[stack.length - 1];
     const s = top.s;
     if (s.type === 'game') { if (game) game.rot(d); return; }
+    if (s.type === 'car') { if (car) car.rot(d); return; }
     if (s.type === 'menu') { top.sel = (top.sel + d + MENU.length) % MENU.length; render(); }
     else if (s.type === 'list') { top.sel = (top.sel + d + s.items.length) % s.items.length; render(); }
     else if (s.type === 'text') textScroll(d);
@@ -352,6 +462,7 @@ window.NOKIA = { start(room, exit) {
     if (s.type === 'list') { s.items[top.sel][1](); return; }
     if (s.type === 'game') { if (game) game.navi(); return; }
     if (s.type === 'tap') { if (tap) tap.navi(); return; }
+    if (s.type === 'car') { if (car) car.navi(); return; }
     if (s.type === 'dial') { if (s.num) placeCall(s.num); return; }
     if (s.act) { s.act(); return; }
     back();
@@ -361,6 +472,7 @@ window.NOKIA = { start(room, exit) {
     const top = stack[stack.length - 1];
     if (top.s.type === 'game') { if (game) game.dir(k); return; }
     if (top.s.type === 'tap') { if (tap) tap.key(k); return; }
+    if (top.s.type === 'car') { if (car) car.key(k); return; }
     if (top.s.type === 'dial') { if (top.s.num.length < 18) { top.s.num += k; render(); } return; }
     const d = dialler();
     d.num = k;

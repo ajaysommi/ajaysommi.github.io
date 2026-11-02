@@ -4175,7 +4175,6 @@ if (window.self === window.top) console.log(
   const box = wrap.querySelector('.era-ad-box'), ad = wrap.querySelector('.era-ad');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const RAINBOW = ['#61bb46', '#fdb827', '#f5821f', '#e03a3e', '#963d97', '#009ddc'];
 
   const mini = document.getElementById('eraMini');
   const fold = (animate) => {
@@ -4231,7 +4230,7 @@ if (window.self === window.top) console.log(
     const r = nav.getBoundingClientRect();
     box.style.left = r.left + 'px';
     box.style.width = r.width + 'px';
-    box.style.top = r.bottom + 6 + 'px';
+    box.style.top = r.bottom + 9 + 'px';
   };
   let pinDue = 0;
   const pinSoon = () => { if (!pinDue) pinDue = requestAnimationFrame(() => { pinDue = 0; pin(); }); };
@@ -4255,26 +4254,6 @@ if (window.self === window.top) console.log(
     if (!phone.matches && (above || scrollY > 40)) scrollBy(0, wrap.getBoundingClientRect().height - before);
     requestAnimationFrame(() => { wrap.style.transition = ''; });
     cycle();
-  };
-  const sparkle = () => {
-    const r = ad.getBoundingClientRect();
-    for (let i = 0; i < 12; i++) {
-      const e = document.createElement('i');
-      e.className = 'era-spark';
-      // around the edge: along the top and bottom, and off both ends
-      const side = i % 4, f = Math.random();
-      const x = side < 2 ? r.left + f * r.width : side === 2 ? r.left : r.right;
-      const y = side === 0 ? r.top : side === 1 ? r.bottom : r.top + f * r.height;
-      const dx = side === 2 ? -1 : side === 3 ? 1 : (f - .5) * .8, dy = side === 0 ? -1 : side === 1 ? 1 : (Math.random() - .5);
-      const d = 16 + Math.random() * 22, sc = .6 + Math.random() * .7;
-      e.style.cssText = `left:${x}px;top:${y}px;--c:${RAINBOW[i % 6]}`;
-      document.body.appendChild(e);
-      e.animate([
-        { transform: 'translate(0,0) scale(0) rotate(0deg)', opacity: 1 },
-        { transform: `translate(${dx * d * .6}px,${dy * d * .6}px) scale(${sc}) rotate(45deg)`, opacity: 1, offset: .45 },
-        { transform: `translate(${dx * d}px,${dy * d}px) scale(0) rotate(90deg)`, opacity: 0 }
-      ], { duration: 700 + Math.random() * 300, delay: Math.random() * 180, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'both' }).finished.then(() => e.remove());
-    }
   };
   const serve = async () => {
     const mark = navMark();
@@ -4306,20 +4285,19 @@ if (window.self === window.top) console.log(
     wrap.classList.add('is-served');
     // the pop plays out in full before it is set down
     await new Promise((r) => {
-      const end = (e) => { if (e.animationName === 'era-ad-launch') { clearTimeout(t); ad.removeEventListener('animationend', end); r(); } };
-      const t = setTimeout(() => { ad.removeEventListener('animationend', end); r(); }, 600);
+      const end = (e) => { if (e.animationName === 'era-ad-launch' || e.animationName === 'era-ad-fade') { clearTimeout(t); ad.removeEventListener('animationend', end); r(); } };
+      const t = setTimeout(() => { ad.removeEventListener('animationend', end); r(); }, phone.matches ? 1000 : 600);
       ad.addEventListener('animationend', end);
     });
-    // landing: a glow (and on a phone, a few sparkles)
+    // landing: a glow
     ad.classList.add('is-glow');
     wrap.classList.add('is-done', 'is-dance');
-    if (phone.matches) sparkle();
     setTimeout(() => ad.classList.remove('is-glow'), 1100);
     cycle();
   };
 
   // after the page has loaded and its loading screen has gone
-  const go = () => setTimeout(serve, 5700);
+  const go = () => setTimeout(serve, phone.matches ? 7700 : 5700);
   if (!root.classList.contains('is-loading')) go();
   else {
     const mo = new MutationObserver(() => { if (!root.classList.contains('is-loading')) { mo.disconnect(); go(); } });

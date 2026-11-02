@@ -810,6 +810,9 @@
       }
       /* Landed: the eras button works again even while it boots. */
       busy = false;
+      window.STORY.arrive(ERAS[i].year);
+      const tile = pick.querySelector(`.pk-d[data-i="${i}"]`);
+      if (tile) tile.classList.add('is-seen');
       const sys = ERAS[i].sys();
       if (bootP) await bootP;
       else if (!booted[i]) { booted[i] = true; await sys.boot(); }
@@ -934,8 +937,8 @@
        of whatever is on screen: its top edge for the status bar, its
        bottom edge for the toolbar, so the room runs on under them. */
     const EDGE = {
-      pick: LIGHT ? ['#f4f2ed', '#e4e1da'] : ['#2a2a2c', '#121214'], nokia: ['#8d9cb9', '#455d86'], iphone: ['#51545e', '#2b2d38'],
-      pocket: ['#d1c9e0', '#a093b9'], 'pocket-sky': ['#c2d5ea', '#8da9ca'], 'pocket-mint': ['#c0e2cd', '#8bbc9f'],
+      pick: LIGHT ? ['#f4f2ed', '#e4e1da'] : ['#2a2a2c', '#121214'], nokia: ['#8692c0', '#3b4f90'], iphone: ['#51545e', '#2b2d38'],
+      pocket: ['#dac4e5', '#ae8ac2'], 'pocket-sky': ['#c2d5ea', '#8da9ca'], 'pocket-mint': ['#c0e2cd', '#8bbc9f'],
       'pocket-sand': ['#e2d6be', '#b9a784'], 'pocket-slate': ['#3a4252', '#252935']
     };
     /* The rooms themselves run on under Safari's bars (see .phone-host);
@@ -1049,6 +1052,9 @@
       const p = PHONES.find((x) => x.id === id);
       if (!p || cur === id) return;
       store.set('phone', id);
+      window.STORY.arrive(id);
+      const seenCard = cards[PICKS.findIndex((x) => x.id === id)];
+      if (seenCard) seenCard.classList.add('is-seen');
       const open = () => {
         if (cur) rooms[cur].hidden = true;
         cur = id;
