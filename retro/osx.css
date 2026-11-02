@@ -418,7 +418,9 @@
 .ch-av { width: 30px; height: 30px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,.35); }
 .ch-av.ini { background: linear-gradient(180deg, #b5bcc6, #8c95a2); color: #fff; font: bold 12px var(--lg); display: grid; place-items: center; }
 .ch-m p { margin: 0; padding: 7px 13px; border-radius: 16px; font-size: 13px; line-height: 1.45; color: #111; background: linear-gradient(180deg, #ffffff, #f1f3f5); border: 1px solid #b9c0c8; box-shadow: 0 1px 1px rgba(0,0,0,.08), inset 0 1px 0 #fff; }
-.ch-m.out p { background: linear-gradient(180deg, #cfe6ff 0%, #9fcbff 55%, #8ec1ff 100%); border-color: #6b9fd8; }
+/* Aqua's glass pills, as on the phone: pale ice coming in, saturated blue going out. */
+.ch-m p { position: relative; padding: 7px 14px 8px; border-radius: 18px; color: #0d2a52; border: 1px solid #8fb2de; background: linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .28)) 5px 2px / calc(100% - 10px) 46% no-repeat, linear-gradient(180deg, #e6f1fd 0%, #cfe3fa 48%, #b7d4f6 52%, #dbeafc 100%); box-shadow: inset 0 0 3px rgba(255, 255, 255, .7), 0 1px 2px rgba(20, 60, 120, .3); }
+.ch-m.out p { color: #fff; text-shadow: 0 -1px 0 rgba(0, 40, 110, .45); border-color: #2a62b8; background: linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .14)) 5px 2px / calc(100% - 10px) 46% no-repeat, linear-gradient(180deg, #8bbcf5 0%, #5a97ec 48%, #3a7be0 52%, #62a2f1 100%); box-shadow: inset 0 0 3px rgba(255, 255, 255, .45), 0 1px 2px rgba(20, 60, 120, .4); }
 .ch-m.is-new p { animation: ch-pop .25s ease-out; transform-origin: 100% 100%; }
 @keyframes ch-pop { from { transform: scale(.6); opacity: 0; } }
 .ch-send { flex: none; padding: 8px 12px; border-top: 1px solid #c7ced6; background: linear-gradient(180deg, #eef1f4, #e1e6eb); }
@@ -481,9 +483,6 @@
 .ox-bar { width: 100%; flex: none; height: 18px; box-sizing: border-box; border: 1px solid #a5a5a5; border-radius: 3px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 0 #fff; background: linear-gradient(180deg, #fdfdfd, #dedede 50%, #d0d0d0 52%, #f1f1f1); }
 .ox-bar i { display: block; height: 100%; animation: ox-stripe .7s linear infinite; background: linear-gradient(180deg, rgba(255,255,255,.7) 0, rgba(255,255,255,.28) 48%, rgba(0,0,0,.05) 50%, rgba(255,255,255,.3) 100%), linear-gradient(90deg, #4f97ee 0 12px, #62a4f1 12px 24px); background-size: 100% 100%, 24px 100%; box-shadow: 1px 0 1px rgba(0,0,0,.25); }
 @keyframes ox-stripe { to { background-position: 0 0, 24px 0; } }
-/* The dock's Trash with something in it. */
-.dk-i.is-full .dk-ic { position: relative; }
-.dk-i.is-full .dk-ic::after { content: ''; position: absolute; left: 30%; right: 30%; top: 8%; height: 30%; border-radius: 40% 50% 30% 60%; background: linear-gradient(135deg, #fff, #cfd6dd); box-shadow: 0 0 0 .5px rgba(0,0,0,.25); }
 
 /* ==========================================================================
    Aqua, all the way through: the blue that glows in the start-up bar is the

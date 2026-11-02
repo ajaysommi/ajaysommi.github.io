@@ -350,8 +350,10 @@ window.WEB = (function () {
   let zTop = 10;
   const wins = {};
   const front = (w) => { w.style.zIndex = ++zTop; root.querySelectorAll('.p8, .br').forEach((x) => x.classList.toggle('is-back', x !== w)); };
+  let watch = null;
   const openWin = (id, title, w, h, html, info) => {
     if (wins[id]) { wins[id].classList.remove('is-closed', 'is-shaded'); front(wins[id]); return wins[id]; }
+    if (watch) watch.opened();
     const n = Object.keys(wins).length % 6;
     const W = root.clientWidth, H = root.clientHeight;
     const el = document.createElement('div');
@@ -493,6 +495,7 @@ window.WEB = (function () {
     api = deskApi;
     root = document.createElement('div');
     root.className = 'nt';
+    watch = window.RETRO.panicWatch(root);
     root.innerHTML = `
       <div class="nt-menubar" role="menubar">
         ${MENUS.map(([k, l]) => `<button type="button" class="m" data-m="${k}" ${k === 'mark' ? 'aria-label="AJ menu"' : ''}>${l}</button>`).join('')}
@@ -573,6 +576,7 @@ window.WEB = (function () {
     const toTrash = (el) => {
       if (el.classList.contains('nt-trash')) return;
       const go = el.dataset.open, name = el.querySelector('b').textContent, icon = el.querySelector('span').innerHTML;
+      if (go === 'win:hd' || go === 'win:sys' || go === 'alert:sys') { window.RETRO.panic(root); return; }
       const known = DESK.find((x) => x[2] === go) || Object.values(FOLDERS).flatMap((f) => f[1]).find((x) => x[2] === go);
       fromList(go);
       const inDesk = DESK.findIndex((x) => x[2] === go);

@@ -87,6 +87,7 @@ window.FINDER = (function () {
   };
 
   const openWin = async (id, from) => {
+    if (!wins.has(id) && watch) watch.opened();
     const spec = SPECS[id] ? SPECS[id]() : null;
     if (!spec) return;
     if (spec.action) { spec.action(); return; }
@@ -540,7 +541,7 @@ window.FINDER = (function () {
   };
 
   const positions = () => store.get('icons', {});
-  let thrown = [];
+  let thrown = [], watch = null;
   const layoutIcons = () => {
     deskEl.innerHTML = '';
     const saved = positions();
@@ -593,6 +594,7 @@ window.FINDER = (function () {
       trash.classList.remove('is-drop');
       const id = el.dataset.id;
       if (el !== trash && overTrash(ev)) {
+        if (id === 'hd' || id === 'system') { window.RETRO.panic(root); return; }
         if (id === 'resume') window.EGGS.find('keepresume');
         thrown.push(id);
         el.remove();
@@ -786,6 +788,7 @@ window.FINDER = (function () {
   function build(scr, deskApi) {
     api = deskApi;
     root = h('div', 'fd');
+    watch = window.RETRO.panicWatch(root);
     root.dataset.pat = store.get('pattern', 'violet');
     root.innerHTML = '<div class="fd-corners"></div>';
     menubar = h('div', 'fd-menubar');
@@ -817,7 +820,8 @@ window.FINDER = (function () {
       trash: () => deskEl.querySelector('[data-id="trash"]'),
       onTrash: (el) => {
         const id = el.dataset.id, tw = wins.get('trash');
-        if (id === 'trash' || id === 'hd' || thrown.includes(id) || (tw && tw.body && tw.body.contains(el))) return;
+        if (id === 'hd' || id === 'system') { window.RETRO.panic(root); return; }
+        if (id === 'trash' || thrown.includes(id) || (tw && tw.body && tw.body.contains(el))) return;
         if (id === 'resume') window.EGGS.find('keepresume');
         thrown.push(id);
         el.remove();

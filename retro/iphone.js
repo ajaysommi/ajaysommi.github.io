@@ -219,13 +219,13 @@ window.IPHONE = { start(room, exit) {
     chicken: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="10" y="39" width="33" height="13" rx="2.4" fill="url(#bat)" stroke="#2c1608"/><rect x="43" y="42.5" width="3.4" height="6" rx="1" fill="#d6d6d6" stroke="#555" stroke-width=".5"/>
         <ellipse cx="27" cy="29" rx="14" ry="11.5" fill="url(#wh)" stroke="#a88b4c" stroke-width=".7"/><circle cx="37" cy="17" r="8" fill="url(#wh)" stroke="#a88b4c" stroke-width=".7"/><path d="M33 9c1-4 3-3 3.6-1 .8-3 3.4-2.6 3.2 0 2-1.6 3.6.6 1.6 3z" fill="#e2261c" stroke="#8a0f0a" stroke-width=".5"/><path d="M44.5 15.5 51 18l-6.6 2.6z" fill="#f7a81a" stroke="#a86a06" stroke-width=".5"/><path d="M43.5 21c1.4 2.4-.8 4.4-2.4 2.8z" fill="#e2261c"/><circle cx="39.4" cy="15" r="2.4" fill="#fff" stroke="#333" stroke-width=".4"/><circle cx="40" cy="15.2" r="1.15" fill="#111"/><path d="M15 25c5 7 12 7 17 2-1 7-9 10-14 7z" fill="#d9c79c"/><path d="M28 40 22 49h5l-2 5 8-9h-5l3-5z" fill="#ffe14a" stroke="#a87400" stroke-width=".6"/>`,
       lg('bg', [[0, '#a7e6ff'], [0.65, '#4aa8e8'], [1, '#2e7a30']]) + lg('bat', [[0, '#7a5a30'], [1, '#2c1a0a']]) + rg('wh', [[0, '#ffffff'], [1, '#ecdcb4']], 0.4, 0.35, 0.7)),
-    clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="40" text-anchor="middle" ${HV} font-weight="bold" font-size="30" fill="#fff" letter-spacing="-1">in</text>`,
+    clipIN: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><text x="28.5" y="43.5" text-anchor="middle" ${HV} font-weight="bold" font-size="42" fill="#fff" letter-spacing="-1.5">in</text>`,
       lg('bg', [[0, '#5eaaf0'], [0.5, '#1f78c9'], [1, '#0b5aa5']]))
   };
 
   /* The springboard's own artwork, taken from the 2007 home screen. The
      calendar and weather faces are left blank and lettered live. */
-  const ART = { sms: 'sms', calendar: 'calendar', photos: 'photos', camera: 'camera', tv: 'youtube', stocks: 'stocks', maps: 'maps', weather: 'weather', settings: 'settings', notes: 'notes', phone: 'phone', mail: 'mail', safari: 'safari', ipod: 'ipod' };
+  const ART = { sms: 'sms', calendar: 'calendar', photos: 'photos', camera: 'camera', tv: 'youtube', stocks: 'stocks', maps: 'maps', weather: 'weather', settings: 'settings', notes: 'notes', phone: 'phone', mail: 'mail', safari: 'safari', ipod: 'ipod', store: 'store' };
   Object.keys(ART).forEach((k) => {
     ICON[k] = () => {
       let over = '';
@@ -881,7 +881,7 @@ window.IPHONE = { start(room, exit) {
 
   /* Notes: every note can be edited, new ones made, sent or thrown away. */
   const NOTES_DEFAULT = [
-    ['More eras', 'This phone is one of three in this portfolio. Tap Eras, at the bottom, to see the others.\n\nOpen this page on a computer and there are four more machines to use.'],
+    ['More eras', 'This phone is one of three in this portfolio. Tap Eras, at the bottom, to see the others.\n\nOpen this page on a computer sometime. It doesn’t stop here.'],
     ['About me', `${P.about[0]}\n\n${P.about[1]}`],
     ['Education', `${P.education.school}\n${P.education.degree}\n${P.education.college}\nGraduating ${P.education.when}\n\n${P.education.text}`],
     ['Off the clock', `“${P.quote}”\n\nRepairs, teardowns and builds: see Builds.`],
@@ -1344,6 +1344,68 @@ window.IPHONE = { start(room, exit) {
 
   /* ---------------------------------------------------- status bar games */
 
+  /* The Store: what was on in 2007, with each title's poster or DVD cover (a
+     coloured tile for the one without). Buying only adds it to this phone's list. */
+  function store07(app) {
+    const MOVIES = [
+      ['Spider-Man 3', 'Action', '#7d1420', '#14213d', 'Peter Parker takes on Sandman, Venom and himself.'],
+      ['Shrek the Third', 'Animation', '#6c8a1f', '#23400f', 'Shrek goes looking for someone else to be king.'],
+      ['Transformers', 'Action', '#2f3b52', '#c2410c', 'A teenager’s first car turns out to be an alien robot.'],
+      ['Pirates of the Caribbean: At World’s End', 'Adventure', '#1c2a35', '#7a5c2e', 'The crew sails to the ends of the earth for Jack Sparrow.'],
+      ['Harry Potter and the Order of the Phoenix', 'Fantasy', '#1d1f3f', '#5b2a86', 'Year five at Hogwarts, and nobody believes Harry.'],
+      ['I Am Legend', 'Sci-Fi', '#3a3a30', '#8a7a4a', 'The last man in New York, and his dog.'],
+      ['The Bourne Ultimatum', 'Thriller', '#0f2a3f', '#3e6f8e', 'Jason Bourne closes in on who made him.'],
+      ['Ratatouille', 'Animation', '#8a2f1c', '#d99a2b', 'A rat in Paris who only wants to cook.'],
+      ['The Simpsons Movie', 'Comedy', '#e0b81e', '#3f83c9', 'Homer dooms Springfield. A pig is involved.'],
+      ['300', 'Action', '#5a1d0c', '#b5641b', 'Three hundred Spartans hold the pass at Thermopylae.'],
+      ['Superbad', 'Comedy', '#c24a1a', '#f0c23c', 'Two best friends, one fake ID, one last party.'],
+      ['Knocked Up', 'Comedy', '#c43a55', '#f0a8a0', 'One night out turns into nine months.'],
+      ['Live Free or Die Hard', 'Action', '#23282f', '#a12a1e', 'John McClane against the whole internet.'],
+      ['Juno', 'Comedy', '#c8501e', '#e8c64a', 'A sixteen-year-old plans her way through an unplanned pregnancy.'],
+      ['No Country for Old Men', 'Drama', '#6a4a26', '#c7a26a', 'A found case of money and the man coming after it.']
+    ];
+    const SHOWS = [
+      ['Lost', 'Drama', '#123a3a', '#3e8a7a', 'Survivors of a plane crash, and an island with its own ideas.'],
+      ['Heroes', 'Sci-Fi', '#1a1a2e', '#c9a227', 'Save the cheerleader, save the world.'],
+      ['The Office', 'Comedy', '#3b4a5a', '#a8b6c2', 'Life at Dunder Mifflin’s Scranton branch.'],
+      ['Grey’s Anatomy', 'Drama', '#3a6ea5', '#a7c6e6', 'Surgeons in Seattle, in and out of the on-call room.'],
+      ['24', 'Thriller', '#111111', '#b58a1a', 'Jack Bauer, one very long day at a time.'],
+      ['American Idol', 'Reality', '#1c3f94', '#c9202e', 'The show everybody at school talked about the next morning.'],
+      ['House', 'Drama', '#2a3d4f', '#7f96a8', 'The rudest doctor in New Jersey is usually right.'],
+      ['The Sopranos', 'Drama', '#141414', '#7a1a1a', 'The final season, and that last scene.'],
+      ['30 Rock', 'Comedy', '#22344f', '#c2a14a', 'Running a sketch show at NBC, barely.'],
+      ['Mad Men', 'Drama', '#6b1f1f', '#d8b48a', 'New this summer: Madison Avenue in 1960.'],
+      ['Dexter', 'Thriller', '#3a0d0d', '#b02020', 'A Miami blood expert with a very private hobby.'],
+      ['Family Guy', 'Animation', '#2b5fb0', '#e3c13a', 'The Griffins of Quahog, and the talking dog.'],
+      ['Entourage', 'Comedy', '#2c2c2c', '#caa55a', 'A young star and his friends from Queens loose in Hollywood.'],
+      ['Friday Night Lights', 'Drama', '#123a6b', '#d1a21e', 'Clear eyes, full hearts: football in small-town Texas.'],
+      ['Hannah Montana', 'Family', '#c2287a', '#f0a6d0', 'A regular girl by day, a pop star by night.']
+    ];
+    const owned = new Set(store.get('ip-store', []));
+    const NO_COVER = ['Entourage'];
+    const cover = (t) => `assets/images/store/${t.toLowerCase().replace(/’/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.webp`;
+    const tile = (x, big) => `<span class="st-tile${big ? ' big' : ''}" style="background:linear-gradient(160deg,${x[2]},${x[3]})">${NO_COVER.includes(x[0]) ? `<b>${esc(x[0])}</b>` : `<img src="${cover(x[0])}" alt="" loading="lazy" draggable="false" />`}</span>`;
+    const page = (x, price) => (pg) => {
+      pg.innerHTML = `<div class="st-item">${tile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[1])} · 2007</p><button type="button" class="st-buy">${owned.has(x[0]) ? 'PURCHASED' : price}</button></div><p class="st-blurb">${esc(x[4])}</p></div>`;
+      const b = pg.querySelector('.st-buy');
+      b.classList.toggle('is-own', owned.has(x[0]));
+      b.addEventListener('click', () => {
+        if (owned.has(x[0]) || b.dataset.busy) return;
+        if (b.textContent !== 'BUY NOW') { b.dataset.was = b.textContent; b.textContent = 'BUY NOW'; b.classList.add('is-sure'); return; }
+        SFX.click();
+        b.dataset.busy = '1'; b.classList.remove('is-sure'); b.textContent = 'DOWNLOADING…';
+        setTimeout(() => { owned.add(x[0]); store.set('ip-store', [...owned]); b.textContent = 'PURCHASED'; b.classList.add('is-own'); delete b.dataset.busy; }, 1700);
+      });
+    };
+    const list = (rows, price) => (pg) => plain(pg, rows.map((x) => ({ text: x[0], sub: `${x[1]} · ${price}`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', page(x, price)) })));
+    const FILM = 'M3 4h24v18H3zM6 6v3h3V6zM6 12v2h3v-2zM6 17v3h3v-3zM21 6v3h3V6zM21 12v2h3v-2zM21 17v3h3v-3zM11 6v14h8V6z';
+    const SCREEN = 'M3 3h24v16H3zM5.500 5.500v11h19v-11zM10 21h10v2.500H10z';
+    tabs(app, [['Movies', FILM], ['TV Shows', SCREEN]], 0, (i) => {
+      if (i === 0) app.reset('Top Movies', list(MOVIES, '$14.99'));
+      else app.reset('Top TV Shows', list(SHOWS, '$1.99'));
+    });
+  }
+
   /* These five play on the phone's own status bar: its signal bars, its
      battery, its clock. Everything is put back when the app closes. */
   const stat = {
@@ -1527,6 +1589,7 @@ window.IPHONE = { start(room, exit) {
     onebar: { name: 'One-Bar', icon: 'onebar', bare: true, bar: 'black', open: GAMES.onebar },
     chicken: { name: 'Chicken', icon: 'chicken', bare: true, bar: 'black', open: GAMES.chicken },
     guestbook: { name: 'Text', icon: 'sms', open: messages },
+    store: { name: 'Store', icon: 'store', nb: 'black', bar: 'black', cls: 'is-store', open: store07 },
     experience: { name: 'Calendar', icon: 'calendar', open: calendar },
     bubbles: { name: 'Bubbles', icon: 'bubbles', bare: true, bar: 'black', open: bubbles },
     builds: { name: 'Photos', icon: 'photos', cls: 'is-photos', open(app) {
@@ -1739,6 +1802,48 @@ window.IPHONE = { start(room, exit) {
         const p = pin && pin.closest('.pin-d');
         if (p) callout(+p.dataset.i); else callout(-1);
       });
+      /* Two fingers: the map as drawn is scaled about them, following exactly,
+         and the right tiles are fetched when they lift. */
+      const fingers = new Map();
+      let pinch = null;
+      const inView = (x, y) => { const r = view.getBoundingClientRect(), k = r.width / 320; return { x: (x - r.left) / k, y: (y - r.top) / k }; };
+      const spread = () => { const [a, b] = [...fingers.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y), m: inView((a.x + b.x) / 2, (a.y + b.y) / 2) }; };
+      const scaleLayers = (t) => [tilesEl, pinsEl].forEach((l) => { l.style.transformOrigin = '0 0'; l.style.transform = t; });
+      view.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.callout, .mp-zoom')) return;
+        fingers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (fingers.size === 2) {
+          try { view.setPointerCapture(e.pointerId); } catch (x) {}
+          drag = null;
+          const s = spread();
+          pinch = { d: s.d, m: s.m, last: s.m, s: 1 };
+          e.stopImmediatePropagation();
+        }
+      }, true);
+      view.addEventListener('pointermove', (e) => {
+        const f = fingers.get(e.pointerId);
+        if (!f) return;
+        f.x = e.clientX; f.y = e.clientY;
+        if (!pinch || fingers.size < 2) return;
+        const s = spread();
+        pinch.s = Math.max(2 ** (2 - z), Math.min(2 ** (17 - z), s.d / pinch.d));
+        pinch.last = s.m;
+        scaleLayers(`translate(${s.m.x - pinch.m.x * pinch.s}px, ${s.m.y - pinch.m.y * pinch.s}px) scale(${pinch.s})`);
+        e.stopImmediatePropagation();
+      }, true);
+      const fingerUp = (e) => {
+        if (!fingers.delete(e.pointerId) || !pinch) return;
+        const p = pinch;
+        pinch = null;
+        const k = p.s, wx = cx - W / 2 + p.m.x, wy = cy - H / 2 + p.m.y;
+        z += Math.log2(k);
+        cx = wx * k - (p.last.x - W / 2); cy = wy * k - (p.last.y - H / 2);
+        scaleLayers('');
+        draw();
+        e.stopImmediatePropagation();
+      };
+      view.addEventListener('pointerup', fingerUp, true);
+      view.addEventListener('pointercancel', fingerUp, true);
       view.addEventListener('dblclick', (e) => { const r = view.getBoundingClientRect(), k = r.width / 320; zoom(1, (e.clientX - r.left) / k, (e.clientY - r.top) / k); });
       view.addEventListener('wheel', (e) => { e.preventDefault(); const r = view.getBoundingClientRect(), k = r.width / 320; zoom(e.deltaY < 0 ? 1 : -1, (e.clientX - r.left) / k, (e.clientY - r.top) / k); }, { passive: false });
       app.el.querySelector('.mp-zoom').addEventListener('click', (e) => { const b = e.target.closest('[data-z]'); if (b) { SFX.click(); zoom(+b.dataset.z); } });
@@ -1970,7 +2075,7 @@ window.IPHONE = { start(room, exit) {
     const v = h('div', 'photo-view');
     const n = s.steps.length;
     let auto = 0, busy = false;
-    let zoom = 1, panX = 0, panY = 0, pinch = null, gesture = false, lastTap = 0;
+    let zoom = 1, panX = 0, panY = 0, pinch = null, gesture = false, lastTap = 0, chromeT = 0;
     const touches = new Map();
     const api = {};
     const big = (i) => s.steps[(i + n) % n][0].replace('-480', '-960');
@@ -2019,7 +2124,7 @@ window.IPHONE = { start(room, exit) {
     const settle = () => { if (zoom < 1.05) { zoom = 1; panX = 0; panY = 0; } zoom = Math.min(4, zoom); paintZoom(true); };
     v.addEventListener('pointerdown', (e) => {
       if (e.target.closest('button')) return;
-      touches.set(e.pointerId, { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now() });
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), onChrome: !v.classList.contains('is-bare') && !!e.target.closest('.cap, .pv-top, .tbar') });
       try { v.setPointerCapture(e.pointerId); } catch (x) {}
       if (touches.size === 2) {
         const p = pair();
@@ -2062,7 +2167,13 @@ window.IPHONE = { start(room, exit) {
             lastTap = 0;
             if (zoom > 1) { zoom = 1; panX = 0; panY = 0; } else { const c = fromMiddle(t.x, t.y); zoom = 2.5; panX = -c.x * 1.5; panY = -c.y * 1.5; }
             paintZoom(true);
-          } else lastTap = now;
+            clearTimeout(chromeT);
+          } else {
+            lastTap = now;
+            /* One tap, once it can't be the start of a double: the words and
+               buttons go; another brings them back. */
+            if (!t.onChrome) chromeT = setTimeout(() => v.classList.toggle('is-bare'), 320);
+          }
         } else if (zoom > 1) paintZoom(true);
       }
       if (swallow) e.stopImmediatePropagation();
@@ -2090,7 +2201,7 @@ window.IPHONE = { start(room, exit) {
      19 in, rows 90 apart starting 19 under the status bar. */
   /* Two home screens, as the original had once you had enough apps: a
      sideways swipe moves between them, the dots above the dock say which. */
-  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin'], ['bubbles', 'signal', 'balancer', 'defender', 'onebar', 'chicken']];
+  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin', 'store'], ['bubbles', 'signal', 'balancer', 'defender', 'onebar', 'chicken']];
   const GRID = PAGES.flat();
   let pageNo = 0;
   const DOCK = ['contact', 'email', 'resume', 'about'];
@@ -2113,6 +2224,8 @@ window.IPHONE = { start(room, exit) {
     b.style.transition = 'none';
     b.style.transform = `translate(${-cx * 1.6}px, ${-cy * 1.6}px) scale(1.5)`;
   };
+  /* The home screen's rows: four fit above the page dots. */
+  const ROW0 = 15, ROW = 85;
   const drawBoard = () => {
     grid.innerHTML = `<div class="ip-pages" style="transform:translateX(${-pageNo * 320}px)">${PAGES.map(() => '<div class="ip-page"></div>').join('')}</div><div class="ip-dots">${PAGES.map((_, i) => `<i class="${i === pageNo ? 'on' : ''}"></i>`).join('')}</div>`;
     dock.innerHTML = '';
@@ -2121,11 +2234,11 @@ window.IPHONE = { start(room, exit) {
       const b = iconBtn(id);
       const c = i % 4, r = Math.floor(i / 4);
       b.style.left = 19.4 - 8.5 + c * 75 + 'px';
-      b.style.top = 19.2 + r * 90.4 + 'px';
+      b.style.top = ROW0 + r * ROW + 'px';
       pages[p].appendChild(b);
       // Only the page on show flies; the others simply wait in place, out of sight.
       // Every page knows its way to the middle, so it can open and close alike.
-      place(b, 19.4 + c * 75, 20 + 19.2 + r * 90.4);
+      place(b, 19.4 + c * 75, 20 + ROW0 + r * ROW);
       if (p !== pageNo) { b.classList.add('is-away'); b.style.transform = ''; b.style.transition = ''; }
     }));
     DOCK.forEach((id, i) => {
@@ -2212,7 +2325,7 @@ window.IPHONE = { start(room, exit) {
     const icons = [...room.querySelectorAll('.ip-icon:not(.is-away)')].map((b) => ({ b, x: -(parseFloat(b.style.getPropertyValue('--cx')) || 0), y: -(parseFloat(b.style.getPropertyValue('--cy')) || 0) }));
     // Half an icon, name included, and the nearest icon to the middle on the
     // home screen's grid: the same stretch whichever page is showing.
-    const HW = 33, HH = 40, PAD = 5, minX = 37.5, minY = 81.9;
+    const HW = 33, HH = 40, PAD = 5, minX = 37.5, minY = 240 - (20 + ROW0 + ROW + 28.5);
     icons.forEach(({ b, x, y }) => {
       b.style.transition = 'none';
       b.style.transform = '';
@@ -2326,7 +2439,7 @@ window.IPHONE = { start(room, exit) {
   });
   /* The volume rocker: the real overlay, and it really sets the volume. */
   let vol = store.get('ip-vol', 12), hudT = 0;
-  const hud = h('div', 'ip-hud', `<svg viewBox="0 0 40 40" width="46" height="46" aria-hidden="true"><path d="M6 15h7l10-8v26l-10-8H6z" fill="currentColor"/><path d="M28 13q5 7 0 14M32 9q8 11 0 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><b>Volume</b><span></span>`);
+  const hud = h('div', 'ip-hud', `<b>ringer</b><em>(headphones)</em><svg viewBox="0 0 84 76" width="84" height="76" aria-hidden="true"><path d="M0 26h17L37 4v68L17 50H0z" fill="#fff"/><path d="M50 27q7 11 0 22" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M59 15q15 23 0 46" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M69 3q24 35 0 70" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg><span></span>`);
   hud.hidden = true;
   scr.appendChild(hud);
   room.querySelectorAll('.ip-vol').forEach((b) => b.addEventListener('click', () => {

@@ -244,10 +244,10 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 .os-host[data-era="2007"] .bz-frame { top: -60px; left: calc(var(--side) + 3px); right: calc(var(--side) + 3px); border-radius: 0; background: linear-gradient(180deg, #121214, #050506); }
 
 /* The music player's room, in the colour chosen in its Settings. */
-.phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(82% 58% at 50% 40%, #f8fbfe 0%, #d5e3f6 55%, #7f9ec3 100%); }
-.phone-host .pocket-room[data-bg="mint"] { background: radial-gradient(82% 58% at 50% 40%, #f8fefb 0%, #d2efdd 55%, #7eb594 100%); }
-.phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(82% 58% at 50% 40%, #fefcf8 0%, #ece0c9 55%, #b29e77 100%); }
-.phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(82% 58% at 50% 40%, #777f91 0%, #3c4050 55%, #1d2029 100%); }
+.phone-host .pocket-room[data-bg="sky"] { background: radial-gradient(82% 58% at 50% 40%, #f8fbfe 0%, #e6eefa 55%, #8da9ca 100%); }
+.phone-host .pocket-room[data-bg="mint"] { background: radial-gradient(82% 58% at 50% 40%, #f8fefb 0%, #e1f4e8 55%, #8bbc9f 100%); }
+.phone-host .pocket-room[data-bg="sand"] { background: radial-gradient(82% 58% at 50% 40%, #fefcf8 0%, #f1e9d8 55%, #b9a784 100%); }
+.phone-host .pocket-room[data-bg="slate"] { background: radial-gradient(82% 58% at 50% 40%, #828a9a 0%, #45495c 55%, #252935 100%); }
 
 /* The time shapes behind the pickers. */
 .pk-time { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0; animation: pk-time-in 2.4s ease .2s forwards; }
@@ -368,9 +368,9 @@ html.is-turned .picker.is-phones { height: var(--vvh, 100svh); padding-bottom: c
 
 /* Phones: their rooms' gradients (the shapes are their own layer now),
    the handset above the shapes, and buttons in the phone's colours. */
-.phone-host .nk-room { background: radial-gradient(82% 58% at 50% 40%, #f3f7fc 0%, #9eaecd 55%, #3e5479 100%); }
-.phone-host .pocket-room { background: radial-gradient(82% 58% at 50% 40%, #fbf9fd 0%, #e2dced 55%, #9587b1 100%); }
-.phone-host .iphone-room { background: radial-gradient(82% 58% at 50% 40%, #a6a8af 0%, #5a5b66 55%, #22242c 100%); }
+.phone-host .nk-room { background: radial-gradient(82% 58% at 50% 40%, #f9fbfd 0%, #abb9d4 55%, #455d86 100%); }
+.phone-host .pocket-room { background: radial-gradient(82% 58% at 50% 40%, #fbf9fd 0%, #ede9f4 55%, #a093b9 100%); }
+.phone-host .iphone-room { background: radial-gradient(82% 58% at 50% 40%, #b1b3b9 0%, #646571 55%, #2b2d38 100%); }
 .nk-scale, .pk-scale, .ip-scale { position: relative; z-index: 1; }
 .is-mobile .snd-toggle span { display: none; }
 .is-mobile .snd-toggle { padding: 10px 12px; }

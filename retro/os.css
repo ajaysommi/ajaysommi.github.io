@@ -737,3 +737,14 @@ img { display: block; max-width: 100%; }
 .bz-cable.is-going .bz-plug, .bz-cable.is-on .bz-plug { pointer-events: none; }
 .bz-cable .bz-hint { opacity: 1; color: #0b5b72; }
 .bz-cable.is-going .bz-hint, .bz-cable.is-on .bz-hint { display: none; }
+
+/* A kernel panic: everything stays, under a grey curtain that comes down over
+   it; then the box. Sized off the screen, so its proportions never change. */
+.kp { position: absolute; inset: 0; z-index: 99990; overflow: hidden; display: grid; place-items: center; cursor: default; }
+.kp::before { content: ''; position: absolute; inset: 0; background: rgba(62, 62, 62, .62); animation: kp-fall 1s cubic-bezier(.45, 0, .55, 1) both; }
+@keyframes kp-fall { from { transform: translateY(-100%); } to { transform: none; } }
+.kp-box { position: relative; container-type: inline-size; width: 60%; aspect-ratio: 963 / 520; background: #212121; overflow: hidden; animation: kp-show .01s linear 1.15s both; }
+@keyframes kp-show { from { visibility: hidden; } to { visibility: visible; } }
+.kp-mark { position: absolute; left: 30.2%; top: 12.200%; width: 39.800%; height: auto; }
+.kp-text { position: absolute; left: 11.600%; top: 4.800cqw; color: #f2f2f2; font: 2.75cqw/3.42cqw "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, "Hiragino Kaku Gothic ProN", sans-serif; white-space: nowrap; text-align: left; }
+.kp-text p { margin: 0 0 3.15cqw; padding: 0; color: inherit; font: inherit; }

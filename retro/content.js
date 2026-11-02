@@ -527,5 +527,31 @@ window.RETRO = (function () {
     }, true);
   };
 
-  return { esc, usedAt, dither, ditherAll, ascii, store, viewport, marquee, dragIcons, contextMenu, zoomPics };
+  /* A kernel panic: the grey curtain comes down over whatever is on screen,
+     then the box in four languages. A click or a key restarts the machine.
+     panicWatch counts what a person trying to break it would do: windows
+     opened in a burst, and frantic clicking. */
+  const panic = (root) => {
+    if (root.querySelector(':scope > .kp')) return;
+    const k = document.createElement('div');
+    k.className = 'kp';
+    k.innerHTML = `<div class="kp-box"><svg class="kp-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#7c7c7c"/><path d="M33 24.500a30 30 0 1 0 34 0" fill="none" stroke="#212121" stroke-width="8"/><path d="M50 16v32" stroke="#212121" stroke-width="7.500" stroke-linecap="round"/></svg><div class="kp-text"><p>You need to restart your computer. Hold down the Power<br/>button for several seconds or press the Restart button.</p><p>Veuillez redémarrer votre ordinateur. Maintenez la touche<br/>de démarrage enfoncée pendant plusieurs secondes ou bien<br/>appuyez sur le bouton de réinitialisation.</p><p>Sie müssen Ihren Computer neu starten. Halten Sie dazu<br/>die Einschalttaste einige Sekunden gedrückt oder drücken<br/>Sie die Neustart-Taste.</p><p lang="ja">コンピュータを再起動する必要があります。パワーボタンを<br/>数秒間押し続けるか、リセットボタンを押してください。</p></div></div>`;
+    k.setAttribute('role', 'alert');
+    root.appendChild(k);
+    window.EGGS.find('panic', true);   // counted, but nothing pops up over the crash
+    window.SFX.music && window.SFX.music(null);
+    const restart = () => location.reload();
+    setTimeout(() => {
+      k.addEventListener('pointerdown', restart);
+      document.addEventListener('keydown', restart);
+    }, 1800);
+  };
+  const panicWatch = (root) => {
+    let opens = [], clicks = [];
+    const recent = (list, ms, n) => { const t = performance.now(); list.push(t); while (list.length && t - list[0] > ms) list.shift(); return list.length >= n; };
+    root.addEventListener('pointerdown', () => { if (recent(clicks, 5000, 50)) panic(root); }, true);
+    return { opened() { if (recent(opens, 3000, 8)) panic(root); } };
+  };
+
+  return { esc, usedAt, dither, ditherAll, ascii, store, viewport, marquee, dragIcons, contextMenu, zoomPics, panic, panicWatch };
 })();
