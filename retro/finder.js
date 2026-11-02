@@ -23,6 +23,9 @@ window.FINDER = (function () {
   const ITEMS = {
     hd: { name: 'Sommi HD', icon: 'hd', kind: 'disk' },
     readme: { name: 'Read Me First', icon: 'doc', kind: 'document' },
+    letter: { name: 'Untitled', icon: 'doc', kind: 'document' },
+    tvguide: { name: 'This Week on TV', icon: 'doc', kind: 'document', keys: 'simpsons seinfeld cheers television shows' },
+    receipt: { name: 'Video Store Receipt', icon: 'doc', kind: 'document', keys: 'movies rental terminator home alone' },
     about: { name: 'About Me', icon: 'person', kind: 'document', keys: 'bio who ajay me' },
     experience: { name: 'Experience', icon: 'folder', kind: 'folder', keys: 'work jobs path career roles' },
     projects: { name: 'Projects', icon: 'folder', kind: 'folder', keys: 'code built apps github' },
@@ -251,7 +254,11 @@ window.FINDER = (function () {
       info: `<span>${DESKTOP.length + 1} items</span><span>1.3 MB in disk</span><span>18 MB available</span>`,
       render: folderGrid(['about', 'experience', 'projects', 'offclock', 'skills', 'education', 'recs', 'contact', 'resume', 'papers', 'system'])
     }),
-    papers: () => ({ title: 'News & Brochures', w: 380, h: 200, info: '<span>2 items</span><span>from the dealer’s counter</span>', render: folderGrid(['paper:news', 'paper:brochure']) }),
+    papers: () => ({ title: 'News & Brochures', w: 420, h: 220, info: '<span>4 items</span><span>from the dealer’s counter</span>', render: folderGrid(['paper:news', 'paper:brochure', 'tvguide', 'receipt']) }),
+    letter: () => ({ title: 'Untitled', w: 420, h: 340, render: (b) => { b.innerHTML = `<div class="doc paper">${window.STORY.html('1991')}</div>`; } }),
+    /* Papers left on the disk by whoever had the computer first. */
+    tvguide: () => ({ title: 'This Week on TV', w: 400, h: 330, render: (b) => { b.innerHTML = '<div class="doc paper"><h2>This Week, 1991</h2><p><b>Thursday:</b> Cheers, and a Simpsons fight over who gets the good couch spot.</p><p><b>Monday:</b> The Fresh Prince of Bel-Air. Everyone can do the theme song by now.</p><p><b>Sometime:</b> this new one, Seinfeld. Worth a look.</p><p>Tape anything good. There’s a blank VHS on top of the set.</p><hr/><p><b>On the radio:</b> Everything I Do, Losing My Religion, and that Nirvana song nobody can make out the words to.</p><p><b>At the arcade:</b> Street Fighter II. Bring quarters.</p></div>'; } }),
+    receipt: () => ({ title: 'Video Store Receipt', w: 330, h: 310, render: (b) => { b.innerHTML = '<div class="doc paper"><h2>Rentals</h2><p>Home Alone<br/>Ghost<br/>Dances with Wolves</p><p><b>Due back Friday by 7.</b><br/>Please be kind, rewind.</p><hr/><p><b>Coming soon to theaters:</b> Terminator 2. Also on the poster wall: The Silence of the Lambs, Thelma &amp; Louise.</p></div>'; } }),
     /* The newsletter as a folded sheet, the brochure as a dealer's leaflet. */
     'paper:news': () => {
       const d = window.PAPERS[1991].news;
@@ -337,7 +344,7 @@ window.FINDER = (function () {
     }),
     trash: () => {
       window.EGGS.find('trash');
-      return { title: 'Trash', w: 440, h: 240, info: `<span>${3 + thrown.length} items</span><span></span>`, render: folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown], true) };
+      return { title: 'Trash', w: 440, h: 240, info: `<span>${4 + thrown.length} items</span><span></span>`, render: folderGrid(['oldsite', 'jquery', 'dontopen', 'letter', ...thrown], true) };
     },
     oldsite: () => ({
       action: async () => {
@@ -495,7 +502,7 @@ window.FINDER = (function () {
     const close = () => { scrim.remove(); d.remove(); };
     const search = () => {
       const q = inp.value.trim().toLowerCase();
-      const all = Object.keys(SPECS).filter((id) => ITEMS[id] && !['oldsite', 'jquery', 'dontopen', 'trash', 'system', 'hd'].includes(id));
+      const all = Object.keys(SPECS).filter((id) => ITEMS[id] && !['oldsite', 'letter', 'jquery', 'dontopen', 'trash', 'system', 'hd'].includes(id));
       hits = q ? all.filter((id) => (ITEMS[id].name + ' ' + (ITEMS[id].keys || '')).toLowerCase().includes(q)) : [];
       if (q && !hits.length) {
         const sk = P.skills.flatMap((s) => s[1]).find((s) => s.toLowerCase().includes(q));
@@ -600,7 +607,7 @@ window.FINDER = (function () {
         el.remove();
         trash.innerHTML = iconEl('trash').innerHTML;
         const tw = wins.get('trash');
-        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown], true)(tw.body); }
+        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', 'letter', ...thrown], true)(tw.body); }
         window.SFX.click();
         return;
       }
@@ -660,7 +667,7 @@ window.FINDER = (function () {
     ['view', 'View', PATTERNS.map(([k, n]) => [`Pattern: ${n}`, () => setPattern(k), '', root.dataset.pat === k])],
     ['special', 'Special', [
       ['Clean Up Desktop', () => { store.set('icons', {}); layoutIcons(); }],
-      ['Empty Trash…', () => { thrown = []; store.set('icons', positions()); layoutIcons(); const tw = wins.get('trash'); if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen'], true)(tw.body); } }],
+      ['Empty Trash…', () => { thrown = []; store.set('icons', positions()); layoutIcons(); const tw = wins.get('trash'); if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', 'letter'], true)(tw.body); } }],
       '-',
       ['Restart', restart],
       ['Restart in Another Era\u2026', () => api.picker()],
@@ -826,7 +833,7 @@ window.FINDER = (function () {
         thrown.push(id);
         el.remove();
         layoutIcons();
-        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', ...thrown], true)(tw.body); }
+        if (tw && tw.body) { tw.body.innerHTML = ''; folderGrid(['oldsite', 'jquery', 'dontopen', 'letter', ...thrown], true)(tw.body); }
         window.SFX.click();
       }
     });

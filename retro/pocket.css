@@ -117,8 +117,8 @@
   touch-action: pan-y;
 }
 .lcd-pane::-webkit-scrollbar { display: none; }
-.lcd-pane.in-r { animation: pk-in-r .22s steps(5) both; }
-.lcd-pane.in-l { animation: pk-in-l .22s steps(5) both; }
+.lcd-pane.in-r { animation: pk-in-r .22s steps(5) backwards; }
+.lcd-pane.in-l { animation: pk-in-l .22s steps(5) backwards; }
 @keyframes pk-in-r { from { transform: translateX(100%); } }
 @keyframes pk-in-l { from { transform: translateX(-100%); } }
 

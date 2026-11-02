@@ -49,8 +49,16 @@ window.WEB = (function () {
         <li><b>Dec 2026:</b> Graduating from <a href="#" data-go="school">UF</a>, AI Certificate included.</li>
         <li>Brought a <a href="#" data-go="garage/macbook">MacBook back from the dead</a>. Pictures inside!</li>
       </ul>
-      <table class="lay"><tr><td style="vertical-align:top"><h3>Hot off the wire</h3><p class="small"><a href="#" data-go="news">What’s New on the Web in 1998</a>: Windows 98 and a search engine called Google.</p></td>
+      <table class="lay"><tr><td style="vertical-align:top"><h3>Hot off the wire</h3><p class="small"><a href="#" data-go="showing">Now Showing</a> · <a href="#" data-go="news">What’s New on the Web in 1998</a>: Windows 98 and a search engine called Google.</p></td>
       <td style="width:230px;vertical-align:top"><a href="#" data-go="shop" class="ad98"><b>SommiNet 56K!</b><span>Surf at top speed. Click here!</span></a></td></tr></table>`),
+
+    /* A fan's page of what everyone was watching. */
+    showing: () => shell('Now Showing', `<h1>Now Showing!!</h1><p class="center"><i>Updated whenever I remember. Sign my guestbook!</i></p><hr/>
+      <h3><span class="new">NEW!</span> At the movies</h3><p>Titanic is STILL in theaters. Also seen: Armageddon, Saving Private Ryan, The Truman Show, There’s Something About Mary.</p>
+      <h3>Must see TV</h3><p>Seinfeld said goodbye in May. Still on: Friends, ER, The X-Files, South Park, and Dawson’s Creek if you’re into that.</p>
+      <h3>In my CD changer</h3><p>My Heart Will Go On. Iris. I Don’t Want to Miss a Thing. That new Britney Spears single.</p>
+      <h3>Staying up too late on</h3><p>StarCraft on the home computer, Pokémon Red on the bus. Zelda comes out for the N64 in November. Counting the days.</p>
+      <p class="center small">Best viewed with the lights off and the modem on. <a href="#" data-go="home">Back home</a></p>`),
 
     /* The papers of 1998: a news page of the year, and an advert. */
     news: () => {
@@ -333,10 +341,10 @@ window.WEB = (function () {
   const FOLDERS = {
     hd: ['Sommi HD', [['folder', 'Applications', 'win:apps'], ['folder', 'Documents', 'win:docs'], ['folder', 'System Folder', 'win:sys'], ['globe', 'SurfBoard', 'app:surf']], '4 items · 1.2 GB available'],
     apps: ['Applications', [['globe', 'SurfBoard', 'app:surf'], ['note', 'Note Pad', 'app:note'], ['chip', 'Calculator', 'app:calc'], ['bomb', 'SommiSweeper', 'app:mines'], ['puzzle', 'Appearance', 'app:appear']], '5 items'],
-    docs: ['Documents', [['resume', 'Résumé', 'page:resume'], ['doc', 'What’s New ’98', 'page:news'], ['doc', '56K Modem Ad', 'page:shop'], ['folder', 'Projects', 'page:projects'], ['photo', 'Garage Photos', 'page:garage'], ['cap', 'School', 'page:school']], '6 items'],
+    docs: ['Documents', [['resume', 'Résumé', 'page:resume'], ['doc', 'What’s New ’98', 'page:news'], ['doc', '56K Modem Ad', 'page:shop'], ['doc', 'Now Showing', 'page:showing'], ['folder', 'Projects', 'page:projects'], ['photo', 'Garage Photos', 'page:garage'], ['cap', 'School', 'page:school']], '7 items'],
     sys: ['System Folder', [['mac', 'System', 'alert:sys'], ['app', 'Desktop', 'alert:finder'], ['folder', 'Extensions', 'win:ext'], ['puzzle', 'Appearance', 'app:appear']], '4 items'],
     ext: ['Extensions', [['chip', '56K Modem Enabler', 'alert:ext'], ['chip', 'Video Player', 'alert:ext'], ['chip', 'Network Driver', 'alert:ext']], '3 items'],
-    trash: ['Trash', [], 'empty']
+    trash: ['Trash', [['doc', 'Untitled', 'app:letter']], '1 item']
   };
   const ALERTS = {
     sys: 'This is the System file. It runs this computer.',
@@ -394,6 +402,7 @@ window.WEB = (function () {
     window.SFX.beep();
   };
   const APPS98 = {
+    letter: () => { openWin('letter', 'Untitled', 380, 320, '<div class="p8-about p8-letter"></div>').querySelector('.p8-letter').innerHTML = window.STORY.html('1998'); },
     surf: () => { const b = root.querySelector('.br'); b.classList.remove('is-closed', 'is-shaded'); front(b); if (!hist.length) load('index'); },
     note: () => {
       const el = openWin('note', 'Note Pad', 300, 240, `<textarea class="p8-note" spellcheck="false" aria-label="Note Pad"></textarea>`);

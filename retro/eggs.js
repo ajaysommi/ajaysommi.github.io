@@ -13,6 +13,7 @@ window.EGGS = (function () {
     ['trash', 'Trash', 'Looked through the 1991 Trash.'],
     ['bomb', 'Error type 26', 'Opened the bomb file.'],
     ['panic', 'Kernel panic', 'Pushed a Mac until it gave up.'],
+    ['letter', 'Dug it out', 'Found a letter nobody was meant to see first.'],
     ['puzzle', 'Fifteen', 'Solved the sliding puzzle.'],
     ['pattern', 'Interior design', 'Changed the desktop pattern.'],
     ['keepresume', 'Kept', 'Tried to throw the resume away.'],

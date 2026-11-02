@@ -191,7 +191,8 @@ window.POCKET = { start(room, exit) {
         [li('Flashlight', ''), () => { lcd.classList.toggle('is-flash'); window.EGGS.find('light'); }],
         [li('Play a tune', '♪'), () => { window.SFX.tune(); window.EGGS.find('tune'); }],
         [li('Easter eggs', `${window.EGGS.count()}/${window.EGGS.total}`), () => open('eggs')],
-        [li('More eras on a computer'), () => open('desk')]
+        [li('More eras on a computer'), () => open('desk')],
+        [li('Untitled', ''), () => open('letter')]
       ]
     }),
     fortune: () => {
@@ -199,6 +200,7 @@ window.POCKET = { start(room, exit) {
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
     desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
+    letter: () => textScreen('A Letter', window.STORY.html('pocket')),
     /* The Music Store, 2004: what everyone was buying, 99 cents a song. */
     store: () => ({ type: 'menu', title: 'Music Store', items: TOP04.map(([s, a], i) => [li(s, store04().includes(i) ? '✓' : '›'), () => open('song', i)]) }),
     song: (i) => {
@@ -209,9 +211,11 @@ window.POCKET = { start(room, exit) {
         [li(have ? 'Purchased' : 'Buy Song', have ? '✓' : '$0.99'), () => { if (have) return; store.set('pk-store', [...store04(), i]); say(`Downloaded “${s}”`); back(); }]
       ] };
     },
-    games: () => ({ type: 'menu', title: 'Games', items: [[li('Orbit'), () => open('orbit')], [li('How to play'), () => open('orbithelp')], [li('Best score', String(store.get('pod-orbit-hi', 0))), () => say(`Best: ${store.get('pod-orbit-hi', 0)}`)]] }),
+    games: () => ({ type: 'menu', title: 'Games', items: [[li('Laptop Rescue'), () => open('rescue')], [li('How to rescue'), () => open('rescuehelp')], [li('Most saved', String(store.get('pod-rescue-hi', 0))), () => say(`Most saved: ${store.get('pod-rescue-hi', 0)}`)], [li('Orbit'), () => open('orbit')], [li('How to play Orbit'), () => open('orbithelp')], [li('Best score', String(store.get('pod-orbit-hi', 0))), () => say(`Best: ${store.get('pod-orbit-hi', 0)}`)]] }),
     orbithelp: () => textScreen('Orbit', '<h2>Orbit</h2><p>Turn the wheel to swing the paddle around the ring and keep the ball inside.</p><p>Every return speeds it up. Every five, the paddle gets shorter. At 15 a second ball joins in.</p><p>Press the centre to launch or pause. MENU quits.</p><div class="hint">three balls to lose</div>'),
     orbit: () => ({ type: 'game', title: 'Orbit' }),
+    rescue: () => ({ type: 'game', title: 'Laptop Rescue', play: 'rescue' }),
+    rescuehelp: () => textScreen('Laptop Rescue', '<h2>Laptop Rescue</h2><p>Old MacBooks keep coming in. Turn the wheel to unscrew, pull parts and scrub off dried paste. Press the centre to commit.</p><p>Filing the connector is the risky part. Turn slowly, press inside the box. Go too far and the board shorts.</p><p>It really happened: a 2012 board in a 2011 MacBook Pro.</p>'),
     settings: () => ({
       type: 'menu', title: 'Settings',
       items: [
@@ -239,6 +243,146 @@ window.POCKET = { start(room, exit) {
      the paddle follows the thumb around the ring exactly as far as the
      thumb turns. A ball that reaches the ring off the paddle is lost. */
   let game = null;
+  /* Laptop Rescue, on the wheel: turn to do the work, press the centre to
+     commit. Every laptop ends the same way, shipped or shorted. */
+  const rescue = (cv) => {
+    const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+    cv.width = W * dpr; cv.height = H * dpr;
+    const c = cv.getContext('2d');
+    c.scale(dpr, dpr);
+    const ink = getComputedStyle(lcd).getPropertyValue('--lcd-ink').trim() || '#1c2614';
+    const font = getComputedStyle(document.body).getPropertyValue('--pixel') || 'monospace';
+    const JOBS = {
+      screws: { say: 'Turn to unscrew', hint: 'six screws', need: 900 },
+      drive: { say: 'Turn: pull the HDD', hint: 'then in with the SSD', need: 500 },
+      battery: { say: 'Turn: swap battery', hint: 'it has swollen', need: 500 },
+      paste: { say: 'Turn to scrub paste', hint: 'it dried out', need: 700 },
+      file: { say: 'File the connector', hint: 'press in the box', need: 0 },
+      install: { say: 'Press: install OS', hint: 'unsupported. do it anyway', need: 0, presses: 2 },
+      ship: { say: 'Turn: into the box', hint: 'good as new', need: 420 }
+    };
+    const g = { state: 'ready', saved: 0, lives: 3, time: 40, maxT: 40, queue: [], job: null, v: 0, spin: 0, msg: 'press the centre', pressed: 0, flash: 0, t: performance.now(), best: store.get('pod-rescue-hi', 0) };
+    const nextJob = () => { const j = g.queue.shift(); if (!j) { newMac(); return; } g.job = j; g.v = 0; g.pressed = 0; };
+    const newMac = () => {
+      const n = g.saved < 2 ? 1 : g.saved < 5 ? 2 : 3;
+      const faults = ['drive', 'battery', 'paste', 'file'].sort(() => Math.random() - .5).slice(0, n);
+      g.queue = ['screws', ...faults, 'install', 'ship'];
+      nextJob();
+    };
+    const finish = () => {
+      g.state = 'over';
+      if (g.saved > g.best) { g.best = g.saved; store.set('pod-rescue-hi', g.saved); g.msg = `new best: ${g.saved} saved`; }
+      else g.msg = `${g.saved} saved · best ${g.best}`;
+      window.SFX.error && window.SFX.error();
+    };
+    const lose = () => {
+      g.lives--; g.flash = 500; say('Filed too far. It shorted');
+      window.SFX.error && window.SFX.error();
+      if (g.lives <= 0) { finish(); return; }
+      newMac();
+    };
+    const draw = () => {
+      c.clearRect(0, 0, W, H);
+      c.fillStyle = ink; c.strokeStyle = ink;
+      c.font = `600 13px ${font}`;
+      c.textAlign = 'left'; c.fillText(`${g.saved} saved`, 6, 13);
+      c.textAlign = 'right'; c.fillText('●'.repeat(Math.max(0, g.lives)) + '○'.repeat(3 - Math.max(0, g.lives)), W - 6, 13);
+      c.textAlign = 'center';
+      if (g.state !== 'play') {
+        c.font = `600 16px ${font}`;
+        c.fillText(g.state === 'over' ? 'Landfill' : 'Laptop Rescue', W / 2, H / 2 - 22);
+        c.font = `12px ${font}`;
+        c.fillText(g.state === 'over' ? g.msg : 'fix it. ship it.', W / 2, H / 2 + 2);
+        c.fillText(g.state === 'over' ? 'centre to retry' : 'press the centre', W / 2, H / 2 + 20);
+        return;
+      }
+      c.fillRect(6, 18, Math.max(0, (W - 12) * g.time / g.maxT), 3);
+      const J = JOBS[g.job];
+      c.font = `600 14px ${font}`; c.fillText(J.say, W / 2, 38);
+      c.font = `11px ${font}`; c.fillText(J.hint, W / 2, 52);
+      /* The laptop on the bench, or the part being worked on. */
+      const lx = W / 2 - 46, ly = 60, lw = 92, lh = H - 60 - 26;
+      if (g.job === 'ship') {
+        const x = lx + (g.v / J.need) * (W - lw - lx - 6);
+        c.lineWidth = 2; c.strokeRect(W - 40, ly + 4, 34, lh - 8);
+        c.fillRect(x, ly + lh / 2 - 7, Math.min(lw, 50), 14);
+      } else {
+        c.lineWidth = 2; c.strokeRect(lx, ly, lw, lh);
+        if (g.job === 'screws') {
+          [[lx + 8, ly + 8], [lx + lw - 8, ly + 8], [lx + 8, ly + lh - 8], [lx + lw - 8, ly + lh - 8], [W / 2, ly + 8], [W / 2, ly + lh - 8]].forEach(([x, y], i) => {
+            if (g.v > (i + 1) * 150) return;
+            c.beginPath(); c.arc(x, y, 4, 0, Math.PI * 2); c.stroke();
+            const a = g.v / 40; c.beginPath(); c.moveTo(x - Math.cos(a) * 3, y - Math.sin(a) * 3); c.lineTo(x + Math.cos(a) * 3, y + Math.sin(a) * 3); c.stroke();
+          });
+        } else if (g.job === 'paste') {
+          const n = Math.ceil(10 * (1 - g.v / J.need));
+          for (let i = 0; i < n; i++) c.fillRect(lx + 12 + (i % 5) * 14, ly + lh / 2 - 9 + Math.floor(i / 5) * 10, 9, 7);
+        } else if (g.job === 'drive' || g.job === 'battery') {
+          const out = g.v / J.need, name = g.job === 'drive' ? (out < .5 ? 'HDD' : 'SSD') : (out < .5 ? 'OLD' : 'NEW');
+          const off = out < .5 ? out * 2 * (lw + 10) : (1 - out) * 2 * (lw + 10);
+          c.save(); c.beginPath(); c.rect(lx, ly, lw, lh); c.clip();
+          c.fillRect(lx + 12 + off, ly + lh / 2 - 12, lw - 24, 24);
+          c.restore();
+          if (out < .95) { c.font = `600 11px ${font}`; c.fillText(name, W / 2, ly + lh + 13); }
+        } else if (g.job === 'file') {
+          const bx = lx + 6, bw = lw - 12, by = ly + lh / 2 - 7;
+          c.strokeRect(bx, by, bw, 14);
+          c.fillRect(bx, by, bw * Math.min(1, g.v), 14);
+          c.lineWidth = 1; c.strokeRect(bx + bw * .66, by - 5, bw * .17, 24);
+        } else if (g.job === 'install') {
+          c.font = `600 13px ${font}`; c.fillText(g.pressed ? 'not supported' : 'newest OS', W / 2, ly + lh / 2 - 2);
+          c.font = `11px ${font}`; c.fillText(g.pressed ? 'install anyway?' : 'on a 2011 MacBook', W / 2, ly + lh / 2 + 14);
+        }
+      }
+      if (g.flash > 0) { c.globalAlpha = .4; c.fillRect(0, 0, W, H); c.globalAlpha = 1; }
+    };
+    let raf = 0;
+    const frame = (now) => {
+      const dt = Math.min(50, now - g.t); g.t = now;
+      if (g.state === 'play') {
+        g.time -= dt / 1000;
+        g.flash = Math.max(0, g.flash - dt);
+        if (g.time <= 0) { g.msg = ''; finish(); }
+      }
+      draw();
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return {
+      turn: (deg) => {
+        if (g.state !== 'play') return;
+        const J = JOBS[g.job], d = Math.abs(deg);
+        if (g.job === 'file') {
+          g.v += d / 900;
+          if (g.v > .83) lose();
+          return;
+        }
+        if (!J.need) return;
+        g.v += d;
+        buzz();
+        if (g.v >= J.need) {
+          if (g.job === 'ship') {
+            g.saved++;
+            const bonus = Math.max(6, 11 - g.saved * .5);
+            g.time = Math.min(g.maxT, g.time + bonus);
+            say(g.saved === 1 ? 'One less in a landfill' : `Shipped. ${g.saved} saved`);
+          }
+          nextJob();
+        }
+      },
+      press: () => {
+        if (g.state === 'over') { Object.assign(g, { state: 'ready', saved: 0, lives: 3, time: g.maxT }); return; }
+        if (g.state === 'ready') { g.state = 'play'; g.t = performance.now(); newMac(); return; }
+        if (g.job === 'install') { g.pressed++; buzz(true); if (g.pressed >= JOBS.install.presses) nextJob(); return; }
+        if (g.job === 'file') {
+          if (g.v >= .66) { say('It clicked in'); buzz(true); nextJob(); }
+          else { say('Not yet'); g.time -= 1; }
+        }
+      },
+      stop: () => cancelAnimationFrame(raf)
+    };
+  };
+
   const orbit = (cv) => {
     const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
     cv.width = W * dpr; cv.height = H * dpr;
@@ -340,15 +484,23 @@ window.POCKET = { start(room, exit) {
       if (top.color) { const im = p.querySelector('img'); im.removeAttribute('data-src'); im.src = src; im.classList.add('is-color'); }
     }
     if (game) { game.stop(); game = null; }
-    if (s.type === 'game') p.innerHTML = '<canvas class="pk-game" aria-label="Orbit: turn the wheel to move the paddle"></canvas>';
+    if (s.type === 'game') p.innerHTML = `<canvas class="pk-game" aria-label="${esc(s.title)}"></canvas>`;
     view.innerHTML = '';
     view.appendChild(p);
     pane = p;
-    if (s.type === 'game') game = orbit(p.querySelector('canvas'));
+    /* Slid in, the pane is put plainly in its place. Mobile Safari can hold a
+       stepped animation on its last step, a fifth of the way off the screen,
+       so the end is not left to the animation alone. */
+    if (dir) {
+      const settle = () => { clearTimeout(t); p.removeEventListener('animationend', settle); p.classList.remove('in-r', 'in-l'); view.scrollLeft = 0; };
+      const t = setTimeout(settle, 300);
+      p.addEventListener('animationend', settle);
+    }
+    if (s.type === 'game') game = (s.play === 'rescue' ? rescue : orbit)(p.querySelector('canvas'));
     backBtn.hidden = stack.length <= 1;
     ditherIn(p);
-    if (s.type === 'menu') scrollSel();
     if (top.scroll) p.scrollTop = top.scroll;
+    if (s.type === 'menu') scrollSel();
   };
 
   const refresh = () => {

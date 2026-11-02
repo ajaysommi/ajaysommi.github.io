@@ -203,16 +203,16 @@ window.IPHONE = { start(room, exit) {
       lg('bg', [[0, '#6fd3ff'], [0.5, '#1d8fe0'], [1, '#0a4fa8']]) + rg('bb', [[0, '#ffffff', 0.15], [0.7, '#bfe9ff', 0.35], [1, '#ffffff', 0.75]], 0.35, 0.3, 0.7)),
     /* The five status bar games, drawn the way the first App Store's icons
        were: a little scene, thick with shading, under the glass. */
-    signal: () => ic(`<rect width="57" height="57" fill="url(#sky)"/><circle cx="44" cy="12" r="6" fill="url(#sun)"/><path d="M0 44q14-12 30-5t27-3v21H0z" fill="url(#hill)"/><path d="M0 49q18-8 57-2v10H0z" fill="#2f7a17"/>
-        <g fill="none" stroke="#cf2a22" stroke-width="2.2"><path d="M28.5 9 19 50M28.5 9 38 50M24 28h9M22 37h13M20.5 45h16"/></g><path d="M22 28 35 37M35 28 22 37M20.5 37l16 8M36.5 37l-16 8" stroke="#f2f2f2" stroke-width="1.1"/><circle cx="28.5" cy="9" r="3.2" fill="url(#rd)"/>
-        <g fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M20 3.5a12 12 0 0 0 0 11M37 3.5a12 12 0 0 1 0 11" /><path d="M14.5 .5a19 19 0 0 0 0 17M42.5 .5a19 19 0 0 1 0 17" opacity=".65"/></g>`,
-      lg('sky', [[0, '#3f93ea'], [0.7, '#9fd4fb'], [1, '#d9f0ff']]) + lg('hill', [[0, '#7ccb45'], [1, '#3e9420']]) + rg('sun', [[0, '#fff7b0'], [1, '#ffbc1a']]) + rg('rd', [[0, '#ff9a8a'], [1, '#c80f0f']], 0.35, 0.35)),
+    /* An open MacBook with a screwdriver across it. */
+    rescue: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><rect x="11" y="13" width="35" height="24" rx="2.500" fill="url(#lid)" stroke="#54606e"/><rect x="14" y="16" width="29" height="18" fill="#10223f"/><path d="M6 38h45l-2.500 5H8.500z" fill="url(#lid)" stroke="#54606e" stroke-width=".7"/><path d="M22 28l3-4 3 2 4-6" fill="none" stroke="#6fe08a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 0h57v22q-28 10-57 0z" fill="#fff" opacity=".2"/>`,
+      lg('bg', [[0, '#79b8f2'], [1, '#1d5ebb']]) + lg('lid', [[0, '#eef1f4'], [1, '#aeb6bf']])),
+    /* A blue sedan head on, as a cartoon, with a chrome wrench beside it. */
+    fixcar: () => ic(`<rect width="57" height="57" fill="url(#wall)"/><rect y="38" width="57" height="19" fill="url(#floor)"/><path d="M0 38h57" stroke="#fff" stroke-opacity=".6" stroke-width=".5"/><ellipse cx="21.800" cy="49.200" rx="20" ry="3" fill="#2a3644" opacity=".55"/><g transform="translate(-4.800 13.200) scale(.0595)"><path d="M130 560h46v30h-46zM714 560h46v30h-46z" fill="#0a0d13"/><path d="M183 197C150 190 124 196 124 216c0 20 28 28 60 24l6-6z" fill="url(#paint)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M136 204c14-5 28-4 40-1" fill="none" stroke="#bfe0ff" stroke-width="7" stroke-linecap="round"/><path d="M120 362c2-22 3-30 8-40 50 8 100 34 136 80l-92-3c-34-2-50-14-52-37z" fill="#10151f" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M124 332c-3 10-4 22-3 34l9 12c-3-16-3-30 0-44z" fill="#e0302a"/><circle cx="167" cy="364" r="28" fill="url(#lens)" stroke="#7d8a97" stroke-width="5"/><circle cx="167" cy="364" r="11" fill="#fff"/><circle cx="222" cy="372" r="19" fill="url(#lens)" stroke="#7d8a97" stroke-width="4"/><circle cx="222" cy="372" r="7" fill="#fff"/><path d="M150 465l92 14-6 36-76-14z" fill="url(#mesh)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M200 243C206 290 224 332 262 362" fill="none" stroke="#0d3fb4" stroke-width="7" stroke-linecap="round"/><g transform="matrix(-1 0 0 1 893 0)"><path d="M183 197C150 190 124 196 124 216c0 20 28 28 60 24l6-6z" fill="url(#paint)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M136 204c14-5 28-4 40-1" fill="none" stroke="#bfe0ff" stroke-width="7" stroke-linecap="round"/><path d="M120 362c2-22 3-30 8-40 50 8 100 34 136 80l-92-3c-34-2-50-14-52-37z" fill="#10151f" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M124 332c-3 10-4 22-3 34l9 12c-3-16-3-30 0-44z" fill="#e0302a"/><circle cx="167" cy="364" r="28" fill="url(#lens)" stroke="#7d8a97" stroke-width="5"/><circle cx="167" cy="364" r="11" fill="#fff"/><circle cx="222" cy="372" r="19" fill="url(#lens)" stroke="#7d8a97" stroke-width="4"/><circle cx="222" cy="372" r="7" fill="#fff"/><path d="M150 465l92 14-6 36-76-14z" fill="url(#mesh)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M200 243C206 290 224 332 262 362" fill="none" stroke="#0d3fb4" stroke-width="7" stroke-linecap="round"/></g><path d="M270 100q8-15 28-15h297q20 0 28 15l66 138c26 28 60 62 78 112 20 54 20 104 10 150l8 30q0 42-45 42H153q-45 0-45-42l8-30c-10-46-10-96 10-150 18-50 52-84 78-112z" fill="url(#paint)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M270 100q8-15 28-15h297q20 0 28 15l6 12H264z" fill="url(#roof)"/><path d="M206 240 266 112q4-9 16-9h329q12 0 16 9l60 128q-241 18-481 0z" fill="url(#screen)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M280 118h130L300 232q-40-1-76-5z" fill="#fff" opacity=".42"/><path d="M402 126h90v20q-45 8-90 0z" fill="#0d1c30"/><path d="M290 232c10-40 30-66 62-66s44 28 48 70zM494 236c4-42 18-70 48-70s52 26 62 66z" fill="#10233a" opacity=".85"/><path d="M226 238q110-12 214-6M430 240q110-12 232-6" fill="none" stroke="#050b16" stroke-width="7" stroke-linecap="round"/><path d="M200 245q247 20 493 0c-6 44-26 86-65 118q-182 24-364 0c-38-32-58-74-64-118z" fill="url(#hood)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M286 276q160 16 320 0" fill="none" stroke="#d3e8ff" stroke-width="9" stroke-linecap="round" opacity=".8"/><path d="M120 362c2-22 3-30 8-40 50 8 100 34 136 80l-92-3c-34-2-50-14-52-37z" fill="#10151f" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M124 332c-3 10-4 22-3 34l9 12c-3-16-3-30 0-44z" fill="#e0302a"/><circle cx="167" cy="364" r="28" fill="url(#lens)" stroke="#7d8a97" stroke-width="5"/><circle cx="167" cy="364" r="11" fill="#fff"/><circle cx="222" cy="372" r="19" fill="url(#lens)" stroke="#7d8a97" stroke-width="4"/><circle cx="222" cy="372" r="7" fill="#fff"/><g transform="matrix(-1 0 0 1 893 0)"><path d="M120 362c2-22 3-30 8-40 50 8 100 34 136 80l-92-3c-34-2-50-14-52-37z" fill="#10151f" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M124 332c-3 10-4 22-3 34l9 12c-3-16-3-30 0-44z" fill="#e0302a"/><circle cx="167" cy="364" r="28" fill="url(#lens)" stroke="#7d8a97" stroke-width="5"/><circle cx="167" cy="364" r="11" fill="#fff"/><circle cx="222" cy="372" r="19" fill="url(#lens)" stroke="#7d8a97" stroke-width="4"/><circle cx="222" cy="372" r="7" fill="#fff"/></g><path d="M262 362q184 26 368 0l-40 44q-143 42-288 0z" fill="#0a0e16" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M266 364q180 26 360 0l-14 15q-166 24-332 0z" fill="url(#chrome)" stroke="#2a313a" stroke-width="3"/><rect x="416" y="378" width="56" height="46" rx="11" fill="#e0242a" stroke="#fff" stroke-width="7"/><path d="M300 474l294 1 18 66H282z" fill="url(#mesh)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><rect x="374" y="446" width="146" height="72" rx="5" fill="#0d1118" stroke="#cfd6dd" stroke-width="5"/><path d="M150 465l92 14-6 36-76-14zM743 465l-92 14 6 36 76-14z" fill="url(#mesh)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M110 505q335 66 673 0l2 26q0 41-45 41H153q-45 0-45-41z" fill="url(#lip)" stroke="#061a4f" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M134 536q313 42 625 0" fill="none" stroke="#9cc8ff" stroke-width="6" stroke-linecap="round" opacity=".85"/></g><g transform="translate(46.800 29.500) rotate(10) scale(.72)"><path d="M-3-5h6v27a3 3 0 0 1-6 0z" fill="url(#steel)" stroke="#061a4f" stroke-width=".8"/><path d="M-.9 0h1.800v20h-1.800z" fill="#7f8a95" opacity=".55"/><path d="M-3-22.500v6.800L0-13.800l3-1.900v-6.800c3.100 1.500 5 4.500 5 7.900 0 3.900-2.300 7.100-5 8.200V-3h-6v-3.500c-2.700-1.100-5-4.300-5-8.200 0-3.400 1.900-6.400 5-7.900z" fill="url(#steel)" stroke="#061a4f" stroke-width=".8"/><path d="M-6.200-14.700c0-1.700.6-3.200 1.700-4.300" fill="none" stroke="#fff" stroke-width=".9" stroke-linecap="round"/><circle cy="22" r="1.300" fill="#3f4752" stroke="#fff" stroke-opacity=".6" stroke-width=".3"/></g><path d="M0 0h57v21C38 28 19 28 0 21z" fill="url(#shine)"/>`,
+      `<linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f6f9"/><stop offset="1" stop-color="#b9c7d4"/></linearGradient><linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fadbb"/><stop offset="1" stop-color="#d8e0e7"/></linearGradient><linearGradient id="paint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f97ff"/><stop offset=".5" stop-color="#1b63e6"/><stop offset="1" stop-color="#0d3fb4"/></linearGradient><linearGradient id="hood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f78ee"/><stop offset=".45" stop-color="#6fb0ff"/><stop offset="1" stop-color="#2a72ea"/></linearGradient><linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2ff"/><stop offset="1" stop-color="#2a72ea"/></linearGradient><linearGradient id="lip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f88f6"/><stop offset="1" stop-color="#0b348f"/></linearGradient><linearGradient id="screen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9e2f5"/><stop offset=".55" stop-color="#4f86a6"/><stop offset="1" stop-color="#19324a"/></linearGradient><radialGradient id="lens" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#cfeaff"/><stop offset="1" stop-color="#4f7fa6"/></radialGradient><linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#b9c2cb"/><stop offset=".55" stop-color="#7a848e"/><stop offset="1" stop-color="#e4e9ee"/></linearGradient><linearGradient id="steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset=".48" stop-color="#d4dae0"/><stop offset=".52" stop-color="#939da8"/><stop offset="1" stop-color="#e2e7ec"/></linearGradient><linearGradient id="shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".62"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient><pattern id="mesh" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#0a0e16"/><path d="M0 8 8 0l8 8-8 8z" fill="none" stroke="#39424f" stroke-width="2.500"/></pattern>`),
     balancer: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><path d="M0 44h57v13H0z" fill="#3a2410"/><path d="M28.5 43 19 53h19z" fill="url(#mt)"/><g transform="rotate(-9 28.5 40)"><rect x="4" y="38" width="49" height="4.4" rx="2" fill="url(#mt)"/>
         <rect x="6" y="21" width="17" height="17" rx="2.4" fill="url(#bat)" stroke="#123f0c"/><rect x="11.5" y="18.4" width="6" height="2.8" rx="1" fill="#d8d8d8" stroke="#555" stroke-width=".5"/><path d="M15 24l-4 7h3l-1.4 5 5-7.4h-3.2l1.8-4.6z" fill="#fff"/>
         <rect x="35" y="29" width="14" height="9" rx="1.6" fill="url(#rdb)" stroke="#5a0a0a"/><rect x="39" y="26.8" width="6" height="2.4" rx="1" fill="#d8d8d8" stroke="#555" stroke-width=".5"/></g>`,
       lg('bg', [[0, '#f7c356'], [0.6, '#e8821a'], [1, '#a84d06']]) + lg('mt', [[0, '#f3f3f3'], [1, '#7c7c7c']]) + lg('bat', [[0, '#a6ec7c'], [0.5, '#4cb82e'], [1, '#237a14']]) + lg('rdb', [[0, '#ff9a8a'], [0.5, '#d9281c'], [1, '#8a0f0a']])),
-    defender: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g fill="#fff" opacity=".8">${[[7, 8], [48, 12], [12, 43], [50, 44], [30, 5]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".9"/>`).join('')}</g><path d="M28.5 7 47 13.5V28C47 40 39 47 28.5 52 18 47 10 40 10 28V13.5z" fill="url(#sh)" stroke="#27306a" stroke-width="1.2"/><path d="M28.5 12 42.5 17V28C42.5 37 36.5 42.5 28.5 47z" fill="#c62a2a"/><path d="M28.5 12 14.5 17V28C14.5 37 20.5 42.5 28.5 47z" fill="#2c50b8"/><path d="M28.5 16v26M19 25h19" stroke="#ffe27a" stroke-width="3" stroke-linecap="round"/><path d="m6 37 7 3-4 3 6 2" fill="none" stroke="#ffe27a" stroke-width="1.8" stroke-linejoin="round"/><path d="m51 37-7 3 4 3-6 2" fill="none" stroke="#ffe27a" stroke-width="1.8" stroke-linejoin="round"/>`,
-      lg('bg', [[0, '#35406f'], [1, '#0c1030']]) + lg('sh', [[0, '#f5f7fb'], [1, '#a7aebf']])),
     onebar: () => ic(`<rect width="57" height="57" fill="url(#bg)"/><g fill="#fff" opacity=".22"><rect x="31" y="22" width="5" height="8"/><rect x="38" y="16" width="5" height="14"/><rect x="45" y="9" width="5" height="21"/></g><rect x="24" y="25" width="5" height="5" fill="url(#gn)"/>
         <path d="M6 43C8 28 20 17 30 15l3 7c-7 2-12 8-13 13l7 2-5 12c-6 2-12 0-15-3z" fill="url(#hs)" transform="rotate(4 20 32)" stroke="#000" stroke-width=".7"/><path d="M14 46q6-2 10-9" stroke="#fff" stroke-opacity=".4" stroke-width="1.4" fill="none"/>`,
       lg('bg', [[0, '#6f7d8d'], [0.55, '#343c48'], [1, '#12151a']]) + lg('gn', [[0, '#a4f07c'], [1, '#34a81d']]) + lg('hs', [[0, '#f3e3b6'], [1, '#b8924e']])),
@@ -888,7 +888,7 @@ window.IPHONE = { start(room, exit) {
     ['To do', `Graduate from UF (Dec 2026)\nFind a great team\nSay hi: ${P.email}`]
   ];
   const notesApp = (app) => {
-    const notes = store.get('ip-notes', null) || NOTES_DEFAULT.map((n) => [...n]);
+    const notes = store.get('ip-notes', null) || [...NOTES_DEFAULT.map((n) => [...n]), ['Untitled', window.STORY.text('iphone')]];
     const save = () => store.set('ip-notes', notes);
     const named = (n) => n[0] || (n[1].split('\n')[0] || 'New Note').slice(0, 28);
     const list = () => app.reset(`Notes (${notes.length})`, (pg, a, entry) => {
@@ -1344,8 +1344,8 @@ window.IPHONE = { start(room, exit) {
 
   /* ---------------------------------------------------- status bar games */
 
-  /* The Store: what was on in 2007, with each title's poster or DVD cover (a
-     coloured tile for the one without). Buying only adds it to this phone's list. */
+  /* The Store: what was on in 2007, with each title's poster or DVD cover.
+     Buying only adds it to this phone's list. */
   function store07(app) {
     const MOVIES = [
       ['Spider-Man 3', 'Action', '#7d1420', '#14213d', 'Peter Parker takes on Sandman, Venom and himself.'],
@@ -1372,19 +1372,34 @@ window.IPHONE = { start(room, exit) {
       ['24', 'Thriller', '#111111', '#b58a1a', 'Jack Bauer, one very long day at a time.'],
       ['American Idol', 'Reality', '#1c3f94', '#c9202e', 'The show everybody at school talked about the next morning.'],
       ['House', 'Drama', '#2a3d4f', '#7f96a8', 'The rudest doctor in New Jersey is usually right.'],
-      ['The Sopranos', 'Drama', '#141414', '#7a1a1a', 'The final season, and that last scene.'],
       ['30 Rock', 'Comedy', '#22344f', '#c2a14a', 'Running a sketch show at NBC, barely.'],
       ['Mad Men', 'Drama', '#6b1f1f', '#d8b48a', 'New this summer: Madison Avenue in 1960.'],
       ['Dexter', 'Thriller', '#3a0d0d', '#b02020', 'A Miami blood expert with a very private hobby.'],
       ['Family Guy', 'Animation', '#2b5fb0', '#e3c13a', 'The Griffins of Quahog, and the talking dog.'],
-      ['Entourage', 'Comedy', '#2c2c2c', '#caa55a', 'A young star and his friends from Queens loose in Hollywood.'],
       ['Friday Night Lights', 'Drama', '#123a6b', '#d1a21e', 'Clear eyes, full hearts: football in small-town Texas.'],
       ['Hannah Montana', 'Family', '#c2287a', '#f0a6d0', 'A regular girl by day, a pop star by night.']
     ];
+    /* Real dates, as seen from the iPhone's launch on June 29, 2007: only what
+       was still to come, and no results from after that day. */
+    const SPORTS = [
+      ['LeBron James', 'NBA', 'Season opens Oct. 30', '#7a1f2e', '#e0a526', 'At 22, he just carried Cleveland to its first NBA Finals, with 48 points in Game 5 against Detroit along the way. San Antonio swept the Finals. The Cavs get another run when the 2007–08 season opens.'],
+      ['Oden and Durant', 'NBA', 'Rookie season, Oct. 30', '#14305c', '#c0392b', 'Portland took Greg Oden first in the draft on June 28, and Seattle took Kevin Durant second. Everyone is already arguing about who got it right.'],
+      ['Federer at Wimbledon', 'Tennis', 'June 25 – July 8', '#14532d', '#6b3fa0', 'Roger Federer is going for a fifth straight title, which would match Björn Borg.'],
+      ['Tour de France', 'Cycling', 'Starts July 7, London', '#b8860b', '#f1c40f', 'For the first time, the Tour starts in London, with a prologue through the middle of the city.'],
+      ['MLB All-Star Game', 'Baseball', 'July 10, San Francisco', '#1c3f94', '#c0392b', 'At AT&T Park, in the home of the Giants and of Barry Bonds.'],
+      ['Open Championship', 'Golf', 'July 19 – 22, Carnoustie', '#1e5b3a', '#c9a227', 'Tiger Woods comes in as the defending champion, on one of the hardest courses in golf.'],
+      ['Beckham in LA', 'Soccer', 'July 21 vs. Chelsea', '#14305c', '#d4af37', 'David Beckham is on his way to the LA Galaxy, and the friendly against Chelsea is the one everybody has circled.'],
+      ['Barry Bonds', 'Baseball', 'Any day now', '#111111', '#e0641b', 'He’s closing in on Hank Aaron’s 755 career home runs, the most famous record in the sport, and all of baseball is watching.'],
+      ['US Open', 'Tennis', 'Aug. 27 – Sept. 9', '#123a6b', '#7fb2e5', 'The last major of the year, in New York.'],
+      ['Florida Gators', 'College Football', 'Opens Sept. 1', '#0a2f6b', '#e8671b', 'The defending national champions open against Western Kentucky, with Tim Tebow taking over at quarterback.'],
+      ['NFL Kickoff', 'Football', 'Sept. 6, Colts vs. Saints', '#13294b', '#b3995d', 'The Super Bowl champion Colts open the season at home against New Orleans.'],
+      ['NHL in London', 'Hockey', 'Sept. 29, Ducks vs. Kings', '#3d3d3d', '#d97a1b', 'The Stanley Cup champion Ducks and the Kings open the season at the O2: the first NHL regular-season games ever played in Europe.'],
+      ['World Series', 'Baseball', 'Starts Oct. 24', '#7a1f1f', '#23395b', 'Moved to a Wednesday night start this year.'],
+      ['Super Bowl XLII', 'Football', 'Feb. 3, 2008, Glendale', '#13294b', '#c0392b', 'At University of Phoenix Stadium in Arizona, to finish the season.']
+    ];
     const owned = new Set(store.get('ip-store', []));
-    const NO_COVER = ['Entourage'];
     const cover = (t) => `assets/images/store/${t.toLowerCase().replace(/’/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.webp`;
-    const tile = (x, big) => `<span class="st-tile${big ? ' big' : ''}" style="background:linear-gradient(160deg,${x[2]},${x[3]})">${NO_COVER.includes(x[0]) ? `<b>${esc(x[0])}</b>` : `<img src="${cover(x[0])}" alt="" loading="lazy" draggable="false" />`}</span>`;
+    const tile = (x, big) => `<span class="st-tile${big ? ' big' : ''}" style="background:linear-gradient(160deg,${x[2]},${x[3]})"><img src="${cover(x[0])}" alt="" loading="lazy" draggable="false" /></span>`;
     const page = (x, price) => (pg) => {
       pg.innerHTML = `<div class="st-item">${tile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[1])} · 2007</p><button type="button" class="st-buy">${owned.has(x[0]) ? 'PURCHASED' : price}</button></div><p class="st-blurb">${esc(x[4])}</p></div>`;
       const b = pg.querySelector('.st-buy');
@@ -1400,14 +1415,20 @@ window.IPHONE = { start(room, exit) {
     const list = (rows, price) => (pg) => plain(pg, rows.map((x) => ({ text: x[0], sub: `${x[1]} · ${price}`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', page(x, price)) })));
     const FILM = 'M3 4h24v18H3zM6 6v3h3V6zM6 12v2h3v-2zM6 17v3h3v-3zM21 6v3h3V6zM21 12v2h3v-2zM21 17v3h3v-3zM11 6v14h8V6z';
     const SCREEN = 'M3 3h24v16H3zM5.500 5.500v11h19v-11zM10 21h10v2.500H10z';
-    tabs(app, [['Movies', FILM], ['TV Shows', SCREEN]], 0, (i) => {
+    const BALL = 'M15 2a11 11 0 1 1 0 22a11 11 0 1 1 0-22zM15 4.500a8.500 8.500 0 0 0-5.800 2.300c2.300 2 3.600 4.200 3.800 6.200h2zM17 4.700V13h2c.2-2 1.200-4 3-5.800A8.500 8.500 0 0 0 17 4.700zM7.700 8.500A8.500 8.500 0 0 0 6.500 13H11c-.2-1.500-1.500-3-3.300-4.500zM23 9.200c-1.300 1.300-2 2.600-2.100 3.800h2.600a8.500 8.500 0 0 0-.5-3.800zM6.500 15a8.500 8.500 0 0 0 1.200 3.500c1.800-1 3-2.200 3.300-3.500zM13 15c-.2 1.800-1.700 3.600-3.900 5a8.500 8.500 0 0 0 5.900 1.500V15zM17 15v6.300a8.500 8.500 0 0 0 5.300-3c-1.800-.8-3-2-3.400-3.300zM21 15c.3.800 1 1.500 2.300 1.800.3-.6.5-1.200.6-1.800z';
+    const SPORT_ART = ['lebron', 'draft', 'wimbledon', 'tour', 'allstar', 'open', 'beckham', 'bonds', 'usopen', 'gators', 'nfl', 'nhl', 'worldseries', 'superbowl'];
+    const sportTile = (x, big) => `<span class="st-tile st-sport${big ? ' big' : ''}"><img src="assets/images/store/sports/${SPORT_ART[SPORTS.indexOf(x)]}.webp" alt="" loading="lazy" draggable="false" /></span>`;
+    const sportPage = (x) => (pg) => { pg.innerHTML = `<div class="st-item">${sportTile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[2])}</p></div><p class="st-blurb">${esc(x[5])}</p></div>`; };
+    const sports = (pg) => plain(pg, [{ header: 'Coming Up · Summer 2007' }, ...SPORTS.map((x) => ({ text: x[0], sub: `${x[1]} · ${x[2]}`, lead: sportTile(x), cls: 'st-row', go: () => app.push('Info', sportPage(x)) }))]);
+    tabs(app, [['Movies', FILM], ['TV Shows', SCREEN], ['Sports', BALL]], 0, (i) => {
       if (i === 0) app.reset('Top Movies', list(MOVIES, '$14.99'));
-      else app.reset('Top TV Shows', list(SHOWS, '$1.99'));
+      else if (i === 1) app.reset('Top TV Shows', list(SHOWS, '$1.99'));
+      else app.reset('Sports', sports);
     });
   }
 
-  /* These five play on the phone's own status bar: its signal bars, its
-     battery, its clock. Everything is put back when the app closes. */
+  /* Some of these play on the phone's own status bar. Everything is put back
+     when the app closes. */
   const stat = {
     sig(n) { room.querySelectorAll('.ip-sig i').forEach((b, i) => b.classList.toggle('off', i >= n)); room.querySelector('.car').textContent = n ? 'AJ&T' : 'No Service'; room.querySelector('.ip-sig').style.display = n ? '' : 'none'; room.querySelector('.ip-edge').style.display = n ? '' : 'none'; },
     bat(p) { const b = room.querySelector('.ip-bat'); b.querySelector('i').style.width = Math.max(0, Math.min(100, p)) + '%'; b.classList.toggle('low', p <= 20); },
@@ -1421,8 +1442,7 @@ window.IPHONE = { start(room, exit) {
     const rootEl = app.el.querySelector('.gm'), msg = rootEl.querySelector('.bb-msg');
     let play = rootEl.querySelector('.gm-play');
     let raf = 0, running = false, last = 0, tick = null, stopT = 0;
-    const lend = () => { if (app.def.lendsClock) stat.lend(); };
-    const hiText = () => { const v = store.get(hiKey, null); msg.querySelector('.hi').textContent = v != null ? `Best: ${v}` : ''; };
+    const hiText = () => { const v = store.get(hiKey, null); msg.querySelector('.hi').textContent = v != null ? `Best: ${typeof v === 'number' ? v.toLocaleString('en-US') : v}` : ''; };
     hiText();
     /* The loop runs only during a round, not behind the start card. */
     const frame = (t) => { if (!running) { raf = 0; return; } raf = requestAnimationFrame(frame); const dt = Math.min(50, t - last); last = t; tick && tick(dt, t); };
@@ -1436,9 +1456,8 @@ window.IPHONE = { start(room, exit) {
       msg.hidden = false;
     };
     /* A fresh play area each round, so a game's listeners don't pile up. */
-    const start = () => { msg.hidden = true; const fresh = play.cloneNode(false); play.replaceWith(fresh); play = fresh; lend(); tick = build(play, over); last = performance.now(); running = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); };
+    const start = () => { msg.hidden = true; const fresh = play.cloneNode(false); play.replaceWith(fresh); play = fresh; tick = build(play, over); last = performance.now(); running = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); };
     msg.addEventListener('click', start);
-    lend();
     app.def.onClose = () => { cancelAnimationFrame(raf); clearTimeout(stopT); running = false; stat.reset(); };
   };
   /* Dragging a thing around the play area, in the screen's own points. */
@@ -1451,31 +1470,17 @@ window.IPHONE = { start(room, exit) {
     ['pointerup', 'pointercancel'].forEach((v) => area.addEventListener(v, () => { on = false; }));
     el.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
   };
+  const withPhoto = (play, over, id) => (title, line, score) => {
+    over(title, line, score);
+    const msg = play.closest('.gm').querySelector('.bb-msg'), st = P.offclock.find((o) => o.id === id).steps;
+    const shot = st[st.length - 1];
+    msg.querySelectorAll('.real').forEach((x) => x.remove());
+    msg.querySelector('.hi').insertAdjacentHTML('beforebegin', `<div class="real"><img src="${shot[0]}" alt="" /><small>The real one: ${esc(shot[1])}</small></div>`);
+  };
   const GAMES = {
-    signal: (app) => gameApp(app, 'Signal Rescue', 'Drag the phone around the screen until all five bars in the status bar come back. Hold them there to connect.', 'ip-signal-hi', (play, over) => {
-      play.innerHTML = '<div class="gm-sky"></div><div class="gm-tip">Find the signal</div><div class="gm-bars"><i></i><i></i><i></i><i></i><i></i></div><div class="gm-phone"></div>';
-      const ph = play.querySelector('.gm-phone'), bars = [...play.querySelectorAll('.gm-bars i')], tip = play.querySelector('.gm-tip');
-      const pos = { x: 160, y: 260 }, spot = { x: 40 + Math.random() * 240, y: 90 + Math.random() * 300 };
-      let at5 = 0, t0 = performance.now(), drift = Math.random() * 6;
-      dragger(play, ph, pos, null, 60);
-      stat.sig(0);
-      return (dt) => {
-        // The good spot wanders, and it is small.
-        drift += dt / 1000;
-        spot.x = Math.max(20, Math.min(300, spot.x + Math.sin(drift * 1.3) * dt * .05));
-        spot.y = Math.max(70, Math.min(400, spot.y + Math.cos(drift * .9) * dt * .05));
-        const n = Math.max(0, Math.min(5, 5 - Math.floor(Math.hypot(pos.x - spot.x, pos.y - spot.y) / 22)));
-        stat.sig(n);
-        bars.forEach((b, i) => b.classList.toggle('on', i < n));
-        at5 = n === 5 ? at5 + dt : 0;
-        tip.textContent = n === 5 ? 'Hold it there…' : n ? 'Getting warmer' : 'No Service';
-        if (at5 > 2000) {
-          const secs = Math.round((performance.now() - t0) / 100) / 10;
-          over('Connected', `Five bars in ${secs} seconds.`, secs, true);
-          placeCall('Ajay Sommi', { connected: true, onEnd: () => stat.sig(5) });
-        }
-      };
-    }),
+    /* The real story's photo on the card when a shift or a drive ends. */
+    rescue: (app) => gameApp(app, 'Laptop Rescue', 'Save as many old MacBooks as you can. Take the case off, fix what’s wrong, install a good OS, and ship it. This really happened to a 2011 MacBook Pro.', 'ip-rescue-hi', (play, over) => window.BENCH.rescue(play, withPhoto(play, over, 'macbook'), SFX)),
+    fixcar: (app) => gameApp(app, 'Fix the Car', 'An old sedan, 180,000 miles and counting. When something goes wrong, pick the right tool and do the repair yourself. Three breakdowns and it gets towed.', 'ip-car-hi', (play, over) => window.BENCH.car(play, withPhoto(play, over, 'civic'), SFX)),
     balancer: (app) => gameApp(app, 'Battery Balancer', 'Apps are eating the battery. Switch off the hungriest ones and keep the status bar battery alive for 40 seconds. They wake up again.', 'ip-balancer-hi', (play, over) => {
       const A = [['Mail', 2.4], ['Maps', 4.2], ['Safari', 3.2], ['Camera', 5.2], ['Photos', 1.8], ['iPod', 1.2]];
       play.innerHTML = `<div class="gm-batt"><b>100%</b><span>40s left</span></div><ul class="gm-procs">${A.map(([n], i) => `<li data-i="${i}"><span>${n}</span><em></em><button type="button" class="sw on"><span class="sw-on">ON</span><span class="sw-off">OFF</span><i></i></button></li>`).join('')}</ul>`;
@@ -1494,36 +1499,6 @@ window.IPHONE = { start(room, exit) {
         left.textContent = Math.max(0, Math.ceil(t / 1000)) + 's left';
         if (p <= 0) over('Battery Dead', `You lasted ${Math.round((40000 - t) / 1000)} seconds.`, null);
         else if (t <= 0) over('Still Running', `Finished with ${Math.round(p)}% left.`, Math.round(p));
-      };
-    }),
-    defender: (app) => gameApp(app, 'Status Bar Defender', 'Glitches are attacking the status bar. When something up there starts flashing, tap it (or just below it) before it fails. It gets faster.', 'ip-defender-hi', (play, over) => {
-      /* The targets run down from each item, since the bar itself is small. */
-      const P4 = [['.ip-sig', 8, 74, 'signal'], ['.ip-edge', 82, 50, 'network'], ['.ip-status .c', 132, 100, 'clock'], ['.ip-bat', 238, 82, 'battery']];
-      play.innerHTML = `<div class="gm-zones">${P4.map(([, x, w, n], i) => `<button type="button" data-i="${i}" style="left:${x}px;width:${w}px"><span>${n}</span></button>`).join('')}</div><div class="gm-score">0</div><div class="gm-lives">●●●</div>`;
-      const zones = [...play.querySelectorAll('.gm-zones button')], sc = play.querySelector('.gm-score'), lv = play.querySelector('.gm-lives');
-      let score = 0, lives = 3, cur = -1, left = 0, wait = 500, speed = 1050, bat = 100;
-      const el = (i) => room.querySelector(P4[i][0]);
-      const clear = () => { if (cur < 0) return; el(cur).classList.remove('gl-bad'); zones[cur].classList.remove('hot'); if (P4[cur][3] === 'clock') { statusC.textContent = hm(now()); } if (P4[cur][3] === 'signal') stat.sig(5); if (P4[cur][3] === 'battery') stat.bat(bat); cur = -1; };
-      statusC.textContent = hm(now());
-      play.querySelector('.gm-zones').addEventListener('pointerdown', (e) => { const b = e.target.closest('button'); if (!b) return; if (+b.dataset.i === cur) { clear(); score++; sc.textContent = score; speed = Math.max(330, speed - 55); wait = 90 + Math.random() * 260; } });
-      return (dt) => {
-        if (cur < 0) {
-          wait -= dt;
-          if (wait <= 0) { cur = Math.floor(Math.random() * 4); left = speed; el(cur).classList.add('gl-bad'); zones[cur].classList.add('hot'); }
-          return;
-        }
-        left -= dt;
-        const f = left / speed, kind = P4[cur][3];
-        if (kind === 'signal') stat.sig(Math.ceil(f * 5));
-        if (kind === 'battery') stat.bat(bat * f);
-        if (kind === 'clock') statusC.textContent = `${Math.floor(Math.random() * 12) + 1}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`;
-        if (left <= 0) {
-          clear();
-          lives--;
-          lv.textContent = '●'.repeat(Math.max(0, lives)) + '○'.repeat(3 - Math.max(0, lives));
-          wait = 500;
-          if (lives <= 0) over('Status Bar Lost', `You fixed ${score} glitches.`, score);
-        }
       };
     }),
     onebar: (app) => gameApp(app, 'One-Bar Call', 'A call is trying to connect. Drag the ring over the drifting reception and keep at least three bars until it goes through. Fall too low for too long and the call fails.', 'ip-onebar-hi', (play, over) => {
@@ -1583,9 +1558,9 @@ window.IPHONE = { start(room, exit) {
   };
   if (airplane) setAir();
   const APPS = {
-    signal: { name: 'Signal', icon: 'signal', bare: true, bar: 'black', open: GAMES.signal },
+    rescue: { name: 'Rescue', icon: 'rescue', bare: true, bar: 'black', open: GAMES.rescue },
     balancer: { name: 'Balancer', icon: 'balancer', bare: true, bar: 'black', open: GAMES.balancer },
-    defender: { name: 'Defender', icon: 'defender', bare: true, bar: 'black', lendsClock: true, open: GAMES.defender },
+    fixcar: { name: 'Fix Car', icon: 'fixcar', bare: true, bar: 'black', open: GAMES.fixcar },
     onebar: { name: 'One-Bar', icon: 'onebar', bare: true, bar: 'black', open: GAMES.onebar },
     chicken: { name: 'Chicken', icon: 'chicken', bare: true, bar: 'black', open: GAMES.chicken },
     guestbook: { name: 'Text', icon: 'sms', open: messages },
@@ -2201,7 +2176,7 @@ window.IPHONE = { start(room, exit) {
      19 in, rows 90 apart starting 19 under the status bar. */
   /* Two home screens, as the original had once you had enough apps: a
      sideways swipe moves between them, the dots above the dock say which. */
-  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin', 'store'], ['bubbles', 'signal', 'balancer', 'defender', 'onebar', 'chicken']];
+  const PAGES = [['guestbook', 'experience', 'builds', 'portfolio', 'projects', 'impact', 'places', 'weather', 'skills', 'notes', 'github', 'linkedin', 'store'], ['bubbles', 'rescue', 'balancer', 'fixcar', 'onebar', 'chicken']];
   const GRID = PAGES.flat();
   let pageNo = 0;
   const DOCK = ['contact', 'email', 'resume', 'about'];
