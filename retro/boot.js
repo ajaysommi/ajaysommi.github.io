@@ -934,9 +934,9 @@
        of whatever is on screen: its top edge for the status bar, its
        bottom edge for the toolbar, so the room runs on under them. */
     const EDGE = {
-      pick: LIGHT ? ['#f4f2ed', '#e4e1da'] : ['#2a2a2c', '#121214'], nokia: ['#8091b1', '#3e5479'], iphone: ['#484a53', '#22242c'],
-      pocket: ['#c6bcd9', '#9587b1'], 'pocket-sky': ['#b3cae5', '#7f9ec3'], 'pocket-mint': ['#b2dcc2', '#7eb594'],
-      'pocket-sand': ['#dccdb0', '#b29e77'], 'pocket-slate': ['#323846', '#1d2029']
+      pick: LIGHT ? ['#f4f2ed', '#e4e1da'] : ['#2a2a2c', '#121214'], nokia: ['#8d9cb9', '#455d86'], iphone: ['#51545e', '#2b2d38'],
+      pocket: ['#d1c9e0', '#a093b9'], 'pocket-sky': ['#c2d5ea', '#8da9ca'], 'pocket-mint': ['#c0e2cd', '#8bbc9f'],
+      'pocket-sand': ['#e2d6be', '#b9a784'], 'pocket-slate': ['#3a4252', '#252935']
     };
     /* The rooms themselves run on under Safari's bars (see .phone-host);
        its status bar and the page behind take the matching colours. */

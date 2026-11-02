@@ -119,6 +119,8 @@ window.POCKET = { start(room, exit) {
 
   const textScreen = (t, html) => ({ type: 'text', title: t, html });
 
+  const TOP04 = [['Yeah!', 'Usher feat. Lil Jon & Ludacris'], ['Burn', 'Usher'], ['If I Ain’t Got You', 'Alicia Keys'], ['This Love', 'Maroon 5'], ['The Way You Move', 'OutKast feat. Sleepy Brown'], ['Hey Ya!', 'OutKast'], ['Slow Jamz', 'Twista feat. Kanye West & Jamie Foxx'], ['Naughty Girl', 'Beyoncé'], ['Lean Back', 'Terror Squad'], ['Goodies', 'Ciara feat. Petey Pablo'], ['Toxic', 'Britney Spears'], ['Mr. Brightside', 'The Killers'], ['American Idiot', 'Green Day'], ['Jesus Walks', 'Kanye West'], ['Numb/Encore', 'Jay-Z & Linkin Park'], ['Drop It Like It’s Hot', 'Snoop Dogg feat. Pharrell'], ['Let’s Get It Started', 'The Black Eyed Peas'], ['Dragostea Din Tei', 'O-Zone'], ['Take Me Out', 'Franz Ferdinand'], ['Float On', 'Modest Mouse'], ['My Happy Ending', 'Avril Lavigne'], ['Pieces of Me', 'Ashlee Simpson'], ['Vertigo', 'U2']];
+  const store04 = () => store.get('pk-store', []);
   const SCREENS = {
     main: () => ({
       type: 'menu', title: 'iSommi',
@@ -132,6 +134,7 @@ window.POCKET = { start(room, exit) {
         [li('Guestbook'), () => open('recs')],
         [li('Contact'), () => open('contact')],
         [li('Resume', '↗'), () => window.open(P.resume, '_blank', 'noopener')],
+        [li('Music Store'), () => open('store')],
         [li('Games'), () => open('games')],
         [li('Extras'), () => open('extras')],
         [li('Settings'), () => open('settings')],
@@ -196,6 +199,16 @@ window.POCKET = { start(room, exit) {
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
     desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
+    /* The Music Store, 2004: what everyone was buying, 99 cents a song. */
+    store: () => ({ type: 'menu', title: 'Music Store', items: TOP04.map(([s, a], i) => [li(s, store04().includes(i) ? '✓' : '›'), () => open('song', i)]) }),
+    song: (i) => {
+      const [s, a] = TOP04[i], have = store04().includes(i);
+      return { type: 'menu', title: 'Music Store', items: [
+        [li(s, ''), () => {}],
+        [li(a, ''), () => {}],
+        [li(have ? 'Purchased' : 'Buy Song', have ? '✓' : '$0.99'), () => { if (have) return; store.set('pk-store', [...store04(), i]); say(`Downloaded “${s}”`); back(); }]
+      ] };
+    },
     games: () => ({ type: 'menu', title: 'Games', items: [[li('Orbit'), () => open('orbit')], [li('How to play'), () => open('orbithelp')], [li('Best score', String(store.get('pod-orbit-hi', 0))), () => say(`Best: ${store.get('pod-orbit-hi', 0)}`)]] }),
     orbithelp: () => textScreen('Orbit', '<h2>Orbit</h2><p>Turn the wheel to swing the paddle around the ring and keep the ball inside.</p><p>Every return speeds it up. Every five, the paddle gets shorter. At 15 a second ball joins in.</p><p>Press the centre to launch or pause. MENU quits.</p><div class="hint">three balls to lose</div>'),
     orbit: () => ({ type: 'game', title: 'Orbit' }),

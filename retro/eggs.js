@@ -12,6 +12,7 @@ window.EGGS = (function () {
     ['ascii', 'Text mode', 'Looked at a photo made of characters.'],
     ['trash', 'Trash', 'Looked through the 1991 Trash.'],
     ['bomb', 'Error type 26', 'Opened the bomb file.'],
+    ['panic', 'Kernel panic', 'Pushed a Mac until it gave up.'],
     ['puzzle', 'Fifteen', 'Solved the sliding puzzle.'],
     ['pattern', 'Interior design', 'Changed the desktop pattern.'],
     ['keepresume', 'Kept', 'Tried to throw the resume away.'],
@@ -49,13 +50,13 @@ window.EGGS = (function () {
     has: (id) => found.has(id),
     count: () => found.size,
     total: LIST.length,
-    find(id) {
+    find(id, quiet) {
       if (found.has(id)) return false;
       const e = LIST.find((x) => x[0] === id);
       if (!e) return false;
       found.add(id);
       window.RETRO.store.set('eggs', [...found]);
-      toast(`<b>★ Easter egg ${found.size}/${LIST.length}</b><span>${window.RETRO.esc(e[1])}</span>`);
+      if (!quiet) toast(`<b>★ Easter egg ${found.size}/${LIST.length}</b><span>${window.RETRO.esc(e[1])}</span>`);
       document.dispatchEvent(new CustomEvent('egg', { detail: id }));
       return true;
     },

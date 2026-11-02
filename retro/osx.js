@@ -93,6 +93,30 @@ window.OSX = (function () {
         <ellipse cx="64" cy="117" rx="27" ry="4.5" fill="none" stroke="#8a949e" stroke-width="2.5"/>
         <ellipse cx="64" cy="30" rx="42" ry="8" fill="url(#rim)" stroke="#7c8792" stroke-width="1.5"/><ellipse cx="64" cy="30.5" rx="36" ry="5" fill="#59636e" opacity=".55"/>`,
       lg('gl', [[0, '#f4f6f8', 0.85], [0.5, '#c4cbd3', 0.7], [1, '#e9edf1', 0.85]], 1, 0) + lg('rim', [[0, '#ffffff'], [0.5, '#c9d0d7'], [1, '#97a1ab']])),
+      trashFull: () => {
+    const can = 'M24 30h80l-9 84a7 7 0 0 1-7 6H40a7 7 0 0 1-7-6z';
+    const lines = (x, y, w, n, a) => [...Array(n)].map((_, i) => `<path d="M${x} ${y + i * 3.2}h${w - (i % 3) * 3}" stroke="#7d8287" stroke-width=".9" transform="rotate(${a} ${x} ${y})"/>`).join('');
+    /* Sheets, back to front, each lit on one side and creased on the other. */
+    const paper = `
+      <path d="M30 34 26 21l15-9 13 6 5 16z" fill="url(#ps)"/><path d="M41 12l-2 13 15 9-1-16z" fill="#c3c7cb"/>${lines(30, 21, 13, 3, -22)}
+      <path d="M72 34 70 15l15-9 16 8 3 20z" fill="url(#ps)"/><path d="M85 6 83 22l21 12-3-20z" fill="#cdd1d5"/>
+      <path d="M48 36 46 16l11-8 17 4 2 24z" fill="#f8f8f6"/><path d="M50 15h20l1 7-20 1z" fill="#eceae4"/>${lines(51, 15, 18, 4, 3)}
+      <path d="M50 36 54 25l15-5 5 6-2 10z" fill="url(#ps)"/><path d="M57 24c4-5 13-5 16-1l-1 6c-5-3-10-3-15-1z" fill="#3fbdf0"/><path d="M66 20c3-2 7-2 10 1l-3 7c-2-3-5-5-8-5z" fill="#62d15e"/>
+      <path d="M74 36 75 20l12-3 7 8-3 11z" fill="#e4792f"/><path d="M78 21l8-2 4 6-7 5z" fill="#3a4047"/><path d="M84 28l7-3 1 11H82z" fill="#f4f4f2"/>
+      <path d="M32 37 34 27l11-6 8 4 3 12z" fill="#ececea"/><path d="M34 27l11-6-2 11-11 5z" fill="#54585c"/><path d="M45 21l8 4-3 12-7-5z" fill="#fdfdfc"/>
+      <path d="M86 37 90 26l10-4 3 3 1 12z" fill="#f6f6f4"/><path d="M90 26l10-4-3 10-9 5z" fill="#b5b9bd"/>${lines(92, 28, 8, 2, -18)}`;
+    return art(`<pattern id="mh" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#d9dee4" opacity=".55"/><circle cx="2.500" cy="2.500" r="1.450" fill="#5b6672" opacity=".55"/></pattern>
+        <clipPath id="ab"><path d="M0 0h128v30a42 8 0 0 1-22 7H22a42 8 0 0 1-22-7z"/></clipPath><clipPath id="in"><path d="${can}"/></clipPath>
+        <ellipse cx="64" cy="30" rx="42" ry="8" fill="url(#rim)" stroke="#7c8792" stroke-width="1.500"/><ellipse cx="64" cy="30.500" rx="37" ry="5.500" fill="#59636e"/>
+        <g clip-path="url(#ab)">${paper}</g>
+        <path d="${can}" fill="url(#gl)" opacity=".62"/>
+        <g clip-path="url(#in)" opacity=".5"><path d="M34 48 44 38l16 3 8 14-14 10-18-6z" fill="#f3f3f1"/><path d="M62 44 80 38l14 9-5 17-17 3-9-11z" fill="#e9e9e6"/><path d="M68 50l13-4 6 8-11 7z" fill="#d97a36"/><path d="M38 64 56 68l4 13-17 5-7-9z" fill="#dcdcd9"/></g>
+        <path d="${can}" fill="url(#mh)"/>
+        <path d="M27 32l9 82a7 7 0 0 0 4 5" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/><path d="M101 32l-9 82" fill="none" stroke="#6c7782" stroke-opacity=".5" stroke-width="2"/>
+        <ellipse cx="64" cy="117" rx="27" ry="4.500" fill="none" stroke="#8a949e" stroke-width="2.500"/>
+        <path d="M22 30a42 8 0 0 0 84 0" fill="none" stroke="url(#rim)" stroke-width="3.500"/><path d="M22 30a42 8 0 0 0 84 0" fill="none" stroke="#7c8792" stroke-width=".8" transform="translate(0 1.800)"/>`,
+      lg('gl', [[0, '#f4f6f8', 0.85], [0.5, '#c4cbd3', 0.7], [1, '#e9edf1', 0.85]], 1, 0) + lg('rim', [[0, '#ffffff'], [0.5, '#c9d0d7'], [1, '#97a1ab']]) + lg('ps', [[0, '#ffffff'], [1, '#c9cdd1']], 1, 1));
+    },
     /* The internal disk: a slab of brushed aluminium seen a little from above. */
     hd: () => art(`<path d="M18 46 30 32h68l12 14z" fill="url(#tp)"/><rect x="10" y="46" width="108" height="50" rx="5" fill="url(#al)" stroke="#7d838b"/>
         <rect x="10" y="46" width="108" height="9" rx="4" fill="#fff" opacity=".55"/>${[20, 108].map((x) => `<circle cx="${x}" cy="86" r="3" fill="#8b929a" stroke="#5f666e" stroke-width=".8"/>`).join('')}
@@ -178,6 +202,7 @@ window.OSX = (function () {
     const have = wins.get(key);
     if (have) { if (have.min) restore(have); focus(have); if (have.select) have.select(arg); return; }
     bounce(app);
+    watch.opened();
     const spec = def(arg);
     const w = Math.min(spec.w || 640, SW() - 40);
     const ht = Math.min(spec.h || 460, SH() - 130);
@@ -705,6 +730,8 @@ window.OSX = (function () {
     say(t('Type <b>help</b> to see what this machine can do.'));
     const run = (raw) => {
       say(`ajay@sommi:~$ ${esc(raw)}`);
+      /* The commands that take a machine down do. */
+      if (/\brm\s+-\w*[rf]\w*\s+(-\w+\s+)*(\/|\/\*|~)(\s|$)|:\(\)\s*\{|\bkill\s+-9\s+(1|-1)\b|\bdd\s+if=\/dev\/(zero|random)/.test(raw)) { window.RETRO.panic(root); return; }
       const [c, ...a] = raw.trim().toLowerCase().split(/\s+/);
       const app = Object.keys(APPS).find((k) => k === a[0] || APPS[k].name.toLowerCase().startsWith(a.join(' ')) && a.length);
       if (!c) return;
@@ -856,7 +883,7 @@ window.OSX = (function () {
     };
   };
 
-  let dockHidden = false, filesAsList = false, wifiOn = true, drawClock = () => {};
+  let dockHidden = false, filesAsList = false, wifiOn = true, drawClock = () => {}, watch = { opened() {} };
   const toggleDock = () => { dockHidden = !dockHidden; root.classList.toggle('dock-off', dockHidden); };
   const goTo = (v) => { const f = wins.get('finder'); if (f) { if (f.min) restore(f); focus(f); f.show(v); return; } open('finder', v); };
   const logOut = async () => {
@@ -960,11 +987,11 @@ window.OSX = (function () {
     const tw = wins.get('trash');
     if (tw && tw.redraw) tw.redraw();
     const can = dockEl.querySelector('[data-app="trash"]');
-    if (can) can.classList.toggle('is-full', trashed.length > 0);
+    if (can) can.querySelector('.dk-ic').innerHTML = ICON[trashed.length ? 'trashFull' : 'trash']();
   };
   const toTrash = (el) => {
     const a = el.dataset.open, n = el.dataset.n || el.querySelector('span').textContent;
-    if (a === 'finder') { alert({ title: t('The disk “Sommi HD” can’t be moved to the Trash.'), text: t('It’s the disk this computer started up from.'), icon: ICON.hd() }); return; }
+    if (a === 'finder') { window.RETRO.panic(root); return; }
     const ic = el.dataset.ic || (APPS[a] ? APPS[a].icon : 'doc');
     gone.add(a + n);
     trashed.push([a, n, ic]);
@@ -1006,7 +1033,7 @@ window.OSX = (function () {
       if (tr) return [['Open', () => tr.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))], ...(trashed.some((x) => x[0] === tr.dataset.t) ? [['Put Back', () => putBack(tr.dataset.t, tr.dataset.n)]] : [])].map(([l, f]) => [t(l), f]);
       const ic = e.target.closest('.dt-i, .fx-ico[data-open]');
       if (e.target.closest('.fx-ico[data-go]')) return [[t('Open'), () => e.target.closest('.fx-ico').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }))]];
-      if (ic) return [[t('Open'), () => open(ic.dataset.open)], [t('Get Info'), () => info(ic.querySelector('span').textContent, ic.dataset.ic || ic.dataset.open)], ...(ic.dataset.open === 'finder' ? [] : ['-', [t('Move to Trash'), () => toTrash(ic)]])];
+      if (ic) return [[t('Open'), () => open(ic.dataset.open)], [t('Get Info'), () => info(ic.querySelector('span').textContent, ic.dataset.ic || ic.dataset.open)], '-', [t('Move to Trash'), () => toTrash(ic)]];
       const dk = e.target.closest('.dk-i');
       if (dk) return dk.dataset.app === 'trash' ? [[t('Open'), () => open('trash')], [t('Empty Trash'), emptyTrash]] : [[t('Open'), () => open(dk.dataset.app)]];
       const w = e.target.closest('.ox-win');
@@ -1091,6 +1118,7 @@ window.OSX = (function () {
       <div class="ox-spot" hidden><div class="sp-bar"><b>Spotlight</b><input type="search" aria-label="Spotlight search" placeholder="" /></div><div class="sp-res"></div></div>
       <div class="ox-dockwrap"><div class="ox-shelf" aria-hidden="true"></div><div class="ox-dock" role="toolbar" aria-label="Dock"></div></div>`;
     scr.appendChild(root);
+    watch = window.RETRO.panicWatch(root);
     menubar = root.querySelector('.ox-menubar');
     deskEl = root.querySelector('.ox-desk');
     window.RETRO.marquee(root, { isBg: (t) => t === root || t === deskEl, items: () => [...deskEl.querySelectorAll('.dt-i')], sel: 'is-sel', cls: 'sel-07' });

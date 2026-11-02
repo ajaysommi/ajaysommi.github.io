@@ -4185,7 +4185,12 @@ if (window.self === window.top) console.log(
     if (animate) mini.animate([{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1.06)', offset: .7 }, { opacity: 1, transform: 'none' }], { duration: 340, easing: 'cubic-bezier(.2, .7, .3, 1)' });
   };
   wrap.querySelector('.era-ad-x').addEventListener('click', () => {
-    wrap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in' }).finished.then(() => fold(true));
+    wrap.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in' }).finished.then(() => {
+      /* Its row in the page closes too; what's being read stays where it is. */
+      const after = (mini || wrap).nextElementSibling, y0 = after.getBoundingClientRect().top;
+      fold(true);
+      if (!phone.matches && scrollY > 0) scrollBy({ top: after.getBoundingClientRect().top - y0, behavior: 'instant' });
+    });
   });
 
   /* ---- the year ---- */
@@ -4218,6 +4223,24 @@ if (window.self === window.top) console.log(
     document.addEventListener('visibilitychange', run);
     run();
   };
+
+  /* ---- on a computer it rides under the menu bar, as wide as the bar ---- */
+  const nav = document.getElementById('siteNav');
+  const pin = () => {
+    if (phone.matches || !nav) { box.style.left = box.style.top = box.style.width = ''; return; }
+    const r = nav.getBoundingClientRect();
+    box.style.left = r.left + 'px';
+    box.style.width = r.width + 'px';
+    box.style.top = r.bottom + 6 + 'px';
+  };
+  let pinDue = 0;
+  const pinSoon = () => { if (!pinDue) pinDue = requestAnimationFrame(() => { pinDue = 0; pin(); }); };
+  addEventListener('scroll', pinSoon, { passive: true });
+  addEventListener('resize', pinSoon, { passive: true });
+  phone.addEventListener('change', pin);
+  if (nav && window.ResizeObserver) new ResizeObserver(pinSoon).observe(nav);
+  pin();
+  new MutationObserver(() => root.classList.toggle('has-era-bar', wrap.classList.contains('is-open') && !wrap.classList.contains('is-off'))).observe(wrap, { attributes: true, attributeFilter: ['class'] });
 
   /* ---- arriving ---- */
   const navMark = () => {
@@ -4255,10 +4278,15 @@ if (window.self === window.top) console.log(
   };
   const serve = async () => {
     const mark = navMark();
-    if (reduce || !mark || (!phone.matches && scrollY > 40)) { instantly(); return; }
+    if (reduce || !mark) { instantly(); return; }
     await wait(120);
     if (phone.matches) wrap.classList.add('is-open');
-    else {
+    else if (scrollY > 40) {
+      /* Partway down the page, what's being read stays exactly where it is. */
+      const after = (mini || wrap).nextElementSibling, y0 = after.getBoundingClientRect().top;
+      wrap.classList.add('is-open');
+      scrollBy({ top: after.getBoundingClientRect().top - y0, behavior: 'instant' });
+    } else {
       /* The row opens in one step, and the page under it is slid from
          where it was down into its new place, as a transform the
          compositor runs: easing the row's own height laid the whole page
@@ -4291,7 +4319,7 @@ if (window.self === window.top) console.log(
   };
 
   // after the page has loaded and its loading screen has gone
-  const go = () => setTimeout(serve, 700);
+  const go = () => setTimeout(serve, 5700);
   if (!root.classList.contains('is-loading')) go();
   else {
     const mo = new MutationObserver(() => { if (!root.classList.contains('is-loading')) { mo.disconnect(); go(); } });
