@@ -126,6 +126,101 @@ window.SHAPES = (function () {
     }, { passive: true });
   };
 
+  /* The cursor as a solid thing moving through the layer. Each shape is a
+     small round body with mass by its size: the cursor shoves the ones it
+     meets out of its way, along the line between them, and drags them with
+     it by its own speed, so a fast sweep throws them and a slow one nudges.
+     A glancing hit sets a shape spinning. Shapes knock into each other, so
+     a push travels through a crowd; each is tied to its home by a soft
+     spring and slowed by the air, so they drift back and settle. When all
+     are still, the loop sleeps. */
+  const physics = (el, { radius = 46, active = () => true } = {}) => {
+    if (!el || matchMedia('(pointer: coarse)').matches || document.documentElement.classList.contains('reduced')) return;
+    el.classList.add('is-physical');
+    const shapes = [...el.querySelectorAll('svg')];
+    let bodies = [], mx = -1e4, my = -1e4, pmx = mx, pmy = my, cvx = 0, cvy = 0, raf = 0, last = 0, lastMove = 0;
+    let ok = false;
+    const measure = () => {
+      const box = el.getBoundingClientRect();
+      ok = box.width > 0;
+      bodies = shapes.map((s, i) => {
+        const old = bodies[i];
+        /* Where it rests: its own place in the layer (it is drawn centred
+           on its left and top), not wherever an animation has it now. */
+        const w = parseFloat(s.style.width) || 30;
+        return { s, hx: box.left + parseFloat(s.style.left) / 100 * box.width, hy: box.top + parseFloat(s.style.top) / 100 * box.height, r: w * 0.42, m: w * w, x: old ? old.x : 0, y: old ? old.y : 0, vx: old ? old.vx : 0, vy: old ? old.vy : 0, a: old ? old.a : 0, va: old ? old.va : 0 };
+      });
+    };
+    const step = (t) => {
+      raf = 0;
+      const dt = Math.min(32, t - (last || t)) / 16.67; last = t;
+      if (!active()) { last = 0; return; }
+      const R = radius;
+      let moving = t - lastMove < 120;
+      // the cursor's speed, eased, so one jumpy event does not fling everything
+      cvx += ((mx - pmx) / Math.max(dt, .5) - cvx) * .5; cvy += ((my - pmy) / Math.max(dt, .5) - cvy) * .5; pmx = mx; pmy = my;
+      for (const b of bodies) {
+        const px = b.hx + b.x, py = b.hy + b.y;
+        const dx = px - mx, dy = py - my, d = Math.hypot(dx, dy), min = R + b.r;
+        if (d < min && d > .01) {
+          const nx = dx / d, ny = dy / d, push = min - d;
+          b.x += nx * push; b.y += ny * push;
+          // velocity of the cursor along the normal is handed over, heavier shapes take less
+          const k = 900 / (900 + b.m * .35);
+          const vn = Math.max(0, cvx * nx + cvy * ny);
+          b.vx += nx * (vn * 1.1 + push * .25) * k + cvx * .12 * k;
+          b.vy += ny * (vn * 1.1 + push * .25) * k + cvy * .12 * k;
+          // the part of the sweep across the shape spins it
+          b.va += ((cvx * -ny + cvy * nx) * .9) * k;
+          moving = true;
+        }
+      }
+      // shape against shape
+      for (let i = 0; i < bodies.length; i++) {
+        const A = bodies[i];
+        for (let j = i + 1; j < bodies.length; j++) {
+          const B = bodies[j];
+          /* Two that already overlap where they rest only push when
+             they are shoved closer than that. */
+          const dx = (B.hx + B.x) - (A.hx + A.x), dy = (B.hy + B.y) - (A.hy + A.y), min = Math.min(A.r + B.r, Math.hypot(B.hx - A.hx, B.hy - A.hy) - .5);
+          if (Math.abs(dx) > min || Math.abs(dy) > min) continue;
+          const d = Math.hypot(dx, dy);
+          if (d >= min || d < .01) continue;
+          const nx = dx / d, ny = dy / d, over = (min - d), ma = A.m, mb = B.m, tot = ma + mb;
+          A.x -= nx * over * mb / tot; A.y -= ny * over * mb / tot; B.x += nx * over * ma / tot; B.y += ny * over * ma / tot;
+          const rv = (B.vx - A.vx) * nx + (B.vy - A.vy) * ny;
+          if (rv < 0) { const imp = -(1 + .55) * rv / (1 / ma + 1 / mb); A.vx -= imp * nx / ma; A.vy -= imp * ny / ma; B.vx += imp * nx / mb; B.vy += imp * ny / mb; A.va -= rv * .4; B.va += rv * .4; }
+        }
+      }
+      let energy = 0;
+      for (const b of bodies) {
+        // the spring home, and air
+        b.vx += -b.x * .012 * dt; b.vy += -b.y * .012 * dt;
+        const drag = Math.pow(.9, dt), spin = Math.pow(.93, dt);
+        b.vx *= drag; b.vy *= drag; b.va *= spin;
+        b.va += -b.a * .004 * dt;
+        b.x += b.vx * dt; b.y += b.vy * dt; b.a += b.va * dt;
+        energy = Math.max(energy, Math.abs(b.vx) + Math.abs(b.vy) + Math.abs(b.va) * .2 + (Math.abs(b.x) + Math.abs(b.y) + Math.abs(b.a) * .2) * .1);
+        b.s.style.translate = `${b.x.toFixed(2)}px ${b.y.toFixed(2)}px`;
+        b.s.style.rotate = `${b.a.toFixed(2)}deg`;
+      }
+      if (moving || energy > .04) raf = requestAnimationFrame(step);
+      else last = 0;
+    };
+    const wake = () => { if (!raf) raf = requestAnimationFrame(step); };
+    measure();
+    addEventListener('resize', () => { measure(); wake(); });
+    addEventListener('pointermove', (e) => {
+      if (!active()) return;
+      if (!ok) measure();
+      if (mx < -1e3) { pmx = e.clientX; pmy = e.clientY; }
+      mx = e.clientX; my = e.clientY; lastMove = performance.now();
+      wake();
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => { mx = my = pmx = pmy = -1e4; cvx = cvy = 0; });
+    return { measure, wake };
+  };
+
   /* A burst from (x, y): shapes thrown outward, turning, fading. */
   const burst = (x, y, set, { color = '#fff', count = 34, reach = 0.6 } = {}) => {
     if (document.documentElement.classList.contains('reduced')) return;
@@ -150,5 +245,5 @@ window.SHAPES = (function () {
     setTimeout(() => box.remove(), 1500);
   };
 
-  return { layer, burst, arrive, follow, SETS };
+  return { layer, burst, arrive, follow, physics, SETS };
 })();

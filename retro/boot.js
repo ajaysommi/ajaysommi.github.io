@@ -435,6 +435,9 @@
       host.querySelectorAll(':scope > .bz-drive, :scope > .bz-cable').forEach((d) => { d.style.transform = `translate(${ox}px, ${oy}px) scale(${k})`; });
       const [sx, sy, sw, sh] = photo.scr;
       Object.entries({ '--pl': ox + sx * k, '--pt': oy + sy * k, '--pw': sw * k, '--ph': sh * k, '--pr': photo.r * k }).forEach(([n, v]) => host.style.setProperty(n, v + 'px'));
+      /* Where the screen's light comes from, for the room at night. */
+      host.style.setProperty('--gcx', ox + (sx + sw / 2) * k + 'px'); host.style.setProperty('--gcy', oy + (sy + sh / 2) * k + 'px');
+      host.style.setProperty('--gsw', sw * k + 'px'); host.style.setProperty('--gsh', sh * k + 'px');
     };
     addEventListener('resize', layout);
     const dress = (i) => {
@@ -447,10 +450,15 @@
       host.dataset.era = y;
       document.documentElement.dataset.era = y;
       backdrop.innerHTML = window.SHAPES.layer(y, { count: 46, color: LOOK[y][0], opacity: LOOK[y][1], size: [26, 60], seed: +y });
+      /* At night (the site's dark theme) the screen is the only light in
+         the room: a pool of it on the wall behind and the desk below,
+         under the machine. */
+      if (!host.querySelector(':scope > .nt-pool')) { const pool = document.createElement('div'); pool.className = 'nt-pool'; pool.innerHTML = '<i class="nt-wall"></i><i class="nt-desk"></i><i class="nt-vig"></i>'; host.insertBefore(pool, bezel); }
+      host.style.removeProperty('--gcx'); host.style.removeProperty('--gcy');
       if (PHOTO[y]) {
         photo = PHOTO[y];
         const [ax, ay, as, mono] = photo.aj;
-        bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${round(photo.glass[4])}"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
+        bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><img class="nt-lit" src="${photo.src}" alt="" draggable="false" style="--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px" /><i class="nt-tint" style="-webkit-mask-image:url(${photo.src});mask-image:url(${photo.src});--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px"></i><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${round(photo.glass[4])}"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
         host.classList.add('is-photo');
         host.classList.remove('is-dark');
         /* The Bondi iMac's power button switches the picture tube off and on. */
@@ -875,7 +883,10 @@
       const want = ERAS.findIndex((e) => '#' + e.year === location.hash);
       if (want >= 0) launch(want);
       else pick.hidden = false;
-      window.SHAPES.follow(pick.querySelector('.bg-shapes'));
+      /* On the desk the shapes are things the cursor can plough through. */
+      const phys = window.SHAPES.physics(pick.querySelector('.bg-shapes'), { active: () => !pick.hidden && !document.documentElement.classList.contains('in-os') });
+      if (!phys) window.SHAPES.follow(pick.querySelector('.bg-shapes'));
+      else setTimeout(() => phys.measure(), 6000);
       /* While the picker sits there, each system is put together out of
          sight and each machine's photograph decoded, one per idle moment,
          so a click only has to fly: building a system on the click held

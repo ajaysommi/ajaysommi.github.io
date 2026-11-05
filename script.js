@@ -4305,29 +4305,68 @@ if (window.self === window.top) console.log(
   }
 })();
 
+
 /* ==========================================================================
-   Into another era: a short, quiet time warp before the eras page. Light
-   streaks out from the middle as the page falls away into the dark the eras
-   page starts on, then it goes.
+   Featured Work on a computer: each project floats in its own bubble. They
+   drift on their own slow currents, lean toward the pointer, and get out of
+   its way when it pushes through them, wobbling like something soft as
+   they go; then they ease back into their places. Touch screens and reduced
+   motion keep the plain cards.
    ========================================================================== */
-(function timeWarp() {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let going = false;
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest && e.target.closest('a[href="eras.html"]');
-    if (!a || going || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    e.preventDefault();
-    going = true;
-    const w = document.createElement('div');
-    w.className = 'time-warp';
-    w.innerHTML = '<i class="tw-streaks"></i><i class="tw-ring"></i><i class="tw-dark"></i>';
-    document.body.appendChild(w);
-    const page = document.querySelector('main') || document.body;
-    page.animate([{ transform: 'none', filter: 'none' }, { transform: 'scale(.97)', filter: 'blur(1.5px)' }], { duration: 700, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' });
-    w.querySelector('.tw-streaks').animate([{ opacity: 0, transform: 'translate(-50%,-50%) scale(.4) rotate(0deg)' }, { opacity: .55, offset: .45 }, { opacity: 0, transform: 'translate(-50%,-50%) scale(1.8) rotate(24deg)' }], { duration: 760, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'forwards' });
-    w.querySelector('.tw-ring').animate([{ opacity: 0, transform: 'translate(-50%,-50%) scale(.2)' }, { opacity: .5, offset: .3 }, { opacity: 0, transform: 'translate(-50%,-50%) scale(2.4)' }], { duration: 700, easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' });
-    w.querySelector('.tw-dark').animate([{ opacity: 0 }, { opacity: 0, offset: .35 }, { opacity: 1 }], { duration: 720, easing: 'ease-in', fill: 'forwards' }).finished.then(() => { location.href = a.href; });
-    /* Back from the eras page by the browser's own button: undone. */
-    addEventListener('pageshow', (ev) => { if (ev.persisted) { w.remove(); page.getAnimations().forEach((x) => x.cancel()); going = false; } }, { once: true });
-  }, true);
+(function projectBubbles() {
+  const grid = document.getElementById('projectGrid');
+  if (!grid || !matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const wide = matchMedia('(min-width: 1024px)');
+  const items = () => [...grid.querySelectorAll('.work-item:not(.is-hidden)')];
+  const B = new Map();
+  let mx = -1e4, my = -1e4, pmx = mx, pmy = my, vmx = 0, vmy = 0, raf = 0, seen = false, last = 0;
+  const body = (el) => {
+    if (!B.has(el)) B.set(el, { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, ph: Math.random() * 6.28, sp: .00045 + Math.random() * .00025, hot: 0 });
+    return B.get(el);
+  };
+  const frame = (t) => {
+    raf = 0;
+    if (!seen || !wide.matches) { grid.classList.remove('is-bubbles'); B.forEach((b, el) => { el.style.transform = ''; }); return; }
+    grid.classList.add('is-bubbles');
+    const dt = Math.min(34, t - (last || t)) / 16.67; last = t;
+    vmx += ((mx - pmx) - vmx) * .35; vmy += ((my - pmy) - vmy) * .35; pmx = mx; pmy = my;
+    for (const el of items()) {
+      const b = body(el);
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2 - b.x, cy = r.top + r.height / 2 - b.y;
+      // its own current
+      const fx = Math.sin(t * b.sp + b.ph) * 7, fy = Math.cos(t * b.sp * 1.3 + b.ph) * 9;
+      let ax = (fx - b.x) * .02, ay = (fy - b.y) * .02;
+      // the pointer: pushed away when it comes through, nudged by its sweep
+      const dx = cx + b.x - mx, dy = cy + b.y - my, reach = Math.max(r.width, r.height) * .62, d = Math.hypot(dx, dy);
+      const inside = mx > r.left && mx < r.right && my > r.top && my < r.bottom;
+      b.hot += ((inside ? 1 : 0) - b.hot) * .12;
+      if (d < reach && d > 1) {
+        const f = (1 - d / reach);
+        ax += (dx / d) * f * 1.6 + vmx * f * .06;
+        ay += (dy / d) * f * 1.6 + vmy * f * .06;
+      }
+      b.vx = (b.vx + ax * dt) * Math.pow(.9, dt); b.vy = (b.vy + ay * dt) * Math.pow(.9, dt);
+      b.x += b.vx * dt; b.y += b.vy * dt;
+      const lim = 46; b.x = Math.max(-lim, Math.min(lim, b.x)); b.y = Math.max(-lim, Math.min(lim, b.y));
+      // soft: it stretches along the way it moves, and leans to the pointer when it is over it
+      const v = Math.min(1, Math.hypot(b.vx, b.vy) / 6), ang = Math.atan2(b.vy, b.vx);
+      const sq = 1 + v * .05, tx = inside ? ((my - (r.top + r.height / 2)) / r.height) * -7 : 0, ty = inside ? ((mx - (r.left + r.width / 2)) / r.width) * 7 : 0;
+      b.tx += (tx - b.tx) * .12; b.ty += (ty - b.ty) * .12;
+      /* Only what is needed this frame, so text at rest stays sharp. */
+      let tf = `translate(${b.x.toFixed(1)}px, ${b.y.toFixed(1)}px)`;
+      if (v > .04) tf += ` rotate(${ang.toFixed(3)}rad) scale(${sq.toFixed(4)}, ${(1 / sq).toFixed(4)}) rotate(${(-ang).toFixed(3)}rad)`;
+      if (Math.abs(b.tx) > .05 || Math.abs(b.ty) > .05) tf += ` perspective(900px) rotateX(${b.tx.toFixed(2)}deg) rotateY(${b.ty.toFixed(2)}deg)`;
+      if (b.hot > .01) tf += ` scale(${(1 + b.hot * .025).toFixed(4)})`;
+      el.style.transform = tf;
+      el.style.setProperty('--gx', (((mx - r.left) / r.width) * 100).toFixed(1) + '%');
+      el.style.setProperty('--gy', (((my - r.top) / r.height) * 100).toFixed(1) + '%');
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  const wake = () => { if (!raf) raf = requestAnimationFrame(frame); };
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) wake(); }, { rootMargin: '120px' }).observe(grid);
+  addEventListener('pointermove', (e) => { if (mx < -1e3) { pmx = e.clientX; pmy = e.clientY; } mx = e.clientX; my = e.clientY; }, { passive: true });
+  document.addEventListener('pointerleave', () => { mx = my = -1e4; });
+  wide.addEventListener('change', wake);
 })();

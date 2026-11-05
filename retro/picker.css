@@ -572,3 +572,71 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .is-desk-pick .pk-d { border-radius: 24px; }
 .mp-card { border-radius: 30px; }
 .pk-d:focus-visible { outline-offset: 3px; border-radius: 24px; }
+/* Shapes moved by the cursor's physics: placed directly each frame, with no
+   easing of their own, and no idle drift that would fight the simulation. */
+.bg-shapes.is-physical svg { transition: none; animation: shp-tw var(--tw, 12s) ease-in-out var(--twd, 0s) infinite; will-change: translate, rotate; }
+
+/* ==========================================================================
+   Night, for the computers on a desk (the site's dark theme): the lights in
+   the room are off. The wall keeps its colour, deep and dim, and its shapes
+   glow faintly like paint that has soaked up the day. The screen is the one
+   light: it blooms past its own edge, washes the inside of the bezel and
+   fades across the case the way light falls off a lit screen, and throws a
+   soft pool onto the wall behind and the desk below.
+   ========================================================================== */
+.os-host[data-era="1983"] { --glow: 92, 255, 120; --glow-a: .5; }
+.os-host[data-era="1991"] { --glow: 226, 233, 242; --glow-a: .42; }
+.os-host[data-era="1998"] { --glow: 92, 190, 230; --glow-a: .5; }
+.os-host[data-era="2007"] { --glow: 104, 160, 245; --glow-a: .5; }
+.nt-pool { display: none; }
+[data-theme="midnight"].is-desk .os-host[data-era] { --gcx: 50%; --gcy: 42%; --gsw: 46vw; --gsh: 50vh; }
+/* The room: dark, but with its own colour still in it. */
+[data-theme="midnight"].is-desk .os-host[data-era]::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 40%, rgba(2, 3, 7, .72), rgba(1, 1, 3, .9) 70%); }
+[data-theme="midnight"].is-desk .os-host[data-era] > .dk-shapes { background: none; }
+[data-theme="midnight"].is-desk .os-host[data-era] > .dk-shapes .bg-shapes { filter: brightness(1.9) drop-shadow(0 0 5px rgba(var(--glow), .55)); opacity: .75; }
+/* The pool of light: on the wall behind the machine, on the desk below,
+   and the dark gathering in the corners. */
+[data-theme="midnight"].is-desk .nt-pool { display: block; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.nt-pool i { position: absolute; display: block; pointer-events: none; }
+.nt-wall { left: var(--gcx); top: var(--gcy); width: calc(var(--gsw) * 2.6); height: calc(var(--gsh) * 2.4); transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(var(--glow), calc(var(--glow-a) * .55)), rgba(var(--glow), calc(var(--glow-a) * .22)) 45%, rgba(var(--glow), 0)); mix-blend-mode: screen; animation: nt-breathe 7s ease-in-out infinite alternate; }
+.nt-desk { left: var(--gcx); top: calc(var(--gcy) + var(--gsh) * 1.25); width: calc(var(--gsw) * 2.2); height: calc(var(--gsh) * .9); transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(var(--glow), calc(var(--glow-a) * .35)), rgba(var(--glow), 0)); mix-blend-mode: screen; }
+.nt-vig { inset: 0; background: radial-gradient(75% 70% at var(--gcx) var(--gcy), transparent 45%, rgba(0, 0, 0, .55)); }
+@keyframes nt-breathe { from { opacity: .9; } to { opacity: 1; } }
+/* The machine: unlit except by its screen. The second copy of the photo is
+   the case as the screen lights it, strongest at the bezel's inner edge and
+   falling away across it; over that, the screen's colour cast. */
+.nt-lit, .nt-tint { display: none; }
+[data-theme="midnight"].is-desk .os-host.is-photo .bz-dev > img:first-child { filter: brightness(.16) saturate(.65) contrast(1.08); }
+[data-theme="midnight"].is-desk .os-host.is-photo .nt-lit { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; filter: brightness(.95) saturate(.85);
+  -webkit-mask-image: radial-gradient(calc(var(--lw) * .95) calc(var(--lh) * 1.0) at var(--lx) var(--ly), #000 52%, rgba(0, 0, 0, .62) 62%, rgba(0, 0, 0, .26) 78%, rgba(0, 0, 0, .08) 92%, transparent 100%);
+  mask-image: radial-gradient(calc(var(--lw) * .95) calc(var(--lh) * 1.0) at var(--lx) var(--ly), #000 52%, rgba(0, 0, 0, .62) 62%, rgba(0, 0, 0, .26) 78%, rgba(0, 0, 0, .08) 92%, transparent 100%); }
+[data-theme="midnight"].is-desk .os-host.is-photo .nt-tint { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; mix-blend-mode: soft-light;
+  background: radial-gradient(calc(var(--lw) * 1.0) calc(var(--lh) * 1.05) at var(--lx) var(--ly), rgba(var(--glow), .95) 45%, rgba(var(--glow), .45) 65%, rgba(var(--glow), 0) 100%); }
+/* The drawn 1983 terminal, without a photo: the case dimmed, the tube's
+   own glow carrying the light. */
+[data-theme="midnight"].is-desk .os-host[data-era="1983"] .bz > * { filter: brightness(.3) saturate(.8); }
+[data-theme="midnight"].is-desk .os-host[data-era="1983"] .bz-frame { filter: brightness(.55); }
+/* The screen itself blooms a little past its edge onto the bezel. */
+[data-theme="midnight"].is-desk .os-host[data-era] .os-screen:not([hidden]) { box-shadow: 0 0 18px 4px rgba(var(--glow), calc(var(--glow-a) * .55)), 0 0 70px 20px rgba(var(--glow), calc(var(--glow-a) * .28)), 0 0 160px 60px rgba(var(--glow), calc(var(--glow-a) * .12)); }
+/* With the Bondi's picture tube switched off, the room goes dark too. */
+[data-theme="midnight"].is-desk .os-host.is-dark .nt-pool, [data-theme="midnight"].is-desk .os-host.is-dark .nt-lit, [data-theme="midnight"].is-desk .os-host.is-dark .nt-tint { opacity: 0; transition: opacity .5s; }
+[data-theme="midnight"].is-desk .os-host.is-dark .os-screen { box-shadow: none; }
+/* Things beside the machine, in the dark with it. */
+[data-theme="midnight"].is-desk .os-host > .bz-drive, [data-theme="midnight"].is-desk .os-host > .bz-cable { filter: brightness(.42) saturate(.85); }
+/* The light on the case falls off as it does off a real screen: full at
+   the glass, half gone a short way in, a faint sheen by the outer edge. */
+[data-theme="midnight"].is-desk .os-host.is-photo .nt-lit {
+  -webkit-mask-image: radial-gradient(calc(var(--lw) * .78) calc(var(--lh) * .86) at var(--lx) var(--ly), #000 62%, rgba(0, 0, 0, .72) 67%, rgba(0, 0, 0, .4) 75%, rgba(0, 0, 0, .18) 85%, rgba(0, 0, 0, .06) 94%, transparent 100%);
+  mask-image: radial-gradient(calc(var(--lw) * .78) calc(var(--lh) * .86) at var(--lx) var(--ly), #000 62%, rgba(0, 0, 0, .72) 67%, rgba(0, 0, 0, .4) 75%, rgba(0, 0, 0, .18) 85%, rgba(0, 0, 0, .06) 94%, transparent 100%); }
+[data-theme="midnight"].is-desk .os-host.is-photo .nt-tint { background: radial-gradient(calc(var(--lw) * .8) calc(var(--lh) * .9) at var(--lx) var(--ly), rgba(var(--glow), .9) 60%, rgba(var(--glow), .4) 72%, rgba(var(--glow), 0) 100%); }
+.os-host[data-era="1991"] { --glow-a: .34; }
+[data-theme="midnight"].is-desk .os-host[data-era="1991"] .nt-lit { filter: brightness(.78) saturate(.8); }
+[data-theme="midnight"].is-desk .os-host[data-era="1983"] .bz > * { filter: brightness(.4) saturate(.8); }
+[data-theme="midnight"].is-desk .os-host[data-era="1983"] .bz-frame { filter: none; box-shadow: 0 0 0 2px rgba(var(--glow), .12), 0 0 40px 6px rgba(var(--glow), .14); }
+/* The buttons around the machine dim with the room. */
+[data-theme="midnight"].is-desk .dk-eras, [data-theme="midnight"].is-desk .dk-top a, [data-theme="midnight"].is-desk .dk-top button { background: rgba(28, 30, 36, .72) !important; color: #d4d6dc !important; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08) !important; }
+[data-theme="midnight"].is-desk .os-host[data-era] .dk-chip, [data-theme="midnight"].is-desk .dk-chip { background: rgba(26, 28, 34, .74); color: #d6d8de; box-shadow: 0 0 0 1px rgba(255, 255, 255, .09), 0 6px 18px rgba(0, 0, 0, .4); }
+[data-theme="midnight"].is-desk .os-host.is-photo .bz-aj { filter: brightness(.38) saturate(.8); }
+[data-theme="midnight"].is-desk .bz-disk, [data-theme="midnight"].is-desk .bz-drive .bz-disk { filter: brightness(.42) saturate(.85); }
+[data-theme="midnight"].is-desk .os-host[data-era="2007"] .nt-lit { -webkit-mask-size: 100% 100%; }
+.os-host[data-era="2007"] .nt-lit, .os-host[data-era="2007"] .nt-tint { --lh: 640px !important; }

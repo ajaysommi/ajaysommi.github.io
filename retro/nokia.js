@@ -526,7 +526,7 @@ window.NOKIA = { start(room, exit) {
     stack.push({ s: STANDBY(), sel: 0 });
     render();
     setTimeout(() => { netUp = true; sig = 4; if (standbyNow()) render(); }, 2600 + Math.random() * 1400);
-    const drift = () => { if (netUp) { const r = Math.random(); sig = Math.max(1, Math.min(5, sig + (r < .45 ? -1 : r < .9 ? 1 : 0))); if (sig === 1 && Math.random() < .7) sig = 2; if (standbyNow()) render(); } setTimeout(drift, 6000 + Math.random() * 9000); };
+    const drift = () => { if (netUp && Math.random() < .3) { sig = Math.max(3, Math.min(5, sig + (Math.random() < .5 ? -1 : 1))); if (standbyNow()) render(); } setTimeout(drift, 12000 + Math.random() * 16000); };
     setTimeout(drift, 9000);
     setInterval(() => { const t = stack[stack.length - 1]; if (t && t.s.type === 'standby' && room.getClientRects().length) render(); }, 20000);
   })();

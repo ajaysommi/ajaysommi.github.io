@@ -455,7 +455,7 @@ window.IPHONE = { start(room, exit) {
       vw.appendChild(pg);
       /* The page underneath hides once the new one has slid over it, but
          only if it is still underneath: a quick Back must not hide it. */
-      if (prev && !opts.instant) { prev.pg.classList.add('out-l'); pg.classList.add('in-r'); setTimeout(() => { prev.pg.classList.remove('out-l'); if (app.stack[app.stack.length - 1] !== prev) prev.pg.style.visibility = 'hidden'; }, 300); }
+      if (prev && !opts.instant) { prev.pg.classList.add('out-l'); pg.classList.add('in-r'); setTimeout(() => { prev.pg.classList.remove('out-l'); pg.classList.remove('in-r'); if (app.stack[app.stack.length - 1] !== prev) prev.pg.style.visibility = 'hidden'; }, 300); }
       else if (prev) prev.pg.style.visibility = 'hidden';
       drawBar();
       return pg;
@@ -467,6 +467,7 @@ window.IPHONE = { start(room, exit) {
       top.opts.onPop && top.opts.onPop();
       const prev = app.stack[app.stack.length - 1];
       prev.pg.style.visibility = '';
+      prev.pg.classList.remove('in-r', 'out-l');
       prev.pg.classList.add('in-l');
       top.pg.classList.add('out-r');
       setTimeout(() => { top.pg.remove(); prev.pg.classList.remove('in-l'); }, 300);
@@ -1653,18 +1654,18 @@ window.IPHONE = { start(room, exit) {
     net = 'search'; paintNet();
     searchT = setTimeout(() => {
       if (airplane) return;
-      net = 'on'; bars = 3 + Math.floor(Math.random() * 3); paintNet();
+      net = 'on'; bars = 4 + Math.floor(Math.random() * 2); paintNet();
       if (!statusLent) netEls().forEach((e) => e.style.display !== 'none' && e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320 }));
     }, ms);
   };
   const drift = () => {
     if (net === 'on' && !statusLent) {
+      /* Mostly it holds; now and then a bar comes or goes, staying strong. */
       const r = Math.random();
-      bars = Math.max(1, Math.min(5, bars + (r < .45 ? -1 : r < .9 ? 1 : 0)));
-      if (bars === 1 && Math.random() < .7) bars = 2;
+      if (r < .3) bars = Math.max(3, Math.min(5, bars + (Math.random() < .5 ? -1 : 1)));
       paintNet();
     }
-    setTimeout(drift, 5000 + Math.random() * 9000);
+    setTimeout(drift, 12000 + Math.random() * 16000);
   };
   setTimeout(drift, 8000);
   /* Airplane Mode flies in the way the plane points, and out the same way. */
@@ -2288,6 +2289,18 @@ window.IPHONE = { start(room, exit) {
     api.play = () => { auto = setInterval(() => { if (zoom === 1) step(1); }, 2200); draw(); };
     return api;
   };
+  /* Any picture in an app can be opened full screen and pinched, not only
+     the ones in Photos: a project's screenshot, a cover, a contact's photo.
+     Pictures already handled by their own page (album grids, list rows,
+     icons, maps, wallpapers) are left to it. */
+  scr.addEventListener('click', (e) => {
+    const im = e.target.closest && e.target.closest('img');
+    if (!im || !current || !current.el.contains(im)) return;
+    if (im.closest('.pl li, .thumbs, .grid4, .ip-icon, .wall-grid, .pv-ph, .photo-view, .mp, .cam, .cam2, .gm, .np-art, .yt-th, .bb-msg') || im.offsetWidth < 60) return;
+    e.stopPropagation();
+    SFX.click();
+    viewer(current, { steps: [[im.currentSrc || im.src, im.alt || '', '']] }, 0, scr.dataset.bar || 'gray');
+  }, true);
 
   /* ----------------------------------------------------------- springboard */
 

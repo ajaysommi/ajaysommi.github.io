@@ -75,7 +75,7 @@ window.OLDWEB = (function () {
   /* Homepages kept with the site, as the archive had them in 1998 and in
      2007: [year, address, folder, title, line]. Typing one of these, or
      searching for it, needs no trip to the archive at all. */
-  const KEPT = [];
+  const KEPT = [[1998, "altavista.com", "altavista", "AltaVista Technology, Inc.", "AltaVista search."], [1998, "amazon.com", "amazon", "Amazon.com--Earth's Biggest Selection", "Earth's biggest selection."], [1998, "aol.com", "aol", "Welcome to AOL.com", "America Online."], [1998, "apple.com", "apple", "Apple Computer", "Apple: Mac, iPod, iPhone and more."], [1998, "ebay.com", "ebay", "eBay - Your Personal Trading Community", "Buy and sell almost anything."], [1998, "geocities.com", "geocities", "GeoCities - The Largest Community on the Web!", "Free homepages for everyone."], [1998, "lycos.com", "lycos", "Lycos: Your Personal Internet Guide", "Lycos: your personal internet guide."], [1998, "microsoft.com", "microsoft", "Welcome to Microsoft's Homepage", "Microsoft Corporation."], [1998, "nba.com", "nba", "NBA.com: The Official Site of the National Basketball Association", "The official site of the NBA."], [1998, "netscape.com", "netscape", "Welcome to Netscape Netcenter", "Netscape Netcenter."], [1998, "nytimes.com", "nytimes", "The New York Times on the Web", "The New York Times on the Web."], [1998, "yahoo.com", "yahoo", "Yahoo!", "Yahoo!: search, mail, news and more."], [2007, "apple.com", "apple", "Apple", "Apple: Mac, iPod, iPhone and more."]];
   const bucket = (year) => (year < 2003 ? 1998 : 2007);
   const bare = (u) => u.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/(index\.html?)?$/, '');
   const ALIAS = { 'espn.com': 'espn.go.com', 'wikipedia.org': 'en.wikipedia.org', 'en.m.wikipedia.org': 'en.wikipedia.org' };
@@ -113,6 +113,12 @@ window.OLDWEB = (function () {
           inp.readOnly = true; inp.setAttribute('inputmode', 'none');
           inp.addEventListener('pointerdown', (e) => { e.preventDefault(); onField(inp, () => { const q = inp.value.trim(); if (q) nav(q); }); });
         });
+        /* On a phone's narrow screen a desktop page opens zoomed out to its
+           full width, as the iPhone's Safari showed one. */
+        if (frame.dataset.kind === 'doc' && frame.getAttribute('src') && frame.clientWidth < 520) {
+          const fit = () => { const w = Math.max(d.documentElement.scrollWidth, d.body ? d.body.scrollWidth : 0); if (w > frame.clientWidth * 1.15) d.documentElement.style.zoom = String(frame.clientWidth / w); };
+          fit(); setTimeout(fit, 400);
+        }
         finish();
     };
     const draw = (html) => {
