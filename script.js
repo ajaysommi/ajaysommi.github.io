@@ -4304,3 +4304,30 @@ if (window.self === window.top) console.log(
     mo.observe(root, { attributes: true, attributeFilter: ['class'] });
   }
 })();
+
+/* ==========================================================================
+   Into another era: a short, quiet time warp before the eras page. Light
+   streaks out from the middle as the page falls away into the dark the eras
+   page starts on, then it goes.
+   ========================================================================== */
+(function timeWarp() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let going = false;
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[href="eras.html"]');
+    if (!a || going || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    going = true;
+    const w = document.createElement('div');
+    w.className = 'time-warp';
+    w.innerHTML = '<i class="tw-streaks"></i><i class="tw-ring"></i><i class="tw-dark"></i>';
+    document.body.appendChild(w);
+    const page = document.querySelector('main') || document.body;
+    page.animate([{ transform: 'none', filter: 'none' }, { transform: 'scale(.97)', filter: 'blur(1.5px)' }], { duration: 700, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' });
+    w.querySelector('.tw-streaks').animate([{ opacity: 0, transform: 'translate(-50%,-50%) scale(.4) rotate(0deg)' }, { opacity: .55, offset: .45 }, { opacity: 0, transform: 'translate(-50%,-50%) scale(1.8) rotate(24deg)' }], { duration: 760, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'forwards' });
+    w.querySelector('.tw-ring').animate([{ opacity: 0, transform: 'translate(-50%,-50%) scale(.2)' }, { opacity: .5, offset: .3 }, { opacity: 0, transform: 'translate(-50%,-50%) scale(2.4)' }], { duration: 700, easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'forwards' });
+    w.querySelector('.tw-dark').animate([{ opacity: 0 }, { opacity: 0, offset: .35 }, { opacity: 1 }], { duration: 720, easing: 'ease-in', fill: 'forwards' }).finished.then(() => { location.href = a.href; });
+    /* Back from the eras page by the browser's own button: undone. */
+    addEventListener('pageshow', (ev) => { if (ev.persisted) { w.remove(); page.getAnimations().forEach((x) => x.cancel()); going = false; } }, { once: true });
+  }, true);
+})();

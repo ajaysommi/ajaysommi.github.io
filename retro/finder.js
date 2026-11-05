@@ -416,7 +416,7 @@ window.FINDER = (function () {
     SPECS['project:' + p.id] = () => ({
       title: p.name, w: 500, h: 360,
       render: (b) => {
-        b.innerHTML = `<div class="doc"><div style="display:flex;gap:14px;align-items:center">${I.svg('app', 32)}<div><h2>${esc(p.full)}</h2><div class="meta" style="margin:0">${esc(p.kind)} · ${esc(p.stack)}</div></div></div><p style="margin-top:14px">${esc(p.text)}</p>
+        b.innerHTML = `<div class="doc"><div style="display:flex;gap:14px;align-items:center">${I.svg('app', 32)}<div><h2>${esc(p.full)}</h2><div class="meta" style="margin:0">${esc(p.kind)} · ${esc(p.stack)}</div></div></div>${p.shot ? `<img class="fd-shot" src="${p.shot}" alt="Screenshot of ${esc(p.name)}" />` : ''}<p style="margin-top:14px">${esc(p.text)}</p>
           <div class="btns">${p.url ? `<a class="btn is-default" href="${p.url}" target="_blank" rel="noopener noreferrer">Open on GitHub</a>` : '<span class="meta">Source is private for now.</span>'}</div>${navBtns(projIds, i, 'project:')}</div>`;
       }
     });

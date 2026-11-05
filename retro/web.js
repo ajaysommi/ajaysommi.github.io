@@ -94,7 +94,7 @@ window.WEB = (function () {
 
     projects: () => shell('Cool Stuff I Built', `
       <h1>Cool Stuff I Built</h1><p class="center">Click the <b>[source]</b> links to see the code. Some are private for now.</p>
-      ${P.projects.map((p) => `<h3>▶ ${esc(p.full)}</h3><p>${esc(p.text)}<br/><span class="small"><b>${esc(p.kind)}</b> &middot; ${esc(p.stack)}</span> ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer">[source]</a>` : '<span class="small">[private]</span>'}</p>`).join('')}
+      ${P.projects.map((p) => `<h3>▶ ${esc(p.full)}</h3>${p.shot ? `<p><img class="old-shot" src="${p.shot}" alt="Screenshot of ${esc(p.name)}" width="100%" border="2" /></p>` : ''}<p>${esc(p.text)}<br/><span class="small"><b>${esc(p.kind)}</b> &middot; ${esc(p.stack)}</span> ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer">[source]</a>` : '<span class="small">[private]</span>'}</p>`).join('')}
       ${nav()}`),
 
     garage: (id) => {

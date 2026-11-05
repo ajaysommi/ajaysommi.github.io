@@ -243,16 +243,26 @@ window.BENCH = (function () {
 
   const PROBLEMS = {
     ac: { sym: 'Ninety degrees and the AC is blowing warm', tool: 0 },
-    plugs: { sym: 'It’s misfiring. Almost 200,000 miles on these plugs', tool: 1 },
+    plugs: { sym: 'It’s misfiring. These plugs have never been changed', tool: 1 },
     throttle: { sym: 'Idling rough. Stalling at lights', tool: 2 },
-    trans: { sym: 'Grinding, violent shaking, jerky shifts', tool: 3 }
+    trans: { sym: 'Grinding, violent shaking, jerky shifts', tool: 3 },
+    /* Past 200,000 miles, everything else starts to go too. */
+    brakes: { sym: 'Pedal goes soft. Brakes feel spongy', tool: 4, late: 1 },
+    battery: { sym: 'Just clicks. Won’t turn over', tool: 5, late: 1 },
+    tire: { sym: 'Flat tire. Pulling hard to the right', tool: 6, late: 1 },
+    cool: { sym: 'Temp gauge in the red. Steam from the hood', tool: 7, late: 1 }
   };
+  const LATE = 200000;
   const car = (play, over, S) => {
     const TOOLS = [
       ['Refrigerant Gauge', 'AC and cooling', 'M4 16a11 11 0 0 1 22 0zM15 16l6-7', 1],
       ['Spark Plug Socket', 'Misfires, power', 'M12 2h6v5h-6zM10 7h10v4H10zM12 11h6v8l-3 5-3-5z'],
       ['Throttle Cleaner', 'Rough idle, stalling', 'M12 2h6v3h-6zM10 5h10l1 3v16H9V8zM2 6l5 2-5 2z'],
-      ['Transmission Fluid', 'Gears and shifting', 'M15 2c5 7 8 10 8 14a8 8 0 0 1-16 0c0-4 3-7 8-14z']
+      ['Transmission Fluid', 'Gears and shifting', 'M15 2c5 7 8 10 8 14a8 8 0 0 1-16 0c0-4 3-7 8-14z'],
+      ['Brake Bleeder', 'Soft pedal, spongy', 'M15 3a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6z'],
+      ['Jumper Cables', 'Won’t start', 'M4 4h8v5H4zM18 4h8v5h-8zM7 9h2v6c0 4 3 6 6 6s6-2 6-6V9h2v6c0 5-4 8-8 8s-8-3-8-8z'],
+      ['Lug Wrench', 'Flats, wobbles', 'M14 2h2v10h10v2H16v10h-2V14H4v-2h10zM13 11h4v4h-4z'],
+      ['Coolant', 'Overheating', 'M11 2h8v3h-8zM9 5h12v4l3 3v12H6V12l3-3zM15 12c3 4 4 5 4 7a4 4 0 0 1-8 0c0-2 1-3 4-7z']
     ];
     play.innerHTML = `<div class="cv-hud"><span class="cv-odo">180,000</span><span class="cv-unit">miles</span><span class="cv-str"></span></div>
       <div class="cv-road"><i class="cv-hills"></i><i class="cv-line"></i>
@@ -280,7 +290,7 @@ window.BENCH = (function () {
         ${[[210, 318], [742, 322]].map(([x, y]) => `<g transform="translate(${x} ${y})"><g class="cv-wheel"><circle r="60" fill="#14161a"/><circle r="45" fill="url(#cvRim)"/>${[0, 72, 144, 216, 288].map((a) => `<g transform="rotate(${a})"><path d="M-7 -8 -12 -41H-4L0 -10zM7 -8 12 -41H4L0 -10z" fill="#3b4148"/></g>`).join('')}<circle r="9" fill="#4a5058"/><circle r="4" fill="#c7ccd2"/></g></g>`).join('')}</svg>
         <i class="cv-smoke"></i></div>
       <div class="cv-sym"></div><div class="cv-hp"><i></i></div>
-      <div class="cv-tools">${TOOLS.map(([n, sub, d], i) => `<button type="button" data-t="${i}"><svg viewBox="0 0 30 26"><path d="${d}" fill="currentColor"/></svg><b>${n}</b><span>${sub}</span></button>`).join('')}</div><div class="cv-fix" hidden></div><div class="lr-float"></div>`;
+      <div class="cv-tools">${TOOLS.map(([n, sub, d], i) => `<button type="button" data-t="${i}"${i > 3 ? ' hidden' : ''}><svg viewBox="0 0 30 26"><path d="${d}" fill="currentColor"/></svg><b>${n}</b><span>${sub}</span></button>`).join('')}</div><div class="cv-fix" hidden></div><div class="lr-float"></div>`;
     const q = (s) => play.querySelector(s);
     const odo = q('.cv-odo'), road = q('.cv-road'), sym = q('.cv-sym'), hpEl = q('.cv-hp i'), fix = q('.cv-fix'), toolsEl = q('.cv-tools'), strEl = q('.cv-str'), float = q('.lr-float');
     const g = stage(play);
@@ -293,7 +303,15 @@ window.BENCH = (function () {
       float.appendChild(e);
       e.animate([{ opacity: 0 }, { opacity: 1, offset: .15 }, { opacity: 1, offset: .75 }, { opacity: 0, transform: 'translate(-50%, -12px)' }], { duration: 1200 }).finished.then(() => e.remove());
     };
-    const drive = () => { cur = null; g.job = driving; road.classList.remove('stopped', 'hurt'); fix.hidden = true; fix.innerHTML = ''; sym.textContent = 'Running smooth'; sym.classList.remove('bad'); hpEl.parentNode.classList.remove('on'); gap = Math.max(900, 2600 - fixes * 170); };
+    /* Older, and things break more often, sometimes one right after another. */
+    let late = false;
+    const drive = () => { cur = null; g.job = driving; road.classList.remove('stopped', 'hurt'); fix.hidden = true; fix.innerHTML = ''; sym.textContent = 'Running smooth'; sym.classList.remove('bad'); hpEl.parentNode.classList.remove('on'); gap = Math.max(900, 2600 - fixes * 170); if (late) gap = Math.random() < Math.min(.55, (miles - LATE) / 120000 + .2) ? 350 : Math.max(500, gap - (miles - LATE) / 60); };
+    const getOld = () => {
+      late = true;
+      toolsEl.classList.add('many');
+      toolsEl.querySelectorAll('[hidden]').forEach((b, i) => { b.hidden = false; b.animate([{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }], { duration: 320, delay: i * 90, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'backwards' }); });
+      pop('200,000 miles. Everything else starts to go');
+    };
     const breakDown = () => {
       if (done) return;
       lives--; lamps();
@@ -356,6 +374,57 @@ window.BENCH = (function () {
         };
         g.job = { down(p) { on = true; rub(p); }, move(p) { if (on) rub(p); }, up() { on = false; } };
       },
+      /* Air in the lines: pump the pedal until the bubbles are gone. */
+      brakes() {
+        open(`<div class="cv-brk"><div class="cv-line2">${[...Array(8)].map(() => '<i></i>').join('')}</div><button type="button" class="cv-pedal" data-b>PUMP</button></div>`, 'Air in the brake lines. Pump the pedal to bleed it out');
+        const bubbles = [...fix.querySelectorAll('.cv-line2 i')];
+        let n = bubbles.length;
+        g.job = { down(p, t) { if (!(t.closest && t.closest('[data-b]'))) return; const b = fix.querySelector('.cv-pedal'); b.animate([{ transform: 'translateY(6px) scaleY(.92)' }, { transform: 'none' }], { duration: 160 }); n--; bubbles[n].classList.add('gone'); S.key && S.key(); if (!n) { g.job = {}; setTimeout(() => fixed('Firm pedal. Stops on a dime'), 200); } } };
+      },
+      /* Red to the dead battery first, black last, or it sparks. */
+      battery() {
+        open('<div class="cv-bat"><div class="cv-cell"><button type="button" data-c="0" class="pos">+</button><button type="button" data-c="1" class="neg">−</button><b>12V</b></div><div class="cv-clamps"><span class="red">RED</span><span class="blk">BLACK</span></div></div>', 'Dead battery. Red clamp on + first, then black on −');
+        let k = 0;
+        g.job = { down(p, t) {
+          const b = t.closest && t.closest('[data-c]');
+          if (!b) return;
+          if (+b.dataset.c !== k) { hp -= .2; S.error && S.error(); pop('Sparks! Red goes on first', true); fix.querySelector('.cv-cell').animate([{ boxShadow: '0 0 0 6px #ffe16b' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 300 }); return; }
+          b.classList.add('on'); S.click && S.click(); k++;
+          if (k === 2) { g.job = {}; setTimeout(() => fixed('Vroom. Started right up'), 260); }
+        } };
+      },
+      /* Five lug nuts, loosened in a star so the wheel comes off true. */
+      tire() {
+        open(`<div class="cv-hub">${[0, 1, 2, 3, 4].map((i) => { const a = -Math.PI / 2 + i * Math.PI * 2 / 5; return `<button type="button" data-l="${i}" style="left:${80 + Math.cos(a) * 52}px;top:${80 + Math.sin(a) * 52}px"></button>`; }).join('')}<i></i></div>`, 'Loosen the lug nuts in a star, as each lights up');
+        const order = [0, 2, 4, 1, 3];
+        let k = 0;
+        const light = () => fix.querySelectorAll('[data-l]').forEach((b) => b.classList.toggle('lit', +b.dataset.l === order[k]));
+        light();
+        g.job = { down(p, t) {
+          const b = t.closest && t.closest('[data-l]');
+          if (!b) return;
+          if (+b.dataset.l !== order[k]) { hp -= .06; return; }
+          b.classList.add('off'); S.click && S.click(); k++;
+          if (k === 5) { g.job = {}; setTimeout(() => fixed('Spare’s on. Back on the road'), 200); } else light();
+        } };
+      },
+      /* Never open a hot radiator: wait for it to cool, then top it up. */
+      cool() {
+        open('<div class="cv-pan"><div class="cv-temp"><i class="t"></i><span>HOT</span></div><div class="cv-oil cv-cool"><i class="lvl"></i><i class="mark"></i></div></div><div class="lr-hold">WAIT FOR IT TO COOL</div>', 'Overheating. Let it cool before you open the cap');
+        const lvl = fix.querySelector('.lvl'), hold = fix.querySelector('.lr-hold'), temp = fix.querySelector('.cv-temp .t'), tl = fix.querySelector('.cv-temp span');
+        let heat = 1, v = .25, on = false;
+        const paint = () => { lvl.style.height = v * 100 + '%'; temp.style.height = heat * 100 + '%'; };
+        paint();
+        g.job = {
+          down() { if (heat > .35) { hp -= .14; S.error && S.error(); pop('Too hot! Wait', true); return; } on = true; },
+          up() { if (!on) return; on = false; if (v >= .68 && v <= .84) fixed('Temp’s back in the middle'); else if (v > .84) { pop('Overfilled. Drain some', true); v = .4; paint(); hp -= .12; } },
+          tick(dt) {
+            if (heat > .3) { heat = Math.max(.3, heat - dt / 3200); if (heat <= .35) { tl.textContent = 'COOL'; temp.classList.add('cool'); hold.textContent = 'HOLD TO FILL'; } }
+            if (on) { v = Math.min(1, v + dt / 1300); if (v >= 1) { on = false; pop('Overfilled. Drain some', true); v = .4; hp -= .12; } }
+            paint();
+          }
+        };
+      },
       /* Never changed in 180,000 miles: pull the plug, see the shavings, refill. */
       trans() {
         open('<div class="cv-pan"><button type="button" class="cv-drain" data-d>Pull drain plug</button><div class="cv-oil"><i class="lvl dirty"></i><i class="mark"></i></div></div><div class="lr-hold" hidden>HOLD TO FILL</div>', 'The fluid’s never been changed. Pull the drain plug');
@@ -394,7 +463,8 @@ window.BENCH = (function () {
       const inFix = !fix.hidden;
       if (!inFix) {
         const ratio = cur ? .55 : 1;
-        miles += dt * .32 * ratio * (1 + fixes * .06);
+        miles += dt * .55 * ratio * (1 + fixes * .06);
+        if (!late && miles >= LATE) getOld();
         sinceLine += dt;
         if (sinceLine > 90) { sinceLine = 0; odo.textContent = Math.floor(miles).toLocaleString('en-US'); }
       } else odo.textContent = Math.floor(miles).toLocaleString('en-US');
@@ -402,7 +472,7 @@ window.BENCH = (function () {
       if (!cur) {
         gap -= dt;
         if (gap <= 0) {
-          const keys = Object.keys(PROBLEMS).filter((k) => k !== last);
+          const keys = Object.keys(PROBLEMS).filter((k) => k !== last && (late || !PROBLEMS[k].late));
           cur = last = keys[Math.floor(Math.random() * keys.length)];
           hp = 1;
           sym.textContent = PROBLEMS[cur].sym;

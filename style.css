@@ -5618,3 +5618,12 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
   html.has-era-bar { scroll-padding-top: calc(var(--nav-h) + 82px); }
   .has-era-bar .section { scroll-margin-top: calc(var(--nav-h) + 80px); }
 }
+
+/* The time warp into the eras page. */
+.time-warp { position: fixed; inset: 0; z-index: 99999; pointer-events: none; overflow: hidden; }
+.time-warp i { position: absolute; left: 50%; top: 50%; display: block; }
+.time-warp .tw-streaks { width: 220vmax; height: 220vmax; border-radius: 50%; opacity: 0;
+  background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0) 0deg 5deg, rgba(190,215,255,.5) 5.6deg, rgba(255,255,255,0) 6.4deg 11deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 8%, #000 22%, transparent 60%); mask: radial-gradient(circle, transparent 0 8%, #000 22%, transparent 60%); }
+.time-warp .tw-ring { width: 60vmin; height: 60vmin; border-radius: 50%; opacity: 0; box-shadow: 0 0 0 2px rgba(170,200,255,.6), 0 0 40px 8px rgba(120,160,255,.35), inset 0 0 40px 8px rgba(120,160,255,.25); }
+.time-warp .tw-dark { inset: 0; left: 0; top: 0; background: radial-gradient(circle at 50% 50%, #1b1b20, #0e0e10 70%); opacity: 0; }

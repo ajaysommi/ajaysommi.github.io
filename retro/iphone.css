@@ -62,7 +62,7 @@
 
 .ip-screen {
   position: absolute; left: 33px; top: 129px; width: 320px; height: 480px;
-  overflow: hidden; background: #000;
+  overflow: hidden; background: #0b0b0b;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #000; -webkit-font-smoothing: antialiased;
   cursor: default;
@@ -85,7 +85,7 @@
   color: #fff; background: rgba(0,0,0,.42);
   text-shadow: 0 -1px 0 rgba(0,0,0,.4);
 }
-.ip-screen[data-bar="black"] .ip-status { background: #000; }
+.ip-screen[data-bar="black"] .ip-status { background: #0b0b0b; }
 .ip-screen[data-bar="gray"] .ip-status {
   color: #1d2733; text-shadow: 0 1px 0 rgba(255,255,255,.55);
   background: linear-gradient(180deg, #e3e8ee 0%, #c5cfda 50%, #b4c0ce 51%, #aebbca 100%);
@@ -109,7 +109,7 @@
 
 /* ------------------------------------------------------------- boot mark */
 
-.ip-screen .ip-boot { position: absolute; inset: 0; z-index: 70; background: #000; display: grid; place-items: center; transition: opacity .5s; }
+.ip-screen .ip-boot { position: absolute; inset: 0; z-index: 70; background: #0b0b0b; display: grid; place-items: center; transition: opacity .5s; }
 .ip-silver { width: 120px; height: 102px; opacity: 0; transform: scale(.94); filter: drop-shadow(0 0 1px rgba(255,255,255,.25)); }
 .ip-screen .ip-boot.is-on .ip-silver { opacity: 1; transform: none; transition: opacity .7s ease, transform .9s ease; }
 .ip-screen .ip-shine { transform: translateX(0); transform-box: view-box; }
@@ -171,7 +171,7 @@
 
 /* ------------------------------------------------------------- springboard */
 
-.ip-screen .ip-board { position: absolute; inset: 0; background: #000; z-index: 10; }
+.ip-screen .ip-board { position: absolute; inset: 0; background: #0b0b0b; z-index: 10; }
 .ip-screen .ip-grid { position: absolute; left: 0; right: 0; top: 20px; height: 370px; }
 .ip-screen .ip-icon {
   position: absolute; width: 74px; display: flex; flex-direction: column; align-items: center;
@@ -310,7 +310,7 @@
 .ip-screen .gbtn.is-down { background: linear-gradient(180deg, #058cf5, #015fe6); color: #fff; }
 .ip-screen .thumbs { display: flex; gap: 6px; padding: 10px; overflow-x: auto; }
 .ip-screen .thumbs img { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; flex: none; }
-.ip-screen .mi { width: 29px; height: 29px; border-radius: 6px; flex: none; display: grid; place-items: center; color: #fff; font-size: 15px; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,.3); background: linear-gradient(180deg, color-mix(in srgb, var(--mi) 70%, #fff), var(--mi) 52%, color-mix(in srgb, var(--mi) 80%, #000)); box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); }
+.ip-screen .mi { width: 29px; height: 29px; border-radius: 6px; flex: none; display: grid; place-items: center; color: #fff; font-size: 15px; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,.3); background: linear-gradient(180deg, color-mix(in srgb, var(--mi) 70%, #fff), var(--mi) 52%, color-mix(in srgb, var(--mi) 80%, #0b0b0b)); box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); }
 /* ON/OFF switches, blue when on. */
 .ip-screen .sw { position: relative; width: 94px; height: 27px; margin-left: auto; border-radius: 6px; border: 1px solid #8e8e8e; overflow: hidden; padding: 0; cursor: pointer; background: linear-gradient(180deg, #e8e8e8, #fff); font: bold 16px Helvetica, Arial, sans-serif; }
 .ip-screen .sw span { position: absolute; top: 0; bottom: 0; width: 56px; display: grid; place-items: center; transition: transform .2s; }
@@ -388,12 +388,12 @@
 .ip-screen .note-tb { flex: none; height: 44px; display: flex; justify-content: space-around; align-items: center; background: #fff8b8; font-size: 20px; color: #b0884a; border-top: 1px solid #e8dc9a; }
 
 /* Photos. */
-.ip-screen .ph-pg { background: #000 !important; }
+.ip-screen .ph-pg { background: #0b0b0b !important; }
 .ip-screen .grid4 { display: grid; grid-template-columns: repeat(4, 75px); gap: 4px; padding: 4px; }
 .ip-screen .grid4 img { width: 75px; height: 75px; object-fit: cover; cursor: pointer; }
 .ip-screen .ph-lede { color: #aaa; font: 13px/1.4 Helvetica, Arial, sans-serif; padding: 10px 12px 20px; }
 .ip-screen .alb .tx { font-size: 18px; }
-.ip-screen .photo-view { position: absolute; inset: 0; background: #000; z-index: 6; display: grid; place-items: center; }
+.ip-screen .photo-view { position: absolute; inset: 0; background: #0b0b0b; z-index: 6; display: grid; place-items: center; }
 .ip-screen .photo-view { overflow: hidden; touch-action: none; }
 .ip-screen .pv-strip { position: absolute; inset: 0; will-change: transform; }
 .ip-screen .pv-ph { position: absolute; top: 0; width: 100%; height: 100%; display: grid; place-items: center; }
@@ -408,7 +408,7 @@
 .ip-screen .tbar button { border: 0; background: none; color: #fff; font: bold 20px Helvetica, Arial, sans-serif; width: 60px; height: 40px; cursor: pointer; }
 
 /* Tab bars. */
-.ip-screen .tabs { flex: none; height: 49px; display: flex; background: linear-gradient(180deg, #4b4b4b, #262626 50%, #111 51%, #000); border-top: 1px solid #555; }
+.ip-screen .tabs { flex: none; height: 49px; display: flex; background: linear-gradient(180deg, #4b4b4b, #262626 50%, #111 51%, #0b0b0b); border-top: 1px solid #555; }
 .ip-screen .tabs button { flex: 1; border: 0; background: none; color: #9a9a9a; font: bold 10px Helvetica, Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 3px; gap: 2px; margin: 2px; border-radius: 4px; cursor: pointer; }
 .ip-screen .tabs button svg { width: 30px; height: 26px; fill: #8f8f8f; }
 .ip-screen .tabs button.on { background: rgba(255,255,255,.14); color: #fff; }
@@ -421,7 +421,7 @@
 .ip-screen .yt-row .tx { font-size: 17px; }
 
 /* Stocks. */
-.ip-screen .stk { position: absolute; inset: 20px 0 0; background: #000; display: flex; flex-direction: column; padding: 6px 6px 0; }
+.ip-screen .stk { position: absolute; inset: 20px 0 0; background: #0b0b0b; display: flex; flex-direction: column; padding: 6px 6px 0; }
 .ip-screen .stk-list { border-radius: 8px; overflow: hidden; background: linear-gradient(180deg, #5d6f8c, #34445c); border: 1px solid #1d2635; }
 .ip-screen .stk .row { width: 100%; display: flex; align-items: center; height: 36px; padding: 0 6px 0 10px; border: 0; border-bottom: 1px solid rgba(0,0,0,.35); background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0)); cursor: pointer; color: #fff; font: bold 17px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
 .ip-screen .stk .row.on { background: linear-gradient(180deg, #8ea9d6, #4d6fa8 50%, #3e609a 51%, #5274ad); }
@@ -455,7 +455,7 @@
 .ip-screen .map-tb button { width: auto; padding: 0 16px; height: 30px; border: 1px solid #33496b; border-radius: 5px; font-size: 12px; background: linear-gradient(180deg, #a3b5cd, #7690b4 50%, #5f7ea8 51%, #56769f); }
 
 /* Weather. */
-.ip-screen .wx { position: absolute; inset: 20px 0 0; background: #000; padding: 44px 14px 12px; }
+.ip-screen .wx { position: absolute; inset: 20px 0 0; background: #0b0b0b; padding: 44px 14px 12px; }
 .ip-screen .wx-card { position: relative; border-radius: 14px; color: #fff; background: linear-gradient(180deg, #3a5f97 0%, #23426f 40%, #1a3156 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 0 0 1px #0d1d36; padding: 10px 12px 0; overflow: visible; }
 .ip-screen .wx-sun { position: absolute; left: 50%; top: -40px; width: 70px; height: 70px; margin-left: -35px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff7b0, #ffcc1a 50%, #f59a00 72%, rgba(245,154,0,0) 74%); filter: drop-shadow(0 0 10px rgba(255,200,40,.6)); }
 .ip-screen .wx-card .hd { position: relative; min-height: 62px; padding-top: 18px; }
@@ -471,7 +471,7 @@
 .ip-screen .wx-foot { display: flex; justify-content: space-between; align-items: center; height: 28px; margin: 0 -12px; padding: 0 12px; font: 11px Helvetica, Arial, sans-serif; border-top: 1px solid rgba(255,255,255,.12); }
 
 /* About, through the camera. */
-.ip-screen .cam { position: absolute; inset: 0; background: #000 center / cover no-repeat; }
+.ip-screen .cam { position: absolute; inset: 0; background: #0b0b0b center / cover no-repeat; }
 .ip-screen .cam .iris { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 .ip-screen .cam .iris i { position: absolute; left: 50%; top: 50%; width: 400px; height: 400px; margin: -200px; background: #222; border: 1px solid #000; transform-origin: 0 0; transition: transform .6s ease-in-out; }
 .ip-screen .cam.is-open .iris i { transform: rotate(var(--r)) translate(160px, 0); }
@@ -700,9 +700,9 @@
 .ip-screen .ct-btns { display: flex; gap: 8px; margin: 0 9px; }
 .ip-screen .ct-btns .gbtn { margin: 0; width: auto; flex: 1; font-size: 14px; }
 .ip-screen .ip-app.no-nb .nb { display: none; }
-.ip-screen .kp-pg { background: #000 !important; display: flex; flex-direction: column; overflow: hidden !important; }
+.ip-screen .kp-pg { background: #0b0b0b !important; display: flex; flex-direction: column; overflow: hidden !important; }
 .ip-screen .kp-num { flex: none; height: 74px; display: flex; align-items: center; justify-content: center; padding: 0 10px; color: #fff; font: 34px Helvetica, Arial, sans-serif; background: linear-gradient(180deg, #2b3a5c, #0d1426); border-bottom: 1px solid #000; white-space: nowrap; overflow: hidden; }
-.ip-screen .kp-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(5, 1fr); gap: 1px; background: #000; }
+.ip-screen .kp-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(5, 1fr); gap: 1px; background: #0b0b0b; }
 .ip-screen .kp-grid button { border: 0; cursor: pointer; color: #fff; background: linear-gradient(180deg, #4d5566 0%, #2d3442 50%, #212734 51%, #2a313f 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
 .ip-screen .kp-grid button:active { background: linear-gradient(180deg, #6a7fb0, #3a5590); }
 .ip-screen .kp-grid b { font: bold 30px/1 Helvetica, Arial, sans-serif; }
@@ -801,7 +801,7 @@
 .ip-screen .mp-tb .map-seg { width: 290px; }
 
 /* Weather. */
-.ip-screen .wx2 { position: absolute; inset: 20px 0 0; background: #000; padding: 14px 12px 0; display: flex; flex-direction: column; }
+.ip-screen .wx2 { position: absolute; inset: 20px 0 0; background: #0b0b0b; padding: 14px 12px 0; display: flex; flex-direction: column; }
 .ip-screen .wx2 .wx-card { flex: none; transition: transform .18s ease-in; }
 .ip-screen .wx2 .wx-card.flip { transform: perspective(600px) rotateY(90deg); }
 .ip-screen .wx2 .wx-card.night { background: linear-gradient(180deg, #2b2f4e 0%, #1a1c33 45%, #0f1022 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 0 0 1px #08091a; }
@@ -900,7 +900,7 @@
 .ip-screen .mp-tb .map-seg { width: 246px; }
 
 /* Camera: a viewfinder drifting over photos, and a snapshot that develops. */
-.ip-screen .cam2 { background: #000; }
+.ip-screen .cam2 { background: #0b0b0b; }
 .ip-screen .cam2 .vf { position: absolute; left: 0; right: 0; top: 20px; bottom: 54px; overflow: hidden; touch-action: pan-y; }
 .ip-screen .cam2 .vf img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s; pointer-events: none; }
 .ip-screen .cam2 .vf img.on { opacity: 1; animation: ip-drift 9s ease-in-out infinite alternate; }
@@ -1045,7 +1045,7 @@
 
 /* About Me's Now Playing: the album art under a translucent black bar,
    a scrubber, and big white transport controls on dark glass. */
-.ip-screen .np { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; z-index: 8; background: #000; color: #fff; animation: ip-in-r .3s ease-out both; }
+.ip-screen .np { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; z-index: 8; background: #0b0b0b; color: #fff; animation: ip-in-r .3s ease-out both; }
 .ip-screen .np.out { animation: ip-out-r .26s ease-in both; }
 .ip-screen .np-top { position: absolute; left: 0; right: 0; top: 0; height: 44px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 0 6px; background: linear-gradient(180deg, rgba(70,70,70,.85), rgba(0,0,0,.85) 50%, rgba(0,0,0,.9)); border-bottom: 1px solid #000; }
 .ip-screen .np-back, .ip-screen .np-list { flex: none; width: 36px; height: 30px; border-radius: 5px; border: 1px solid #000; cursor: pointer; background: linear-gradient(180deg, #6a6a6a, #333 50%, #222 51%, #111); position: relative; }
@@ -1066,7 +1066,7 @@
 .ip-screen .np-words { position: absolute; inset: 26px 0 0; padding: 16px 18px; overflow-y: auto; background: rgba(0,0,0,.78); font: 15px/1.45 Helvetica, Arial, sans-serif; scrollbar-width: none; }
 .ip-screen .np-words[hidden] { display: none; }
 .ip-screen .np-words p { margin: 0; }
-.ip-screen .np-ctl { position: absolute; left: 0; right: 0; top: 364px; bottom: 0; display: flex; align-items: center; justify-content: space-around; background: linear-gradient(180deg, rgba(60,60,60,.95), #111 45%, #000); border-top: 1px solid #555; }
+.ip-screen .np-ctl { position: absolute; left: 0; right: 0; top: 364px; bottom: 0; display: flex; align-items: center; justify-content: space-around; background: linear-gradient(180deg, rgba(60,60,60,.95), #111 45%, #0b0b0b); border-top: 1px solid #555; }
 .ip-screen .np-ctl button { border: 0; background: none; width: 72px; height: 56px; display: grid; place-items: center; cursor: pointer; }
 .ip-screen .np-ctl svg { width: 36px; height: 26px; filter: drop-shadow(0 -1px 0 rgba(0,0,0,.6)); }
 .ip-screen .np-ctl button:active svg { opacity: .6; }
@@ -1206,12 +1206,12 @@
 .ip.is-photo .ip-vol.dn { top: 216px; }
 
 /* Settings › Wallpaper. */
-.ip-screen .pg.wall-pg { background: #000; }
+.ip-screen .pg.wall-pg { background: #0b0b0b; }
 .ip-screen .wall-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 5px; }
 .ip-screen .wall-grid button { position: relative; border: 0; padding: 0; background: none; aspect-ratio: 2 / 3; cursor: pointer; overflow: hidden; }
 .ip-screen .wall-grid img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ip-screen .wall-grid button.on { outline: 2px solid #5a97ec; outline-offset: -2px; }
-.ip-screen .wall-set { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; z-index: 9; background: #000; animation: ip-in-r .22s ease-out both; }
+.ip-screen .wall-set { position: absolute; left: 0; right: 0; top: 20px; bottom: 0; z-index: 9; background: #0b0b0b; animation: ip-in-r .22s ease-out both; }
 .ip-screen .wall-set .pv { position: absolute; inset: 0; background: center / cover no-repeat; }
 .ip-screen .wall-set .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; display: flex; gap: 12px; align-items: center; padding: 0 14px; background: linear-gradient(180deg, rgba(110,110,110,.55) 0%, rgba(70,70,70,.58) 49.500%, rgba(18,18,18,.72) 50%, rgba(0,0,0,.8) 100%); }
 .ip-screen .wall-set button { flex: 1; height: 44px; border-radius: 8px; border: 1.500px solid #000; color: #fff; font: bold 16px Helvetica, Arial, sans-serif; text-shadow: 0 -1px 0 rgba(0,0,0,.45); background: linear-gradient(180deg, #6a6a6a 0, #3a3a3a 48%, #171717 50%, #262626 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); cursor: pointer; }
@@ -1439,3 +1439,81 @@
 .ip-screen .cv-oil .lvl { background: linear-gradient(180deg, #ff5a44, #d81f1f); }
 .ip-screen .cv-oil .lvl.dirty { background: linear-gradient(180deg, #2a1c0c, #0c0703); }
 .ip-screen .cv-oil .mark { border-color: #1f9a45; background: rgba(72,208,108,.28); }
+
+/* Safari's loading bar: the address field fills with blue, left to right. */
+.ip-screen .saf-top { position: relative; }
+.ip-screen .saf-prog { position: absolute; top: 7px; height: 30px; width: 0; border-radius: 6px 0 0 6px; pointer-events: none; opacity: 0; z-index: 2; mix-blend-mode: multiply; background: linear-gradient(180deg, #c9dcf7 0%, #9fc0ee 48%, #86aee8 52%, #a9c8f1 100%); transition-property: width, opacity; transition-timing-function: cubic-bezier(.3,.7,.4,1); }
+.ip-screen .saf-prog.on { opacity: 1; }
+.ip-screen .saf-prog.done { opacity: 0; transition: opacity .25s, width .16s; }
+
+/* The Store's buy button: labels that slide and fade, a width that eases,
+   and green that fades in over the blue rather than snapping. */
+.ip-screen .st-buy { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; transition: width .24s cubic-bezier(.3,.7,.3,1), border-color .22s, color .22s; }
+.ip-screen .st-buy::before, .ip-screen .st-buy::after { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity .24s; pointer-events: none; }
+.ip-screen .st-buy::before { background: linear-gradient(180deg, #a9dc8b, #62b048 50%, #4b9c33 51%, #62b048); }
+.ip-screen .st-buy::after { background: linear-gradient(180deg, #f2f2f2, #d6d6d6); }
+.ip-screen .st-buy.is-sure, .ip-screen .st-buy.is-own { background: linear-gradient(180deg, #a8c1e4, #6e94c8 50%, #5580bd 51%, #6e94c8); }
+.ip-screen .st-buy.is-sure::before { opacity: 1; }
+.ip-screen .st-buy.is-own::after { opacity: 1; }
+.ip-screen .st-buy .bt { position: relative; z-index: 1; display: inline-block; }
+.ip-screen .st-buy .bt.out { left: 0; right: 0; text-align: center; }
+/* Seasons and episodes. */
+.ip-screen .st-season { grid-template-columns: 46px 1fr; align-items: center; border-bottom: 1px solid #d9d9d9; }
+.ip-screen .st-season h3 { font-size: 15px; }
+.ip-screen .st-eps .pl { margin: 0; }
+.ip-screen .st-ep .rt { color: #2f62c6; font: bold 13px Helvetica, Arial, sans-serif; }
+.ip-screen .st-ep .tx { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ip-screen .st-meta + .st-meta { margin-top: -2px; }
+
+/* Fix the Car past 200,000 miles: eight tools, smaller, two to a row. */
+.ip-screen .cv-tools [hidden] { display: none; }
+.ip-screen .cv-tools.many { top: 252px; gap: 6px; }
+.ip-screen .cv-tools.many button { height: 46px; padding: 4px 8px; flex-direction: row; justify-content: flex-start; text-align: left; gap: 7px; border-radius: 9px; }
+.ip-screen .cv-tools.many svg { flex: none; width: 22px; height: 19px; margin: 0; }
+.ip-screen .cv-tools.many b { display: block; font-size: 12px; }
+.ip-screen .cv-tools.many span { display: block; font-size: 10px; margin-top: 1px; }
+.ip-screen .cv-tools.many button > b, .ip-screen .cv-tools.many button > span { white-space: nowrap; }
+.ip-screen .cv-tools.many button { display: grid; grid-template-columns: 22px 1fr; grid-template-rows: auto auto; column-gap: 7px; align-content: center; }
+.ip-screen .cv-tools.many svg { grid-row: 1 / 3; }
+/* Brakes: bubbles in the line, a pedal to pump. */
+.ip-screen .cv-brk { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 6px; }
+.ip-screen .cv-line2 { display: flex; gap: 6px; padding: 10px 12px; border-radius: 16px; background: linear-gradient(180deg, #e3c86a, #b8902c); box-shadow: inset 0 2px 4px rgba(0,0,0,.35); }
+.ip-screen .cv-line2 i { width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, rgba(255,255,255,.35) 60%, rgba(255,255,255,.1)); border: 1px solid rgba(255,255,255,.7); transition: opacity .2s, transform .2s; }
+.ip-screen .cv-line2 i.gone { opacity: 0; transform: translateY(-10px) scale(.4); }
+.ip-screen .cv-pedal { width: 120px; height: 96px; border: 0; border-radius: 14px 14px 22px 22px; color: #fff; font: bold 16px Helvetica, Arial, sans-serif; background: repeating-linear-gradient(180deg, #555c66 0 6px, #3c424a 6px 12px); box-shadow: 0 4px 0 #1d2128, 0 6px 8px rgba(0,0,0,.4); }
+/* Battery: two posts and the clamps waiting. */
+.ip-screen .cv-bat { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 30px; }
+.ip-screen .cv-cell { position: relative; width: 220px; height: 120px; border-radius: 10px; background: linear-gradient(180deg, #3d434b, #1e2228); box-shadow: inset 0 0 0 2px #5a626c; }
+.ip-screen .cv-cell b { position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; font: bold 26px Helvetica, Arial, sans-serif; color: #ffcf4d; pointer-events: none; }
+.ip-screen .cv-cell button { position: absolute; top: -18px; width: 58px; height: 46px; border: 0; border-radius: 8px 8px 4px 4px; font: bold 26px/1 Helvetica, Arial, sans-serif; color: #fff; background: linear-gradient(180deg, #c8ccd1, #8b9199); text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.ip-screen .cv-cell .pos { left: 22px; }
+.ip-screen .cv-cell .neg { right: 22px; }
+.ip-screen .cv-cell .pos.on { background: linear-gradient(180deg, #ff6b5c, #c9281c); }
+.ip-screen .cv-cell .neg.on { background: linear-gradient(180deg, #4b5058, #15181c); }
+.ip-screen .cv-clamps { display: flex; gap: 60px; font: bold 12px Helvetica, Arial, sans-serif; pointer-events: none; }
+.ip-screen .cv-clamps .red { color: #ff6b5c; }
+.ip-screen .cv-clamps .blk { color: #aab2bb; }
+/* The wheel hub with its five lug nuts. */
+.ip-screen .cv-hub { position: relative; width: 160px; height: 160px; margin: 8px auto 0; border-radius: 50%; background: radial-gradient(circle, #e7eaee 0 22%, #9aa2ab 23% 62%, #2a2e34 63%); }
+.ip-screen .cv-hub > i { position: absolute; left: 62px; top: 62px; width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #f5f6f7, #a3aab2); pointer-events: none; }
+.ip-screen .cv-hub button { position: absolute; width: 34px; height: 34px; margin: -17px; border: 0; border-radius: 6px; background: radial-gradient(circle, #8b939c 0 35%, #4c535b 36%); clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); transition: transform .2s, opacity .2s; }
+.ip-screen .cv-hub button.lit { background: radial-gradient(circle, #fff3b0 0 35%, #ffcf4d 36%); }
+.ip-screen .cv-hub button.off { opacity: .25; transform: rotate(-60deg) scale(.8); }
+/* Coolant: a temperature bar that falls, then a fill to the mark. */
+.ip-screen .cv-temp { position: relative; flex: none; width: 60px; height: 150px; border-radius: 8px; border: 2px solid #aab2bb; overflow: hidden; background: linear-gradient(180deg, #e9edf1, #c4ccd4); }
+.ip-screen .cv-temp .t { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, #ff5a44, #d81f1f); transition: background .3s; }
+.ip-screen .cv-temp .t.cool { background: linear-gradient(180deg, #7fb0f1, #2a68c8); }
+.ip-screen .cv-temp span { position: absolute; left: 0; right: 0; top: 6px; text-align: center; font: bold 12px Helvetica, Arial, sans-serif; color: #1d2128; }
+.ip-screen .cv-cool .lvl { background: linear-gradient(180deg, #7ef08f, #1f9a45); }
+
+/* Call buttons sit in a recessed glass well, as the unlock knob does in its
+   track: a little air between the button and the well's edge. */
+.ip-screen .cl-btns { position: relative; z-index: 0; gap: 15px; padding: 0 18px; box-sizing: border-box; }
+.ip-screen .cl-btns button { position: relative; }
+.ip-screen .cl-btns button::before { content: ''; position: absolute; inset: -3.5px; z-index: -1; border-radius: 12.5px; background: rgba(0,0,0,.42); border: 1px solid rgba(0,0,0,.6); box-shadow: inset 0 1px 1px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.2); pointer-events: none; }
+.ip-screen .cl-btns button:active { filter: none; }
+.ip-screen .cl-btns button:active::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: rgba(0,0,0,.18); pointer-events: none; }
+.ip-screen .pj-shot { padding: 0; overflow: hidden; }
+.ip-screen .pj-shot img { display: block; width: 100%; height: auto; }
+/* Typing into a page: the keyboard takes the toolbar's place. */
+.ip-screen.kb-on .is-safari .saf-bot { display: none; }

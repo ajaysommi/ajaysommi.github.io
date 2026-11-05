@@ -72,45 +72,98 @@ window.OLDWEB = (function () {
   const homePage = (year) => `${STYLE(year)}<div class="home">${LOGO(year, true)}${searchForm('')}<div class="ft">©${year} Google</div></div>`;
   const resultsPage = (q, list, year) => `${STYLE(year)}<div class="bar">${LOGO(year)}${searchForm(q)}</div><div class="st">Results <b>1</b> - <b>${list.length}</b> for <b>${esc(q)}</b></div>${list.length ? list.map((r) => `<div class="r"><a class="t" href="${esc(r.u)}">${esc(r.t)}</a><div class="s">${esc(r.s)}<br/><span class="u">${esc(r.u.replace(/^https?:\/\//, '').slice(0, 60))}</span></div></div>`).join('') : '<p>Your search did not match any documents.</p>'}`;
 
+  /* Homepages kept with the site, as the archive had them in 1998 and in
+     2007: [year, address, folder, title, line]. Typing one of these, or
+     searching for it, needs no trip to the archive at all. */
+  const KEPT = [];
+  const bucket = (year) => (year < 2003 ? 1998 : 2007);
+  const bare = (u) => u.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/(index\.html?)?$/, '');
+  const ALIAS = { 'espn.com': 'espn.go.com', 'wikipedia.org': 'en.wikipedia.org', 'en.m.wikipedia.org': 'en.wikipedia.org' };
+  const keep = (u, year) => {
+    const b = bare(u), host = ALIAS[b] || b;
+    const e = KEPT.find((x) => x[0] === bucket(year) && x[1] === host);
+    return e && { path: `assets/oldweb/${e[0]}/${e[2]}/index.html`, e };
+  };
+  const keeps = (q, year) => {
+    const w = q.trim().toLowerCase().replace(/[^a-z0-9.]/g, '');
+    return KEPT.filter((x) => x[0] === bucket(year) && (x[2] === w || x[1] === w || x[1].split('.')[0] === w || x[1] === w + '.com')).map((x) => ({ t: x[3], u: 'http://' + (x[1].split('.').length > 2 ? x[1] : 'www.' + x[1]) + '/', s: x[4] }));
+  };
+
   /* Opens what was typed in a frame. Our own pages (Google) are drawn in
      the frame with no scripts, and their links and form come back here;
      archived and present-day sites load as themselves. */
-  const open = async (frame, input, year, { onNav, onState } = {}) => {
+  const open = async (frame, input, year, { onNav, onState, onField } = {}) => {
     const v = String(input || '').trim();
     const state = (s) => onState && onState(s);
+    /* Done means the page has really arrived, not that it was asked for. */
+    let fin = false;
+    const finish = () => { if (!fin) { fin = true; state('done'); } };
     const nav = (u) => onNav && onNav(u);
+    /* Pages drawn or kept here: their links and forms come back through
+       the browser, and their fields take the device's own keyboard. */
+    const hook = () => {
+        let d;
+        try { d = frame.contentDocument; } catch (e) { return; }
+        if (!d) return;
+        d.addEventListener('click', (e) => { const a = e.target.closest('a[href]'); if (!a) return; e.preventDefault(); const h = a.getAttribute('href'); if (h.startsWith('#')) { const t = d.getElementById(h.slice(1)); if (t) t.scrollIntoView(); return; } const u = a.href; if (/^https?:/i.test(u) && !u.startsWith(location.origin + '/assets/')) nav(u); });
+        d.addEventListener('submit', (e) => { e.preventDefault(); const f = new FormData(e.target); let q = f.get('q') || f.get('p') || f.get('query') || f.get('field-keywords') || f.get('search'); if (!q) { const t = e.target.querySelector('input[type=text],input:not([type])'); q = t && t.value; } if (q && String(q).trim()) nav(String(q)); }, true);
+        /* A device with a keyboard of its own types into these fields, so
+           the visitor's real keyboard never comes up. */
+        if (onField) d.querySelectorAll('input[type=text],input:not([type])').forEach((inp) => {
+          inp.readOnly = true; inp.setAttribute('inputmode', 'none');
+          inp.addEventListener('pointerdown', (e) => { e.preventDefault(); onField(inp, () => { const q = inp.value.trim(); if (q) nav(q); }); });
+        });
+        finish();
+    };
     const draw = (html) => {
       frame.dataset.kind = 'doc';
       frame.setAttribute('sandbox', 'allow-same-origin');
       frame.removeAttribute('src');
       frame.srcdoc = html;
-      frame.onload = () => {
-        let d;
-        try { d = frame.contentDocument; } catch (e) { return; }
-        if (!d) return;
-        d.addEventListener('click', (e) => { const a = e.target.closest('a[href]'); if (!a) return; e.preventDefault(); const h = a.getAttribute('href'); if (h.startsWith('#')) { const t = d.getElementById(h.slice(1)); if (t) t.scrollIntoView(); return; } if (/^https?:/i.test(a.href)) nav(a.href); });
-        d.addEventListener('submit', (e) => { e.preventDefault(); const q = new FormData(e.target).get('q'); if (q && String(q).trim()) nav(String(q)); }, true);
-      };
+      frame.onload = hook;
+    };
+    /* A copy kept with the site: shown at once, as itself. */
+    const kept = (path) => {
+      frame.removeAttribute('srcdoc');
+      frame.dataset.kind = 'doc';
+      frame.setAttribute('sandbox', 'allow-same-origin');
+      frame.onload = hook;
+      frame.src = path;
     };
     const site = (src) => {
       frame.removeAttribute('srcdoc');
       frame.dataset.kind = src === 'about:blank' ? '' : 'site';
       frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups');
-      frame.onload = null;
+      frame.onload = src === 'about:blank' ? null : finish;
       frame.src = src;
     };
     if (!v) { site('about:blank'); return; }
     state('loading');
-    if (isGoogle(v)) { draw(homePage(year)); state('done'); return; }
+    if (isGoogle(v)) { draw(homePage(year)); return; }
+    const k = isUrl(v) && keep(v, year);
+    if (k) { kept(k.path); return; }
     if (!isUrl(v)) {
+      /* A search for one of the kept sites answers at once, that site
+         first; the rest of the results join below when they come. */
+      const hit = keeps(v, year);
+      if (hit.length) {
+        draw(resultsPage(v, hit, year).replace(/<div class="st">Results <b>1<\/b> - <b>\d+<\/b>/, '<div class="st">Results <b>1</b> - <b>10</b>') + '<div class="more"></div>');
+        results(v).then((list) => {
+          let d; try { d = frame.contentDocument; } catch (e) { return; }
+          const m = d && d.querySelector('.more');
+          if (!m) return;
+          const seen = new Set(hit.map((r) => r.u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')));
+          m.outerHTML = list.filter((r) => !seen.has(r.u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))).slice(0, 9).map((r) => `<div class="r"><a class="t" href="${esc(r.u)}">${esc(r.t)}</a><div class="s">${esc(r.s)}<br/><span class="u">${esc(r.u.replace(/^https?:\/\//, '').slice(0, 60))}</span></div></div>`).join('');
+        }).catch(() => {});
+        return;
+      }
       try { draw(resultsPage(v, await results(v), year)); }
       catch (e) { site('https://www.google.com/search?igu=1&q=' + encodeURIComponent(v)); }
-      state('done');
       return;
     }
     const u = full(v);
     const old = await snapshot(u, year);
-    if (old) { site(old); state('done'); return; }
+    if (old) { site(old); return; }
     /* Nothing from back then: today's page, read through the reader so
        sites that refuse framing still show; failing that, framed as is. */
     try {
@@ -119,7 +172,6 @@ window.OLDWEB = (function () {
       const html = (await r.text()).replace(/<script\b[\s\S]*?<\/script>/gi, '');
       draw(`<base href="${esc(u)}">` + html);
     } catch (e) { site(u); }
-    state('done');
   };
 
   return { open, shown, isUrl, isGoogle };

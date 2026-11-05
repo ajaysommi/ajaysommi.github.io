@@ -191,3 +191,17 @@
 .nk-cv .m { font-family: monospace; font-size: 12px; letter-spacing: 0; white-space: nowrap; }
 .nk-cv .s { font-weight: bold; white-space: nowrap; }
 .nk-cv .d { font-size: .82em; opacity: .85; white-space: nowrap; }
+
+/* Start-up: the hands slide together, then the name comes up beneath. */
+.nk-boot .nk-hands { width: 100%; height: auto; max-height: 100%; color: var(--ink); fill: var(--ink); image-rendering: pixelated; filter: none; mix-blend-mode: normal; }
+.nk-hands .hl { animation: nk-hl 1.3s cubic-bezier(.25,.8,.35,1) both; }
+.nk-hands .hr { animation: nk-hr 1.3s cubic-bezier(.25,.8,.35,1) both; }
+.nk-hands .hb { animation: nk-hb .5s steps(4) 1.1s both; }
+@keyframes nk-hl { from { transform: translateX(-30px); } }
+@keyframes nk-hr { from { transform: translateX(30px); } }
+@keyframes nk-hb { from { opacity: 0; } }
+.nk-boot { padding: 0; place-content: stretch; }
+.t-standby .nk-op.is-search { font-size: 15px; letter-spacing: .02em; top: 52px; }
+.nk-boot { display: block; padding: 2px 0 0; }
+.nk-boot .nk-hands { display: block; width: 100%; height: 100%; max-height: none; }
+.nk-view.t-boot .nk-boot svg.nk-hands { width: 100%; height: auto; max-height: 100%; margin: 0 auto; }

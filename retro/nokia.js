@@ -401,7 +401,7 @@ window.NOKIA = { start(room, exit) {
     view.className = 'nk-view t-' + s.type;
     let html = '';
     if (s.type === 'standby') {
-      html = `${bars(4, 'l')}${bars(3, 'r')}<div class="nk-op">SOMMIA</div><div class="nk-time">${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</div>`;
+      html = `${bars(sig, 'l')}${bars(3, 'r')}<div class="nk-op${netUp ? '' : ' is-search'}">${netUp ? 'SOMMIA' : 'Searching'}</div><div class="nk-time">${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</div>`;
     } else if (s.type === 'menu') {
       const [name, ico] = MENU[top.sel];
       html = `<div class="nk-hd"><span>${esc(name)}</span><span>${top.sel + 1}</span></div><div class="nk-ico">${I.svg(ico, 48)}</div>${scrollbar(top.sel, MENU.length)}`;
@@ -499,18 +499,35 @@ window.NOKIA = { start(room, exit) {
 
   /* ---------------------------------------------------------------- boot */
 
+  /* The start-up screen, dot for dot on the 84 by 48 display: two hands
+     reaching for each other, then the name. Rows are hex, one bit a dot. */
+  const HANDS = '000000000000000000000,000000000000000000000,000000000000000000000,000000000000000000000,000000000060000000000,0000000001e0038000000,000000000fe003fe0001f,000000007ffe00fffffff,00000c77fffc0007fffff,208063dffff80007fffff,0009c7fffe000007fffff,40263e7ffe00001fc7fff,0001ffffff00001f83fff,0001ffffff80000e87fff,0007ffffffe003fe87fcc,0007dfffc7f00fffff800,0007fff8e2f03ecfff000,0007ffe000603feffc000,0007ffc00000087ff9004,0007ffc00020001ef0020,0007ff841000200200008,0002ff009140000101204,0007fe082030840480820,0007fc40124c002603104,003ffe80d064243220888,11fffe400018088d0b024,dcfffc23f0449832208c8,effffffffe18068d0b067,ffffffffff2db06a86a08,ffffffffffa49bb6b5b6c,ffffffffffb62a5b1b334,fffffffffa5b64eacda1b,fffffffa5769ac5d36934,ffffff5dfb6ef7ee9b6ec,fffffffffffffffffffff,fffffffffffffffffffff,fc00f00387861e187e1ff,f800600183060c187c0ff,f8ffe3f18006001878c7f,f8ffe3f18846211878c7f,f800e3f18cc6331871e3f,fc0063f18fc63f187003f,fffc63f18fc63f186001f,fffc63f18fc63f1863f1f,f80060018fc63f1863f1f,fc00f0038fc63f1863f1f,fffffffffffffffffffff,fffffffffffffffffffff'.split(',');
+  const bootArt = () => {
+    const part = { l: '', r: '', b: '' };
+    HANDS.forEach((row, y) => {
+      const bits = BigInt('0x' + row).toString(2).padStart(84, '0');
+      for (let x = 0; x < 84; x++) if (bits[x] === '1') part[y >= 34 ? 'b' : x <= 48 ? 'l' : 'r'] += `M${x} ${y}h.86v.86h-.86z`;
+    });
+    return `<svg class="nk-hands" viewBox="0 0 84 48" aria-label="SOMMIA"><defs><pattern id="nkdot" width="1" height="1" patternUnits="userSpaceOnUse"><rect width=".86" height=".86" fill="currentColor" opacity=".07"/></pattern></defs><rect width="84" height="48" fill="url(#nkdot)"/><path class="hl" d="${part.l}"/><path class="hr" d="${part.r}"/><path class="hb" d="${part.b}"/></svg>`;
+  };
+  /* The network: a few seconds of searching, then the bars, which wander. */
+  let sig = 0, netUp = false;
+  const standbyNow = () => { const t = stack[stack.length - 1]; return t && t.s.type === 'standby' && room.getClientRects().length; };
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   (async () => {
     await room.landed;
     await wait(250);
     light();
     view.className = 'nk-view t-boot';
-    view.innerHTML = `<div class="nk-boot">${I.pxmark(56, true)}<div>SOMMIA</div></div>`;
+    view.innerHTML = `<div class="nk-boot">${bootArt()}</div>`;
     SFX.tune();
-    await wait(1700);
+    await wait(2900);
     on = true;
     stack.push({ s: STANDBY(), sel: 0 });
     render();
+    setTimeout(() => { netUp = true; sig = 4; if (standbyNow()) render(); }, 2600 + Math.random() * 1400);
+    const drift = () => { if (netUp) { const r = Math.random(); sig = Math.max(1, Math.min(5, sig + (r < .45 ? -1 : r < .9 ? 1 : 0))); if (sig === 1 && Math.random() < .7) sig = 2; if (standbyNow()) render(); } setTimeout(drift, 6000 + Math.random() * 9000); };
+    setTimeout(drift, 9000);
     setInterval(() => { const t = stack[stack.length - 1]; if (t && t.s.type === 'standby' && room.getClientRects().length) render(); }, 20000);
   })();
 } };

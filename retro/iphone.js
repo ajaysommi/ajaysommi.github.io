@@ -423,7 +423,7 @@ window.IPHONE = { start(room, exit) {
   let bid = 0;
   const THEMES = {
     blue: ['#a6b8cf', '#7892b6', '#6280aa', '#5a79a2', '#2f4466'],
-    black: ['#727272', '#3c3c3c', '#272727', '#1b1b1b', '#000'],
+    black: ['#727272', '#3c3c3c', '#272727', '#1b1b1b', '#0b0b0b'],
     notes: ['#cfa778', '#9a6b35', '#8a5d2a', '#7a5222', '#3f2408']
   };
   const shapeBack = (b, theme) => {
@@ -584,7 +584,7 @@ window.IPHONE = { start(room, exit) {
 
   /* A tab bar whose every tab shows its own page. */
   const tabs = (app, items, start, show) => {
-    const t = h('div', 'tabs', items.map(([n, d], i) => `<button type="button" class="${i === start ? 'on' : ''}" data-i="${i}"><svg viewBox="0 0 30 26"><path d="${d}"/></svg>${n}</button>`).join(''));
+    const t = h('div', 'tabs', items.map(([n, d], i) => `<button type="button" class="${i === start ? 'on' : ''}" data-i="${i}"><svg viewBox="0 0 30 26">${d[0] === '<' ? d : `<path d="${d}"/>`}</svg>${n}</button>`).join(''));
     t.addEventListener('click', (e) => { const b = e.target.closest('[data-i]'); if (!b) return; t.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); SFX.click(); show(+b.dataset.i); });
     app.el.appendChild(t);
     show(start);
@@ -627,12 +627,40 @@ window.IPHONE = { start(room, exit) {
     const local = (u) => /^[\w-]+\.html([?#]|$)/.test(u) || /\.pdf(#|$)/i.test(u);
     const pretty = (u) => !u ? '' : local(u) ? 'ajaysommi.github.io/' + u.replace(/^index\.html/, '') : window.OLDWEB.shown(u);
     const resolve = (v) => { v = v.trim(); return v || null; };
-    const progress = (on) => { prog.classList.toggle('on', on); if (!on) { prog.classList.add('done'); setTimeout(() => prog.classList.remove('done'), 300); } };
+    /* The address bar fills with blue as the page comes in, the way 2007's
+       Safari did: in fits and starts, slowing as it nears the end but never
+       stopping, and racing to the end the moment the page arrives. */
+    let pct = 0, crawl = 0, busy = false;
+    const bar = (p, ms) => { const r = addr && app.el.querySelector('.saf-url'); if (r) { prog.style.left = r.offsetLeft + 'px'; prog.style.width = (r.offsetWidth * p) + 'px'; } prog.style.transitionDuration = ms + 'ms'; };
+    const step = () => {
+      if (!busy) return;
+      const left = .96 - pct;
+      const r = Math.random();
+      /* Now and then it sits still a moment; otherwise it lurches on. */
+      if (r > .22) pct += Math.max(.004, left * (r < .6 ? .06 + Math.random() * .1 : .16 + Math.random() * .18));
+      pct = Math.min(pct, .965);
+      bar(pct, 180 + Math.random() * 260);
+      crawl = setTimeout(step, r > .22 ? 220 + Math.random() * 520 : 600 + Math.random() * 700);
+    };
+    const progress = (on) => {
+      clearTimeout(crawl);
+      if (on) { busy = true; pct = 0; prog.classList.remove('done'); bar(0, 0); prog.classList.add('on'); void prog.offsetWidth; pct = .08 + Math.random() * .06; bar(pct, 220); crawl = setTimeout(step, 260); return; }
+      if (!busy) return;
+      busy = false; bar(1, 160);
+      setTimeout(() => { prog.classList.add('done'); setTimeout(() => { if (!busy) { prog.classList.remove('on', 'done'); bar(0, 0); } }, 260); }, 180);
+    };
+    /* Typing into a page's own search box uses this phone's keyboard. */
+    const onField = (inp, submit) => {
+      const t = { get value() { return inp.value; }, ret: 'Search', insert(s) { inp.value += s; }, back() { inp.value = inp.value.slice(0, -1); }, enter() { kb.hide(); submit(); }, blur() { inp.classList.remove('kb-at'); inp.style.boxShadow = ''; } };
+      inp.style.boxShadow = '0 0 0 2px #6a9ae6';
+      kb.show(t);
+      requestAnimationFrame(() => requestAnimationFrame(() => { try { inp.scrollIntoView({ block: 'center' }); } catch (e) {} }));
+    };
     const load = async (u) => {
       const my = ++token;
       note.hidden = true;
-      if (!u || local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.dataset.kind = ''; fr.onload = u ? follow : null; fr.src = u || 'about:blank'; progress(false); return; }
-      await window.OLDWEB.open(fr, u, 2007, { onNav: (x) => { if (my === token) go(x); }, onState: (st) => { if (my === token) progress(st === 'loading'); } });
+      if (!u || local(u)) { fr.removeAttribute('srcdoc'); fr.removeAttribute('sandbox'); fr.dataset.kind = ''; if (u) progress(true); else progress(false); fr.onload = u ? () => { if (my === token) progress(false); follow(); } : null; fr.src = u || 'about:blank'; return; }
+      await window.OLDWEB.open(fr, u, 2007, { onField, onNav: (x) => { if (my === token) go(x); }, onState: (st) => { if (my === token) progress(st === 'loading'); } });
     };
     /* Links followed inside one of our own pages never pass through here,
        so its address is read back after each load: they join the history
@@ -1067,7 +1095,7 @@ window.IPHONE = { start(room, exit) {
   function armCallBack(title) {
     clearTimeout(backT);
     const ringIn = () => {
-      if (state === 'boot' || airplane || !shown() || (callEl && !callEl.dataset.idle)) { backT = setTimeout(ringIn, 1500); return; }
+      if (state === 'boot' || airplane || net !== 'on' || !shown() || (callEl && !callEl.dataset.idle)) { backT = setTimeout(ringIn, 1500); return; }
       closeCall(true);
       if (asleep) wake();
       clearTimeout(sleepT);
@@ -1359,7 +1387,6 @@ window.IPHONE = { start(room, exit) {
       ['The Simpsons Movie', 'Comedy', '#e0b81e', '#3f83c9', 'Homer dooms Springfield. A pig is involved.'],
       ['300', 'Action', '#5a1d0c', '#b5641b', 'Three hundred Spartans hold the pass at Thermopylae.'],
       ['Superbad', 'Comedy', '#c24a1a', '#f0c23c', 'Two best friends, one fake ID, one last party.'],
-      ['Knocked Up', 'Comedy', '#c43a55', '#f0a8a0', 'One night out turns into nine months.'],
       ['Live Free or Die Hard', 'Action', '#23282f', '#a12a1e', 'John McClane against the whole internet.'],
       ['Juno', 'Comedy', '#c8501e', '#e8c64a', 'A sixteen-year-old plans her way through an unplanned pregnancy.'],
       ['No Country for Old Men', 'Drama', '#6a4a26', '#c7a26a', 'A found case of money and the man coming after it.']
@@ -1400,29 +1427,84 @@ window.IPHONE = { start(room, exit) {
     const owned = new Set(store.get('ip-store', []));
     const cover = (t) => `assets/images/store/${t.toLowerCase().replace(/’/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.webp`;
     const tile = (x, big) => `<span class="st-tile${big ? ' big' : ''}" style="background:linear-gradient(160deg,${x[2]},${x[3]})"><img src="${cover(x[0])}" alt="" loading="lazy" draggable="false" /></span>`;
-    const page = (x, price) => (pg) => {
-      pg.innerHTML = `<div class="st-item">${tile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[1])} · 2007</p><button type="button" class="st-buy">${owned.has(x[0]) ? 'PURCHASED' : price}</button></div><p class="st-blurb">${esc(x[4])}</p></div>`;
-      const b = pg.querySelector('.st-buy');
-      b.classList.toggle('is-own', owned.has(x[0]));
-      b.addEventListener('click', () => {
-        if (owned.has(x[0]) || b.dataset.busy) return;
-        if (b.textContent !== 'BUY NOW') { b.dataset.was = b.textContent; b.textContent = 'BUY NOW'; b.classList.add('is-sure'); return; }
+    /* The buy button: price, then BUY NOW in green, then downloading. Each
+       label slides up and out as the next rises in, and the button eases
+       to its new width, as the store's own did. */
+    const label = (b, text) => {
+      const old = b.querySelector('.bt'), w0 = b.offsetWidth;
+      const n = h('span', 'bt', esc(text));
+      if (!old) { b.textContent = ''; b.appendChild(n); return; }
+      old.classList.add('out');
+      b.appendChild(n);
+      n.style.position = 'absolute'; n.style.visibility = 'hidden';
+      const w1 = n.offsetWidth + (b.offsetWidth - old.offsetWidth);
+      n.style.position = ''; n.style.visibility = '';
+      old.style.position = 'absolute';
+      b.style.width = w0 + 'px'; void b.offsetWidth; b.style.width = w1 + 'px';
+      old.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-9px)', opacity: 0 }], { duration: 200, easing: 'ease-in' }).finished.then(() => old.remove());
+      n.animate([{ transform: 'translateY(9px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], { duration: 240, delay: 60, easing: 'ease-out', fill: 'backwards' });
+      setTimeout(() => { if (b.isConnected) b.style.width = ''; }, 320);
+    };
+    const buy = (b, key, price, has = () => owned.has(key), onDone) => {
+      label(b, has() ? 'PURCHASED' : price);
+      b.classList.toggle('is-own', has());
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (has() || b.dataset.busy) return;
+        if (!b.classList.contains('is-sure')) { b.classList.add('is-sure'); label(b, 'BUY NOW'); return; }
         SFX.click();
-        b.dataset.busy = '1'; b.classList.remove('is-sure'); b.textContent = 'DOWNLOADING…';
-        setTimeout(() => { owned.add(x[0]); store.set('ip-store', [...owned]); b.textContent = 'PURCHASED'; b.classList.add('is-own'); delete b.dataset.busy; }, 1700);
+        b.dataset.busy = '1'; b.classList.remove('is-sure'); label(b, 'DOWNLOADING…');
+        setTimeout(() => { owned.add(key); store.set('ip-store', [...owned]); b.classList.add('is-own'); label(b, 'PURCHASED'); delete b.dataset.busy; onDone && onDone(); }, 1700);
       });
     };
+    const page = (x, price) => (pg) => {
+      pg.innerHTML = `<div class="st-item">${tile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[1])} · 2007</p><button type="button" class="st-buy"></button></div><p class="st-blurb">${esc(x[4])}</p></div>`;
+      buy(pg.querySelector('.st-buy'), x[0], price);
+    };
     const list = (rows, price) => (pg) => plain(pg, rows.map((x) => ({ text: x[0], sub: `${x[1]} · ${price}`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', page(x, price)) })));
+    /* TV: every season that had aired by the iPhone's launch, each episode
+       with its own page. Episode guides from TVmaze. */
+    let tv = null;
+    const guide = () => tv || (tv = fetch('assets/data/tv2007.json').then((r) => r.json()).catch(() => ({})));
+    const D = (s) => { const [y, m, d] = s.split('-'); return `${MONTHS[+m - 1]} ${+d}, ${y}`; };
+    const seasonPrice = (n) => '$' + (Math.max(9, Math.round(n * 1.99 * .8)) - .01).toFixed(2);
+    const epKey = (x, s, e) => `${x[0]} S${s}E${e[0]}`, sKey = (x, s) => `${x[0]} S${s}`;
+    const epPage = (x, s, e) => (pg) => {
+      pg.innerHTML = `<div class="st-item">${tile(x, true)}<div class="st-info"><h3>${esc(e[1])}</h3><p class="st-meta">${esc(x[0])}<br/>Season ${s}${e[0] ? `, Episode ${e[0]}` : ', Special'}<br/>Aired ${D(e[2])}</p><button type="button" class="st-buy"></button></div><p class="st-blurb">${esc(e[3] || `${x[0]}, season ${s}${e[0] ? `, episode ${e[0]}` : ''}.`)}</p></div>`;
+      buy(pg.querySelector('.st-buy'), epKey(x, s, e), '$1.99', () => owned.has(sKey(x, s)) || owned.has(epKey(x, s, e)));
+    };
+    const seasonPage = (x, s, eps) => (pg) => {
+      pg.innerHTML = `<div class="st-item st-season">${tile(x)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">Season ${s} · ${eps.length} episodes</p><button type="button" class="st-buy"></button></div></div>`;
+      buy(pg.querySelector('.st-buy'), sKey(x, s), seasonPrice(eps.length), undefined, () => pg.querySelectorAll('.pl .rt').forEach((r) => { r.textContent = '✓'; }));
+      const box = h('div', 'st-eps');
+      pg.appendChild(box);
+      plain(box, eps.map((e) => ({ text: `${e[0] ? e[0] + '. ' : ''}${e[1]}`, sub: `Aired ${D(e[2])}`, rt: owned.has(sKey(x, s)) || owned.has(epKey(x, s, e)) ? '✓' : '$1.99', cls: 'st-ep', go: () => app.push(`Episode ${e[0] || ''}`.trim(), epPage(x, s, e)) })));
+    };
+    const showPage = (x) => (pg) => {
+      pg.innerHTML = `<div class="st-item">${tile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[1])}</p><p class="st-meta st-load">Loading seasons…</p></div><p class="st-blurb">${esc(x[4])}</p></div>`;
+      guide().then((g) => {
+        const ss = g[x[0]] || [];
+        const m = pg.querySelector('.st-load');
+        if (!ss.length) { m.textContent = 'Premieres July 19 on AMC'; return; }
+        m.textContent = `${ss.length} season${ss.length > 1 ? 's' : ''} · $1.99 an episode`;
+        const box = h('div', 'st-eps');
+        pg.appendChild(box);
+        plain(box, [{ header: 'Seasons' }, ...ss.map(([s, eps]) => ({ text: `Season ${s}`, sub: `${eps.length} episodes · ${eps[0][2].slice(0, 4)}${eps[eps.length - 1][2].slice(0, 4) !== eps[0][2].slice(0, 4) ? '–' + eps[eps.length - 1][2].slice(2, 4) : ''}`, rt: owned.has(sKey(x, s)) ? '✓' : seasonPrice(eps.length), cls: 'st-ep', go: () => app.push(`Season ${s}`, seasonPage(x, s, eps)) }))]);
+      });
+    };
+    const shows = (pg) => plain(pg, SHOWS.map((x) => ({ text: x[0], sub: `${x[1]} · $1.99 an episode`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', showPage(x)) })));
     const FILM = 'M3 4h24v18H3zM6 6v3h3V6zM6 12v2h3v-2zM6 17v3h3v-3zM21 6v3h3V6zM21 12v2h3v-2zM21 17v3h3v-3zM11 6v14h8V6z';
     const SCREEN = 'M3 3h24v16H3zM5.500 5.500v11h19v-11zM10 21h10v2.500H10z';
-    const BALL = 'M15 2a11 11 0 1 1 0 22a11 11 0 1 1 0-22zM15 4.500a8.500 8.500 0 0 0-5.800 2.300c2.300 2 3.600 4.200 3.800 6.200h2zM17 4.700V13h2c.2-2 1.200-4 3-5.800A8.500 8.500 0 0 0 17 4.700zM7.700 8.500A8.500 8.500 0 0 0 6.500 13H11c-.2-1.500-1.500-3-3.300-4.500zM23 9.200c-1.300 1.300-2 2.600-2.100 3.800h2.600a8.500 8.500 0 0 0-.5-3.800zM6.500 15a8.500 8.500 0 0 0 1.200 3.500c1.800-1 3-2.200 3.300-3.500zM13 15c-.2 1.800-1.700 3.600-3.900 5a8.500 8.500 0 0 0 5.900 1.500V15zM17 15v6.300a8.500 8.500 0 0 0 5.300-3c-1.800-.8-3-2-3.400-3.300zM21 15c.3.800 1 1.500 2.300 1.800.3-.6.5-1.200.6-1.800z';
+    /* A basketball drawn as strokes through a mask, so it is exactly round
+       and even on both sides, and takes the tab's own colour. */
+    const BALL = '<defs><mask id="st-ball" maskUnits="userSpaceOnUse" x="0" y="0" width="30" height="26"><g fill="none" stroke="#fff" stroke-width="1.9"><circle cx="15" cy="13" r="10.2"/><path d="M15 2.8v20.4M4.8 13h20.4"/><path d="M7.6 5.9a10.6 10.6 0 0 1 0 14.2M22.4 5.9a10.6 10.6 0 0 0 0 14.2"/></g></mask></defs><rect width="30" height="26" mask="url(#st-ball)"/>';
     const SPORT_ART = ['lebron', 'draft', 'wimbledon', 'tour', 'allstar', 'open', 'beckham', 'bonds', 'usopen', 'gators', 'nfl', 'nhl', 'worldseries', 'superbowl'];
     const sportTile = (x, big) => `<span class="st-tile st-sport${big ? ' big' : ''}"><img src="assets/images/store/sports/${SPORT_ART[SPORTS.indexOf(x)]}.webp" alt="" loading="lazy" draggable="false" /></span>`;
     const sportPage = (x) => (pg) => { pg.innerHTML = `<div class="st-item">${sportTile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[2])}</p></div><p class="st-blurb">${esc(x[5])}</p></div>`; };
     const sports = (pg) => plain(pg, [{ header: 'Coming Up · Summer 2007' }, ...SPORTS.map((x) => ({ text: x[0], sub: `${x[1]} · ${x[2]}`, lead: sportTile(x), cls: 'st-row', go: () => app.push('Info', sportPage(x)) }))]);
     tabs(app, [['Movies', FILM], ['TV Shows', SCREEN], ['Sports', BALL]], 0, (i) => {
       if (i === 0) app.reset('Top Movies', list(MOVIES, '$14.99'));
-      else if (i === 1) app.reset('Top TV Shows', list(SHOWS, '$1.99'));
+      else if (i === 1) app.reset('Top TV Shows', shows);
       else app.reset('Sports', sports);
     });
   }
@@ -1433,7 +1515,7 @@ window.IPHONE = { start(room, exit) {
     sig(n) { room.querySelectorAll('.ip-sig i').forEach((b, i) => b.classList.toggle('off', i >= n)); room.querySelector('.car').textContent = n ? 'AJ&T' : 'No Service'; room.querySelector('.ip-sig').style.display = n ? '' : 'none'; room.querySelector('.ip-edge').style.display = n ? '' : 'none'; },
     bat(p) { const b = room.querySelector('.ip-bat'); b.querySelector('i').style.width = Math.max(0, Math.min(100, p)) + '%'; b.classList.toggle('low', p <= 20); },
     lend() { statusLent = true; },
-    reset() { statusLent = false; stat.sig(5); stat.bat(100); room.querySelectorAll('.ip-status .gl-bad').forEach((x) => x.classList.remove('gl-bad')); if (airplane) setAir(); tickClock(); }
+    reset() { statusLent = false; stat.sig(5); stat.bat(100); room.querySelectorAll('.ip-status .gl-bad').forEach((x) => x.classList.remove('gl-bad')); if (airplane) net = 'air'; paintNet(); tickClock(); }
   };
   /* The frame every one of them shares: a card to start and end on, a
      frame loop that stops with the app. */
@@ -1551,12 +1633,49 @@ window.IPHONE = { start(room, exit) {
 
   let airplane = store.get('ip-air', false), bright = store.get('ip-bright', 100);
   if (bright !== 100) scr.style.filter = `brightness(${bright / 100})`;
-  const setAir = () => {
-    room.querySelector('.ip-sig').style.display = airplane ? 'none' : '';
-    room.querySelector('.ip-edge').style.display = airplane ? 'none' : '';
-    room.querySelector('.car').innerHTML = airplane ? '<svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true"><path d="M15.5 6c0 .7-.8 1-1.6 1H10L6.8 12H5.3L7 7H3.6L2.4 8.5H1.3L2 6l-.7-2.500h1.100L3.600 5H7L5.300 0h1.500L10 5h3.900c.8 0 1.600.3 1.600 1z" fill="currentColor"/></svg>' : 'AJ&amp;T';
+  /* The network: Searching… for a few seconds after it starts up or comes
+     out of Airplane Mode, then AJ&T, with the bars coming and going a
+     little as a real signal does. */
+  const PLANE = '<svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true"><path d="M15.5 6c0 .7-.8 1-1.6 1H10L6.8 12H5.3L7 7H3.6L2.4 8.5H1.3L2 6l-.7-2.500h1.100L3.600 5H7L5.300 0h1.500L10 5h3.900c.8 0 1.600.3 1.600 1z" fill="currentColor"/></svg>';
+  let net = airplane ? 'air' : 'search', bars = 4, searchT = 0;
+  const netEls = () => ['.ip-sig', '.car', '.ip-edge'].map((s) => room.querySelector(s));
+  const paintNet = () => {
+    if (statusLent) return;
+    const [sig, car, edge] = netEls();
+    sig.style.display = net === 'on' ? '' : 'none';
+    edge.style.display = net === 'on' ? '' : 'none';
+    car.innerHTML = net === 'air' ? PLANE : net === 'search' ? 'Searching…' : 'AJ&amp;T';
+    sig.querySelectorAll('i').forEach((b, i) => b.classList.toggle('off', i >= bars));
   };
-  if (airplane) setAir();
+  const slide = (els, from, to, ms, easing) => Promise.all(els.filter((e) => e.style.display !== 'none').map((e) => e.animate([{ transform: `translateX(${from}px)`, opacity: from ? 0 : 1 }, { transform: `translateX(${to}px)`, opacity: to ? 0 : 1 }], { duration: ms, easing }).finished.catch(() => {})));
+  const search = (ms) => {
+    clearTimeout(searchT);
+    net = 'search'; paintNet();
+    searchT = setTimeout(() => {
+      if (airplane) return;
+      net = 'on'; bars = 3 + Math.floor(Math.random() * 3); paintNet();
+      if (!statusLent) netEls().forEach((e) => e.style.display !== 'none' && e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320 }));
+    }, ms);
+  };
+  const drift = () => {
+    if (net === 'on' && !statusLent) {
+      const r = Math.random();
+      bars = Math.max(1, Math.min(5, bars + (r < .45 ? -1 : r < .9 ? 1 : 0)));
+      if (bars === 1 && Math.random() < .7) bars = 2;
+      paintNet();
+    }
+    setTimeout(drift, 5000 + Math.random() * 9000);
+  };
+  setTimeout(drift, 8000);
+  /* Airplane Mode flies in the way the plane points, and out the same way. */
+  const setAir = async (anim) => {
+    clearTimeout(searchT);
+    if (!anim || statusLent) { if (airplane) { net = 'air'; paintNet(); } else if (net === 'air') search(2400 + Math.random() * 1600); else paintNet(); return; }
+    await slide(netEls(), 0, 16, 200, 'ease-in');
+    if (airplane) { net = 'air'; paintNet(); slide(netEls(), -16, 0, 280, 'cubic-bezier(.2,.8,.3,1)'); }
+    else { search(2400 + Math.random() * 1600); slide(netEls(), -16, 0, 280, 'cubic-bezier(.2,.8,.3,1)'); }
+  };
+  paintNet();
   const APPS = {
     rescue: { name: 'Rescue', icon: 'rescue', bare: true, bar: 'black', open: GAMES.rescue },
     balancer: { name: 'Balancer', icon: 'balancer', bare: true, bar: 'black', open: GAMES.balancer },
@@ -1655,7 +1774,7 @@ window.IPHONE = { start(room, exit) {
     projects: { name: 'Projects', icon: 'tv', cls: 'is-yt', bar: 'black', nb: 'black', open(app) {
       const row = (p) => ({ text: p.name, sub: p.stack, cls: 'yt-row', lead: `<span class="yt-th" style="--h:${P.projects.indexOf(p) * 57 + 200}">${esc(p.name.slice(0, 2))}</span>`, go: () => app.push(p.name, (x) => {
         x.classList.add('pin');
-        x.innerHTML = `${group([['', `${esc(p.full)}<br/><span style="font-weight:normal;color:#4c566c">${esc(p.kind)}</span>`]])}<div class="gp"><div class="txt">${esc(p.text)}</div></div>${group([['stack', esc(p.stack), 1]])}${p.url ? '<button class="gbtn" type="button" data-go>View on GitHub</button>' : '<div class="gl" style="text-align:center">Source is private for now</div>'}`;
+        x.innerHTML = `${group([['', `${esc(p.full)}<br/><span style="font-weight:normal;color:#4c566c">${esc(p.kind)}</span>`]])}${p.shot ? `<div class="gp pj-shot"><img src="${p.shot}" alt="Screenshot of ${esc(p.name)}" /></div>` : ''}<div class="gp"><div class="txt">${esc(p.text)}</div></div>${group([['stack', esc(p.stack), 1]])}${p.url ? '<button class="gbtn" type="button" data-go>View on GitHub</button>' : '<div class="gl" style="text-align:center">Source is private for now</div>'}`;
         const b = x.querySelector('[data-go]');
         if (b) b.addEventListener('click', () => ext(p.url));
       }) });
@@ -1916,7 +2035,7 @@ window.IPHONE = { start(room, exit) {
         pg.addEventListener('click', (ev) => {
           const sw = ev.target.closest('[data-sw]');
           if (sw) {
-            if (sw.dataset.sw === 'air') { airplane = !airplane; store.set('ip-air', airplane); sw.classList.toggle('on', airplane); sw.setAttribute('aria-checked', String(airplane)); setAir(); return; }
+            if (sw.dataset.sw === 'air') { airplane = !airplane; store.set('ip-air', airplane); sw.classList.toggle('on', airplane); sw.setAttribute('aria-checked', String(airplane)); setAir(true); return; }
             if (sw.dataset.sw === 'sound') { SFX.toggle(); sw.classList.toggle('on', !SFX.muted); sw.setAttribute('aria-checked', String(!SFX.muted)); }
             else { sw.classList.toggle('on'); sw.setAttribute('aria-checked', String(sw.classList.contains('on'))); }
             return;
@@ -1969,7 +2088,7 @@ window.IPHONE = { start(room, exit) {
                     WALL = WALLS[WALLS.length - 1][0]; store.set('ip-wall', WALL); lock.style.backgroundImage = `url(${WALL})`;
                     bright = 100; store.set('ip-bright', 100); scr.style.filter = '';
                     vol = 12; store.set('ip-vol', 12); SYS.volume(12 / 16);
-                    airplane = false; store.set('ip-air', false); stat.reset();
+                    const wasAir = airplane; airplane = false; store.set('ip-air', false); stat.reset(); if (wasAir) setAir(true);
                     showUnread();
                     alertBox('Reset Complete');
                   }
@@ -2463,6 +2582,7 @@ window.IPHONE = { start(room, exit) {
     setTimeout(() => {
       boot.classList.add('is-gone');
       state = 'locked';
+      if (!airplane) search(2800 + Math.random() * 1700);
       tickClock();
       const onTheMinute = () => { tickClock(); setTimeout(onTheMinute, 60000 - Date.now() % 60000); };
       setTimeout(onTheMinute, 60000 - Date.now() % 60000);

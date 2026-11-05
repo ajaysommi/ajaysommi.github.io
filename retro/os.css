@@ -748,3 +748,6 @@ img { display: block; max-width: 100%; }
 .kp-mark { position: absolute; left: 30.2%; top: 12.200%; width: 39.800%; height: auto; }
 .kp-text { position: absolute; left: 11.600%; top: 4.800cqw; color: #f2f2f2; font: 2.75cqw/3.42cqw "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, "Hiragino Kaku Gothic ProN", sans-serif; white-space: nowrap; text-align: left; }
 .kp-text p { margin: 0 0 3.15cqw; padding: 0; color: inherit; font: inherit; }
+/* On the 1991 screen a screenshot is grey and coarse, like a scanned picture. */
+.fd-shot { display: block; width: 100%; margin-top: 12px; border: 1px solid #000; filter: grayscale(1) contrast(1.35); image-rendering: pixelated; }
+.old-shot { display: block; max-width: 100%; }

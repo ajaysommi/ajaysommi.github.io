@@ -112,7 +112,7 @@ window.PORTFOLIO = (function () {
 
     projects: [
       {
-        id: 'sommiscript', name: 'SommiScript', full: 'SommiScript: Lightweight Programming Language',
+        id: 'sommiscript', shot: 'assets/images/projects/sommiscript-480.webp', name: 'SommiScript', full: 'SommiScript: Lightweight Programming Language',
         kind: 'Language', stack: 'Java / Language Design / Interpreters', lang: 'Java',
         text: "Built a custom scripting language with Python/JavaScript-inspired syntax and a lightweight Java interpreter, making it easy to experiment with language design and execution.",
         url: 'https://github.com/ajaysommi/SommiScript'
@@ -124,19 +124,19 @@ window.PORTFOLIO = (function () {
         url: ''
       },
       {
-        id: 'gatorgoods', name: 'GatorGoods', full: 'GatorGoods Marketplace',
+        id: 'gatorgoods', shot: 'assets/images/projects/gatorgoods-480.webp', name: 'GatorGoods', full: 'GatorGoods Marketplace',
         kind: 'Full-stack', stack: 'MongoDB / Express / React / Node', lang: 'React',
         text: "Full-stack MERN app for UF students to buy and sell items, with secure authentication, listings, and a clean API-first design.",
         url: 'https://github.com/ajaysommi/GatorGoods'
       },
       {
-        id: 'crash', name: 'Crash Analysis', full: 'Crash Fatality Analysis',
+        id: 'crash', shot: 'assets/images/projects/crash-480.webp', name: 'Crash Analysis', full: 'Crash Fatality Analysis',
         kind: 'Data science', stack: 'Python / Pandas / Visualization', lang: 'Python',
         text: "Interactive analysis of vehicle fatality data (1996 to 2022), uncovering safety trends by make, model, and year to reveal gaps in official ratings.",
         url: 'https://github.com/ajaysommi/Car-Crash-Analyzation-Tool'
       },
       {
-        id: 'avl', name: 'BalanceTree', full: 'BalanceTree (AVL)',
+        id: 'avl', shot: 'assets/images/projects/avl-480.webp', name: 'BalanceTree', full: 'BalanceTree (AVL)',
         kind: 'Algorithms', stack: 'C++ / Data Structures', lang: 'C++',
         text: "Self-balancing AVL tree with insert, delete, and lookup operations, optimized for performance and correctness.",
         url: 'https://github.com/ajaysommi/BalanceTree'
@@ -380,6 +380,9 @@ window.RETRO = (function () {
       return;
     }
     r.setProperty('--tw', W + 'px'); r.setProperty('--th', H + 'px');
+    /* A real keyboard that came and went (a page's own field) pushes the
+       whole page up; once nothing is being typed in, it comes back. */
+    if (root.dataset.mode === 'mobile' && !(vv && vv.height < innerHeight * .8) && (scrollY || scrollX)) scrollTo(0, 0);
     /* Never taller than the small viewport: where a browser's bar floats
        over the page (Safari's bottom bar), nothing is drawn under it. */
     viewport();
@@ -555,3 +558,5 @@ window.RETRO = (function () {
 
   return { esc, usedAt, dither, ditherAll, ascii, store, viewport, marquee, dragIcons, contextMenu, zoomPics, panic, panicWatch };
 })();
+/* Any real field losing focus on a phone: put the page back where it was. */
+if (document.documentElement.dataset.mode === 'mobile') document.addEventListener('focusout', () => setTimeout(() => { if (!/^(INPUT|TEXTAREA)$/.test((document.activeElement || {}).tagName || '') && (scrollY || scrollX)) scrollTo(0, 0); }, 120));

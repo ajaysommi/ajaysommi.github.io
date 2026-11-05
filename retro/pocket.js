@@ -157,7 +157,7 @@ window.POCKET = { start(room, exit) {
     projects: () => ({ type: 'menu', title: 'Projects', items: P.projects.map((p, i) => [li(p.name), () => open('project', i)]) }),
     project: (i) => {
       const p = P.projects[i];
-      return { type: 'text', title: p.name, nav: ['project', i, P.projects.length], html: `<h2>${esc(p.full)}</h2><div class="m">${esc(p.kind)} · ${esc(p.stack)}</div><p>${esc(p.text)}</p>${p.url ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer">Open on GitHub ↗</a>` : '<div class="m">Source is private for now.</div>'}` };
+      return { type: 'text', title: p.name, nav: ['project', i, P.projects.length], html: `<h2>${esc(p.full)}</h2><div class="m">${esc(p.kind)} · ${esc(p.stack)}</div>${p.shot ? `<img class="pk-shot" src="${p.shot}" alt="" />` : ''}<p>${esc(p.text)}</p>${p.url ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer">Open on GitHub ↗</a>` : '<div class="m">Source is private for now.</div>'}` };
     },
     garage: () => ({ type: 'menu', title: 'Off the Clock', items: P.offclock.map((s, i) => [li(s.name), () => open('story', i)]) }),
     story: (i, k = 0) => ({ type: 'story', title: P.offclock[i].name, story: i, slide: k }),

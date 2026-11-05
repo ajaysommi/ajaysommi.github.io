@@ -416,7 +416,7 @@ window.OSX = (function () {
         const sel = (i) => {
           const p = P.projects[i];
           b.querySelectorAll('.src button').forEach((x) => x.classList.toggle('on', +x.dataset.i === i));
-          pane.innerHTML = `<div class="xp-head" style="--tint:hsl(${i * 57 + 200} 60% 55%)"><div class="xp-logo">${ICON.projects()}</div><div><h2>${esc(p.full)}</h2><p>${esc(p.kind)}</p><p class="xp-meta">${esc(p.stack)}</p></div></div><p class="xp-text">${esc(p.text)}</p>${tokens(p.stack.split(' / '))}<div class="ox-btns left">${p.url ? `<button type="button" class="ax-btn is-default" data-url="${p.url}">${t('View on GitHub')}</button>` : `<span class="xp-meta">${t('Source is private for now.')}</span>`}</div>`;
+          pane.innerHTML = `<div class="xp-head" style="--tint:hsl(${i * 57 + 200} 60% 55%)"><div class="xp-logo">${ICON.projects()}</div><div><h2>${esc(p.full)}</h2><p>${esc(p.kind)}</p><p class="xp-meta">${esc(p.stack)}</p></div></div>${p.shot ? `<img class="xp-shot" src="${p.shot}" alt="Screenshot of ${esc(p.name)}" />` : ''}<p class="xp-text">${esc(p.text)}</p>${tokens(p.stack.split(' / '))}<div class="ox-btns left">${p.url ? `<button type="button" class="ax-btn is-default" data-url="${p.url}">${t('View on GitHub')}</button>` : `<span class="xp-meta">${t('Source is private for now.')}</span>`}</div>`;
         };
         b.addEventListener('click', (e) => { const x = e.target.closest('[data-i]'); if (x) { SFX.click(); sel(+x.dataset.i); } const u = e.target.closest('[data-url]'); if (u) ext(u.dataset.url); });
         sel(0);
@@ -1173,20 +1173,12 @@ window.OSX = (function () {
 
     /* Left to the browser, a list scrolls ahead of the page and its Aqua bar,
        painted by the page, trails behind. Scrolling from here moves both in
-       the same frame. A mouse wheel's big steps glide; a trackpad is direct. */
+       the same frame. Wheel and trackpad both move it at once. */
     const canScroll = (el, d, axis) => {
       const s = getComputedStyle(el), o = axis === 'y' ? s.overflowY : s.overflowX;
       if (o !== 'auto' && o !== 'scroll') return false;
       const pos = axis === 'y' ? el.scrollTop : el.scrollLeft, max = axis === 'y' ? el.scrollHeight - el.clientHeight : el.scrollWidth - el.clientWidth;
       return max > 1 && (d < 0 ? pos > 0 : pos < max - 1);
-    };
-    let glide = null;
-    const glideOn = () => {
-      if (!glide) return;
-      const g = glide, at = g.axis === 'y' ? g.el.scrollTop : g.el.scrollLeft, next = at + (g.to - at) * .3;
-      const done = Math.abs(g.to - next) < 1;
-      if (g.axis === 'y') g.el.scrollTop = done ? g.to : next; else g.el.scrollLeft = done ? g.to : next;
-      if (done) glide = null; else requestAnimationFrame(glideOn);
     };
     root.addEventListener('wheel', (e) => {
       if (e.ctrlKey) return;
@@ -1197,14 +1189,8 @@ window.OSX = (function () {
       while (el && el !== root && !canScroll(el, d, axis)) el = el.parentElement;
       if (!el || el === root) return;
       e.preventDefault();
-      const steppy = e.deltaMode !== 0 || (Math.abs(d) >= 50 && Number.isInteger(d));
-      const max = axis === 'y' ? el.scrollHeight - el.clientHeight : el.scrollWidth - el.clientWidth;
-      if (steppy || (glide && glide.el === el)) {
-        const from = glide && glide.el === el ? glide.to : (axis === 'y' ? el.scrollTop : el.scrollLeft);
-        const running = !!glide;
-        glide = { el, axis, to: Math.max(0, Math.min(max, from + d)) };
-        if (!running) requestAnimationFrame(glideOn);
-      } else if (axis === 'y') el.scrollTop += d; else el.scrollLeft += d;
+      /* Straight there, every time: no easing to wait for. */
+      if (axis === 'y') el.scrollTop += d; else el.scrollLeft += d;
     }, { passive: false });
 
     dockEl.addEventListener('pointermove', (e) => magnify(e.clientX));
