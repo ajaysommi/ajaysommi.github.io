@@ -761,3 +761,19 @@ html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82
 .os-host[data-era="1991"] { --tint: 148, 132, 108; --tint-edge: 76, 66, 52; }
 .os-host[data-era="1998"] { --tint: 98, 160, 178; --tint-edge: 48, 88, 104; }
 .os-host[data-era="2007"] { --tint: 112, 132, 188; --tint-edge: 52, 66, 112; }
+
+/* Night shapes, without a filter on their layer. Real Safari skips a
+   parent's filter for children it animates on their own layers (these
+   twinkle), so there the shapes stayed exactly as dim as in daylight.
+   Instead each shape is given the brighter colour itself, and its own soft
+   glow; nothing depends on the parent. */
+.os-host[data-era="1991"] { --shp: 214, 196, 152; }
+.os-host[data-era="1998"] { --shp: 60, 214, 246; }
+.os-host[data-era="2007"] { --shp: 196, 214, 248; }
+.is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes { filter: none !important; opacity: .9; color: rgb(var(--shp)) !important; }
+.is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes svg { filter: drop-shadow(0 0 5px rgba(var(--shp), .7)) drop-shadow(0 0 9px rgba(var(--glow), .35)) !important; }
+/* And stronger: at night each shape's own opacity is lifted (its twinkle
+   kept, in a brighter range), as plain values Safari draws the same. */
+.is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes { opacity: 1; }
+.is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes svg { animation: shp-tw-night var(--tw, 12s) ease-in-out var(--twd, 0s) infinite !important; }
+@keyframes shp-tw-night { 0%, 62%, 100% { opacity: calc(var(--o) * 1.9); } 81% { opacity: calc(var(--o) * 2.6); } }
