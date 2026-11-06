@@ -772,8 +772,7 @@ html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82
 .os-host[data-era="2007"] { --shp: 196, 214, 248; }
 .is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes { filter: none !important; opacity: .9; color: rgb(var(--shp)) !important; }
 .is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes svg { filter: drop-shadow(0 0 5px rgba(var(--shp), .7)) drop-shadow(0 0 9px rgba(var(--glow), .35)) !important; }
-/* And stronger: at night each shape's own opacity is lifted (its twinkle
-   kept, in a brighter range), as plain values Safari draws the same. */
+/* At night the shapes stay as they arrive: the brighter colour and the
+   glow, at their own opacity, twinkling as in daylight. (Lifting their
+   opacity once they had landed read as a flash.) */
 .is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes { opacity: 1; }
-.is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes svg { animation: shp-tw-night var(--tw, 12s) ease-in-out var(--twd, 0s) infinite !important; }
-@keyframes shp-tw-night { 0%, 62%, 100% { opacity: calc(var(--o) * 1.9); } 81% { opacity: calc(var(--o) * 2.6); } }
