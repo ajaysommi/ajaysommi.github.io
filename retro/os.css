@@ -751,3 +751,9 @@ img { display: block; max-width: 100%; }
 /* On the 1991 screen a screenshot is grey and coarse, like a scanned picture. */
 .fd-shot { display: block; width: 100%; margin-top: 12px; border: 1px solid #000; filter: grayscale(1) contrast(1.35); image-rendering: pixelated; }
 .old-shot { display: block; max-width: 100%; }
+/* SurfBoard lifted off its place on the desk: a free window, dragged by
+   its title bar. Full screen still fills the screen. */
+.nt .br.is-float { position: absolute; margin: 0; z-index: 3; }
+.nt .br.is-float.is-shaded { height: auto !important; }
+.nt .br.is-float.is-zoomed { left: 0 !important; top: 22px !important; width: auto !important; height: auto !important; }
+.nt .br > .br-title { cursor: default; }

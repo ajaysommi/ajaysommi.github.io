@@ -450,13 +450,42 @@
     /* The machine fills most of the window: room above and at the sides,
        none below, where it runs off the bottom edge. */
     const TOP = 66;
+    Object.keys(PHOTO).forEach((y) => { PHOTO[y].y = y; });
+    /* How far in the view has come on each machine: 0 as it first stands,
+       1 drawn in closer once the visitor has started it (the disk in, the
+       cable plugged, a language picked). Kept for the visit. */
+    const close = {};
     const place = (ph) => {
       /* The top of the machine sits just under the buttons; it is as large
          as the height allows from there, and runs off the bottom. */
       const [vx, vy, vw, vh] = ph.view;
-      const k = Math.min((innerHeight - TOP) / vh, (innerWidth * 0.94) / vw);
+      const k0 = Math.min((innerHeight - TOP) / vh, (innerWidth * 0.94) / vw);
+      /* Closer: larger, its top still just under the buttons, its whole
+         screen still in view above the bottom edge, and some of the room
+         still showing either side. */
+      const [, sy, , sh] = ph.scr;
+      const k1 = Math.max(k0, Math.min(k0 * 1.38, (innerHeight - 22 - TOP) / (sy + sh - vy), (innerWidth * 0.9) / vw));
+      const t = close[ph.y] || 0, k = k0 + (k1 - k0) * t;
       return { k, ox: (innerWidth - vw * k) / 2 - vx * k, oy: TOP - vy * k };
     };
+    /* Drawing the view in: the machine and its screen grow together, frame
+       by frame, the screen's own contents laid out at each size so more of
+       them fits as it opens up. */
+    let closeRaf = 0;
+    const drawCloser = (y) => {
+      if (close[y] || !PHOTO[y] || root.classList.contains('reduced')) { close[y] = 1; layout(); return; }
+      const t0 = performance.now(), D = 1100, ease = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      cancelAnimationFrame(closeRaf);
+      const step = (now) => {
+        const t = Math.min(1, (now - t0) / D);
+        close[y] = ease(t);
+        if (host.dataset.era === y) layout();
+        if (t < 1) closeRaf = requestAnimationFrame(step);
+        else { const s = ERAS[cur] && ERAS[cur].sys(); s && s.resize && s.resize(); }
+      };
+      closeRaf = requestAnimationFrame(step);
+    };
+    api.closer = () => { const y = host.dataset.era; if (y && y !== '1983') drawCloser(y); };
     const layout = () => {
       if (!photo) return;
       const { k, ox, oy } = place(photo);
@@ -548,7 +577,7 @@
     let diskWaiting = null;
     api.disk = () => new Promise((resolve) => {
       if (host.dataset.era !== '1991' || !photo) { resolve(); return; }
-      diskWaiting = () => { diskWaiting = null; resolve(); };
+      diskWaiting = () => { diskWaiting = null; resolve(); setTimeout(() => api.closer(), 250); };
       showDisk();
     });
     function showDisk() {
@@ -720,6 +749,7 @@
         el.classList.add('is-on');
         SFX.click();
         netCb && netCb();
+        setTimeout(() => api.closer(), 250);
       };
       plug.addEventListener('click', connect);
       plug.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); connect(); } });

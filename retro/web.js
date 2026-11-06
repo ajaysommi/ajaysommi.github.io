@@ -556,6 +556,30 @@ window.WEB = (function () {
     });
     root.addEventListener('pointerover', (e) => { const m = e.target.closest('.nt-menubar .m'); if (openMenu && m && m !== openMenu && !m.hasAttribute('data-spk')) showMenu(m); });
 
+    /* The browser window moves by its title bar like any other window: the
+       first drag lifts it out of its place on the desk into a window of
+       its own, at exactly the size and spot it had. */
+    root.addEventListener('pointerdown', (e) => {
+      const bar = e.target.closest('.br > .br-title');
+      if (!bar || e.target.closest('button') || e.button !== 0) return;
+      const br = bar.parentElement;
+      if (br.classList.contains('is-zoomed')) return;
+      e.preventDefault();
+      if (!br.classList.contains('is-float')) {
+        const x = br.offsetLeft, y = br.offsetTop, w = br.offsetWidth, hgt = br.offsetHeight;
+        br.classList.add('is-float');
+        Object.assign(br.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: hgt + 'px' });
+      }
+      const k = root.getBoundingClientRect().width / root.offsetWidth;
+      const sx = e.clientX, sy = e.clientY, ox = br.offsetLeft, oy = br.offsetTop;
+      const mv = (ev) => {
+        br.style.left = Math.max(-br.offsetWidth + 60, Math.min(root.clientWidth - 40, ox + (ev.clientX - sx) / k)) + 'px';
+        br.style.top = Math.max(24, Math.min(root.clientHeight - 20, oy + (ev.clientY - sy) / k)) + 'px';
+      };
+      const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); };
+      addEventListener('pointermove', mv); addEventListener('pointerup', up);
+    });
+
     /* The browser is a window on a desktop: the left box closes it, the
        right one rolls it up to its title bar; the icons open it again. */
     const win = root.querySelector('.br');
