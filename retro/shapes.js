@@ -66,12 +66,16 @@ window.SHAPES = (function () {
   /* A steady pseudo-random sequence, so a layer looks the same each time. */
   const rnd = (seed) => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   const svg = (k, attrs) => `<svg viewBox="0 0 40 40" ${attrs}><path d="${P[k]}" fill="currentColor" fill-rule="evenodd"/></svg>`;
+  /* Filled in: the openings in a shape (a CD's hole, a screen, a ring) are
+     filled with a lighter wash of the same colour, every piece drawn whole
+     underneath, so it reads as a solid thing with its detail still on it. */
+  const solid = (k, attrs) => `<svg viewBox="0 0 40 40" ${attrs}><g opacity=".6">${P[k].split(/(?<=z)/i).filter((d) => d.trim()).map((d) => `<path d="${d.trim()}" fill="currentColor"/>`).join('')}</g><path d="${P[k]}" fill="currentColor" fill-rule="evenodd"/></svg>`;
 
   /* One shape to every cell of a grid shaped like the screen, placed
      somewhere in the middle of its cell: every part of the screen gets its
      share, and nothing lines up. Each turns and floats on its own clock,
      and sits at its own depth for the cursor. */
-  const layer = (set, { count = 30, color = '#fff', opacity = 0.08, size = [26, 54], seed = 7, aspect = innerWidth / Math.max(1, innerHeight) } = {}) => {
+  const layer = (set, { count = 30, color = '#fff', opacity = 0.08, size = [26, 54], seed = 7, aspect = innerWidth / Math.max(1, innerHeight), filled = false } = {}) => {
     const r = rnd(seed), keys = SETS[set] || SETS.time;
     const cols = Math.max(2, Math.round(Math.sqrt(count * aspect))), rows = Math.max(2, Math.round(count / cols));
     let out = '', i = 0;
@@ -79,9 +83,9 @@ window.SHAPES = (function () {
       const x = ((col + 0.25 + r() * 0.5) / cols) * 100, y = ((row + 0.25 + r() * 0.5) / rows) * 100;
       const s = size[0] + r() * (size[1] - size[0]), rot = Math.round(r() * 60 - 30);
       const o = (opacity * (0.7 + r() * 0.5)).toFixed(3);
-      out += svg(keys[(i * 5 + Math.floor(r() * 3)) % keys.length], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--o:${o};--tw:${(10 + Math.random() * 6).toFixed(1)}s;--twd:${(-Math.random() * 16).toFixed(1)}s;--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
+      out += (filled ? solid : svg)(keys[(i * 5 + Math.floor(r() * 3)) % keys.length], `style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;opacity:${o};--o:${o};--tw:${(10 + Math.random() * 6).toFixed(1)}s;--twd:${(-Math.random() * 16).toFixed(1)}s;--rot:${rot}deg;--d:${(14 + r() * 14).toFixed(1)}s;--dl:${(-r() * 20).toFixed(1)}s;--z:${(0.3 + r() * 0.7).toFixed(2)}"`);
     }
-    return `<div class="bg-shapes" aria-hidden="true" style="color:${color}">${out}</div>`;
+    return `<div class="bg-shapes${filled ? ' is-filled' : ''}" aria-hidden="true" style="color:${color}">${out}</div>`;
   };
 
   /* A layer that starts empty: its shapes fly out from (x, y) one after

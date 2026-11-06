@@ -1035,7 +1035,7 @@
     std.hidden = true;
     std.textContent = 'Standard site';
     document.body.appendChild(std);
-    const LOOK = { nokia: ['#243a6e', 0.18], pocket: ['#5b4a86', 0.18], iphone: ['#ffffff', 0.13] };
+    const LOOK = { nokia: ['#243a6e', 0.22], pocket: ['#5b4a86', 0.22], iphone: ['#ffffff', 0.16] };
 
     /* The tile's drawing becomes the phone (and back), by the same flight
        as the computers, its photograph sharpening in mid-air. */
@@ -1104,7 +1104,7 @@
           rooms[id] = r;
           p.mod().start(r, () => showPicker());
           new MutationObserver(() => { if (cur === id) tint(id); }).observe(r, { attributes: true, attributeFilter: ['data-bg'] });
-          r.insertAdjacentHTML('afterbegin', window.SHAPES.layer(id, { count: 30, color: LOOK[id][0], opacity: LOOK[id][1], size: [24, 50], seed: id.length * 7 }));
+          r.insertAdjacentHTML('afterbegin', window.SHAPES.layer(id, { count: 30, color: LOOK[id][0], opacity: LOOK[id][1], size: [24, 50], seed: id.length * 7, filled: true }));
         } else rooms[id].hidden = false;
         document.documentElement.dataset.phone = id;
         tint(id);
