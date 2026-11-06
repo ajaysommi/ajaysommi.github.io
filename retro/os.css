@@ -757,3 +757,5 @@ img { display: block; max-width: 100%; }
 .nt .br.is-float.is-shaded { height: auto !important; }
 .nt .br.is-float.is-zoomed { left: 0 !important; top: 22px !important; width: auto !important; height: auto !important; }
 .nt .br > .br-title { cursor: default; }
+/* Plugged in, the showing length of wire can be clicked to pull it out. */
+.bz-cable.is-on .bz-wire { pointer-events: stroke; cursor: pointer; }

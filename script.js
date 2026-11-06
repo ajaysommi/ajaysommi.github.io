@@ -803,10 +803,15 @@ const onScrollFrame = (() => {
           eye.style.transformOrigin = markBox.style.transformOrigin = '';
         }, 140);
         setTimeout(() => el.remove(), 320);
-        setTimeout(() => { try { homeAnim.cancel(); } catch {} }, 700);
+        /* Before an animation is ended, its element is told to keep the layer
+           the animation gave it: ending it then changes nothing on screen,
+           where otherwise Safari would take the layer apart and draw the
+           element again, a visible hitch under the nav's frosted glass and
+           in the scrolling logo carousel. */
+        setTimeout(() => { try { home.style.willChange = 'opacity'; homeAnim.cancel(); } catch {} }, 700);
       }, D + 500);
       settle(entrances, () => {
-        entrances.forEach((a) => { try { a.cancel(); } catch {} });
+        entrances.forEach((a) => { try { const t = a.effect && a.effect.target; if (t) t.style.willChange = 'opacity, translate, scale'; a.cancel(); } catch {} });
         if (tileCard) tileCard.classList.remove('is-arriving');
       }, latest + 450);
     };
@@ -4297,7 +4302,7 @@ if (window.self === window.top) console.log(
   };
 
   // after the page has loaded and its loading screen has gone
-  const go = () => setTimeout(serve, phone.matches ? 7700 : 5700);
+  const go = () => setTimeout(serve, phone.matches ? 10200 : 8200);
   if (!root.classList.contains('is-loading')) go();
   else {
     const mo = new MutationObserver(() => { if (!root.classList.contains('is-loading')) { mo.disconnect(); go(); } });

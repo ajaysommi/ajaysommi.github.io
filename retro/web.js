@@ -710,7 +710,11 @@ window.WEB = (function () {
     const d = document.createElement('div');
     load('index');
     api.cable && api.cable(goOnline);
+    api.cableOut && api.cableOut(goOffline);
   };
+  /* The cable pulled out: what is on screen stays, but the next page asks
+     for the cable again. */
+  const goOffline = () => { online = false; setStatus('Network cable unplugged'); };
   const goOnline = async () => {
     if (online) return;
     const d = document.createElement('div');

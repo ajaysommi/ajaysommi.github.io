@@ -621,8 +621,9 @@
        on the back, out of sight: tap the plug and it tucks in behind the
        machine, the wire (a rope, a chain of points under gravity) drawing
        up after it, and the machine goes online. */
-    let netCb = null, netOn = false;
+    let netCb = null, netOn = false, netOffCb = null;
     api.cable = (cb) => { netCb = cb; if (host.dataset.era === '1998' && photo) showCable(); };
+    api.cableOut = (cb) => { netOffCb = cb; };
     const RJ45 = `<g class="bz-plug" tabindex="0" role="button" aria-label="Plug in the network cable"><rect class="hit" x="-160" y="-46" width="176" height="92" fill="transparent"/>`
       + [0, 1, 2, 3, 4].map((i) => `<rect x="${-10 - i * 9}" y="${-13 - i * .9}" width="6.5" height="${26 + i * 1.8}" rx="1.6" fill="url(#rjB)" stroke="#0d4c9c" stroke-width=".8"/>`).join('')
       + `<path d="M-50 -16H-92L-96 -21H-104V21H-96L-92 20H-50z" fill="url(#rjB)" stroke="#0d4c9c" stroke-width="1"/><path d="M-54 -16C-62 -35 -82 -35 -92 -24L-98 -19H-86C-78 -26 -68 -24 -64 -16z" fill="#2f86ec" stroke="#0d4c9c" stroke-width="1"/><path d="M-92 -8H-58" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>`
@@ -726,6 +727,39 @@
       };
       plug.addEventListener('click', connect);
       plug.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); connect(); } });
+      /* Plugged in, the wire can be pulled back out: a click on the length
+         of it showing beside the machine. Not through the machine itself:
+         a click there lands on the photograph's solid pixels and is left
+         alone, so clicking the case never unplugs anything. */
+      const shell = document.createElement('canvas');
+      const shellImg = new Image();
+      shellImg.onload = () => { shell.width = shellImg.naturalWidth; shell.height = shellImg.naturalHeight; shell.getContext('2d', { willReadFrequently: true }).drawImage(shellImg, 0, 0); };
+      shellImg.src = photo.src;
+      const onMachine = (cx, cy) => {
+        if (!shell.width) return true;
+        const m = place(photo), x = Math.round((cx - m.ox) / m.k), y = Math.round((cy - m.oy) / m.k);
+        if (x < 0 || y < 0 || x >= shell.width || y >= shell.height) return false;
+        return shell.getContext('2d').getImageData(x, y, 1, 1).data[3] > 24;
+      };
+      const unplug = async () => {
+        if (!netOn || tucking) return;
+        tucking = true;
+        netOn = false;
+        SFX.click();
+        netOffCb && netOffCb();
+        el.classList.remove('is-on');
+        stillSince = 0;
+        requestAnimationFrame(loop);
+        // Out from behind the machine, round its side, and back to where it waited.
+        await moveTo({ x: 1470, y: TUCK.y }, 360, (q) => q * q * (3 - 2 * q));
+        el.classList.remove('is-behind');
+        await moveTo({ x: 1470, y: Math.max(420, Math.min(1000, REST.y)) }, 200, (q) => q * (2 - q));
+        await moveTo(REST, 300, (q) => 1 - (1 - q) * (1 - q));
+        seg = span(REST) * 1.12;
+        tucking = false;
+        el.classList.remove('is-going');
+      };
+      wires.forEach((w) => w.addEventListener('click', (e) => { if (netOn && !onMachine(e.clientX, e.clientY)) unplug(); }));
     }
 
     /* Where the machine is on screen: the photograph's whole frame, or for
