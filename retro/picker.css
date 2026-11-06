@@ -776,3 +776,9 @@ html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82
    glow, at their own opacity, twinkling as in daylight. (Lifting their
    opacity once they had landed read as a flash.) */
 .is-desk.lights-off .os-host[data-era]:not([data-era="1983"]) > .dk-shapes .bg-shapes { opacity: 1; }
+/* Phone shapes: the twinkle begins from the brightness a shape lands at
+   (its first and last frames are that brightness, and each one waits its
+   turn rather than starting mid-cycle), so nothing snaps darker once the
+   shapes have flown in. A touch more glow. */
+@keyframes shp-star { 0%, 100% { opacity: var(--o); } 25% { opacity: calc(var(--o) * .6); } 50% { opacity: calc(var(--o) * 1.25); } 75% { opacity: calc(var(--o) * .85); } }
+.bg-shapes.is-filled svg { animation-delay: calc(var(--twd, 0s) * -1) !important; filter: drop-shadow(0 0 2px currentColor) drop-shadow(0 0 6px color-mix(in srgb, currentColor 55%, transparent)); }
