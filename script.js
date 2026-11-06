@@ -4304,39 +4304,3 @@ if (window.self === window.top) console.log(
     mo.observe(root, { attributes: true, attributeFilter: ['class'] });
   }
 })();
-
-
-/* ==========================================================================
-   Featured Work on a computer: each project in a bubble of its own shape,
-   floating where it is. Each bobs on its own slow breath, a few pixels at
-   most, and leans a hair toward the pointer when it is near; the light on
-   its skin follows the pointer. That is all: quiet, so the work is what
-   you read. Touch screens and reduced motion keep the plain cards.
-   ========================================================================== */
-(function projectBubbles() {
-  const grid = document.getElementById('projectGrid');
-  if (!grid || !matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const wide = matchMedia('(min-width: 1024px)');
-  const set = () => grid.classList.toggle('is-bubbles', wide.matches);
-  set(); wide.addEventListener('change', set);
-  const B = new Map();
-  let mx = -1e4, my = -1e4, raf = 0, seen = false;
-  const frame = (t) => {
-    raf = 0;
-    if (!seen || !wide.matches) { grid.querySelectorAll('.work-item').forEach((el) => { el.style.translate = ''; }); return; }
-    grid.querySelectorAll('.work-item:not(.is-hidden)').forEach((el, i) => {
-      if (!B.has(el)) B.set(el, { ph: i * 1.7 + Math.random(), sp: .00032 + Math.random() * .00012, x: 0, y: 0 });
-      const b = B.get(el), r = el.getBoundingClientRect();
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2, d = Math.hypot(mx - cx, my - cy), near = Math.max(0, 1 - d / (r.width * .9));
-      const tx = Math.sin(t * b.sp + b.ph) * 2.5 + ((mx - cx) / r.width) * 4 * near;
-      const ty = Math.cos(t * b.sp * 1.2 + b.ph) * 3.5 + ((my - cy) / r.height) * 4 * near;
-      b.x += (tx - b.x) * .06; b.y += (ty - b.y) * .06;
-      el.style.translate = `${b.x.toFixed(2)}px ${b.y.toFixed(2)}px`;
-      el.style.setProperty('--gx', (((mx - r.left) / r.width) * 100).toFixed(1) + '%');
-      el.style.setProperty('--gy', (((my - r.top) / r.height) * 100).toFixed(1) + '%');
-    });
-    raf = requestAnimationFrame(frame);
-  };
-  new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) raf = requestAnimationFrame(frame); }, { rootMargin: '100px' }).observe(grid);
-  addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
-})();

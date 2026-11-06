@@ -134,7 +134,7 @@ window.SHAPES = (function () {
      a push travels through a crowd; each is tied to its home by a soft
      spring and slowed by the air, so they drift back and settle. When all
      are still, the loop sleeps. */
-  const physics = (el, { radius = 46, active = () => true } = {}) => {
+  const physics = (el, { radius = 34, active = () => true } = {}) => {
     if (!el || matchMedia('(pointer: coarse)').matches || document.documentElement.classList.contains('reduced')) return;
     el.classList.add('is-physical');
     const shapes = [...el.querySelectorAll('svg')];
@@ -166,12 +166,14 @@ window.SHAPES = (function () {
           const nx = dx / d, ny = dy / d, push = min - d;
           b.x += nx * push; b.y += ny * push;
           // velocity of the cursor along the normal is handed over, heavier shapes take less
-          const k = 900 / (900 + b.m * .35);
+          /* Heavy things: a big shape takes much less of the shove than a
+             small one, and nothing is thrown far. */
+          const k = 420 / (420 + b.m * .9);
           const vn = Math.max(0, cvx * nx + cvy * ny);
-          b.vx += nx * (vn * 1.1 + push * .25) * k + cvx * .12 * k;
-          b.vy += ny * (vn * 1.1 + push * .25) * k + cvy * .12 * k;
-          // the part of the sweep across the shape spins it
-          b.va += ((cvx * -ny + cvy * nx) * .9) * k;
+          b.vx += nx * (Math.min(vn, 14) * .45 + push * .12) * k + cvx * .04 * k;
+          b.vy += ny * (Math.min(vn, 14) * .45 + push * .12) * k + cvy * .04 * k;
+          // the part of the sweep across the shape turns it, slowly
+          b.va += ((cvx * -ny + cvy * nx) * .28) * k;
           moving = true;
         }
       }
@@ -195,8 +197,8 @@ window.SHAPES = (function () {
       let energy = 0;
       for (const b of bodies) {
         // the spring home, and air
-        b.vx += -b.x * .012 * dt; b.vy += -b.y * .012 * dt;
-        const drag = Math.pow(.9, dt), spin = Math.pow(.93, dt);
+        b.vx += -b.x * .014 * dt; b.vy += -b.y * .014 * dt;
+        const drag = Math.pow(.86, dt), spin = Math.pow(.88, dt);
         b.vx *= drag; b.vy *= drag; b.va *= spin;
         b.va += -b.a * .004 * dt;
         b.x += b.vx * dt; b.y += b.vy * dt; b.a += b.va * dt;

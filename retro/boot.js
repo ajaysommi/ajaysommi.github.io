@@ -401,19 +401,29 @@
     bar.className = 'dk-bar';
     bar.hidden = true;
     bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><button type="button" class="dk-chip dk-lights" data-k="lights" aria-pressed="false"><i class="dk-bulb" aria-hidden="true"></i><b>Lights off</b></button><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
-    /* The room's lights: off with the site's dark theme, on with its light
-       one, until the switch says otherwise; the choice is kept. */
+    /* The room's lights follow the site's light or dark theme, which
+       follows the device's own setting unless the visitor picked one; the
+       switch picks one, for here and for the standard site. The 1983
+       terminal has no lights to switch. */
     const lightsBtn = bar.querySelector('.dk-lights');
-    const setLights = (off, keep) => {
-      root.classList.toggle('lights-off', off);
-      lightsBtn.setAttribute('aria-pressed', String(off));
-      lightsBtn.querySelector('b').textContent = off ? 'Lights on' : 'Lights off';
-      if (keep) try { localStorage.setItem('aj-lights', off ? 'off' : 'on'); } catch (e) {}
+    const sysLight = matchMedia('(prefers-color-scheme: light)');
+    let lightsOff = root.dataset.theme === 'midnight';
+    const applyLights = () => {
+      const era = host.dataset.era;
+      root.classList.toggle('lights-off', lightsOff && era !== '1983');
+      lightsBtn.hidden = era === '1983';
+      lightsBtn.setAttribute('aria-pressed', String(!lightsOff));
+      lightsBtn.querySelector('b').textContent = lightsOff ? 'Lights off' : 'Lights on';
     };
-    let savedLights = null;
-    try { savedLights = localStorage.getItem('aj-lights'); } catch (e) {}
-    setLights(savedLights ? savedLights === 'off' : root.dataset.theme === 'midnight');
-    lightsBtn.addEventListener('click', (e) => { e.stopPropagation(); SFX.click(); setLights(!root.classList.contains('lights-off'), true); });
+    const setLights = (off, keep) => {
+      lightsOff = off;
+      if (keep) try { sessionStorage.setItem('as-theme', off ? 'midnight' : 'daylight'); } catch (e) {}
+      applyLights();
+    };
+    window.__lights = applyLights;
+    sysLight.addEventListener('change', () => { let th = null; try { th = sessionStorage.getItem('as-theme'); } catch (e) {} if (!th) setLights(!sysLight.matches); });
+    applyLights();
+    lightsBtn.addEventListener('click', (e) => { e.stopPropagation(); SFX.click(); setLights(!lightsOff, true); });
     bar.querySelector('[data-k="eras"]').addEventListener('click', () => { SFX.click(); showPicker(); });
     document.body.appendChild(bar);
     /* Shapes of the era behind the machine. */
@@ -462,6 +472,7 @@
       const y = ERAS[i].year;
       host.dataset.era = y;
       document.documentElement.dataset.era = y;
+      if (window.__lights) window.__lights();
       backdrop.innerHTML = window.SHAPES.layer(y, { count: 46, color: LOOK[y][0], opacity: LOOK[y][1], size: [26, 60], seed: +y });
       /* At night (the site's dark theme) the screen is the only light in
          the room: a pool of it on the wall behind and the desk below,
