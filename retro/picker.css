@@ -746,7 +746,18 @@ html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82
 /* The 2007 room's shapes at night: lighter against its deep blue, as the
    other Macs' shapes are against their rooms. */
 .is-desk.lights-off .os-host[data-era="2007"] > .dk-shapes .bg-shapes { filter: brightness(2.6) saturate(1.25) drop-shadow(0 0 6px color-mix(in srgb, currentColor 70%, transparent)) drop-shadow(0 0 7px rgba(var(--glow), .55)); }
-/* At night the room's shapes read clearly: brighter, fully there, with a
-   glow in their own colour and the screen's. */
-.is-desk.lights-off .os-host[data-era] > .dk-shapes .bg-shapes { opacity: 1; filter: brightness(2.1) saturate(1.35) drop-shadow(0 0 5px color-mix(in srgb, currentColor 80%, transparent)) drop-shadow(0 0 9px rgba(var(--glow), .55)); }
-.is-desk.lights-off .os-host[data-era="2007"] > .dk-shapes .bg-shapes { filter: brightness(2.8) saturate(1.25) drop-shadow(0 0 5px color-mix(in srgb, currentColor 80%, transparent)) drop-shadow(0 0 9px rgba(var(--glow), .6)); }
+
+/* Night in the room, drawn the same in every browser: the room's colour is
+   multiplied by a deep tint of its own hue, which darkens it and makes it
+   richer at once. (A backdrop filter did this before, but Safari leaves a
+   parent's own background out of a backdrop, so there the room stayed
+   light and its shapes washed out.) */
+.os-host[data-era="1991"] { --tint: 178, 160, 132; --tint-edge: 92, 80, 64; }
+.os-host[data-era="1998"] { --tint: 128, 196, 214; --tint-edge: 62, 108, 128; }
+.os-host[data-era="2007"] { --tint: 136, 160, 220; --tint-edge: 64, 82, 136; }
+.is-desk .os-host[data-era]:not([data-era="1983"])::before, .is-desk.lights-off .os-host[data-era]::before, .is-desk.lights-off .os-host[data-era="2007"]::before {
+  -webkit-backdrop-filter: none; backdrop-filter: none; mix-blend-mode: multiply;
+  background: radial-gradient(115% 90% at 50% 42%, rgb(var(--tint)), rgb(var(--tint-edge)) 82%); }
+.os-host[data-era="1991"] { --tint: 148, 132, 108; --tint-edge: 76, 66, 52; }
+.os-host[data-era="1998"] { --tint: 98, 160, 178; --tint-edge: 48, 88, 104; }
+.os-host[data-era="2007"] { --tint: 112, 132, 188; --tint-edge: 52, 66, 112; }
