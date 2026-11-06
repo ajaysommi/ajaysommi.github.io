@@ -719,34 +719,7 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 /* The lights switch, as an icon: a moon with the lights off, a sun with
    them on, drawn as the standard site's theme button draws them. */
 .dk-lights { display: inline-grid; place-items: center; padding: 8px 12px; }
-.dk-lights svg, .mp-lights svg { display: block; }
-.dk-lights .ico-moon, .mp-lights .ico-moon { display: none; }
-.lights-off .dk-lights .ico-moon, .lights-off .mp-lights .ico-moon { display: block; }
-.lights-off .dk-lights .ico-sun, .lights-off .mp-lights .ico-sun { display: none; }
-/* On a phone it sits between Standard site and the sound button, the
-   same round chip as the sound button, in the phone's colours. */
-.mp-lights { position: fixed; z-index: 7000; top: calc(env(safe-area-inset-top) + 8px); right: calc(max(10px, env(safe-area-inset-right)) + 54px); border: 0; border-radius: 999px; padding: 10px 12px; color: #eee; cursor: pointer; background: rgba(20,18,16,.78); box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-.mp-lights svg { width: 19px; height: 19px; }
-.mp-lights[hidden] { display: none; }
-.is-mobile .mp-site { right: calc(max(10px, env(safe-area-inset-right)) + 108px); }
-[data-phone="nokia"] .mp-lights { background: rgba(31,45,85,.88); color: #e6ecf7; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(20,30,60,.3); }
-[data-phone="pocket"] .mp-lights { background: rgba(236,229,248,.92); color: #3b3352; box-shadow: 0 0 0 1px #bcb0d6, 0 4px 12px rgba(60,50,90,.16); }
-[data-phone="iphone"] .mp-lights { background: rgba(28,28,30,.82); color: #f2f2f2; box-shadow: 0 0 0 1px rgba(255,255,255,.3), 0 4px 12px rgba(0,0,0,.3); }
-
-/* Night on a phone: one layer over the room and the phone, with the
-   screen cut out of it. It dims what it covers but deepens its colour;
-   the screen stays as bright as ever and lights the bezel and the wall. */
-.phone-iphone, .iphone-room { --nglow: 190, 210, 255; }
-.nk-room { --nglow: 175, 225, 110; }
-.pocket-room { --nglow: 190, 205, 240; }
-.pn-night { position: absolute; inset: 0; z-index: 40; pointer-events: none; opacity: 0; transition: opacity 1s ease; --k: 1; }
-.lights-off .pn-night { opacity: 1; }
-.pn-night i { position: absolute; display: block; pointer-events: none; }
-.pn-dark { inset: 0; background: radial-gradient(110% 85% at 50% 42%, rgba(0, 8, 24, .12), rgba(0, 4, 16, .46) 78%); -webkit-backdrop-filter: brightness(.62) saturate(1.9) contrast(1.05); backdrop-filter: brightness(.62) saturate(1.9) contrast(1.05); }
-.pn-wall { left: calc(var(--sx) + var(--sw) / 2); top: calc(var(--sy) + var(--sh) / 2); width: calc(var(--sw) * 3.4); height: calc(var(--sh) * 2.6); transform: translate(-50%, -50%); opacity: var(--k); transition: opacity .6s;
-  background: radial-gradient(closest-side, rgba(var(--nglow), .34), rgba(var(--nglow), .13) 45%, rgba(var(--nglow), 0)); mix-blend-mode: screen; }
-.pn-halo { left: var(--sx); top: var(--sy); width: var(--sw); height: var(--sh); border-radius: 4px; opacity: var(--k); transition: opacity .6s;
-  box-shadow: 0 0 14px 3px rgba(var(--nglow), .42), 0 0 46px 14px rgba(var(--nglow), .22), 0 0 110px 40px rgba(var(--nglow), .1); mix-blend-mode: screen; }
-/* The page behind a phone, past the room's edge, dims with it. */
-.lights-off[data-phone] body { filter: none; }
-html[data-phone] .mp-lights { top: calc(var(--vvt, 0px) + var(--vvh, 100svh) - env(safe-area-inset-bottom) - 14px); transform: translateY(-100%); }
+.dk-lights svg { display: block; }
+.dk-lights .ico-moon { display: none; }
+.lights-off .dk-lights .ico-moon { display: block; }
+.lights-off .dk-lights .ico-sun { display: none; }
