@@ -1086,7 +1086,7 @@ window.OSX = (function () {
     s.addEventListener('pointerover', (e) => { const b = e.target.closest('[data-l]'); if (b) rows().forEach((x) => x.classList.toggle('on', x === b)); });
     s.addEventListener('click', (e) => {
       const b = e.target.closest('[data-l]');
-      if (b) { SFX.click(); document.removeEventListener('keydown', key, true); resolve({ lang: b.dataset.l, s }); api.closer && api.closer(); return; }
+      if (b) { SFX.click(); document.removeEventListener('keydown', key, true); resolve({ lang: b.dataset.l, s }); return; }
       const p = e.target.closest('[data-p]');
       if (p && p.dataset.p === 's') { SFX.click(); api.picker(); }
       if (p && p.dataset.p === 'r') { SFX.chime(); s.firstChild.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500 }); }
