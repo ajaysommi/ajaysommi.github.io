@@ -400,7 +400,20 @@
     const bar = document.createElement('div');
     bar.className = 'dk-bar';
     bar.hidden = true;
-    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
+    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><button type="button" class="dk-chip dk-lights" data-k="lights" aria-pressed="false"><i class="dk-bulb" aria-hidden="true"></i><b>Lights off</b></button><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
+    /* The room's lights: off with the site's dark theme, on with its light
+       one, until the switch says otherwise; the choice is kept. */
+    const lightsBtn = bar.querySelector('.dk-lights');
+    const setLights = (off, keep) => {
+      root.classList.toggle('lights-off', off);
+      lightsBtn.setAttribute('aria-pressed', String(off));
+      lightsBtn.querySelector('b').textContent = off ? 'Lights on' : 'Lights off';
+      if (keep) try { localStorage.setItem('aj-lights', off ? 'off' : 'on'); } catch (e) {}
+    };
+    let savedLights = null;
+    try { savedLights = localStorage.getItem('aj-lights'); } catch (e) {}
+    setLights(savedLights ? savedLights === 'off' : root.dataset.theme === 'midnight');
+    lightsBtn.addEventListener('click', (e) => { e.stopPropagation(); SFX.click(); setLights(!root.classList.contains('lights-off'), true); });
     bar.querySelector('[data-k="eras"]').addEventListener('click', () => { SFX.click(); showPicker(); });
     document.body.appendChild(bar);
     /* Shapes of the era behind the machine. */
@@ -453,12 +466,12 @@
       /* At night (the site's dark theme) the screen is the only light in
          the room: a pool of it on the wall behind and the desk below,
          under the machine. */
-      if (!host.querySelector(':scope > .nt-pool')) { const pool = document.createElement('div'); pool.className = 'nt-pool'; pool.innerHTML = '<i class="nt-wall"></i><i class="nt-desk"></i><i class="nt-vig"></i>'; host.insertBefore(pool, bezel); }
+      if (!host.querySelector(':scope > .lx-pool')) { const pool = document.createElement('div'); pool.className = 'lx-pool'; pool.innerHTML = '<i class="lx-wall"></i><i class="lx-desk"></i><i class="lx-vig"></i>'; host.insertBefore(pool, bezel); }
       host.style.removeProperty('--gcx'); host.style.removeProperty('--gcy');
       if (PHOTO[y]) {
         photo = PHOTO[y];
         const [ax, ay, as, mono] = photo.aj;
-        bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><img class="nt-lit" src="${photo.src}" alt="" draggable="false" style="--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px" /><i class="nt-tint" style="-webkit-mask-image:url(${photo.src});mask-image:url(${photo.src});--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px"></i><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${round(photo.glass[4])}"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
+        bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><img class="lx-lit" src="${photo.src}" alt="" draggable="false" style="--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px" /><i class="lx-tint" style="-webkit-mask-image:url(${photo.src});mask-image:url(${photo.src});--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px"></i><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${round(photo.glass[4])}"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
         host.classList.add('is-photo');
         host.classList.remove('is-dark');
         /* The Bondi iMac's power button switches the picture tube off and on. */

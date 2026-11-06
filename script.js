@@ -4307,66 +4307,36 @@ if (window.self === window.top) console.log(
 
 
 /* ==========================================================================
-   Featured Work on a computer: each project floats in its own bubble. They
-   drift on their own slow currents, lean toward the pointer, and get out of
-   its way when it pushes through them, wobbling like something soft as
-   they go; then they ease back into their places. Touch screens and reduced
-   motion keep the plain cards.
+   Featured Work on a computer: each project in a bubble of its own shape,
+   floating where it is. Each bobs on its own slow breath, a few pixels at
+   most, and leans a hair toward the pointer when it is near; the light on
+   its skin follows the pointer. That is all: quiet, so the work is what
+   you read. Touch screens and reduced motion keep the plain cards.
    ========================================================================== */
 (function projectBubbles() {
   const grid = document.getElementById('projectGrid');
   if (!grid || !matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const wide = matchMedia('(min-width: 1024px)');
-  const items = () => [...grid.querySelectorAll('.work-item:not(.is-hidden)')];
+  const set = () => grid.classList.toggle('is-bubbles', wide.matches);
+  set(); wide.addEventListener('change', set);
   const B = new Map();
-  let mx = -1e4, my = -1e4, pmx = mx, pmy = my, vmx = 0, vmy = 0, raf = 0, seen = false, last = 0;
-  const body = (el) => {
-    if (!B.has(el)) B.set(el, { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, ph: Math.random() * 6.28, sp: .00045 + Math.random() * .00025, hot: 0 });
-    return B.get(el);
-  };
+  let mx = -1e4, my = -1e4, raf = 0, seen = false;
   const frame = (t) => {
     raf = 0;
-    if (!seen || !wide.matches) { grid.classList.remove('is-bubbles'); B.forEach((b, el) => { el.style.transform = ''; }); return; }
-    grid.classList.add('is-bubbles');
-    const dt = Math.min(34, t - (last || t)) / 16.67; last = t;
-    vmx += ((mx - pmx) - vmx) * .35; vmy += ((my - pmy) - vmy) * .35; pmx = mx; pmy = my;
-    for (const el of items()) {
-      const b = body(el);
-      const r = el.getBoundingClientRect();
-      const cx = r.left + r.width / 2 - b.x, cy = r.top + r.height / 2 - b.y;
-      // its own current
-      const fx = Math.sin(t * b.sp + b.ph) * 7, fy = Math.cos(t * b.sp * 1.3 + b.ph) * 9;
-      let ax = (fx - b.x) * .02, ay = (fy - b.y) * .02;
-      // the pointer: pushed away when it comes through, nudged by its sweep
-      const dx = cx + b.x - mx, dy = cy + b.y - my, reach = Math.max(r.width, r.height) * .62, d = Math.hypot(dx, dy);
-      const inside = mx > r.left && mx < r.right && my > r.top && my < r.bottom;
-      b.hot += ((inside ? 1 : 0) - b.hot) * .12;
-      if (d < reach && d > 1) {
-        const f = (1 - d / reach);
-        ax += (dx / d) * f * 1.6 + vmx * f * .06;
-        ay += (dy / d) * f * 1.6 + vmy * f * .06;
-      }
-      b.vx = (b.vx + ax * dt) * Math.pow(.9, dt); b.vy = (b.vy + ay * dt) * Math.pow(.9, dt);
-      b.x += b.vx * dt; b.y += b.vy * dt;
-      const lim = 46; b.x = Math.max(-lim, Math.min(lim, b.x)); b.y = Math.max(-lim, Math.min(lim, b.y));
-      // soft: it stretches along the way it moves, and leans to the pointer when it is over it
-      const v = Math.min(1, Math.hypot(b.vx, b.vy) / 6), ang = Math.atan2(b.vy, b.vx);
-      const sq = 1 + v * .05, tx = inside ? ((my - (r.top + r.height / 2)) / r.height) * -7 : 0, ty = inside ? ((mx - (r.left + r.width / 2)) / r.width) * 7 : 0;
-      b.tx += (tx - b.tx) * .12; b.ty += (ty - b.ty) * .12;
-      /* Only what is needed this frame, so text at rest stays sharp. */
-      let tf = `translate(${b.x.toFixed(1)}px, ${b.y.toFixed(1)}px)`;
-      if (v > .04) tf += ` rotate(${ang.toFixed(3)}rad) scale(${sq.toFixed(4)}, ${(1 / sq).toFixed(4)}) rotate(${(-ang).toFixed(3)}rad)`;
-      if (Math.abs(b.tx) > .05 || Math.abs(b.ty) > .05) tf += ` perspective(900px) rotateX(${b.tx.toFixed(2)}deg) rotateY(${b.ty.toFixed(2)}deg)`;
-      if (b.hot > .01) tf += ` scale(${(1 + b.hot * .025).toFixed(4)})`;
-      el.style.transform = tf;
+    if (!seen || !wide.matches) { grid.querySelectorAll('.work-item').forEach((el) => { el.style.translate = ''; }); return; }
+    grid.querySelectorAll('.work-item:not(.is-hidden)').forEach((el, i) => {
+      if (!B.has(el)) B.set(el, { ph: i * 1.7 + Math.random(), sp: .00032 + Math.random() * .00012, x: 0, y: 0 });
+      const b = B.get(el), r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2, d = Math.hypot(mx - cx, my - cy), near = Math.max(0, 1 - d / (r.width * .9));
+      const tx = Math.sin(t * b.sp + b.ph) * 2.5 + ((mx - cx) / r.width) * 4 * near;
+      const ty = Math.cos(t * b.sp * 1.2 + b.ph) * 3.5 + ((my - cy) / r.height) * 4 * near;
+      b.x += (tx - b.x) * .06; b.y += (ty - b.y) * .06;
+      el.style.translate = `${b.x.toFixed(2)}px ${b.y.toFixed(2)}px`;
       el.style.setProperty('--gx', (((mx - r.left) / r.width) * 100).toFixed(1) + '%');
       el.style.setProperty('--gy', (((my - r.top) / r.height) * 100).toFixed(1) + '%');
-    }
+    });
     raf = requestAnimationFrame(frame);
   };
-  const wake = () => { if (!raf) raf = requestAnimationFrame(frame); };
-  new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) wake(); }, { rootMargin: '120px' }).observe(grid);
-  addEventListener('pointermove', (e) => { if (mx < -1e3) { pmx = e.clientX; pmy = e.clientY; } mx = e.clientX; my = e.clientY; }, { passive: true });
-  document.addEventListener('pointerleave', () => { mx = my = -1e4; });
-  wide.addEventListener('change', wake);
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) raf = requestAnimationFrame(frame); }, { rootMargin: '100px' }).observe(grid);
+  addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
 })();

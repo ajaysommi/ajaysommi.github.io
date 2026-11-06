@@ -1525,3 +1525,8 @@
 .ip-screen .cl-btns .cl-dark { box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
 /* A bar with no signal is only a small stub at the foot of its place. */
 .ip-screen .ip-sig i.off { height: 2px !important; opacity: .85; }
+/* A project's own screenshot as its thumbnail, shown whole. */
+.ip-screen .yt-th.has-shot { background: #15161a; overflow: hidden; }
+.ip-screen .pl li .yt-th.has-shot img { position: static; width: 100%; height: 100%; margin: 0; border: 0; border-radius: 0; object-fit: contain; box-shadow: none; }
+/* Starting up: the mark comes up and sparkles, with no shine swept over it. */
+.ip-screen .ip-boot .ip-shine, .ip-screen .ip-boot.is-shine .ip-shine { animation: none; opacity: 0; display: none; }

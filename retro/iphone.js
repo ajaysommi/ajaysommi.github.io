@@ -1773,7 +1773,7 @@ window.IPHONE = { start(room, exit) {
       app.push('Playlists', (pg) => plain(pg, PL.map(([n, list]) => ({ text: n, sub: `${list.length} song${list.length === 1 ? '' : 's'}`, img: list[0].img, cls: 'yt-row', go: () => app.push(n, songs(list), { back: 'Playlists' }) }))), { right: ['Now Playing', () => nowPlaying(PL[0][1], 0)] });
     } },
     projects: { name: 'Projects', icon: 'tv', cls: 'is-yt', bar: 'black', nb: 'black', open(app) {
-      const row = (p) => ({ text: p.name, sub: p.stack, cls: 'yt-row', lead: `<span class="yt-th" style="--h:${P.projects.indexOf(p) * 57 + 200}">${esc(p.name.slice(0, 2))}</span>`, go: () => app.push(p.name, (x) => {
+      const row = (p) => ({ text: p.name, sub: p.stack, cls: 'yt-row', lead: p.shot ? `<span class="yt-th has-shot"><img src="${p.shot}" alt="" loading="lazy" draggable="false" /></span>` : `<span class="yt-th" style="--h:${P.projects.indexOf(p) * 57 + 200}">${esc(p.name.slice(0, 2))}</span>`, go: () => app.push(p.name, (x) => {
         x.classList.add('pin');
         x.innerHTML = `${group([['', `${esc(p.full)}<br/><span style="font-weight:normal;color:#4c566c">${esc(p.kind)}</span>`]])}${p.shot ? `<div class="gp pj-shot"><img src="${p.shot}" alt="Screenshot of ${esc(p.name)}" /></div>` : ''}<div class="gp"><div class="txt">${esc(p.text)}</div></div>${group([['stack', esc(p.stack), 1]])}${p.url ? '<button class="gbtn" type="button" data-go>View on GitHub</button>' : '<div class="gl" style="text-align:center">Source is private for now</div>'}`;
         const b = x.querySelector('[data-go]');
