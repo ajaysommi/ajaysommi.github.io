@@ -739,3 +739,10 @@ html.is-desk.lights-off:not([data-era="1983"]) .pk-fly .bz-dev > img:first-child
 html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-dev > img:first-child { filter: brightness(.74) saturate(1.05) contrast(1.04); }
 html.is-desk.lights-off:not([data-era="1983"]) .pk-fly .bz-aj { filter: brightness(.7); }
 html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82) contrast(.95) drop-shadow(0 1px 0 rgba(255, 255, 255, .3)); }
+/* The night layers are never part of a flying copy, and are always laid
+   over the photo, never after it. */
+.pk-fly .lx-lit, .pk-fly .lx-tint { display: none !important; }
+.bz-dev > .lx-lit, .bz-dev > .lx-tint { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+/* The 2007 room's shapes at night: lighter against its deep blue, as the
+   other Macs' shapes are against their rooms. */
+.is-desk.lights-off .os-host[data-era="2007"] > .dk-shapes .bg-shapes { filter: brightness(2.6) saturate(1.25) drop-shadow(0 0 6px color-mix(in srgb, currentColor 70%, transparent)) drop-shadow(0 0 7px rgba(var(--glow), .55)); }

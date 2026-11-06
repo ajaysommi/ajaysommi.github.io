@@ -267,8 +267,16 @@
            glass and badge), so where the copy gives way to it nothing
            changes. */
         const c = body.cloneNode(true);
-        c.querySelectorAll('button, .bz-drive').forEach((x) => x.remove());
+        /* Only the machine itself: not its buttons, nor the night lighting
+           laid over it, which outside the room would show as a second
+           copy of the photo below the first. */
+        c.querySelectorAll('button, .bz-drive, .lx-lit, .lx-tint').forEach((x) => x.remove());
         c.style.cssText += `;position:absolute;left:0;top:0;transform:scale(${device.width / body.offsetWidth});transform-origin:0 0;filter:none`;
+        /* Cut off where the room's window cuts the machine off (below the
+           bottom edge: the 1991 Mac's keyboard, the stands), so the copy
+           never shows more than the room will. */
+        const shown = (innerHeight - device.top) * body.offsetHeight / device.height, cut = body.offsetHeight - shown;
+        if (cut > 1) c.style.clipPath = `inset(0 0 ${cut.toFixed(1)}px 0)`;
         im.appendChild(c);
       } else im.style.background = `url("${photo}") 0 0 / 100% 100% no-repeat`;
       if (glass && !body) im.innerHTML = `<i style="position:absolute;left:${glass[0] / photoW * 100}%;top:${glass[1] / photoH * 100}%;width:${glass[2] / photoW * 100}%;height:${glass[3] / photoH * 100}%;background:${glass[5] || '#050506'};border-radius:${round(glass[4], glass[2], glass[3])}"></i>`;
