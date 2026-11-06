@@ -5629,3 +5629,5 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 .era-yr[data-y="1998"] { top: -.07em; }
 .era-yr[data-y="2007"] { top: -.05em; }
 .era-yr.is-scramble { top: 0; }
+/* On a phone the boxed years sit a little lower than on a computer. */
+@media (max-width: 719px) { .era-yr[data-y="2000"], .era-yr[data-y="2004"] { top: -.1em; } }
