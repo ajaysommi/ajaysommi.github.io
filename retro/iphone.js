@@ -2297,7 +2297,11 @@ window.IPHONE = { start(room, exit) {
     const im = e.target.closest && e.target.closest('img');
     if (!im || !current || !current.el.contains(im)) return;
     if (im.closest('.pl li, .thumbs, .grid4, .ip-icon, .wall-grid, .pv-ph, .photo-view, .mp, .cam, .cam2, .gm, .np-art, .yt-th, .bb-msg') || im.offsetWidth < 60) return;
-    e.stopPropagation();
+    /* A movie or show's cover in the Store is left to the plain picture
+       view: it opens up larger and closes with a tap, nothing more. */
+    if (im.closest('.st-item')) return;
+    // Only this viewer: the plain picture view must not open over it as well.
+    e.stopImmediatePropagation();
     SFX.click();
     viewer(current, { steps: [[im.currentSrc || im.src, im.alt || '', '']] }, 0, scr.dataset.bar || 'gray');
   }, true);
