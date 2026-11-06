@@ -1,0 +1,209 @@
+/* CSS Document - MySpace */
+body{background:#E5E5E5; margin:0; padding:0; font-family:verdana,arial,sans-serif,helvetica; font-size:11px; color:#000; text-align:center;}
+img{border:0;}
+form{margin:0; padding:0;}
+
+/* Headings */
+h1 {font-size:200%;}
+h2 {font-size:175%;}
+h3 {font-size:150%;}
+h4 {font-size:125%;}
+h5 {font-size:100%;}
+h6 {font-size:80%;}
+
+/* Links */
+a{text-decoration:none; font-weight:bold;}
+a:link, a:active, a:visited{color:#039;}
+a:hover{color:#C00; text-decoration:underline;}
+
+/* Tables */
+table {font:inherit; font-size:100%; color:inherit; border-collapse:collapse;}
+
+/* Div's */
+#wrap{width:800px; margin:0 auto; padding:0; text-align:left; background-color:#FFFFFF;}
+#header{background-color:#039;color:#FFF; height:125px; padding:5px; padding-top:8px;}
+#topnav{background-color:#6698CB; text-align:center; padding:5px;}
+#footer{background-color:#E5E5E5;text-align:center;position:relative; bottom:0; left:0; margin:0;padding:0;}
+#footer a {text-decoration:underline;}
+#copyRight {color:#000000; font-size:90%; font-family:Arial;}
+#main{background:inherit; position:relative; min-height:500px; _height:500px;}
+#nav{position: absolute;margin-left:1%; margin-right:1%;background:inherit;}
+#content{position: relative;margin-right:1%;background:inherit;}
+#contentWrap{position:static;} 
+#header #advert{margin-top:5px; text-align:center; z-index:1000000 !important; visibility:visible !important; display:block !important;}
+
+/* Sets header, topnav, and footer text and links color */
+#header, #header a, #topnav a{color:#FFFFFF;font-weight:normal;}
+#topnav a:hover{color:#040C5C;}
+
+/* Addictional header styles */
+#header_bandJoin {text-align:left; font-size:90%; font-weight:bold;}
+#header_search input, #header_search label {height:18px; padding:0; margin:0; margin-right:2px; vertical-align:middle;}
+#searchSubmit {font-family:Verdana, Geneva, Arial, Helvetica, sans-serif; font-size:85%; background-color:#E0FFFF;}
+
+/* Google Transparent Logo */
+form>img#googleTLogo{background-image:url(https://web.archive.org/web/20070614202716im_/http://x.myspace.com/images/powered_by_google_white.png);background-repeat: no-repeat;}
+#googleTLogo{vertical-align:bottom;width:120px;height:30px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://x.myspace.com/images/powered_by_google_white.png', sizingMethod='image');}
+
+/* Classes */
+.clear{clear:both;}
+.left{float:left;}
+.right{float:right;}
+.advert{display:block;}
+.relative{position:relative;}
+
+.section {border:2px #6698CB solid; width:100%; margin-bottom:15px;}
+.heading {background-color:#6698CB; color:#FFFFFF; margin:0;}
+
+.cols {width:100%;}
+.cols th, .cols td {text-align:left;vertical-align:top;}
+.cols th {width:100px;}
+
+.onlineNow {width:80px; height:20px;}
+
+/* Font */
+.alignL {text-align:left}
+.alignR {text-align:right}
+.alignC {text-align:center}
+.alignJ {text-align:justify}
+.valignT {vertical-align:top}
+.valignM {vertical-align:middle}
+.valignB {vertical-align:bottom}
+.weightN {font-weight:normal}
+.weightB {font-weight:bold}
+.smaller {font-size:90%;}
+.bigger {font-size:110%;}
+
+/* Background */
+.bgWhite{background:#FFF;}
+.bgBlue{background:#039;}
+.bgLtBlue{background:#D5E8FB;}
+.bgDkBlue{background:#040C5C;}
+.bgNavBlue{background:#6698CB;}
+.bgGrey{background:#E5E5E5;}
+.bgDkGrey{background:#666;}
+.bgRed{background:#C00;}
+.bgPeach{background:#FC9;}
+.bgPurple{background:#96C;}
+.bgGreen{background:#090;}
+.bgOrange{background:#F60;} /* Alternative #FF9800 */
+.bgBlack{background:#000;}
+
+/* Font Color */
+.txtWhite{color:#FFF;}
+.txtBlue{color:#039;}
+.txtLtBlue{color:#D5E8FB}
+.txtDkBlue{color:#040C5C;}
+.txtNavBlue{color:#6698CB;}
+.txtGrey{color:#E5E5E5;}
+.txtDkGrey{color:#666;}
+.txtRed{color:#C00;}
+.txtPeach{color:#FC9;}
+.txtPurple{color:#96C;}
+.txtGreen{color:#090;}
+.txtOrange{color:#F60;} /* Alternative #FF9800 */
+.txtBlack{color:#000;}
+
+/* Links */
+
+
+/* Border */
+.borWhite{border:1px solid #FFF;}
+.borBlue{border:1px solid #039;}
+.borLtBlue{border:1px solid #D5E8FB}
+.borDkBlue{border:1px solid #040C5C;}
+.borNavBlue{border:1px solid #6698CB;}
+.borGrey{border:1px solid #E5E5E5;}
+.borDkGrey{border:1px solid #666;}
+.borRed{border:1px solid #C00;}
+.borPeach{border:1px solid #FC9;}
+.borPurple{border:1px solid #96C;}
+.borGreen{border:1px solid #090;}
+.borOrange{border:1px solid #F60;} /* Alternative #FF9800 */
+.borBlack{border:1px solid #000;}
+
+/* Dimensions */
+/* Widths */
+.w25{width:25px;}
+.w50{width:50px;}
+.w75{width:75px;}
+.w100{width:100px;}
+.w125{width:125px;}
+.w150{width:150px;}
+.w175{width:175px;}
+.w200{width:200px;}
+.w225{width:225px;}
+.w250{width:250px;}
+.w275{width:275px;}
+.w300{width:300px;}
+.w325{width:325px;}
+.w350{width:350px;}
+.w375{width:375px;}
+.w400{width:400px;}
+.w49{width:49%;}
+.w40{width:40%;}
+
+/* Heights */
+.h15{height:15px;}
+.h20{height:20px;}
+.h25{height:25px;}
+.h50{height:50px;}
+.h75{height:75px;}
+.h100{height:100px;}
+.h125{height:125px;}
+.h150{height:150px;}
+.h175{height:175px;}
+.h200{height:200px;}
+.h225{height:225px;}
+.h250{height:250px;}
+.h275{height:275px;}
+.h300{height:300px;}
+.h325{height:325px;}
+.h350{height:350px;}
+.h375{height:375px;}
+.h400{height:400px;}
+
+/* Padding */
+.noPad{padding:0;}
+.pad2{padding:2px;}
+.pad3{padding:3px;}
+.pad5{padding:5px;}
+.padTB5{padding:5px 0;}
+.padTB10{padding:10px 0;}
+.padTB15{padding:15px 0;}
+.padRL5{padding:0 5px;}
+.padRL10{padding:0 10px;}
+.padRL15{padding:0 15px;}
+
+/* Margin */
+.noMar{margin:0;}
+.mar2{margin:2px;}
+.mar3{margin:3px;}
+.mar5{margin:5px;}
+.mar10{margin:10px;}
+.marTB5{margin:5px 0;}
+.marTB10{margin:10px 0;}
+.marTB15{margin:15px 0;}
+.marRL5{margin:0 5px;}
+.marRL10{margin:0 10px;}
+.marRL15{margin:0 15px;}
+/*
+     FILE ARCHIVED ON 20:27:16 Jun 14, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 00:35:11 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.702
+  exclusion.robots: 0.074
+  exclusion.robots.policy: 0.059
+  esindex: 0.01
+  cdx.remote: 14.097
+  LoadShardBlock: 93.023 (3)
+  PetaboxLoader3.datanode: 189.194 (4)
+  PetaboxLoader3.resolve: 121.876 (2)
+  load_resource: 227.962
+*/

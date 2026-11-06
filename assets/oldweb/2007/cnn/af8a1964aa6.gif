@@ -1,0 +1,509 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<title>CNN.com</title>
+<link rel="Start" href="/">
+<link rel="Search" href="/search/">
+<link rel="stylesheet" href="http://i.cnn.net/cnn/.element/ssi/css/1.1/main.css" type="text/css">
+<link rel="stylesheet" href="http://i.cnn.net/cnn/.element/ssi/css/1.3/common.css" type="text/css">
+<script language="JavaScript1.2" src="http://i.cnn.net/cnn/.element/ssi/js/1.3/main.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">cnnSiteWideCurrDate = new Date(2007, 1, 17);</script>
+<script type="text/javascript" language="JavaScript1.1" src="http://ar.atwola.com/file/adsWrapper.js"></script>
+<style type="text/css">
+<!--
+.aoltextad { text-align: justify; font-size: 12px; color: black; font-family: Georgia, sans-serif }
+-->
+</style>
+<script type="text/javascript" src="http://i.a.cnn.net/cnn/.element/ssi/js/1.3/ad_head0.js"></script>
+<script type="text/javascript" src="http://i.a.cnn.net/cnn/cnn_adspaces/cnn_adspaces.js"></script>
+
+</head>
+<body topmargin="0" leftmargin="0" marginheight="0" marginwidth="0" onload="cnnHandleCSIs();">
+<a href="#ContentArea"><img src="http://i.cnn.net/cnn/images/1.gif" alt="Skip to main content" align="right" width="10" height="1" border="0" hspace="0" vspace="0"></a>
+<style type="text/css">
+.cnnCeilIntlEd {position:absolute;top:46px;right:10px;font-size:10px;color:#333;font-family:arial,sans-serif;}
+.cnnCeilIntlEd A:link, .cnnCeilIntlEd A:visited, .cnnCeilIntlEd A:hover {color:#333;}
+</style>
+<div><img src="http://i.a.cnn.net/cnn/images/1.gif" height="1" width="1" border="0" alt=""></div>
+<div id="CNN_Ceiling">
+
+	<div class="cnnRightBorder"></div>
+	<div class="cnnLeftBorder"></div>
+
+	<div class="cnnCeilingLogo">
+		<a href="/"><img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/logo_cnn.gif" width="206" height="64" hspace="0" vspace="0" border="0" alt="CNN.com"></a>
+	</div>
+	
+	<div class="cnnMember">
+
+		<script language="javascript" type="text/javascript">
+			if (typeof(CNN_returnUserName) != "undefined") {
+				CNN_returnUserName('firstName');
+			} else {
+				document.write('Member Center: <a href="http://audience.cnn.com/services/cnn/memberservices/regwall/member_profile.jsp?source=cnn">Sign In<\/a> | <a href="http://audience.cnn.com/services/cnn/memberservices/member_register.jsp?pid=&source=cnn&url=http%3A%2F%2Faudience.cnn.com%2Fservices%2Fcnn%2Fmemberservices%2Fregwall%2Fmember_profile.jsp%3Fsource%3Dcnn">Register<\/a>');		
+			}
+		</script>				
+			<noscript>
+				Member Center: <a href="http://audience.cnn.com/services/cnn/memberservices/regwall/member_profile.jsp?source=cnn">Sign In</a> | <a href="http://audience.cnn.com/services/cnn/memberservices/member_register.jsp?pid=&source=cnn&url=http%3A%2F%2Faudience.cnn.com%2Fservices%2Fcnn%2Fmemberservices%2Fregwall%2Fmember_profile.jsp%3Fsource%3Dcnn">Register</a>	
+			</noscript>
+
+	</div>		
+		
+		<div class="cnnCeilIntlEd"><a href="/linkto/intl.html">International Edition</a></div>
+
+	<div class="cnnCeilingdivider">
+		<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/cnnCeildivider.gif" alt="" width="752" height="2" hspace="0" vspace="0" border="0">	
+	</div>
+
+	<div class="cnnCeilingSearch">
+		<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_search.gif" width="71" height="14" alt="Search">
+	</div>
+
+
+<form action="http://search.cnn.com/cnn/search" method="get" onsubmit="return CNN_validateSearchForm(this);">
+	<input type="hidden" name="source" value="cnn">
+
+	<input type="hidden" name="invocationType" value="search/top">
+	
+	<div class="cnnSearchTheWebOption">
+		<input type="radio" name="sites" value="web" checked class="cnnR">
+	</div>
+
+	<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_the_web.gif" width="39" height="6" alt="" class="cnnSearchTheWebImg">
+
+	
+	<div class="cnnSearchCNNOption">
+		<input type="radio" name="sites" value="cnn" class="cnnR">
+	</div>
+
+	<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_cnn_com.gif" width="39" height="6" alt="" class="cnnSearchCNNImg">
+
+		<input type="text" name="query" value="" title="Enter text to search for and click 'Search'" size="30" maxlength="40" class="cnnInput">
+	
+	<div class="cnnSearchSubmitBtn">
+		<input type="submit" value="Search" class="cnnFormButtonSearch">
+	</div>
+</form>
+
+	<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_yahoo.gif" width="164" height="13" alt="" class="cnnYahoo">
+
+</div>
+
+
+
+<!-- <table width="770" cellpadding="0" cellspacing="0" border="0" id="cnnCeilSearch">
+		<colgroup>
+			<col width="8">
+			<col width="572">
+			<col width="32">
+			<col width="158">
+		</colgroup>
+		<tr>
+			<td class="cnnGrad"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/searchbar/nav.gradient.gif" width="8" height="30" alt=""></td>
+			<td><div class="cnnNoWrap">
+				<form action="http://search.cnn.com/cnn/search" method="get" onsubmit="return CNN_validateSearchForm(this);">
+					<input type="hidden" name="source" value="edition"><input type="hidden" name="invocationType" value="search/top"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/searchbar/hdr.gif" width="63" height="12" alt="Search" class="cnnSrch"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/searchbar/vert.divider.gif" width="2" height="29" style="margin: 0 15px" alt=""><input type="radio" name="sites" value="web" checked class="cnnR"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/searchbar/the.web.gif" width="44" height="7" alt="" class="cnnWeb"><input type="radio" name="sites" value="cnn" class="cnnR"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/searchbar/cnn.com.gif" width="41" height="7" alt="" class="cnnCNN"><input type="text" name="query" value="" title="Enter text to search for and click 'Search'" size="30" maxlength="40" class="cnnInput"><input type="submit" value="SEARCH" class="cnnFormButtonSearch">
+				</form></div>
+			</td>
+			<td><img src="http://i.a.cnn.net/cnn/.element/img/1.3/searchbar/vert.divider.gif" width="2" height="29" style="margin: 0 15px" alt=""></td>
+			<td><img src="http://i.a.cnn.net/cnn/.element/img/1.3/searchbar/yahoo.logo.gif" width="158" height="29" alt=""></td>
+		</tr>
+	</table> -->
+<table width="770" cellpadding="0" cellspacing="0" border="0">
+	<tr valign="top">
+		<td width="126" valign="top"><div id="cnnNavBar"><ul id="nav">
+	<li><div><a href="/">Home Page</a></div></li>
+	<li><div><a href="/WORLD/">World</a></div></li>
+	<li><div><a href="/US/">U.S.</a></div></li>	
+	<li><div><a href="/WEATHER/">Weather</a></div></li>
+	<li class="money"><div><a href="http://money.cnn.com/index.html?cnn=yes">Business</a></div></li>
+	<li class="sports"><div><a href="/si/index.html?cnn=yes">Sports</a></div></li>
+	<li class="analysis"><div><a href="/time/index.html?xid=site-cnn-navside">Analysis</a></div></li>
+	<li><div><a href="/POLITICS/">Politics</a></div></li>
+	<li><div><a href="/LAW/">Law</a></div></li>
+	<li><div><a href="/TECH/">Technology</a></div></li>
+	<li><div><a href="/TECH/space/">Science &amp; Space</a></div></li>
+	<li><div><a href="/HEALTH/">Health</a></div></li>
+	<li><div><a href="/SHOWBIZ/">Entertainment</a></div></li>
+	<li><div><a href="/offbeat/">Offbeat</a></div></li>
+	<li><div><a href="/TRAVEL/">Travel</a></div></li>
+	<li><div><a href="/EDUCATION/">Education</a></div></li>
+	<li><div><a href="/SPECIALS/">Special Reports</a></div></li>
+	<li><div><a href="/video/">Video</a></div></li>	
+	<li><div><a href="/AUTOS/">Autos</a></div></li>
+	<li><div><a href="/exchange/">I-Reports</a></div></li>
+</ul>
+
+<div class="cnnNavAd">
+	<!-- ADSPACE: generic/left.120x90 --><div align="center" style="padding: 0; margin: 0; border: 0;"><script type="text/javascript"> 
+
+cnnad_createAd("436111","http://ads.cnn.com/html.ng/site=cnn&cnn_position=120x90_lft&params.styles=fs","90","120");
+
+</script></div>
+</div>
+
+<div><img src="http://i.a.cnn.net/cnn/.element/img/1.5/nav/services.gif" width="126" height="18" border="0" alt="Services"></div>
+<ul id="cnnBottomNav">
+	<li class="top"><a href="/EMAIL/">E-mails</a></li>
+	<li><a href="/services/rss/">RSS</a></li>
+	<li><a href="/services/podcasting/">Podcasts</a></li>
+	<li><a href="/togo/">CNNtoGO</a></li>
+	<li><a href="/pipeline/">CNN Pipeline</a></li>
+</ul>
+<div><img src="http://i.a.cnn.net/cnn/.element/img/1.5/nav/menu_bottom_line.gif" width="126" height="1" border="0" alt=""></div>
+<div id="cnnBottomNavSearchBox">
+	<img src="http://i.a.cnn.net/cnn/.element/img/1.5/nav/search.gif" width="126" height="18" border="0" alt="">
+	<form action="http://search.cnn.com/cnn/search" method="get" name="nav_bottom_search" onSubmit="return CNN_validateSearchForm(this)">
+		<input type="hidden" name="sites" value="cnn">
+		<input type="hidden" name="source" value="cnn">
+		<input type="hidden" name="invocationType" value="side/home">
+
+		<div class="cnnSearchTheWebOption">
+			<input type="radio" name="sites" value="web" checked class="cnnR">
+		</div>
+
+<div class="cnnSearchTheWebImg">
+		<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_the_web.gif" width="39" height="6" alt="">
+</div>
+
+		<div class="cnnSearchCNNOption">
+			<input type="radio" name="sites" value="cnn" class="cnnR">
+		</div>
+	
+		<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_cnn_com.gif" width="39" height="6" alt="" class="cnnSearchCNNImg">
+
+ 
+		<input type="text" name="query" class="cnnInput" value="" title="Enter text to search for and click 'Search'" size="7" maxlength="40">	
+
+		<div class="cnnSearchSubmitBtn">
+			<input type="submit" value="Search" class="cnnFormButtonSearch">
+		</div>
+
+
+
+	<img src="http://i.a.cnn.net/cnn/.element/img/1.5/nav/powered_by_yahoo.gif" width="85" height="21" border="0" alt="Powered by Yahoo! Search" class="cnnYahoo">
+
+	</form>
+</div>
+
+<div><img src="http://i.a.cnn.net/cnn/.element/img/1.5/nav/menu_bottom_line.gif" width="126" height="1" border="0" alt=""></div></div></td>
+		<td width="10"><img src="http://i.cnn.net/cnn/images/1.gif" width=10 height="1" hspace="0" vspace="0" alt="" border="0"></td>
+		<td>
+<div><img src="http://i.cnn.net/cnn/images/1.gif" width=634 height="10" hspace="0" vspace="0" alt="" border="0"></div>
+<a name="ContentArea"></a>
+			<table cellpadding="0" cellspacing="0" width="100%" border="0">
+				<tr valign="top">
+					<td><img src="http://i.cnn.net/cnn/.element/img/1.0/sect/SEARCH/search.hd.gif" width="142" height="32" alt="" border="0" hspace="0" vspace="0" align="top"></td>
+				</tr>
+				<tr valign="top">
+					<td width="634" bgcolor="#003366" height="3"><img src="http://i.cnn.net/cnn/images/1.gif" width="634" height="3" hspace="0" vspace="0" alt="" border="0"></td>
+				</tr>
+			</table>
+<div><img src="http://i.cnn.net/cnn/images/1.gif" width=634 height="9" hspace="0" vspace="0" alt="" border="0"></div>
+<div class="cnnBodyText">
+<p>To search CNN.com, enter your keyword/s at the top of this or any CNN.com page. To search any other site, click on a link below.</p>		
+		
+
+
+<table width="464" cellpadding="0" cellspacing="0" border="0">
+ <tr>
+  <td width="229" align="left">
+  
+   <table cellpadding="1" cellspacing="0" bgcolor="#999999" border="0">
+     <tr><td>
+     <table width="224" cellpadding="5" cellspacing="0" bgcolor="#DEDEDE" border="0">
+    <tr><td class="cnnBodyText">
+    <a href="/cnnsi/search/"><img src="http://i.cnn.net/cnn/.element/img/1.0/sect/SEARCH/search_si.gif" border="0" align="absmiddle"></a> <a href="/cnnsi/search/">Search SI.com</a>
+   </td></tr></table>
+   </td></tr></table>
+   
+   </td>
+  <td><img src="http://i.cnn.net/cnn/images/1.gif" alt="" width="6" height="1" hspace="0" vspace="0" border="0"></td>
+  <td width="229" align="left">
+  
+   <table cellpadding="1" cellspacing="0" bgcolor="#999999" border="0">
+     <tr><td>
+     <table width="224" cellpadding="5" cellspacing="0" bgcolor="#DEDEDE" border="0">
+    <tr><td class="cnnBodyText">
+    <a href="/money/search/"><img src="http://i.cnn.net/cnn/.element/img/1.0/sect/SEARCH/search_cnnmoney.gif" border="0" align="absmiddle"></a> <a href="/money/search/">Search Money.com</a>
+   </td></tr></table>
+   </td></tr></table>
+   
+   </td>
+ </tr>
+</table>
+		
+<a name="help"></a>
+
+
+
+<p>
+<span class="cnntopResultsTerm" style="font-weight:bold;font-size:14px;color:#c00;">SEARCH BASICS</span><br>
+To enter a query, select either the &quot;web&quot; or &quot;site&quot; radio button. If you would like to search the entire web, select &nbsp;&quot;web.&quot; If you would like to refine your search to query only CNN.com, select &nbsp;&quot;site.&quot; Then, just type in a few descriptive words and hit the 'SEARCH' button for a list of relevant results. The search only returns web pages or stories that contain all the words in your query, refining or narrowing your search is as simple as adding more words to the search terms you have already entered. CNN's site search is designed to be simple and easy for our users. If you don't find your search term right away, use the tips to try to refine your search.
+</p>
+
+<p>
+<b>The more words you type in, the more specific the results will be.</b><br>
+Put double-quotes around phrases that you want to find. For example, if you're searching for the specific phrase George W. Bush, type in &quot;George W. Bush&quot;. Always double-check your spelling if no results are returned. If no results are returned, review the terms that you entered to make sure that you did not mispell any terms. If you did, correct the spelling and try your search again. Only documents containing all of the words in the query will be returned. If you are looking for a specific item, type several words that will definitely be included in that document. For example, if you're looking for something less specific, just type in &quot;tax&quot; and you'll get more matches. There is no need to include &quot;and&quot; between terms.
+</p>
+
+<p>
+<b>Automatic Exclusion of Common Words</b><br>
+Common words and characters such as &quot;where&quot; and &quot;how&quot; are ignored, as well as certain single digits and letters, because they tend to slow down your search without improving the results. If a common word is essential to getting the results you want, you can include this by conducting a phrase search, which simply means putting quotation marks around two or more words. Common words in a phrase search (e.g., &quot;where are you&quot;) are included in the search. For example, to search for Star Wars, Episode I, use: &quot;Star Wars Episode I&quot;.
+</p>
+
+<p>
+<b>Capitalization</b><br>
+Searches are NOT case sensitive. All letters, regardless of how you type them, will be understood as lower case. For example, searches for &quot;george bush&quot;, &quot;George Bush&quot;, and &quot;gEoRgE bUsH&quot; will all return the same results.
+</p>
+
+<p>
+<b>Select words or phrases that are descriptive</b><br>
+Think about how you would describe the perfect story or resource for your search. If you want information about stem cell research in Europe, type in exactly that - &quot;Stem Cell Research in Europe&quot; (remember to use double-quotes).
+</p>
+<p>
+<b>Try word variations</b><br>
+Enter in variants of the search word, such as synonyms or the plural forms of a word. For example, enter &quot;school&quot; in place of &quot;classroom.&quot; Try using conjunctions to refine your search.
+</p>
+
+
+<p>
+<span class="cnntopResultsTerm" style="font-weight:bold;font-size:14px;color:#c00;">WEB SEARCH</span><br>
+<b>&quot;+&quot; searches</b><br>
+Common words and characters such as &quot;where&quot; and &quot;how&quot; are ignored, as well as certain single digits and single letters, because they tend to slow down your search without improving the results. If a common word is essential to getting the results you want, you can include it by putting a &quot;+&quot; sign in front of it. (Be sure to include a space before the &quot;+&quot; sign). For example, to search for Star Wars Episode I, use &quot;Star Wars Episode +I&quot; (with or without the quotation marks).
+</p>
+
+<p>
+<b>&quot;-&quot; searches</b><br>
+Sometimes what you're searching for has more than one meaning; &quot;bass&quot; can refer to fishing or music. You can exclude a word from your search by putting a minus sign (&quot;-&quot;) immediately in front of the term you want to avoid (Be sure to include a space before the minus sign). For example, to find web pages about bass that do not contain the word &quot;music&quot;, type: &quot;bass -music&quot;
+</p>
+
+<p>
+<b>Domain Restrict</b><br>
+If you know the website you want to search but aren't sure where the information is located within the site, you can search only that domain. Do this by entering what you're looking for followed by the word &quot;site&quot; and a colon followed by the domain name. For example, to find stories about George Bush on CNN.com, enter: &quot;George Bush site:www.cnn.com&quot;
+</p>
+
+<p>
+<span class="cnntopResultsTerm" style="font-weight:bold;font-size:14px;color:#c00;">SITE SEARCH</span><br>
+Search results are returned sorted by relevance first, then secondarily sorted by date. If your search is time or date-sensitive, try clicking on the link that says &quot;sort results by date&quot; to pull up older documents that may be more relevant.
+</p>
+
+<p>
+<b>Try word variations</b><br>
+If you are having difficulties finding your search terms, try using either the &quot;AND&quot;, &quot;OR&quot;, and/or the &quot;()&quot; conjunctions. For example, to search for either George Bush or George Pataki, enter &quot;George AND (Bush OR Pataki).&quot;
+</p>
+</div>
+		</td>
+	</tr>
+</table>
+
+
+
+<!-- below fold -->
+
+
+<br clear="all">
+<table width="770" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="10"><img src="http://i.cnn.net/cnn/images/1.gif" alt="" width="10" height="10"></td>
+		<td width="760">
+<!-- floor -->
+<div id="CNN_domesticFloor">
+	<div class="cnn25pxT10BPad">
+		<div id="cnnFootNav">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr valign="middle">
+					<td class="cnnFootNavPadL"><a href="http://edition.cnn.com" onClick="clickEdLink()">International Edition</a></td>
+					<td>
+						<form>
+							<select title="CNN.com is available in different languages" name="languages" size="1" onChange="if (this.options[selectedIndex].value != '') location.href=this.options[selectedIndex].value" class="cnnFormSelectSm">
+								<option value="" disabled selected>Languages</option>
+								<option value="" disabled>---------</option>
+								<option value="http://arabic.cnn.com/">Arabic</option>				
+								<option value="http://www.CNN.co.jp/">Japanese</option>
+								<option value="http://www.joins.com/cnn/">Korean</option>
+								<option value="http://cnnturk.com/">Turkish</option>				
+							</select>
+						</form>
+					</td>
+					<td><a href="/CNN/Programs/">CNN TV</a></td>
+					<td><a href="/CNNI/">CNN International</a></td>
+					<td><a href="/HLN/">Headline News</a></td>
+					<td><a href="/TRANSCRIPTS/">Transcripts</a></td>
+					<td><a href="/services/advertise/">Advertise with Us</a></td>
+					<td align="right" class="cnnFootNavPadR"><a href="/about/">About Us</a></td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="cnnFooterSearch">
+			<form action="http://search.cnn.com/cnn/search" method="get" onSubmit="return CNN_validateSearchForm(this);">
+				<input type="hidden" name="source" value="cnn">
+				<input type="hidden" name="invocationType" value="search/bottom">
+	
+				<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_search.gif" width="71" height="14" alt="Search" class="cnnFooterSearchImg">
+	
+				<div class="cnnSearchTheWebOption">
+					<input type="radio" name="sites" value="web" checked class="cnnR">
+				</div>
+
+				<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_the_web.gif" width="39" height="6" alt="" class="cnnSearchTheWebImg">
+
+				<div class="cnnSearchCNNOption">
+					<input type="radio" name="sites" value="cnn" class="cnnR">
+				</div>
+	
+				<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_cnn_com.gif" width="39" height="6" alt="" class="cnnSearchCNNImg">
+	
+				<input type="text" name="query" value="" title="Enter text to search for and click 'Search'" size="60" maxlength="80" class="cnnInput">	
+
+				<div class="cnnSearchSubmitBtn">
+					<input type="submit" value="Search" class="cnnFormButtonSearch">
+				</div>
+
+				<img src="http://i.a.cnn.net/cnn/.element/img/1.5/ceiling/search/hdr_yahoo.gif" width="164" height="13" alt="" class="cnnYahoo">
+	
+			</form>
+		</div>
+
+		<table width="100%" border="0" cellpadding="0" cellspacing="10" id="cnnFoot">
+			<colgroup>
+				<col width="271">
+				<col width="1">
+				<col width="498">
+			</colgroup>
+			<tr valign="top">
+				<td><b>&copy; 2007 Cable News Network.</b><br>A Time Warner Company. All Rights Reserved.<br><a href="/interactive_legal.html">Terms</a> under which this service is provided to you.<br>Read our <a href="/privacy.html">privacy guidelines</a>. <a href="/feedback/">Contact us</a>.</td>
+				<td valign="middle"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/floor/dots.gif" width="1" height="64" hspace="0" vspace="0" border="0" alt=""></td>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" id="cnnIconMap">
+						<tr>
+							<td valign="bottom" class="cnn4pxRpad"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/misc/icon.offsite.gif" alt="Offsite Icon" width="12" height="9" border="0">
+					External sites open in new window; not endorsed by CNN.com</td>
+						</tr>
+						<tr>
+							<td valign="bottom" class="cnn4pxRpad"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/floor/icon.wd.pipe.gray.gif" alt="Pipeline Icon" width="47" height="9" border="0">
+					Pay service with live and archived video. <a href="/pipeline/">Learn more</a></td>
+						</tr>
+						<tr class="cnnNoPad">
+							<td valign="bottom" class="cnn4pxRpad"><a href="/services/podcasting/"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/floor/icon.wd.pod.gif" alt="Radio News Icon" width="23" height="11" border="0"></a>
+					<a href="/services/podcasting/">Download audio news</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/services/rss/"><img src="http://i.a.cnn.net/cnn/.element/img/1.3/floor/icon.wd.xml.gif" alt="RSS Feed" width="24" height="11" border="0" class="cnnXmlIcon"></a>
+					<a href="/services/rss/">Add RSS headlines</a></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<!-- /floor --></td>
+	</tr>
+</table>
+<img src="/cookie.crumb" alt="" width="1" height="1">
+
+<img src="http://i.a.cnn.net/cnn/1.gif" alt="" id="TargetImage" name="TargetImage" width="1" height="1" onLoad="getAdHeadCookie(this)">
+
+<img src="http://i.a.cnn.net/cnn/1.gif" alt="" id="TargetImageDE" name="TargetImageDE" width="1" height="1" onLoad="getDEAdHeadCookie(this)">	
+
+<img src="http://leadback.advertising.com/adcedge/lb?site=695501&srvc=1&betr=alcnn_cs=1&betq=2374=369897" width="1" height="1" border="0">
+
+<script language="JavaScript1.1" src="http://ar.atwola.com/file/adsEnd.js"></script>
+<script language="JavaScript" src="http://i.a.cnn.net/cnn/.element/ssi/js/1.3/flash_detect.js"></script>
+<script language="JavaScript1.2" src="http://i.a.cnn.net/cnn/.element/ssi/js/1.3/omniture.js"></script>
+<!-- SiteCatalyst code version: H.1.
+Copyright 1997-2005 Omniture, Inc. More info available at
+http://www.omniture.com -->
+<script language="JavaScript" src="http://i.a.cnn.net/cnn/.element/ssi/js/1.3/s_code.js"></script>
+<script language="JavaScript"><!--
+/* You may give each page an identifying name, server, and channel on
+the next lines. */
+s.pageName=pageName;
+s.server="";
+s.channel=channel;
+s.pageType="";
+if (typeof(cnnAuthor) != "undefined") {
+    s.prop1=cnnAuthor;
+} else {
+    s.prop1="";
+}
+s.prop2=location.hostname;
+if (typeof(cnnBrandingValue) != "undefined") {
+    s.prop3=cnnBrandingValue;
+} else {
+    s.prop3="";
+}
+if (typeof(cnnStoryDate) != "undefined") {
+    s.prop4=cnnStoryDate;
+} else {
+    s.prop4="";
+}
+if (typeof(cnnStoryHeadline) != "undefined") {
+    s.prop5=cnnStoryHeadline;
+} else {
+    s.prop5="";
+}
+if (typeof(CNN_getCookies) != "undefined") {
+var allCookies = CNN_getCookies();
+var adHeadCookie = allCookies["firstName"] || null;
+if ( adHeadCookie ) {
+    s.prop6="member";
+	s.eVar3="member";
+} else {
+    s.prop6="non-member";
+	s.eVar3="non-member";
+}
+} else {
+    s.prop6="";
+	s.eVar3="";
+}
+if (typeof(cnnCurrHour) != "undefined") {
+ s.prop7=cnnCurrHour;
+} else {
+ s.prop7="";
+}
+if (typeof(cnnRefString) != "undefined") {
+    s.prop8=cnnRefString;
+} else {
+    s.prop8="";
+}
+s.prop9 = parseInt(CNN_FlashDetect.prototype.getVersion());
+
+s.prop12 = s.getQueryParam('pc');
+
+/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+var s_code=s.t();if(s_code)document.write(s_code)//--></script>
+<script language="JavaScript"><!--
+if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+//--></script><noscript><img
+src="http://cnnglobal.122.2O7.net/b/ss/cnnglobal/1/H.1--NS/0"
+height="1" width="1" border="0" alt="" /></noscript><!--/DO NOT REMOVE/-->
+<!-- End SiteCatalyst code version: H.1. -->
+
+
+
+
+
+<div id="csiIframe" style="visibility:hidden;height:0px;width:0px;"></div>
+</body>
+</html>
+<!--
+     FILE ARCHIVED ON 21:56:03 Feb 17, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 23:39:08 Nov 05, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.54
+  exclusion.robots: 0.037
+  exclusion.robots.policy: 0.027
+  esindex: 0.007
+  cdx.remote: 5.682
+  LoadShardBlock: 160.235 (6)
+  PetaboxLoader3.datanode: 185.302 (7)
+  PetaboxLoader3.resolve: 56.364 (2)
+  load_resource: 146.993
+-->

@@ -1,0 +1,147 @@
+.applications .handle {
+  background: url(/web/20070615111330im_/http://static.ak.facebook.com/images/movearrow.gif) no-repeat center center;
+  width: 13px;
+  min-width: 13px;
+  height: 14px;
+  min-height: 14px;
+  font-size: 14px;
+  display: block;
+  float: left;
+  margin-right: -30px; 
+  position: relative;
+  left: -30px;
+  padding: 0px;
+}
+
+.applications .handle:hover {
+  cursor: move; }
+
+.app_selector_module {
+  display: none; }
+
+.applications .app_selector_module {
+  display: block;
+  color: #333;
+  margin: 0px 10px 10px;
+  padding: 5px 0px;
+}
+
+.app_selector_module #sidebar .app_selector_module h2 {
+  display: none;
+}
+
+.applications #sidebar .app_selector_module h2 {
+  width: auto;
+  float: none;
+}
+
+.applications .app_selector {
+  margin-top: 6px;
+}
+
+.applications .app_selector select {
+  width: 112px;
+}
+
+.action_item {
+  display: none;
+}
+
+.applications li:hover .action_item {
+  position: relative;
+  left: -80px;
+  width: 40px;
+  float: left;
+  text-align: right;
+  margin-right: -80px;
+  display: block;
+  font-size: 9px;
+}
+
+.action_item_add {
+  display: none;
+}
+
+.applications li:hover .action_item_add {
+  position: relative;
+  left: -80px;
+  width: 70px;
+  float: left;
+  text-align: right;
+  margin-right: -70px;
+  display: block;
+  font-size: 9px;
+}
+
+.add_button {
+  margin-top: 6px;
+}
+
+
+.floating_container {
+   opacity: 0.4;
+   position: absolute;
+   width: 110px;
+}
+
+.floating_container:hover {
+   cursor: move;
+}
+
+
+#sidebar .app_list .floating_container .link_title {
+   filter: alpha(opacity=40);
+}
+
+#sidebar .app_list .floating_container .handle {
+   filter: alpha(opacity=40);
+}
+
+.rearrange_message {
+   font-size: 11px;
+   padding: 3px 7px;
+   margin: 3px 0px;
+   border: solid 1px #ccc; 
+   background: #f0f0f0;
+   height: 15px;
+}
+
+#empty_more_message {
+   height: auto;
+   font-color: #999;
+   font-size: 9px;
+}
+
+.rearrange_message .image {
+   vertical-align: middle;
+}
+
+.rearrange_status {
+   font-size: 11px;   
+   padding: 3px 7px;
+   margin: 3px 0px;
+   border: solid 1px #ffe222;
+   background: #fffbe2;
+   height: 15px;
+}
+
+/*
+     FILE ARCHIVED ON 11:13:30 Jun 15, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 00:39:06 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 3.734
+  exclusion.robots: 0.096
+  exclusion.robots.policy: 0.079
+  esindex: 0.012
+  cdx.remote: 21.458
+  LoadShardBlock: 302.297 (3)
+  PetaboxLoader3.datanode: 374.062 (4)
+  PetaboxLoader3.resolve: 163.696 (2)
+  load_resource: 241.862
+*/

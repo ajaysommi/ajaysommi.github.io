@@ -1,0 +1,51 @@
+/* $Id: general.css,v 1.57 2007/05/29 19:10:10 lfoster Exp $
+/css/home/screen/general.css
+(c)2006 - 2007 The New York Times Company  */
+
+@import url(/web/20070617231019cs_/http://graphics8.nytimes.com/css/common/screen/general.css);  
+@import url(/web/20070617231019cs_/http://graphics8.nytimes.com/css/common/screen/insidenytimes.css);  
+@import url(/web/20070617231019cs_/http://graphics8.nytimes.com/css/home/screen/framework.css);
+@import url(/web/20070617231019cs_/http://graphics8.nytimes.com/css/home/screen/templateStyle.css);
+@import url(/web/20070617231019cs_/http://graphics8.nytimes.com/css/home/screen/promos.css);
+
+/* fix for ie6 */
+* html #mostPopWidget .moduleAd {
+        margin-top: -25px;
+        width: 329px;
+	padding-bottom: 5px;
+}
+
+#HPMiddle {
+	clear: both;
+	float: left;
+	margin-top: 10px;
+	padding-top: 0!important;
+}
+
+#HPMiddle h3 {
+	font-family: arial,helvetica,sans serif;
+	color: #999;
+	font-size: 83.3%;
+	padding-bottom: 1px;
+}	
+
+/*
+     FILE ARCHIVED ON 23:10:19 Jun 17, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 01:33:29 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.81
+  exclusion.robots: 0.114
+  exclusion.robots.policy: 0.096
+  esindex: 0.017
+  cdx.remote: 7.374
+  LoadShardBlock: 101.566 (3)
+  PetaboxLoader3.datanode: 107.924 (4)
+  load_resource: 83.709
+  PetaboxLoader3.resolve: 55.957
+*/

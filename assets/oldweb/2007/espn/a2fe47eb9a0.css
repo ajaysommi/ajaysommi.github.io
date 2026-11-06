@@ -1,0 +1,118 @@
+/* Universal Login ------------------------------------------------------ */
+
+.universalLogin {
+	float: left;
+	width: 100%;
+	background: #41454a;
+	color: #FFF;
+	font-family: Verdana, Arial, Helvetica, Sans-serif;
+	font-size: x-small;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+.universalLogin li.left a, .universalLogin li.right a {
+	color: #FFF;
+}
+
+.universalLogin li.left a.active {
+	color: #000;
+	font-weight: bold;
+	background: #FFF;
+	text-decoration: none;
+	padding: 1px 4px 3px 4px;
+}
+
+.universalLogin li.left {
+	float: left;
+	padding: 7px 0 7px 7px;
+}
+
+.universalLogin li.right {
+	float: right;
+	padding: 7px 8px 7px 0;
+}
+
+.universalLogin li.right a {
+	font-weight: bold;
+}
+
+.universalLogin form {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 4px;
+	right: 7px;
+}
+
+* html .universalLogin form {
+	top: 3px;
+}
+
+* html .ul_fieldLabel {
+	/* ie 6 needs a nudge */
+	position: relative;
+	top: -1px;
+}
+
+.universalLogin input.field {
+	padding: 3px;
+	margin: 0 4px;
+	border: 0;
+	font-weight: normal;
+	font-size: x-small;
+	width: 100px;
+	background: url(/web/20070613211922im_/http://assets.espn.go.com/i/login/bg_input.gif) no-repeat;
+	font-family: Verdana, Arial, Helvetica, Sans-serif;
+}
+
+.universalLogin input.ul_submit {
+	padding: 1px 3px;
+	margin: 0;
+	border: 1px solid #444;
+	font-size: x-small;
+	font-weight: bold;
+	background: url(/web/20070613211922im_/http://assets.espn.go.com/i/login/bg_loginSubmit.gif) repeat-x 0 50%;
+	font-family: Verdana, Arial, Helvetica, Sans-serif;
+	color: white;
+	cursor: pointer;
+}
+
+.universalLogin input.ul_submit_image {
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
+    padding-left: 5px;
+}
+
+#login {
+	position: relative;
+	width: 772px;
+	height: 26px;
+	padding: 0px 0px 0px 0px;
+	overflow: hidden;
+	}
+
+.login-in-label{ line-height:16px; }
+/*
+     FILE ARCHIVED ON 21:19:22 Jun 13, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 01:24:16 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.646
+  exclusion.robots: 0.098
+  exclusion.robots.policy: 0.083
+  esindex: 0.01
+  cdx.remote: 11.282
+  LoadShardBlock: 143.715 (3)
+  PetaboxLoader3.datanode: 137.224 (4)
+  PetaboxLoader3.resolve: 119.318 (2)
+  load_resource: 162.421
+*/

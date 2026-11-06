@@ -1,0 +1,2535 @@
+body {
+	padding:0;
+	margin:4px 0 0 2px;
+	background:#fff;
+	font:normal 76.01% arial, helvetica, sans-serif;
+	text-align:center;
+}
+.IE body {
+	margin:4px 2px;
+}
+h1, h2, h3, h4, h5, h6, form, div, p, i, img, ul, li, ol, table, tr, td, fieldset, label, dt, legend, #locT, #locT ul#m, .lrM, .smM,#dl EMBED,#dl OBJECT,#m .l h6,#ev .r h6,#m .w,#sf, #ww .l, #hgl .l, #ww .wl {
+	margin:0;
+	padding:0;
+}
+.fl_l, #hp img, #cm a.cmi, #locT ul#wwr, #locT ul#wwr li, #locT ul#r, #locT ul#r li, .evtDt .l img, .evtDtU .l img, .evtTv .l img, .evtTvU .l img, .evtS .l img, .evtSU .l img, .evtDt .l,.evtDtU .l,.evtTv .l,.evtTvU .l,.evtS .l,.evtSU .l, .evtDt .prl,.evtDtU .prl,.evtTv .prl,.evtTvU .prl,.evtS .prl,.evtSU .prl, .evtS .l, .evtS .shw img,.evtS .shw, .evtS li, .td, .fW i, #lwm img, #lw img, #lw span, #lw ol,#lw ul, #hotS ul, #rp img, .pr,#m .pr h5,#m .pr p, #ww .pr h5,#ww .pr p,  #hlg .pr h5, #hgl .pr p, #mkt, #mktp div, #mktp img, #fiB ul, #fiC img, #om_fiC img, #fiC .gn, #om_fiC .gn, #sf h5, #sf ul, #ww .l, #hgl .l, #ww .wl, #mD .l, #ww .w, #hgl .l, .pr75, .ent img, .evtS h6, #d h3, #d ul li, #mvD .shw .img, #m .pr, #ww .pr, #hgl .pr, #wwt img, #logo, #horo div, #horo img {
+	float:left;
+}
+#mktf, #mvshw .l i#thN {
+	float:right;
+}
+#fts h1, #fts label, #fts form, #fts dt {
+	display:inline;
+}
+fieldset, img, table, #blsrch .nb {
+	border:0;
+}
+.bcn {
+	height:1px;
+	width:1px;
+	position:absolute;
+	top:0;
+	left:0;
+}
+.ai_e {
+	display:none;
+}
+.IE .ai_e, .IE7 .ai_e {
+	position:absolute;
+}
+.cl_l {
+	clear:left;
+}
+#ct br.cl_l, p.mkt {
+	clear:both;
+}
+br.clr {
+	clear:right;
+	height:1px;
+}
+br.cl_l, #lCA p.cl_l {
+	height:1px;
+	line-height:1px;
+}
+#itrk {
+	visibility:hidden;
+	position:absolute;
+	bottom:0;
+}
+#tAd {
+	text-align:center;
+	width:62.4em;
+	margin:0 auto;
+	padding-bottom:4px;
+	height:7.25em;
+	border-bottom:1px solid #acacac;
+}
+.IE #tAd, .IE7 #tAd {
+	height:7.5em;
+}
+.IE #tAd_h.ai_fl, .IE7 #tAd_h.ai_fl {
+	text-align:center;
+	width:62.4em;
+	margin:0 auto;
+	padding-bottom:4px;
+	padding-top:4px;
+}
+#tAd img, #tAd object, #tAd embed, .IE #tAd img, .IE7 #tAd img, .IE #tAd_h.ai_fl img, .IE7 #tAd_h.ai_fl img, .IE #tAd_h.ai_fl object, .IE7 #tAd_h.ai_fl object {
+	width:60em;
+	height:7.5em;
+}
+.Gecko #tAd embed {
+	margin-left:.4em;
+}
+#logo {
+	height:8.2em;
+	width:12.9em;
+}
+#hd h1 {
+	height:1px;
+	width:1px;
+	overflow:hidden;
+	font-size:.01em;
+}
+#ct h4, h3 {
+	font-size:1.1em;
+	padding:.2em 0 .2em .5em;
+	background:#3d618a;
+	margin:.5em 0 0 0;
+	color:#fff;
+}
+h4 a {
+	color:#fff;
+}
+.g_over, a.over, button.over, input.over {
+	background:#BFEBAA;
+	filter:progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#F9FEF7,endColorStr=#7BED46);
+}
+.g_clk, a.clk, button.clk, input.clk {
+	background:#C6FFA9;
+	filter:progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#99E576,endColorStr=#F5FCF1);
+}
+.fBt:focus, .sBt:focus {
+	border:1px solid #65C335;
+}
+.fBt {
+	font:.9em Tahoma,Arial,Sans-Serif;
+	cursor:pointer;
+	padding:0;
+	border:1px solid #56ba24;
+	background:#D4F4C5 url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 -2175px;
+}
+#aL, #aL2, a h6 {
+	position:relative;
+	top:0;
+	left:0;
+	overflow:hidden;
+	height:1px;
+	width:1px;
+}
+#hd, #ct, #ft, #fts, #nbug {
+	text-align:left;
+	margin:0 auto;
+	width:62.4em;
+}
+#nbug {
+	background:#fff9d6;
+	height:2.35em;
+}
+.Gecko #nbug, .Gecko #tAd {
+	width:62.2em;
+}
+#nbug img, #nbug p {
+	float:left;
+}
+#nbug p {
+	font-weight:bold;
+	margin-top:.9em;
+	font-size:.9em;
+}
+#hd {
+	height:8.3em;
+	background:#60ade3 url('/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png') repeat-x;
+	border-bottom:#8b8f90 solid 1px;
+	clear:both;
+}
+.Gecko #hd, .Gecko #ct {
+	width:62.3em;
+}
+a {
+	text-decoration:none;
+	color:#2864b4;
+}
+a:hover, #d .all a:hover, .nwst h3 a:hover, .nwst a:hover {
+	text-decoration:underline;
+}
+.di {
+	display:inline;
+}
+.db {
+	display:block;
+}
+.dn {
+	display:none;
+}
+.audio, #nwshl .audio {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -1825px;
+	padding-left:1.4em;
+}
+.radio, #nwshl .radio {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -2075px;
+	padding-left:1.5em;
+}
+.prem, #nwshl .prem {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -1925px;
+	padding-left:1.7em;
+}
+.vid, #nwshl .vid, #wwr .vid, #wwt .vid {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -803px;
+	margin:0;
+	padding:0 0 0 1.4em;
+}
+.link, .sq {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -745px;
+	padding-left:.7em;
+}
+#blsrch {
+	position:relative;
+	margin-top:.3em;
+	margin-right:.9em;
+	width:73.5%;
+	background:#fff url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 100% -2567px;
+	float:right;
+	padding:.25em .3em .3em;
+}
+.IE #blsrch {
+	margin-right:.4em;
+}
+#blsrch ul li {
+	display:inline;
+	padding:.2em 0 .5em;
+	line-height:1.6em;
+}
+.IE7 #blsrch ul li {
+	line-height:1.9em;
+}
+#blsrch .av {
+	background:#a9dd57;
+}
+#blsrch a {
+	font-weight:bold;
+	border-right:1px solid #78acc1;
+	font-size:1em;
+	color:#2b64b4;
+	padding:0 .9em 0 1.2em;
+}
+#blsrch .ava {
+	color:#000;
+	border:0;
+}
+.SAF #blsrch .ava {
+	padding:.2em 1em .7em;
+}
+.MacAol #blsrch .ava {
+	padding:.3em 1em .8em;
+}
+#blsrch fieldset {
+	background:#a9dd57;
+	margin-top:.5em;
+	padding:.5em;
+}
+#blsrch fieldset {
+	margin-top:0;
+}
+.q {
+	width:84%;
+	border:.15em solid #8999a6;
+	border-right:.15em solid #e8e8e8;
+	border-bottom:.15em solid #e8e8e8;
+	margin-top:-1px;
+	height:1.3em;
+	line-height:1.3em;
+	font-size:1.2em;
+	padding:.2em 0 0;
+}
+.IE #blsrch .q {
+	width:87%;
+	padding:0;
+	height:1.4em;
+}
+.MacAol #blsrch .q {
+	width:85%;
+	height:1.8em;
+}
+.IE7 .q {
+	width:80%;
+}
+#fts .q {
+	width:20em;
+	font-size:.9em;
+	height:1.2em;
+	line-height:1.2em;
+}
+#blsrch .fBt {
+	padding:0 .8em .3em;
+	margin-left:.4em;
+	height:2.15em;
+	font-size:1em;
+	font-weight:bold;
+}
+.IE #blsrch .fBt {
+	position:absolute;
+	padding:0 .12em 0.05em;
+	right:.8em;
+	bottom:.9em;
+	height:2em;
+}
+.MacAol #blsrch .fBt {
+	padding:.4em .5em;
+}
+#blsrch .st {
+	height:1.8em;
+}
+#fts #botlogo {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -142px;
+	margin:0;
+	height:1.2em;
+}
+#fts #botlogo {
+	width:9.9em;
+	height:2.4em;
+	display:block;
+	text-indent:-10000px;
+	overflow:hidden;
+	text-decoration:none;
+}
+#fts .fBt {
+	padding:0 1.2em .1em;
+	margin-left:.2em;
+}
+.IE #fts .fBt {
+	margin-top:1px;
+}
+.Gecko #fts .fBt {
+	margin-bottom:.1em;
+}
+#fts form {
+	position:absolute;
+	right:.5em;
+	top:.75em;
+}
+#fts label, #fts dt {
+	font-weight:bold;
+	color:#fff;
+}
+#lMC {
+	float:left;
+	width:59%;
+	overflow:hidden;
+}
+#sMC {
+	float:right;
+	width:41%;
+}
+.IE #sMC {
+	overflow:hidden;
+}
+#lMC h4 {
+	width:32.3em;
+}
+.Gecko #lMC h4 {
+	width:32.35em;
+}
+.lmM, .smM, #comm {
+	width:35.15em;
+	background:#fff;
+	border:3px solid #ccc;
+	border-top:1px solid #fff;
+	border-left:1px solid #ccc;
+	padding-left:.7em;
+}
+.Gecko .lmM {
+	width:35.2em;
+	padding-left:.6em;
+}
+#sMC h4 {
+	width:22.75em;
+	float:right;
+}
+.smM, #comm {
+	width:24.5em;
+	float:right;
+}
+.IE .smM, .IE7 .smM, .Gecko .smM {
+	width:24.6em;
+}
+#ft, #ftl {
+	position:relative;
+	width:62.4em;
+	clear:both;
+	padding-top:.3em;
+}
+#fts {
+	background:#3D84BC url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 -53px;
+	height:2.5em;
+}
+#gt {
+	background:#e0e5e9;
+	width:36.6em;
+	border:0;
+	border-bottom:1px solid #D0d4d7;
+	color:#5582aa;
+	padding:.35em 0 .25em .5em;
+}
+.IE #gt {
+	width:100%;
+}
+#gt h2 {
+	font-size:.9em;
+	height:1em;
+	line-height:1em;
+}
+#gt h2 i {
+	font-style:normal;
+	font-weight:normal;
+	padding:0 0 0 .5em;
+	height:.5em;
+	line-height:.5em;
+}
+#gt h2 i#dt {
+	background:url('/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png') no-repeat 0 -417px;
+	margin-left:.5em;
+	padding-left:.7em;
+}
+#dl {
+	position:relative;
+	margin:.5em 0 0;
+	width:36em;
+	border:1px solid #999;
+	height:17.17em;
+}
+#dlC {
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:1;
+}
+.Standard, .Feature, .HotSpot, .Basic, .sc1, .sc2, .fb1 {
+	position:relative;
+	margin:0;
+	width:36em;
+	height:15.39em;
+	overflow:hidden;
+}
+.MacAol .Standard, .MacAol .Feature {
+	height:15.3em;
+}
+.dlbgimg {
+	position:absolute;
+	top:0;
+	left:0;
+	margin:0;
+	width:36em;
+	height:16.2em;
+	overflow:hidden;
+}
+.IE #dl, .IE .dlbgimg, .IE .Standard, .IE .Feature, .IE .HotSpot, .IE .Basic, .IE .sc1, .IE .sc2, .IE .fb1 {
+	width:35.9em;
+}
+.IE .Standard, .IE .Feature, .IE .HotSpot, .IE .Basic, .IE .sc1, .IE .sc2, .IE .fb1 {
+	height:15.39em;
+}
+.dltitle {
+	position:relative;
+}
+#dlC ul {
+	list-style-type:none;
+	padding:0;
+}
+.main img {
+	display:block;
+	margin-bottom:1em;
+	border:none;
+	width:9.9em;
+	height:2.17em;
+}
+.main p {
+	display:block;
+	margin:.25em 0;
+}
+.main p.bg1, .sc1sd {
+	background:#e7eff0 url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 -1252px;
+	padding:.26em 0 .26em .3em;
+	margin:0 0 0 -.2em;
+	border:.1em solid #999;
+	border-right:none;
+}
+.sc1sd {
+	background:#E8EDF1 url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 -1500px;
+	margin:9em 0 0 -.4em;
+	padding:0 0 .6em 18em;
+	height:4.3em;
+}
+.IE .sc1sd {
+	margin-top:9.1em;
+	padding:0 0 0 18em;
+}
+.Gecko .sc1sd {
+	margin-bottom:.56em;
+}
+.sc1sd p {
+	padding-left:.15em;
+}
+.IE .sc1sd p {
+	padding-left:.25em;
+}
+.main .link {
+	margin-bottom:1em;
+}
+.Feature .mainimg, .sc1 .mainimg {
+	position:relative;
+	float:left;
+	width:16.4em;
+	padding:0 .5em .5em;
+}
+.Feature .mainimg img, .sc1 .mainimg img {
+	position:absolute;
+	display:block;
+	width:16.5em;
+	height:12.4em;
+	border:none;
+}
+.Feature .main, .sc1 .main {
+	position:absolute;
+	top:0;
+	right:0;
+	width:18.2em;
+	padding:0 0 .4em .4em;
+}
+.IE .Feature .main, .sc1 .main {
+	width:18.06em;
+	padding:0 0 .3em .3em;
+}
+.Feature .main h2, .sc1 .main h2, .fb1 .main h2 {
+	font-weight:bold;
+	font-size:1.5em;
+	padding:.6em 0 0 0;
+	margin-bottom:0;
+	line-height:1.05em;
+}
+.fb1 .main h2 {
+	padding-top:0;
+}
+.Feature .main h2.nbpd, .sc1 .main h2 {
+	margin-bottom:-3px;
+}
+.Feature .sponsor {
+	padding:.31em 0 .25em;
+}
+.Feature .sponsor img {
+	margin-bottom:0;
+	width:16.5em;
+	height:2.5em;
+}
+.sc1 p {
+	margin-bottom:0;
+	margin-top:.2em;
+}
+.sc1sd img {
+	float:right;
+	height:4.9em;
+	width:4.85em;
+}
+.sc1sd h3 {
+	width:12.5em;
+	overflow:hidden;
+	white-space:nowrap;
+	font-size:1em;
+	float:right;
+	margin-right:.7em;
+	color:#000;
+	padding:0;
+	background:none;
+}
+.IE .sc1sd h3 {
+	width:12.5em;
+	float:none;
+	padding-left:.3em;
+}
+.sc2 .main {
+	position:relative;
+	padding-top:8.2em;
+	width:22.7em;
+	float:left;
+	padding-left:.5em;
+}
+.sc2 .sc2sd {
+	position:relative;
+	float:right;
+	width:12.2em;
+}
+.sc2 .sc2sd img {
+	height:6.6em;
+	width:9.9em;
+	margin:1em 0 .4em .4em;
+}
+.sc2 .b {
+	margin-left:-.5em;
+}
+.fb1 .lt {
+	text-align:left;
+}
+.fb1 .ct {
+	text-align:center;
+}
+.fb1 .rt {
+	text-align:right;
+}
+.fb1 .main {
+	position:relative;
+	top:8.6em;
+	width:34.8em;
+	padding:0 .5em;
+}
+.IE .fb1 .main {
+	top:8.7em;
+}
+.HotSpot .mainimg {
+	position:absolute;
+	overflow:hidden;
+	float:left;
+	width:36em;
+	height:21.15em;
+	padding:0;
+}
+.IE .HotSpot .mainimg {
+	margin-left:-1px;
+}
+.HotSpot .mainimg a {
+	display:block;
+	line-height:1.85em;
+	padding:6.8em 13em;
+}
+.dlpv {
+	position:absolute;
+	width:34.5em;
+	overflow:hidden;
+	line-height:1.6em;
+	height:1.55em;
+	top:15.4em;
+	padding:.1em 1em 0 .5em;
+	border-top:1px solid #999;
+	background:#fff;
+}
+.IE .dlpv {
+	width:34.45em;
+}
+.MacAol .dlpv, .MacAol #dlcontrol {
+	z-index:4;
+}
+.dlpv b {
+	text-decoration:none;
+	color:#000;
+}
+#dlcontrol {
+	background:#fff;
+	position:absolute;
+	top:15.39em;
+	right:.35em;
+	border:1px solid #999;
+	border-top:none;
+	border-right:none;
+	padding-left:.35em;
+	margin-right:1px;
+	height:1.4em;
+	line-height:1.2em;
+	z-index:2;
+	display:block;
+	background:#e0e5e9;
+	border-top:1px solid #ddd;
+}
+.SAF #dlcontrol {
+	top:15.376em;
+}
+#dlcontrol img {
+	width:1.6em;
+	height:1.6em;
+	margin-top:-1px;
+	margin-bottom:-1px;
+}
+#dlcontrol #dlcount {
+	display:block;
+	float:left;
+	padding:.1em .2em 0 0;
+	width:1.5em;
+	margin:0;
+}
+.IE7 #dlcontrol {
+	height:1.6em;
+}
+#dlp {
+	display:none;
+}
+.dlcat {
+	position:relative;
+	padding:0 0 0 .5em;
+	font-weight:bold;
+	color:#686868;
+	height:1.2em;
+}
+#dl a.dlhotspotLg {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/dl_feat_hotspot.gif");
+	position:absolute;
+	display:block;
+	padding-top:.7em;
+	width:16.4em;
+	height:12.32em;
+}
+#dl h2.lg {
+	font-size:1.8em;
+}
+#dl .a1 a {
+	color:#2864B4;
+}
+#dl .a2 a {
+	color:#98DCFA;
+}
+#nws {
+	overflow:hidden;
+	width:36.15em;
+}
+.nwst {
+	position:relative;
+	width:36.15em;
+	padding:.2em 0 .3em 0;
+	height:1.25em;
+	background:#3d618a;
+	margin:.5em 0 0 0;
+	color:#fff;
+}
+.IE .nwst {
+	width:36.1em;
+	padding-top:.2em;
+	padding-bottom:.25em;
+}
+.nwst span, .nwst i {
+	font-size:.92em;
+}
+.nwst span {
+	color:#a5cbf6;
+	white-space:nowrap;
+	padding:0 0 0 .2em;
+}
+.IE .nwst span {
+	padding-left:.4em;
+}
+.nwst i {
+	margin-top:0.05em;
+	padding:.08em .9em 0 .5em;
+	font-style:normal;
+	float:right;
+}
+.nwst i img {
+	margin-bottom:-.3em;
+}
+.nwst i a {
+	color:#fff;
+	text-decoration:none;
+}
+img.nwsddarr {
+	padding:0 .2em .43em .2em;
+}
+.nwst h3 {
+	display:inline;
+	font-size:1.1em;
+	color:#fff;
+	padding-top:0;
+	padding-bottom:0;
+}
+.IE .nwst h3 {
+	line-height:1.3em;
+}
+.nwst h3 a {
+	color:#fff;
+	text-decoration:none;
+}
+#nwsdd {
+	position:absolute;
+	width:8.5em;
+	background:#e4e6e7;
+	border:solid 1px #3d618a;
+	border-top:0;
+	color:#000;
+	z-index:4;
+}
+.Gecko #nwsdd {
+	width:8.8em;
+}
+.SAF #nwsdd {
+	margin-top:.55em;
+}
+#nwsddarrowup {
+	position:absolute;
+	z-index:5;
+	width:1em;
+	height:1.1em;
+	background:#e4e6e7;
+	padding:.3em 0 0 .35em;
+}
+.Gecko #nwsddarrowup {
+	margin:.05em .1em 0 0;
+	padding-left:.1em;
+}
+.SAF #nwsddarrowup {
+	margin-top:.35em;
+	margin-right:.1em;
+}
+img.fdi {
+	width:1.2em;
+	height:1.15em;
+}
+#nwsdd ul, #horo ul {
+	list-style:none;
+}
+.IE #nwsddlst li, .IE7 #nwsddlst li {
+	float:left;
+}
+#nwsdd li a {
+	padding:.1em 0 .1em .3em;
+	display:block;
+	width:9.5em;
+	font-size:.9em;
+}
+#nwsdd li a:hover {
+	background:#f5d427;
+	text-decoration:none;
+}
+.IE7 #nwsdd li a:hover, .SAF #nwsdd li a:hover {
+	width:9em;
+}
+#nwsdd li.nwsddact a, #nwsdd li.nwsddact a:hover {
+	font-weight:bold;
+	color:#000;
+	background:none;
+}
+#nws .lmM {
+	height:6.5em;
+	padding-top:.4em;
+}
+.IE7 #nws .lmM, .IE7 #sf {
+	width:35.2em;
+}
+#nwshl ul {
+	width:35em;
+}
+#nwshl li.last {
+	width:27em;
+	overflow:hidden;
+	white-space:nowrap;
+}
+#nwshl li.more {
+	position:relative;
+	right:-27.5em;
+	margin-top:-1.2em;
+	overflow:hidden;
+	text-align:right;
+	width:7.5em;
+}
+#nwshl li.more a {
+	font-weight:bold;
+	margin-right:.3em;
+}
+.all a {
+	color:#fff;
+	font-size:.8em;
+	float:right;
+	font-style:normal;
+	font-weight:normal;
+	padding:.2em .7em 0 0;
+}
+#om_dir {
+	border:.5em solid #dcdcdc;
+	border-top:1px solid #fff;
+	padding:.5em 0 .25em;
+	margin:0;
+	background:#dcdcdc;
+}
+.Gecko #om_dir, .IE7 #om_dir {
+	width:36.1em;
+}
+#om_dir b {
+	font-weight:bold;
+	color:#ff6600;
+}
+#om_dir td {
+	border:0;
+	padding:0;
+	margin:0 1px;
+	width:25%;
+	overflow:hidden;
+}
+.IE #om_dir td, .IE7 #om_dir td {
+	padding-top:.4em;
+}
+#om_dir a {
+	display:block;
+	font-size:1em;
+	background:#fff;
+	border-top:1px solid #ccc;	
+	text-decoration:none;
+	overflow:hidden;
+	padding:0 0 0 .3em;
+	border-right:none;
+	height:1.2em;
+}
+.IE #om_dir a {
+	width:8.25em;
+}
+.SAF #om_dir a {
+	width:8.35em;
+}
+#om_dir a:hover, #om_dir a.dhead:hover { 
+	background-color:#f5d427;
+}
+#ww, #hgl {
+	padding:.1em 0 0.2em 0;
+	height:22.3em;
+	background-color:#FFFFFF;
+	width:35.8em;
+}
+#hgl {
+	height:18.4em;
+}
+#ww {
+	position:relative;
+}
+.IE #ww {
+        height:22.4em;
+        padding-bottom:0;
+}
+.IE #ww, .IE #hgl {
+	width:35.8em;
+	padding:.1em 0 0;
+}
+#ww .mB, #hgl .mB {
+	font-size:1em;
+	margin:0;
+	padding:0;
+}
+#ww .vpm h5 {
+        font-size:1em;
+        padding-bottom:.18em;
+}
+#ww .vpm img {
+        width:7.91em;
+        height:5.97em;
+        padding-bottom:.36em;
+}
+#ww .vpm {
+        float:left;
+        margin:.56em 0 .9em .6em;
+        width:10.4em;
+}
+.IE #ww .vpm {
+        margin-left:.36em;
+}
+#ww .pd_l {
+        margin-left:1.9em;
+}
+.IE #ww .pd_l {
+        margin-left:1.9em;
+}
+#ww #locT ul {
+	padding:.5em 0 0;
+	margin:0 0 0 .3em;
+	list-style:none;
+	height:1.31em;
+}
+#ev .mh ul, #ag .mh ul, #agr {
+	padding-top:.15em;
+}
+.IE #ww #locT ul, .IE #ev .mh ul {
+	padding-top:.2em;
+	line-height:1.6em;
+	margin-bottom:-1px;
+}
+#wrad {
+        padding:.82em .73em 0 .73em;
+}
+#wrad p {
+        padding:.36em 0 .18em 0;
+}
+#wrad p.pt {
+        padding:.9em 0 .74em 0;
+}
+#wrad p.ta {
+        background:transparent url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 -2300px;
+        padding:.6em 0 .18em 0;
+	clear:left;
+}
+#wrad h6.rad {
+        width:34em;
+	color:#000000;
+	font-size:1em;
+}
+#wrad h6.rad b {
+        float:left;
+        clear:right;
+}
+#wrad h6.rad a {
+	background:#e5e6e8 url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -1001px;
+	text-indent:-10000px;
+	overflow:hidden;
+	height:1.5em;
+	width:10em;
+        margin-left:.5em;
+	text-decoration:none;
+	display:block;
+	cursor:hand;
+}
+#wrad a.fBt {
+        height:1.5em;
+        margin-left:1em;
+        padding:2px 5px 2px 5px;
+        color:#000000;
+        text-decoration:none;
+}
+#r, #agr {
+	position:relative;
+	right:.6em;
+	float:right;
+	line-height:.5em;
+	padding:0;
+	height:.5em;
+}
+ul#agr {
+	line-height:1.15em;
+}
+.IE ul#agr {
+	margin-bottom:-2px;
+}
+.SAF ul#agr, .MacAol ul#agr {
+	margin-top:-1px;
+}
+#ev .mh ul {
+	padding-top:.18em;
+}
+#ev .mh ul li, #ag .mh ul li {
+	display:inline;
+	font-size:.9em;
+}
+.IE #ev .mh ul {
+	margin-top:-.2em;
+}
+#ww #locT #wwr li a, #ev .mh li a, #ag h4 li a {
+	background:#D2E8F9;
+	padding:0.05em .4em;
+	margin-left:.3em;
+	border:1px solid #CDCDCD;
+	font-weight:bold;
+	line-height:1.3em;
+	color:#2864b4;
+}
+#ww #locT #wwr li a {
+	line-height:1.35em;
+}
+.IE #ww #locT #wwr li a, .IE #ev .mh li a, .IE #ag h4 li a {
+	line-height:1.35em;
+	padding:0.1em .4em;
+}
+.SAF #ww #locT #wwr li a, .SAF #ag h4 li a {
+	line-height:1.35em;
+}
+#ev .mh li a, #ag h4 li a {
+	padding:0 .4em;
+	border:0;
+	border-bottom:1px solid #3d618a;
+}
+#ww #locT #wwr li a.sel, #ww #locT #wwr li a.over, #ev .mh li a.sel, #ev .mh li a.curr, #ag h4 li a.sel {
+	background:#fff;
+	border-bottom:1px solid #fff;
+	color:#2864b4;
+}
+.IE #ww #locT #wwr li a.sel, .IE #ww #locT #wwr li a.over, .IE #ev .mh li a.sel, .IE #ev .mh li a.curr, .IE #ag h4 li a.sel {
+	position:relative;
+	margin-bottom:-1px;
+	line-height:1.35em;
+}
+.MacAol #ww #locT #wwr, .MacAol #ev .mh #r,.MacAol #ag .mh #agr {
+	line-height:.25em;
+	margin-bottom:-1px;
+}
+.MacAol #ev .mh #r {
+	padding-top:.1em;
+}
+.MacAol #ag .mh #agr {
+	margin:0;
+	padding-top:.15em;
+}
+.IE7 #ww #locT #wwr li a {
+	margin-top:0;
+	margin-bottom:0;
+	line-height:1em;
+	height:1em;
+	position:relative;
+}
+.IE7 #agr .sel, .IE7 #ev .mh li a.curr, .IE7  #ww #locT #wwr li a.sel {
+	line-height:1.4em;
+}
+.IE7  #ww #locT #wwr li a.sel {
+	line-height:1em;
+	height:1em;
+}
+.sel:hover, .curr:hover {
+	text-decoration:none;
+}
+#ww .mB2, #hbl .mB2 {
+	height:15.15em;
+	width:21.1em;
+	padding:.8em .8em .8em .7em;
+	margin:0;
+	border:1px solid #CDCDCD;
+	border-left:0;
+	background-color:#fff;
+	clear:left;
+}
+.IE #ww .mB2, .IE7 #ww .mB2, .IE #hgl .mB2, .IE7 #hgl .mB2 {
+	height:15.1em;
+	width:20.3em;
+	border-bottom:0;
+}
+#ww .l, #hgl .l {
+	width:22.75em;
+}
+.IE #ww .l, .IE #hgl .l {
+	overflow:hidden;
+	width:22em;
+}
+#ww .wl {
+        position:absolute;
+        bottom:0;
+        left:0;
+        width:100%;
+        background-color:#E4E6E7;
+}
+.IE #ww .wl {
+        bottom:-1px;
+}
+.mpr {
+	width:9.9em;
+	height:6.6em;
+}
+#ww .r, #hgl .r {
+	padding:.7em 0 0 .2em;
+	font-weight:bold;
+	display:block;
+	width:10.5em;
+	height:17.8em;
+	margin:0 0 0 23.3em;
+	background-color:#e5e6e8;
+}
+.IE #ww .r, #hgl .r {
+	height:16.1em;
+	overflow:hidden;
+	width:10.3em;
+	margin:0 0 0 22.5em;
+}
+.MacAol #hgl .r {
+	float:right;
+}
+#ww .w, #hgl .w {
+	height:17.8em;
+	padding:.6em 0 0 .2em;
+	border:none;
+}
+.IE #ww .w,  .IE #hgl .w {
+	height:17.7em;
+}
+#ww .r h6.fst, #ww.r h6.tst, #hgl .r h6.tst {
+	border:none;
+}
+#wwt img {
+	width:7.9em;
+	height:5.9em;
+}
+#wwt ol, #hgl ol {
+	padding-top:.6em;
+	margin-left:1.4em;
+}
+.IE #wwt ol, .IE7 #hgl ol {
+	margin:-.1em 0 0 0;
+}
+.IE #wwt ol li, .IE #hgl ol li {
+	list-style-position:inside;
+	margin:0 0 .1em 0;
+}
+#wwt .olr, #hgl .olr {
+	padding:0;
+	margin-left:10em;
+	height:5.9em;
+}
+.IE #wwt .olr, .IE7 #wwt .olr, .IE #hgl .olr, .IE7 #hgl .olr {
+	height:6.1em;
+	padding:0;
+	margin-left:8.6em;
+	overflow:hidden;
+}
+.IE7 #wwt .olr, .IE7 #hgl .olr {
+	padding-left:1.5em;
+}
+#wwt ol li, #hgl ol li {
+	color:#000;
+	font-weight:bold;
+	font-size:1em;
+	margin:0 0 .1em 0;
+	padding:0;
+}
+#wwt ol li a, #hgl ol li a {
+	margin:0 .3em 0 -.3em;
+	font-size:1em;
+}
+#wwt ol li p ,#hgl ol li p{
+	display:inline;
+	font-weight:normal;
+}
+#wwt ol li p a, #hgl ol li p a {
+	margin:0;
+}
+#wwt .olr p, #hgl .olr p {
+	margin-left:-.3em;
+	display:block;
+}
+.IE #wwt .olr p, .IE #hgl .olr p {
+	margin-left:1.1em;
+}
+#wwt ul {
+	margin-top:.6em;
+}
+#wwt li {
+	padding-top:.4em;
+}
+#wwt ul li {
+	list-style-type:none;
+	padding-top:.4em;
+	font-weight:bold;
+}
+#ww .r h6.rad, #hgl .r h6.rad {
+	border:none;
+	font-size:1em;
+	padding:0;
+	margin:0 0 .5em 0;
+	color:#04748c;
+	background:#e5e6e8 url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -1000px;
+	height:1.4em;
+}
+#ww .r h6.rad a, #hgl .r h6.rad a {
+	width:12em;
+	height:1.1em;
+	display:block;
+	text-indent:-10000px;
+	overflow:hidden;
+	text-decoration:none;
+	background:none;
+}
+#ww .r h6.fst,#ww .r h6.tst, #hgl .r h6.fst, #hgl .r h6.tst {
+	margin:5px 0 0 0;
+	padding:0;
+	background:none;
+	font-size:.9em;
+	color:#000;
+}
+#ww .r li, #hgl .r li {
+	list-style-type:none;
+	margin-left:.3em;
+}
+.IE #ww .r li, .IE7 #ww .r li, .IE #hgl .r li, .IE7 #hgl .r li {
+	margin-left:-1.2em;
+}
+.IE7 #ww .r li, .IE7 #hgl .r li {
+	margin-left:-1em;
+}
+#ww .r li a {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -745px;
+	padding-left:.8em;
+}
+#ww .r ol, #hgl .r ol {
+	margin:.5em 0 .5em 0;
+	padding:0;
+}
+#ww .r ol li, #hgl .r ol li {
+	padding:0;
+	margin:0 0 0 1.65em;
+	color:black;
+	font-weight:bold;
+	font-size:1em;
+	list-style-type:decimal;
+}
+.IE #ww .r ol li, .IE7 #ww .r ol li, .IE #hgl .r ol li, .IE7 #hgl .r ol li {
+	margin:0;
+	list-style-position:inside;
+}
+.IE7 #ww .r ol li, .IE7 #ww .l ol li, .IE7 #hgl .r ol li, .IE7 #hgl .l ol li {
+	margin-left:.5em;
+}
+#ww .r ol li a, #hgl .r ol li a {
+	background:none;
+	margin-left:-.3em;
+	padding:0 0 .2em 0;
+	width:10.7em;
+	display:block;
+	font-size:1em;
+}
+.IE #ww .r ol li a, .IE #hgl .r ol li a {
+	margin-left:0;
+	padding:.1em 0 0 0;
+	width:10.7em;
+}
+#wrad a.ply {
+	background:url('/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png') no-repeat 0 -623px;
+	padding-left:1.5em;
+}
+#comm {
+	background:#e4e6e7;
+	height:7.8em;
+	padding:0;
+	border:0;
+	border-bottom:1px solid #D0d4d7;
+	width:100%;
+}
+.IE #ev h4 {
+	padding-bottom:0;
+}
+.IE7 h4 {
+	padding:.2em 0 .2em .5em;
+}
+#ev .lmM {
+	padding-bottom:.5em;
+}
+.elat {
+	height:14em;
+}
+#ev img {
+	padding:0 .5em .8em 0;
+}
+.evtTv img, .evtDt img {
+	margin-bottom:3em;
+}
+.evtTv table,.evtTv tr,.evtTv td {
+	padding:0;
+	margin:0;
+	border:0;
+}
+.evtTv .t1,.evtTv .t2,.evtTv .t3,.evtTv .t4 {
+	overflow:hidden;
+	white-space:nowrap;
+	font-size:1em;
+}
+.evtTv .t1 {
+	width:3.2em;
+	font-weight:bold;
+	text-align:right;
+}
+.evtTv .t2 {
+	padding-left:.1em;
+	width:8.5em;
+}
+.evtTv .t2 a {
+	white-space:nowrap;
+}
+.evtTv .t3 {
+	width:4.85em;
+}
+.evtTv .t3 a {
+	text-decoration:none;
+	cursor:none;
+	color:#000;
+}
+.evtTv .t3 i {
+	font-style:normal;
+
+}
+#ev .hd, .evtS .hd {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 100%;
+	margin:0 .7em .65em .1em;
+	padding:.6em 0 .5em;
+	height:1.6em;
+}
+#ev .l {
+	width:48%;
+	border-right:1px dotted #adbecb;
+	margin-right:.5em;
+	height:85%;
+}
+.evtTv, .evtDt {
+	height:11em;
+}
+#ev .r h6 {
+	font-weight:bold;
+	font-size:1.1em;
+}
+#ev .r form {
+	padding-top:.8em;
+}
+#ev .hd i {
+	font-style:normal;
+	float:right;
+	margin-right:.3em;
+}
+#ev .hd h5, #mktp h5, #horo h5, #w p a {
+	font-size:1em;
+}
+#ev .hd a {
+	font-size:.9em;
+}
+p.bt, p.bt a {
+	font-weight:bold;
+	clear:left;
+}
+#ent {
+	position:relative;
+	height:14em;
+}
+.evtS h6 {
+	width:50%;
+	margin:0;
+	padding:2px 0 0 0;
+	font-size:.9em;
+	font-size:1.1em;
+}
+#mvshw h6 {
+	padding-left:6px;
+	font-size:.9em;
+	width:40%;
+}
+#mvshw {
+	width:100%;
+}
+#mvshw .l i#thN {
+	width:40%;
+	font-size:.9em;
+	text-align:right;
+	padding-right:0;
+	padding-top:.1em;
+	font-weight:normal;
+	font-style:normal;
+	margin-right:.6em;
+}
+#mvshw .l i#thN a.nxt,#mvshw .l i#thN a.prv {
+	width:.1em;
+	padding:0 .6em;
+	text-indent:-10000px;
+	overflow:hidden;
+	height:1em;
+	text-decoration:none;
+}
+.IE #mvshw .l i#thN a.nxt,.IE #mvshw .l i#thN a.prv {
+	padding-right:.4em;
+	width:1em;
+}
+#mvshw .l i#thN a.nxt {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 100% -1796px;
+}
+.IE #mvshw .l i#thN a.nxt, .Gecko .evtS .l i#thN a.nxt {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 100% -1796px;
+}
+#mvshw .l i#thN a.prv {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -1698px;
+}
+.IE #mvshw .l i#thN a.prv, .Gecko #mvshw .l i#thN a.prv {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -1696px;
+}
+#mvD .l {
+	background:#e0e5e9;
+	margin:0 0 1em;
+	width:26.5em;
+	border:none;
+}
+.MacAol #mvD .l {
+	height:5em;
+}
+#locForm {
+	height:3em;
+	padding:.5em 0 0 .6em;
+	width:100%;
+	background:#fff;
+}
+#locForm label, #locForm dt {
+	float:left;
+	clear:left;
+	padding:.1em .3em 0 0;
+}
+#mvshw .l .tm {
+	background:#fff;
+	margin:0 5px 5px;
+	padding:5px;
+	font-size:.9em;
+	clear:left;
+}
+#mvshw .l .tm i {
+	font-style:normal;
+}
+#mvshw .shw img,#mvshw .shw {
+	margin-right:5px;
+	min-height:7.1em;
+	min-width:6.25em;
+}
+p.bt {
+	position:absolute;
+	bottom:.5em;
+}
+#sf {
+	position:relative;
+	height:15.2em;
+	padding-left:.6em;
+	padding-top:.5em;
+}
+.IE #sf {
+	padding-left:.7em;
+}
+#sf h5, .vul h5 {
+	font-size:1em;
+	width:11.5em;
+	overflow:hidden;
+}
+.sf {
+	width:33%;
+	float:left;
+}
+.sf ul, .vul ul li, #nwshl ul, #om_rfy ul {
+	list-style:none;
+}
+.sf ul li, .vul ul li a, #wwr ul li a, #nwshl ul li a, #wwt ul li a, #om_rfy ul li a {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -745px;
+	padding-left:.8em;
+}
+.sf ul li {
+	line-height:1.4em;
+}
+#sf p, #adSS {
+	position:absolute;
+	bottom:0;
+	left:0;
+	text-align:center;
+	margin:0;
+	padding:.4em 0 0;
+	clear:left;
+}
+#sf p a, #adSS_h p a {
+	border-top:1px solid #ccc;
+	width:36em;
+	display:block;
+}
+#adSS {
+	height:1.2em;
+	margin-left:-2px;
+}
+.IE7 #adSS {
+	height:1.6em;
+}
+#adSS_h {
+	position:absolute;
+	bottom:0;
+	left:0;
+}
+#adSS_h.ai_fl {
+	margin:.4em 0 0 .25em;
+	width:24.5em;
+	width:25.5em;
+	height:1.2em;
+}
+#adComm_h p {
+	text-align:center;
+	font-size:.9em;
+}
+#adComm {
+	overflow:hidden;
+	white-space:nowrap;
+}
+#adComm_h p a {
+	font-weight:normal;
+}
+#adComm_h.ai_fl {
+	text-align:center;
+	width:25.5em;
+}
+.IE #adComm_h.ai_fl, .IE7 #adComm_h.ai_fl {
+	margin-top:.3em;
+	padding-top:.25em;
+}
+#adComm_h a.sq {
+	font-weight:normal;
+}
+#comm a, #comm a:hover{
+	text-decoration:none;
+	color:#1e5c99;
+}
+#comm a.h:hover{
+	text-decoration:underline;
+}
+#comm {
+	background:#e4e6e7;
+	height:7.8em;
+	width:25.55em;
+	border-bottom:1px solid #D0d4d7;
+}
+.IE #comm {
+	width:25.55em;
+}
+#comm, #static, #custom {
+	float:left;
+}
+#comm ul li {
+	margin-top:.1em;
+	list-style-type:none;
+	text-align:center;
+	float:left;
+}
+.IE #comm ul li {
+	margin-top:.2em;
+}
+#comm ul li img {
+	font-size:1em;
+	width:7.5em;
+	height:2.45em;
+}
+#static, #custom {
+	height:8.7em;
+	font-size:.9em;
+	font-weight:bold;
+}
+#static {
+	position:relative;
+	width:11.1em;
+	background:#e0e5e9 url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 100% -1350px;
+}
+#custom {
+	width:16.96em;
+}
+#static ul {
+	margin:.2em 0 0 1.6em;
+}
+#custom ul {
+	margin:.2em 0 0 0;
+}
+#custom ul li {
+	margin:.1em .4em 0;
+}
+.IE #custom ul li {
+	margin:.2em .4em 0 .2em;
+}
+#mmc {
+	position:absolute;
+	color:#FF0000;
+	text-align:left;
+	font-size:.99em;
+	text-indent:0;
+	margin:0 0 0 5em;
+	font-weight:bold;
+}
+#comPA{
+	z-index:999999999;
+	width:15px;
+	height:14px;
+	border-top:1px solid black;
+	border-left:1px solid black;
+	border-right:1px solid black;
+	background-color:white;
+	position:absolute;
+	display:none;
+}
+#comP {
+	margin:0;
+	padding:0;
+	position:absolute;
+	display:none;
+	width:100px;
+	height:146px;
+	border:1px solid black;
+	background:white;
+	overflow:auto;
+}
+#comP ul {
+	margin:0;
+	padding:0;
+	list-style-type:none;
+	width:81px;
+	overflow:hidden;
+}
+#comP ul li {
+	margin:0;
+	padding:0;
+	height:1.5em;
+	width:81px;
+	text-align:left;
+	font-size:.9em;
+}
+#comP ul li a {
+	margin:0;
+	padding:0 0 0 .3em;
+	display:block;
+	height:1.5em;
+	width:81px;
+	text-decoration:none;
+	color:#1e5c99;
+}
+#comP ul li a:hover {
+	color:#1e5c99;
+	background-color:#f5d427;
+}
+#comP ul li.cur a, #comP ul li.cur a:hover {
+	color:black;
+	background-color:white;
+	font-weight:bold;
+}
+#comm ul li img.comArw1 {
+	width:13px;
+	height:10px;
+}
+.comArw2 {
+	width:13px;
+	height:10px;
+	margin-left:-2px;
+}
+#cmAd {
+	background:#e4e6e7;
+	line-height:1.5em;
+	height:1.5em;
+	width:24.95em;
+	padding:0 .3em;
+	clear:both;
+	text-align:center;
+	border-top:1px solid #fff;
+	border-bottom:2px solid #d5d5d5;
+}
+.SAF #adComm {
+	width:25.2em;
+}
+.IE #cmAd {
+	width:24.9em;
+	overflow:hidden;
+}
+#cmAd .sq {
+	font-weight:normal;
+}
+#rA {
+	text-align:center;
+	margin:.5em auto 0;
+}
+.Gecko #rA {
+	min-height:9.5em;
+}
+.IE7 #rA, .IE7 #adA300x100_1_h.ai_e {
+	min-height:9.3em;
+	text-align:center;
+	margin-left:.5em;
+	height:auto !important;
+}
+#rA p a, #rA p a img, #adA300x100_1_h.ai_e p a, #adA300x250_1_h.ai_e p a {
+	font-size:.9em;
+}
+#rA p a img, #adA300x100_1_h.ai_e p a {
+	height:1em;
+	line-height:1.4em;
+	overflow:hidden;
+}
+.IE #rA {
+	height:10em;
+	padding:.5em 0 0 .5em;
+	text-align:center;
+}
+.IE #adA300x100_1_h.ai_fl, .IE7 #adA300x100_1_h.ai_fl, .IE7 #adA300x250_1_h.ai_fl {
+	font-size:.9em;
+	padding:.2em 0 0;
+}
+.IE #rA p a.sq, .IE #adA300x100_1_h.ai_fl .sq, .IE #adA300x250_1_h.ai_fl .sq, .IE7 #adA300x100_1_h.ai_fl .sq, .IE7 #adA300x250_1_h.ai_fl .sq {
+	margin-left:.3em;
+}
+.vul {
+	width:49%;
+	float:left;
+	padding:.5em 0;
+}
+#vid_fm {
+	background:#e5e6e8;
+}
+#vid_fm fieldset {
+	background:#e5e6e8;
+	padding:.5em 0 .7em .4em;
+	margin-left:-.65em;
+}
+#vid_fm label, #form_bg dt {
+	padding-bottom:.3em;
+	display:inline;
+}
+#vid_fm .mSrch {
+	font-size:.9em;
+	width:14em;
+	border:1px solid #000;
+}
+.IE #vid_fm .mSrch, .IE7 #vid_fm .mSrch, .SAF #vid_fm .mSrch {
+	width:13em;
+}
+#fvid p {
+	padding-bottom:.5em;
+}
+.IE #fvid p {
+	height:.1em;
+	display:block;
+}
+#adFV {
+	margin-top:.5em;
+}
+#adFV img {
+	width:25.55em;
+}
+.IE #adFVin_h img, .IE7 #adFVin_h img {
+	width:25.55em;
+	height:12.4em;
+}
+.IE #adFVin_h img {
+	margin-left:2px;
+}
+.IE #adFV, .IE7 #adFV {
+	height:12.2em;
+}
+.IE #rA {
+	padding:.5em 0 0 .5em;
+	height:9em;
+}
+.IE #rA img, .IE #adA300x250_1_h.ai_fl, .IE #adA300x250_1_h.ai_fl img {
+	width:24em;
+}
+.IE #rp, .IE7 #rp {
+	height:5.5em;
+}
+#rp .pr {
+	margin-top:.5em;
+	width:12.7em;
+}
+.IE #rp .pr, .IE7 #rp .pr {
+	width:12.7em;
+	height:5em;
+}
+.img60 {
+	height:4.95em;
+	width:4.95em;
+}
+.img150 {
+	height:4.95em;
+	width:12.2em;
+}
+.IE #adFPflatpic1, .IE #adFPflatpic2, .IE7 #adFPflatpic1, .IE7 #adFPflatpic2, .IE7 #adFPflatpic3 {
+	position:relative;
+}
+.IE #adFPflatpic1, .IE #adFPflatpic2, .IE #adFPflatpic3 {
+	margin-top:.5em;
+}
+.IE #adFPflatpic1 {
+	height:.1em;
+	width:12.7em;
+}
+.IE #adFPflatpic1_h.ai_fl, .IE #adFPflatpic2_h.ai_fl, .IE7 #adFPflatpic1_h.ai_fl, .IE7 #adFPflatpic2_h.ai_fl {
+	padding-top:0;
+	width:12.7em;
+	margin:0;
+}
+.IE #adFPflatpic2, .IE7 #adFPflatpic2 {
+	margin-left:12.75em;
+	height:4.5em;
+}
+.IE7 #adFPflatpic1_h.ai_fl, .IE7 #adFPflatpic2_h.ai_fl, .IE7 #adFPflatpic3_h.ai_fl {
+	margin-top:.3em;
+}
+.pr h5, #adFPflatpic1_h.ai_fl .pr h5, #adFPflatpic2_h.ai_fl .pr h5 {
+	float:none;
+	color:#000;
+	font-size:.9em;
+	margin-left:5.8em;
+	text-align:left;
+}
+.IE .pr h5 {
+	margin-left:5.63em;
+}
+.pr p, #adFPflatpic1_h.ai_fl .pr p, #adFPflatpic2_h.ai_fl .pr p {
+	float:none;
+	font-size:.9em;
+	margin-left:5.8em;
+	text-align:left;
+}
+#adFPflatpic1_h.ai_fl IMG, #adFPflatpic2_h.ai_fl IMG, #adFPflatpic3_h.ai_fl IMG {
+	float:left;
+}
+#hL {
+	width:75%;
+	float:right;
+	margin:.5em 0 0 0;
+	clear:right;
+	text-align:right;
+	margin-right:-.25em;
+}
+#hL a {
+	color:#fff;
+}
+#hL li {
+	display:inline;
+	background:url(/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png) 0 -504px no-repeat;
+	padding:0 1em;
+}
+#hL li.f {
+	background:none;
+}
+#hL li .hmp, #hL li.f .hmp {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -1597px;
+	padding-left:1.2em;
+	font-weight:bold;
+}
+#hL li .env, #hL li.f .env {
+	background:url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") no-repeat 0 -2817px;
+	padding-left:1.4em;
+}
+#ag .smM {
+	clear:both;
+	height:8em;
+	width:24.5em;
+}
+.IE #ag .smM, .Gecko #ag .smM {
+	width:24.6em;
+}
+#w {
+	padding-top:.5em;
+}
+#w h5, #w label, #w dt {
+	font-size:1em;
+	margin-bottom:1em;
+}
+#w p.sq {
+        font-size:.9em;
+	float:left;
+	clear:both;
+        margin-top:1em;
+}
+.IE #w p.sq {
+        margin-top:0;
+        padding-bottom:.3em;
+}
+#w p.sq b {
+        color:#000;
+}
+#trf .fBt, #mktf .fBt {
+	width:2.5em;
+}
+.SAF #trf .fBt, #mktf .fBt {
+	width:3em;
+}
+#ent .mSrch, #w .mSrch, #mktf .mSrch, #trf .mSrch, #gettf .mSrch {
+	font-size:.9em;
+	width:7em;
+	margin-right:.3em;
+	border:1px solid #000;
+}
+#w .mSrch {
+	width:6.6em;
+	margin-right:.2em;
+}
+.IE #w .mSrch {
+	width:4.3em;
+	margin-right:.2em;
+}
+.Gecko #mvD .mSrch, .Gecko #mvD .fBt {
+	float:left;
+}
+.IE #ent .mSrch, .IE #vid_fm .mSrch, .IE #w .mSrch, .IE #trf .mSrch, .IE #mktf .mSrch {
+	height:1.3em;
+}
+.SAF #w .mSrch {
+	width:6.3em;
+}
+#mktf .mSrch {
+	width:8.2em;
+	margin-right:.15em;
+}
+.MacAol #w form .fBt, .MacAol #trf .fBt, .MacAol #mktf .fBt, .MacAol #ent .fBt, .MacAol #form_bg .fBt {
+	height:1.55em;
+	padding-top:.1em;
+}
+#w a {
+	font-size:.9em;
+}
+#w .td {
+	width:58%;
+	border-right:1px dotted #b0bccb;
+	text-align:center;
+	margin-right:.3em;
+}
+.IE #w .td {
+	height:4.5em;
+}
+#w .td a {
+	font-size:1.1em;
+}
+#w .td p { 
+	text-align:left;
+}
+#w .td p a {
+	color:#000;
+}
+#tdw img {
+	height:2.25em;
+	width:2.25em;
+	margin-bottom:-.6em;
+}
+.IE #tdw img {
+	height:2.55em;
+}
+#tdw b {
+	font-size:1.6em;
+	color:#676b6c;
+	padding-bottom:.5em;
+}
+.td, .fW {
+	margin-top:.5em;
+}
+.fW i {
+	font-style:normal;
+	font-size:.88em;
+	margin-top:.5em;
+	width:2.4em;
+}
+.fW img {
+	height:1.8em;
+	margin:2px .15em -5px .15em;
+}
+.fW big {
+	font-size:1em;
+	font-weight:bold;
+}
+.fW .hi {
+	color:#FE0101;
+}
+.fW .lo {
+	color:#0365D0;
+}
+#w p {
+	clear:both;
+}
+#mkth h4 i {
+	font-weight:normal;
+	font-style:normal;
+	font-size:.8em;
+	float:right;
+	margin-top:.15em;
+	padding-right:.5em;
+}
+#mkth h4 i span {
+	color:#a5cbf6;
+}
+#mkt {
+	padding:2px 8px 2px 0;
+	width:100%;
+}
+.IE #mkt, .IE7 #mkt {
+	width:98%;
+}
+#mkt td {
+	padding:3px 0 1px;
+}
+#mkt .int {
+	font-weight:bold;
+	text-align:right;
+}
+#mkt .lft {
+	text-align:left;
+}
+#mkt .rt {
+	text-align:right;
+	width:23%;
+}
+#mkt .qt {
+background:red;
+}
+#mkt .qup{
+	color:#109c01;
+}
+#mkt .qdn{
+	color:red;
+}
+#mkt .qnc{
+	color:gray;
+}
+#mktf {
+	padding:4px 2px 2px 6px;
+	background:#e4e6e7;
+	width:100%;
+	clear:left;
+	margin-left:-8px;
+}
+.IE #mktf {
+	padding-top:6px;
+}
+#mktf form, #mktp h5, #horo h5 {
+	padding-bottom:4px;
+}
+#mktf form {
+	float:left;
+	width:50%;
+margin-top:-2px;
+}
+#mktf form label, #mktf form dt {
+	font-weight:bold;
+}
+.MacAol #mktf dt {
+	margin-bottom:-.8em;
+}
+#mktp, #horo {
+	padding-top:6px;
+	padding-bottom:6px;
+}
+p.mkt {
+	padding:8px 0 8px .8em;
+	border-top:1px solid #ccc;
+	font-weight:bold;
+	margin-left:-.7em;
+}
+p.mkt b {
+	color:#000;
+	text-decoration:none;
+}
+#mktp img, #horo img {
+	margin-right:6px;
+}
+#mktp ul {
+	list-style:none;
+}
+#fIt p, #mkt tr.ln, #wrad p, #drad1, #drad2, #drad3 {
+	background:transparent url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 -2302px;
+}
+#fIt p {
+	padding:.4em 0;
+	width:24em;
+}
+#fIt p.gp {
+	background:none;
+}
+#fIt p.ta {
+	padding-top:1.1em;
+	background:transparent url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/v_sprite.png") repeat-x 0 -2300px;
+}
+#fIt img {
+	margin-right:.5em;
+}
+#fIt p.nb {
+	clear:left;
+	background:none;
+	padding-top:0;
+}
+#ftl, #cpr {
+	text-align:center;
+	padding:.9em .25em .25em;
+	font-size:.9em;
+}
+#cpr {
+	color:#999;
+}
+#cpr i {
+	font-style:normal;
+	color:#000;
+}
+#trf {
+	padding:.5em .5em 0 0;
+}
+#trf h5, #gettf h5 {
+	font-size:1.1em;
+}
+#trf .chloc {
+	height:1.4em;
+	font-size:.9em;
+	clear:left;
+}
+#trf .tfimg, #gettferr .tfimg, #gettf .tfimg {
+	float:right;
+}
+#trf .tf {
+	margin-top:.3em;
+	height:2.5em;
+	float:left;
+	width:50%;
+	overflow:hidden;
+}
+#trf .tf i {
+	color:#fff;
+	font-style:normal;
+	padding:.35em 0;
+	line-height:1.6em;
+	float:left;
+	width:2.7em;
+	display:block;
+	text-align:center;
+}
+#trf .tf a {
+	font-size:.9em;
+	float:left;
+	padding-left:.2em;
+}
+#trf .jam_gr {
+	float:left;
+	width:50%;
+	height:3.5em;
+	overflow:hidden;
+}
+#trf .jam_gr span, #trf .jam_gr span.j0 {
+	width:1.8em;
+	padding:0;
+	margin:1.65em 0 0 0;
+	text-align:center;
+	display:block;
+	border:1px solid #000;
+	font-size:.9em;
+	background:#00ff00;
+}
+.MacAol #trf .jam_gr {
+	margin-top:-.2em;
+	padding-top:.1em;
+}
+#trf .jam_gr span.j10 {
+	background:#ff0000;
+	margin-left:85%;
+}
+#trf .jam_gr span.j1 {
+	background:#46FB00;
+	margin-left:8.5%;
+}
+#trf .jam_gr span.j2 {
+	background:#86F700;
+	margin-left:17%;
+}
+#trf .jam_gr span.j3 {
+	background:#B4F400;
+	margin-left:25.5%;
+}
+#trf .jam_gr span.j4 {
+	background:#E3F200;
+	margin-left:34%;
+}
+#trf .jam_gr span.j5 {
+	background:#ffff00;
+	margin-left:42.5%;
+}
+#trf .jam_gr span.j6 {
+	background:#FFDF00;
+	margin-left:51%;
+}
+#trf .jam_gr span.j7 {
+	background:#FFB500;
+	margin-left:59.5%;
+}
+#trf .jam_gr span.j8 {
+	background:#FF6600;
+	margin-left:68%;
+}
+#trf .jam_gr span.j9 {
+	background:#FF3F00;
+	margin-left:76.5%;
+}
+#trf a.sq {
+	font-weight:bold;
+}
+#gettf form {
+	margin-top:2em;
+}
+#trf .mSrch {
+	margin-left:.3em;
+	width:36%;
+	margin-right:.2em;
+}
+#gettferr form {
+	margin-top:1em;
+	text-align:center;
+}
+#gettferr label, #gettferr dt, #gettferr p {
+	width:70%;
+	color:red;
+	display:block;
+	margin:0 auto;
+}
+label#short, dt#short {
+	width:50%;
+}
+#trf .tf .white {
+	color:#fff;
+}
+#trf .tf .black, #trf .black {
+	color:#000;
+}
+#gettferr p a {
+	margin-top:.6em;
+	display:block;
+	clear:left;
+}
+#lCA, #adA300x100_2_h.ai_e {
+	clear:both;
+	height:8em;
+	padding-left:.25em;
+}
+#lCA {
+	padding-top:8px;
+	margin-top:0;
+}
+.Gecko #lCA {
+	padding-left:.2em;
+}
+.IE7 #lCA, .IE7 #adA300x100_2_h.ai_e, .IE #lCA, .IE #adA300x100_2_h.ai_e {
+        padding-top:.5em;
+	height:8.3em;
+}
+#om_dir a.dhead {
+	background-color:#ccc;
+	border-left:.1em solid #fff;
+	border-right:.1em solid #fff;
+	width:8em;
+}
+#lform_bg {
+	float:left;
+	background:#dcdcdc;
+	clear:both;
+	width:21.3em;
+	padding:.3em 0 .3em .4em;
+	margin-bottom:.7em;
+}
+.IE #lform_bg {
+	margin-bottom:.3em;
+}
+#lform_bg label, #lform_bg dt, #lform_bg .mSrch {
+	font-size:.9em;
+}
+#lform_bg label, #lform_bg dt {
+	font-weight:bold;
+}
+#lform_bg .mSrch {
+	font-size:.9em;
+	width:11.5em;
+	border:1px solid #000;
+	margin-right:.25em;
+}
+.IE #lform_bg .mSrch, .IE7 #lform_bg .mSrch, .SAF #lform_bg .mSrch {
+	width:10.5em;
+}
+.MacAol #lform_bg dt, .MacAol #lform_bg .mSrch {
+	float:left;
+}
+.MacAol #lform_bg .fBt {
+	height:1.5em;
+}
+#hgl .l .sq {
+	font-weight:bold;
+}
+#lwm {
+	position:relative;
+	clear:both;
+	height:6.6em;
+	overflow:hidden;
+	padding:0 0 .8em .65em;
+}
+#lwm IMG {
+	margin:.7em .7em .7em 0;
+}
+.IE #lwm IMG {
+	padding:0 .7em 0 0;
+}
+#lwm p {
+	font-size:1em;
+	padding:.4em .1em 0 0;
+	overflow:hidden;
+}
+.MacAol #lwm p {
+	height:5em;
+}
+#btc {
+	position:absolute;
+	bottom:.5em;
+	right:0;
+}
+.MacAol #btc {
+	position:relative;
+}
+.lw img  {
+	width:6.15em;
+	height:6.2em;
+}
+.lw .pbt, .lw .nbt {
+	position:relative;
+	float:right;
+	width:1.5em;
+	height:1.4em;
+	display:block;
+}
+.lw .pbt {
+	background:#ccc url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/sm_pbt.gif") no-repeat;
+	width:1.55em;
+	margin-left:.3em;
+}
+.SAF .lw .pbt {
+	width:1.6em;
+}
+.lw .nbt {
+	background:#ccc url("/web/20070612212801im_/http://www.aolcdn.com/_media/aolp_v21/sm_nbt.gif") no-repeat;
+	margin-right:.25em;
+}
+.MacAol .lw .pbt {
+	height:1.5em;
+}
+.lw i.ntxt {
+	font-style:normal;
+	font-size:1em;
+	float:right;
+	padding-top:.1em;
+}
+.IE .lw i.ntxt {
+	padding-top:.2em;
+}
+#om_rfy .lst {
+	width:49%;
+	float:left;
+	padding:.5em 0;
+}
+#om_rfy .lst ul li {
+	line-height:1.4em;
+}
+#hgl .l {
+	background:#fff;
+	padding:.5em 0 0 .5em;
+	height:18.1em;
+	width:22.2em;
+}
+#hgl .pr {
+	height:13em;
+	padding:.35em 0 0 .2em;
+	width:49%;
+}
+.IE #hgl .pr, .IE7 #hgl .pr {
+	width:10.5em;
+}
+#hgl .pr p {
+	margin-left:0;
+	width:11.7em;
+}
+.IE #hgl .w, .IE7 #hgl .w {
+	width:11.3em;
+}
+#hgl .r {
+	margin:0 0 0 0;
+	height:17.9em;
+	width:12.4em;
+	padding-left:.5em;
+	float:right;
+}
+.IE #hgl .r {
+	height:18em;
+}
+.rh {
+	line-height:1.5em;
+}
+.img75, #fIt img, #horo img, #mktp img {
+	height:6.2em;
+	width:6.2em;
+}
+#horo img {
+	margin-top:.3em;
+}
+#ev .img75 {
+	margin-bottom:2em;
+}
+#w .fBt {
+	padding-left:.5em;
+	padding-right:.3em;
+}
+.IE #adFPflatpic1, .IE #rp .pr {
+	width:12.55em !important;
+	float:left;
+}
+.IE #adFPflatpic3_h.ai_fl, .IE7 #adFPflatpic3_h.ai_fl {
+        width:25.5em;
+}
+#adFPflatpic3 .pr, #adFPflatpic3_h.ai_fl .pr {
+        margin-top:.5em;
+        width:25.5em;
+}
+#adFPflatpic3 .pr h5, #adFPflatpic3_h.ai_fl .pr h5 {
+        margin-left:10.5em;
+        font-size:1em;
+}
+#adFPflatpic3 .pr p, #adFPflatpic3_h.ai_fl .pr p {
+        margin-left:10.5em;
+        font-size:1em;
+}
+#adFPflatpic3, #adFPflatpic3_h.ai_fl {
+        width:25.5em;
+        height:5.5em;
+}
+.IE #rp #adFPflatpic3 .pr {
+    width:25.5em !important;
+}
+#dradtop, #dradtop_h {
+	text-align:left;
+	width:25.5em;
+	height:2.55em;
+	padding-left:2px;
+	clear:both;
+	padding:4px 8px 0 0;
+}
+.Gecko #dradtop_h {
+	padding:0;
+}
+.IE #dradtop, .IE #dradtop_h, .IE7 #dradtop, .IE7 #dradtop_h {
+	padding-top:0;
+	margin-top:4px;
+}
+#drad1, #drad2, #drad3 {
+	padding:.4em 0;
+	width:24em;
+	height:1.28em;
+}
+.IE #drad1_h, .IE #drad2_h, .IE #drad3_h, .IE7 #drad1_h, .IE7 #drad2_h, .IE7 #drad3_h {
+	padding:.4em 0;
+	margin:.4em 0 .4em .4em;
+}
+#smore {
+	display:none;
+	position:absolute;
+	padding:7px 5px 4px 5px;
+	border:1px solid black;
+	background:#fff;
+	width:7em;
+}
+#smore ul {
+	list-style-type:none;
+}
+#smore ul li {
+	height:1.5em;
+	white-space:nowrap;
+}
+#smorex {
+	position:absolute;
+	right:5px;
+	top:1px;
+}
+
+/*
+     FILE ARCHIVED ON 21:28:01 Jun 12, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 01:50:29 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.372
+  exclusion.robots: 0.038
+  exclusion.robots.policy: 0.028
+  esindex: 0.006
+  cdx.remote: 28.928
+  LoadShardBlock: 195.523 (3)
+  PetaboxLoader3.datanode: 204.489 (4)
+  load_resource: 444.154
+  PetaboxLoader3.resolve: 291.145
+*/

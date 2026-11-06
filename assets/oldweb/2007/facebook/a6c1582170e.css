@@ -1,0 +1,1761 @@
+
+/*  ------------------------------------------------------------------------
+                                    Facebook
+    ------------------------------------------------------------------------  */
+
+body {
+  background: #fff;
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+  font-size: 11px;
+  margin: 0px;
+  padding: 0px;
+  text-align: left; }
+
+h1, h2, h3, h4, h5 {
+  font-size: 13px;
+  color: #333;
+  margin: 0px;
+  padding: 0px; }
+
+h1 {
+  font-size: 14px; }
+
+h4, h5 {
+  font-size: 11px; }
+
+p {
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+  font-size: 11px;
+  text-align: left; }
+
+a {
+  color: #3b5998;
+  text-decoration: none; }
+
+a:hover {
+  text-decoration: underline; }
+
+img {
+  border: 0px; }
+
+select {
+  border:1px solid #BDC7D8;
+  font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+  font-size:11px;
+  padding:2px;
+}
+
+td,
+td.label {
+  font-size: 11px; 
+  text-align: left; }
+
+.wbr { display: block; float:left; }
+
+/*  --------------------------|  GLOBAL CLASSES  |--------------------------  */
+
+/* This is FBML transitional code for backwards compatibility, sorry for the mess */
+
+.standard_message {
+  padding:10px;
+}
+
+.standard_message.no_padding {
+  padding:0;
+}
+
+.standard_message.shorten {
+  padding-bottom:0;
+}
+
+.standard_message.has_padding {
+  padding:10px;
+}
+
+.standard_message #error,
+.standard_message .status,
+.standard_message .explanation_note {
+  margin:0;
+}
+
+#error,
+.status,
+.explanation_note {        
+  margin: 0 10px 10px 10px;
+  padding: 10px;
+  border: solid 1px #dd3c10;
+  background: #ffebe8;
+}
+
+#error p,
+.status p,
+.explanation_note p {
+  margin: 4px 0px 0px;
+  line-height:14px;
+  font-weight:normal;
+}
+
+#error a,
+.status a,
+.explanation_note a {
+  text-decoration: none;
+  color: #dd3c10;
+}
+
+.status {
+  border-color:#e2c822;
+  background: #fff9d7; 
+}
+
+.status a {
+  color: #3b5998;
+  text-decoration: none;
+}
+
+.explanation_note {
+  border-color:#bdc7d8;
+  background:#fff;
+}
+
+.explanation_note h1 {
+  font-size:11px;
+}
+
+.pipe {
+  color: gray;
+  padding: 0px 3px; }
+
+.column {
+  float: left; }
+
+.center {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+
+.editor_title {
+  background: #f7f7f7;
+  padding-bottom: 5px;
+} 
+
+.standard_title {
+  padding-bottom: 5px;
+}
+
+.page_title {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 10px 5px;
+  margin: 0px 10px;
+}
+
+.standard_title .page_title {
+  border-bottom: none;
+}
+
+
+/*  ----------------------------|  PAGE FRAME  |----------------------------  */
+
+#book {
+  padding: 0px;
+  margin: 0px auto;
+  text-align: left;
+  width: 781px; }
+
+#sidebar {
+  padding: 0px 0px 0px; 
+  font-size: 13px; /* Needed for correct text-size handling. Ask Aaron */
+  width: 132px;
+  float: left; }
+  
+  #sidebar h2 {
+    margin: 0px; 
+    font-size: 11px; 
+    float: left;
+    text-align: left;
+    color: #333;
+    border: none;
+    background: none;
+    padding: 0px 0px 3px; }
+
+  #sidebar h2 a {
+    color: #333; }
+
+  #sidebar h2 a:hover {
+    color: #3b5998;
+    text-decoration: underline; }
+  
+  #sidebar a.go_home {
+    display: block;
+    background: #3b5998 url(/web/20070615111340im_/http://static.ak.facebook.com/images/facebook_logo.gif) no-repeat top left;
+    height: 26px;
+    width: 133px;
+    position: absolute;
+    z-index: 3;
+    margin: 0;
+    padding: 29px 0px 0px;
+    font-size: 13px;
+    }
+
+    #sidebar a.go_home:hover {
+      background: #3b5998 url(/web/20070615111340im_/http://static.ak.facebook.com/images/facebook_logo.gif) no-repeat bottom left; 
+    }
+  
+    #sidebar a.go_home h1 {
+      font-size: 13px; }
+  
+  #sidebar_content {
+    font-size: 11px; 
+    margin: 2em 0px 15px;
+    padding: 32px 0px 0px;
+    color: #000;
+    border-bottom: solid 1px #ddd;
+    background: #f7f7f7 url(/web/20070615111340im_/http://static.ak.facebook.com/images/go_home.gif) no-repeat 0px -100px; /*preload logo hover */ }
+      
+  #squicklogin {
+     padding: 8px 10px 10px 9px; }
+    
+    #squicklogin label {
+      color: #333; }
+    
+    #squicklogin .inputtext {
+      width: 105px;
+      margin: 0px 0px 5px; }
+
+    #squicklogin .inputsubmit {
+      margin: 5px 0px 2px; 
+      width: 60px; }
+
+    #squicklogin p {
+      padding: 0px;
+      line-height: 18px; }
+
+    #squicklogin #doquicklogin{
+	margin:5px 0 8px 0;
+}
+  
+  #qsearch {
+    padding: 8px 4px 2px 10px; }
+
+    #qsearch div.findfriends {
+      float: right;
+      font-size: 9px;
+      line-height: 13px;
+      margin: 0px; 
+      padding: 4px 5px 0px 0px; 
+    }
+
+    #qsearch a.findfriends {
+      font-size: 9px; 
+      line-height: 13px;
+      margin: 0px;
+      padding: 1px 0px 0px 0px; 
+    }
+    
+    #qsearch .inputsearch {
+      margin-top: 0px;
+      width: 105px; }
+    
+    #qsearch.hourglass #q {
+      float: none;
+      border-color: #95a5c6;
+      padding-left: 17px;
+      width: 90px; }
+    
+    #qsearch h2 {
+      margin-right: -3px;
+      padding: 0px; }
+
+#qsearch .search_arrow,
+#qsearch .global_menu_arrow_active {
+      position: relative;
+      float: left;
+      width: 13px;
+      margin: 0px 0px 1px -1px;
+      border-right: 1px solid #f7f7f7;
+      border-top: 1px solid #f7f7f7;
+      padding: 2px 0px 0px 0px;
+      height: 16px;
+      background: url(/web/20070615111340im_/http://static.ak.facebook.com/images/down_arrow.gif) no-repeat 0px center; }
+    
+    #qsearch .search_arrow:hover,
+    #qsearch .global_menu_arrow_active {      
+      background: #6D84B4 url(/web/20070615111340im_/http://static.ak.facebook.com/images/down_arrow.gif) no-repeat -13px center; }
+    
+    #qsearch .global_menu_arrow_active {
+      border-top: solid 1px #3B5998;
+      border-right: solid 1px #3B5998; }
+
+    #qsearch .search_arrow span,
+    #qsearch .search_arrow_active span {
+      text-indent: -99px; display: none; }
+
+    #qsearch #global_search_link {
+       display: -moz-inline-stack;
+       display: inline-block;
+       padding: 2px 3px 3px 3px;
+       border-top: solid 1px #f7f7f7;
+       margin-right: 2px;
+       line-height: 13px; }
+
+   #qsearch #global_search_link:hover {
+      background: #6D84B4;
+      color: white;
+      text-decoration: none; }
+
+   #qsearch #global_search_link.active, #qsearch #global_search_link.active:hover {      
+      position: relative;
+      border-top: solid 1px #f7f7f7;
+      border-left: solid 1px #f7f7f7;
+      background: #6D84B4;
+      color: white;
+      margin-right: 1px;
+      left: -1px; }
+
+    #qsearch #global_search_link.active, #qsearch #global_search_link.active:hover {
+      text-decoration: none;
+      border-top: solid 1px #3B5998;
+      border-left: solid 1px #3B5998; }
+
+#search_options_menu {
+  z-index: 5;
+  padding: 5px 0px;
+  position: absolute;
+  background: white;
+  margin: -2px 0px 0px -1px;
+  border: solid 1px #3B5998; }
+
+#search_options_menu a {
+  display: block; 
+  color: #3b5998;
+  width: 95px;
+  border-right: solid 1px white;
+  border-left: solid 1px white;
+  padding: 4px 10px; }
+
+#search_options_menu a:hover {
+  text-decoration: none;
+  background: #6D84B4;
+  border-right: solid 1px #6d84b4;
+  border-left: solid 1px #6d84b4;
+  color: white; }
+
+#sidebar_content .separator {
+   border-top: solid 1px #CCCCCC; 
+   border-bottom: solid 1px white;
+   margin: 0px -10px 4px -10px; }
+
+#sidebar .app_list { 
+  font-size: 11px;
+  padding: 8px 10px 0px; }
+  
+  #sidebar .app_list h2 {
+    float: left; 
+    padding-left: 2px;}
+
+  #sidebar .app_list_outside {
+    padding: 2px 14px 5px; 
+  }
+
+  #sidebar .browse_apps_link {
+    font-size: 9px;
+    padding-top: 5px;
+ }
+    
+  #sidebar .edit_apps {
+    float: right;
+    text-align: right;
+    width: 30px;
+    font-weight: normal; }
+    
+  #sidebar #app_list, #app_non_nav_list {
+      clear: both; 
+      list-style: none; 
+      margin: 0px 0px 0px 0px;
+      padding: 2px 3px 0px; }
+
+  #sidebar #app_non_nav_list {
+      padding-bottom: 5px; }
+  
+  #sidebar .divider_bar {
+     margin-left: 22px;
+     border-bottom: solid 1px #d6d6d6;
+     line-height: 0px;
+     margin-bottom: 3px;
+  }
+
+    #sidebar .app_list .list_item {
+        margin: 0px 0px 0px -35px;
+        padding: 1px 0px 3px 35px; }
+
+    #sidebar .app_list_outside h2 {
+        margin-left: -5px;
+        padding: 3px 0px;
+    }
+
+    #sidebar .app_list .list_item .container {
+        margin: 0px;
+        padding: 0px 0px 3px; }
+
+      #sidebar .app_list li a {
+        margin: 0px;
+        padding: 0px; }
+
+      #sidebar .app_list .photos_app_link {
+        background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/photo.gif') 0px 2px no-repeat; }
+      #sidebar .app_list .video_app_link {
+        background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/video.gif') 0px 2px no-repeat; }
+      #sidebar .app_list .notes_app_link {
+        background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/note.gif') 0px 2px no-repeat; }
+      #sidebar .app_list .groups_app_link {
+        background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/group.gif') 0px 3px no-repeat; }
+      #sidebar .app_list .events_app_link {
+        background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/event.gif') 0px 2px no-repeat; }
+      #sidebar .app_list .book_app_link {
+        background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/bookreview.gif') 0px 2px no-repeat; }
+      #sidebar .app_list .posted_app_link {
+        background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/post.gif') 0px 2px no-repeat; }
+
+      #sidebar .app_list .icon {
+        float: left; 
+        margin: 0px; 
+        padding: 0px;
+        height: 16px;
+        width: 16px;  }
+
+     #sidebar .app_list .link_title {
+        width: 80px;
+        display: block;
+        padding: 2px 0px 2px 22px;
+        margin: 0px 0px -4px 0px;  }
+
+
+#sidebar .more_section {
+/*  background: #ececec; */
+  margin-top: 2px;
+  padding: 2px 0px 2px 12px;
+  display: block;
+}
+
+#sidebar .more_section:hover {
+  background: #ececec;
+}
+
+#sidebar .expand_link {
+  text-align: left;
+  padding-left: 10px;
+  font-size: 9px;
+  font-weight: bold;
+  padding-bottom: 0px;
+  background: #ccc;
+  margin: 0px 0x 0px 0px;
+  display:block;
+  width: 100px;
+}
+
+#sidebar .more_apps {
+  background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/down_arrow_grey_small.gif') no-repeat 0px 0px;
+ }
+
+#sidebar .less_apps {
+  background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/up_arrow_grey_small.gif') no-repeat 0px 0px;
+ }
+
+#sidebar .more_apps a, #sidebar .less_apps a, .more_section a {
+  color: #666666;  
+}
+
+#publicity {
+  height: 61px;
+  padding: 3px 3px 7px; }
+
+  #publicity h5 {
+    border: none;
+    margin: 0px;
+    padding: 0px;
+    color: #333;
+    line-height: 19px; }
+  
+  #publicity h5.new {
+    line-height: 17px;
+    padding: 0px 0px 2px 36px;
+    background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/publicity_new.gif') no-repeat left center; }
+  
+  #publicity h5.tip {
+    line-height: 17px;
+    padding: 0px 0px 2px 29px;
+    background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/publicity_tip.gif') no-repeat left center; }
+  
+  #publicity p {
+    margin: 0px;
+    color: #333;
+    line-height: 14px; }
+
+#widebar {
+  width: 649px;
+  float: left; }
+
+#widebar_shadow {
+  width: 1px;
+  float: left;
+  overflow: hidden; }
+
+#navigator {
+  margin: 0px 1px 0px 0px;
+  padding: 9px 0px 4px 0px;
+  height: 2em;
+  background: url(/web/20070615111340im_/http://static.ak.facebook.com/images/navigator_bg.gif) no-repeat left bottom; 
+  line-height: 2em; }
+  
+  #navigator a {
+    text-decoration: none; 
+    color: white; }
+  
+  #navigator ul.main_set {
+    font-size: 13px;
+    float: left;
+    display: block;
+    list-style: none;
+    margin: 0px;
+    padding: 0px; }
+    
+    #navigator .main_set li {
+      float: left;
+      display: block;
+      margin: 0px 10px 0px 0px;
+      font-weight: bold; }
+      
+      #navigator .main_set li a {
+        padding: 3px 5px; }
+      #navigator .main_set li a.active,
+      #navigator .main_set li a:hover { 
+        background: #5c75aa; }
+      
+      #navigator .main_set li a.edit_link {
+        color: #d8dfea;
+        font-weight: normal; }
+      #navigator .main_set li a.edit_link:hover {
+        text-decoration: underline; 
+        background: transparent; }
+  
+  #navigator ul.secondary_set {
+    float: right;
+    display: block;
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    padding-right: 17px;
+    font-size: 11px; }
+
+    #navigator .secondary_set li {
+      float: left;
+      display: block;
+      margin: 0px 10px 0px 0px; }
+    #navigator .secondary_set li a {
+      text-transform: lowercase;  
+      color: #c3cddf; }
+    #navigator .secondary_set li a:hover {
+      color: white;
+      text-decoration: underline; }
+  
+#book #content_shadow {
+    margin: 2px 0px 0px 1px;
+    background: transparent url(/web/20070615111340im_/http://static.ak.facebook.com/images/shadow_gray.gif) repeat-y top right;
+    padding: 0px;
+    border-bottom: solid 1px #ddd; }
+
+#content { 
+    margin: -2px 1px 0px -1px;
+    border-top: none;
+    border-left: solid 1px #b7b7b7;
+    border-right: solid 1px #b7b7b7;
+    border-bottom: solid 1px #3b5998;
+    font-size: 11px; }
+
+#pagefooter {
+  clear: both;
+  padding: 0px;
+  margin: 0px;
+  height: 50px;
+  line-height: 16px; }
+
+#pagefooter ul {
+  display: block;
+  list-style: none;
+  float: right;
+  margin: 0px;
+  padding: 8px 2px 4px;}
+
+#pagefooter li {
+  float: left;
+  padding: 0px;}
+
+#pagefooter .footer_links a {
+  text-transform: lowercase; 
+  padding: 2px 6px;}
+
+#pagefooter .copyright {
+  color: #777;
+  float: left;
+  margin: 0px;
+  padding: 8px 10px 0px; }
+  
+  #pagefooter .copyright .brand {
+    padding: 0px 0px 2px 22px;
+    background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/hidden.gif') no-repeat; }
+
+#subheader {
+  border-left: solid 1px #b7b7b7;
+  border-right: solid 1px #b7b7b7; }
+
+
+#navigator .main_set li .with_arrow {
+  margin-top: 0px;
+}
+
+.global_menu_arrow_active:focus {
+  outline: 0px;
+}
+
+#navigator .main_set li a.global_menu_arrow,
+#navigator .main_set li a.global_menu_arrow_active {
+  height: 19px;
+  width: 17px;
+  margin: 0px 0px -10px -1px;
+  padding: 3px 0px 3px;
+  background: transparent url(/web/20070615111340im_/http://static.ak.facebook.com/images/global_menu_arrow.gif) no-repeat 0px center; }
+  
+  #navigator .main_set li a.global_menu_arrow_active,
+  #navigator .main_set li a.global_menu_arrow:hover, 
+  #navigator .main_set li a.global_menu_arrow_active:hover {
+    background: #5c75aa url(/web/20070615111340im_/http://static.ak.facebook.com/images/global_menu_arrow.gif) no-repeat 0px center; }
+
+
+
+/* Navigator Drop Menus ==================== */
+
+#navigator .navigator_menu {
+  margin: -1px;
+  position: absolute;
+  z-index: 100;
+  background: white;
+  border: solid 1px #3b5998;
+  }
+
+  #navigator .navigator_menu.friends { 
+     max-width: 140px;
+  }
+
+  #navigator .navigator_menu.networks { 
+     max-width: 250px;
+  }
+  
+  #navigator .navigator_menu ul {
+    font-size: 11px; 
+    line-height: 1em;
+    font-weight: normal;
+    list-style: none;
+    padding: 5px 0px;
+    margin: 0px; }
+    
+  #navigator .navigator_menu li {
+    float: none;
+    cursor: pointer;
+    font-weight: normal;
+    padding: 0px;
+    margin: 0px; }
+
+    #navigator .navigator_menu li.menu_divider {
+      display: block;
+      margin: 4px 10px;
+      font-size: 1px;
+      line-height: 1px;
+      cursor: default;
+      border-bottom: solid 1px #eee; }
+      
+    #navigator .navigator_menu li a {
+      display: block;
+      color: #3b5998;
+      border-right: solid 1px white;
+      border-left: solid 1px white;
+      padding: 4px 25px 4px 10px; }
+
+    #navigator .navigator_menu a:hover {
+      text-decoration: none;
+      background: #3b5998;
+      border-right: solid 1px #6d84b4;
+      border-left: solid 1px #6d84b4;
+      color: white; }
+
+/* Title Header ==================== */
+
+.title_header {
+  background: white;
+  padding: 20px 20px 17px; }
+
+  .title_header h2 {
+    margin: 0px;
+    font-size: 14px;
+    padding: 0px 0px 0px 24px;
+    background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/hidden.gif') no-repeat 1px 1px; }
+  
+  .title_header h2.no_icon { 
+     padding: 0px; 
+     background: none;}
+  
+  .title_header.add_border {
+    border-bottom: solid 1px #ccc; }
+  .title_header.gray {
+    background: #f7f7f7; }
+  .title_header.shorten {
+    padding-bottom: 0px; }
+  .title_header.no_padding {
+    padding: 0px; }
+  .title_header h4 {
+    color: #666;
+    font-size: 11px;
+    padding: 3px 0 0 24px; }
+  .title_header h4.no_icon {
+    padding: 3px 0 0 0; }
+
+
+
+
+/* Media Header ==================== */
+
+.obj_media_header {
+  background-color: #ffffff;
+  padding: 0px 22px 5px 20px; }
+.media_header {
+  background-color: #ffffff;
+  padding: 0px 12px 5px 20px; }
+ 
+  .obj_media_header .user_info {
+    float: left;
+    padding-top: 18px;
+    width: 425px; }
+  .media_header .user_info {
+    float: left;
+    padding-top: 18px;
+    width: 545px }
+ 
+  .obj_media_header h2 {
+    float: left;
+    margin: 0px;
+    width: 425px;
+    font-size: 14px;
+    padding: 3px 0px 5px; }
+  .media_header h2 {
+    float: left;
+    margin: 0px;
+    width: 350px;
+    font-size: 14px;
+    padding: 3px 0px 5px; }
+
+  .obj_media_header h2 span,
+  .media_header h2 span {
+    font-weight: normal; }
+
+  .obj_media_header .pipe,
+  .media_header .pipe {
+    color: gray;
+    padding: 0px 3px; }
+ 
+  .obj_media_header .picture {
+    float: right;
+    margin-top: 18px;
+    margin-right: 0px;
+    position: relative;
+    z-index: 1;
+    text-align: right;
+    overflow: hidden;
+    height: 50px;
+    width: 150px; }
+  .media_header .picture {
+    float: left;
+    margin-top: 18px;
+    margin-right: 10px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    height: 50px;
+    width: 50px; }
+    
+  .obj_media_header .picture img {
+    visibility: hidden; }
+  .media_header .picture img {
+    display: block; }
+
+  .obj_media_header .media_gray_bg {
+      background: #f7f7f7;
+      z-index: 0;
+      border-bottom: solid 1px #cccccc;
+      margin: -18px -254px 7px -20px;
+      padding: 18px 114px 0px 20px;
+      width: 512px; }
+  .media_header .media_gray_bg {
+      background: #f7f7f7;
+      z-index: 0;
+      border-bottom: solid 1px #cccccc;
+      margin: -18px -14px 7px -80px;
+      padding: 18px 14px 0px 80px;
+      width: 552px; }
+
+/* Dashboard Header ==================== */
+
+.dashboard_header {
+  padding: 10px 10px 0px; }
+
+  .dashboard_header .dh_links {
+    padding: 0px 10px 5px;
+    border-bottom: solid 1px #ccc; }
+    
+    .dashboard_header .dh_links .dh_actions { float: left; }
+    .dashboard_header .dh_links .dh_help { float: right; }
+    .dashboard_header .dh_links .pipe { padding: 0px 7px; color: #aaa; }
+    .dashboard_header .dh_links form {display: inline; overflow: hidden; width: 0px;}
+
+  .dashboard_header .dh_titlebar {
+    padding: 10px 10px 12px; }
+    
+    .dashboard_header .dh_titlebar h2 {
+      float: left;
+      font-size: 14px;
+      padding: 7px 0px 7px 24px;
+      background-repeat: no-repeat;
+      background-position: 1px 8px; }
+    .dashboard_header .dh_titlebar .dh_search {
+       float: right;
+       margin-top: 2px;
+       height: 30px;
+       line-height: 30px; }
+    .dashboard_header .dh_titlebar .dh_search input {
+       margin: 0px; }
+    .dashboard_header .dh_titlebar .dh_right {
+       float: right;
+       margin-top: 2px;
+       height: 30px; }
+
+  .dashboard_header .dh_new_media_shell {
+    float: right; 
+    background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_media_button_active.gif') no-repeat bottom -30px;
+    margin: 7px 0px 0px; }
+  
+  .dashboard_header .dh_new_media {
+     float: left;
+     display: block;
+     color: #777;
+     text-decoration: none;
+     background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_media_button.gif') no-repeat; }
+     
+     .dashboard_header .dh_new_media .tr { background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_media_button.gif') no-repeat top right; }
+     .dashboard_header .dh_new_media .bl { background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_media_button.gif') no-repeat bottom left; }
+     .dashboard_header .dh_new_media .br { background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_media_button.gif') no-repeat bottom right; }
+     .dashboard_header .dh_new_media span {
+       color: #333;
+       font-size: 11px;
+       font-weight: bold; 
+       display: block;
+       padding: 3px 9px 5px 22px;
+       text-shadow: white 0px 1px 1px;
+       background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_media_button_plus.gif') no-repeat 9px center; }
+
+   .dashboard_header .dh_new_media:hover {
+     text-decoration: underline; }
+   .dashboard_header .dh_new_media:active,
+   .dashboard_header .dh_new_media:active .tr,
+   .dashboard_header .dh_new_media:active .bl,
+   .dashboard_header .dh_new_media:active .br {
+     background-image: url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_media_button_active.gif'); }
+
+  
+/* ----------------------|  Empty List Message |---------------------- */
+
+.empty_message {
+  color: #333; 
+  font-size: 13px;
+  line-height: 17px;
+  padding: 20px 20px 50px 20px;
+  text-align: center;
+  background: #f7f7f7; }
+
+/*  ----------------------|  SWEET BLESSED CLEARFIX  |----------------------  */
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0; }
+
+.clearfix {
+    display: inline-block; }
+
+html[xmlns] .clearfix {
+    display: block; }
+
+* html .clearfix {
+    height: 1%; }
+
+
+/*  ------------------------------|  FORMS  |-------------------------------  */
+
+form {
+  margin: 0px;
+  padding: 0px; }
+
+label {
+  color: #666666;
+  font-weight: bold; }
+
+.formtable {
+  margin: 0px auto; }
+
+.formtable {
+  margin: 0px; }
+
+.formtable td {
+  border: none;
+  margin: 0px;
+  padding: 3px 1px; }
+
+.formtable td.label {
+  color: #666666;
+  font-weight: bold;
+  padding-right: 10px; }
+
+.formtable tr.tallrow {
+  vertical-align: top; }
+
+.formbuttons {
+  text-align: center;
+  margin: 10px 10px; }
+
+.formbuttons .inputsubmit, .formbuttons .inputbutton {
+  margin: 2px 4px; }
+
+.formbuttons .securetoggle {
+  padding: 9px 0px 0px 0px; }
+
+
+/*  FORM INPUTS  */
+
+.inputtext,
+.inputpassword {
+  border: 1px solid #bdc7d8;
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+  font-size: 11px;
+  padding: 3px; }
+
+textarea {
+  border: 1px solid #bdc7d8;
+  padding: 3px;
+  font-size: 11px;
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif; }
+     
+.inputbutton,
+.inputsubmit {
+  border-style: solid;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+  border-top-color: #D9DFEA;
+  border-left-color: #D9DFEA;
+  border-bottom-color: #0e1f5b;
+  border-right-color: #0e1f5b;
+  background-color: #3b5998;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif; 
+  text-align: center; }
+
+.inputcheckbox {
+  border: 0px; }
+
+.inputsearch {
+  background: white url(/web/20070615111340im_/http://static.ak.facebook.com/images/magglass.png) no-repeat 3px 4px;
+  padding-left: 17px; }
+
+.transparent_png_ie6 { 
+  display: none;
+}
+
+#inline_flyer {
+    background-color: #efeded;
+    color: #909090;
+    border-bottom: 1px solid #d8dfea;
+    padding: 4px 10px 2px 10px;
+}
+
+#inline_flyer .external_link a { 
+    text-decoration: none;
+    border-bottom: 1px dotted #3b5998;
+}
+
+#inline_flyer .external_link a:hover { 
+    text-decoration: none;
+    border-bottom: 1px dotted #efeded;
+}
+
+#inline_flyer #abbreviated_body {
+    float: left;
+    width: 430px;
+}
+
+#inline_flyer #expander {
+    float: right;
+}
+
+#inline_flyer_content { 
+    background-color: #efeded;
+    border-bottom: 1px solid #d8dfea;
+    padding: 4px 10px;
+}
+
+/*  ----------------------------|  ERROR PAGE  |----------------------------  */
+
+.error_page #content {
+  padding: 20px; }
+
+.error_page #error {
+  margin: 0px; }
+
+
+/*  -------------------------------|  TABS  |-------------------------------  */
+
+#tabs {
+        text-align: center;
+        padding: 4px 0px;
+        margin: 10px 20px 0px;
+        border-bottom: solid 1px #3B5998; }
+
+#tabs div {
+        display: inline;
+        padding: 0px;
+        margin: 0px; }
+* html #tabs div { 
+        margin: 0 3px; }
+
+
+#tabs a {
+        margin: 0px;
+        padding: 4px; }
+
+#tabs .activetab a {
+        color: white;
+        background: #3B5998; }
+
+#tabs .activetab a:hover {
+        text-decoration: none; }
+
+#tabs .inactivetab a:hover {
+        background: #D8DFEA;
+        text-decoration: none; }
+
+#tabs .disabled {
+        color: #c0c0c0;
+        margin: 0px;
+        padding: 4px;
+        text-decoration: none; }
+
+
+/*--|  Toggle Tabs  |--------------------------------------------------------------|
+==================================================================================*/
+
+.tabs {
+  padding:3px 0;
+  border-bottom:1px solid #898989;
+}
+
+.tabs.top {
+  background: #f7f7f7; }
+
+.tabs .left_tabs {
+  padding-left:10px;
+  float:left;
+}
+
+.tabs .right_tabs {
+  padding-right:10px;
+  float:right;
+}
+
+.tabs .back_links {
+  padding-right: 20px;
+  float:right;
+}
+
+.toggle_tabs {
+  margin:0;
+  padding:0;
+  list-style:none;
+  text-align:center;
+  display:inline;
+}
+
+.toggle_tabs li {
+  display:inline; 
+  padding: 2px 0px 3px; 
+  background: #f1f1f1 url(/web/20070615111340im_/http://static.ak.facebook.com/images/components/toggle_tab_gloss.gif) top left repeat-x;
+} 
+
+.toggle_tabs li a {
+  padding:2px 8px 3px 9px;
+  xbackground: url(/web/20070615111340im_/http://static.ak.facebook.com/images/components/toggle_tab_shadow.gif) bottom left repeat-x;
+  border:1px solid #898989;
+  border-left:0;
+  color:#333;
+  font-weight:bold; }
+  
+.toggle_tabs li a:focus {
+  outline: 0px;
+}
+
+.toggle_tabs .first a {
+  border:1px solid #898989;
+}
+
+.toggle_tabs li a.selected {
+  margin-left:-1px;
+  background:#6d84b4;
+  border:1px solid #3b5998;
+  border-left:1px solid #5973a9;
+  border-right:1px solid #5973a9;
+  color:#fff;
+}
+
+.toggle_tabs .last a.selected {
+  margin-left:-1px;
+  border-left:1px solid #5973a9;
+  border-right:1px solid #36538f;
+}
+
+.toggle_tabs .first a.selected {
+  margin:0;
+  border-left:1px solid #36538f;
+  border-right:1px solid #5973a9;
+}
+
+.toggle_tabs .first.last a.selected {
+  border:1px solid #36538f;
+}
+
+.toggle_tabs li a.selected:hover {
+  text-decoration:none;
+}
+
+/*  -----------------------------|  PAGER PRO  |----------------------------  */
+
+.pagerpro {
+  float: right;
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+
+.pagerpro li {
+  display: inline;
+  float: left; }
+
+.pagerpro a {
+  display: block;
+  padding: 3px;
+  padding-bottom: 2px; }
+
+.pagerpro a:hover {
+  background: #3B5998;
+  border-color: #D8DFEA;
+  border-bottom: 1px solid #3B5998;
+  color: white;
+  text-decoration: none; }
+
+.pagerpro .current a,
+.pagerpro .current a:hover {
+  background: transparent;
+  border-color: #3B5998;
+  border-bottom: 2px solid #3B5998;
+  color: #3B5998;
+  font-weight: bold;
+  padding-left: 2px;
+  padding-right: 2px; }
+
+
+/*  -------------------------------|  BARS  |-------------------------------  */
+
+.summary_bar {
+  border-bottom: 1px solid #D8DFEA;
+  clear: both;
+  padding: 11px 20px 0px;
+  color: black;
+  font-weight: normal;
+  line-height: normal; }
+  
+  .summary_bar h1, .summary_bar h2, .summary_bar h3, .summary_bar h4, .summary_bar h5 {
+    font-weight: normal; }
+
+.summary_bar .summary {
+  color: #333;
+  float: left;
+  padding-top: 3px;
+  padding-bottom: 4px; }
+
+.summary_bar .summary a {
+  font-weight: normal; }
+
+.tab_bar {
+  padding: 3px 20px 0px 10px;
+  border-bottom: solid 1px #3B5998; }
+
+.tab_bar #tabs {
+  margin: 0px 10px;
+  display: inline;
+  float: left;
+  border-bottom: none;
+}
+
+.tab_bar .back_links {
+  padding: 4px 0px;
+  float: right; }
+
+.footer_bar {
+  border-top: 1px solid #D8DFEA;
+  padding: 0 20px; }
+
+.footer_bar .post_editor {
+  padding-bottom: 13px;
+  padding-top: 13px; }
+
+.footer_bar .pagerpro a {
+  border-top: 2px solid white;
+  padding-top: 1px;
+  padding-bottom: 0px; }
+
+.footer_bar .pagerpro a:hover {
+  border-bottom: 2px solid #3B5998;
+  border-top: 2px solid #3B5998; }
+
+.footer_bar .pagerpro .current a,
+.footer_bar .pagerpro .current a:hover {
+  border-bottom-color: white;
+  border-top: 2px solid #3B5998; }
+
+.action_bar {
+  padding: 6px 20px 5px;
+  background: #f7f7f7; 
+  border-top: solid 1px #b7b7b7;
+  border-bottom: solid 1px #ccc; }
+  
+  .action_bar label { color: #444; }
+
+/*  ---------------------------|  ACTIONS PRO  |----------------------------  */
+
+.actionspro {
+  list-style: none;
+  margin: 0px;
+  padding: 0px; }
+
+.actionspro li { border-bottom: 1px solid #D8DFEA; }
+
+.actionspro a {
+  background: transparent;
+  display: block;
+  margin: 0px;
+  padding: 2px 3px;
+  text-decoration: none; }
+
+.actionspro a:hover {
+  background: #3b5998;
+  color: white;
+  text-decoration: none; }
+
+/*  ---------------------------|  SHARE | HIDE  |---------------------------  */
+
+.share_and_hide {
+  font-size: 9px; }
+
+  .s_and_h_big {
+    font-size: 11px; }
+
+  .share_and_hide a {
+    padding: 0px 14px 1px 4px;
+    display: block;
+    float: left;
+    background: white url(/web/20070615111340im_/http://static.ak.facebook.com/images/share_icon_small.gif) repeat-y right center;
+    border: solid 1px #7f93bc; }
+
+    .s_and_h_big a {
+      background: white url(/web/20070615111340im_/http://static.ak.facebook.com/images/share_icon.gif) repeat-y right center;
+      padding: 1px 18px 2px 4px; }
+
+  .share_and_hide a.save {
+    background: #eceff5;
+    border-left: none; }
+
+    .share_and_hide a.with_share {
+      border: solid 1px #adbad4;
+      border-left: none; }
+
+  .share_and_hide a:hover {
+    color: #fff;
+    border-color: #3B5998;
+    text-decoration: none;
+    background: #3B5998 url(/web/20070615111340im_/http://static.ak.facebook.com/images/share_icon_small_hover.gif) repeat-y right center; }
+
+    .s_and_h_big a:hover {
+      background: #3B5998 url(/web/20070615111340im_/http://static.ak.facebook.com/images/share_icon_hover.gif) repeat-y right center; }
+
+  .share_and_hide a.x_to_hide {
+    border: none;
+    width: 3px;
+    padding: 1px 5px 2px;
+    margin-left: 3px;
+    background: transparent url(/web/20070615111340im_/http://static.ak.facebook.com/images/x_to_hide.gif) no-repeat center center; }
+
+    .s_and_h_big a.x_to_hide {
+      padding: 2px 5px 3px; }
+
+  .share_and_hide a.x_to_hide:hover {
+    background: #3B5998 url(/web/20070615111340im_/http://static.ak.facebook.com/images/x_to_hide_hover.gif) no-repeat center center; }
+
+
+.quail {
+  color: #3B5998;
+  float: left;
+  padding: 3px 0; }
+
+.quail a:hover {
+  cursor: text;
+  text-decoration: none; }
+
+
+/*  --------------------------|  SQUARE BULLETS  |--------------------------  */
+
+ul.square_bullets {
+  list-style: square;
+  padding-left: 20px;
+  color: #3B5998; }
+
+ul.square_bullets li {
+  padding: 1px 0px; }
+
+ul.square_bullets li span {
+  color: black; }
+
+
+/*  ----------------------------|  MISCELLANY  |----------------------------  */
+
+/* safari won't do word break in a table without a nested div with a fixed 
+ * width. firefox does not understand break-word at all yet, though it is 
+ * standard css3. */
+.datawrap { word-wrap: break-word; }
+
+/* this makes opera respect wbr tags. */
+/* firefox and ie already do. */
+/* opera likes &shy;, but that causes other problems on other browsers. */
+/* safari is clueles about both. */
+/* if you can help us solve this, http://tinyurl.com/yucz38 */
+wbr:after { content: "\00200B" }
+
+/* adjustImage goodness */
+.img_loading {
+  width: 0px;
+  height: 0px; }
+
+.img_ready {
+  width: auto;
+  height: auto; }
+
+.two_column .right,
+.two_column .left {
+  float: left; }
+
+.no_padding {
+  padding: 0px; }
+
+.see_all {
+  text-align: right; }
+
+/*  -----------------------|  WELCOME BUTTONS  |----------------------------  */
+
+.welcome_buttons {
+  display:block;
+  padding:8px 0 0 0; }
+
+.welcome_buttons a {
+  float:left;
+  display:block;
+  width:170px;
+  /* width:200px; */
+  padding:5px;
+  margin-bottom:5px;
+  color:#666;
+  background-color:#f7f7f7;
+  margin-right:12px;
+  /* margin-right:10px; */
+  border-top:1px solid #ccc;
+  border-bottom:1px solid #ccc; }
+
+html #content .welcome_buttons a:hover {
+  text-decoration:none;
+  color:#333;
+  background:#d8dfea;
+  border-top:1px solid #3b5998;
+  border-bottom:1px solid #3b5998; }
+
+.welcome_buttons a h4 {
+  margin:0;
+  padding:0 0 0 14px;
+  font-size:13px;
+  color:#333;
+  background:transparent url(/web/20070615111340im_/http://static.ak.facebook.com/images/sitetour/tour_arrow.gif) no-repeat 3px 2px;
+  border: 0px; }
+
+.welcome_buttons a:hover h4 {
+  color:#000; }
+
+.welcome_buttons a p {
+  font-size:11px;
+  margin:0;
+  padding:3px 0 2px 14px; }
+
+.welcome_buttons a p span {
+  display:block; }
+
+.under_login_tour {
+  padding:3px 0 0 0; }
+
+.under_login_tour a {
+  width:112px;
+  padding:3px 4px 4px 4px;
+  margin:8px 0 0 0; }
+
+html #book .under_login_tour a:hover {
+  text-decoration:none;
+  color:#333;
+  background:#d8dfea;
+  border-top:1px solid #3b5998;
+  border-bottom:1px solid #3b5998; }
+
+.under_login_tour a h4 {
+  font-size:11px;
+  padding:0 0 0 9px;
+  background:transparent url(/web/20070615111340im_/http://static.ak.facebook.com/images/sitetour/tour_arrow_micro.gif) no-repeat 2px 4px; }
+
+.under_login_tour a p {
+  font-size: 9px;
+  padding: 3px 0 0 9px; }
+
+.new_feature_tag {
+  padding: 3px 0 0 6px; background: 
+  url('/web/20070615111340im_/http://static.ak.facebook.com/images/new_feature_tag.gif') no-repeat; 
+  height: 14px; 
+  float: left; 
+  margin-right: 6px;
+  width: 32px; }
+
+.new_feature_tag div {
+  font-size: 9px;
+  color: #fff; }
+
+.new_feature_tag_title {
+  padding-top: 1px;
+  margin-bottom: 3px;
+  font-weight: bold; }
+
+
+/*  ---------------------------|  APP SWITCHER  |---------------------------  */
+
+#app_switcher {
+  float: right;
+  z-index: 101;
+  position: relative; }
+  
+  #app_switcher .app_switcher_unselected {
+    position: relative; 
+    float: left; }
+  
+  #app_switcher .app_switcher_button {
+    cursor: pointer; 
+    color: #555;
+    float: left;
+    display: block;
+    padding: 0px 5px;
+    margin: 0px;
+    font-weight: bold;
+    line-height: 14px; /* Shared by all divs in the link */
+    text-decoration: none;
+    border: solid 1px #f7f7f7; }
+    
+  #app_switcher .app_switcher_button .arrow,
+  #app_switcher .app_switcher_button .name,
+  #app_switcher .app_switcher_button .icon {
+    float: left; }
+  
+    #app_switcher .app_switcher_unselected .app_switcher_button:hover {
+      border: solid 1px #666;
+      background: #fff url(/web/20070615111340im_/http://static.ak.facebook.com/images/app_switcher_hover_shadow.gif) repeat-x bottom left; }
+    
+    #app_switcher .app_switcher_selected .app_switcher_button {
+      color: white; 
+      background: #6d84b4;
+      border: solid 1px #3B5998; }
+
+  #app_switcher .app_switcher_button .arrow {
+    width: 13px;
+    padding: 4px 0px 3px;
+    margin-top: 1px;
+    background: transparent url('/web/20070615111340im_/http://static.ak.facebook.com/images/app_switcher_down_arrow.gif') no-repeat -11px center; }
+
+    #app_switcher .app_switcher_selected .app_switcher_button .arrow {
+      background-position: 2px center; }
+  
+  #app_switcher .app_switcher_button .name {
+    padding: 4px 0px 4px 6px; }
+  
+  #app_switcher .app_switcher_button .icon {
+    width: 16px;
+    padding: 4px 0px;
+    background-position: -16px center; 
+    background-repeat: no-repeat; }
+    
+    #app_switcher .app_switcher_selected .app_switcher_button .icon {
+      background-position: 0px center; }
+    
+#app_switcher_menu {
+  position: absolute;
+  background: white;
+  border: solid 1px #3B5998;
+  z-index: 100;
+  padding: 2px 0px 6px;
+  width: 136px; }
+    
+  #app_switcher_menu .menu_list_header {
+    color: #555;
+    font-size: 9px;
+    border-bottom: solid 1px #d8dfea;
+    padding: 2px 7px 3px;
+    margin: 0px 0px 6px; }
+
+  #app_switcher_menu a {
+    display: block;
+    line-height: 14px;
+    padding: 1px 7px;
+  }
+  
+  #app_switcher_menu a:hover {
+    color: white;
+    text-decoration: none;
+    background: #6D84B4; 
+    cursor: pointer;  }
+  
+  #app_switcher_menu .side_space,
+  #app_switcher_menu .app_icon,
+  #app_switcher_menu .name { 
+    float: left; }
+  
+  #app_switcher_menu .side_space {
+    width: 7px;
+    padding: 4px 0px;
+    margin: 0px 3px; }
+  
+    #app_switcher_menu .selector_arrow {
+      background: url(/web/20070615111340im_/http://static.ak.facebook.com/images/rightarrow.gif) no-repeat -7px center; }
+  
+    #app_switcher_menu a:hover .selector_arrow {
+      background: url(/web/20070615111340im_/http://static.ak.facebook.com/images/rightarrow.gif) no-repeat 0px center; }    
+
+  #app_switcher_menu .app_icon {
+    width: 16px;
+    padding: 4px 0px;
+    margin: 0px 0px 0px 2px;
+    background: url('/web/20070615111340im_/http://static.ak.facebook.com/images/icons/hidden.gif') no-repeat -16px center; }
+    
+    #app_switcher_menu a:hover .app_icon {
+      background-position: 0px center; }
+  
+  #app_switcher_menu .name {
+    padding: 4px 0px;
+    margin: 0px 0px 0px 5px; }
+
+
+/*  ---------------------------|  GRAY HEADER  |---------------------------  */
+
+.grayheader {
+  border-bottom: 1px solid #ccc; 
+  margin: 0px 0px 10px; 
+  background: #f7f7f7;
+  padding: 15px 20px 10px
+}
+
+.grayheader h2 {
+  font-size:13px;
+  margin: 0px 0px 2px;
+  padding:0px;
+}
+
+.grayheader .left_side {
+   float: left;
+}
+
+.grayheader .right_side {
+  float: right;
+}
+
+.grayheader p {
+  display: block;
+  color: gray;
+  font-size: 11px;
+  margin: 2px 0px;
+  padding: 0px;
+}
+
+
+/*  ---------------------------|  FLYERS  |---------------------------  */
+
+#announce {
+  width: 120px; }
+
+#announce .advert {
+  background:#F9F9F9 none repeat scroll 0%;
+  border: solid 1px #D8DFEA;
+  border-bottom: solid 1px #3B5998;
+  display: block;
+  line-height:14px;
+  margin: 0px 0px 7px;
+  padding: 5px 0px 2px 0px;
+}
+
+#announce h4 {
+  border-bottom:1px solid #D8DFEA;
+  color:#3B5998;
+  font-size:13px;
+  font-weight:bold;
+  margin: 0px 5px 3px 5px;
+  padding:0px 0px 3px;
+  text-align:center;
+}
+
+#announce h3 {
+  color:black;
+  font-weight:bold;
+  text-align:center;
+  padding: 0px 0px 3px;
+  margin: 4px 5px 3px;
+  font-size: 11px;
+}
+
+#announce p {
+  color: #222222;
+  margin: 0px 0px 3px 5px;
+  overflow: hidden;
+  width: 110px;
+  word-wrap: break-word;
+}
+
+.sponsors {
+   text-align: center;
+}
+
+.sponsor_absolute {
+  position: absolute;  
+  top: 302px;
+}
+
+#ssponsor {
+   width: 120px;
+   font-size: 11px;
+   text-align: left;
+   padding-top: 0px; }
+
+.credit {
+   text-align: center;
+}
+
+#ssponsor .seeall {
+   margin: 5px 0px;
+   text-align: right;
+}
+
+
+/*  ---------------------------|  DROP-DOWN MENUS  |---------------------------  */
+
+
+.drop_down_menu {
+  background: white;
+  position: absolute;
+  margin-top: -1px;
+  border: solid 1px #3B5998;
+  width: 150px;
+  padding: 5px 0px;
+}
+
+.drop_down_menu .menu_element {
+  padding: 3px 7px;
+}
+
+.drop_down_menu .menu_element:hover {
+  color: white;
+  background: #3B5998;
+  cursor: pointer;
+}
+
+.drop_down_menu .menu_element:hover a {
+  color: white;
+  text-decoration: none;
+}
+
+
+/*  ---------------------------|  NOTES  |---------------------------  */
+
+.note_dialog {
+  background:#FFFFFF none repeat scroll 0%;
+  border:1px solid #BDC 7D8;
+  color:#444444;
+  margin:0pt 10px 10px;
+  padding:10px;
+}
+
+
+/*  -------------------------| MISC |--------------------------------- */
+
+.findfriends_block {
+  text-align: left;
+  margin: auto;
+}
+
+
+.findfriends_block li {
+  line-height:18px;
+  list-style-image:none;
+  list-style-position:outside;
+  list-style-type:none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+
+/*  Here, take it. It's a goodbye gift. Go clean.  -------------------------  */
+
+/*
+     FILE ARCHIVED ON 11:13:40 Jun 15, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 00:39:06 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.462
+  exclusion.robots: 0.05
+  exclusion.robots.policy: 0.039
+  esindex: 0.008
+  cdx.remote: 14.596
+  LoadShardBlock: 110.229 (3)
+  PetaboxLoader3.datanode: 93.025 (4)
+  PetaboxLoader3.resolve: 115.369 (3)
+  load_resource: 210.602
+*/

@@ -1,0 +1,106 @@
+	#splash_main {margin:0px 12px 10px 12px; background:url('https://web.archive.org/web/20070613010754im_/http://x.myspace.com/images/divider4.gif') repeat-y 457px 0px;}
+	#splash_mainBottom{margin:0px 12px 0px 12px;}
+
+	.section{border:0; width:97%;}
+	.section .heading{padding:5px; color:#000000;text-align:left;}
+	.splash_vspace {height:12px;}
+	
+	#splash_coolNewPeople {border:1px solid #FFCC99;width:300px;}
+	#splash_coolNewPeople .heading {background-color:#FFCC99;}
+	#splash_coolNewPeople div {margin-bottom:5px;}
+	.w120 {width:98px;}
+	
+	#splash_coolNewPeople, #splash_advertisement, #splash_login {text-align:center;}
+	
+	#splash_music {width:440px;}
+	#splash_music .heading {background-color:#B5CCFB; height:14px;}
+	
+	#splash_login{border:1px solid #003399;width:300px;clear:both;}
+	#splash_login .heading {background-color:#039; color:#fff; margin-bottom:5px;}
+	#splash_login label, #splash_login input {text-align:right;}
+	
+	#splash_login .row input{float:right; width:50%; text-align:left; margin:2px 0; margin-right:18%;}
+	#splash_login .row label{float:left; width:30%; text-align:right; margin:2px 0; margin-right:2%;}
+	#splash_login .row{clear:both;}
+	#splash_login a {font-size:90%; margin:5px;}
+	
+	#splash_getStarted {margin:0;width:100%;}
+	#splash_getStarted h4{color:#003399; font-size:110%; margin:0; padding:0;}
+	#splash_getStarted .cols td {background-color:#B5CCFB; width:24%; padding:5px; font-size:90%;}
+	#splash_getStarted .cols, #splash_getStarted .cols td {border:1px solid #003399;}
+	#splash_getStarted span {color:#CC0000; font-weight:bold;}
+	#splash_getStarted span a {font-weight:normal;}
+	
+	#splash_greybox {clear:left; background-color:#F2F5F7; border:1px solid #D0E4FD; height:70px; width:440px;}
+	#splash_greybox .col {float:left; margin:3px; width:23%;}
+	#splash_greybox .col a {font-weight:normal; font-size:13px;}
+	
+	#header {text-align:right; height:70px; padding:5px;}
+	#header_search #searchSubmit {font-size:100%; height:20px;}
+	#header_search input {margin-bottom:4px;}
+	#logo {margin-top:15px;}
+	#searchrequest {font-size:80%; width:175px;}
+
+#splash_login .row input
+{
+ margin-right: 50px !important;
+}
+
+.col3
+{
+width: 49%;
+vertical-align: top;
+text-align: left;
+}
+
+#wrap
+{
+width: 100% !important;
+background: transparent;
+}
+
+.col2
+{
+width: 2%;
+background: #FFF;
+vertical-align: top;
+}
+
+.col1
+{
+width: 49%;
+vertical-align: top;
+text-align: right;
+}
+#SplashContentWrap
+{
+	 background: white;
+	 width: 800px;
+	 margin-left: auto;
+	 margin-right: auto;
+}
+#MainTable
+{
+width: 100%;
+}
+	
+/*
+     FILE ARCHIVED ON 01:07:54 Jun 13, 2007 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 00:36:04 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.423
+  exclusion.robots: 0.045
+  exclusion.robots.policy: 0.036
+  esindex: 0.007
+  cdx.remote: 20.9
+  LoadShardBlock: 76.191 (3)
+  PetaboxLoader3.datanode: 85.818 (4)
+  load_resource: 111.281
+  PetaboxLoader3.resolve: 90.859
+*/

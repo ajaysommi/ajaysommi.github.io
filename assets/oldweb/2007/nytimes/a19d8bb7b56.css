@@ -1,0 +1,72 @@
+/*
+$Id: ie7.css,v 1.11 2008/07/01 19:19:03 jguinto Exp $
+(c)2006 - 2007 The New York Times Company 
+*/
+
+@import url(/web/20110210150658cs_/http://graphics8.nytimes.com/css/common/screen/ie7.css);
+
+body {
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+#rightSpan .clearboth {
+	height: 9px !important;
+	}
+	
+#toolbar {
+	padding-bottom: 0;
+	margin-bottom: 0;
+	height: 20px;
+	}
+	
+#Photo163 {
+	background: none;       
+	}
+	
+div#shell div#page div#main div#insideNYTimes div#insideNYTimesHeader h4,
+div#shell div#page div#main div#insideNYTimes table#insideNYTimesBrowser td div.story h5 {
+    font-size: 95%;
+    }
+	
+div#navigation ul.tabs li#navJobs {
+	padding-bottom:5px;
+	}
+
+.aColumn .story#topStoryContinuedA .callout h5,
+.bColumn .story#topStoryContinuedB .callout h5 {
+	font-size: 120%;
+	}
+
+#rightSpan div.byline,
+#rightSpan div#topStoryContinuedB .callout .byline {
+	font-size:84%;
+	}
+
+/*	wideSpan layout 	*/	
+#rightSpanBelowWideSpan {
+	width: 510px;
+	}
+	
+.breakingNewsAlertABC .breakingNewsAlert div { width: 874px; }
+
+/*
+     FILE ARCHIVED ON 15:06:58 Feb 10, 2011 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 01:33:31 Nov 06, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  captures_list: 0.44
+  exclusion.robots: 0.044
+  exclusion.robots.policy: 0.034
+  esindex: 0.008
+  cdx.remote: 32.351
+  LoadShardBlock: 258.96 (3)
+  PetaboxLoader3.datanode: 254.482 (4)
+  load_resource: 180.472
+  PetaboxLoader3.resolve: 64.112
+*/

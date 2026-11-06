@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+	<ShortName>YouTube Video Search</ShortName>
+	<Description>Search for videos on YouTube</Description>
+	<Tags>youtube video</Tags>
+	<Image height="16" width="16" type="image/vnd.microsoft.icon">http://www.youtube.com/favicon.ico</Image>
+	<Url type="text/html" template="http://www.youtube.com/results?search_type=search_videos&amp;search_query={searchTerms}&amp;search_sort=relevance&amp;search_category=0&amp;page={startPage?}" />
+	<Query role="example" searchTerms="cat" />
+</OpenSearchDescription>
