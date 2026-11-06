@@ -746,3 +746,7 @@ html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82
 /* The 2007 room's shapes at night: lighter against its deep blue, as the
    other Macs' shapes are against their rooms. */
 .is-desk.lights-off .os-host[data-era="2007"] > .dk-shapes .bg-shapes { filter: brightness(2.6) saturate(1.25) drop-shadow(0 0 6px color-mix(in srgb, currentColor 70%, transparent)) drop-shadow(0 0 7px rgba(var(--glow), .55)); }
+/* At night the room's shapes read clearly: brighter, fully there, with a
+   glow in their own colour and the screen's. */
+.is-desk.lights-off .os-host[data-era] > .dk-shapes .bg-shapes { opacity: 1; filter: brightness(2.1) saturate(1.35) drop-shadow(0 0 5px color-mix(in srgb, currentColor 80%, transparent)) drop-shadow(0 0 9px rgba(var(--glow), .55)); }
+.is-desk.lights-off .os-host[data-era="2007"] > .dk-shapes .bg-shapes { filter: brightness(2.8) saturate(1.25) drop-shadow(0 0 5px color-mix(in srgb, currentColor 80%, transparent)) drop-shadow(0 0 9px rgba(var(--glow), .6)); }
