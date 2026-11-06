@@ -694,3 +694,15 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
    colour around it, like the G3's. */
 .bg-shapes.is-filled svg { filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 12px currentColor); }
 .is-desk.lights-off .bz-hint { color: #eef2f6 !important; opacity: 1; text-shadow: 0 0 10px rgba(var(--glow), .55), 0 1px 2px rgba(0, 0, 0, .4); transition: color 1s ease; }
+/* Phone rooms: the shapes keep their symbols (the fill behind them only a
+   faint wash), glow softly, and brighten and dim on their own slow clocks,
+   like stars. */
+.bg-shapes.is-filled svg { filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 9px currentColor); animation: shp-star var(--tw, 12s) ease-in-out var(--twd, 0s) infinite !important; animation-play-state: running !important; }
+@keyframes shp-star { 0%, 100% { opacity: calc(var(--o) * .55); } 30% { opacity: calc(var(--o) * 1.25); } 55% { opacity: calc(var(--o) * .8); } 78% { opacity: calc(var(--o) * 1.6); } }
+.reduced .bg-shapes.is-filled svg { animation: none !important; }
+/* Until the screen shows something, it lights nothing. */
+.is-desk .os-host.lx-wait[data-era] .os-screen, .is-desk.lights-off .os-host.lx-wait[data-era] .os-screen:not([hidden]) { box-shadow: none; }
+.is-desk.lights-off .os-host.lx-wait .lx-pool, .is-desk.lights-off .os-host.is-photo.lx-wait .lx-lit, .is-desk.lights-off .os-host.is-photo.lx-wait .lx-tint { opacity: 0; }
+/* The 2007 iMac's case a little brighter, and lit more evenly across it. */
+.is-desk.lights-off .os-host[data-era="2007"] .bz-dev > img:first-child { filter: brightness(.74) saturate(1.05) contrast(1.04); }
+.is-desk.lights-off .os-host[data-era="2007"] .lx-lit { opacity: .7; filter: brightness(.92) saturate(1); }

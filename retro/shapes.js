@@ -69,7 +69,7 @@ window.SHAPES = (function () {
   /* Filled in: the openings in a shape (a CD's hole, a screen, a ring) are
      filled with a lighter wash of the same colour, every piece drawn whole
      underneath, so it reads as a solid thing with its detail still on it. */
-  const solid = (k, attrs) => `<svg viewBox="0 0 40 40" ${attrs}><g opacity=".6">${P[k].split(/(?<=z)/i).filter((d) => d.trim()).map((d) => `<path d="${d.trim()}" fill="currentColor"/>`).join('')}</g><path d="${P[k]}" fill="currentColor" fill-rule="evenodd"/></svg>`;
+  const solid = (k, attrs) => `<svg viewBox="0 0 40 40" ${attrs}><g opacity=".16">${P[k].split(/(?<=z)/i).filter((d) => d.trim()).map((d) => `<path d="${d.trim()}" fill="currentColor"/>`).join('')}</g><path d="${P[k]}" fill="currentColor" fill-rule="evenodd"/></svg>`;
 
   /* One shape to every cell of a grid shaped like the screen, placed
      somewhere in the middle of its cell: every part of the screen gets its

@@ -421,7 +421,13 @@
       applyLights();
     };
     window.__lights = applyLights;
-    sysLight.addEventListener('change', () => { let th = null; try { th = sessionStorage.getItem('as-theme'); } catch (e) {} if (!th) setLights(!sysLight.matches); });
+    /* The device switching between light and dark always wins: the page
+       follows it at once, as the standard site does. */
+    sysLight.addEventListener('change', () => {
+      try { sessionStorage.removeItem('as-theme'); } catch (e) {}
+      root.dataset.theme = sysLight.matches ? 'daylight' : 'midnight';
+      setLights(!sysLight.matches);
+    });
     applyLights();
     lightsBtn.addEventListener('click', (e) => { e.stopPropagation(); SFX.click(); setLights(!lightsOff, true); });
     bar.querySelector('[data-k="eras"]').addEventListener('click', () => { SFX.click(); showPicker(); });
@@ -794,6 +800,9 @@
     const launch = once(launchNow);
     const showPicker = once(pickerNow);
     async function launchNow(i) {
+      /* At night the screen throws no light until it is showing
+         something: not while it is still black on the way in. */
+      host.classList.add('lx-wait');
       if (i === cur) return;
       const prev = cur;
       cur = i;
@@ -847,8 +856,13 @@
       const tile = pick.querySelector(`.pk-d[data-i="${i}"]`);
       if (tile) tile.classList.add('is-seen');
       const sys = ERAS[i].sys();
+      /* The light comes up once it has started up (or after a few seconds
+         if it is waiting on the visitor, as the 1991 Mac waits for its disk). */
+      const lit = () => host.classList.remove('lx-wait');
+      const litT = setTimeout(lit, 6000);
       if (bootP) await bootP;
       else if (!booted[i]) { booted[i] = true; await sys.boot(); }
+      clearTimeout(litT); lit();
       if (cur !== i) return;
       sys.resize && sys.resize();
       sys.enter();
