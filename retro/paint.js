@@ -136,6 +136,14 @@ window.SOMMIPAINT = (function () {
       for (;;) { fn(x0, y0); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } }
     };
     const keep = () => { undoBuf = doc.slice(); };
+    /* The line width chosen below the tools also thickens the pencil and the
+       brush: their shape is grown by a round pen of that width. */
+    const thick = (shape, w) => {
+      if (w <= 1) return shape;
+      const d = disc(w - 1), s = new Set();
+      shape.forEach(([a, b]) => d.forEach(([u, v]) => s.add((a + u) + ',' + (b + v))));
+      return [...s].map((t) => t.split(',').map(Number));
+    };
 
     /* Shapes are drawn into a scratch canvas and read back as dots, with no
        smoothing: whatever crosses half a dot is a dot. */
@@ -311,8 +319,8 @@ window.SOMMIPAINT = (function () {
       if (sel) drop();
       const a = s;
       switch (tool) {
-        case 'pencil': keep(); drag = { kind: 'pencil', v: get(p.x, p.y) ? 0 : 1, last: p }; set(p.x, p.y, drag.v); if (mirror) set(mirrorX(p.x), p.y, drag.v); break;
-        case 'brush': keep(); drag = { kind: 'brush', last: p }; stamp(p.x, p.y, BRUSHES[brush], paint); break;
+        case 'pencil': keep(); drag = { kind: 'pencil', v: get(p.x, p.y) ? 0 : 1, last: p, pen: thick([[0, 0]], lineW) }; stamp(p.x, p.y, drag.pen, (x, y) => set(x, y, drag.v)); break;
+        case 'brush': keep(); drag = { kind: 'brush', last: p, pen: thick(BRUSHES[brush], lineW) }; stamp(p.x, p.y, drag.pen, paint); break;
         case 'eraser': keep(); drag = { kind: 'eraser', last: p }; stamp(p.x, p.y, box(fat ? 1 : 7, fat ? 1 : 7), (x, y) => set(x, y, 0)); break;
         case 'spray': keep(); drag = { kind: 'spray', p }; break;
         case 'bucket': keep(); fill(p.x, p.y); break;
@@ -334,8 +342,8 @@ window.SOMMIPAINT = (function () {
       if (!drag) return;
       const p = at(e);
       const k = drag.kind;
-      if (k === 'pencil') { line(drag.last.x, drag.last.y, p.x, p.y, (x, y) => { set(x, y, drag.v); if (mirror) set(mirrorX(x), y, drag.v); }); drag.last = p; render(); }
-      else if (k === 'brush') { line(drag.last.x, drag.last.y, p.x, p.y, (x, y) => stamp(x, y, BRUSHES[brush], paint)); drag.last = p; render(); }
+      if (k === 'pencil') { line(drag.last.x, drag.last.y, p.x, p.y, (x, y) => stamp(x, y, drag.pen, (a, b) => set(a, b, drag.v))); drag.last = p; render(); }
+      else if (k === 'brush') { line(drag.last.x, drag.last.y, p.x, p.y, (x, y) => stamp(x, y, drag.pen, paint)); drag.last = p; render(); }
       else if (k === 'eraser') { const r = fat ? 1 : 7; line(drag.last.x, drag.last.y, p.x, p.y, (x, y) => stamp(x, y, box(r, r), (a, b) => set(a, b, 0))); drag.last = p; render(); }
       else if (k === 'spray') drag.p = p;
       else if (k === 'hand') {
