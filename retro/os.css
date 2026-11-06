@@ -759,3 +759,84 @@ img { display: block; max-width: 100%; }
 .nt .br > .br-title { cursor: default; }
 /* Plugged in, the showing length of wire can be clicked to pull it out. */
 .bz-cable.is-on .bz-wire { pointer-events: stroke; cursor: pointer; }
+
+/* ==========================================================================
+   SommiPaint (paint.js): laid out at 512 by 342 and scaled to the screen.
+   ========================================================================== */
+.spnt { position: absolute; inset: 0; z-index: 9000; overflow: hidden; background: #fff; }
+.smp-stage { position: absolute; left: 0; top: 0; width: 512px; height: 342px; transform-origin: 0 0; font: 12px var(--pixel); color: #000; user-select: none; -webkit-user-select: none;
+  background: repeating-conic-gradient(#000 0 25%, #fff 0 50%) 0 0 / 2px 2px; }
+.spnt button { font: inherit; color: inherit; margin: 0; padding: 0; border: 0; background: none; cursor: default; }
+/* The menu bar. */
+.smp-bar { position: absolute; left: 0; right: 0; top: 0; height: 19px; display: flex; align-items: center; gap: 2px; padding-left: 10px; background: #fff; border-bottom: 1px solid #000; }
+.smp-m { height: 19px; padding: 0 7px !important; font: 600 13px var(--pixel) !important; letter-spacing: .02em; display: flex; align-items: center; }
+.smp-m.on { background: #000 !important; color: #fff !important; }
+.smp-m.on svg path { fill: #fff; }
+.smp-drop { position: absolute; top: 19px; z-index: 30; min-width: 150px; padding: 2px 0; background: #fff; border: 1px solid #000; box-shadow: 1px 1px 0 #000, 2px 2px 0 #000; }
+.smp-drop button { display: flex; width: 100%; justify-content: space-between; gap: 16px; padding: 1px 12px 1px 16px !important; font: 12px var(--pixel) !important; text-align: left; position: relative; white-space: nowrap; }
+.smp-drop button:not(:disabled):hover { background: #000; color: #fff; }
+.smp-drop button:disabled { color: #999; }
+.smp-drop button.chk::before { content: '✓'; position: absolute; left: 4px; }
+.smp-drop .st-bold span:first-child { font-weight: 700; }
+.smp-drop .st-italic span:first-child { font-style: italic; }
+.smp-drop .st-underline span:first-child { text-decoration: underline; }
+.smp-drop .st-outline span:first-child { color: #fff; -webkit-text-stroke: .8px #000; }
+.smp-drop .st-outline:hover span:first-child { -webkit-text-stroke: .8px #fff; color: #000; }
+.smp-drop .st-shadow span:first-child { color: #fff; -webkit-text-stroke: .7px #000; text-shadow: 1px 1px 0 #000; }
+.smp-drop hr { border: 0; border-top: 1px dotted #000; margin: 2px 0; }
+/* The tools: ten rows of two, the chosen one in reverse. */
+.smp-tools { position: absolute; left: 18px; top: 31px; width: 52px; display: grid; grid-template-columns: 1fr 1fr; background: #fff; border: 1px solid #000; }
+.smp-tools button { height: 21.8px; display: grid; place-items: center; border-right: 1px solid #000 !important; border-bottom: 1px solid #000 !important; }
+.smp-tools button:nth-child(2n) { border-right: 0 !important; }
+.smp-tools button:nth-last-child(-n+2) { border-bottom: 0 !important; }
+.smp-tools svg { display: block; }
+.smp-tools button.on { background: #000; }
+.smp-tools button.on svg { filter: invert(1); }
+/* Line widths, the chosen one ticked; the first draws no border. */
+.smp-widths { position: absolute; left: 18px; top: 258px; width: 52px; height: 74px; display: flex; flex-direction: column; justify-content: space-evenly; background: #fff; border: 1px solid #000; }
+.smp-widths button { position: relative; height: 13px; display: flex; align-items: center; padding: 0 5px 0 14px !important; }
+.smp-widths i { display: block; flex: 1; background: #000; }
+.smp-widths i.dot { background: none; border-top: 1px dotted #000; }
+.smp-widths button.on::before { content: '✓'; position: absolute; left: 3px; top: -1px; font: 600 11px var(--pixel); }
+/* The picture's window. */
+.smp-win { position: absolute; left: 81px; top: 33px; width: 412px; height: 256px; background: #fff; border: 1px solid #000; box-shadow: 1px 1px 0 #000; }
+.smp-title { position: relative; height: 18px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #000;
+  background: repeating-linear-gradient(#fff 0 2px, #000 2px 3px) 0 3px / 100% 12px no-repeat; background-color: #fff; }
+.smp-title span { padding: 0 8px; background: #fff; font: 600 12px var(--pixel); }
+.smp-close { position: absolute; left: 8px; top: 3px; width: 11px; height: 11px; background: #fff !important; border: 1px solid #000 !important; box-shadow: 0 0 0 2px #fff; }
+.smp-close:active { background: #000 !important; }
+.smp-view { position: relative; width: 410px; height: 236px; overflow: hidden; cursor: crosshair; touch-action: none; }
+.smp-view canvas { position: absolute; left: 0; top: 0; width: 410px; height: 236px; image-rendering: pixelated; image-rendering: crisp-edges; }
+.smp-o { pointer-events: none; }
+/* The patterns: the chosen one large on the left, then two rows. */
+.smp-pats { position: absolute; left: 80px; top: 298px; width: 418px; height: 35px; display: flex; background: #fff; border: 1px solid #000; }
+.smp-cur { width: 40px; display: grid; place-items: center; border-right: 1px solid #000; }
+.smp-cur canvas { width: 28px; height: 22px; border: 1px solid #000; image-rendering: pixelated; }
+.smp-grid { flex: 1; display: grid; grid-template-columns: repeat(19, 1fr); grid-template-rows: 1fr 1fr; }
+.smp-grid button { border-right: 1px solid #000 !important; border-bottom: 1px solid #000 !important; overflow: hidden; }
+.smp-grid button:nth-child(19n) { border-right: 0 !important; }
+.smp-grid button:nth-child(n+20) { border-bottom: 0 !important; }
+.smp-grid canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+/* Dialogs, as the system drew them: a double border, the default button ringed. */
+.smp-dlg { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; }
+.smp-dbox { max-width: 300px; padding: 10px 14px; background: #fff; border: 1px solid #000; box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000, 3px 3px 0 3px #000; font: 12px/1.35 var(--pixel); }
+.smp-dbox p { margin: 0 0 6px; }
+.smp-dbtns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.smp-dbtns button { min-width: 58px; height: 20px; padding: 0 10px !important; border: 1px solid #000 !important; border-radius: 8px; font: 12px var(--pixel) !important; }
+.smp-dbtns button.def { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #000; }
+.smp-dbtns button:active { background: #000; color: #fff; }
+.smp-brushes { display: grid; grid-template-columns: repeat(8, 22px); gap: 2px; }
+.smp-brushes button { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid #000 !important; }
+.smp-brushes button.on { box-shadow: inset 0 0 0 2px #000; }
+.smp-brushes canvas { width: 16px; height: 16px; image-rendering: pixelated; }
+.smp-pe { display: flex; gap: 12px; align-items: center; }
+.smp-pebits { display: grid; grid-template-columns: repeat(8, 12px); border: 1px solid #000; }
+.smp-pebits button { width: 12px; height: 12px; border-right: 1px solid #ccc !important; border-bottom: 1px solid #ccc !important; }
+.smp-pebits button.on { background: #000; }
+.smp-pe canvas { width: 48px; height: 48px; border: 1px solid #000; image-rendering: pixelated; }
+.smp-page { max-width: none; }
+.smp-page canvas { display: block; width: 230px; height: 288px; border: 1px solid #000; image-rendering: pixelated; cursor: pointer; }
+.smp-dlg:has(.smp-page) { align-items: start; padding-top: 22px; }
+.smp-page canvas { width: 168px; height: 210px; }
+
+.smp-file { display: none !important; }

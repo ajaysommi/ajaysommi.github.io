@@ -41,6 +41,7 @@ window.FINDER = (function () {
     eggs: { name: 'Easter Eggs', icon: 'egg', kind: 'document', keys: 'secrets' },
     computer: { name: 'About This Computer', icon: 'mac', kind: 'desk accessory' },
     puzzle: { name: 'Puzzle', icon: 'puzzle', kind: 'desk accessory', keys: 'game fifteen' },
+    paint: { name: 'SommiPaint', icon: 'paint', kind: 'application', keys: 'draw paint drawing art picture macpaint' },
     notepad: { name: 'Note Pad', icon: 'note', kind: 'desk accessory', keys: 'notes write' },
     scrapbook: { name: 'Scrapbook', icon: 'photo', kind: 'desk accessory', keys: 'photos pictures gallery' },
     oldsite: { name: 'Portfolio (2025)', icon: 'folder', kind: 'folder' },
@@ -54,7 +55,7 @@ window.FINDER = (function () {
   P.projects.forEach((p) => { ITEMS['project:' + p.id] = { name: p.name, icon: 'app', kind: 'application', keys: (p.full + ' ' + p.stack).toLowerCase() }; });
   P.offclock.forEach((s) => { ITEMS['story:' + s.id] = { name: s.name, icon: 'photo', kind: 'slideshow', keys: s.title.toLowerCase() }; });
 
-  const DESKTOP = ['hd', 'about', 'experience', 'projects', 'offclock', 'skills', 'education', 'recs', 'contact', 'resume', 'readme', 'internet'];
+  const DESKTOP = ['hd', 'about', 'experience', 'projects', 'offclock', 'skills', 'education', 'recs', 'contact', 'resume', 'readme', 'internet', 'paint'];
 
   /* --------------------------------------------------------------- utils */
 
@@ -398,6 +399,8 @@ window.FINDER = (function () {
       return { title: 'Scrapbook', w: 560, h: 560, render: viewer(slides) };
     },
     puzzle: () => ({ title: 'Puzzle', w: 340, h: 400, render: puzzle }),
+    /* SommiPaint takes the whole screen, with its own menus, until it quits. */
+    paint: () => ({ action: () => window.SOMMIPAINT && window.SOMMIPAINT.open(root) }),
     find: () => ({ action: find })
   };
   P.experience.forEach((e, i) => {
@@ -642,6 +645,7 @@ window.FINDER = (function () {
       ['Note Pad', () => openWin('notepad')],
       ['Puzzle', () => openWin('puzzle')],
       ['Scrapbook', () => openWin('scrapbook')],
+      ['SommiPaint', () => openWin('paint')],
       '-',
       ['Restart in Another Era\u2026', () => api.picker()]
     ]],
