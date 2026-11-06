@@ -400,7 +400,7 @@
     const bar = document.createElement('div');
     bar.className = 'dk-bar';
     bar.hidden = true;
-    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><button type="button" class="dk-chip dk-lights" data-k="lights" aria-pressed="false"><i class="dk-bulb" aria-hidden="true"></i><b>Lights off</b></button><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
+    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><button type="button" class="dk-chip dk-lights" data-k="lights" aria-pressed="false" aria-label="Lights" title="Lights"><svg class="ico-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
     /* The room's lights follow the site's light or dark theme, which
        follows the device's own setting unless the visitor picked one; the
        switch picks one, for here and for the standard site. The 1983
@@ -413,7 +413,7 @@
       root.classList.toggle('lights-off', lightsOff && era !== '1983');
       lightsBtn.hidden = era === '1983';
       lightsBtn.setAttribute('aria-pressed', String(!lightsOff));
-      lightsBtn.querySelector('b').textContent = lightsOff ? 'Lights off' : 'Lights on';
+      lightsBtn.setAttribute('aria-label', lightsOff ? 'Turn the lights on' : 'Turn the lights off'); lightsBtn.title = lightsBtn.getAttribute('aria-label');
     };
     const setLights = (off, keep) => {
       lightsOff = off;
@@ -1051,6 +1051,49 @@
     document.body.appendChild(std);
     const LOOK = { nokia: ['#243a6e', 0.22], pocket: ['#5b4a86', 0.22], iphone: ['#ffffff', 0.16] };
 
+    /* Night on a phone, as on the desk: with the lights off the room and
+       the phone go dim and rich in their own colours, and the screen is the
+       light, glowing out over the bezel and the wall. The switch sits by
+       the sound button and follows the site's light or dark theme, which
+       follows the device's own setting. */
+    const lt = document.createElement('button');
+    lt.type = 'button';
+    lt.className = 'mp-lights';
+    lt.hidden = true;
+    lt.innerHTML = '<svg class="ico-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+    document.body.appendChild(lt);
+    const SCREEN = { iphone: '.ip-screen', nokia: '.nk-lcd', pocket: '.pk-lcd' };
+    let lightsOff = root.dataset.theme === 'midnight';
+    const nightOf = (r) => r.querySelector(':scope > .pn-night');
+    const placeNight = () => {
+      const r = cur && rooms[cur], n = r && nightOf(r), sc = r && r.querySelector(SCREEN[cur]);
+      if (!n || !sc) return;
+      const R = r.getBoundingClientRect(), S = sc.getBoundingClientRect();
+      if (!S.width) return;
+      const x = S.left - R.left, y = S.top - R.top, w = S.width, h = S.height;
+      n.querySelector('.pn-dark').style.clipPath = `path(evenodd, "M0 0H${R.width}V${R.height}H0Z M${x.toFixed(1)} ${y.toFixed(1)}h${w.toFixed(1)}v${h.toFixed(1)}h${(-w).toFixed(1)}Z")`;
+      Object.entries({ '--sx': x, '--sy': y, '--sw': w, '--sh': h }).forEach(([k, v]) => n.style.setProperty(k, v.toFixed(1) + 'px'));
+      /* How much light the screen gives: none when it is asleep or off, a
+         little when the Nokia's backlight has gone out. */
+      let k = 1;
+      if (cur === 'nokia') k = r.querySelector('.nk.is-lit') ? 1 : .3;
+      if (cur === 'pocket') k = r.querySelector('.pk.is-off') ? 0 : 1;
+      if (cur === 'iphone') { const off = r.querySelector('.ip-off'); k = off && +getComputedStyle(off).opacity > .5 ? 0 : 1; }
+      n.style.setProperty('--k', k);
+    };
+    const applyLights = () => {
+      root.classList.toggle('lights-off', lightsOff);
+      lt.setAttribute('aria-label', lightsOff ? 'Turn the lights on' : 'Turn the lights off');
+      lt.setAttribute('aria-pressed', String(!lightsOff));
+      placeNight();
+    };
+    const sysLightM = matchMedia('(prefers-color-scheme: light)');
+    sysLightM.addEventListener('change', () => { try { sessionStorage.removeItem('as-theme'); } catch (e) {} root.dataset.theme = sysLightM.matches ? 'daylight' : 'midnight'; lightsOff = !sysLightM.matches; applyLights(); });
+    lt.addEventListener('click', () => { SFX.click(); lightsOff = !lightsOff; try { sessionStorage.setItem('as-theme', lightsOff ? 'midnight' : 'daylight'); } catch (e) {} applyLights(); });
+    addEventListener('retro-fit', () => placeNight());
+    setInterval(() => { if (cur && lightsOff && !document.hidden) placeNight(); }, 400);
+    applyLights();
+
     /* The tile's drawing becomes the phone (and back), by the same flight
        as the computers, its photograph sharpening in mid-air. */
     const SHOT = { nokia: ['assets/images/sommia-3310.webp', 924, 1702, [232, 452, 470, 342, 40, '#a9c262']], pocket: ['assets/images/isommi-classic.webp', 947, 1661, [168, 151, 600, 489, 6, '#b3c0da']], iphone: ['assets/images/iphone-2g.webp?v=3', 795, 1508, [68, 262, 661, 991, 0, '#000']] };
@@ -1119,11 +1162,14 @@
           p.mod().start(r, () => showPicker());
           new MutationObserver(() => { if (cur === id) tint(id); }).observe(r, { attributes: true, attributeFilter: ['data-bg'] });
           r.insertAdjacentHTML('afterbegin', window.SHAPES.layer(id, { count: 30, color: LOOK[id][0], opacity: LOOK[id][1], size: [24, 50], seed: id.length * 7, filled: true }));
+          r.insertAdjacentHTML('beforeend', '<div class="pn-night" aria-hidden="true"><i class="pn-dark"></i><i class="pn-wall"></i><i class="pn-halo"></i></div>');
         } else rooms[id].hidden = false;
         document.documentElement.dataset.phone = id;
         tint(id);
         back.hidden = false;
         std.hidden = false;
+        lt.hidden = false;
+        requestAnimationFrame(placeNight);
         history.replaceState(null, '', '#' + id);
         SFX.music(id === 'iphone' ? 2007 : null);
       };
@@ -1146,6 +1192,7 @@
         tint('pick');
         back.hidden = true;
         std.hidden = true;
+        lt.hidden = true;
         history.replaceState(null, '', location.pathname + location.search);
       };
       const card = id && cards[PICKS.findIndex((x) => x.id === id)];
