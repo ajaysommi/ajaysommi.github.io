@@ -706,3 +706,12 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 /* The 2007 iMac's case a little brighter, and lit more evenly across it. */
 .is-desk.lights-off .os-host[data-era="2007"] .bz-dev > img:first-child { filter: brightness(.74) saturate(1.05) contrast(1.04); }
 .is-desk.lights-off .os-host[data-era="2007"] .lx-lit { opacity: .7; filter: brightness(.92) saturate(1); }
+/* Phone rooms: a tight glow, so a CD's hole and a screen's frame still show. */
+.bg-shapes.is-filled svg { filter: drop-shadow(0 0 1.5px currentColor) drop-shadow(0 0 5px color-mix(in srgb, currentColor 45%, transparent)); }
+/* Everywhere else, the shapes glow a little: the desk rooms and the era
+   picker. */
+.os-host > .dk-shapes .bg-shapes svg, .picker > .bg-shapes svg { filter: drop-shadow(0 0 4px color-mix(in srgb, currentColor 55%, transparent)); }
+.is-desk.lights-off .os-host[data-era] > .dk-shapes .bg-shapes svg { filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 70%, transparent)); }
+/* The 2007 iMac's AJ at night: light, set gently into the aluminium. */
+.is-desk.lights-off .os-host[data-era="2007"] .bz-aj { filter: brightness(.82) contrast(.95) drop-shadow(0 1px 0 rgba(255, 255, 255, .3)); }
+.picker > .bg-shapes svg { filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 85%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, currentColor 40%, transparent)); }

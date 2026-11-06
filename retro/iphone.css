@@ -1530,3 +1530,6 @@
 .ip-screen .pl li .yt-th.has-shot img { position: static; width: 100%; height: 100%; margin: 0; border: 0; border-radius: 0; object-fit: contain; box-shadow: none; }
 /* Starting up: the mark comes up and sparkles, with no shine swept over it. */
 .ip-screen .ip-boot .ip-shine, .ip-screen .ip-boot.is-shine .ip-shine { animation: none; opacity: 0; display: none; }
+/* The thumbnail sits in a white mat, clear of the screen's left edge. */
+.ip-screen .yt-th.has-shot { margin-left: 6px; padding: 2px; box-sizing: border-box; background: #fff; box-shadow: 0 0 0 1px #d6d6d6; }
+.ip-screen .yt-th { margin-left: 6px; }
