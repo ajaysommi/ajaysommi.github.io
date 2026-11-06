@@ -731,3 +731,11 @@ html[data-theme="daylight"]:not([data-phone]) .snd-toggle, [data-theme="daylight
 .picker > .bg-shapes { filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 80%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, currentColor 35%, transparent)); }
 .os-host > .dk-shapes .bg-shapes { filter: drop-shadow(0 0 4px color-mix(in srgb, currentColor 55%, transparent)); }
 .is-desk.lights-off .os-host[data-era] > .dk-shapes .bg-shapes { filter: brightness(1.5) saturate(1.4) drop-shadow(0 0 6px color-mix(in srgb, currentColor 70%, transparent)) drop-shadow(0 0 6px rgba(var(--glow), .5)); }
+
+/* The copy of the machine that flies in from its tile (and back out to it)
+   is dimmed exactly as the machine is in the room, so at night it is dark
+   from the first frame and nothing changes where it hands over. */
+html.is-desk.lights-off:not([data-era="1983"]) .pk-fly .bz-dev > img:first-child { filter: brightness(.6) saturate(1.15) contrast(1.04); }
+html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-dev > img:first-child { filter: brightness(.74) saturate(1.05) contrast(1.04); }
+html.is-desk.lights-off:not([data-era="1983"]) .pk-fly .bz-aj { filter: brightness(.7); }
+html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82) contrast(.95) drop-shadow(0 1px 0 rgba(255, 255, 255, .3)); }
