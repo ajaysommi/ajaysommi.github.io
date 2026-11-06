@@ -4302,7 +4302,7 @@ if (window.self === window.top) console.log(
   };
 
   // after the page has loaded and its loading screen has gone
-  const go = () => setTimeout(serve, phone.matches ? 10200 : 8200);
+  const go = () => setTimeout(serve, phone.matches ? 11200 : 9200);
   if (!root.classList.contains('is-loading')) go();
   else {
     const mo = new MutationObserver(() => { if (!root.classList.contains('is-loading')) { mo.disconnect(); go(); } });
