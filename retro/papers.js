@@ -7,25 +7,25 @@
 window.PAPERS = {
   1983: {
     news: {
-      file: 'NEWS.TXT', title: 'THE BULLETIN BOARD', sub: 'FALL 1974 · WHAT THE USERS GROUP IS TALKING ABOUT',
+      file: 'NEWS.TXT', title: 'THE BULLETIN BOARD', sub: 'FALL 1977 · WHAT THE USERS GROUP IS TALKING ABOUT',
       items: [
-        ['A WHOLE COMPUTER ON ONE CHIP', 'Intel’s new 8080 arrived in April: an entire processor on a single chip, and far faster than the 8008 before it.'],
-        ['NETWORKS OF NETWORKS', 'In May Vint Cerf and Bob Kahn published a way to join separate computer networks into one. They call it the Transmission Control Program.'],
-        ['BUILD YOUR OWN', 'Radio-Electronics printed plans in July for the Mark-8, a computer you put together yourself around the 8008.'],
-        ['A COMPUTER FOR YOUR POCKET', 'Hewlett-Packard’s HP-65 calculator runs programs you keep on little magnetic cards. It costs $795. (Open this portfolio on a phone and its era picker has other devices to try.)'],
-        ['THINKING MACHINES?', 'In Britain the Lighthill report has cut most of the money for artificial intelligence. At Stanford a program called MYCIN suggests treatments for infections from a few hundred IF-THEN rules typed in by hand. A computer that understands an ordinary English sentence is still a dream.'],
-        ['THE CHECKOUT READS STRIPES', 'In June a supermarket in Ohio scanned the first product with a bar code: a pack of chewing gum.']
+        ['COMPUTERS YOU CAN BUY ASSEMBLED', 'Three home computers went on sale this year ready to plug in, no soldering: the Apple II, the Commodore PET and Radio Shack’s TRS-80.'],
+        ['A COMPUTER FAIRE', 'In April thousands lined up in San Francisco for the first West Coast Computer Faire, to see what a computer at home could do.'],
+        ['NETWORKS OF NETWORKS', 'In November a message crossed three separate networks, by radio, by satellite and over the ARPANET, using one protocol, TCP.'],
+        ['GAMES ON THE TELEVISION', 'Atari’s new Video Computer System plays games from cartridges. Combat comes in the box. (Open this portfolio on a phone and its era picker has other devices to try.)'],
+        ['THINKING MACHINES?', 'At Stanford a program called MYCIN suggests treatments for infections from a few hundred IF-THEN rules typed in by hand. A computer that understands an ordinary English sentence is still a dream.'],
+        ['TO THE STARS', 'NASA launched Voyager 1 and 2 this summer, toward Jupiter and Saturn, each carrying a golden record of sounds from Earth.']
       ],
       foot: 'MEETINGS FIRST TUESDAY OF THE MONTH. BRING DISKS.'
     },
     brochure: {
-      file: 'CATALOG.TXT', title: 'THE SOMMITRON', sub: 'A COMPUTER OF YOUR OWN, FOR THE DESK OR THE LAB',
+      file: 'CATALOG.TXT', title: 'THE SOMMI II', sub: 'A PERSONAL COMPUTER FOR HOME, SCHOOL AND OFFICE',
       items: [
-        ['MEMORY', '4K of RAM as standard, expandable to 16K.'],
-        ['STORAGE', 'Cassette tape built in. 8 inch disk drive optional.'],
-        ['DISPLAY', 'Matching terminal, 40 columns of upper case.'],
+        ['MEMORY', '4K of RAM as standard, expandable to 48K.'],
+        ['STORAGE', 'Cassette tape built in. 5¼ inch disk drive optional.'],
+        ['DISPLAY', 'Colour graphics. 40 columns of upper case.'],
         ['SOFTWARE', 'Runs SOMMI-DOS 3.3 and everything on this disk.'],
-        ['PRICE', '$1,495 as a kit. $2,195 assembled and tested.']
+        ['PRICE', '$1,295 with 4K. Plugs into your own television.']
       ],
       foot: 'ASK YOUR DEALER FOR A DEMONSTRATION TODAY.'
     }

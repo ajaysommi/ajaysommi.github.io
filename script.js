@@ -4200,7 +4200,7 @@ if (window.self === window.top) console.log(
   /* ---- the year ---- */
   const yr = wrap.querySelector('.era-yr');
   const phone = matchMedia('(max-width: 719px)');
-  const years = () => (phone.matches ? ['2000', '2004', '2007'] : ['1974', '1984', '1998', '2007']);
+  const years = () => (phone.matches ? ['2000', '2004', '2007'] : ['1977', '1984', '1998', '2007']);
   const light = (y) => wrap.querySelectorAll('.era-dv').forEach((d) => d.classList.toggle('is-on', d.dataset.y === y && getComputedStyle(d).display !== 'none'));
   const land = (y) => { yr.textContent = y; yr.dataset.y = y; yr.classList.remove('is-scramble'); light(y); };
   let k = 0;

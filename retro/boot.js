@@ -321,10 +321,10 @@
   };
 
   const ERAS = [
-    { year: '1983', label: '1974', machine: 'Sommitron', name: 'SOMMI-DOS', note: 'A command line. Type, or click the commands.', sys: () => window.TERM, art: ART[1983] },
+    { year: '1983', label: '1977', machine: 'Sommi II', name: 'SOMMI-DOS', note: 'A command line. Type, or click the commands.', sys: () => window.TERM, art: ART[1983] },
     { year: '1991', label: '1984', machine: 'Sommitosh 128k', name: 'SommiOS 1', note: 'Black and white windows, icons and a Trash.', sys: () => window.FINDER, art: ART[1991] },
     { year: '1998', label: '1998', machine: 'iSommi G3', name: 'SommiNet 98', note: 'A browser and a homepage, guestbook included.', sys: () => window.WEB, art: ART[1998] },
-    { year: '2007', label: '2007', machine: 'iSommi Aluminum', name: 'SommiOS X Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ART[2007] }
+    { year: '2007', label: '2007', machine: 'iSommi G5', name: 'SommiOS X Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ART[2007] }
   ];
   /* The standard site sits in the same row, as the newest machine. */
   const OPTS = ERAS;
@@ -388,7 +388,7 @@
        logo was. */
     const MARK = I.mark(64);
     const BEZEL = {
-      1983: `<div class="bz-chin"><span class="bz-badge">${MARK}<b>SOMMITRON</b></span><i class="bz-led"></i></div>`,
+      1983: `<div class="bz-chin"><span class="bz-badge">${MARK}<b>SOMMI II</b></span><i class="bz-led"></i></div>`,
       1991: `<div class="bz-chin"><span class="bz-badge">${MARK}</span><span class="bz-floppy"><i></i></span></div>`,
       1998: `<div class="bz-chin"><span class="bz-spk l"></span><span class="bz-mid">${MARK}<i class="bz-cd"></i></span><span class="bz-spk r"></span></div>`,
       2007: `<div class="bz-chin"><span class="bz-badge">${I.mark(64, true)}</span></div>`

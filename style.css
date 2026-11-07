@@ -5561,8 +5561,8 @@ header.nav .brand-mark svg.brand-aj { display: block; width: 25px; height: 23px;
 @media (max-width: 330px) { .era-dv { height: 21px; } .era-ad-devs { gap: 5px; } }
 @media (prefers-reduced-motion: reduce) { .era-ad-wrap { transition: none; } .era-ad::after, .era-ad-wrap.is-served .era-ad, .era-dv svg, .era-dv .ev, .era-dv .pu { animation: none; } }
 .era-yr { display: inline-block; min-width: 4ch; color: var(--ink); font-variant-numeric: tabular-nums; transition: color .3s ease, text-shadow .3s ease; }
-.era-yr[data-y="1974"] { font: 1.22em/1 "VT323", ui-monospace, monospace; color: #3fbf5f; text-shadow: 0 0 6px rgba(63,191,95,.45); }
-[data-theme="daylight"] .era-yr[data-y="1974"] { color: #1f8a3c; text-shadow: none; }
+.era-yr[data-y="1977"] { font: 1.22em/1 "VT323", ui-monospace, monospace; color: #3fbf5f; text-shadow: 0 0 6px rgba(63,191,95,.45); }
+[data-theme="daylight"] .era-yr[data-y="1977"] { color: #1f8a3c; text-shadow: none; }
 .era-yr[data-y="1984"] { font: .78em/1 "Silkscreen", ui-monospace, monospace; letter-spacing: .02em; }
 .era-yr[data-y="1998"] { font: 1.04em/1 "Times New Roman", Times, serif; color: #4f7bff; text-decoration: underline; text-underline-offset: 2px; }
 [data-theme="daylight"] .era-yr[data-y="1998"] { color: #0000ee; }
