@@ -403,6 +403,9 @@ html[data-phone] .mp-back, html[data-phone] .mp-site { top: calc(var(--vvt, 0px)
 .tl-ring { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 85%, transparent), 0 0 24px 6px color-mix(in srgb, var(--c) 40%, transparent), inset 0 0 24px 4px color-mix(in srgb, var(--c) 35%, transparent); }
 
 .picker > .bg-shapes { opacity: 0; animation: pk-time-in 4.5s cubic-bezier(.4,0,.2,1) 1s forwards; }
+/* On the phone picker the faint shapes carry a very slight glow. */
+.picker.is-phones > .bg-shapes svg { filter: drop-shadow(0 0 3px rgba(255,255,255,.55)); }
+[data-theme="daylight"] .picker.is-phones > .bg-shapes svg { filter: none; }
 .pk-copy { font: 15px var(--read); color: #8a8a90; gap: 8px; bottom: 18px; }
 .pk-copy .aj-mark { width: 18px; height: 18px; }
 .mp-card, .mp-card:not(.is-sel) { opacity: 1; background: #262628; }
