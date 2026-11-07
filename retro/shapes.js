@@ -256,5 +256,29 @@ window.SHAPES = (function () {
     setTimeout(() => box.remove(), 1500);
   };
 
-  return { layer, burst, arrive, follow, physics, SETS };
+  /* The shapes that can actually be seen (not behind `cover`) take these
+     kinds in turn, so the ones that say the most are never all hidden
+     behind the device. */
+  const showFirst = (el, covers, kinds) => {
+    if (!el) return;
+    const cs = [].concat(covers).filter(Boolean).map((x) => x.getBoundingClientRect()).filter((r) => r.width);
+    const L = el.getBoundingClientRect();
+    if (!cs.length || !L.width) return;
+    const filled = el.classList.contains('is-filled');
+    /* How much of each shape is in sight where it comes to rest (its own
+       left/top: it may still be flying in), on the screen and clear of
+       every cover, sampled on a small grid. The clearest go first. */
+    const W = innerWidth, H = innerHeight;
+    const seen = [...el.querySelectorAll('svg')].map((s) => {
+      const w = parseFloat(s.style.width) || 30, x0 = L.left + parseFloat(s.style.left) / 100 * L.width - w / 2, y0 = L.top + parseFloat(s.style.top) / 100 * L.height - w / 2;
+      let n = 0;
+      for (let i = 0; i < 5; i++) for (let j = 0; j < 5; j++) {
+        const x = x0 + w * (i + .5) / 5, y = y0 + w * (j + .5) / 5;
+        if (x > 0 && x < W && y > 0 && y < H && !cs.some((c) => x > c.left && x < c.right && y > c.top && y < c.bottom)) n++;
+      }
+      return { s, f: n / 25 };
+    }).filter((o) => o.f > 0.6).sort((p, q) => q.f - p.f);
+    seen.forEach(({ s }, n) => { s.innerHTML = (filled ? solid : svg)(kinds[n % kinds.length], '').replace(/^<svg[^>]*>|<\/svg>$/g, ''); });
+  };
+  return { layer, burst, arrive, follow, physics, showFirst, SETS };
 })();
