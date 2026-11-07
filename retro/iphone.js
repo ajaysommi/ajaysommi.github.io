@@ -1393,13 +1393,17 @@ window.IPHONE = { start(room, exit) {
       ['Lost', 'Drama', '#123a3a', '#3e8a7a', 'Survivors of a plane crash, and an island with its own ideas.'],
       ['Heroes', 'Sci-Fi', '#1a1a2e', '#c9a227', 'Save the cheerleader, save the world.'],
       ['The Office', 'Comedy', '#3b4a5a', '#a8b6c2', 'Life at Dunder Mifflin’s Scranton branch.'],
+      ['Grey’s Anatomy', 'Drama', '#3a6ea5', '#a7c6e6', 'Surgical interns at Seattle Grace, learning on the job.'],
+      ['The Simpsons', 'Animation', '#e0b81e', '#3f83c9', 'Eighteen seasons in Springfield, and the movie is out July 27.'],
       ['24', 'Thriller', '#111111', '#b58a1a', 'Jack Bauer, one very long day at a time.'],
       ['American Idol', 'Reality', '#1c3f94', '#c9202e', 'The show everybody at school talked about the next morning.'],
       ['House', 'Drama', '#2a3d4f', '#7f96a8', 'The rudest doctor in New Jersey is usually right.'],
       ['30 Rock', 'Comedy', '#22344f', '#c2a14a', 'Running a sketch show at NBC, barely.'],
       ['Mad Men', 'Drama', '#6b1f1f', '#d8b48a', 'New this summer: Madison Avenue in 1960.'],
       ['Friday Night Lights', 'Drama', '#123a6b', '#d1a21e', 'Clear eyes, full hearts: football in small-town Texas.'],
-      ['Hannah Montana', 'Family', '#c2287a', '#f0a6d0', 'A regular girl by day, a pop star by night.']
+      ['Hannah Montana', 'Family', '#c2287a', '#f0a6d0', 'A regular girl by day, a pop star by night.'],
+      ['SpongeBob SquarePants', 'Kids', '#2b8fd0', '#f2d53c', 'A sponge, his pineapple under the sea, and the Krusty Krab.'],
+      ['How It’s Made', 'Documentary', '#1d4f8a', '#8fb3d9', 'How everyday things are made, from crayons to cars.']
     ];
     /* Real dates, as seen from the iPhone's launch on June 29, 2007: only what
        was still to come, and no results from after that day. */
@@ -1422,23 +1426,17 @@ window.IPHONE = { start(room, exit) {
     const owned = new Set(store.get('ip-store', []));
     const cover = (t) => `assets/images/store/${t.toLowerCase().replace(/’/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.webp`;
     const tile = (x, big) => `<span class="st-tile${big ? ' big' : ''}" style="background:linear-gradient(160deg,${x[2]},${x[3]})"><img src="${cover(x[0])}" alt="" loading="lazy" draggable="false" /></span>`;
-    /* The buy button: price, then BUY NOW in green, then downloading. Each
-       label slides up and out as the next rises in, and the button eases
-       to its new width, as the store's own did. */
+    /* The buy button: price, then BUY NOW in green, then downloading. The
+       words simply change in place, as on the phone itself; only the colour
+       and the width ease to the new label. */
     const label = (b, text) => {
-      const old = b.querySelector('.bt'), w0 = b.offsetWidth;
-      const n = h('span', 'bt', esc(text));
-      if (!old) { b.textContent = ''; b.appendChild(n); return; }
-      old.classList.add('out');
-      b.appendChild(n);
-      n.style.position = 'absolute'; n.style.visibility = 'hidden';
-      const w1 = n.offsetWidth + (b.offsetWidth - old.offsetWidth);
-      n.style.position = ''; n.style.visibility = '';
-      old.style.position = 'absolute';
+      const old = b.querySelector('.bt');
+      if (!old) { b.textContent = ''; b.appendChild(h('span', 'bt', esc(text))); return; }
+      const w0 = b.offsetWidth;
+      old.textContent = text;
+      b.style.width = ''; const w1 = b.offsetWidth;
       b.style.width = w0 + 'px'; void b.offsetWidth; b.style.width = w1 + 'px';
-      old.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-9px)', opacity: 0 }], { duration: 200, easing: 'ease-in' }).finished.then(() => old.remove());
-      n.animate([{ transform: 'translateY(9px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], { duration: 240, delay: 60, easing: 'ease-out', fill: 'backwards' });
-      setTimeout(() => { if (b.isConnected) b.style.width = ''; }, 320);
+      setTimeout(() => { if (b.isConnected) b.style.width = ''; }, 260);
     };
     const buy = (b, key, price, has = () => owned.has(key), onDone) => {
       label(b, has() ? 'PURCHASED' : price);
@@ -1461,7 +1459,7 @@ window.IPHONE = { start(room, exit) {
     /* TV: every season that had aired by the iPhone's launch, each episode
        with its own page. Episode guides from TVmaze. */
     let tv = null;
-    const guide = () => tv || (tv = fetch('assets/data/tv2007.json').then((r) => r.json()).catch(() => ({})));
+    const guide = () => tv || (tv = fetch('assets/data/tv2007.json?v=2').then((r) => r.json()).catch(() => ({})));
     const D = (s) => { const [y, m, d] = s.split('-'); return `${MONTHS[+m - 1]} ${+d}, ${y}`; };
     const seasonPrice = (n) => '$' + (Math.max(9, Math.round(n * 1.99 * .8)) - .01).toFixed(2);
     const epKey = (x, s, e) => `${x[0]} S${s}E${e[0]}`, sKey = (x, s) => `${x[0]} S${s}`;
@@ -1482,7 +1480,8 @@ window.IPHONE = { start(room, exit) {
         const ss = g[x[0]] || [];
         const m = pg.querySelector('.st-load');
         if (!ss.length) { m.textContent = 'Premieres July 19 on AMC'; return; }
-        m.textContent = `${ss.length} season${ss.length > 1 ? 's' : ''} · $1.99 an episode`;
+        /* Where the store carries only the later seasons, it says which. */
+        m.textContent = `${ss[0][0] > 1 ? `Seasons ${ss[0][0]}–${ss[ss.length - 1][0]}` : `${ss.length} season${ss.length > 1 ? 's' : ''}`} · $1.99 an episode`;
         const box = h('div', 'st-eps');
         pg.appendChild(box);
         plain(box, [{ header: 'Seasons' }, ...ss.map(([s, eps]) => ({ text: `Season ${s}`, sub: `${eps.length} episodes · ${eps[0][2].slice(0, 4)}${eps[eps.length - 1][2].slice(0, 4) !== eps[0][2].slice(0, 4) ? '–' + eps[eps.length - 1][2].slice(2, 4) : ''}`, rt: owned.has(sKey(x, s)) ? '✓' : seasonPrice(eps.length), cls: 'st-ep', go: () => app.push(`Season ${s}`, seasonPage(x, s, eps)) }))]);
