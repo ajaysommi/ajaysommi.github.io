@@ -1638,13 +1638,13 @@ window.IPHONE = { start(room, exit) {
      out of Airplane Mode, then AJ&T, with the bars coming and going a
      little as a real signal does. */
   const PLANE = '<svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true"><path d="M15.5 6c0 .7-.8 1-1.6 1H10L6.8 12H5.3L7 7H3.6L2.4 8.5H1.3L2 6l-.7-2.500h1.100L3.600 5H7L5.300 0h1.500L10 5h3.900c.8 0 1.600.3 1.600 1z" fill="currentColor"/></svg>';
-  let net = airplane ? 'air' : 'search', bars = 4, searchT = 0;
+  let net = airplane ? 'air' : 'search', bars = 4, searchT = 0, edgeOn = true;
   const netEls = () => ['.ip-sig', '.car', '.ip-edge'].map((s) => room.querySelector(s));
   const paintNet = () => {
     if (statusLent) return;
     const [sig, car, edge] = netEls();
     sig.style.display = net === 'on' ? '' : 'none';
-    edge.style.display = net === 'on' ? '' : 'none';
+    edge.style.display = net === 'on' && edgeOn ? '' : 'none';
     car.innerHTML = net === 'air' ? PLANE : net === 'search' ? 'Searching…' : 'AJ&amp;T';
     sig.querySelectorAll('i').forEach((b, i) => b.classList.toggle('off', i >= bars));
   };
@@ -1652,14 +1652,30 @@ window.IPHONE = { start(room, exit) {
   const search = (ms) => {
     clearTimeout(searchT);
     net = 'search'; paintNet();
-    searchT = setTimeout(() => {
+    /* Found: AJ&T with every bar empty, then the bars fill one by one,
+       then the E. Each step is a timer, so going back into Airplane Mode
+       (or searching again) stops the rest. */
+    const step = (fn, d) => { searchT = setTimeout(fn, d); };
+    step(() => {
       if (airplane) return;
-      net = 'on'; bars = 4 + Math.floor(Math.random() * 2); paintNet();
+      const want = 4 + Math.floor(Math.random() * 2);
+      net = 'on'; bars = 0; edgeOn = false; paintNet();
       if (!statusLent) netEls().forEach((e) => e.style.display !== 'none' && e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320 }));
+      const fill = () => {
+        if (airplane || net !== 'on') return;
+        if (bars < want) { bars++; paintNet(); step(fill, 170); return; }
+        step(() => {
+          if (airplane || net !== 'on') return;
+          edgeOn = true; paintNet();
+          const e = netEls()[2];
+          if (!statusLent && e.style.display !== 'none') e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260 });
+        }, 300);
+      };
+      step(fill, 650);
     }, ms);
   };
   const drift = () => {
-    if (net === 'on' && !statusLent) {
+    if (net === 'on' && edgeOn && !statusLent) {
       /* Mostly it holds; now and then a bar comes or goes, staying strong. */
       const r = Math.random();
       if (r < .3) bars = Math.max(3, Math.min(5, bars + (Math.random() < .5 ? -1 : 1)));
@@ -1667,7 +1683,7 @@ window.IPHONE = { start(room, exit) {
     }
     setTimeout(drift, 12000 + Math.random() * 16000);
   };
-  setTimeout(drift, 8000);
+  setTimeout(drift, 20000);
   /* Airplane Mode flies in the way the plane points, and out the same way. */
   const setAir = async (anim) => {
     clearTimeout(searchT);
