@@ -173,7 +173,7 @@ window.PORTFOLIO = (function () {
           [O + 'mac-paste-480.webp', 'Fresh paste.', "Thermal paste is what carries heat off the processor. Years old, it had dried out, and a chip that can't shed heat runs hot and slows itself down. I took the board out, cleaned the old paste off and put fresh paste on."],
           [O + 'mac-clean-480.webp', 'Making it fit.', "The 2012 board was never meant to go in a 2011 body, and its display connector simply didn't fit. So I literally took a sheet of sandpaper and filed the connector's edges down by hand, a little at a time. File too far and I'd wear through the insulation and short the board, or crack the fragile connector for good. It clicked in."],
           [O + 'mac-boot-480.webp', 'Stuck at boot.', "First attempt: it powered on but wouldn't boot properly, so it was back to troubleshooting to track down the fault."],
-          [O + 'mac-sonoma-480.webp', 'It boots.', 'With the fault fixed, it came up as a 2012. Then I went one step further and unofficially installed macOS Sonoma, a version Apple never supported on this model. One less laptop in a landfill.']
+          [O + 'mac-sonoma-480.webp', 'It boots.', 'With the fault fixed, it came up as a 2012. Then I went one step further and unofficially installed macOS Sonoma, a version never supported on this model. One less laptop in a landfill.']
         ]
       },
       {

@@ -9,7 +9,7 @@ window.PAPERS = {
     news: {
       file: 'NEWS.TXT', title: 'THE BULLETIN BOARD', sub: 'FALL 1977 · WHAT THE USERS GROUP IS TALKING ABOUT',
       items: [
-        ['COMPUTERS YOU CAN BUY ASSEMBLED', 'Three home computers went on sale this year ready to plug in, no soldering: the Apple II, the Commodore PET and Radio Shack’s TRS-80.'],
+        ['COMPUTERS YOU CAN BUY ASSEMBLED', 'Home computers went on sale this year ready to plug in, no soldering needed. The Commodore PET and Radio Shack’s TRS-80 are among them.'],
         ['A COMPUTER FAIRE', 'In April thousands lined up in San Francisco for the first West Coast Computer Faire, to see what a computer at home could do.'],
         ['NETWORKS OF NETWORKS', 'In November a message crossed three separate networks, by radio, by satellite and over the ARPANET, using one protocol, TCP.'],
         ['GAMES ON THE TELEVISION', 'Atari’s new Video Computer System plays games from cartridges. Combat comes in the box. (Open this portfolio on a phone and its era picker has other devices to try.)'],

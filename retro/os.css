@@ -840,3 +840,8 @@ img { display: block; max-width: 100%; }
 .smp-page canvas { width: 168px; height: 210px; }
 
 .smp-file { display: none !important; }
+
+/* SommiPaint's first menu: the AJ in one-bit pixels, where the maker's logo would be. */
+.spnt .smp-aj { display: flex; color: #000; }
+.spnt .smp-aj svg { display: block; }
+.spnt .smp-m.on .smp-aj { color: #fff; }
