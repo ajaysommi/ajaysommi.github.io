@@ -50,8 +50,13 @@ window.SHAPES = (function () {
     home: 'M20 4a16 16 0 1 1 0 32a16 16 0 1 1 0-32zM20 8a12 12 0 1 0 0 24a12 12 0 1 0 0-24zM14 14h12v12H14zM16 16v8h8v-8z',
     ripple: 'M20 14a6 6 0 1 1 0 12a6 6 0 1 1 0-12zM20 6a14 14 0 1 1 0 28a14 14 0 1 1 0-28zM20 9a11 11 0 1 0 0 22a11 11 0 1 0 0-22z',
     slide: 'M4 16h18V9l14 11-14 11v-7H4z',
-    touch: 'M12 2h16a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4zM11 7v24h18V7z'
+    touch: 'M12 2h16a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4zM11 7v24h18V7z',
+    /* The phone's own three: a handset, the browser's compass, and the iPod in it. */
+    handset: 'M9 5h6l3 8-4 3c2 4 5 7 9 9l3-4 8 3v6c0 2-2 4-4 4C17 39 1 23 5 9c0-2 2-4 4-4z',
+    compass: 'M20 3a17 17 0 1 1 0 34a17 17 0 1 1 0-34zM20 6.5a13.5 13.5 0 1 0 0 27a13.5 13.5 0 1 0 0-27zM28 12l-5.5 10.5L12 28l5.5-10.5z'
   };
+  /* A layer picks every fifth kind, so a set's length must not be a
+     multiple of five, or some of its kinds never appear. */
   const SETS = {
     time: ['hourglass', 'clock', 'calendar', 'stopwatch', 'floppy525', 'cassette', 'happymac', 'floppy', 'cd', 'globe', 'candybar', 'ipod', 'touch'],
     1983: ['crt', 'prompt', 'floppy525', 'joystick', 'cassette', 'cursor'],
@@ -60,7 +65,7 @@ window.SHAPES = (function () {
     2007: ['ipod', 'video', 'wifi', 'magnifier', 'usb', 'dock'],
     nokia: ['snake', 'envelope', 'bars', 'battery', 'note', 'candybar'],
     pocket: ['note', 'cd', 'headphones', 'play', 'ipod'],
-    iphone: ['apps', 'home', 'wifi', 'ripple', 'slide', 'battery', 'touch']
+    iphone: ['apps', 'home', 'wifi', 'ripple', 'slide', 'battery', 'touch', 'ipod', 'handset', 'compass', 'video']
   };
 
   /* A steady pseudo-random sequence, so a layer looks the same each time. */
