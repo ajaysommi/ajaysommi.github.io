@@ -386,8 +386,16 @@ window.RETRO = (function () {
     /* Never taller than the small viewport: where a browser's bar floats
        over the page (Safari's bottom bar), nothing is drawn under it. */
     viewport();
-    r.setProperty('--vvh', Math.min(vv ? vv.height : innerHeight, probe.offsetHeight || Infinity) + 'px');
-    r.setProperty('--vvt', (vv ? Math.max(0, vv.offsetTop) : 0) + 'px');
+    /* A visible height well short of the small viewport, with none of the
+       page's own fields in use, is the browser's keyboard (its address bar)
+       or a value left over from before the tab was put away: the page keeps
+       to the small viewport then, so nothing is laid out for a screen half
+       its size. */
+    const svh = probe.offsetHeight || Infinity, a = document.activeElement;
+    const typing = a && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
+    const short = vv && vv.height < Math.min(svh, innerHeight) * 0.8 && !typing;
+    r.setProperty('--vvh', (short ? Math.min(svh, innerHeight) : Math.min(vv ? vv.height : innerHeight, svh)) + 'px');
+    r.setProperty('--vvt', (vv && !short ? Math.max(0, vv.offsetTop) : 0) + 'px');
     dispatchEvent(new Event('retro-fit'));
   };
   let raf = 0;
@@ -395,6 +403,15 @@ window.RETRO = (function () {
   if (window.visualViewport) { visualViewport.addEventListener('resize', later); visualViewport.addEventListener('scroll', later); }
   addEventListener('resize', later);
   addEventListener('orientationchange', () => setTimeout(sync, 350));
+  /* Coming back to a tab (Safari restores it as it was, without telling
+     the page its bars or keyboard changed meanwhile), or once a field lets
+     go: measured again at once and once more when the browser has settled. */
+  const again = () => { later(); setTimeout(sync, 400); };
+  addEventListener('pageshow', again);
+  addEventListener('focus', again);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) again(); });
+  document.addEventListener('focusout', () => setTimeout(sync, 300));
+  addEventListener('load', () => setTimeout(sync, 300));
   sync();
 
   /* Dragging across an empty desktop draws the selection box, and the
