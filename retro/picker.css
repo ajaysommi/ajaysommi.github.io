@@ -782,3 +782,10 @@ html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82
    shapes have flown in. A touch more glow. */
 @keyframes shp-star { 0%, 100% { opacity: var(--o); } 25% { opacity: calc(var(--o) * .6); } 50% { opacity: calc(var(--o) * 1.25); } 75% { opacity: calc(var(--o) * .85); } }
 .bg-shapes.is-filled svg { animation-delay: calc(var(--twd, 0s) * -1) !important; filter: drop-shadow(0 0 2px currentColor) drop-shadow(0 0 6px color-mix(in srgb, currentColor 55%, transparent)); }
+
+/* The photographed machines' shadow, a blurred silhouette of the photo
+   under it with room to fade out in (see boot.js), not a filter on the
+   machine, which Safari clips at the photo's edge. */
+.os-host.is-photo .bz-dev, .pk-fly .bz-dev { filter: none !important; }
+.bz-shade { position: absolute; z-index: -1; box-sizing: content-box; pointer-events: none; filter: blur(25px); }
+.bz-shade > i { display: block; width: 100%; height: 100%; background: rgba(40, 40, 60, .35); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }

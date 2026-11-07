@@ -99,8 +99,8 @@ window.TERM = (function () {
     `  ${cmd('view me', pad('VIEW ME', 12))}a photo, in text mode`,
     `  ${cmd('github', pad('GITHUB', 12))}open GitHub`,
     `  ${cmd('linkedin', pad('LINKEDIN', 12))}open LinkedIn`,
-    `  ${cmd('news', pad('NEWS', 12))}the users group news sheet, fall 1983`,
-    `  ${cmd('catalog', pad('CATALOG', 12))}the SOMMI //e brochure`,
+    `  ${cmd('news', pad('NEWS', 12))}the users group news sheet, fall 1974`,
+    `  ${cmd('catalog', pad('CATALOG', 12))}the SOMMITRON brochure`,
     `  ${cmd('bricks', pad('BRICKS', 12))}a game: break out the wall`,
     `  ${cmd('era', pad('ERA', 12))}start up from another era`,
     `  ${cmd('clear', pad('CLEAR', 12))}clear the screen`,
@@ -288,7 +288,7 @@ window.TERM = (function () {
     ' Volume in drive A is PORTFOLIO',
     ' Directory of A:\\',
     '',
-    ...FILES.map(([n, c, s]) => ` ${cmd(c === 'home' ? 'clear' : (c === 'secrets' ? 'type secrets.txt' : c), pad(n.split('.')[0], 9) + pad(n.split('.')[1], 4))}${String(s).padStart(8)}  10-23-83`),
+    ...FILES.map(([n, c, s]) => ` ${cmd(c === 'home' ? 'clear' : (c === 'secrets' ? 'type secrets.txt' : c), pad(n.split('.')[0], 9) + pad(n.split('.')[1], 4))}${String(s).padStart(8)}  10-23-74`),
     `       ${FILES.length} file(s)   ${FILES.reduce((a, f) => a + f[2], 0).toLocaleString()} bytes`,
     '               1,343,488 bytes free',
     ''
@@ -334,7 +334,7 @@ window.TERM = (function () {
     email: 'contact', mail: 'contact', reach: 'contact',
     cv: 'resume', 'r\u00e9sum\u00e9': 'resume',
     cls: 'clear', dir: 'ls', 'ls -la': 'ls', cat: 'type', more: 'type', open: 'type',
-    next: '1991', gui: '1991', startx: '1991', win: '1991', desktop: '1991', finder: '1991',
+    next: '1984', gui: '1984', startx: '1984', win: '1984', desktop: '1984', finder: '1984', '1991': '1984', '1983': '1974',
     web: '1998', www: '1998', internet: '1998', netscape: '1998', browser: '1998',
     quit: 'era', logout: 'era', bye: 'era', shutdown: 'era', exit: 'era', eras: 'era', switch: 'era', restart: 'era',
     hi: 'hello', hey: 'hello', yo: 'hello', listings: 'tv', movies: 'tv', tonight: 'tv',
@@ -354,17 +354,17 @@ window.TERM = (function () {
     news: () => print([...paper('news'), ['  TONIGHT? TYPE TV.', 'dim'], ''], 8),
     undelete: () => { window.EGGS.find('letter'); return print(['1 FILE RECOVERED: LETTER.TXT', '', ...window.STORY.paragraphs('1983').flatMap((p) => [esc(p), ''])]); },
     tv: () => print([
-      'THE LISTINGS, 1983', rule(48),
+      'THE LISTINGS, 1974', rule(48),
       '  ON THE TUBE',
-      ['    M*A*S*H signs off. Half the country watched.', 'dim'],
-      ['    The A-Team, Cheers, Knight Rider, Dallas', 'dim'], '',
+      ['    Happy Days is new this year. So is', 'dim'],
+      ['    The Six Million Dollar Man. M*A*S*H, Kojak', 'dim'], '',
       '  AT THE DRIVE-IN',
-      ['    Return of the Jedi, WarGames, Flashdance,', 'dim'],
-      ['    Trading Places, Risky Business', 'dim'], '',
+      ['    Blazing Saddles, Young Frankenstein, Chinatown,', 'dim'],
+      ['    The Towering Inferno, The Godfather Part II', 'dim'], '',
       '  ON THE RADIO',
-      ['    Billie Jean, Every Breath You Take, Sweet Dreams', 'dim'], '',
+      ['    Waterloo, Kung Fu Fighting, The Way We Were', 'dim'], '',
       '  AT THE ARCADE',
-      ['    Dragon\'s Lair costs 50 cents. It is worth it.', 'dim'], ''
+      ['    A Pong table in every bar. A quarter a game.', 'dim'], ''
     ]),
     joshua: () => print(['GREETINGS, PROFESSOR FALKEN.', '', 'SHALL WE PLAY A GAME?', '', `  ${cmd('bricks', '[ BRICKS ]')}`, '']),
     catalog: () => print(paper('brochure'), 8),
@@ -389,7 +389,7 @@ window.TERM = (function () {
     time: () => COMMANDS.date(),
     whoami: () => print(['guest', '']),
     hello: () => print(['HELLO! GLAD YOU\u2019RE HERE.', `  ${cmd('about', 'START WITH ABOUT')}  or  ${cmd('help', 'SEE EVERYTHING')}`, '']),
-    version: () => print(['SOMMI-DOS VERSION 3.3 \u00b7 BUILD 1983.10.23', '']),
+    version: () => print(['SOMMI-DOS VERSION 3.3 \u00b7 BUILD 1974.10.23', '']),
     history: () => print(hist.length ? hist.map((h, i) => `  ${i + 1}  ${esc(h)}`).concat(['']) : ['NO HISTORY YET.', '']),
     echo: (a, raw) => print([esc(raw.replace(/^\s*echo\s?/i, '')) || '', '']),
     sudo: () => { window.EGGS.find('sudo'); return print(['guest is not in the sudoers file.', '']); },
@@ -418,13 +418,13 @@ window.TERM = (function () {
     ':q': () => print(['NOTHING TO QUIT.', '']),
     ':wq': () => COMMANDS[':q'](),
     rm: () => print(['PERMISSION DENIED.', '']),
-    exit: () => print(['TYPE ERA TO LEAVE.', `  ${cmd('1991', '[ TRAVEL TO 1991 ]')}`, '']),
+    exit: () => print(['TYPE ERA TO LEAVE.', `  ${cmd('1984', '[ TRAVEL TO 1984 ]')}`, '']),
     reboot: () => { COMMANDS.clear(); return boot(true); },
     logo: () => print([...BANNER.map((l) => [esc(l), 'big']), '']),
-    '1983': () => print(['YOU ARE ALREADY IN 1983.', '']),
+    '1974': () => print(['YOU ARE ALREADY IN 1974.', '']),
     era: () => { print(['SHUTTING DOWN. CHOOSE A STARTUP DISK...', '']); setTimeout(() => api.picker(), 600); return Promise.resolve(); },
     '2007': () => { print(['JUMPING AHEAD TO 2007...', '']); setTimeout(() => api.go(3), 450); return Promise.resolve(); },
-    '1991': () => { print(['ENGAGING TIME CIRCUITS...', '']); setTimeout(() => api.go(1), 450); return Promise.resolve(); },
+    '1984': () => { print(['ENGAGING TIME CIRCUITS...', '']); setTimeout(() => api.go(1), 450); return Promise.resolve(); },
     '1998': () => { print(['SKIPPING AHEAD TO 1998...', '']); setTimeout(() => api.go(2), 450); return Promise.resolve(); }
   };
 
@@ -605,7 +605,7 @@ window.TERM = (function () {
       </div>
       <div class="term-chips" role="toolbar" aria-label="Commands"></div>
       <input class="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type a command" />
-      <div class="term-wait"><div>${window.ICONS.pxmark(96, true)}SOMMI-83 PERSONAL COMPUTER<br/>BIOS v1.0 \u00b7 (C) 1983<br/><br/>NO SYSTEM DISK.<br/>INSERT PORTFOLIO DISK IN DRIVE A:<br/><span class="blink">\u2588</span></div></div>`;
+      <div class="term-wait"><div>${window.ICONS.pxmark(96, true)}SOMMITRON 74 COMPUTER<br/>BIOS v1.0 \u00b7 (C) 1974<br/><br/>NO SYSTEM DISK.<br/>INSERT PORTFOLIO DISK IN DRIVE A:<br/><span class="blink">\u2588</span></div></div>`;
     scr.appendChild(root);
     out = root.querySelector('.term-out');
     input = root.querySelector('.term-input');
@@ -669,9 +669,9 @@ window.TERM = (function () {
     ready = false;
     const d = fast ? 0 : 60;
     await print([
-      'SOMMI-83 BIOS v1.0',
-      'MEMORY TEST ........... 640K OK',
-      'DRIVE A: 1.44MB ....... READY',
+      'SOMMITRON 74 BIOS v1.0',
+      'MEMORY TEST ........... 16K OK',
+      'DRIVE A: 8 INCH ....... READY',
       'READING PORTFOLIO DISK'
     ], d);
     if (!fast) {

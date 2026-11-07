@@ -7,49 +7,49 @@
 window.PAPERS = {
   1983: {
     news: {
-      file: 'NEWS.TXT', title: 'THE BULLETIN BOARD', sub: 'FALL 1983 · WHAT THE USERS GROUP IS TALKING ABOUT',
+      file: 'NEWS.TXT', title: 'THE BULLETIN BOARD', sub: 'FALL 1974 · WHAT THE USERS GROUP IS TALKING ABOUT',
       items: [
-        ['MACHINE OF THE YEAR', 'For the first time the year’s cover honour went to a machine instead of a person: the personal computer.'],
-        ['THE NETWORK CHANGES ITS LANGUAGE', 'On New Year’s Day every host on the ARPANET switched over to TCP/IP. The old protocol is gone.'],
-        ['SPREADSHEETS GET SERIOUS', 'Lotus 1-2-3 arrived for the IBM PC in January and has become the reason many offices buy one.'],
-        ['A PHONE YOU CAN CARRY', 'The FCC approved the first handheld cellular telephone in September. It weighs about two pounds. (Open this portfolio on a phone and its era picker has other devices to try.)'],
-        ['THINKING MACHINES?', 'Japan\u2019s Fifth Generation project and a new DARPA program are betting millions on artificial intelligence. The best of it today is the expert system: a few hundred IF-THEN rules typed in by hand. A computer that understands an ordinary English sentence is still a dream.'],
-        ['NAMES, NOT NUMBERS', 'A proposal for a Domain Name System would let you reach a computer by name instead of by its address.']
+        ['A WHOLE COMPUTER ON ONE CHIP', 'Intel’s new 8080 arrived in April: an entire processor on a single chip, and far faster than the 8008 before it.'],
+        ['NETWORKS OF NETWORKS', 'In May Vint Cerf and Bob Kahn published a way to join separate computer networks into one. They call it the Transmission Control Program.'],
+        ['BUILD YOUR OWN', 'Radio-Electronics printed plans in July for the Mark-8, a computer you put together yourself around the 8008.'],
+        ['A COMPUTER FOR YOUR POCKET', 'Hewlett-Packard’s HP-65 calculator runs programs you keep on little magnetic cards. It costs $795. (Open this portfolio on a phone and its era picker has other devices to try.)'],
+        ['THINKING MACHINES?', 'In Britain the Lighthill report has cut most of the money for artificial intelligence. At Stanford a program called MYCIN suggests treatments for infections from a few hundred IF-THEN rules typed in by hand. A computer that understands an ordinary English sentence is still a dream.'],
+        ['THE CHECKOUT READS STRIPES', 'In June a supermarket in Ohio scanned the first product with a bar code: a pack of chewing gum.']
       ],
       foot: 'MEETINGS FIRST TUESDAY OF THE MONTH. BRING DISKS.'
     },
     brochure: {
-      file: 'CATALOG.TXT', title: 'THE SOMMI //e', sub: 'A PERSONAL COMPUTER FOR HOME, SCHOOL AND OFFICE',
+      file: 'CATALOG.TXT', title: 'THE SOMMITRON', sub: 'A COMPUTER OF YOUR OWN, FOR THE DESK OR THE LAB',
       items: [
-        ['MEMORY', '64K of RAM as standard, expandable to 128K.'],
-        ['STORAGE', 'Built-in 5¼ inch disk drive. 140K on every disk.'],
-        ['DISPLAY', 'Upper and lower case. 80 columns with the optional card.'],
+        ['MEMORY', '4K of RAM as standard, expandable to 16K.'],
+        ['STORAGE', 'Cassette tape built in. 8 inch disk drive optional.'],
+        ['DISPLAY', 'Matching terminal, 40 columns of upper case.'],
         ['SOFTWARE', 'Runs SOMMI-DOS 3.3 and everything on this disk.'],
-        ['PRICE', '$1,395 introductory. Monitor sold separately.']
+        ['PRICE', '$1,495 as a kit. $2,195 assembled and tested.']
       ],
       foot: 'ASK YOUR DEALER FOR A DEMONSTRATION TODAY.'
     }
   },
   1991: {
     news: {
-      file: 'The Insider, Fall 91', title: 'The Sommi Insider', sub: 'Fall 1991 · News for people who use computers',
+      file: 'The Insider, Fall 84', title: 'The Sommi Insider', sub: 'Fall 1984 · News for people who use computers',
       items: [
-        ['System 7 ships', 'The new system software arrived in May: every program can run at once, aliases point to files from anywhere, and help appears in balloons.'],
-        ['A web of documents', 'In August a researcher at CERN, Tim Berners-Lee, posted a summary of his World Wide Web project to a public newsgroup. Pages link to other pages, anywhere on the network.'],
-        ['A free kernel from Finland', 'Linus Torvalds, a student in Helsinki, announced a hobby operating system for 386 machines. He calls it Linux.'],
-        ['Laptops grow up', 'A new line of portable computers arrived in October, with the trackball moved to the front of the keyboard where your thumbs are.'],
-        ['Gopher burrows in', 'The University of Minnesota released Gopher, a simple menu for finding files on computers all over the Internet.'],
-        ['Neural networks learn to read', 'At Bell Labs a neural network has learned to read handwritten ZIP codes, one digit at a time. It is one of the few things these \u201cartificial brains\u201d can do well, and it takes weeks of computer time to teach.']
+        ['A computer with a mouse', 'In January a computer arrived with windows, icons, a mouse and a Trash, introduced by a commercial during the Super Bowl.'],
+        ['Blocks that fall', 'At the Academy of Sciences in Moscow, Alexey Pajitnov has written a puzzle game of falling blocks. He calls it Tetris.'],
+        ['Names, not numbers', 'The Internet is switching on the Domain Name System, so you can reach a computer by its name instead of a string of numbers.'],
+        ['Cyberspace', 'William Gibson’s first novel, Neuromancer, imagines a worldwide network of computers you can step inside. He calls it cyberspace.'],
+        ['Music on a disc, in your hand', 'Sony’s new portable compact disc player arrived in November, not much bigger than the disc’s own case.'],
+        ['An \u201cAI winter\u201d?', 'Expert systems are the hot thing: rules typed in by hand that help configure computers and diagnose disease. At this summer’s AI conference, researchers warned the excitement could end in a bust, an \u201cAI winter.\u201d']
       ],
       foot: 'Subscriptions are free. Tell a friend.'
     },
     brochure: {
-      file: 'SommiOS 7 Brochure', title: 'SommiOS 7', sub: 'System software for your desk',
+      file: 'Sommitosh Brochure', title: 'Sommitosh 128k', sub: 'A computer for your desk',
       items: [
         ['Open everything', 'Every window on the desk at the same time. Drag them by their title bars.'],
         ['Find anything', 'Press ⌘F and type what you are looking for: a company, a language, a project.'],
         ['A fresh start', 'Special › Restart in Another Era starts the same portfolio up from a different year.'],
-        ['Requirements', 'Any computer with 2 MB of memory and a 1.4 MB floppy drive. Hard disk recommended.']
+        ['Inside', '128K of memory, a 400K 3½ inch disk drive and a sharp 9 inch screen. SommiOS 1 included.']
       ],
       foot: 'Available now from your authorised Sommi dealer.'
     }

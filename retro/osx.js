@@ -171,7 +171,7 @@ window.OSX = (function () {
     mail: { name: 'Mail', icon: 'mail', keys: 'contact email hello write' },
     compose: { name: 'New Message', icon: 'mail', keys: 'write email' },
     preview: { name: 'Resume', icon: 'preview', keys: 'cv pdf preview resume' },
-    timemachine: { name: 'Time Machine', icon: 'timemachine', keys: 'era switch 1983 1991 1998 back' },
+    timemachine: { name: 'Time Machine', icon: 'timemachine', keys: 'era switch 1974 1984 1998 back' },
     memory: { name: 'Concentration', icon: 'memory', keys: 'game play memory match cards concentration' },
     docs: { name: 'Documents', icon: 'docs', keys: 'files documents' },
     downloads: { name: 'Downloads', icon: 'downloads', keys: 'download resume pdf' },
@@ -746,7 +746,7 @@ window.OSX = (function () {
       else if (c === 'resume') { open('preview'); }
       else if (c === 'contact' || c === 'mail') { open('compose'); }
       else if (c === 'era' || c === 'tm' || c === 'timemachine') { timeTravel(); }
-      else if (['1983', '1991', '1998'].includes(c)) { api.go(['1983', '1991', '1998'].indexOf(c)); }
+      else if (['1974', '1984', '1998'].includes(c)) { api.go(['1974', '1984', '1998'].indexOf(c)); }
       else if (c === 'uname') say('SommiOS X 10.4 Gator');
       else if (c === 'sudo') { window.EGGS.find('sudo'); say('ajay is not in the sudoers file. This incident will be reported.'); }
       else if (c === 'hire') { window.EGGS.find('hire'); say('<a href="mailto:' + P.email + '">' + P.email + '</a>'); }

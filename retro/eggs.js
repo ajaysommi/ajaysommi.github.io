@@ -10,7 +10,7 @@ window.EGGS = (function () {
     ['hire', 'Hire', 'Ran the hire command.'],
     ['xyzzy', 'Adventurer', 'Said the magic word.'],
     ['ascii', 'Text mode', 'Looked at a photo made of characters.'],
-    ['trash', 'Trash', 'Looked through the 1991 Trash.'],
+    ['trash', 'Trash', 'Looked through the Sommitosh Trash.'],
     ['bomb', 'Error type 26', 'Opened the bomb file.'],
     ['panic', 'Kernel panic', 'Pushed a Mac until it gave up.'],
     ['letter', 'Dug it out', 'Found a letter nobody was meant to see first.'],

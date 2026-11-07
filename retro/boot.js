@@ -321,10 +321,10 @@
   };
 
   const ERAS = [
-    { year: '1983', name: 'SOMMI-DOS', note: 'A command line. Type, or click the commands.', sys: () => window.TERM, art: ART[1983] },
-    { year: '1991', name: 'SommiOS 7', note: 'Black and white windows, icons and a Trash.', sys: () => window.FINDER, art: ART[1991] },
-    { year: '1998', name: 'SommiNet 98', note: 'A browser and a homepage, guestbook included.', sys: () => window.WEB, art: ART[1998] },
-    { year: '2007', name: 'SommiOS X Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ART[2007] }
+    { year: '1983', label: '1974', machine: 'Sommitron', name: 'SOMMI-DOS', note: 'A command line. Type, or click the commands.', sys: () => window.TERM, art: ART[1983] },
+    { year: '1991', label: '1984', machine: 'Sommitosh 128k', name: 'SommiOS 1', note: 'Black and white windows, icons and a Trash.', sys: () => window.FINDER, art: ART[1991] },
+    { year: '1998', label: '1998', machine: 'iSommi G3', name: 'SommiNet 98', note: 'A browser and a homepage, guestbook included.', sys: () => window.WEB, art: ART[1998] },
+    { year: '2007', label: '2007', machine: 'iSommi Aluminum', name: 'SommiOS X Gator', note: 'A dock, Aqua windows and Spotlight.', sys: () => window.OSX, art: ART[2007] }
   ];
   /* The standard site sits in the same row, as the newest machine. */
   const OPTS = ERAS;
@@ -350,7 +350,7 @@
       <div class="sm-status"><span class="sm-bat"><i></i></span><span class="sm-clock"></span></div>
       <div class="pk-in">
         <div class="pk-head">${I.pxmark(36)}<h1>Choose an era</h1><p>Each one is the portfolio on a computer from its year.</p></div>
-        <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.year}</span><b>${esc(e.name)}</b></button>`).join('')}</div>
+        <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.label || e.year}</span><b>${esc(e.machine || e.name)}</b></button>`).join('')}</div>
       </div><a class="pk-home" href="index.html">‹ Standard site</a>`;
     const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
     tick(); setInterval(() => { if (!pick.hidden) tick(); }, 15000);
@@ -388,7 +388,7 @@
        logo was. */
     const MARK = I.mark(64);
     const BEZEL = {
-      1983: `<div class="bz-chin"><span class="bz-badge">${MARK}<b>SOMMI //e</b></span><i class="bz-led"></i></div>`,
+      1983: `<div class="bz-chin"><span class="bz-badge">${MARK}<b>SOMMITRON</b></span><i class="bz-led"></i></div>`,
       1991: `<div class="bz-chin"><span class="bz-badge">${MARK}</span><span class="bz-floppy"><i></i></span></div>`,
       1998: `<div class="bz-chin"><span class="bz-spk l"></span><span class="bz-mid">${MARK}<i class="bz-cd"></i></span><span class="bz-spk r"></span></div>`,
       2007: `<div class="bz-chin"><span class="bz-badge">${I.mark(64, true)}</span></div>`
@@ -492,6 +492,15 @@
         photo = PHOTO[y];
         const [ax, ay, as, mono] = photo.aj;
         bezel.innerHTML = `<div class="bz-dev" style="width:${photo.w}px;height:${photo.h}px"><img src="${photo.src}" alt="" draggable="false" /><img class="lx-lit" src="${photo.src}" alt="" draggable="false" style="--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px" /><i class="lx-tint" style="-webkit-mask-image:url(${photo.src});mask-image:url(${photo.src});--lx:${photo.scr[0] + photo.scr[2] / 2}px;--ly:${photo.scr[1] + photo.scr[3] / 2}px;--lw:${photo.scr[2]}px;--lh:${photo.scr[3]}px"></i><i class="bz-glass" style="left:${photo.glass[0]}px;top:${photo.glass[1]}px;width:${photo.glass[2]}px;height:${photo.glass[3]}px;border-radius:${round(photo.glass[4])}"></i><span class="bz-aj" style="left:${ax - as / 2}px;top:${ay - as / 2}px;width:${as}px;height:${as}px">${I.mark(as, mono)}</span></div>`;
+        /* The machine's shadow, drawn on its own with room around it to
+           fade out in: as a filter on the machine, Safari cut it off at the
+           photo's edge, a hard line beside the 2007 iMac. */
+        const SP = 140;
+        const shade = document.createElement('i');
+        shade.className = 'bz-shade';
+        shade.style.cssText = `left:${-SP}px;top:${30 - SP}px;width:${photo.w}px;height:${photo.h}px;padding:${SP}px`;
+        shade.innerHTML = `<i style="-webkit-mask-image:url(${photo.src});mask-image:url(${photo.src})"></i>`;
+        bezel.querySelector('.bz-dev').appendChild(shade);
         host.classList.add('is-photo');
         host.classList.remove('is-dark');
         /* The Bondi iMac's power button switches the picture tube off and on. */
@@ -852,7 +861,7 @@
         const s = screen(i);
         s.hidden = false;
         osOn(true);
-        history.replaceState(null, '', '#' + y);
+        history.replaceState(null, '', '#' + ERAS[i].label);
       };
       const art = tileArt(i);
       if (prev < 0 && !pick.hidden && art) {
@@ -955,7 +964,8 @@
     addEventListener('resize', () => { if (cur >= 0) { const s = ERAS[cur].sys(); s.resize && s.resize(); } });
 
     READY.then(() => {
-      const want = ERAS.findIndex((e) => '#' + e.year === location.hash);
+      // By the year shown, or the one it had before (old links keep working).
+      const want = ERAS.findIndex((e) => '#' + e.label === location.hash || '#' + e.year === location.hash);
       if (want >= 0) launch(want);
       else pick.hidden = false;
       /* On the desk the shapes are things the cursor can plough through. */

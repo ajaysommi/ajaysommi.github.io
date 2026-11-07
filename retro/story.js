@@ -8,19 +8,19 @@ window.STORY = (function () {
   /* Where each one is kept. They are all things that were thrown out or left
      behind, so a visitor finds the first by poking around, and each after
      that by being told where to dig. */
-  const WHERE = { 1983: 'on the 1983 terminal, if you think to UNDELETE', 1991: 'in the Trash on the 1991 Mac', 1998: 'in the Trash on the 1998 Mac', 2007: 'in the Trash on the 2007 iMac', nokia: 'in the Extras on the 2000 phone', pocket: 'at the very bottom of the Extras on the 2004 music player', iphone: 'at the bottom of the Notes on the iPhone' };
+  const WHERE = { 1983: 'on the 1974 Sommitron, if you think to UNDELETE', 1991: 'in the Trash on the Sommitosh 128k', 1998: 'in the Trash on the iSommi G3', 2007: 'in the Trash on the iSommi Aluminum', nokia: 'in the Extras on the 2000 phone', pocket: 'at the very bottom of the Extras on the 2004 music player', iphone: 'at the bottom of the Notes on the iPhone' };
   const COMPUTERS = ['1983', '1991', '1998', '2007'], PHONES = ['nokia', 'pocket', 'iphone'];
   const CHAPTERS = {
     1983: {
-      n: 1, name: 'the 1983 terminal',
+      n: 1, name: 'the 1974 Sommitron',
       lines: ['This is where it starts: a blinking cursor. No icons and no help. You type, it answers, and it does exactly what you said.', 'I still like it down here. I wrote a file system in C++ and a small language of my own, SommiScript, mostly to find out what’s underneath a prompt like this one.']
     },
     1991: {
-      n: 2, name: 'the 1991 Mac',
+      n: 2, name: 'the 1984 Sommitosh 128k',
       lines: ['Same idea, but somebody decided a computer should meet people halfway. A desk, some folders, a Trash you can drag things to.', 'That’s the part I care about most: thinking about the person using it. It’s also the kind of machine I can’t leave alone. I once put a 2012 board in a 2011 MacBook just to bring it back.']
     },
     1998: {
-      n: 3, name: 'the 1998 Mac',
+      n: 3, name: 'the 1998 iSommi G3',
       lines: ['Now the computer talks to other computers, as long as nobody picks up the phone. Everything starts to be about connecting people.', 'GatorGoods came from the same feeling: a place for UF students to buy and sell from each other.']
     },
     nokia: {
@@ -32,7 +32,7 @@ window.STORY = (function () {
       lines: ['One wheel, and a thousand songs in your pocket. Something complicated, made to feel simple.', 'I chase that feeling at work. At Toyota I replaced a manual spreadsheet with a live dashboard, and data entry got five times faster.']
     },
     2007: {
-      n: 6, name: 'the 2007 iMac',
+      n: 6, name: 'the 2007 iSommi Aluminum',
       lines: ['Glass and a dock, and everything has its place. By now computers mostly run themselves, and the work moves to making them trustworthy.', 'At JM Family I built automatic checks in Azure that catch people holding the wrong access, so nobody has to go looking by hand.']
     },
     iphone: {

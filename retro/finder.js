@@ -48,9 +48,9 @@ window.FINDER = (function () {
     jquery: { name: 'jquery.min.js', icon: 'doc', kind: 'document' },
     dontopen: { name: 'Don’t Open Me', icon: 'app', kind: 'application' }
   };
-  ITEMS.papers = { name: 'News & Brochures', icon: 'folder', kind: 'folder', keys: 'news brochure 1991 newsletter papers' };
-  ITEMS['paper:news'] = { name: window.PAPERS[1991].news.file, icon: 'doc', kind: 'document', keys: 'news newsletter 1991 system 7 linux web' };
-  ITEMS['paper:brochure'] = { name: window.PAPERS[1991].brochure.file, icon: 'doc', kind: 'document', keys: 'brochure sommios 7' };
+  ITEMS.papers = { name: 'News & Brochures', icon: 'folder', kind: 'folder', keys: 'news brochure 1984 newsletter papers' };
+  ITEMS['paper:news'] = { name: window.PAPERS[1991].news.file, icon: 'doc', kind: 'document', keys: 'news newsletter 1984 tetris cyberspace' };
+  ITEMS['paper:brochure'] = { name: window.PAPERS[1991].brochure.file, icon: 'doc', kind: 'document', keys: 'brochure sommitosh 128k sommios' };
   P.experience.forEach((e) => { ITEMS['role:' + e.id] = { name: e.short, icon: 'doc', kind: 'document', keys: (e.org + ' ' + e.role + ' ' + e.tags.join(' ')).toLowerCase(), year: e.year }; });
   P.projects.forEach((p) => { ITEMS['project:' + p.id] = { name: p.name, icon: 'app', kind: 'application', keys: (p.full + ' ' + p.stack).toLowerCase() }; });
   P.offclock.forEach((s) => { ITEMS['story:' + s.id] = { name: s.name, icon: 'photo', kind: 'slideshow', keys: s.title.toLowerCase() }; });
@@ -258,8 +258,8 @@ window.FINDER = (function () {
     papers: () => ({ title: 'News & Brochures', w: 420, h: 220, info: '<span>4 items</span><span>from the dealer’s counter</span>', render: folderGrid(['paper:news', 'paper:brochure', 'tvguide', 'receipt']) }),
     letter: () => ({ title: 'Untitled', w: 420, h: 340, render: (b) => { b.innerHTML = `<div class="doc paper">${window.STORY.html('1991')}</div>`; } }),
     /* Papers left on the disk by whoever had the computer first. */
-    tvguide: () => ({ title: 'This Week on TV', w: 400, h: 330, render: (b) => { b.innerHTML = '<div class="doc paper"><h2>This Week, 1991</h2><p><b>Thursday:</b> Cheers, and a Simpsons fight over who gets the good couch spot.</p><p><b>Monday:</b> The Fresh Prince of Bel-Air. Everyone can do the theme song by now.</p><p><b>Sometime:</b> this new one, Seinfeld. Worth a look.</p><p>Tape anything good. There’s a blank VHS on top of the set.</p><hr/><p><b>On the radio:</b> Everything I Do, Losing My Religion, and that Nirvana song nobody can make out the words to.</p><p><b>At the arcade:</b> Street Fighter II. Bring quarters.</p></div>'; } }),
-    receipt: () => ({ title: 'Video Store Receipt', w: 330, h: 310, render: (b) => { b.innerHTML = '<div class="doc paper"><h2>Rentals</h2><p>Home Alone<br/>Ghost<br/>Dances with Wolves</p><p><b>Due back Friday by 7.</b><br/>Please be kind, rewind.</p><hr/><p><b>Coming soon to theaters:</b> Terminator 2. Also on the poster wall: The Silence of the Lambs, Thelma &amp; Louise.</p></div>'; } }),
+    tvguide: () => ({ title: 'This Week on TV', w: 400, h: 330, render: (b) => { b.innerHTML = '<div class="doc paper"><h2>This Week, 1984</h2><p><b>Thursday:</b> The Cosby Show, then Cheers. A fight over who gets the good couch spot.</p><p><b>Friday:</b> Miami Vice. Pastel jackets everywhere by now.</p><p><b>Sometime:</b> Knight Rider. The car talks.</p><p>Tape anything good. There’s a blank VHS on top of the set.</p><hr/><p><b>On the radio:</b> When Doves Cry, Jump, and that Ghostbusters song everyone keeps singing.</p><p><b>At the arcade:</b> Punch-Out!! Bring quarters.</p></div>'; } }),
+    receipt: () => ({ title: 'Video Store Receipt', w: 330, h: 310, render: (b) => { b.innerHTML = '<div class="doc paper"><h2>Rentals</h2><p>Trading Places<br/>Risky Business<br/>WarGames</p><p><b>Due back Friday by 7.</b><br/>Please be kind, rewind.</p><hr/><p><b>Coming soon to theaters:</b> The Terminator. Also on the poster wall: Ghostbusters, The Karate Kid.</p></div>'; } }),
     /* The newsletter as a folded sheet, the brochure as a dealer's leaflet. */
     'paper:news': () => {
       const d = window.PAPERS[1991].news;
@@ -274,7 +274,7 @@ window.FINDER = (function () {
       title: 'Read Me First', w: 470, h: 430, x: 40, y: 50,
       render: (b) => {
         b.innerHTML = `<div class="doc"><h2>Welcome to SommiOS.</h2>
-          <p>This is the portfolio as it would have looked on a desktop in 1991.</p>
+          <p>This is the portfolio as it would have looked on a desktop in 1984.</p>
           <p>• <b>Double-click</b> any icon to open it.<br/>• Drag windows by their <b>title bars</b>. The box at the top left closes one.<br/>• Press <b>⌘F</b> (or Ctrl+F) and just type what you want to see.<br/>• <b>Special › Restart in Another Era</b> starts up from a different year.<br/>• The newsletter and brochures that came with it are in <b>Sommi HD</b>.</p>
           
           <div class="btns"><button class="btn is-default" data-open="about">Start with About Me</button><button class="btn" data-open="find">Find…</button></div></div>`;
@@ -373,8 +373,8 @@ window.FINDER = (function () {
     computer: () => ({
       title: 'About This Computer', w: 500, h: 290,
       render: (b) => {
-        b.innerHTML = `<div class="about-mem"><div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">${I.svg('mac', 32)}<div><b style="font-size:17px">SommiOS 7.1</b><br/>© 1991 Sommi Systems.</div></div>
-          <div>Total Memory: 4,096K · Largest Unused Block: 0K</div><hr style="border:0;border-top:1px solid #000;margin:8px 0"/>
+        b.innerHTML = `<div class="about-mem"><div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">${I.svg('mac', 32)}<div><b style="font-size:17px">SommiOS 1.1</b><br/>© 1984 Sommi Systems.</div></div>
+          <div>Total Memory: 128K · Largest Unused Block: 0K</div><hr style="border:0;border-top:1px solid #000;margin:8px 0"/>
           <div class="r">${I.svg('person', 16)}<span>Portfolio</span><div class="bar"><i style="width:56%"></i></div></div>
           <div class="r">${I.svg('chip', 16)}<span>Curiosity</span><div class="bar"><i style="width:100%"></i></div></div>
           <div class="r">${I.svg('wrench', 16)}<span>Side projects</span><div class="bar"><i style="width:72%"></i></div></div>
@@ -715,7 +715,7 @@ window.FINDER = (function () {
     if (!id || !ITEMS[id]) return;
     const it = ITEMS[id];
     const wid = 'info:' + id;
-    SPECS[wid] = () => ({ title: `${it.name} Info`, w: 340, h: 280, render: (b) => { b.innerHTML = `<div class="doc" style="font-size:14px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">${ico(id, 32)}<b style="font-family:var(--pixel);font-size:16px">${esc(it.name)}</b></div><p><b>Kind:</b> ${esc(it.kind)}<br/><b>Where:</b> Sommi HD<br/><b>Created:</b> ${it.year || 1991}<br/><b>Size:</b> ${(it.name.length * 37) % 900 + 12}K on disk</p><p class="meta">Comments:</p></div>`; } });
+    SPECS[wid] = () => ({ title: `${it.name} Info`, w: 340, h: 280, render: (b) => { b.innerHTML = `<div class="doc" style="font-size:14px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">${ico(id, 32)}<b style="font-family:var(--pixel);font-size:16px">${esc(it.name)}</b></div><p><b>Kind:</b> ${esc(it.kind)}<br/><b>Where:</b> Sommi HD<br/><b>Created:</b> ${it.year || 1984}<br/><b>Size:</b> ${(it.name.length * 37) % 900 + 12}K on disk</p><p class="meta">Comments:</p></div>`; } });
     openWin(wid);
   };
 
