@@ -164,9 +164,10 @@
 .lcd-banner {
   position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 4;
   background: var(--lcd-ink); color: var(--lcd); padding: 6px 10px; font: 13px var(--pixel);
-  text-align: center; transform: translateY(140%); transition: transform .25s steps(4);
+  text-align: center; transform: translateY(calc(100% + 10px)); visibility: hidden; transition: transform .25s steps(4), visibility 0s .25s;
 }
-.lcd-banner.is-on { transform: none; }
+/* Hidden outright when down: slid only part of the way, its top edge showed as a dark line along the screen's bottom. */
+.lcd-banner.is-on { transform: none; visibility: visible; transition: transform .25s steps(4), visibility 0s; }
 
 /* The wheel. */
 .pk-wheel-wrap { flex: 1 1 40%; min-height: 0; width: 100%; display: grid; place-items: center; padding-top: 14px; }
