@@ -1373,7 +1373,7 @@ window.IPHONE = { start(room, exit) {
 
   /* ---------------------------------------------------- status bar games */
 
-  /* The Store: what was on in 2007, with each title's poster or DVD cover.
+  /* The Store: what was trending in 2007 (labelled so, not as favourites), with each title's poster or DVD cover.
      Buying only adds it to this phone's list. */
   function store07(app) {
     const MOVIES = [
@@ -1386,24 +1386,18 @@ window.IPHONE = { start(room, exit) {
       ['The Bourne Ultimatum', 'Thriller', '#0f2a3f', '#3e6f8e', 'Jason Bourne closes in on who made him.'],
       ['Ratatouille', 'Animation', '#8a2f1c', '#d99a2b', 'A rat in Paris who only wants to cook.'],
       ['The Simpsons Movie', 'Comedy', '#e0b81e', '#3f83c9', 'Homer dooms Springfield. A pig is involved.'],
-      ['300', 'Action', '#5a1d0c', '#b5641b', 'Three hundred Spartans hold the pass at Thermopylae.'],
-      ['Superbad', 'Comedy', '#c24a1a', '#f0c23c', 'Two best friends, one fake ID, one last party.'],
       ['Live Free or Die Hard', 'Action', '#23282f', '#a12a1e', 'John McClane against the whole internet.'],
-      ['Juno', 'Comedy', '#c8501e', '#e8c64a', 'A sixteen-year-old plans her way through an unplanned pregnancy.'],
       ['No Country for Old Men', 'Drama', '#6a4a26', '#c7a26a', 'A found case of money and the man coming after it.']
     ];
     const SHOWS = [
       ['Lost', 'Drama', '#123a3a', '#3e8a7a', 'Survivors of a plane crash, and an island with its own ideas.'],
       ['Heroes', 'Sci-Fi', '#1a1a2e', '#c9a227', 'Save the cheerleader, save the world.'],
       ['The Office', 'Comedy', '#3b4a5a', '#a8b6c2', 'Life at Dunder Mifflin’s Scranton branch.'],
-      ['Grey’s Anatomy', 'Drama', '#3a6ea5', '#a7c6e6', 'Surgeons in Seattle, in and out of the on-call room.'],
       ['24', 'Thriller', '#111111', '#b58a1a', 'Jack Bauer, one very long day at a time.'],
       ['American Idol', 'Reality', '#1c3f94', '#c9202e', 'The show everybody at school talked about the next morning.'],
       ['House', 'Drama', '#2a3d4f', '#7f96a8', 'The rudest doctor in New Jersey is usually right.'],
       ['30 Rock', 'Comedy', '#22344f', '#c2a14a', 'Running a sketch show at NBC, barely.'],
       ['Mad Men', 'Drama', '#6b1f1f', '#d8b48a', 'New this summer: Madison Avenue in 1960.'],
-      ['Dexter', 'Thriller', '#3a0d0d', '#b02020', 'A Miami blood expert with a very private hobby.'],
-      ['Family Guy', 'Animation', '#2b5fb0', '#e3c13a', 'The Griffins of Quahog, and the talking dog.'],
       ['Friday Night Lights', 'Drama', '#123a6b', '#d1a21e', 'Clear eyes, full hearts: football in small-town Texas.'],
       ['Hannah Montana', 'Family', '#c2287a', '#f0a6d0', 'A regular girl by day, a pop star by night.']
     ];
@@ -1462,7 +1456,8 @@ window.IPHONE = { start(room, exit) {
       pg.innerHTML = `<div class="st-item">${tile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[1])} · 2007</p><button type="button" class="st-buy"></button></div><p class="st-blurb">${esc(x[4])}</p></div>`;
       buy(pg.querySelector('.st-buy'), x[0], price);
     };
-    const list = (rows, price) => (pg) => plain(pg, rows.map((x) => ({ text: x[0], sub: `${x[1]} · ${price}`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', page(x, price)) })));
+    const TREND = { header: 'Trending in 2007' };
+    const list = (rows, price) => (pg) => plain(pg, [TREND, ...rows.map((x) => ({ text: x[0], sub: `${x[1]} · ${price}`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', page(x, price)) }))]);
     /* TV: every season that had aired by the iPhone's launch, each episode
        with its own page. Episode guides from TVmaze. */
     let tv = null;
@@ -1493,7 +1488,7 @@ window.IPHONE = { start(room, exit) {
         plain(box, [{ header: 'Seasons' }, ...ss.map(([s, eps]) => ({ text: `Season ${s}`, sub: `${eps.length} episodes · ${eps[0][2].slice(0, 4)}${eps[eps.length - 1][2].slice(0, 4) !== eps[0][2].slice(0, 4) ? '–' + eps[eps.length - 1][2].slice(2, 4) : ''}`, rt: owned.has(sKey(x, s)) ? '✓' : seasonPrice(eps.length), cls: 'st-ep', go: () => app.push(`Season ${s}`, seasonPage(x, s, eps)) }))]);
       });
     };
-    const shows = (pg) => plain(pg, SHOWS.map((x) => ({ text: x[0], sub: `${x[1]} · $1.99 an episode`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', showPage(x)) })));
+    const shows = (pg) => plain(pg, [TREND, ...SHOWS.map((x) => ({ text: x[0], sub: `${x[1]} · $1.99 an episode`, lead: tile(x), cls: 'st-row', go: () => app.push('Info', showPage(x)) }))]);
     const FILM = 'M3 4h24v18H3zM6 6v3h3V6zM6 12v2h3v-2zM6 17v3h3v-3zM21 6v3h3V6zM21 12v2h3v-2zM21 17v3h3v-3zM11 6v14h8V6z';
     const SCREEN = 'M3 3h24v16H3zM5.500 5.500v11h19v-11zM10 21h10v2.500H10z';
     /* A basketball drawn as strokes through a mask, so it is exactly round
@@ -1504,8 +1499,8 @@ window.IPHONE = { start(room, exit) {
     const sportPage = (x) => (pg) => { pg.innerHTML = `<div class="st-item">${sportTile(x, true)}<div class="st-info"><h3>${esc(x[0])}</h3><p class="st-meta">${esc(x[2])}</p></div><p class="st-blurb">${esc(x[5])}</p></div>`; };
     const sports = (pg) => plain(pg, [{ header: 'Coming Up · Summer 2007' }, ...SPORTS.map((x) => ({ text: x[0], sub: `${x[1]} · ${x[2]}`, lead: sportTile(x), cls: 'st-row', go: () => app.push('Info', sportPage(x)) }))]);
     tabs(app, [['Movies', FILM], ['TV Shows', SCREEN], ['Sports', BALL]], 0, (i) => {
-      if (i === 0) app.reset('Top Movies', list(MOVIES, '$14.99'));
-      else if (i === 1) app.reset('Top TV Shows', shows);
+      if (i === 0) app.reset('Trending Movies', list(MOVIES, '$14.99'));
+      else if (i === 1) app.reset('Trending TV Shows', shows);
       else app.reset('Sports', sports);
     });
   }
