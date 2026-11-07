@@ -1652,18 +1652,18 @@ window.IPHONE = { start(room, exit) {
   const search = (ms) => {
     clearTimeout(searchT);
     net = 'search'; paintNet();
-    /* Found: AJ&T with every bar empty, then the bars fill one by one,
-       then the E. Each step is a timer, so going back into Airplane Mode
+    /* Found: AJ&T with every bar empty, then the bars all at once, then
+       the E. Each step is a timer, so going back into Airplane Mode
        (or searching again) stops the rest. */
     const step = (fn, d) => { searchT = setTimeout(fn, d); };
     step(() => {
       if (airplane) return;
-      const want = 4 + Math.floor(Math.random() * 2);
+      const want = 3 + Math.floor(Math.random() * 3);
       net = 'on'; bars = 0; edgeOn = false; paintNet();
       if (!statusLent) netEls().forEach((e) => e.style.display !== 'none' && e.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320 }));
       const fill = () => {
         if (airplane || net !== 'on') return;
-        if (bars < want) { bars++; paintNet(); step(fill, 170); return; }
+        bars = want; paintNet();
         step(() => {
           if (airplane || net !== 'on') return;
           edgeOn = true; paintNet();
