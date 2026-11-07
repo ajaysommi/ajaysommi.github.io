@@ -423,7 +423,7 @@ window.IPHONE = { start(room, exit) {
   let bid = 0;
   const THEMES = {
     blue: ['#a6b8cf', '#7892b6', '#6280aa', '#5a79a2', '#2f4466'],
-    black: ['#727272', '#3c3c3c', '#272727', '#1b1b1b', '#0b0b0b'],
+    black: ['#727272', '#3c3c3c', '#272727', '#1b1b1b', '#060606'],
     notes: ['#cfa778', '#9a6b35', '#8a5d2a', '#7a5222', '#3f2408']
   };
   const shapeBack = (b, theme) => {
