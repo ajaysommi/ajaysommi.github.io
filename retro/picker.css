@@ -794,3 +794,10 @@ html.is-desk.lights-off[data-era="2007"] .pk-fly .bz-aj { filter: brightness(.82
 .os-host.is-photo .bz-dev, .pk-fly .bz-dev { filter: none !important; }
 .bz-shade { position: absolute; z-index: -1; box-sizing: content-box; pointer-events: none; filter: blur(25px); }
 .bz-shade > i { display: block; width: 100%; height: 100%; background: rgba(40, 40, 60, .35); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+
+/* The desktop picker's shapes glow as the phone picker's do: a slight
+   halo hugging each one and a soft one around it. Drawn once over the
+   whole layer, not per shape, so the flight back to the picker stays
+   smooth. */
+.picker.is-desk-pick > .bg-shapes { filter: drop-shadow(0 0 2px rgba(255, 255, 255, .6)) drop-shadow(0 0 12px rgba(255, 255, 255, .9)); }
+[data-theme="daylight"] .picker.is-desk-pick > .bg-shapes { filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 80%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, currentColor 35%, transparent)); }
