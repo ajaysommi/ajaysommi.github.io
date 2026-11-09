@@ -447,7 +447,7 @@
     const PHOTO = {
       1991: { src: 'assets/images/bezels/mac-1991.webp', w: 1356, h: 1159, glass: [319, 161, 551, 427, [120, 14, 120, 14]], scr: [346, 197, 497, 349], r: 10, view: [215, 30, 755, 770], aj: [307, 769, 38, false] },
       1998: { src: 'assets/images/bezels/imac-g3.webp', w: 1419, h: 1108, glass: [304, 192, 880, 602, 20], scr: [352, 236, 786, 516], r: 12, view: [160, 30, 1180, 960], aj: [738, 851, 38, false] },
-      2007: { src: 'assets/images/bezels/imac-2007.webp', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [128, 128, 1466, 912], r: 0, view: [42, 42, 1642, 1250], aj: [861, 1184, 132, true] }
+      2007: { src: 'assets/images/bezels/imac-2007.webp?v=2', w: 1726, h: 1608, glass: [119, 119, 1484, 930, 0], scr: [128, 128, 1466, 912], r: 0, view: [42, 42, 1642, 1250], aj: [861, 1184, 132, true] }
     };
     let photo = null;
     /* The machine fills most of the window: room above and at the sides,
