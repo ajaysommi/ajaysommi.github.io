@@ -75,7 +75,7 @@ window.SHAPES = (function () {
     1998: ['cd', 'globe', 'at', 'envelope', 'puck', 'star', 'bars'],
     2007: ['ipod', 'firewire', 'wifi', 'magnifier', 'chat', 'usb', 'bluetooth', 'compass', 'ethernet', 'cd', 'wheel', 'folder', 'face', 'dock'],
     nokia: ['snake', 'envelope', 'bars', 'battery', 'note', 'candybar'],
-    pocket: ['note', 'cd', 'headphones', 'play', 'ipod'],
+    pocket: ['note', 'cd', 'headphones', 'play', 'ipod', 'wheel'],
     iphone: ['apps', 'note', 'bubble', 'compass', 'handset', 'wifi', 'envelope', 'ipod', 'battery', 'keypad', 'slide', 'video', 'globe', 'headphones']
   };
 
