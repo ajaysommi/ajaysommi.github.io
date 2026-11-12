@@ -38,7 +38,7 @@ window.SHAPES = (function () {
     video: 'M3 7h34v26H3zM6 14v16h28V14zM16 17l10 5-10 5z',
     wifi: 'M20 29a3.5 3.5 0 1 1 0 7a3.5 3.5 0 1 1 0-7zM10 21a14 14 0 0 1 20 0l-2.6 2.6a10.4 10.4 0 0 0-14.8 0zM4 15a22 22 0 0 1 32 0l-2.6 2.6a18.4 18.4 0 0 0-26.8 0z',
     magnifier: 'M17 4a12 12 0 1 1 0 24a12 12 0 1 1 0-24zM17 8a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM25 25l3-3 9 9-3 3z',
-    usb: 'M18 2h4v24h-4zM14 26h12v6l-6 6-6-6zM11 8h4v6h-4zM25 11h4v4h-4z',
+    usb: 'M20 2l5.5 7h-4v17l6-3.6V19h-2v-5.5h5.5V19h-2v4.8l-7.5 4.6v3.3a4.2 4.2 0 1 1-3 0v-6.2L11 20.6v-3.3a3.3 3.3 0 1 1 3 0v1.6l4.5 2.8V9h-4z',
     dock: 'M3 26h34l-4 8H7zM8 18h6v6H8zM17 16h6v8h-6zM26 18h6v6h-6z',
     snake: 'M4 6h22v5H4zM21 11h5v11h-5zM10 17h11v5H10zM10 22h5v10h-5zM31 14h4v4h-4z',
     candybar: 'M13 3h14a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM13 8v11h14V8z',
@@ -55,6 +55,14 @@ window.SHAPES = (function () {
     // A text-message bubble, and a phone's keypad.
     bubble: 'M20 5c9.4 0 17 5.8 17 13s-7.6 13-17 13c-1.8 0-3.5-.2-5.1-.6L6 35l2.4-7.2C5.1 25.5 3 22 3 18 3 10.8 10.6 5 20 5z',
     keypad: 'M11 5a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 5a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 5a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM11 13a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 13a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 13a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM11 21a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 21a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 21a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM11 29a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 29a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 29a3 3 0 1 1 0 6a3 3 0 1 1 0-6z',
+    // The 2007 desktop's own: ports and signals, its chat, wheel, folder and face.
+    firewire: 'M20 13a7.5 7.5 0 1 1 0 15a7.5 7.5 0 1 1 0-15zM20 16.8a3.7 3.7 0 1 0 0 7.4a3.7 3.7 0 1 0 0-7.4zM10 2l5.5 5.5L10 13 4.5 7.5zM30 2l5.5 5.5L30 13l-5.5-5.5zM13 31h14v3H13zM13 35.5h14v3H13z',
+    ethernet: 'M3 6h34v28H3zM9 12v17h22V12h-5V9H14v3zM12.5 22h2v5h-2zM16.5 22h2v5h-2zM20.5 22h2v5h-2zM24.5 22h2v5h-2z',
+    bluetooth: 'M20 2c8.5 0 12 7 12 18s-3.5 18-12 18S8 31 8 20 11.5 2 20 2zM18 7v11.2l-5-4.4-2 2.2 6.2 5-6.2 5 2 2.2 5-4.4V33l9-8-5.6-4.8L27 15zM21 13.5l2.4 2.1-2.4 2.1zM21 22.4l2.4 2.1-2.4 2.1z',
+    chat: 'M20 4c9.4 0 17 6 17 14s-7.6 14-17 14c-1.8 0-3.5-.2-5.1-.6L6 36l2.4-7.2C5.1 26.3 3 22.4 3 18 3 10 10.6 4 20 4zM11 14h12v9H11zM24 17l5-3v9l-5-3z',
+    wheel: 'M20 3a17 17 0 1 1 0 34a17 17 0 1 1 0-34zM20 13.5a6.5 6.5 0 1 0 0 13a6.5 6.5 0 1 0 0-13zM16 6.5h8v2h-8zM18 30l4 2.2-4 2.2zM6.5 19h3v2h-3zM30.5 19h3v2h-3z',
+    folder: 'M3 8h12l3 3.5h19V34H3zM5 15.5v16h30v-16z',
+    face: 'M7 4h26a3 3 0 0 1 3 3v26a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zM13 11h3v6h-3zM24 11h3v6h-3zM10 24.5c5.6 5 14.4 5 20 0l1.6 1.8c-6.6 5.8-16.6 5.8-23.2 0z',
     handset: 'M9 5h6l3 8-4 3c2 4 5 7 9 9l3-4 8 3v6c0 2-2 4-4 4C17 39 1 23 5 9c0-2 2-4 4-4z',
     compass: 'M20 3a17 17 0 1 1 0 34a17 17 0 1 1 0-34zM20 6.5a13.5 13.5 0 1 0 0 27a13.5 13.5 0 1 0 0-27zM28 12l-5.5 10.5L12 28l5.5-10.5z'
   };
@@ -65,7 +73,7 @@ window.SHAPES = (function () {
     1983: ['crt', 'prompt', 'floppy525', 'joystick', 'cassette', 'cursor'],
     1991: ['floppy', 'happymac', 'bomb', 'watch', 'trash', 'brush'],
     1998: ['cd', 'globe', 'at', 'envelope', 'puck', 'star', 'bars'],
-    2007: ['ipod', 'video', 'wifi', 'magnifier', 'usb', 'dock'],
+    2007: ['ipod', 'firewire', 'wifi', 'magnifier', 'chat', 'usb', 'bluetooth', 'compass', 'ethernet', 'cd', 'wheel', 'folder', 'face', 'dock'],
     nokia: ['snake', 'envelope', 'bars', 'battery', 'note', 'candybar'],
     pocket: ['note', 'cd', 'headphones', 'play', 'ipod'],
     iphone: ['apps', 'note', 'bubble', 'compass', 'handset', 'wifi', 'envelope', 'ipod', 'battery', 'keypad', 'slide', 'video', 'globe', 'headphones']
