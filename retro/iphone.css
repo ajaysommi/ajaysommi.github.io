@@ -1538,7 +1538,7 @@
 .ip-screen .mp-info { position: absolute; inset: 20px 0 0; z-index: 12; display: flex; flex-direction: column; background: #c5ccd4; animation: ip-in-r .3s ease-out both; }
 .ip-screen .mp-info.out { animation: mp-info-out .3s ease-in both; }
 @keyframes mp-info-out { to { transform: translateX(100%); } }
-.ip-screen .mp-info .pg { position: relative; flex: 1; inset: auto; }
+.ip-screen .mp-info .pg { position: relative; flex: 1; inset: auto; min-height: 0; padding-bottom: 24px; } /* only the space under the bar, so it scrolls to its very end */
 .ip-screen .mp-info .ct-head { margin: 4px 12px 16px; }
 .ip-screen .mp-info .ct-head b { display: block; font: bold 18px/1.2 Helvetica, Arial, sans-serif; color: #000; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
 .ip-screen .mp-info .ct-head span { display: block; font: 14px Helvetica, Arial, sans-serif; color: #4c566c; margin-top: 2px; }
