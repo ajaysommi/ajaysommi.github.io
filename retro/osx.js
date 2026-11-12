@@ -163,7 +163,7 @@ window.OSX = (function () {
     companies: { name: 'Companies', icon: 'companies', keys: 'employers logos toyota jm hunter adt fics' },
     projects: { name: 'Projects', icon: 'projects', keys: 'code github built apps' },
     skills: { name: 'Skills', icon: 'skills', keys: 'stack languages tools system preferences' },
-    photos: { name: 'Off the Clock', icon: 'photos', keys: 'photos garage repairs macbook civic electronics builds' },
+    photos: { name: 'Off the Clock', icon: 'photos', keys: 'photos garage repairs macbook car civic electronics builds' },
     guestbook: { name: 'Messages', icon: 'guestbook', keys: 'recommendations references testimonials chat guestbook' },
     education: { name: 'Education', icon: 'education', keys: 'school uf university florida degree' },
     terminal: { name: 'Terminal', icon: 'terminal', keys: 'shell command line' },

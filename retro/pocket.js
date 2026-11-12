@@ -119,7 +119,8 @@ window.POCKET = { start(room, exit) {
 
   const textScreen = (t, html) => ({ type: 'text', title: t, html });
 
-  const TOP04 = [['Yeah!', 'Usher feat. Lil Jon & Ludacris'], ['Burn', 'Usher'], ['If I Ain’t Got You', 'Alicia Keys'], ['This Love', 'Maroon 5'], ['The Way You Move', 'OutKast feat. Sleepy Brown'], ['Hey Ya!', 'OutKast'], ['Slow Jamz', 'Twista feat. Kanye West & Jamie Foxx'], ['Naughty Girl', 'Beyoncé'], ['Lean Back', 'Terror Squad'], ['Goodies', 'Ciara feat. Petey Pablo'], ['Toxic', 'Britney Spears'], ['Mr. Brightside', 'The Killers'], ['American Idiot', 'Green Day'], ['Jesus Walks', 'Kanye West'], ['Numb/Encore', 'Jay-Z & Linkin Park'], ['Drop It Like It’s Hot', 'Snoop Dogg feat. Pharrell'], ['Let’s Get It Started', 'The Black Eyed Peas'], ['Dragostea Din Tei', 'O-Zone'], ['Take Me Out', 'Franz Ferdinand'], ['Float On', 'Modest Mouse'], ['My Happy Ending', 'Avril Lavigne'], ['Pieces of Me', 'Ashlee Simpson'], ['Vertigo', 'U2']];
+  /* The Music Store opened in April 2003: what everyone was buying that year, 99 cents a song. */
+  const TOP04 = [['Crazy in Love', 'Beyoncé feat. Jay-Z'], ['Hey Ya!', 'OutKast'], ['Where Is the Love?', 'The Black Eyed Peas'], ['Bring Me to Life', 'Evanescence'], ['Seven Nation Army', 'The White Stripes'], ['Clocks', 'Coldplay'], ['The Way You Move', 'OutKast feat. Sleepy Brown'], ['Get Busy', 'Sean Paul'], ['Rock Your Body', 'Justin Timberlake'], ['Unwell', 'Matchbox Twenty'], ['Here Without You', '3 Doors Down'], ['Numb', 'Linkin Park'], ['Fighter', 'Christina Aguilera'], ['Times Like These', 'Foo Fighters'], ['I Believe in a Thing Called Love', 'The Darkness'], ['Someday', 'Nickelback'], ['Miss You', 'Aaliyah'], ['Beautiful', 'Christina Aguilera'], ['Hole in the World', 'Eagles']];
   const store04 = () => store.get('pk-store', []);
   const SCREENS = {
     main: () => ({
@@ -201,7 +202,7 @@ window.POCKET = { start(room, exit) {
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
     desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
     letter: () => textScreen('A Letter', window.STORY.html('pocket')),
-    /* The Music Store, 2004: what everyone was buying, 99 cents a song. */
+    /* The Music Store, 2003: what everyone was buying, 99 cents a song. */
     store: () => ({ type: 'menu', title: 'Music Store', items: TOP04.map(([s, a], i) => [li(s, store04().includes(i) ? '✓' : '›'), () => open('song', i)]) }),
     song: (i) => {
       const [s, a] = TOP04[i], have = store04().includes(i);

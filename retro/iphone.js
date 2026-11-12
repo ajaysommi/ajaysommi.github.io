@@ -1716,8 +1716,7 @@ window.IPHONE = { start(room, exit) {
           { t: 'Where It Started', a: 'About Me', img: P.kidPhoto, x: `“${P.quote}”` }
         ]],
         ['Education', [{ t: P.education.degree, a: P.education.school, img: G, fit: 1, x: `${P.education.college}. Graduating ${P.education.when}. ${P.education.text}` }]],
-        ['Career', [...P.experience].reverse().map((e) => ({ t: e.org, a: e.role, img: e.photos[0] || G, fit: !e.photos[0], x: `${e.when} · ${e.where}. ${e.text}` }))],
-        ['Off the Clock', P.offclock.map((o) => ({ t: o.name, a: o.title, img: o.cover || (o.steps[0] && o.steps[0][0]), x: o.lede }))]
+        ['Career', [...P.experience].reverse().map((e) => ({ t: e.org, a: e.role, img: e.photos[0] || G, fit: !e.photos[0], x: `${e.when} · ${e.where}. ${e.text}` }))]
       ];
       const len = (tr) => 60 + tr.x.length % 150;
       const clk = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -1841,7 +1840,18 @@ window.IPHONE = { start(room, exit) {
       /* A real map: OpenStreetMap tiles, or satellite imagery, with a pin
          for every place worked. Drag to move, double-tap or + to zoom,
          and List shows them as a list that leads back to the map. */
-      const CITIES = [['Jacksonville, FL', 30.332, -81.656, 'rjax'], ['Palo Alto, CA', 37.442, -122.143, 'rfa'], ['Gainesville, FL', 29.652, -82.325, 'fics'], ['Deerfield Beach, FL', 26.318, -80.1, 'jm'], ['St. Louis, MO', 38.627, -90.199, 'hunter'], ['Boca Raton, FL', 26.368, -80.128, 'adt']];
+      /* Each pin on the office itself: [city, lat, lon, role id, street].
+         Robotics For All has no office of its own to point to, so its pin
+         stays on Palo Alto. */
+      const CITIES = [
+        ['Jacksonville, FL 32204', 30.31858, -81.69510, 'rjax', '2671 Gilmore St'],
+        ['Palo Alto, CA', 37.442, -122.143, 'rfa', ''],
+        ['Gainesville, FL 32611', 29.64404, -82.34779, 'fics', 'Malachowsky Hall, 1889 Museum Rd'],
+        ['Jacksonville, FL 32219', 30.37945, -81.82716, 'toyota', '9985 Pritchard Rd'],
+        ['Deerfield Beach, FL 33442', 26.31871, -80.11955, 'jm', '100 Jim Moran Blvd'],
+        ['Bridgeton, MO 63044', 38.74482, -90.39176, 'hunter', '11250 Hunter Dr'],
+        ['Boca Raton, FL 33431', 26.39408, -80.11759, 'adt', '1501 Yamato Rd']
+      ];
       const W = 320, H = 480 - 20 - 32 - 44;
       let z = 4, mode = 'map';
       const wp = (lat, lon, zz) => { const s = 256 * 2 ** zz, r = Math.sin(lat * Math.PI / 180); return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + r) / (1 - r)) / (4 * Math.PI)) * s]; };
@@ -1878,16 +1888,17 @@ window.IPHONE = { start(room, exit) {
         open = i;
         if (i < 0) return;
         const p = pinsEl.querySelector(`.pin-d[data-i="${i}"]`);
-        const [nme, , , id] = CITIES[i];
+        const [nme, , , id, st] = CITIES[i];
         const e = P.experience.find((x) => x.id === id);
-        const c = h('button', 'callout', `<span class="co-t">${esc(e.short)}<em>${esc(nme)} · ${e.year}</em></span><span class="co-go">›</span>`);
+        const c = h('button', 'callout', `<span class="co-t">${esc(e.short)}${st ? `<em>${esc(st)}</em>` : ''}<em>${esc(nme)} · ${e.year}</em></span><span class="co-go">›</span>`);
         c.type = 'button';
         c.style.left = p.style.left; c.style.top = p.style.top;
-        c.addEventListener('click', (ev) => { ev.stopPropagation(); alertBox(e.org, `${esc(e.role)}<br/>${esc(e.when)}`); });
+        c.addEventListener('click', (ev) => { ev.stopPropagation(); alertBox(e.org, `${esc(e.role)}<br/>${esc(e.when)}<br/><br/>${st ? esc(st) + '<br/>' : ''}${esc(nme)}`); });
         pinsEl.appendChild(c);
         if (!keep) SFX.click();
       };
-      const go = (i, zz = 9) => { const [, la, lo] = CITIES[i]; z = zz; [cx, cy] = wp(la, lo, z); open = i; draw(); };
+      // Close enough to see the building itself.
+      const go = (i, zz = 16) => { const [, la, lo] = CITIES[i]; z = zz; [cx, cy] = wp(la, lo, z); open = i; draw(); };
       const zoom = (d, px = W / 2, py = H / 2) => {
         const nz = Math.max(2, Math.min(17, Math.round(z) + d));
         if (nz === z) return;
@@ -1952,7 +1963,7 @@ window.IPHONE = { start(room, exit) {
       view.addEventListener('dblclick', (e) => { const r = view.getBoundingClientRect(), k = r.width / 320; zoom(1, (e.clientX - r.left) / k, (e.clientY - r.top) / k); });
       view.addEventListener('wheel', (e) => { e.preventDefault(); const r = view.getBoundingClientRect(), k = r.width / 320; zoom(e.deltaY < 0 ? 1 : -1, (e.clientX - r.left) / k, (e.clientY - r.top) / k); }, { passive: false });
       app.el.querySelector('.mp-zoom').addEventListener('click', (e) => { const b = e.target.closest('[data-z]'); if (b) { SFX.click(); zoom(+b.dataset.z); } });
-      plain(list, CITIES.map(([nme, , , id], i) => { const e = P.experience.find((x) => x.id === id); return { text: e.short, sub: nme, rt: String(e.year), go: () => { setMode('map'); go(i); } }; }));
+      plain(list, CITIES.map(([nme, , , id, st], i) => { const e = P.experience.find((x) => x.id === id); return { text: e.short, sub: st ? `${st}, ${nme}` : nme, rt: String(e.year), go: () => { setMode('map'); go(i); } }; }));
       const setMode = (m) => {
         list.hidden = m !== 'list';
         if (m !== 'list') { mode = m; draw(); }
@@ -1962,7 +1973,7 @@ window.IPHONE = { start(room, exit) {
       app.el.querySelector('.mp-tb').appendChild(ctl);
       field(app.el.querySelector('.mb-f'), { placeholder: 'Search places', ret: 'Search', onEnter: (f) => {
         const q = f.value.toLowerCase().trim();
-        const i = CITIES.findIndex(([nme, , , id]) => (nme + ' ' + P.experience.find((x) => x.id === id).org).toLowerCase().includes(q));
+        const i = CITIES.findIndex(([nme, , , id, st]) => (nme + ' ' + st + ' ' + P.experience.find((x) => x.id === id).org).toLowerCase().includes(q));
         kb.hide();
         if (q && i >= 0) { setMode(mode === 'sat' ? 'sat' : 'map'); go(i); } else alertBox('No Results Found', `No matches for “${esc(f.value)}”.`);
       } });

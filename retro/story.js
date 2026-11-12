@@ -8,7 +8,7 @@ window.STORY = (function () {
   /* Where each one is kept. They are all things that were thrown out or left
      behind, so a visitor finds the first by poking around, and each after
      that by being told where to dig. */
-  const WHERE = { 1983: 'on the 1977 Sommi II, if you think to UNDELETE', 1991: 'in the Trash on the Sommitosh 128k', 1998: 'in the Trash on the iSommi G3', 2007: 'in the Trash on the iSommi G5', nokia: 'in the Extras on the 2000 phone', pocket: 'at the very bottom of the Extras on the 2004 music player', iphone: 'at the bottom of the Notes on the iPhone' };
+  const WHERE = { 1983: 'on the 1977 Sommi II, if you think to UNDELETE', 1991: 'in the Trash on the Sommitosh 128k', 1998: 'in the Trash on the iSommi G3', 2007: 'in the Trash on the iSommi G5', nokia: 'in the Extras on the 2000 phone', pocket: 'at the very bottom of the Extras on the 2003 music player', iphone: 'at the bottom of the Notes on the iPhone' };
   const COMPUTERS = ['1983', '1991', '1998', '2007'], PHONES = ['nokia', 'pocket', 'iphone'];
   const CHAPTERS = {
     1983: {
@@ -28,7 +28,7 @@ window.STORY = (function () {
       lines: ['The computer leaves the desk. It has one small screen and a battery that lasts all week, and it simply cannot fail.', 'At Hunter I built remote resets for more than 100,000 alignment machines out in the world. The same rule applies: when it’s far away, it has to work.']
     },
     pocket: {
-      n: 5, name: 'the 2004 music player',
+      n: 5, name: 'the 2003 music player',
       lines: ['One wheel, and a thousand songs in your pocket. Something complicated, made to feel simple.', 'I chase that feeling at work. At Toyota I replaced a manual spreadsheet with a live dashboard, and data entry got five times faster.']
     },
     2007: {

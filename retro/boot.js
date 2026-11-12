@@ -2,7 +2,7 @@
    Start-up. After the loading screen the visitor picks what to run. On a
    computer that is a startup disk, one per era, and the system on it boots
    to fill the window: 1983 terminal, 1991 desktop, 1998 web, 2007 desktop.
-   On a phone it is a handset: a 2000 candybar, a 2004 pocket player or a
+   On a phone it is a handset: a 2000 candybar, a 2003 pocket player or a
    2007 touchscreen. Every system can come back here to pick another.
    Deep links (#1991, #2007, #nokia, #iphone ...) skip the picker.
    ========================================================================== */
@@ -1019,7 +1019,7 @@
   };
   const PHONES = [
     { id: 'nokia', name: 'SOMMIA 3310', year: '2000', note: 'Keys only. Navi selects, C goes back.', mod: () => window.NOKIA, cls: 'nk-room' },
-    { id: 'pocket', name: 'iSommi Classic', year: '2004', note: 'A click wheel and a tiny screen.', mod: () => window.POCKET, cls: 'pocket-room' },
+    { id: 'pocket', name: 'iSommi Classic', year: '2003', note: 'A click wheel and a tiny screen.', mod: () => window.POCKET, cls: 'pocket-room' },
     { id: 'iphone', name: 'iSommi 2G', year: '2007', note: 'Slide to unlock. The home button goes back.', mod: () => window.IPHONE, cls: 'iphone-room' }
   ];
 

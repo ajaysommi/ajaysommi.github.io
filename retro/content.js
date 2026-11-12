@@ -177,8 +177,8 @@ window.PORTFOLIO = (function () {
         ]
       },
       {
-        id: 'civic', name: 'The Civic', title: 'Working on my own car',
-        lede: "A 2007 Honda Civic closing in on 200,000 miles, and a habit of trying the fix myself before calling in a mechanic. Every repair started the same way: a symptom, hours of research and tutorials, then doing it myself until it worked.",
+        id: 'civic', name: 'My Car', title: 'Working on my own car',
+        lede: "My car, closing in on 200,000 miles, and a habit of trying the fix myself before calling in a mechanic. Every repair started the same way: a symptom, hours of research and tutorials, then doing it myself until it worked.",
         cover: O + 'diag-goggles-480.webp',
         steps: [
           [O + 'diag-goggles-480.webp', 'AC out, mid summer.', 'The AC quit in the middle of summer. Ninety degree heat, a low pressure refrigerant gauge and an electrical check on the compressor clutch, working through it one tutorial at a time.'],
