@@ -52,6 +52,9 @@ window.SHAPES = (function () {
     slide: 'M4 16h18V9l14 11-14 11v-7H4z',
     touch: 'M12 2h16a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4zM11 7v24h18V7z',
     /* The phone's own three: a handset, the browser's compass, and the iPod in it. */
+    // A text-message bubble, and a phone's keypad.
+    bubble: 'M20 5c9.4 0 17 5.8 17 13s-7.6 13-17 13c-1.8 0-3.5-.2-5.1-.6L6 35l2.4-7.2C5.1 25.5 3 22 3 18 3 10.8 10.6 5 20 5z',
+    keypad: 'M11 5a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 5a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 5a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM11 13a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 13a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 13a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM11 21a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 21a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 21a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM11 29a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM20 29a3 3 0 1 1 0 6a3 3 0 1 1 0-6zM29 29a3 3 0 1 1 0 6a3 3 0 1 1 0-6z',
     handset: 'M9 5h6l3 8-4 3c2 4 5 7 9 9l3-4 8 3v6c0 2-2 4-4 4C17 39 1 23 5 9c0-2 2-4 4-4z',
     compass: 'M20 3a17 17 0 1 1 0 34a17 17 0 1 1 0-34zM20 6.5a13.5 13.5 0 1 0 0 27a13.5 13.5 0 1 0 0-27zM28 12l-5.5 10.5L12 28l5.5-10.5z'
   };
@@ -65,7 +68,7 @@ window.SHAPES = (function () {
     2007: ['ipod', 'video', 'wifi', 'magnifier', 'usb', 'dock'],
     nokia: ['snake', 'envelope', 'bars', 'battery', 'note', 'candybar'],
     pocket: ['note', 'cd', 'headphones', 'play', 'ipod'],
-    iphone: ['apps', 'home', 'wifi', 'ripple', 'slide', 'battery', 'touch', 'ipod', 'handset', 'compass', 'video']
+    iphone: ['apps', 'note', 'bubble', 'compass', 'handset', 'wifi', 'envelope', 'ipod', 'battery', 'keypad', 'slide', 'video', 'globe', 'headphones']
   };
 
   /* A steady pseudo-random sequence, so a layer looks the same each time. */

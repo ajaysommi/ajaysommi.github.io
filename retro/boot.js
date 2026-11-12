@@ -1183,7 +1183,7 @@
       } else await fade(async () => open());
       if (rooms[id].land) rooms[id].land();
       /* Around the iPhone, the shapes that show past its edges are the phone's own: the handset, the browser, the iPod. */
-      if (id === 'iphone') requestAnimationFrame(() => window.SHAPES.showFirst(rooms[id].querySelector('.bg-shapes'), [rooms[id].querySelector('.ip'), back, std, snd], ['handset', 'compass', 'ipod', 'battery', 'video', 'apps', 'wifi', 'slide']));
+      if (id === 'iphone') requestAnimationFrame(() => window.SHAPES.showFirst(rooms[id].querySelector('.bg-shapes'), [rooms[id].querySelector('.ip'), back, std, snd], ['handset', 'bubble', 'compass', 'note', 'envelope', 'ipod', 'wifi', 'keypad']));
     }
 
     async function pickerNow() {
