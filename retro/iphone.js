@@ -1001,7 +1001,7 @@ window.IPHONE = { start(room, exit) {
      the top and bottom over the wallpaper, and the panel of controls is
      simply there between them. Nobody picks up: after about four seconds
      it fails. `connected` is a call that has already been answered. */
-  function placeCall(title, { connected = false, failNow = false, onEnd = null } = {}) {
+  function placeCall(title, { connected = false, failNow = false, onEnd = null, line = 'mobile' } = {}) {
     if (airplane && !connected) { alertBox('Airplane Mode', 'Turn off Airplane Mode to make a call.'); return; }
     closeCall(true);
     // Every call that goes out unanswered gets rung back, wherever it was placed from.
@@ -1015,7 +1015,7 @@ window.IPHONE = { start(room, exit) {
     const on = { mute: false, speaker: false, hold: false };
     let ring = null, fail = 0, secs = 0, timer = 0, typed = '', adding = false, failed = false;
     const volume = () => { if (ring) ring.gain(on.mute || on.hold ? 0 : on.speaker ? 1.6 : .6); };
-    const status = () => { st.textContent = on.hold ? 'on hold' : connected ? `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}` : 'calling mobile…'; };
+    const status = () => { st.textContent = on.hold ? 'on hold' : connected ? `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}` : `calling${line ? ' ' + line : ''}…`; };
     const stopAll = () => { if (ring) ring.stop(); ring = null; clearTimeout(fail); clearInterval(timer); };
     const end = (instant) => {
       stopAll();
@@ -1852,6 +1852,35 @@ window.IPHONE = { start(room, exit) {
         ['Bridgeton, MO 63044', 38.74482, -90.39176, 'hunter', '11250 Hunter Dr'],
         ['Boca Raton, FL 33431', 26.39408, -80.11759, 'adt', '1501 Yamato Rd']
       ];
+      /* Each office's main line, as listed publicly (none found for the two
+         small nonprofits, so their Info has no phone). */
+      const PHONE = { fics: '(352) 294-3287', toyota: '(904) 378-4600', jm: '(954) 429-2000', hunter: '(314) 731-3020', adt: '(561) 988-3600' };
+      /* Info, as Maps showed it for a place: a pin, the name, its phone
+         (tap to call) and address, and here what I did there. */
+      const info = (i) => {
+        const [nme, , , id, st] = CITIES[i];
+        const e = P.experience.find((x) => x.id === id), tel = PHONE[id];
+        const o = h('div', 'mp-info', `<div class="nb"><span class="t">Info</span></div><div class="pg pin">
+          <div class="ct-head"><span class="mi-thumb"><i class="pin-d"></i></span><div><b>${esc(e.org)}</b><span>${esc(e.short === e.org ? e.where : e.short)}</span></div></div>
+          ${tel ? `<div class="gp"><div class="row tap" data-act="call"><span class="k">phone</span><span class="v n">${esc(tel)}</span></div></div>` : ''}
+          <div class="gp"><div class="row tap" data-act="map"><span class="k">address</span><span class="v n ml">${st ? esc(st) + '<br/>' : ''}${esc(nme)}</span></div></div>
+          <div class="gp"><div class="row"><span class="k">role</span><span class="v n ml">${esc(e.role)}</span></div><div class="row"><span class="k">when</span><span class="v n">${esc(e.when)}</span></div><div class="txt">${esc(e.text)}</div></div>
+        </div>`);
+        const back = h('button', 'nbb l', '<span>Map</span>');
+        back.type = 'button';
+        o.querySelector('.nb').appendChild(back);
+        app.el.appendChild(o);
+        shapeBack(back);
+        const close = () => { o.classList.add('out'); setTimeout(() => o.remove(), 300); };
+        back.addEventListener('click', () => { SFX.click(); close(); });
+        o.querySelectorAll('.row.tap').forEach((r) => r.addEventListener('click', () => {
+          SFX.click();
+          r.classList.add('is-down'); setTimeout(() => r.classList.remove('is-down'), 250);
+          if (r.dataset.act === 'call') placeCall(e.org, { line: '' });
+          else { close(); setMode('map'); go(i); }
+        }));
+        SFX.click();
+      };
       const W = 320, H = 480 - 20 - 32 - 44;
       let z = 4, mode = 'map';
       const wp = (lat, lon, zz) => { const s = 256 * 2 ** zz, r = Math.sin(lat * Math.PI / 180); return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + r) / (1 - r)) / (4 * Math.PI)) * s]; };
@@ -1893,7 +1922,7 @@ window.IPHONE = { start(room, exit) {
         const c = h('button', 'callout', `<span class="co-t">${esc(e.short)}${st ? `<em>${esc(st)}</em>` : ''}<em>${esc(nme)} · ${e.year}</em></span><span class="co-go">›</span>`);
         c.type = 'button';
         c.style.left = p.style.left; c.style.top = p.style.top;
-        c.addEventListener('click', (ev) => { ev.stopPropagation(); alertBox(e.org, `${esc(e.role)}<br/>${esc(e.when)}<br/><br/>${st ? esc(st) + '<br/>' : ''}${esc(nme)}`); });
+        c.addEventListener('click', (ev) => { ev.stopPropagation(); info(i); });
         pinsEl.appendChild(c);
         if (!keep) SFX.click();
       };
