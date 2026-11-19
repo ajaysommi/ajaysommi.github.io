@@ -15,7 +15,7 @@
 .tw {
   --tw-line: #2a2c34; --tw-grass: #9cc46f; --tw-leaf: #6fae4f; --tw-leaf2: #4f8f3c; --tw-trunk: #7a5a3e;
   --tw-mtn1: #b8cbb0; --tw-mtn2: #c8d4de; --tw-cloud: #ffffff; --tw-road: #3d3f47; --tw-curb: #e9e5dc;
-  --tw-panel: #e9eaec; --tw-panel2: #dcdee2; --tw-tower: #f7f7f5; --tw-roofcap: #c9ccd2; --tw-seam: #cfd2d7;
+  --tw-panel: #f6f6f5; --tw-panel2: #e1e3e7; --tw-tower: #fbfbfa; --tw-roofcap: #c9ccd2; --tw-seam: #e2e4e8;
   --tw-glass: #bcd6ea; --tw-showfloor: #d9dde3; --tw-bay: #3a3d46; --tw-red: #e1262d;
   --tw-jm: #44506e; --tw-jmband: #2b3550; --tw-win: #bfd6ea; --tw-walk: #ddd6c8; --tw-drive: #c9c5bc;
   --tw-pond: #7cbad6; --tw-rock: #9a9ca3; --tw-pole: #5d616b; --tw-card: #ffffff; --tw-lab: #2e3446;
@@ -25,7 +25,7 @@
 [data-theme="midnight"] .tw, [data-theme="terminal"] .tw {
   --tw-line: #0e0f14; --tw-grass: #3f6b44; --tw-leaf: #3f7a3e; --tw-leaf2: #2c5a30; --tw-trunk: #4a3726;
   --tw-mtn1: #3a3d6a; --tw-mtn2: #2c3058; --tw-cloud: #6b5a8e; --tw-road: #20212a; --tw-curb: #44454f;
-  --tw-panel: #b9bcc4; --tw-panel2: #9a9ea8; --tw-tower: #d9dade; --tw-roofcap: #7e828c; --tw-seam: #a6a9b1;
+  --tw-panel: #e6e7ea; --tw-panel2: #c4c8cf; --tw-tower: #eeeff1; --tw-roofcap: #7e828c; --tw-seam: #cfd2d8;
   --tw-glass: #f7c978; --tw-showfloor: #e7b86c; --tw-bay: #2a2c34; --tw-red: #c81f26;
   --tw-jm: #2f3852; --tw-jmband: #1e2539; --tw-win: #f5c76f; --tw-walk: #6b6a70; --tw-drive: #4a4a52;
   --tw-pond: #2e5d86; --tw-rock: #5b5d66; --tw-pole: #6a6e78; --tw-card: #f1eee6; --tw-lab: #222738;
@@ -43,8 +43,8 @@
 [data-theme="midnight"] .tw :is(.tw-sky-n, .tw-moon, .tw-stars), [data-theme="terminal"] .tw :is(.tw-sky-n, .tw-moon, .tw-stars) { opacity: 1; }
 [data-theme="midnight"] .tw .tw-sun, [data-theme="terminal"] .tw .tw-sun { opacity: 0; }
 .tw-moon-cut { fill: #0d1230; }
-.tw-stars circle { fill: #fff; animation: tw-twinkle 3.2s ease-in-out infinite; animation-delay: var(--d); }
-@keyframes tw-twinkle { 50% { opacity: .25; } }
+.tw-stars circle { fill: #fff; opacity: var(--lo); animation: tw-twinkle var(--t) ease-in-out infinite; animation-delay: var(--d); }
+@keyframes tw-twinkle { 50% { opacity: 1; } }
 .tw-cloud { fill: var(--tw-cloud); opacity: .92; animation: tw-drift var(--dur) linear infinite; animation-delay: var(--from); }
 @keyframes tw-drift { from { transform: translateX(-560px); } to { transform: translateX(1300px); } }
 .tw-mtn1 { fill: var(--tw-mtn1); } .tw-mtn2 { fill: var(--tw-mtn2); }
@@ -208,7 +208,6 @@
 @keyframes tw-pin { from { transform: scale(.6); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
 .tw-pin.seen .tw-pin-ring { animation: none; opacity: 0; }
 .tw.zoomed .tw-pin { opacity: 0; }
-.tw.zoomed .tw-hot { filter: none !important; }
 
 
 /* ---------------------------------------------------------- the name on hover */
@@ -312,3 +311,34 @@
 .tw-paused *, .tw-paused { animation-play-state: paused !important; }
 .tw-hit rect { fill: transparent; pointer-events: all; }
 .tw-nohit { pointer-events: none; }
+
+/* ---------------------------------------------------------- additions */
+/* The pins only anchor the name on hover; they aren't drawn. */
+.tw-pin { visibility: hidden; }
+/* The emblem lit from behind after dark. */
+.tw-backlit { opacity: 0; transition: opacity .6s; }
+[data-theme="midnight"] .tw .tw-backlit, [data-theme="terminal"] .tw .tw-backlit { opacity: .9; }
+[data-theme="midnight"] .tw .tw-tlogo, [data-theme="terminal"] .tw .tw-tlogo { filter: drop-shadow(0 0 3px rgba(255, 70, 70, .95)) drop-shadow(0 0 12px rgba(255, 40, 40, .6)); }
+/* Showroom cars: on the floor, a shadow under them, further back behind the glass. */
+.tw-carshadow { fill: rgba(0, 0, 0, .3); }
+.tw-showcar { opacity: .7; }
+/* Hunter's bay. */
+.tw-liftbase { fill: #26272d; }
+.tw-arm-a { stroke: #d0202e; stroke-width: 6; stroke-linecap: round; }
+.tw-arm-b { stroke: #1d1e22; stroke-width: 5; stroke-linecap: round; }
+.tw-pivot { fill: #d8dade; }
+.tw-tgt { fill: #17181c; }
+.tw-tgt-sq { fill: #fff; }
+.tw-chock { fill: #2a2c34; } .tw-chockband { fill: #f2b705; }
+.tw-laser { fill: rgba(255, 36, 36, .8); animation: tw-scan 2.2s ease-in-out infinite; }
+.tw-laser + .tw-laser { animation-delay: -.8s; }
+/* The rover: blinks, smiles, hops when it notices you, waves once it's close. */
+.tw-eyes { transform-box: fill-box; transform-origin: center; animation: tw-wink 5s infinite; }
+@keyframes tw-wink { 0%, 93%, 100% { transform: none; } 95% { transform: scaleY(.1); } }
+.tw-smile { fill: none; stroke: #1a1b1f; stroke-width: 1.8; stroke-linecap: round; }
+.tw-arm-r { transform-box: fill-box; transform-origin: 0 0; transition: transform .3s; }
+.tw-rover.wave .tw-arm-r { animation: tw-waving .9s ease-in-out infinite; }
+@keyframes tw-waving { 0%, 100% { transform: rotate(-100deg); } 50% { transform: rotate(-150deg); } }
+.tw-rover.hop .tw-rover-hop { animation: tw-hop .55s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes tw-hop { 40% { transform: translateY(-9px); } 100% { transform: none; } }
+.tw-rover.wave .tw-blink { animation-duration: .35s; }

@@ -45,13 +45,15 @@
 
   /* ---------------------------------------------------------- the two robots */
   // Each lives in its own patch of lawn and never leaves it.
+  // They move like something with a little weight: a soft spring toward
+  // where they want to be, never faster than an amble.
   const bots = {
-    rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1150, y: 556, tx: 1150, ty: 556, face: -1, idleAt: 0, box: [1012, 1172, 536, 566], reach: 110, keep: 46, pinDy: -78, speed: 150 },
-    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 340, y: 560, tx: 340, ty: 560, face: 1, idleAt: 0, box: [292, 392, 548, 584], reach: 150, keep: 70, pinDy: -48, speed: 120 }
+    rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1150, y: 556, vx: 0, vy: 0, tx: 1150, ty: 556, face: -1, idleAt: 0, box: [1012, 1172, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
+    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 340, y: 562, vx: 0, vy: 0, tx: 340, ty: 562, face: 1, idleAt: 0, box: [296, 388, 552, 582], reach: 140, keep: 64, pinDy: -40, k: 3, max: 45, s: 0.78, tilt: 0 }
   };
   const placeBot = (b) => {
     b.el.setAttribute('transform', `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`);
-    b.flip.setAttribute('transform', `scale(${b.face} 1)`);
+    b.flip.setAttribute('transform', `scale(${(b.face * b.s).toFixed(3)} ${b.s}) rotate(${b.tilt.toFixed(1)})`);
     b.pin.setAttribute('transform', `translate(${b.x.toFixed(1)} ${(b.y + b.pinDy).toFixed(1)})`);
   };
   Object.values(bots).forEach(placeBot);
@@ -60,15 +62,34 @@
   const TARGET = [424, 511];
   let aim = TARGET.slice();
   const aimCam = () => {
-    const b = bots.rjax, cx = b.x + 13 * b.face, cy = b.y - 28;
+    const b = bots.rjax, cx = b.x + 13 * b.s * b.face, cy = b.y - 28 * b.s;
     let a = Math.atan2(aim[1] - cy, (aim[0] - cx) * b.face) * 180 / Math.PI;
     a = clamp(a, -55, 55);
     turret.setAttribute('transform', `translate(13 -28) rotate(${a.toFixed(1)})`);
-    const ex = cx + 7 * b.face * Math.cos(a * Math.PI / 180), ey = cy + 7 * Math.sin(a * Math.PI / 180);
+    const ex = cx + 7 * b.s * b.face * Math.cos(a * Math.PI / 180), ey = cy + 7 * b.s * Math.sin(a * Math.PI / 180);
     vision.setAttribute('d', `M${ex.toFixed(1)} ${ey.toFixed(1)} L${aim[0].toFixed(1)} ${aim[1].toFixed(1)}`);
     reticle.setAttribute('transform', `translate(${aim[0].toFixed(1)} ${aim[1].toFixed(1)})`);
   };
   aimCam();
+
+  /* ---------------------------------------------------------- Hunter's lift */
+  // Up, a pause, down, a pause; the scissor arms follow the platform, and
+  // the HawkEye's two red beacons keep their lasers on the wheel targets.
+  const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg);
+  const BEACONS = [[916 + 75.4 * 0.113, 370 + 112 * 0.214], [916 + 75.4 * 0.918, 370 + 112 * 0.214]], WHEELS = [1020, 1093];
+  const lift = (now) => {
+    const t = (now / 1000) % 9, u = t < 3 ? t / 3 : t < 4.5 ? 1 : t < 7.5 ? 1 - (t - 4.5) / 3 : 0;
+    const h = 22 * (0.5 - 0.5 * Math.cos(Math.PI * u)), top = 466 - h;
+    plat.setAttribute('transform', `translate(0 ${(-h).toFixed(2)})`);
+    armA.setAttribute('d', `M1110 474 L1004 ${top.toFixed(1)}`);
+    armB.setAttribute('d', `M1004 474 L1110 ${top.toFixed(1)}`);
+    pivot.setAttribute('cy', ((474 + top) / 2).toFixed(1));
+    lasers.forEach((l, i) => {
+      const [bx, by] = BEACONS[i], tx = WHEELS[i], ty = 442 - h;
+      l.setAttribute('points', `${bx},${by - 1.6} ${bx},${by + 1.6} ${tx},${(ty + 2).toFixed(1)} ${tx},${(ty - 2).toFixed(1)}`);
+    });
+  };
+  lift(0);
 
   /* ---------------------------------------------------------- where things are */
   const pinOf = (id) => (bots[id] ? [bots[id].x, bots[id].y + bots[id].pinDy] : D.pin[id]);
@@ -167,7 +188,7 @@
     render(r);
     requestAnimationFrame(() => { panel.classList.add('open'); tween(frame(z, left), wasOpen ? 750 : 900); });
     tw.classList.add('zoomed');
-    glow(null);
+    lit = null; glow(id);
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
     const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
     hideLabel(); resetParallax();
@@ -179,6 +200,7 @@
     setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
     tween(FULL, 800);
     tw.classList.remove('zoomed');
+    glow(null); over = null;
     chips.forEach((c) => c.classList.remove('on'));
   };
 
@@ -239,14 +261,19 @@
       const side = ptr.x >= b.x ? -1 : 1;
       b.tx = clamp(ptr.x + side * b.keep, x0, x1); b.ty = clamp(ptr.y, y0, y1);
     } else if (now > b.idleAt) { b.tx = x0 + Math.random() * (x1 - x0); b.ty = y0 + Math.random() * (y1 - y0); b.idleAt = now + 3500 + Math.random() * 4000; }
-    const dx = b.tx - b.x, dy = b.ty - b.y, d = Math.hypot(dx, dy), sp = near ? b.speed : b.speed * 0.3;
-    if (d > 1.5) {
-      const k = Math.min(1, (sp * dt) / d);
-      b.x += dx * k; b.y += dy * k;
-    }
+    const dx = b.tx - b.x, dy = b.ty - b.y, d = Math.hypot(dx, dy);
+    const k = near ? b.k : b.k * 0.5, damp = 2 * Math.sqrt(k);
+    b.vx += (dx * k - b.vx * damp) * dt; b.vy += (dy * k - b.vy * damp) * dt;
+    const sp = Math.hypot(b.vx, b.vy), cap = near ? b.max : b.max * 0.45;
+    if (sp > cap) { b.vx *= cap / sp; b.vy *= cap / sp; }
+    b.x = clamp(b.x + b.vx * dt, x0, x1); b.y = clamp(b.y + b.vy * dt, y0, y1);
+    b.tilt += (clamp(b.vx * 0.14, -9, 9) * b.face - b.tilt) * Math.min(1, dt * 6);
     // Face the pointer when it's close, otherwise the way it's going.
-    if (near) b.face = ptr.x >= b.x ? 1 : -1; else if (Math.abs(dx) > 3) b.face = dx > 0 ? 1 : -1;
-    b.el.classList.toggle('still', d <= 1.5);
+    if (near) b.face = ptr.x >= b.x ? 1 : -1; else if (Math.abs(b.vx) > 4) b.face = b.vx > 0 ? 1 : -1;
+    b.el.classList.toggle('still', sp < 3);
+    if (near && !b.near) { b.el.classList.remove('hop'); void b.el.getBoundingClientRect(); b.el.classList.add('hop'); }
+    b.near = near;
+    b.el.classList.toggle('wave', near && sp < 6 && d < 6);
     placeBot(b);
     return near;
   };
@@ -258,9 +285,10 @@
       steer(bots.rfa, dt, now);
       const close = steer(bots.rjax, dt, now) && Math.hypot(ptr.x - bots.rjax.x, ptr.y - bots.rjax.y) < 230;
       const want = close ? [ptr.x, ptr.y] : TARGET;
-      aim = [aim[0] + (want[0] - aim[0]) * Math.min(1, dt * 8), aim[1] + (want[1] - aim[1]) * Math.min(1, dt * 8)];
+      aim = [aim[0] + (want[0] - aim[0]) * Math.min(1, dt * 2.5), aim[1] + (want[1] - aim[1]) * Math.min(1, dt * 2.5)];
       aimCam();
     }
+    if (dt > 0) lift(now);
     requestAnimationFrame(loop);
   };
   const go = () => { if (running || reduced || !visible) return; running = true; lastT = 0; requestAnimationFrame(loop); };
@@ -277,19 +305,19 @@
       if (!cur && !reduced) layers.forEach(([g, d]) => { g.style.transform = `translate(${(-nx * d).toFixed(2)}px, ${(-ny * d * 0.4).toFixed(2)}px)`; });
       const p = toSVG(e);
       ptr = { x: p.x, y: p.y };
-      const sky = p.y < 206;
+      const sky = p.y < 222;
       tw.classList.toggle('sky', sky);
       tw.classList.toggle('near', !sky);
       if (sky && dish) {
-        // The dish sits on the roof at (986, 212); it turns its face to the pointer.
-        const a = Math.atan2(p.x - 986, 212 - p.y) * 180 / Math.PI;
+        // The dish sits on JM Family's roof at (336, 232); it turns its face to the pointer.
+        const a = Math.atan2(p.x - 336, 232 - p.y) * 180 / Math.PI;
         dish.style.transform = `translate(0px, -16px) rotate(${clamp(a, -70, 70).toFixed(1)}deg)`;
       } else if (dish) dish.style.transform = '';
       if (!sky && head) {
-        // The camera hangs off the showroom's corner at (452, 352), looking out to the left;
+        // The camera hangs on the wall at (550, 404), over its sign, looking out to the left;
         // it turns only as far as its mount allows.
-        const a = Math.atan2(p.y - 352, 452 - p.x) * 180 / Math.PI;
-        head.style.transform = `rotate(${clamp(-a, -60, 25).toFixed(1)}deg)`;
+        const a = Math.atan2(p.y - 404, 550 - p.x) * 180 / Math.PI;
+        head.style.transform = `rotate(${clamp(-a, -55, 30).toFixed(1)}deg)`;
       } else if (head) head.style.transform = '';
       eyes.forEach((el) => {
         const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;

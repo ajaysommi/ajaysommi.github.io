@@ -24,14 +24,14 @@ const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-l
 
 /* Each story, told plainly: what changed because of the work, then how. */
 const STORY = {
-  rjax: "Taught a competition robot to aim by itself. I wrote the camera code that spotted coloured targets in the middle of a match, so the robot could line up on its own instead of the driver doing it by hand, and I kept the cameras, wiring and code working together all season. The first code I wrote that had to work in the real world, not just on a laptop.",
-  shiva: "Helped more families find robotics classes: visits from search grew 20% in one summer. I looked at what parents were actually typing into search engines, rewrote the parts of the academy's site that search engines read, and checked the numbers every week to keep what worked.",
-  rfa: "Gave volunteers hours back every week. They were copying sign up details from forms into spreadsheets by hand, so I wrote scripts that filed each family's details automatically and sent their confirmation emails. Fewer typos, faster replies to parents, and the start of a habit: find the manual work and make it run on its own.",
-  fics: "Found the weak spots in AI chatbots before bad actors could. I built tools that automatically fed ChatGPT tricky inputs designed to make it misbehave, kept a catalogue of the failures we could reliably repeat, and helped work out how to spot and block them, running some of the experiments on HiPerGator, UF's supercomputer.",
-  toyota: "Caught faulty tire packages before they became costly recalls: tire warranty claims fell 20% and over $150k was saved. When a dealer balances a tire on a Hunter machine, its Road Force reading (how unevenly the tire and wheel roll) goes to HunterNet, Hunter's data service. I pulled those readings for 51,000 vehicles, and when a tire package Toyota offered went past the allowed limit, Toyota had to issue a recall, so finding those and reporting them was my job, across 21 reports. I also automated a file transfer that saved about 350 hours a year, and replaced a manual spreadsheet with a live dashboard that made data entry 5× faster.",
-  jm: "Made it easy to spot employees who had access they shouldn't. I built an automated check in Azure that compared everyone's access across Microsoft Graph, Salesforce and MuleSoft with company policy and reported anything that didn't match. I also built a service that analysed 100k+ events from the Toyota and JM Lexus dealership systems, and helped set up GPT agents that answer questions about that data.",
-  hunter: "Made it possible to reset Hunter's alignment machines from anywhere, instead of sending a technician out, across more than 100,000 machines worldwide. I designed and built that secure remote reset myself, in C#/.NET and Blazor on Azure IoT Hub. I also fixed crashes that hit while machines were being set up, and moved the tests to a safer framework, removing a security and privacy risk.",
-  adt: "Designed an AI check that catches false alarms before police or firefighters are sent out, and presented it to senior leadership. On ADT's Salesforce platform I also cleaned up data so it stayed under the platform's limits, brought test coverage back up so releases could ship, and used AI tools like Claude and Cursor to work through a large codebase faster."
+  rjax: "Taught a competition robot to aim by itself. I wrote the camera code that spotted targets mid match, so it lined up its shots without the driver's help.",
+  shiva: "Helped more families find robotics classes: search visits grew 20% in one summer after I reworked the academy's site around what parents were actually searching for.",
+  rfa: "Saved volunteers hours every week. My scripts filed each family's sign up details and sent their confirmation emails automatically, so nobody had to copy them by hand.",
+  fics: "Found weak spots in AI chatbots before bad actors could. I built tools that automatically tried to trick ChatGPT into misbehaving, and helped work out how to block those tricks.",
+  toyota: "Caught bad tire packages before they became recalls: 20% fewer tire warranty claims and over $150k saved. I tracked tire readings from Hunter balancers (sent through HunterNet) across 51,000 vehicles and flagged any package over the limit. I also automated work that saved about 350 hours a year.",
+  jm: "Made it easy to spot employees with access they shouldn't have, using an automated check across Microsoft Graph, Salesforce and MuleSoft. I also analysed 100k+ dealership events and helped set up GPT agents that answer questions about them.",
+  hunter: "Made it possible to reset Hunter's alignment machines remotely instead of sending a technician, across 100,000+ machines worldwide. I designed and built the secure reset myself, and fixed crashes during machine setup.",
+  adt: "Designed an AI check that catches false alarms before emergency responders are sent, and pitched it to senior leadership. I also kept ADT's Salesforce platform under its limits and got releases shipping again."
 };
 
 /* Where each stop is: the box the scene leans in to, and its pin. */
@@ -42,21 +42,21 @@ const SPOT = {
   edu: { zoom: [10, 480, 260, 110], pin: [120, 520] },
   jm: { zoom: [262, 292, 200, 200], pin: [362, 316] },
   toyota: { zoom: [456, 200, 450, 290], pin: [640, 230] },
-  hunter: { zoom: [902, 330, 236, 160], pin: [1020, 352] },
-  fics: { zoom: [930, 182, 200, 120], pin: [1060, 252] },
-  adt: { zoom: [420, 320, 140, 260], pin: [474, 484] }
+  hunter: { zoom: [902, 330, 236, 160], pin: [1020, 360] },
+  fics: { zoom: [280, 196, 200, 120], pin: [410, 270] },
+  adt: { zoom: [470, 380, 130, 150], pin: [525, 430] }
 };
 /* How the jobs lead into each other, for each card. */
 const LINKS = [
-  ['rjax', 'shiva', 'From building a competition robot to helping a robotics academy get found by the families looking for it.'],
-  ['shiva', 'rfa', 'Two robotics education groups: first getting families to the classes, then running the sign ups once they came.'],
-  ['rfa', 'fics', 'The habit from Robotics For All (find the manual work and make it run itself) became tools that tested AI chatbots on their own.'],
-  ['fics', 'edu', 'FICS is the University of Florida’s cybersecurity institute: research alongside coursework.'],
-  ['fics', 'jm', 'What I learned about how AI fails went into setting up GPT agents at JM Family.'],
-  ['fics', 'adt', 'From finding how AI breaks to designing an AI check that catches false alarms.'],
-  ['toyota', 'hunter', 'At Toyota I read Road Force data from Hunter’s balancers through HunterNet; two years later I was building for Hunter’s machines.'],
-  ['jm', 'toyota', 'JM Family is the parent of Southeast Toyota; at JM I analysed events from the Toyota and JM Lexus dealership systems.'],
-  ['hunter', 'adt', 'Both 2026: resetting machines safely from afar at Hunter, then deciding from afar whether an alarm is real at ADT.']
+  ['rjax', 'shiva', 'Robotics, from building one to helping a robotics academy grow.'],
+  ['shiva', 'rfa', 'Robotics education: first finding families, then running their sign ups.'],
+  ['rfa', 'fics', 'Automating manual work became automating AI testing.'],
+  ['fics', 'edu', 'FICS is UF’s cybersecurity institute.'],
+  ['fics', 'jm', 'Knowing how AI fails helped set up GPT agents at JM.'],
+  ['fics', 'adt', 'From breaking AI to an AI check that catches false alarms.'],
+  ['toyota', 'hunter', 'Toyota’s tire data came from Hunter machines, which I later built for.'],
+  ['jm', 'toyota', 'JM Family is Southeast Toyota’s parent company.'],
+  ['hunter', 'adt', 'Both about acting safely from afar.']
 ];
 
 const roles = P.experience.map((e) => ({
@@ -78,15 +78,21 @@ const hot = (id, inner) => `<g class="tw-hot" data-id="${id}" style="--tint:${TI
 const tree = (x, y, s = 1, k = 0) => `<g class="tw-tree" transform="translate(${x} ${y}) scale(${s})"><path d="M-6 0 V-58 M0 -40 L18 -66 M-2 -48 L-22 -70" class="tw-trunk"/><g class="tw-canopy" style="--k:${k}"><circle cx="0" cy="-92" r="38" class="tw-leaf2"/><circle cx="-34" cy="-70" r="28" class="tw-leaf2"/><circle cx="32" cy="-68" r="30" class="tw-leaf2"/><circle cx="-6" cy="-100" r="30" class="tw-leaf"/><circle cx="-34" cy="-76" r="22" class="tw-leaf"/><circle cx="26" cy="-78" r="24" class="tw-leaf"/><circle cx="8" cy="-120" r="18" class="tw-leaf"/></g></g>`;
 const bush = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g>`;
 /* A showroom: amber light, spots shining down onto the cars, glass in front. */
-const showroom = (x, y, w, h, cars, key) => {
-  const spots = cars.map((c) => c.cx);
+const showroom = (x, y, w, h, cars) => {
+  const spots = cars.map((c) => c.cx), fy = y + h - 8;
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-int"/>
-      ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${y + h - 6} ${cx - 44},${y + h - 6}" class="tw-spotcone" style="--i:${i}"/><ellipse cx="${cx}" cy="${y + h - 8}" rx="46" ry="8" class="tw-pool" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
-      <rect x="${x}" y="${y + h - 6}" width="${w}" height="6" class="tw-showfloor"/>
-      ${cars.map((c) => pic(c.f, c.cx - c.w / 2, y + h - 6 - c.w * 0.72, c.w, c.w * 0.72, 'tw-showcar')).join('')}
+      ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${fy} ${cx - 44},${fy}" class="tw-spotcone" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
+      <rect x="${x}" y="${fy}" width="${w}" height="8" class="tw-showfloor"/>
+      ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
+      ${cars.map((c) => `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/>` + pic(c.f, c.cx - c.w / 2, fy + 3 - c.w * 0.72, c.w, c.w * 0.72, 'tw-showcar')).join('')}
       <rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-glassover"/>
       <path d="M${x + 14} ${y + 8} l-12 ${Math.round(h * 0.4)} M${x + w * 0.42} ${y + 8} l-22 ${Math.round(h * 0.7)}" class="tw-shine"/>`;
 };
+
+// Stars: scattered at random (the same random every build), each with its own size and slow breath.
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const STARS = Array.from({ length: 70 }, () => { const r = rnd(); return `<circle cx="${(rnd() * 1200).toFixed(1)}" cy="${(4 + rnd() * 250).toFixed(1)}" r="${(0.5 + r * r * 1.6).toFixed(2)}" style="--t:${(3 + rnd() * 6).toFixed(1)}s;--d:${(-rnd() * 9).toFixed(1)}s;--lo:${(0.15 + rnd() * 0.35).toFixed(2)}"/>`; }).join('');
 
 const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A drawn town block. Each part of it is a place I've worked; the buttons below open the same stories.">
   <defs>
@@ -97,6 +103,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <linearGradient id="twSpot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7de" stop-opacity=".95"/><stop offset="1" stop-color="#fff7de" stop-opacity="0"/></linearGradient>
     <radialGradient id="twPool"><stop offset="0" stop-color="#fff6d8" stop-opacity=".95"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></radialGradient>
     <radialGradient id="twHalo"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twBack"><stop offset="0" stop-color="#fff2ec" stop-opacity=".95"/><stop offset=".55" stop-color="#ffd6cc" stop-opacity=".45"/><stop offset="1" stop-color="#ffd6cc" stop-opacity="0"/></radialGradient>
     <radialGradient id="twLamp"><stop offset="0" stop-color="#ffe2a0" stop-opacity=".5"/><stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/></radialGradient>
     <linearGradient id="twAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf86"/><stop offset="1" stop-color="#e8a24f"/></linearGradient>
     <linearGradient id="twDayInt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ead8"/><stop offset="1" stop-color="#ddd0b6"/></linearGradient>
@@ -107,7 +114,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
   <g class="tw-far" data-depth="4">
     <rect class="tw-sky-d" x="-200" y="-60" width="1600" height="600" fill="url(#twSkyDay)"/>
     <rect class="tw-sky-n" x="-200" y="-60" width="1600" height="600" fill="url(#twSkyNight)"/>
-    <g class="tw-stars">${Array.from({ length: 40 }, (_, i) => `<circle cx="${(i * 137) % 1200}" cy="${10 + ((i * 71) % 210)}" r="${i % 5 ? 1.1 : 1.8}" style="--d:${(i % 7) * 0.6}s"/>`).join('')}</g>
+    <g class="tw-stars">${STARS}</g>
     <g class="tw-sun"><circle cx="1090" cy="86" r="70" fill="url(#twHalo)"/><circle cx="1090" cy="86" r="32" fill="#ffcf6b"/></g>
     <g class="tw-moon"><circle cx="1090" cy="80" r="30" fill="#f6eed6"/><circle cx="1106" cy="70" r="27" class="tw-moon-cut"/></g>
     <g class="tw-cloud" style="--dur:110s;--from:-20s"><g transform="translate(380 110)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
@@ -141,7 +148,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="266" y="306" width="190" height="14" rx="3" class="tw-roofcap"/>
       <rect x="270" y="318" width="182" height="164" class="tw-jm"/>
       <rect x="278" y="326" width="166" height="40" rx="4" class="tw-jmband"/>
-      <image href="assets/logos/opt/jm-family-light.webp" x="288" y="329" width="146" height="34" preserveAspectRatio="xMidYMid meet"/>
+      <image href="assets/images/town/jm-tree.webp" x="336" y="328" width="46" height="36" preserveAspectRatio="xMidYMid meet"/>
       ${[0, 1, 2].map((i) => `<g transform="translate(${282 + i * 56} 378)"><rect width="48" height="62" rx="3" class="tw-win"/><rect x="8" y="24" width="32" height="20" rx="2" class="tw-screen"/>${[0, 1, 2, 3].map((b) => `<rect x="${12 + b * 7}" y="${40 - (3 + ((i + b) % 3) * 4)}" width="4" height="${3 + ((i + b) % 3) * 4}" class="tw-dash" style="--i:${i + b}"/>`).join('')}<rect x="18" y="44" width="12" height="10" class="tw-desk"/>${i === 1 ? '' : `<circle cx="${i ? 38 : 10}" cy="48" r="6" class="tw-plant"/>`}</g>`).join('')}
       <rect x="290" y="448" width="34" height="34" rx="2" class="tw-door"/>
     </g>`)}
@@ -153,17 +160,17 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g>
       <rect x="458" y="324" width="108" height="10" rx="3" class="tw-roofcap"/>
       <rect x="462" y="332" width="100" height="10" class="tw-red"/>
-      ${showroom(462, 342, 100, 140, [{ f: 'car-red-front', cx: 512, w: 62 }], 'l')}
+      ${showroom(462, 342, 100, 140, [{ f: 'car-red-front', cx: 512, w: 58 }])}
 
       <rect x="556" y="206" width="352" height="12" rx="3" class="tw-roofcap"/>
       <rect x="560" y="216" width="344" height="266" class="tw-facade tw-fo"/>
       <path d="M560 252 H904 M560 288 H904 M560 324 H904 M646 216 V350 M732 216 V350 M818 216 V350" class="tw-grid"/>
-      <image href="assets/logos/opt/toyota-mark.webp" x="574" y="226" width="122" height="88" preserveAspectRatio="xMidYMid meet"/>
+      <ellipse cx="635" cy="270" rx="86" ry="56" fill="url(#twBack)" class="tw-backlit"/><image href="assets/logos/opt/toyota-mark.webp" x="574" y="226" width="122" height="88" preserveAspectRatio="xMidYMid meet" class="tw-tlogo"/>
       <text x="890" y="336" class="tw-sommi" text-anchor="end">SOMMIVILLE</text>
       <rect x="652" y="350" width="244" height="132" class="tw-portal"/>
-      ${showroom(658, 356, 232, 126, [{ f: 'car-bronze-front', cx: 700, w: 64 }, { f: 'car-white-front', cx: 848, w: 62 }], 'c')}
+      ${showroom(658, 356, 232, 126, [{ f: 'car-bronze-front', cx: 702, w: 60 }, { f: 'car-white-front', cx: 846, w: 58 }])}
       <rect x="752" y="388" width="48" height="94" class="tw-pillar tw-fo"/>
-      <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet"/>
+      <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo"/>
       <rect x="760" y="426" width="32" height="56" class="tw-doorglass"/><path d="M776 426 V482" class="tw-mullp"/>
 
       <rect x="904" y="284" width="234" height="12" rx="3" class="tw-roofcap"/>
@@ -175,35 +182,32 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     </g>`)}
 
     ${hot('hunter', `
-    <!-- 2026, Hunter Engineering: in Toyota's service bay, an SUV up on a
-         Hunter alignment rack, the camera tower's red lasers reading its
-         wheels. The logo is on the tower, the rack and the console. -->
+    <!-- 2026, Hunter Engineering: in Toyota's service bay, a Hunter HawkEye
+         aligner (its two red beacons firing lasers) reading the targets on
+         an SUV's wheels, the SUV going up and down on a Hunter scissor lift.
+         The lift and the lasers are moved by the script. -->
     <g>
-      <g class="tw-onlift">
-        <image href="assets/images/town/car-side.webp" x="966" y="384" width="150" height="64" preserveAspectRatio="xMidYMax meet" class="tw-car-img"/>
-        <rect x="992" y="420" width="14" height="14" rx="2" class="tw-clamp"/><rect x="1075" y="420" width="14" height="14" rx="2" class="tw-clamp"/>
-        <rect x="954" y="448" width="164" height="9" rx="2" class="tw-lift"/>
-        <rect x="1006" y="449" width="60" height="7" rx="1.5" class="tw-plate"/><image href="assets/logos/opt/hunter.webp" x="1008" y="449.5" width="56" height="6" preserveAspectRatio="xMidYMid meet"/>
+      <image href="assets/images/town/hawkeye.webp" x="916" y="370" width="75.4" height="112" preserveAspectRatio="xMidYMax meet"/>
+      <rect x="996" y="474" width="124" height="8" rx="2" class="tw-liftbase"/>
+      <rect x="994" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/><rect x="1112" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/>
+      <path class="tw-arm-b" d="M1004 474 L1110 466"/><path class="tw-arm-a" d="M1110 474 L1004 466"/>
+      <circle class="tw-pivot" cx="1057" cy="470" r="3"/>
+      <g class="tw-plat">
+        <image href="assets/images/town/car-side.webp" x="994" y="404" width="124" height="53" preserveAspectRatio="xMidYMax meet" class="tw-car-img"/>
+        ${[1020, 1093].map((x) => `<g transform="translate(${x} 442)"><rect x="-8" y="-8" width="16" height="16" rx="2" class="tw-tgt"/>${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<rect x="${-5.6 + c * 4}" y="${-5.6 + r * 4}" width="3.2" height="3.2" rx=".6" class="tw-tgt-sq"/>`).join('')).join('')}</g>`).join('')}
+        <rect x="990" y="456" width="132" height="10" rx="2" class="tw-lift"/>
+        <path d="M992 456 l6 -9 h7 l4 9 z" class="tw-chock"/><rect x="992" y="453" width="17" height="3" class="tw-chockband"/>
+        <image href="assets/logos/opt/hunter.webp" x="1036" y="457.5" width="40" height="7" preserveAspectRatio="xMidYMid meet"/>
       </g>
-      <rect x="962" y="457" width="7" height="25" class="tw-pole"/><rect x="1104" y="457" width="7" height="25" class="tw-pole"/>
-      <g transform="translate(936 0)">
-        <rect x="-3.5" y="364" width="7" height="118" class="tw-pole"/>
-        <rect x="-16" y="362" width="32" height="8" rx="3" class="tw-tbar"/>
-        <rect x="-18" y="350" width="36" height="12" rx="3" class="tw-plate"/><image href="assets/logos/opt/hunter.webp" x="-16" y="351.5" width="32" height="9" preserveAspectRatio="xMidYMid meet"/>
-        <rect x="-15" y="370" width="11" height="9" rx="2" class="tw-cam"/><rect x="4" y="370" width="11" height="9" rx="2" class="tw-cam"/>
-        <circle cx="-9.5" cy="374.5" r="2" class="tw-lens"/><circle cx="9.5" cy="374.5" r="2" class="tw-lens"/>
-      </g>
-      <polygon points="941,373 941,377 999,428 999,425" fill="url(#twBeam)" class="tw-beam"/>
-      <polygon points="945,373 945,377 1082,428 1082,425" fill="url(#twBeam)" class="tw-beam" style="animation-delay:-.7s"/>
-      <g class="tw-dots"><circle cx="999" cy="427" r="2.4"/><circle cx="1082" cy="427" r="2.4"/></g>
-      <g transform="translate(1124 0)"><rect x="-14" y="402" width="10" height="80" rx="2" class="tw-console"/></g>
+      <polygon class="tw-laser" points="0,0 0,0 0,0"/><polygon class="tw-laser" points="0,0 0,0 0,0"/>
     </g>`)}
 
     ${hot('fics', `
-    <!-- 2023, FICS at UF: a lab on the dealership's roof. Racks, a terminal
+    <!-- 2023, FICS at UF: a lab on JM Family's roof. Racks, a terminal
          catching prompts meant to break a chatbot, and a dish that turns to
          watch the sky. -->
     <g>
+      <g transform="translate(-650 20)">
       <rect x="950" y="234" width="150" height="52" rx="4" class="tw-lab"/>
       <rect x="944" y="228" width="162" height="9" rx="3" class="tw-roofcap"/>
       ${[0, 1].map((k) => `<g transform="translate(${960 + k * 30} 244)"><rect width="22" height="38" rx="2" class="tw-rack"/>${[0, 1, 2, 3].map((r) => `<circle cx="6" cy="${7 + r * 9}" r="1.7" class="tw-led" style="--d:${((r + k * 2) % 5) * 0.33}s"/><circle cx="12" cy="${7 + r * 9}" r="1.7" class="tw-led" style="--d:${((r + k + 1) % 5) * 0.29}s"/>`).join('')}</g>`).join('')}
@@ -216,23 +220,25 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <g class="tw-dish" transform="translate(0 -16)"><path d="M-22 -14 q22 22 44 0 z" class="tw-dishface"/><path d="M0 -6 l0 -16" class="tw-feed"/><circle cx="0" cy="-24" r="3" class="tw-led-on"/>
         <g class="tw-pings"><path d="M-10 -34 a14 14 0 0 1 20 0"/><path d="M-18 -42 a26 26 0 0 1 36 0" style="animation-delay:.4s"/></g></g>
       </g>
+      </g>
     </g>`)}
 
     <!-- Front lawn: a walk to the door, a drive to the service bay, hedges. -->
     <path d="M760 482 H792 L816 600 H736 Z" class="tw-walk"/>
     <path d="M914 482 H1124 L1150 600 H898 Z" class="tw-drive"/>
-    ${bush(600, 496, .9)}${bush(660, 498, .8)}${bush(712, 494, .85)}${bush(866, 496, .9)}
+    ${bush(604, 508, .9)}${bush(662, 510, .8)}${bush(714, 506, .85)}${bush(866, 508, .9)}
     ${[700, 852].map((x) => `<g transform="translate(${x} 560)" class="tw-lamppost"><circle cx="0" cy="-60" r="30" fill="url(#twLamp)" class="tw-lampglow"/><rect x="-2" y="-60" width="4" height="60" class="tw-pole"/><rect x="-7" y="-66" width="14" height="7" rx="3" class="tw-bulb"/></g>`).join('')}
 
     ${hot('adt', `
-    <!-- 2026, ADT: its sign on the grass in front of the showroom, and its
-         camera on the showroom's corner just above. -->
+    <!-- 2026, ADT: its sign half hidden in the hedge by the showroom, and its
+         camera on the wall just above it. -->
     <g>
-      <image href="assets/images/town/adt-sign.webp" x="446" y="474" width="56" height="91" preserveAspectRatio="xMidYMax meet"/>
-      <g class="tw-cctv" transform="translate(462 352)">
+      <image href="assets/images/town/adt-sign.webp" x="506" y="428" width="48" height="78" preserveAspectRatio="xMidYMax meet"/>
+      ${bush(540, 510, 1.05)}
+      <g class="tw-cctv" transform="translate(560 404)">
         <rect x="-10" y="-4" width="10" height="8" rx="1.5" class="tw-pole"/>
         <g transform="translate(-10 0)"><g class="tw-cctv-head" transform="rotate(-26)">
-          <polygon points="-30,0 -170,-34 -170,34" fill="url(#twCone)" class="tw-cone tw-nohit" transform="scale(1 .55)"/>
+          <polygon points="-30,0 -150,-30 -150,30" fill="url(#twCone)" class="tw-cone tw-nohit" transform="scale(1 .55)"/>
           <rect x="-8" y="-2.5" width="9" height="5" rx="2" class="tw-pole"/>
           <rect x="-34" y="-7" width="28" height="14" rx="4" class="tw-camshell"/>
           <rect x="-39" y="-5" width="6" height="10" rx="2" fill="#1f6fd1"/>
@@ -254,8 +260,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <circle cx="103" cy="517" r="1.8" class="tw-pupil"/><circle cx="119" cy="517" r="1.8" class="tw-pupil"/>
         <rect x="97" y="511" width="26" height="6" class="tw-lid"/>
       </g>
-      <rect x="220" y="490" width="3.4" height="58" class="tw-pole"/>
-      <path d="M223 492 l40 11 l-40 11 z" fill="#0021a5"/><path d="M223 503 l40 0 l-40 11 z" fill="#fa4616"/><text x="235" y="507" class="tw-uf">UF</text>
+      <rect x="182" y="486" width="3.4" height="62" class="tw-pole"/>
+      <image href="assets/images/town/uf-pennant.webp" x="185" y="486" width="66" height="22" preserveAspectRatio="xMinYMid meet"/>
     </g>`)}
 
     ${hot('rjax', `
@@ -263,7 +269,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
          own patch of lawn. Its camera locks on the target, or on the pointer
          when it comes close, and it drives over for a look. -->
     <g>
-      <g transform="translate(262 500)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
+      <g transform="translate(278 504)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
       <g transform="translate(424 520)"><rect x="-2" y="0" width="4" height="34" class="tw-pole"/><path d="M-12 -18 v14 h24 v-14 h-6 v8 h-12 v-8 z" class="tw-target"/></g>
       <path class="tw-vision" d="M0 0"/>
       <g class="tw-reticle"><path d="M-20 -14 v-7 h7 M13 -21 h7 v7 M20 14 v7 h-7 M-13 21 h-7 v-7"/></g>
@@ -281,16 +287,16 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- 2022, Robotics For All: the rover, in the colours of its logo, in its
          corner of the lawn. It comes over when the pointer is nearby, and
          keeps a polite distance. -->
-    <g class="tw-rover" transform="translate(1150 556)"><g class="tw-rover-flip"><g class="tw-rover-bob">
+    <g class="tw-rover" transform="translate(1150 556)"><g class="tw-rover-flip"><g class="tw-rover-hop"><g class="tw-rover-bob">
       <rect x="-1.6" y="-60" width="3.2" height="11" class="tw-pole"/><circle cx="0" cy="-62" r="3.6" class="tw-blink" fill="#ff5a3d"/>
       <rect x="-22" y="-50" width="44" height="31" rx="11" fill="#ffc928" class="tw-ol"/>
-      <rect x="-14" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/><rect x="3" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/>
-      <circle class="tw-pupil2 tw-follow" cx="-8.5" cy="-37" r="2.6"/><circle class="tw-pupil2 tw-follow" cx="8.5" cy="-37" r="2.6"/>
+      <g class="tw-eyes"><rect x="-14" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/><rect x="3" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/></g>
+      <g class="tw-eyes"><circle class="tw-pupil2 tw-follow" cx="-8.5" cy="-37" r="2.6"/><circle class="tw-pupil2 tw-follow" cx="8.5" cy="-37" r="2.6"/></g><path d="M-6 -24 q6 4 12 0" class="tw-smile"/>
       <rect x="-17" y="-19" width="34" height="22" rx="6" fill="#2b6fe0" class="tw-ol"/><rect x="-9" y="-15" width="18" height="9" rx="2" fill="#1b4fb4"/>
-      <path d="M-17 -12 l-9 8 M17 -12 l9 8" class="tw-arm"/>
+      <path d="M-17 -12 l-9 8" class="tw-arm"/><path d="M17 -12 l9 8" class="tw-arm tw-arm-r"/>
       <g class="tw-mail"><rect x="20" y="-14" width="20" height="14" rx="2" class="tw-paper"/><path d="M21 -13 l9 7 l9 -7" class="tw-fold"/></g>
       <circle cx="-10" cy="6" r="6.5" class="tw-tyre"/><circle cx="10" cy="6" r="6.5" class="tw-tyre"/>
-    </g></g></g>`)}
+    </g></g></g></g>`)}
 
     <!-- A pin on every stop. -->
     <g class="tw-pins">${roles.map((r) => { const at = SPOT[r.id].pin; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
