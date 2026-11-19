@@ -21,7 +21,7 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 const has = (f) => fs.existsSync(path.join(root, f));
 const big = (s) => { for (const k of ['-800', '-960']) { const f = s.replace(/-(400|480)\.webp$/, k + '.webp'); if (f !== s && has(f)) return f; } return s; };
 
-const TINT = { rjax: '#1fd12a', shiva: '#2f7fb5', rfa: '#f2b705', fics: '#fa4616', toyota: '#eb0a1e', jm: '#00857c', hunter: '#d0202e', adt: '#1f6fd1', edu: '#0021a5' };
+const TINT = { vc: '#19633a', tm: '#8b5cf6', rjax: '#1fd12a', shiva: '#2f7fb5', rfa: '#f2b705', fics: '#fa4616', toyota: '#eb0a1e', jm: '#00857c', hunter: '#d0202e', adt: '#1f6fd1', edu: '#0021a5' };
 const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-light'], toyota: ['toyota', 'toyota-light'], jm: ['jm-family', 'jm-family-light'], hunter: ['hunter', 'hunter-light'], adt: ['adt', 'adt'], shiva: ['shiva', 'shiva'], rjax: ['renaissance-jax', 'renaissance-jax'] };
 
 /* Each story, told plainly: what changed because of the work, then how. */
@@ -38,7 +38,8 @@ const STORY = {
 
 /* The block is wider now (it fills the window and scrolls sideways), so
    each place keeps its drawing and is moved along the street by OFF. */
-const WORLD = 2240;
+const WORLD = 5520;
+const HOME = 2900;   // the visitor center, where the street starts
 const OFF = { edu: 170, fics: 230, shiva: 230, rjax: 330, toyota: 700, hunter: 700, adt: 700 };
 
 /* What each place is, for anyone who hasn't heard of it. */
@@ -53,6 +54,25 @@ const ABOUT = {
   adt: 'The home security company behind the blue sign.'
 };
 
+/* East of the visitor center: what I've built, one lot each.
+   PLACEHOLDERS. Each lot is a stand-in drawing with a red note saying what
+   should go there; the card under it already uses the real write up from
+   retro/content.js. To replace one, draw its lot in lot() (or give it its
+   own drawing) and delete its `ph` note. */
+const PROJECTS = [
+  { id: 'p-civic', src: ['offclock', 'civic'], name: 'Car repair', tint: '#c0392b', ph: 'Draw a home garage with my car up on jack stands, tools on the wall.' },
+  { id: 'p-macbook', src: ['offclock', 'macbook'], name: 'Laptop repair', tint: '#6b7280', ph: 'Draw a repair bench with the MacBook opened up and its logic board out.' },
+  { id: 'p-electronics', src: ['offclock', 'electronics'], name: 'Electronics', tint: '#0ea5e9', ph: 'Draw a tinker shop: Arduino, the homemade soldering iron, the self opening lid.' },
+  { id: 'p-sommiscript', src: ['projects', 'sommiscript'], name: 'SommiScript', tint: '#f59e0b', ph: 'Draw something for my programming language (a print shop? a little school?).' },
+  { id: 'p-betai', src: ['projects', 'betai'], name: 'BetAI', tint: '#16a34a', ph: 'Draw a stadium style kiosk or a scoreboard for the betting model marketplace.' },
+  { id: 'p-gatorgoods', src: ['projects', 'gatorgoods'], name: 'GatorGoods', tint: '#fa4616', ph: 'Draw a campus market stall for the student marketplace.' },
+  { id: 'p-crash', src: ['projects', 'crash'], name: 'Crash Analysis', tint: '#dc2626', ph: 'Draw a crash test lab with a dummy and charts.' },
+  { id: 'p-avl', src: ['projects', 'avl'], name: 'BalanceTree', tint: '#65a30d', ph: 'Draw a tree nursery with a perfectly balanced tree.' },
+  { id: 'p-wadfs', src: ['projects', 'wadfs'], name: 'WAD FS', tint: '#7c3aed', ph: 'Draw a filing archive / warehouse for the file system.' }
+];
+const LOT0 = 3560, LOTW = 205;
+PROJECTS.forEach((p, i) => { p.x = LOT0 + i * LOTW; TINT[p.id] = p.tint; });
+
 /* Where each stop is: the box the scene leans in to, and its pin. */
 const SPOT = {
   shiva: { zoom: [196, 186, 190, 110], pin: [290, 196] },
@@ -63,7 +83,10 @@ const SPOT = {
   toyota: { zoom: [456, 200, 450, 290], pin: [640, 230] },
   hunter: { zoom: [902, 330, 236, 160], pin: [1020, 360] },
   fics: { zoom: [8, 250, 128, 236], pin: [70, 296] },
-  adt: { zoom: [548, 334, 110, 180], pin: [610, 424] }
+  adt: { zoom: [548, 334, 110, 180], pin: [610, 424] },
+  vc: { zoom: [2700, 222, 400, 290], pin: [2900, 236] },
+  tm: { zoom: [3320, 330, 140, 170], pin: [3390, 344] },
+  ...Object.fromEntries(PROJECTS.map((p) => [p.id, { zoom: [p.x - 16, 330, 202, 186], pin: [p.x + 85, 360] }]))
 };
 /* How the jobs lead into each other, for each card. */
 const LINKS = [
@@ -82,6 +105,14 @@ const roles = P.experience.map((e) => ({
 }));
 const E = P.education;
 roles.push({ id: 'edu', org: E.school, short: 'UF', role: `${E.degree}, ${E.college}`, when: E.when, where: 'Gainesville, FL', year: 2026, text: E.text, about: '', stats: [], tags: E.tags, photos: [], logo: null, gator: E.logo, tint: TINT.edu, school: true });
+roles.push({ id: 'vc', org: 'Sommiville Visitor Center', short: 'Visitor center', badge: 'Hi', role: `${P.name}, ${P.title}`, when: 'University of Florida, Class of 2026', where: 'Florida', text: P.about.join(' '), about: '', stats: [], tags: [], photos: [], logo: null, tint: TINT.vc, go: [['Classic portfolio', 'classic.html'], ['Résumé', 'resume.html'], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Email', 'mailto:' + P.email]] });
+roles.push({ id: 'tm', org: 'Time machine', short: 'Time machine', badge: '1977', role: '', when: '', where: '', text: '', about: '', stats: [], tags: [], photos: [], logo: null, tint: TINT.tm, special: true });
+PROJECTS.forEach((p) => {
+  const s = P[p.src[0]].find((q) => q.id === p.src[1]) || {};
+  const off = p.src[0] === 'offclock';
+  const pics = off ? [s.cover, ...(s.steps || []).map((st) => st[0])].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).slice(0, 6) : s.shot ? [s.shot] : [];
+  roles.push({ id: p.id, org: off ? s.title : s.full, short: p.name, badge: off ? 'Fix' : 'Build', role: off ? 'Off the clock' : s.kind, when: off ? '' : s.stack, where: '', text: off ? s.lede : s.text, about: '', stats: [], tags: off ? [] : String(s.stack || '').split(' / '), photos: pics.map(big), logo: null, tint: p.tint, ph: p.ph, url: s.url || '' });
+});
 const order = roles.map((r) => r.id);
 
 /* ---------------------------------------------------------------- drawing */
@@ -95,7 +126,22 @@ const hot = (id, inner) => `<g class="tw-hot" data-id="${id}" style="--tint:${TI
 const tree = (x, y, s = 1, k = 0) => `<g class="tw-tree" transform="translate(${x} ${y}) scale(${s})"><path d="M-6 0 V-58 M0 -40 L18 -66 M-2 -48 L-22 -70" class="tw-trunk"/><g class="tw-canopy" style="--k:${k}"><circle cx="0" cy="-92" r="38" class="tw-leaf2"/><circle cx="-34" cy="-70" r="28" class="tw-leaf2"/><circle cx="32" cy="-68" r="30" class="tw-leaf2"/><circle cx="-6" cy="-100" r="30" class="tw-leaf"/><circle cx="-34" cy="-76" r="22" class="tw-leaf"/><circle cx="26" cy="-78" r="24" class="tw-leaf"/><circle cx="8" cy="-120" r="18" class="tw-leaf"/></g></g>`;
 const bush = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g>`;
 /* A big red gift bow (the picture) up on the hood, clear of the grille. */
-const bow = (cx, cy, w) => `<image href="assets/images/town/bow.webp" x="${(cx - w / 2).toFixed(1)}" y="${(cy - w * 0.723 * 0.56).toFixed(1)}" width="${w.toFixed(1)}" height="${(w * 0.723).toFixed(1)}" class="tw-bow"/>`;
+const bow = (cx, cy, w) => `<image href="assets/images/town/bow.webp" x="${(cx - w / 2).toFixed(1)}" y="${(cy - w * 0.799 * 0.6).toFixed(1)}" width="${w.toFixed(1)}" height="${(w * 0.799).toFixed(1)}" class="tw-bow"/>`;
+/* A placeholder lot (see PROJECTS). */
+const lot = (p) => hot(p.id, `
+    <g>
+      <text x="${p.x + 85}" y="352" class="tw-ph-big" text-anchor="middle">PLACEHOLDER</text>
+      <rect x="${p.x}" y="362" width="170" height="10" rx="3" class="tw-roofcap"/>
+      <rect x="${p.x + 4}" y="370" width="162" height="116" class="tw-lotwall tw-fo"/>
+      <rect x="${p.x + 14}" y="378" width="142" height="20" rx="4" class="tw-jmband"/>
+      <text x="${p.x + 85}" y="392" class="tw-lot-n" text-anchor="middle">${esc(p.name)}</text>
+      <path d="M${p.x} 402 h170 l-8 14 h-154 z" fill="${p.tint}" class="tw-awning"/>
+      ${[0, 1, 2, 3, 4].map((k) => `<path d="M${p.x + 17 + k * 34} 402 h17 l-1.6 14 h-15.4 z" class="tw-awning-s"/>`).join('')}
+      <rect x="${p.x + 14}" y="424" width="88" height="48" rx="3" class="tw-win"/>
+      <rect x="${p.x + 114}" y="430" width="40" height="56" rx="2" class="tw-door"/>
+      <text x="${p.x + 85}" y="503" class="tw-ph-note" text-anchor="middle">TODO: draw ${esc(p.name.toLowerCase())}</text>
+    </g>`);
+
 /* A showroom: amber light, spots shining down onto the cars, glass in front. */
 const showroom = (x, y, w, h, cars) => {
   const spots = cars.map((c) => c.cx), fy = y + h - 8;
@@ -143,6 +189,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <radialGradient id="twLamp"><stop offset="0" stop-color="#ffe2a0" stop-opacity=".5"/><stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/></radialGradient>
     <linearGradient id="twHead" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fff3c4" stop-opacity=".75"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></linearGradient>
     <radialGradient id="twBulb"><stop offset="0" stop-color="#fffbe8"/><stop offset=".35" stop-color="#fff1b8" stop-opacity=".9"/><stop offset="1" stop-color="#ffe9a0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="twLed" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#e4f2ff" stop-opacity=".85"/><stop offset="1" stop-color="#cfe6ff" stop-opacity="0"/></linearGradient>
+    <radialGradient id="twLedBulb"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#dcefff" stop-opacity=".95"/><stop offset="1" stop-color="#bfe0ff" stop-opacity="0"/></radialGradient>
     <radialGradient id="twTail"><stop offset="0" stop-color="#ff6a5a"/><stop offset=".4" stop-color="#ff2b2b" stop-opacity=".8"/><stop offset="1" stop-color="#ff2b2b" stop-opacity="0"/></radialGradient>
     <radialGradient id="twHaz"><stop offset="0" stop-color="#ffb21a" stop-opacity=".95"/><stop offset="1" stop-color="#ffb21a" stop-opacity="0"/></radialGradient>
     <linearGradient id="twAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf86"/><stop offset="1" stop-color="#e8a24f"/></linearGradient>
@@ -156,6 +204,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <rect class="tw-sky-d" x="-800" y="-1600" width="${WORLD + 1600}" height="2140" fill="url(#twSkyDay)"/>
     <rect class="tw-sky-n" x="-800" y="-1600" width="${WORLD + 1600}" height="2140" fill="url(#twSkyNight)"/>
     <g class="tw-stars">${STARS}</g>
+    <rect class="tw-overcast" x="-800" y="-1600" width="${WORLD + 1600}" height="2140"/>
     <g class="tw-sun"><circle cx="1380" cy="-30" r="70" fill="url(#twHalo)"/><circle cx="1380" cy="-30" r="32" fill="#ffcf6b"/></g>
     <g class="tw-moon"><circle cx="1380" cy="-36" r="30" fill="#f6eed6"/><circle cx="1396" cy="-46" r="27" class="tw-moon-cut"/></g>
     <g class="tw-cloud" style="--dur:110s;--from:-20s"><g transform="translate(380 110) scale(1.0)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
@@ -171,6 +220,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
   <!-- Middle: the block. -->
   <g class="tw-mid">
     <rect class="tw-grass" x="-800" y="470" width="${WORLD + 1600}" height="700"/>
+    <rect class="tw-snowground" x="-800" y="474" width="${WORLD + 1600}" height="700"/>
     ${hot('shiva', `
     <!-- 2020, Shiva Robotics Academy: a billboard out past the block, search traffic climbing. -->
     <g transform="translate(415 24.3) scale(.72)" class="tw-distant">
@@ -262,7 +312,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <circle class="tw-pivot" cx="1057" cy="470" r="3"/>
       <g class="tw-plat">
         <image href="assets/images/town/car-side.webp" x="994" y="404" width="124" height="53" preserveAspectRatio="xMidYMax meet" class="tw-car-img"/>
-        <g class="tw-night tw-nohit"><polygon points="1002,424 1002,430 950,446 950,414" fill="url(#twHead)"/><circle cx="1002.5" cy="427" r="6" fill="url(#twBulb)"/><circle cx="1109" cy="423.5" r="6" fill="url(#twTail)"/></g>
+        <g class="tw-night tw-nohit"><polygon points="1002,424 1002,430 950,446 950,414" fill="url(#twLed)"/><circle cx="1002.5" cy="427" r="6" fill="url(#twLedBulb)"/><circle cx="1109" cy="423.5" r="6" fill="url(#twTail)"/></g>
         ${[1020, 1093].map((x) => `<g transform="translate(${x} 442)"><rect x="-8" y="-8" width="16" height="16" rx="2" class="tw-tgt"/>${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<rect x="${-5.6 + c * 4}" y="${-5.6 + r * 4}" width="3.2" height="3.2" rx=".6" class="tw-tgt-sq"/>`).join('')).join('')}</g>`).join('')}
         <rect x="990" y="456" width="132" height="10" rx="2" class="tw-lift"/>
         <path d="M992 456 l6 -9 h7 l4 9 z" class="tw-chock"/><rect x="992" y="453" width="17" height="3" class="tw-chockband"/>
@@ -337,7 +387,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- 2022, Robotics For All: the rover, in the colours of its logo, in its
          corner of the lawn. It comes over when the pointer is nearby, and
          keeps a polite distance. -->
-    <g class="tw-rover" transform="translate(1850 556)"><g class="tw-rover-flip"><g class="tw-rover-hop"><g class="tw-rover-bob">
+    <g class="tw-rover" transform="translate(1850 556)"><g class="tw-rover-flip"><g class="tw-rover-hop"><g class="tw-rover-bob"><g class="tw-rover-shiver">
       <rect x="-1.6" y="-60" width="3.2" height="11" class="tw-pole"/><circle cx="0" cy="-62" r="3.6" class="tw-blink" fill="#ff5a3d"/>
       <rect x="-22" y="-50" width="44" height="31" rx="11" fill="#ffc928" class="tw-ol"/>
       <g class="tw-eyes"><rect x="-14" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/><rect x="3" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/></g>
@@ -346,18 +396,72 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <path d="M-17 -12 l-9 8" class="tw-arm"/><path d="M17 -12 l9 8" class="tw-arm tw-arm-r"/>
       <g class="tw-mail"><rect x="20" y="-14" width="20" height="14" rx="2" class="tw-paper"/><path d="M21 -13 l9 7 l9 -7" class="tw-fold"/></g>
       <circle cx="-10" cy="6" r="6.5" class="tw-tyre"/><circle cx="10" cy="6" r="6.5" class="tw-tyre"/>
-    </g></g></g></g>`)}
+      <g class="tw-jacket"><path d="M-19 -20 h38 a3 3 0 0 1 3 3 v19 a4 4 0 0 1 -4 4 h-36 a4 4 0 0 1 -4 -4 v-19 a3 3 0 0 1 3 -3 z" fill="#e63946" class="tw-ol"/><path d="M-20 -11 h40 M-20 -3 h40" class="tw-quilt"/><path d="M0 -19 v24" class="tw-zip"/><path d="M-12 -21 q12 7 24 0 v-2 h-24 z" fill="#f4f1ea" class="tw-ol"/></g>
+      <g class="tw-beanie"><path d="M-21 -46 q21 -19 42 0 z" fill="#e63946" class="tw-ol"/><rect x="-22" y="-51" width="44" height="6" rx="3" fill="#f4f1ea" class="tw-ol"/></g>
+    </g></g></g></g></g>`)}
+
+    <!-- The visitor center, where everyone starts: the welcome sign, the
+         center itself, a signpost, the exit to the classic site and the
+         time machine. -->
+    ${hot('vc', `
+    <g>
+      <rect x="2770" y="300" width="8" height="66" class="tw-pole"/><rect x="3022" y="300" width="8" height="66" class="tw-pole"/>
+      <rect x="2730" y="230" width="340" height="80" rx="12" class="tw-welcome"/>
+      <rect x="2739" y="239" width="322" height="62" rx="8" class="tw-welcome-in"/>
+      <text x="2900" y="261" class="tw-wel-s" text-anchor="middle">WELCOME TO</text>
+      <text x="2900" y="293" class="tw-wel-b" text-anchor="middle">SOMMIVILLE</text>
+      <rect x="2756" y="362" width="288" height="12" rx="3" class="tw-roofcap"/>
+      <rect x="2762" y="372" width="276" height="114" class="tw-vcwall tw-fo"/>
+      <rect x="2772" y="382" width="256" height="24" rx="4" class="tw-jmband"/>
+      <text x="2900" y="399" class="tw-vc-t" text-anchor="middle">VISITOR CENTER</text>
+      <rect x="2774" y="418" width="90" height="54" rx="3" class="tw-win"/><rect x="2936" y="418" width="90" height="54" rx="3" class="tw-win"/>
+      <rect x="2788" y="432" width="34" height="24" rx="2" class="tw-vcmap"/><path d="M2792 450 l8 -9 l7 6 l9 -10" class="tw-vcmap-l"/>
+      <rect x="2952" y="440" width="58" height="10" rx="2" class="tw-desk"/>
+      <rect x="2878" y="426" width="44" height="60" rx="2" class="tw-door"/>
+      <circle cx="2900" cy="416" r="7" fill="#2b6fe0"/><text x="2900" y="419.6" class="tw-i" text-anchor="middle">i</text>
+    </g>`)}
+    <g class="tw-signpost">
+      <rect x="2627" y="402" width="6" height="128" class="tw-pole"/>
+      <path d="M2632 408 H2526 l-11 11 l11 11 H2632 Z" class="tw-dir"/><text x="2577" y="422.5" class="tw-dir-t" text-anchor="middle">WHERE I’VE WORKED</text>
+      <path d="M2628 438 H2734 l11 11 l-11 11 H2628 Z" class="tw-dir"/><text x="2683" y="452.5" class="tw-dir-t" text-anchor="middle">WHAT I’VE BUILT</text>
+    </g>
+    <a href="classic.html" class="tw-exit" aria-label="Take the exit to the classic portfolio">
+      <rect x="3112" y="412" width="6" height="126" class="tw-pole"/><rect x="3244" y="412" width="6" height="126" class="tw-pole"/>
+      <rect x="3190" y="352" width="66" height="24" rx="4" class="tw-exit-b"/><text x="3223" y="368.5" class="tw-exit-n" text-anchor="middle">EXIT 1</text>
+      <rect x="3096" y="372" width="170" height="66" rx="8" class="tw-exit-b"/>
+      <rect x="3101" y="377" width="160" height="56" rx="5" class="tw-exit-ln"/>
+      <text x="3112" y="400" class="tw-exit-t">Classic</text><text x="3112" y="423" class="tw-exit-t">Portfolio</text>
+      <path d="M3222 424 l20 -22 m-13 -1 h13 v13" class="tw-exit-ar"/>
+    </a>
+    ${hot('tm', `
+    <g>
+      <ellipse cx="3390" cy="487" rx="66" ry="10" class="tw-tm-pad"/>
+      <ellipse cx="3390" cy="485" rx="52" ry="6.5" class="tw-tm-glow"/>
+      <path d="M3366 382 l-9 -12 M3414 382 l9 -12" class="tw-feed"/><circle cx="3357" cy="369" r="3" class="tw-led-on"/><circle cx="3423" cy="369" r="3" class="tw-led-on"/>
+      <rect x="3348" y="378" width="84" height="106" rx="40" class="tw-tm-body tw-ol"/>
+      <rect x="3360" y="392" width="60" height="72" rx="30" class="tw-tm-glass"/>
+      <g transform="translate(3390 428)"><g class="tw-tm-swirl"><circle r="22" class="tw-tm-ring"/></g><g class="tw-tm-swirl tw-tm-back"><circle r="13" class="tw-tm-ring tw-tm-ring2"/></g></g>
+      <rect x="3352" y="350" width="76" height="22" rx="6" class="tw-tm-sign"/>
+      <text x="3390" y="365.5" class="tw-tm-yr" text-anchor="middle">1977</text>
+      <text x="3390" y="343" class="tw-tm-t" text-anchor="middle">TIME MACHINE</text>
+    </g>`)}
+
+    <!-- What I've built: placeholder lots for now (see PROJECTS). -->
+    ${PROJECTS.map(lot).join('')}
+    ${tree(2290, 482, 1.15, 2)}${tree(3500, 480, 1.05, 1)}${tree(5440, 482, 1.25, 0)}
+
+    <!-- Snow, when it snows: it settles on the roofs and the ground (town.css). -->
+    <g class="tw-snowy" aria-hidden="true">${[[242, 300, 118], [443.8, 200, 152.6], [1158, 324, 108], [1256, 206, 352], [1604, 284, 234], [2730, 230, 340], [2756, 362, 288], [3096, 372, 170], [3190, 352, 66], [3352, 350, 76], ...PROJECTS.map((p) => [p.x, 362, 170])].map(([x, y, w]) => `<rect x="${x - 1}" y="${y - 7}" width="${w + 2}" height="8.5" rx="4" class="tw-snowcap"/>`).join('')}</g>
 
     <!-- A pin on every stop. -->
-    <g class="tw-pins">${roles.map((r) => { const at = SPOT[r.id].pin; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
+    <g class="tw-pins">${roles.map((r) => { const at = SPOT[r.id].pin ? [SPOT[r.id].pin[0] + (OFF[r.id] || 0), SPOT[r.id].pin[1]] : null; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
   </g>
 </svg>`;
 
-const sorted = [...roles].sort((a, b) => a.year - b.year || order.indexOf(a.id) - order.indexOf(b.id));
-const chips = sorted.map((r) => `<button type="button" class="tw-chip" data-id="${r.id}" style="--tint:${r.tint}"><b>’${String(r.year).slice(2)}</b><span>${esc(r.school ? 'University of Florida' : r.short)}</span></button>`).join('');
+const work = roles.filter((r) => r.year).sort((a, b) => a.year - b.year || order.indexOf(a.id) - order.indexOf(b.id));
 const data = {
-  order: sorted.map((r) => r.id),
-  W: WORLD,
+  order: [...work.map((r) => r.id), 'vc', ...PROJECTS.map((p) => p.id)],
+  W: WORLD, home: HOME,
   pin: Object.fromEntries(Object.entries(SPOT).map(([k, v]) => [k, v.pin ? [v.pin[0] + (OFF[k] || 0), v.pin[1]] : null])),
   links: LINKS,
   roles: Object.fromEntries(roles.map((r) => { const z = SPOT[r.id].zoom; return [r.id, { ...r, zoom: z ? [z[0] + (OFF[r.id] || 0), z[1], z[2], z[3]] : null }]; }))
@@ -372,10 +476,10 @@ const html = `<!-- town:start -->
       <div class="tw" id="town" tabindex="-1">
         <div class="tw-stage">
           ${svg}
+          <canvas class="tw-wx" aria-hidden="true"></canvas>
           <div class="tw-label" aria-hidden="true"></div>
           <button type="button" class="tw-pan tw-pan-l" aria-label="Look left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <button type="button" class="tw-pan tw-pan-r" aria-label="Look right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button type="button" class="tw-theme" aria-label="Day or night"><svg class="tw-ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg><svg class="tw-ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
           <aside class="tw-panel" aria-live="polite" hidden>
             <button type="button" class="tw-x" aria-label="Back to the whole block"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
             <div class="tw-panel-in"></div>
@@ -385,7 +489,6 @@ const html = `<!-- town:start -->
             </div>
           </aside>
         </div>
-        <div class="tw-chips" role="group" aria-label="Every stop, oldest first">${chips}</div>
         <script type="application/json" id="town-data">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>
       </div>
     </section>
@@ -397,3 +500,16 @@ if (page.includes('<!-- town:start -->')) page = page.replace(/<!-- town:start -
 else page = page.replace('<section id="experience" class="section journey-section" data-compact>', `${html.trim()}\n\n    <section id="path-circuit" class="section journey-section tw-retired" data-compact hidden>`);
 fs.writeFileSync(f, page);
 console.log('index.html updated', page.length);
+
+/* The classic portfolio (the menu and the visitor center's exit link to
+   it): the same page without the town, the old timeline back in its place,
+   scrolling as a normal page (town.css scopes the full window to
+   html:not(.classic)). */
+let classic = page
+  .replace('<html lang="en">', '<html lang="en" class="classic">')
+  .replace(/<!-- town:start -->[\s\S]*?<!-- town:end -->/, '')
+  .replace('<section id="path-circuit" class="section journey-section tw-retired" data-compact hidden>', '<section id="experience" class="section journey-section" data-compact>')
+  .replace('<link rel="canonical" href="https://ajaysommi.github.io/" />', '<link rel="canonical" href="https://ajaysommi.github.io/classic.html" />');
+if (!classic.includes('class="classic"') || classic.includes('town:start') || !classic.includes('<section id="experience" class="section journey-section"')) throw new Error('classic page did not build');
+fs.writeFileSync(path.join(root, 'classic.html'), classic);
+console.log('classic.html updated', classic.length);

@@ -115,7 +115,7 @@
 [data-theme="midnight"] .tw :is(.tw-spotcone, .tw-pool), [data-theme="terminal"] .tw :is(.tw-spotcone, .tw-pool) { opacity: .85; }
 @keyframes tw-breathe { 50% { opacity: .55; } }
 .tw-lamp { fill: #fff8e0; }
-.tw-showcar { opacity: .82; }
+.tw-showcar, .tw-bow { opacity: .62; }
 .tw-glassover { fill: rgba(190, 215, 235, .3); }
 [data-theme="midnight"] .tw .tw-glassover, [data-theme="terminal"] .tw .tw-glassover { fill: rgba(255, 228, 175, .12); }
 .tw-fo { stroke: var(--tw-line); stroke-width: 2.4; }
@@ -374,35 +374,121 @@
 
 /* ---------------------------------------------------------- the whole window
    On a wide screen the block is the page: nothing else of the site shows
-   (the previous page is kept at the git tag classic-site). It fills the
-   window and slides sideways. Phones keep their own layout. */
+   but a compact bar in the corner (the logo still smiles its way into it).
+   The traditional page is classic.html (html.classic), which scrolls as a
+   normal page. Phones keep their own layout. */
 .tw-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.tw-pan, .tw-theme { display: none; }
+.tw-pan, .tw-navx, .tw-classic-back { display: none !important; }
 @media (min-width: 720px) {
-  html, body { height: 100%; overflow: hidden !important; }
-  .page-loader, .bg, .rail, #siteNav, .dock-fab, .sheet-scrim, .mobile-sheet, .footer, .skip-link { display: none !important; }
-  main > :not(#experience) { display: none !important; }
-  #main { margin: 0 !important; padding: 0 !important; }
+  html:not(.classic), html:not(.classic) body { height: 100%; overflow: hidden !important; }
+  html:not(.classic) :is(.bg, .rail, .dock-fab, .sheet-scrim, .mobile-sheet, .footer, .skip-link) { display: none !important; }
+  html:not(.classic) main > :not(#experience) { display: none !important; }
+  html:not(.classic) #main { margin: 0 !important; padding: 0 !important; }
   #experience.town-section { position: fixed; inset: 0; z-index: 1; margin: 0; padding: 0; max-width: none; width: auto; opacity: 1 !important; transform: none !important; }
   #experience .tw { position: absolute; inset: 0; margin: 0; }
   #experience .tw-stage { position: absolute; inset: 0; aspect-ratio: auto; border: 0; border-radius: 0; }
-  .tw.dragging .tw-svg { cursor: grabbing; }
-  .tw.dragging .tw-hot { cursor: grabbing; }
-  .tw-chips { position: absolute; z-index: 5; left: 0; right: 0; bottom: 16px; width: fit-content; margin: 0 auto; flex-wrap: nowrap; max-width: calc(100% - 32px); overflow-x: auto; scrollbar-width: none; padding: 6px; gap: 6px; border: 1px solid var(--stroke); border-radius: 999px; background: color-mix(in oklab, var(--bg) 88%, transparent); box-shadow: 0 14px 40px -18px rgba(0, 0, 0, .45); transition: opacity .3s, transform .3s; }
-  .tw-chips::-webkit-scrollbar { display: none; }
-  .tw-chip { flex: none; height: 30px; padding: 0 11px 0 10px; gap: 6px; font-size: 12.5px; }
-  .tw.zoomed .tw-chips { opacity: 0; pointer-events: none; transform: translateY(12px); }
-  .tw-panel { bottom: 16px; top: 16px; }
-  .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
+  .tw.dragging .tw-svg, .tw.dragging .tw-hot { cursor: grabbing; }
+  .tw-panel { bottom: 16px; top: 80px; }
+  .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid !important; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
   .tw-pan svg { width: 20px; height: 20px; }
   .tw-pan-l { left: 16px; } .tw-pan-r { right: 16px; }
   .tw-pan.on { opacity: .9; pointer-events: auto; }
   .tw-pan:hover { opacity: 1; transform: scale(1.06); }
   .tw.zoomed .tw-pan { opacity: 0; pointer-events: none; }
-  .tw-theme { position: absolute; z-index: 5; top: 16px; left: 16px; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; transition: opacity .3s; }
-  .tw-theme svg { width: 18px; height: 18px; }
-  .tw-ico-sun { display: none; }
-  [data-theme="midnight"] .tw-ico-moon, [data-theme="terminal"] .tw-ico-moon { display: none; }
-  [data-theme="midnight"] .tw-ico-sun, [data-theme="terminal"] .tw-ico-sun { display: block; }
-  .tw.zoomed .tw-panel.left ~ .tw-theme, .tw.zoomed .tw-theme { opacity: 0; pointer-events: none; }
+
+  /* The compact bar: the logo, home, day or night, the weather, the menu. */
+  html:not(.classic) header.nav { left: 16px !important; right: auto !important; top: 16px !important; transform: none !important; width: auto !important; gap: 2px !important; padding: 5px 6px !important; }
+  html:not(.classic) header.nav :is(.nav-links, #paletteBtn, .cta, #navToggle) { display: none !important; }
+  html:not(.classic) header.nav .nav-actions { gap: 2px; margin-left: 2px; }
+  html:not(.classic) button.tw-navx { display: grid !important; }
+  html:not(.classic) div.tw-navx { display: block !important; position: relative; }
+  html.classic a.tw-classic-back { display: grid !important; }
+  .tw-pop { position: absolute; top: calc(100% + 12px); left: -6px; z-index: 70; display: grid; gap: 2px; min-width: 200px; padding: 6px; border: 1px solid var(--stroke); border-radius: 16px; background: var(--bg); box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .5); animation: tw-pop .22s cubic-bezier(.2, .8, .2, 1); }
+  .tw-pop[hidden] { display: none; }
+  @keyframes tw-pop { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
+  .tw-pop :is(button, a) { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0; border-radius: 10px; background: none; color: var(--ink); font: 500 14px var(--font-sans); text-align: left; text-decoration: none; cursor: pointer; }
+  .tw-pop :is(button, a):hover { background: color-mix(in oklab, var(--ink) 7%, transparent); }
+  .tw-pop .on { background: color-mix(in oklab, var(--ink) 10%, transparent); font-weight: 600; }
 }
+
+/* ---------------------------------------------------------- the visitor center */
+.tw-welcome { fill: #19633a; stroke: #f4f1ea; stroke-width: 3; }
+.tw-welcome-in { fill: none; stroke: #fff; stroke-width: 2.2; }
+.tw-wel-s { font: 700 12.5px var(--font-sans); letter-spacing: .34em; fill: #fff; }
+.tw-wel-b { font: 800 31px var(--font-sans); letter-spacing: .07em; fill: #fff; }
+.tw-vcwall { fill: #eadcc2; }
+[data-theme="midnight"] .tw .tw-vcwall, [data-theme="terminal"] .tw .tw-vcwall { fill: #bdae94; }
+.tw-vc-t { font: 800 12px var(--font-sans); letter-spacing: .22em; fill: #19633a; }
+.tw-i { font: italic 700 10px Georgia, serif; fill: #fff; }
+.tw-vcmap { fill: #f6f1e4; stroke: var(--tw-line); stroke-width: 1.4; } .tw-vcmap-l { fill: none; stroke: #e1262d; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.tw-dir { fill: #f4f1ea; stroke: var(--tw-line); stroke-width: 2; stroke-linejoin: round; }
+.tw-dir-t { font: 700 8.6px var(--font-sans); letter-spacing: .06em; fill: #2a2c34; }
+.tw-exit { cursor: pointer; }
+.tw-exit-b { fill: #19633a; stroke: #f4f1ea; stroke-width: 2.4; transition: fill .2s; }
+.tw-exit-ln { fill: none; stroke: #fff; stroke-width: 1.8; }
+.tw-exit-n { font: 800 10.5px var(--font-sans); letter-spacing: .08em; fill: #fff; }
+.tw-exit-t { font: 700 17px var(--font-sans); fill: #fff; }
+.tw-exit-ar { fill: none; stroke: #fff; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+.tw-exit:hover .tw-exit-b, .tw-exit:focus-visible .tw-exit-b { fill: #23804b; }
+.tw-exit:hover .tw-exit-ar { animation: tw-nudge .8s ease-in-out infinite; }
+@keyframes tw-nudge { 50% { transform: translate(2px, -2px); } }
+
+/* ---------------------------------------------------------- the time machine */
+.tw-tm-pad { fill: #2a2c34; }
+.tw-tm-glow { fill: #a78bfa; animation: tw-scan 2s ease-in-out infinite; }
+.tw-tm-body { fill: #dfe2ea; }
+.tw-tm-glass { fill: #140f2b; }
+.tw-tm-ring { fill: none; stroke: #a78bfa; stroke-width: 3; stroke-dasharray: 9 6; stroke-linecap: round; }
+.tw-tm-ring2 { stroke: #22d3ee; stroke-dasharray: 5 5; }
+.tw-tm-swirl { transform-box: fill-box; transform-origin: center; animation: tw-spin 3s linear infinite; }
+.tw-tm-back { animation-duration: 2s; animation-direction: reverse; }
+@keyframes tw-spin { to { transform: rotate(360deg); } }
+.tw-tm-sign { fill: #140f2b; }
+.tw-tm-yr { font: 700 13px var(--font-mono); fill: #4ade80; letter-spacing: .08em; }
+.tw-tm-t { font: 800 10.5px var(--font-sans); letter-spacing: .16em; fill: var(--tw-line); }
+[data-theme="midnight"] .tw .tw-tm-t, [data-theme="terminal"] .tw .tw-tm-t { fill: #e8e6f2; }
+
+/* ---------------------------------------------------------- placeholder lots (in red, on purpose) */
+.tw-lotwall { fill: #efe9df; }
+[data-theme="midnight"] .tw .tw-lotwall, [data-theme="terminal"] .tw .tw-lotwall { fill: #cfc6b6; }
+.tw-lot-n { font: 700 10.5px var(--font-sans); fill: #2a2c34; }
+.tw-awning-s { fill: rgba(255, 255, 255, .75); }
+.tw-ph-big { font: 900 15px var(--font-sans); letter-spacing: .06em; fill: #ff1a1a; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+.tw-ph-note { font: 800 8.6px var(--font-sans); fill: #ff1a1a; paint-order: stroke; stroke: #fff; stroke-width: 2.4px; }
+.tw-p-ph { margin: 0 0 12px; padding: 9px 11px; border: 2px dashed #ff1a1a; border-radius: 9px; background: rgba(255, 26, 26, .07); color: #ff1a1a; font: 800 13px/1.45 var(--font-sans); }
+.tw-p-gos { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.tw-p-go { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 1px solid color-mix(in oklab, var(--tint) 45%, var(--stroke)); border-radius: 999px; color: var(--ink); font: 600 13px var(--font-sans); text-decoration: none; }
+.tw-p-go:hover { background: color-mix(in oklab, var(--tint) 10%, transparent); }
+
+/* ---------------------------------------------------------- weather */
+.tw-wx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.tw-overcast { fill: #77828f; opacity: 0; transition: opacity 2.5s; pointer-events: none; }
+[data-theme="midnight"] .tw .tw-overcast, [data-theme="terminal"] .tw .tw-overcast { fill: #0b0f1d; }
+.tw.wx-rain .tw-overcast { opacity: .5; }
+.tw.wx-snow .tw-overcast { opacity: .32; }
+.tw-snowcap { fill: #fbfdff; transform: scaleY(0); transform-box: fill-box; transform-origin: 50% 100%; transition: transform 2.5s; pointer-events: none; }
+.tw.wx-snow .tw-snowcap { transform: scaleY(1); transition: transform 22s cubic-bezier(.3, 0, .6, 1) 2s; }
+.tw-snowground { fill: #f3f7fa; opacity: 0; transition: opacity 3s; pointer-events: none; }
+.tw.wx-snow .tw-snowground { opacity: .93; transition: opacity 28s ease-in 1s; }
+[data-theme="midnight"] .tw :is(.tw-snowcap, .tw-snowground), [data-theme="terminal"] .tw :is(.tw-snowcap, .tw-snowground) { fill: #d8e0ec; }
+.tw-leaf, .tw-leaf2, .tw-grass { transition: fill 6s; }
+.tw.wx-snow .tw-leaf { fill: #eef3f6; transition: fill 24s; } .tw.wx-snow .tw-leaf2 { fill: #cbd7de; transition: fill 24s; }
+.tw.wx-fall .tw-leaf { fill: #e9952f; } .tw.wx-fall .tw-leaf2 { fill: #c2541c; } .tw.wx-fall .tw-grass { fill: #b8b46c; }
+[data-theme="midnight"] .tw.wx-fall .tw-leaf, [data-theme="terminal"] .tw.wx-fall .tw-leaf { fill: #a8601f; }
+[data-theme="midnight"] .tw.wx-fall .tw-leaf2, [data-theme="terminal"] .tw.wx-fall .tw-leaf2 { fill: #7d3a16; }
+[data-theme="midnight"] .tw.wx-fall .tw-grass, [data-theme="terminal"] .tw.wx-fall .tw-grass { fill: #4d5a33; }
+/* The rover in the snow: shivers, then bundles up. */
+.tw-jacket, .tw-beanie { opacity: 0; transform: translateY(-16px); transition: opacity .4s, transform .6s cubic-bezier(.3, 1.6, .5, 1); }
+.tw-rover.jacket :is(.tw-jacket, .tw-beanie) { opacity: 1; transform: none; }
+.tw-rover.jacket .tw-beanie { transition-delay: .35s; }
+.tw-quilt { fill: none; stroke: rgba(0, 0, 0, .25); stroke-width: 1.2; } .tw-zip { stroke: #f4f1ea; stroke-width: 1.4; }
+.tw-rover.cold .tw-rover-shiver { animation: tw-shiver .09s linear infinite; }
+.tw-rover.cold.jacket .tw-rover-shiver { animation: tw-shiver2 3.4s linear infinite; }
+@keyframes tw-shiver { 0%, 100% { transform: translateX(-1.1px); } 50% { transform: translateX(1.1px); } }
+@keyframes tw-shiver2 { 0%, 84%, 100% { transform: none; } 86%, 90%, 94% { transform: translateX(-.8px); } 88%, 92% { transform: translateX(.8px); } }
+
+/* ---------------------------------------------------------- the time machine's trip */
+.tt { position: fixed; inset: 0; z-index: 2147483000; opacity: 0; transition: opacity .42s ease; cursor: wait; }
+.tt.blank { opacity: 1; }
+.tt-logo { position: fixed; }
+.tt-px { position: fixed; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }

@@ -55,9 +55,12 @@
   };
   const view = () => [camX, BOTTOM - vh, vw, vh];
   measure();
+  // Everyone starts at the visitor center; work is to the left, what I've built to the right.
+  const homeX = () => clamp(D.home - vw / 2, 0, Math.max(0, WORLD - vw));
+  camX = homeX();
   let vb = view(), anim = 0, cur = null;
   const nameOf = (r) => (r.school ? 'University of Florida' : r.short);
-  const yy = (r) => `’${String(r.year).slice(2)}`;
+  const yy = (r) => r.badge || `’${String(r.year).slice(2)}`;
 
   /* ---------------------------------------------------------- the two robots */
   // Each lives in its own patch of lawn and never leaves it.
@@ -117,8 +120,8 @@
   // so the halo comes from a still copy of the place tucked behind it,
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
-  const LIVE = { hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
+  const LIVE = { tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
+  const SKIP = { tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
   const halos = {};
   const hotOf = (id) => hots.find((h) => h.dataset.id === id);
   let lit = null;
@@ -168,10 +171,13 @@
   skip.forEach((n) => { n.style.display = ''; });
 
   /* ---------------------------------------------------------- the lean in */
+  let arrived = false;
+  const arrive = () => { arrived = true; tw.classList.add('arrive'); };
   const far = $('.tw-far', svg), panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
   const setVB = (b) => {
     vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
     far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${((b[1] - (BOTTOM - vh)) * 0.4).toFixed(2)})`);
+    if (!arrived && camX < 1500) arrive();
     panL.classList.toggle('on', !cur && camX > 4);
     panR.classList.toggle('on', !cur && camX < WORLD - vw - 4);
   };
@@ -220,13 +226,16 @@
       <div class="tw-p-top"><span class="tw-p-logo">${r.logo ? logo(r.logo) : r.gator ? `<img src="${r.gator}" alt="" style="max-height:42px" />` : ''}</span><span class="tw-p-yr">${yy(r)}</span></div>
       <h3>${esc(r.org)}</h3>
       <p class="tw-p-role">${esc(r.role)}</p>
-      <p class="tw-p-when">${esc(r.when)} · ${esc(r.where)}</p>
+      ${r.when || r.where ? `<p class="tw-p-when">${esc([r.when, r.where].filter(Boolean).join(' · '))}</p>` : ''}
+      ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
       ${r.about ? `<p class="tw-p-about">${esc(r.about)}</p>` : ''}
       <p class="tw-p-text">${esc(r.text)}</p>
       ${r.photos.length ? `<div class="tw-p-pics">${r.photos.map((s) => `<button type="button" aria-label="Open photo"><img src="${s}" alt="" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
       ${r.stats.length ? `<ul class="tw-p-stats">${r.stats.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('')}</ul>` : ''}
       ${links.length ? `<div class="tw-p-links"><h4>How it connects</h4>${links.map(([a, b, long]) => { const o = D.roles[a === r.id ? b : a]; return `<button type="button" class="tw-p-link" data-go="${o.id}" style="--lt:${o.tint}"><b>${esc(nameOf(o))} ${yy(o)}</b> ${esc(long)}</button>`; }).join('')}</div>` : ''}
-      <ul class="tw-p-tags">${r.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
+      ${r.url ? `<p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.url)}" target="_blank" rel="noopener">See the code ↗</a></p>` : ''}
+      ${r.go ? `<p class="tw-p-gos">${r.go.map(([t, u]) => `<a class="tw-p-go" href="${esc(u)}"${/^https?:/.test(u) ? ' target="_blank" rel="noopener"' : ''}>${esc(t)}</a>`).join('')}</p>` : ''}
+      ${r.tags.length ? `<ul class="tw-p-tags">${r.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}`;
     inner.scrollTop = 0;
     inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
     prevB.hidden = !p; nextB.hidden = !n;
@@ -246,6 +255,7 @@
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
+    if (r.special) { timeTravel(); return; }
     const wasOpen = !!cur;
     cur = id;
     $$('.tw-big-pic', panel).forEach((n) => n.remove());
@@ -259,7 +269,7 @@
     requestAnimationFrame(() => { panel.classList.add('open'); tween(frame(z, left), wasOpen ? 750 : 900); });
     tw.classList.add('zoomed');
     glow(null); glow(id);
-    if (id === 'jm') tw.classList.add('arrive', 'parked');
+    if (id === 'jm') { arrived = true; tw.classList.add('arrive', 'parked'); }
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
     const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
     hideLabel(); panL.classList.remove('on'); panR.classList.remove('on');
@@ -414,7 +424,7 @@
     if (visible) go(); else running = false;
   }).observe(stage);
   stage.addEventListener('wheel', (e) => {
-    if (cur || e.ctrlKey) return;
+    if (cur || e.ctrlKey || document.documentElement.classList.contains('is-loading')) return;
     const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * k;
     if (!d) return;
@@ -443,11 +453,144 @@
   const themeB = $('.tw-theme', tw);
   if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
 
-  if (reduced || !('IntersectionObserver' in window)) tw.classList.add('arrive', 'parked');
-  else {
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setTimeout(() => tw.classList.add('arrive'), 700); io.disconnect(); } }, { threshold: 0.55 });
-    io.observe(stage);
-  }
+  if (reduced) { arrived = true; tw.classList.add('arrive', 'parked'); }
   addEventListener('resize', () => { measure(); if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
+  /* ---------------------------------------------------------- the compact bar */
+  // Home (and the logo) slide back to the visitor center; the weather and
+  // the menu open small lists under the bar.
+  const goHome = () => { if (cur) { camX = homeX(); close(); } else panTo(homeX(), 1100); };
+  const homeB = document.getElementById('twHome');
+  if (homeB) homeB.addEventListener('click', goHome);
+  const brand = document.querySelector('header.nav .brand');
+  if (brand) brand.addEventListener('click', (e) => { if (!matchMedia('(min-width: 720px)').matches) return; e.preventDefault(); goHome(); });
+  const pops = [['twWx', 'twWxPop'], ['twMenu', 'twMenuPop']].map(([b, p]) => [document.getElementById(b), document.getElementById(p)]).filter(([b, p]) => b && p);
+  const shut = () => pops.forEach(([b, p]) => { p.hidden = true; b.setAttribute('aria-expanded', 'false'); });
+  pops.forEach(([b, p]) => b.addEventListener('click', (e) => { e.stopPropagation(); const was = !p.hidden; shut(); if (!was) { p.hidden = false; b.setAttribute('aria-expanded', 'true'); } }));
+  document.addEventListener('click', (e) => { if (!e.target.closest('.tw-popwrap')) shut(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
+  const tmItem = document.querySelector('#twMenuPop [data-go="time"]');
+  if (tmItem) tmItem.addEventListener('click', () => { shut(); timeTravel(); });
+  const exit = $('.tw-exit', svg);
+  if (exit) exit.addEventListener('click', (e) => { e.stopPropagation(); if (dragged) e.preventDefault(); });
+
+  /* ---------------------------------------------------------- the time machine */
+  // Its display rolls through the eras it can take you to.
+  const tmYr = $('.tw-tm-yr', svg);
+  if (tmYr && !reduced) { const ys = ['1977', '1984', '1998', '2007']; let k = 0; setInterval(() => { k = (k + 1) % ys.length; tmYr.textContent = ys[k]; }, 1400); }
+  // Stepping in: the screen goes blank, the AJ mark comes in from the top
+  // left to the middle, turns to pixels, the pixels take the screen, and the
+  // eras (the old school machines) open.
+  let travelling = false;
+  function timeTravel() {
+    if (travelling) return;
+    travelling = true;
+    const dest = 'eras.html';
+    if (reduced) { location.href = dest; return; }
+    const cs = getComputedStyle(document.body), ink = cs.color || '#16171c', bg = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' ? cs.backgroundColor : '#0b0d12';
+    const ov = document.createElement('div');
+    ov.className = 'tt'; ov.style.background = bg;
+    document.body.appendChild(ov);
+    requestAnimationFrame(() => ov.classList.add('blank'));
+    const mark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="9 8.5 45 42" width="450" height="420"><path d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z" fill="${ink}"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg>`;
+    const im = new Image();
+    im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(mark);
+    const S = Math.min(innerWidth, innerHeight) * 0.32, dpr = Math.min(2, devicePixelRatio || 1);
+    const cv = document.createElement('canvas');
+    cv.className = 'tt-logo'; cv.width = Math.round(S * dpr); cv.height = Math.round(S * 42 / 45 * dpr);
+    cv.style.width = S + 'px'; cv.style.height = (S * 42 / 45) + 'px';
+    cv.style.left = (innerWidth - S) / 2 + 'px'; cv.style.top = (innerHeight - S * 42 / 45) / 2 + 'px';
+    ov.appendChild(cv);
+    const g = cv.getContext('2d');
+    const draw = (res) => {
+      g.clearRect(0, 0, cv.width, cv.height);
+      if (!res) { g.imageSmoothingEnabled = true; g.drawImage(im, 0, 0, cv.width, cv.height); return; }
+      const t = document.createElement('canvas'); t.width = res; t.height = Math.max(1, Math.round(res * 42 / 45));
+      t.getContext('2d').drawImage(im, 0, 0, t.width, t.height);
+      g.imageSmoothingEnabled = false; g.drawImage(t, 0, 0, cv.width, cv.height);
+    };
+    const src = document.querySelector('header.nav .brand-aj');
+    const from = src && src.getBoundingClientRect().width ? src.getBoundingClientRect() : { left: 18, top: 18, width: 27, height: 25 };
+    const go = () => { location.href = dest; };
+    const safety = setTimeout(go, 4200);
+    const start = () => {
+      draw(0);
+      const fx = from.left + from.width / 2 - innerWidth / 2, fy = from.top + from.height / 2 - innerHeight / 2, k = from.width / S;
+      const fly = cv.animate([{ transform: `translate(${fx}px, ${fy}px) scale(${k})`, opacity: 0.2 }, { transform: 'none', opacity: 1 }], { duration: 900, delay: 380, easing: 'cubic-bezier(.2, .8, .2, 1)', fill: 'both' });
+      fly.onfinish = () => {
+        // into pixels: each step coarser
+        const steps = [56, 30, 16, 9];
+        let i = 0;
+        const tick = () => {
+          if (i < steps.length) { draw(steps[i++]); setTimeout(tick, 150); return; }
+          // then the pixels take the screen
+          const px = document.createElement('canvas'), P = 44;
+          px.className = 'tt-px'; px.width = Math.ceil(innerWidth / P); px.height = Math.ceil(innerHeight / P);
+          ov.appendChild(px);
+          const q = px.getContext('2d'), cells = [];
+          for (let y = 0; y < px.height; y++) for (let x = 0; x < px.width; x++) cells.push([x, y]);
+          for (let j = cells.length - 1; j > 0; j--) { const r = Math.floor(Math.random() * (j + 1)); [cells[j], cells[r]] = [cells[r], cells[j]]; }
+          const cols = ['#0b0d12', '#0b0d12', '#0b0d12', '#16331f', '#1f6fd1', '#ff6b35', '#3d68ff'];
+          let n = 0;
+          const fill = () => {
+            const per = Math.ceil(cells.length / 14);
+            for (let m = 0; m < per && n < cells.length; m++, n++) { q.fillStyle = cols[(Math.random() * cols.length) | 0]; q.fillRect(cells[n][0], cells[n][1], 1, 1); }
+            if (n < cells.length) requestAnimationFrame(fill);
+            else { q.fillStyle = '#0b0d12'; q.fillRect(0, 0, px.width, px.height); clearTimeout(safety); setTimeout(go, 160); }
+          };
+          requestAnimationFrame(fill);
+        };
+        setTimeout(tick, 220);
+      };
+    };
+    if (im.complete && im.naturalWidth) start(); else { im.onload = start; im.onerror = go; }
+  }
+
+  /* ---------------------------------------------------------- weather */
+  // Clear, rain, snow or fall. The falling things are drawn on a canvas
+  // over the street; what settles (snow on the roofs and the lawn, the
+  // leaves turning) is done in town.css. In the snow the rover shivers, then
+  // puts on its jacket and beanie.
+  const wxc = $('.tw-wx', stage), rover = bots.rfa.el;
+  let wx = 'clear', parts = [], wxRaf = 0, wxLast = 0, coldT = 0;
+  const sizeWx = () => { const d = Math.min(2, devicePixelRatio || 1); wxc.width = stage.clientWidth * d; wxc.height = stage.clientHeight * d; wxc.getContext('2d').setTransform(d, 0, 0, d, 0, 0); };
+  const spawn = (mode, any) => {
+    const w = stage.clientWidth, h = stage.clientHeight, y = any ? Math.random() * h : -20;
+    if (mode === 'snow') return { x: Math.random() * w, y, r: 1 + Math.random() * 2.4, vy: 28 + Math.random() * 46, ph: Math.random() * 6.3, sw: 10 + Math.random() * 22 };
+    if (mode === 'rain') return { x: Math.random() * (w + 200), y, l: 10 + Math.random() * 12, vy: 820 + Math.random() * 380 };
+    return { x: Math.random() * w, y, r: 3.4 + Math.random() * 2.8, vy: 36 + Math.random() * 40, ph: Math.random() * 6.3, sw: 30 + Math.random() * 40, rot: Math.random() * 6.3, c: ['#e9952f', '#c2541c', '#d9b13b', '#a8401a'][(Math.random() * 4) | 0] };
+  };
+  const wxLoop = (t) => {
+    const dt = Math.min(0.05, (t - (wxLast || t)) / 1000); wxLast = t;
+    const c = wxc.getContext('2d'), w = stage.clientWidth, h = stage.clientHeight;
+    c.clearRect(0, 0, w, h);
+    const night = /midnight|terminal/.test(document.documentElement.dataset.theme || '');
+    parts.forEach((p, i) => {
+      p.y += p.vy * dt;
+      if (wx === 'snow') { p.ph += dt * 1.3; const x = p.x + Math.sin(p.ph) * p.sw; c.fillStyle = night ? 'rgba(235,240,255,.9)' : 'rgba(255,255,255,.95)'; c.beginPath(); c.arc(x, p.y, p.r, 0, 6.283); c.fill(); }
+      else if (wx === 'rain') { p.x -= p.vy * 0.16 * dt; c.strokeStyle = night ? 'rgba(170,190,230,.45)' : 'rgba(90,120,160,.45)'; c.lineWidth = 1.3; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x + p.l * 0.16, p.y - p.l); c.stroke(); }
+      else { p.ph += dt * 1.6; p.rot += dt * 2; const x = p.x + Math.sin(p.ph) * p.sw; c.save(); c.translate(x, p.y); c.rotate(p.rot); c.fillStyle = p.c; c.beginPath(); c.ellipse(0, 0, p.r * 1.6, p.r * 0.8, 0, 0, 6.283); c.fill(); c.restore(); }
+      if (p.y > h + 20 || p.x < -40) parts[i] = spawn(wx, false);
+    });
+    wxRaf = requestAnimationFrame(wxLoop);
+  };
+  const setWeather = (mode) => {
+    if (!['clear', 'rain', 'snow', 'fall'].includes(mode)) return;
+    wx = mode;
+    tw.classList.remove('wx-rain', 'wx-snow', 'wx-fall');
+    if (mode !== 'clear') tw.classList.add('wx-' + mode);
+    document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => { const on = b.dataset.wx === mode; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+    cancelAnimationFrame(wxRaf); wxLast = 0;
+    clearTimeout(coldT);
+    rover.classList.remove('cold', 'jacket');
+    if (mode === 'snow') { rover.classList.add('cold'); coldT = setTimeout(() => rover.classList.add('jacket'), 3200); }
+    sizeWx();
+    const n = mode === 'snow' ? 190 : mode === 'rain' ? 260 : mode === 'fall' ? 34 : 0;
+    parts = Array.from({ length: reduced ? Math.round(n / 4) : n }, () => spawn(mode, true));
+    if (n) wxRaf = requestAnimationFrame(wxLoop); else wxc.getContext('2d').clearRect(0, 0, wxc.width, wxc.height);
+  };
+  document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => b.addEventListener('click', () => { setWeather(b.dataset.wx); shut(); }));
+  addEventListener('resize', () => { if (wx !== 'clear') sizeWx(); });
+
   tw._bots = bots;
+  tw._weather = setWeather;
 })();
