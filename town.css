@@ -1,212 +1,233 @@
 /* ==========================================================================
-   THE PATH, ON A WIDE SCREEN
-   One shop, cut open like a doll's house, a room for every place I've
-   worked. Upstairs runs left to right from the first job; downstairs runs
-   back right to left; one thread runs through every room in order. Drawn
-   in one hand: flat fills, a firm dark outline, each room washed in its
-   company's colour. Day in the light theme; night, rooms lit, in the dark.
-   Click a room and the drawing leans in with its story beside it. Stand
-   the pointer in the road and the traffic stops for it, not always in time.
+   AROUND THE BLOCK (the work history, on a wide screen)
+   One drawn street: a Toyota dealership in the middle, with Hunter's gear in
+   its service bay and the FICS lab on its roof, JM Family next door,
+   Shiva's billboard, the Renaissance Jax robot and the Robotics For All
+   rover out on the lawn, ADT's sign, the UF pond. Flat shapes with soft
+   outlines, a living street: the rover follows the pointer on the grass,
+   the camera on the corner follows it near the building, the dish on the
+   roof follows it through the sky, and in the road it's a cone the traffic
+   has to stop for. Day in the light theme; dusk, windows lit, in the dark.
    ========================================================================== */
 
 .tw-retired { display: none !important; }
 
 .tw {
-  --tw-line: #26272d; --tw-shell: #efe9de; --tw-roof: #34363e; --tw-floor: #d9d0bf; --tw-room: #f8f4ec; --tw-mix: 10%;
-  --tw-walk: #ddd6c9; --tw-curb: #f4f1ea; --tw-road: #3f4047; --tw-wood: #c9a27a; --tw-metal: #5a5d67; --tw-paper: #ffffff;
-  --tw-glass: #b7d3ea; --tw-cloud: #ffffff; --tw-node: #fbf8f2;
+  --tw-line: #2a2c34; --tw-grass: #9cc46f; --tw-leaf: #6fae4f; --tw-leaf2: #4f8f3c; --tw-trunk: #7a5a3e;
+  --tw-mtn1: #b8cbb0; --tw-mtn2: #c8d4de; --tw-cloud: #ffffff; --tw-road: #3d3f47; --tw-curb: #e9e5dc;
+  --tw-panel: #e9eaec; --tw-panel2: #dcdee2; --tw-tower: #f7f7f5; --tw-roofcap: #c9ccd2; --tw-seam: #cfd2d7;
+  --tw-glass: #bcd6ea; --tw-showfloor: #d9dde3; --tw-bay: #3a3d46; --tw-red: #e1262d;
+  --tw-jm: #44506e; --tw-jmband: #2b3550; --tw-win: #bfd6ea; --tw-walk: #ddd6c8; --tw-drive: #c9c5bc;
+  --tw-pond: #7cbad6; --tw-rock: #9a9ca3; --tw-pole: #5d616b; --tw-card: #ffffff; --tw-lab: #2e3446;
   position: relative;
   margin-top: 8px;
 }
 [data-theme="midnight"] .tw, [data-theme="terminal"] .tw {
-  --tw-line: #0b0b0e; --tw-shell: #2d2e35; --tw-roof: #17181d; --tw-floor: #1f2026; --tw-room: #2a2a2f; --tw-mix: 16%;
-  --tw-walk: #25262c; --tw-curb: #33343b; --tw-road: #111216; --tw-wood: #8a6a4c; --tw-metal: #6a6d77; --tw-paper: #f1eee6;
-  --tw-glass: #1d3653; --tw-cloud: #2a3048; --tw-node: #1c1d22;
+  --tw-line: #0e0f14; --tw-grass: #3f6b44; --tw-leaf: #3f7a3e; --tw-leaf2: #2c5a30; --tw-trunk: #4a3726;
+  --tw-mtn1: #3a3d6a; --tw-mtn2: #2c3058; --tw-cloud: #6b5a8e; --tw-road: #20212a; --tw-curb: #44454f;
+  --tw-panel: #b9bcc4; --tw-panel2: #9a9ea8; --tw-tower: #d9dade; --tw-roofcap: #7e828c; --tw-seam: #a6a9b1;
+  --tw-glass: #f7c978; --tw-showfloor: #e7b86c; --tw-bay: #2a2c34; --tw-red: #c81f26;
+  --tw-jm: #2f3852; --tw-jmband: #1e2539; --tw-win: #f5c76f; --tw-walk: #6b6a70; --tw-drive: #4a4a52;
+  --tw-pond: #2e5d86; --tw-rock: #5b5d66; --tw-pole: #6a6e78; --tw-card: #f1eee6; --tw-lab: #222738;
 }
 
-.tw-stage { position: relative; aspect-ratio: 1200 / 700; border: 1px solid var(--stroke); border-radius: var(--r-xl, 22px); overflow: hidden; background: var(--tw-road); isolation: isolate; }
+.tw-stage { position: relative; aspect-ratio: 1200 / 640; border: 1px solid var(--stroke); border-radius: var(--r-xl, 22px); overflow: hidden; background: var(--tw-grass); isolation: isolate; }
 .tw-svg { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
 .tw-far, .tw-mid, .tw-near { transition: transform .9s cubic-bezier(.2, .8, .2, 1); }
-.tw-o { stroke: var(--tw-line); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
 .tw-mono { font-family: var(--font-mono); }
+.tw-ol { stroke: var(--tw-line); stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
 
-/* ---------------------------------------------------------- sky */
+/* ---------------------------------------------------------- sky and land */
 .tw-sky-n, .tw-moon, .tw-stars { opacity: 0; transition: opacity .6s; }
 .tw-sky-d, .tw-sun { transition: opacity .6s; }
 [data-theme="midnight"] .tw :is(.tw-sky-n, .tw-moon, .tw-stars), [data-theme="terminal"] .tw :is(.tw-sky-n, .tw-moon, .tw-stars) { opacity: 1; }
 [data-theme="midnight"] .tw .tw-sun, [data-theme="terminal"] .tw .tw-sun { opacity: 0; }
-.tw-moon-cut { fill: #10152a; }
+.tw-moon-cut { fill: #1c2148; }
 .tw-stars circle { fill: #fff; animation: tw-twinkle 3.2s ease-in-out infinite; animation-delay: var(--d); }
 @keyframes tw-twinkle { 50% { opacity: .25; } }
-.tw-cloud { fill: var(--tw-cloud); opacity: .9; animation: tw-drift var(--dur) linear infinite; animation-delay: var(--from); }
-@keyframes tw-drift { from { transform: translateX(-500px); } to { transform: translateX(1300px); } }
-
-/* ---------------------------------------------------------- the shop */
-.tw-shell { fill: var(--tw-shell); }
-.tw-roof { fill: var(--tw-roof); }
-.tw-unit { fill: #c9c5bb; }
-[data-theme="midnight"] .tw .tw-unit, [data-theme="terminal"] .tw .tw-unit { fill: #3a3b42; }
-.tw-back { fill: color-mix(in oklab, var(--tint) var(--tw-mix), var(--tw-room)); }
-.tw-floor { fill: var(--tw-floor); }
-/* At night every room is lit: a warm wash from the ceiling. */
-[data-theme="midnight"] .tw .tw-back, [data-theme="terminal"] .tw .tw-back { fill: color-mix(in oklab, var(--tint) var(--tw-mix), #3a352d); }
-.tw-ring { fill: none; stroke: var(--tint); stroke-width: 4; opacity: 0; pointer-events: none; transition: opacity .25s; }
-.tw-room { cursor: pointer; }
-.tw-room:hover .tw-ring, .tw-room.hl .tw-ring { opacity: 1; }
-.tw.zoomed .tw-room .tw-ring { opacity: 0; }
-
-.tw-leg { fill: var(--tw-metal); }
-.tw-bench { fill: var(--tw-wood); }
-.tw-paper { fill: var(--tw-paper); }
-.tw-monitor { fill: #25272e; }
-.tw-screen-l { fill: #f7f6f2; }
-.tw-screen-d { fill: #131925; }
-.tw-signband { fill: #1d1f24; }
-.tw-plaque { fill: #fff; }
-[data-theme="midnight"] .tw .tw-plaque, [data-theme="terminal"] .tw .tw-plaque { fill: #1b1c21; }
-.tw-lexus-mark { filter: brightness(2.3); }
+.tw-cloud { fill: var(--tw-cloud); opacity: .92; animation: tw-drift var(--dur) linear infinite; animation-delay: var(--from); }
+@keyframes tw-drift { from { transform: translateX(-560px); } to { transform: translateX(1300px); } }
+.tw-mtn1 { fill: var(--tw-mtn1); } .tw-mtn2 { fill: var(--tw-mtn2); }
+.tw-grass { fill: var(--tw-grass); }
+.tw-leaf { fill: var(--tw-leaf); } .tw-leaf2 { fill: var(--tw-leaf2); }
+.tw-trunk { fill: none; stroke: var(--tw-trunk); stroke-width: 9; stroke-linecap: round; }
+.tw-canopy { transform-box: fill-box; transform-origin: 50% 100%; animation: tw-sway 6s ease-in-out infinite; animation-delay: calc(var(--k) * -2s); }
+@keyframes tw-sway { 50% { transform: rotate(1.6deg); } }
+.tw-pole { fill: var(--tw-pole); }
+.tw-walk { fill: var(--tw-walk); } .tw-drive { fill: var(--tw-drive); }
+.tw-rounded { clip-path: inset(0 round 7px); }
 .tw-lg-l { display: none; }
 [data-theme="daylight"] .tw .tw-lg-d { display: none; } [data-theme="daylight"] .tw .tw-lg-l { display: inline; }
 
-/* 2019: the bench. */
-.tw-pegboard { fill: #e7dcc8; } .tw-peg { fill: #b9a98c; }
-[data-theme="midnight"] .tw .tw-pegboard, [data-theme="terminal"] .tw .tw-pegboard { fill: #4a4337; }
-.tw-tool { fill: none; stroke: var(--tw-metal); stroke-width: 4; stroke-linecap: round; } .tw-tool-f { fill: var(--tw-metal); }
-.tw-laptop { fill: #d9dce2; } .tw-code { stroke: #2fae5a; stroke-width: 3; stroke-linecap: round; }
-.tw-vent { fill: rgba(0, 0, 0, .25); }
-.tw-cam { fill: #2a2b30; }
-.tw-ring-light { fill: #46f28a; animation: tw-glow 1.4s ease-in-out infinite; }
-.tw-target { fill: none; stroke: #2fd36f; stroke-width: 4.5; stroke-linejoin: round; }
-.tw-vision { stroke: #2fd36f; stroke-width: 2.6; stroke-dasharray: 5 6; animation: tw-march 1.2s linear infinite; }
-@keyframes tw-march { to { stroke-dashoffset: -22; } }
-.tw-reticle path { fill: none; stroke: #2fd36f; stroke-width: 3; stroke-linecap: round; }
-.tw-reticle { animation: tw-lock 3s cubic-bezier(.2, .8, .2, 1) infinite; }
-@keyframes tw-lock { 0% { transform: translate(286px, 198px) scale(1.7) rotate(25deg); opacity: 0; } 30%, 80% { transform: translate(286px, 198px) scale(1) rotate(0); opacity: 1; } 100% { transform: translate(286px, 198px) scale(1); opacity: 0; } }
-.tw-turret { transform-box: fill-box; transform-origin: 30% 100%; animation: tw-aim 3s ease-in-out infinite; }
-@keyframes tw-aim { 0% { transform: rotate(-10deg); } 30%, 100% { transform: rotate(0); } }
-@keyframes tw-glow { 50% { opacity: .4; } }
-
-/* 2020: the search desk. */
-.tw-cork { fill: #d6b184; }
-.tw-searchbar { fill: #ebe8e1; }
-.tw-mag { fill: none; stroke: #6a6d77; stroke-width: 1.8; }
-.tw-type { font-size: 7.6px; fill: #3b3d45; }
-.tw-top { fill: #fff1d6; stroke: #f39c12; stroke-width: 1.4; }
-.tw-rank { font-size: 8px; font-weight: 700; fill: #e08a00; }
-.tw-line-a { fill: #f39c12; } .tw-line { fill: #cfcbc2; }
-.tw-results .tw-top { animation: tw-climb 5s cubic-bezier(.2, .8, .2, 1) infinite; }
-@keyframes tw-climb { 0%, 10% { transform: translateY(28px); opacity: .4; } 35%, 100% { transform: none; opacity: 1; } }
+/* ---------------------------------------------------------- billboard */
+.tw-board { fill: #fff; stroke: var(--tw-line); stroke-width: 4; }
 .tw-bars rect { fill: #f39c12; transform-box: fill-box; transform-origin: bottom; animation: tw-grow 5s cubic-bezier(.2, .8, .2, 1) infinite; animation-delay: calc(var(--i) * .12s); }
 @keyframes tw-grow { 0%, 8% { transform: scaleY(.2); } 40%, 88% { transform: scaleY(1); } 100% { transform: scaleY(.2); } }
-.tw-up { font: 700 15px var(--font-sans); fill: #2fae5a; letter-spacing: -.02em; }
+.tw-arrow { fill: none; stroke: #22a052; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.tw-plus { font: 800 17px var(--font-sans); fill: #22a052; letter-spacing: -.02em; }
 
-/* 2022: the sign up desk. */
-.tw-counter { fill: #ead9bb; }
-[data-theme="midnight"] .tw .tw-counter, [data-theme="terminal"] .tw .tw-counter { fill: #5a4c38; }
-.tw-tablet { fill: #2a2c33; } .tw-go { fill: #2fae5a; }
-.tw-cell { fill: #e8e5de; animation: tw-fill 6s steps(1) infinite; animation-delay: calc(var(--i) * .5s); }
-@keyframes tw-fill { 0% { fill: #e8e5de; } 40%, 92% { fill: #bfe6b6; } }
-.tw-form { animation: tw-file 3s cubic-bezier(.5, 0, .3, 1) infinite; }
-@keyframes tw-file { 0% { transform: none; opacity: 0; } 15% { opacity: 1; } 70% { transform: translate(84px, -44px) scale(.5); opacity: 1; } 80%, 100% { transform: translate(90px, -48px) scale(.4); opacity: 0; } }
-.tw-fold { fill: none; stroke: #c9c2b4; stroke-width: 1.4; }
-.tw-eye { fill: #1a1b1f; } .tw-rover .tw-pupil { fill: #fff; }
-.tw-blink { animation: tw-glow 1s steps(1) infinite; }
-.tw-rover { animation: tw-roll 10s ease-in-out infinite; }
-@keyframes tw-roll { 0%, 8% { transform: translateX(0); } 42%, 56% { transform: translateX(104px); } 92%, 100% { transform: translateX(0); } }
-.tw-mail { animation: tw-hand 10s ease-in-out infinite; }
-@keyframes tw-hand { 0%, 40% { transform: none; opacity: 1; } 47% { transform: translate(12px, -18px); opacity: 0; } 50%, 90% { opacity: 0; } 100% { opacity: 1; transform: none; } }
+/* ---------------------------------------------------------- JM Family */
+.tw-roofcap { fill: var(--tw-roofcap); }
+.tw-jm { fill: var(--tw-jm); } .tw-jmband { fill: #f7f6f2; stroke: var(--tw-line); stroke-width: 2; }
+.tw-win { fill: var(--tw-win); }
+.tw-screen { fill: #18202e; }
+.tw-dash { fill: #2ad3b4; transform-box: fill-box; transform-origin: bottom; animation: tw-tick 2.6s ease-in-out infinite; animation-delay: calc(var(--i) * -.45s); }
+@keyframes tw-tick { 50% { transform: scaleY(.45); } }
+.tw-desk { fill: #5b4a3a; }
+.tw-plant { fill: #4f8f3c; }
+.tw-door { fill: #1d2335; }
 
-/* 2023: the server room. */
-.tw-rack { fill: #24262d; } .tw-unit-s { fill: #363942; }
-.tw-led { fill: #46f28a; animation: tw-glow 1.3s steps(1) infinite; animation-delay: var(--d); }
-.tw-led:nth-of-type(4n) { fill: #ff9a3d; }
-.tw-tiny { font-size: 8.5px; fill: var(--ink-3); letter-spacing: .04em; }
-.tw-bubble { fill: #fff; stroke: #e0473b; stroke-width: 1.6; }
-.tw-warn { font-size: 7.8px; font-weight: 600; fill: #e0473b; }
-.tw-tick { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.tw-bad { animation: tw-attack 5s ease-in-out infinite; }
-@keyframes tw-attack { 0% { transform: translateY(14px); opacity: 0; } 20%, 55% { transform: none; opacity: 1; } 70%, 100% { transform: translateY(-4px); opacity: 0; } }
-.tw-shield { transform-box: fill-box; transform-origin: center; animation: tw-catch 5s cubic-bezier(.3, 1.6, .5, 1) infinite; }
-@keyframes tw-catch { 0%, 38% { transform: scale(0); } 48%, 82% { transform: scale(1); } 94%, 100% { transform: scale(0); } }
-.tw-pennant { cursor: pointer; transform-box: fill-box; transform-origin: left center; transition: transform .3s; }
-.tw-pennant:hover, .tw-pennant.hl { transform: rotate(-4deg) scale(1.06); }
-.tw-uf { font: 800 12px var(--font-sans); fill: #fff; letter-spacing: .02em; }
+/* ---------------------------------------------------------- the dealership */
+.tw-facade { fill: var(--tw-panel); } .tw-facade2 { fill: var(--tw-panel2); }
+.tw-seam { stroke: var(--tw-seam); stroke-width: 2; }
+.tw-red { fill: var(--tw-red); }
+.tw-glass { fill: var(--tw-glass); }
+.tw-showfloor { fill: var(--tw-showfloor); }
+.tw-mull, .tw-handle { fill: #8e939d; }
+.tw-mullp { stroke: #8e939d; stroke-width: 3; }
+.tw-shine { stroke: rgba(255, 255, 255, .45); stroke-width: 9; stroke-linecap: round; }
+[data-theme="midnight"] .tw .tw-shine, [data-theme="terminal"] .tw .tw-shine { stroke: rgba(255, 255, 255, .14); }
+.tw-tower { fill: var(--tw-tower); }
+.tw-service { font: italic 800 22px var(--font-sans); fill: #2a2c34; letter-spacing: .02em; }
+.tw-bay { fill: var(--tw-bay); }
+.tw-baylight { fill: #fff3cf; opacity: .9; }
+.tw-pot { fill: #c9b9a2; }
+.tw-car-img { filter: drop-shadow(0 4px 4px rgba(0, 0, 0, .25)); }
+.tw-bollard { fill: #e1262d; }
+/* Road Force card: one tire package over the limit, flagged. */
+.tw-card { fill: var(--tw-card); stroke: var(--tw-line); stroke-width: 2.6; }
+.tw-card-k { font-size: 8.5px; fill: #3b3d45; letter-spacing: .04em; font-weight: 600; }
+.tw-card-s { font-size: 7.5px; fill: #e0473b; }
+.tw-limit { stroke: #e0473b; stroke-width: 1.6; stroke-dasharray: 4 3; }
+.tw-rf-ok { fill: #7aa7d8; transform-box: fill-box; transform-origin: bottom; animation: tw-rf 4s ease-in-out infinite; animation-delay: calc(var(--i) * -.3s); }
+.tw-rf-over { fill: #e0473b; transform-box: fill-box; transform-origin: bottom; animation: tw-rf 4s ease-in-out infinite; }
+@keyframes tw-rf { 50% { transform: scaleY(.82); } }
+.tw-recall rect { fill: #e0473b; } .tw-recall text { font-size: 7.6px; font-weight: 700; fill: #fff; letter-spacing: .06em; }
+.tw-recall { animation: tw-glow 1.4s steps(1) infinite; }
+.tw-wire-bed { fill: none; stroke: rgba(0, 0, 0, .22); stroke-width: 5; stroke-linejoin: round; }
+.tw-wire-p { fill: none; stroke: #ff4d4d; stroke-width: 2.4; stroke-dasharray: 3 9; stroke-linecap: round; stroke-linejoin: round; animation: tw-flow 1.4s linear infinite; }
+@keyframes tw-flow { to { stroke-dashoffset: -24; } }
+.tw.link-th .tw-wire-p { stroke-width: 3.4; stroke: #ff6b3d; }
 
-/* 2024 and 2025: the showrooms. */
-.tw-spotlight { transform-box: fill-box; transform-origin: top; animation: tw-sweep 5s ease-in-out infinite alternate; }
-@keyframes tw-sweep { from { transform: skewX(10deg); } to { transform: skewX(-10deg); } }
-.tw-turn { fill: rgba(255, 255, 255, .7); stroke: var(--tw-line); stroke-width: 3; }
-[data-theme="midnight"] .tw .tw-turn, [data-theme="terminal"] .tw .tw-turn { fill: rgba(255, 240, 210, .18); }
-.tw-show { animation: tw-float 4s ease-in-out infinite; }
-@keyframes tw-float { 50% { translate: 0 -2px; } }
-.tw-car-toyota { --paint: #d42a30; }
-.tw-car-lexus { --paint: #e6e3dc; }
-.tw-car-side { --paint: #2f62c9; }
-.tw-paint { fill: var(--paint); }
-.tw-glass-c { fill: #2b3a4c; }
-.tw-lightlens { fill: #f8f4e3; }
-.tw-grille { fill: #1b1c20; }
-.tw-mesh { stroke: #3d3f47; stroke-width: 1.8; fill: none; }
-.tw-badge { fill: #d6d9df; stroke: var(--tw-line); stroke-width: 1.4; }
-.tw-badge-in, .tw-badge-l { fill: none; stroke: #1b1c20; stroke-width: 1.4; }
-.tw-plate { fill: #f4f1ea; stroke: var(--tw-line); stroke-width: 1.4; }
-.tw-fog { fill: #efe6c4; }
-.tw-drl { fill: none; stroke: #ffffff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.tw-trim { fill: none; stroke: rgba(0, 0, 0, .22); stroke-width: 2; }
-.tw-tail { fill: #d8343a; }
-.tw-tyre { fill: #222327; }
-.tw-hub { fill: #b9bcc4; }
-.tw-row { fill: #273042; }
-.tw-mark { font-size: 9px; font-weight: 700; }
-.tw-ok { fill: #3ddc84; } .tw-bad-x { fill: #ff5a4f; animation: tw-glow 1s steps(1) infinite; }
-.tw-check { animation: tw-scanrow 5s steps(1) infinite; animation-delay: calc(var(--i) * .35s); }
-@keyframes tw-scanrow { 0% { opacity: .25; } 12%, 100% { opacity: 1; } }
-
-/* 2026: the alignment bay. */
-.tw-console { fill: #3a3d46; }
-.tw-antenna { stroke: var(--tw-metal); stroke-width: 3; stroke-linecap: round; }
-.tw-led-on { fill: #ff4d3d; animation: tw-glow 1s steps(1) infinite; }
-.tw-waves path { fill: none; stroke: #b5121b; stroke-width: 3; stroke-linecap: round; animation: tw-ping 1.8s ease-out infinite; }
-@keyframes tw-ping { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
-.tw-lift { animation: tw-raise 8s ease-in-out infinite; }
-@keyframes tw-raise { 0%, 10% { transform: translateY(8px); } 30%, 80% { transform: none; } 100% { transform: translateY(8px); } }
-.tw-clamp { fill: #f1ede3; }
+/* ---------------------------------------------------------- Hunter in the bay */
+.tw-lift { fill: #d0202e; }
+.tw-tbar { fill: #2a2c34; }
+.tw-plate { fill: #1b1c21; }
+.tw-hlogo { pointer-events: none; }
+.tw-cam { fill: #1b1c21; }
 .tw-beam { animation: tw-scan 2.2s ease-in-out infinite; }
 @keyframes tw-scan { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+.tw-onlift { animation: tw-raise 8s ease-in-out infinite; }
+@keyframes tw-raise { 0%, 12% { transform: translateY(5px); } 30%, 80% { transform: none; } 100% { transform: translateY(5px); } }
+.tw-balancer { fill: #d0202e; }
+.tw-wheel { animation: tw-spin 1.2s linear infinite; }
+@keyframes tw-spin { to { rotate: 360deg; } }
+.tw-tyre { fill: #222327; } .tw-rim { fill: #c9ccd3; } .tw-spoke { stroke: #6a6e78; stroke-width: 3; }
+.tw-wave { fill: none; stroke: #3ddc84; stroke-width: 1.8; }
 
-/* 2026: the front door. */
-.tw-door { fill: #3a3d46; }
-.tw-door-glass { fill: var(--tw-glass); }
-.tw-shine { stroke: rgba(255, 255, 255, .5); stroke-width: 7; stroke-linecap: round; }
-.tw-keypad { fill: #ece8df; }
-.tw-armed { fill: #2fae5a; animation: tw-glow 1.6s ease-in-out infinite; }
-.tw-camshell { fill: #f4f1ea; }
+/* ---------------------------------------------------------- the lab on the roof */
+.tw-lab { fill: var(--tw-lab); }
+.tw-rack { fill: #171a22; }
+.tw-led { fill: #46f28a; animation: tw-glow 1.3s steps(1) infinite; animation-delay: var(--d); }
+.tw-led:nth-of-type(3n) { fill: #ff9a3d; }
+@keyframes tw-glow { 50% { opacity: .35; } }
+.tw-bubble { fill: #fff; stroke: #e0473b; stroke-width: 1.4; }
+.tw-warn { font-size: 6.8px; font-weight: 600; fill: #e0473b; }
+.tw-tick { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tw-bad { animation: tw-attack 5s ease-in-out infinite; }
+@keyframes tw-attack { 0% { transform: translateY(10px); opacity: 0; } 20%, 55% { transform: none; opacity: 1; } 70%, 100% { transform: translateY(-4px); opacity: 0; } }
+.tw-shield { transform-box: fill-box; transform-origin: center; animation: tw-catch 5s cubic-bezier(.3, 1.6, .5, 1) infinite; }
+@keyframes tw-catch { 0%, 38% { transform: scale(0); } 48%, 82% { transform: scale(1); } 94%, 100% { transform: scale(0); } }
+.tw-dish { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.tw:not(.sky) .tw-dish { animation: tw-scanning 9s ease-in-out infinite; }
+@keyframes tw-scanning { 0%, 100% { transform: translate(0, -16px) rotate(-30deg); } 50% { transform: translate(0, -16px) rotate(30deg); } }
+.tw-dishface { fill: #eef0f3; stroke: var(--tw-line); stroke-width: 2.4; }
+.tw-feed { stroke: var(--tw-line); stroke-width: 2.4; stroke-linecap: round; }
+.tw-led-on { fill: #ff4d3d; animation: tw-glow 1s steps(1) infinite; }
+.tw-pings path { fill: none; stroke: #fa4616; stroke-width: 2.4; stroke-linecap: round; animation: tw-ping 1.6s ease-out infinite; }
+@keyframes tw-ping { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ---------------------------------------------------------- ADT */
+.tw-secured { font-size: 7.5px; font-weight: 700; fill: #1f6fd1; letter-spacing: .06em; }
+[data-theme="midnight"] .tw .tw-secured, [data-theme="terminal"] .tw .tw-secured { fill: #9cc0ff; }
+.tw-camshell { fill: #f4f1ea; stroke: var(--tw-line); stroke-width: 2; }
 .tw-rec { fill: #ff3b30; animation: tw-glow 1s steps(1) infinite; }
 .tw-cone { animation: tw-scan 3s ease-in-out infinite; }
 .tw-cctv-head { transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-.tw:not(.tracking) .tw-cctv-head { animation: tw-pan 7s ease-in-out infinite; }
-@keyframes tw-pan { 0%, 100% { transform: rotate(-36deg); } 50% { transform: rotate(-8deg); } }
+.tw:not(.near) .tw-cctv-head { animation: tw-pan 7s ease-in-out infinite; }
+@keyframes tw-pan { 0%, 100% { transform: rotate(-38deg); } 50% { transform: rotate(-6deg); } }
 
-/* ---------------------------------------------------------- the thread */
-.tw-thread-bed { fill: none; stroke: var(--tw-line); stroke-width: 9; stroke-linejoin: round; opacity: .55; }
-.tw-thread { fill: none; stroke: #ff6b35; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 14 10; animation: tw-flow 1.6s linear infinite; }
-@keyframes tw-flow { to { stroke-dashoffset: -24; } }
-.tw-node { cursor: pointer; }
-.tw-node-c { fill: var(--tw-node); stroke: var(--tint); stroke-width: 4; transition: r .2s; }
-.tw-node-t { font: 700 12px var(--font-sans); letter-spacing: -.02em; fill: color-mix(in oklab, var(--tint) 70%, var(--ink)); pointer-events: none; }
-.tw-node:hover .tw-node-c, .tw-node.hl .tw-node-c { fill: var(--tint); }
-.tw-node:hover .tw-node-t, .tw-node.hl .tw-node-t { fill: #fff; }
-.tw.zoomed .tw-node:not(.hl) { opacity: .55; }
+/* ---------------------------------------------------------- the pond */
+.tw-pond { fill: var(--tw-pond); }
+.tw-rock { fill: var(--tw-rock); }
+.tw-ripples ellipse { fill: none; stroke: #fff; stroke-opacity: .5; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: tw-ripple 3.2s ease-out infinite; }
+@keyframes tw-ripple { from { transform: scale(.6); opacity: 1; } to { transform: scale(3.4); opacity: 0; } }
+.tw-gator { animation: tw-peek 7s ease-in-out infinite; }
+@keyframes tw-peek { 0%, 12% { transform: translateY(14px); } 24%, 70% { transform: translateY(0); } 82%, 100% { transform: translateY(14px); } }
+.tw-gator-b { fill: #4f8f4b; }
+.tw-pupil { fill: #1a1b1f; }
+.tw-lid { fill: #4f8f4b; transform-box: fill-box; transform-origin: top; transform: scaleY(0); animation: tw-blink 7s infinite; }
+@keyframes tw-blink { 0%, 44% { transform: scaleY(0); } 46% { transform: scaleY(1); } 48%, 100% { transform: scaleY(0); } }
+.tw-uf { font: 800 9px var(--font-sans); fill: #fff; }
+
+/* ---------------------------------------------------------- the lawn robots */
+.tw-target { fill: none; stroke: #22c55e; stroke-width: 3.4; stroke-linejoin: round; }
+.tw-vision { stroke: #22c55e; stroke-width: 2.2; stroke-dasharray: 5 6; animation: tw-march 1.2s linear infinite; }
+@keyframes tw-march { to { stroke-dashoffset: -22; } }
+.tw-reticle path { fill: none; stroke: #22c55e; stroke-width: 2.4; stroke-linecap: round; }
+.tw-reticle { animation: tw-lock 3s cubic-bezier(.2, .8, .2, 1) infinite; }
+@keyframes tw-lock { 0% { transform: translate(470px, 490px) scale(1.7) rotate(25deg); opacity: 0; } 30%, 80% { transform: translate(470px, 490px) scale(1) rotate(0); opacity: 1; } 100% { transform: translate(470px, 490px) scale(1); opacity: 0; } }
+.tw-vent { fill: rgba(0, 0, 0, .25); }
+.tw-ringlight { fill: #46f28a; animation: tw-glow 1.4s ease-in-out infinite; }
+.tw-turret { transform-box: fill-box; transform-origin: 50% 100%; animation: tw-aim 3s ease-in-out infinite; }
+@keyframes tw-aim { 0% { transform: rotate(-10deg); } 30%, 100% { transform: rotate(0); } }
+.tw-eye { fill: #1a1b1f; } .tw-pupil2 { fill: #fff; }
+.tw-arm { stroke: #2b6fe0; stroke-width: 4; stroke-linecap: round; }
+.tw-paper { fill: #fff; stroke: #c9c2b4; stroke-width: 1.2; } .tw-fold { fill: none; stroke: #c9c2b4; stroke-width: 1.2; }
+.tw-blink { animation: tw-glow 1s steps(1) infinite; }
+.tw-rover-bob { animation: tw-bob .45s ease-in-out infinite alternate; }
+.tw-rover.still .tw-rover-bob { animation-duration: 1.6s; }
+@keyframes tw-bob { to { translate: 0 -2px; } }
+
+/* ---------------------------------------------------------- lamps */
+.tw-bulb { fill: #e9e3d4; }
+.tw-lampglow { opacity: 0; transition: opacity .6s; }
+[data-theme="midnight"] .tw :is(.tw-lampglow), [data-theme="terminal"] .tw :is(.tw-lampglow) { opacity: 1; }
+[data-theme="midnight"] .tw .tw-bulb, [data-theme="terminal"] .tw .tw-bulb { fill: #ffd98a; }
+
+/* ---------------------------------------------------------- hover: what belongs together lights together */
+.tw-hot { cursor: pointer; transition: opacity .3s; }
+.tw-pin { pointer-events: none; transition: opacity .3s; }
+.tw-pin-ring { fill: none; stroke: #ff6b35; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: tw-pin 2.4s ease-out infinite; }
+.tw-pin-dot { fill: #ff6b35; stroke: #fff; stroke-width: 1.6; }
+@keyframes tw-pin { from { transform: scale(.6); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
+.tw-pin.seen .tw-pin-ring { animation: none; opacity: 0; }
+.tw.zoomed .tw-pin { opacity: 0; }
+.tw.zoomed .tw-links { display: none; }
+.tw.zoomed .tw-hot { filter: none !important; }
+/* The threads between jobs. */
+.tw-link path { fill: none; stroke: var(--tint); stroke-width: 3; stroke-dasharray: 2 8; stroke-linecap: round; animation: tw-flow 1s linear infinite; opacity: .95; }
+.tw-link .tw-link-bed { stroke: rgba(255, 255, 255, .7); stroke-width: 7; stroke-dasharray: none; animation: none; opacity: .5; }
+[data-theme="midnight"] .tw .tw-link .tw-link-bed, [data-theme="terminal"] .tw .tw-link .tw-link-bed { stroke: rgba(0, 0, 0, .4); }
+.tw-link rect { fill: var(--ink); }
+.tw-link text { font: 600 11px var(--font-sans); fill: var(--bg); }
+.tw-link { animation: tw-in .3s ease-out both; }
+@keyframes tw-in { from { opacity: 0; } }
 
 /* ---------------------------------------------------------- the street */
-.tw-walk { fill: var(--tw-walk); } .tw-curb { fill: var(--tw-curb); } .tw-road { fill: var(--tw-road); }
+.tw-curb { fill: var(--tw-curb); } .tw-road { fill: var(--tw-road); }
 .tw-dashes rect { fill: #f2efe7; opacity: .65; }
 .tw-car { --paint: #888; }
-.tw-car .tw-tail { transition: fill .15s; }
-.tw-car.braking .tw-tail { fill: #ff2a2a; filter: drop-shadow(0 0 4px #ff2a2a); }
+.tw-paint { fill: var(--paint); }
+.tw-glass-c { fill: #2b3a4c; }
+.tw-trim { fill: none; stroke: rgba(0, 0, 0, .22); stroke-width: 2; }
+.tw-hub { fill: #b9bcc4; }
+.tw-headlamp { stroke: #fff6d8; stroke-width: 4; stroke-linecap: round; }
+.tw-tail { stroke: #c4262c; stroke-width: 4; stroke-linecap: round; transition: stroke .15s; }
+.tw-car.braking .tw-tail { stroke: #ff2a2a; filter: drop-shadow(0 0 4px #ff2a2a); }
 .tw-car.crashed { animation: tw-shake .35s ease-out; }
-.tw-car.crashed .tw-lightlens, .tw-car.crashed .tw-tail { animation: tw-hazard .7s steps(1) infinite; }
-@keyframes tw-hazard { 50% { fill: #ffb21a; } }
+.tw-car.crashed .tw-headlamp, .tw-car.crashed .tw-tail { animation: tw-hazard .7s steps(1) infinite; }
+@keyframes tw-hazard { 50% { stroke: #ffb21a; } }
 @keyframes tw-shake { 20% { rotate: -3deg; } 40% { rotate: 2deg; } 60% { rotate: -1deg; } 100% { rotate: 0deg; } }
 .tw-bang { pointer-events: none; animation: tw-bang .8s cubic-bezier(.2, .8, .2, 1) forwards; transform-box: fill-box; transform-origin: center; }
 @keyframes tw-bang { 0% { transform: scale(.2); opacity: 1; } 60% { opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
@@ -268,9 +289,47 @@
 .tw-chip:active { transform: scale(.96); }
 
 
+/* How this job connects to the others. */
+.tw-p-links { margin: 4px 0 16px; padding: 12px 12px 4px; border-radius: 12px; background: color-mix(in oklab, var(--tint) 8%, var(--m-fill)); }
+.tw-p-links h4 { margin: 0 0 8px; font: 11px var(--font-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+.tw-p-link { display: block; width: 100%; margin: 0 0 8px; padding: 0; border: 0; background: none; text-align: left; color: var(--ink-2); font: 13.5px/1.5 var(--font-sans); cursor: pointer; }
+.tw-p-link b { display: inline-flex; align-items: center; gap: 6px; margin-right: 4px; color: var(--ink); font-weight: 600; }
+.tw-p-link b::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--lt); }
+.tw-p-link:hover b { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ==========================================================================
+   THE LAST THING ON THE PAGE (wide screens): the way into the eras, saved
+   for whoever scrolls all the way down.
+   ========================================================================== */
+.finale { display: none; }
+@media (min-width: 720px) {
+  .finale { display: block; width: min(calc(100vw - 2 * var(--gutter, 24px)), var(--maxw, 1140px)); margin: 40px auto 0; }
+  .finale a { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 28px; padding: 30px 32px; border: 1px solid var(--stroke); border-radius: var(--r-xl, 22px); background: var(--surface); color: var(--ink); text-decoration: none; overflow: hidden; isolation: isolate; transition: border-color .3s, transform .3s; }
+  .finale a:hover { border-color: var(--stroke-hi); transform: translateY(-2px); }
+  .finale-st { display: grid; grid-template-rows: repeat(6, 1fr); width: 54px; height: 64px; border-radius: 12px; overflow: hidden; }
+  .finale-st i { transform-origin: left; transform: scaleX(0); transition: transform .7s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i) * 70ms); }
+  .finale.in .finale-st i { transform: none; }
+  .finale-st i:nth-child(1) { background: #61bb46; --i: 0; } .finale-st i:nth-child(2) { background: #fdb827; --i: 1; } .finale-st i:nth-child(3) { background: #f5821f; --i: 2; }
+  .finale-st i:nth-child(4) { background: #e03a3e; --i: 3; } .finale-st i:nth-child(5) { background: #963d97; --i: 4; } .finale-st i:nth-child(6) { background: #009ddc; --i: 5; }
+  .finale-k { display: block; margin-bottom: 6px; font: 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .finale-t { display: block; font-size: clamp(26px, 3vw, 38px); font-weight: 600; letter-spacing: -.035em; line-height: 1.05; }
+  .finale-yr { display: inline-block; min-width: 2.6em; font-family: var(--font-mono); color: var(--accent); }
+  .finale-yr.roll { animation: finale-roll .45s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes finale-roll { from { opacity: 0; transform: translateY(50%); } }
+  .finale-s { display: block; margin-top: 8px; color: var(--ink-2); font-size: 15px; }
+  .finale-go { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 999px; background: var(--ink); color: var(--bg); font-weight: 500; }
+  .finale-go svg { width: 16px; height: 16px; transition: transform .3s; }
+  .finale a:hover .finale-go svg { transform: translateX(3px); }
+  .finale { opacity: 0; transform: translateY(24px); transition: opacity .8s, transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .finale.in { opacity: 1; transform: none; }
+  /* The banner that used to drop in under the menu bar now waits here. */
+  .era-ad-wrap, .era-mini { display: none !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tw *, .tw *::before { animation: none !important; }
   .tw-far, .tw-mid, .tw-near { transition: none; }
+  .finale, .finale-st i { transition: none; opacity: 1; transform: none; }
 }
-/* Off screen, the shop holds still. */
+/* Off screen, the street holds still. */
 .tw-paused *, .tw-paused { animation-play-state: paused !important; }

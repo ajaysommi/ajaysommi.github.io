@@ -4302,7 +4302,9 @@ if (window.self === window.top) console.log(
   };
 
   // after the page has loaded and its loading screen has gone
-  const go = () => setTimeout(serve, phone.matches ? 11200 : 9200);
+  // On a computer the way into the eras is saved for the very bottom of the
+  // page (the finale, in town.css and town.js); only phones get the banner.
+  const go = () => { if (phone.matches) setTimeout(serve, 11200); };
   if (!root.classList.contains('is-loading')) go();
   else {
     const mo = new MutationObserver(() => { if (!root.classList.contains('is-loading')) { mo.disconnect(); go(); } });

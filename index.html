@@ -44,7 +44,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css" />
   <link rel="stylesheet" href="mobile.css?v=11" />
-  <link rel="stylesheet" href="town.css?v=6" />
+  <link rel="stylesheet" href="town.css?v=23" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -670,266 +670,256 @@
 
     <!-- THE PATH: scroll-driven career circuit -->
     <!-- town:start -->
-    <!-- THE PATH, on a wide screen: one shop, cut open, a room for every
-         place I've worked, and a thread through them in order. Built from
+    <!-- THE BLOCK, on a wide screen: every place I've worked, on one drawn
+         street, with threads showing how each led to the next. Built from
          retro/content.js by tools/build-town.js; edit that, not this. -->
     <section id="experience" class="section town-section">
-      <div class="section-head"><h2>The path so far</h2></div>
-      <p class="section-lede">One shop, a room for every place I’ve worked, the thread running through them in order. Click a room to step inside.</p>
+      <div class="section-head"><h2>Around the block</h2></div>
+      <p class="section-lede">Every place I’ve worked, on one street. Wander around, click anything to step inside, and mind the traffic.</p>
       <div class="tw" id="town" tabindex="-1">
         <div class="tw-stage">
-          <svg class="tw-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A drawn shop, cut open, a room for each place I've worked. The buttons below open the same stories.">
+          <svg class="tw-svg" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A drawn town block. Each part of it is a place I've worked; the buttons below open the same stories.">
   <defs>
-    <linearGradient id="twSkyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bcd8f1"/><stop offset="1" stop-color="#efe9dd"/></linearGradient>
-    <linearGradient id="twSkyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#090d1a"/><stop offset="1" stop-color="#1c2032"/></linearGradient>
-    <linearGradient id="twSpot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff4d6" stop-opacity=".8"/><stop offset="1" stop-color="#fff4d6" stop-opacity="0"/></linearGradient>
-    <linearGradient id="twBeam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#58e8ff" stop-opacity=".05"/><stop offset="1" stop-color="#58e8ff" stop-opacity=".85"/></linearGradient>
-    <linearGradient id="twCone" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#6c95ff" stop-opacity=".5"/><stop offset="1" stop-color="#6c95ff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="twSkyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fcbef"/><stop offset=".7" stop-color="#e9eef0"/><stop offset="1" stop-color="#f6ecd9"/></linearGradient>
+    <linearGradient id="twSkyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151b3d"/><stop offset=".55" stop-color="#2d2f5e"/><stop offset="1" stop-color="#6a4a7a"/></linearGradient>
+    <linearGradient id="twBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4d4d" stop-opacity=".85"/><stop offset="1" stop-color="#ff4d4d" stop-opacity="0"/></linearGradient>
+    <linearGradient id="twCone" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#7aa2ff" stop-opacity=".5"/><stop offset="1" stop-color="#7aa2ff" stop-opacity="0"/></linearGradient>
     <radialGradient id="twHalo"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
-    <pattern id="twPeg" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="1.4" class="tw-peg"/></pattern>
-    <g id="twSedan"><g class="tw-o">
-    <path d="M-80 -14 Q-82 -30 -66 -33 L-40 -36 Q-24 -56 4 -58 Q32 -58 50 -38 L72 -33 Q84 -30 84 -16 V-10 H-80 Z" class="tw-paint"/>
-    <path d="M-33 -37 Q-20 -51 -2 -53 V-37 Z M3 -53 Q26 -53 41 -37 H3 Z" class="tw-glass-c"/>
-    <path d="M-2 -37 V-14 M-36 -22 H70" class="tw-trim"/>
-    <rect x="72" y="-30" width="11" height="6" rx="3" class="tw-lightlens"/><rect x="-80" y="-30" width="8" height="7" rx="3" class="tw-tail"/>
-    <circle cx="-48" cy="-8" r="15" class="tw-tyre"/><circle cx="50" cy="-8" r="15" class="tw-tyre"/><circle cx="-48" cy="-8" r="6.5" class="tw-hub"/><circle cx="50" cy="-8" r="6.5" class="tw-hub"/>
+    <radialGradient id="twLamp"><stop offset="0" stop-color="#ffe2a0" stop-opacity=".5"/><stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/></radialGradient>
+    <filter id="twGlow-rjax" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#22c55e" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-shiva" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#2f7fb5" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-rfa" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#f2b705" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-fics" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#fa4616" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-toyota" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#eb0a1e" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-jm" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#00857c" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-hunter" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#d0202e" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-adt" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#1f6fd1" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twGlow-edu" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="#0021a5" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <g id="twSedan"><g class="tw-ol">
+    <path d="M-82 -12 Q-84 -27 -70 -31 L-46 -35 Q-28 -55 0 -57 Q30 -57 50 -38 L74 -33 Q86 -30 86 -16 V-8 H-82 Z" class="tw-paint"/>
+    <path d="M-36 -37 Q-22 -51 -4 -53 V-37 Z M2 -53 Q24 -53 40 -37 H2 Z" class="tw-glass-c"/>
+    <path d="M-1 -37 V-12 M-40 -24 H74" class="tw-trim"/>
+    <path d="M70 -31 L86 -27" class="tw-headlamp"/><path d="M-82 -27 H-72" class="tw-tail"/>
+    <circle cx="-50" cy="-8" r="15" class="tw-tyre"/><circle cx="52" cy="-8" r="15" class="tw-tyre"/><circle cx="-50" cy="-8" r="6.5" class="tw-hub"/><circle cx="52" cy="-8" r="6.5" class="tw-hub"/>
+  </g></g><g id="twSuv"><g class="tw-ol">
+    <path d="M-82 -12 V-36 Q-82 -44 -72 -45 L-54 -47 L-40 -66 Q-37 -70 -30 -70 H44 Q52 -70 57 -62 L68 -47 Q84 -45 84 -32 V-12 Z" class="tw-paint"/>
+    <path d="M-34 -50 L-25 -64 H4 V-50 Z M10 -64 H44 L54 -50 H10 Z" class="tw-glass-c"/>
+    <path d="M7 -50 V-16 M-46 -28 H74" class="tw-trim"/>
+    <path d="M70 -40 L84 -37" class="tw-headlamp"/><path d="M-82 -40 H-72" class="tw-tail"/>
+    <circle cx="-50" cy="-8" r="16" class="tw-tyre"/><circle cx="52" cy="-8" r="16" class="tw-tyre"/><circle cx="-50" cy="-8" r="7" class="tw-hub"/><circle cx="52" cy="-8" r="7" class="tw-hub"/>
   </g></g>
-    <g id="twSuv"><g class="tw-o">
-      <path d="M-80 -12 V-34 Q-80 -42 -70 -43 L-52 -45 L-38 -66 Q-35 -70 -28 -70 H44 Q52 -70 57 -62 L68 -45 Q82 -43 82 -32 V-12 Z" class="tw-paint"/>
-      <path d="M-32 -48 L-23 -63 H4 V-48 Z M10 -63 H44 L54 -48 H10 Z" class="tw-glass-c"/>
-      <path d="M7 -48 V-16 M-44 -26 H74" class="tw-trim"/>
-      <rect x="70" y="-38" width="11" height="7" rx="3" class="tw-lightlens"/><rect x="-80" y="-40" width="8" height="10" rx="3" class="tw-tail"/>
-      <circle cx="-48" cy="-8" r="16" class="tw-tyre"/><circle cx="50" cy="-8" r="16" class="tw-tyre"/><circle cx="-48" cy="-8" r="7" class="tw-hub"/><circle cx="50" cy="-8" r="7" class="tw-hub"/>
-    </g></g>
   </defs>
 
-  <!-- Sky. -->
-  <g class="tw-far" data-depth="5">
-    <rect class="tw-sky-d" x="-200" y="-100" width="1600" height="700" fill="url(#twSkyDay)"/>
-    <rect class="tw-sky-n" x="-200" y="-100" width="1600" height="700" fill="url(#twSkyNight)"/>
-    <g class="tw-stars"><circle cx="0" cy="10" r="1.7" style="--d:0s"/><circle cx="149" cy="63" r="1.1" style="--d:0.5s"/><circle cx="298" cy="20" r="1.1" style="--d:1s"/><circle cx="447" cy="73" r="1.1" style="--d:1.5s"/><circle cx="596" cy="30" r="1.7" style="--d:2s"/><circle cx="745" cy="83" r="1.1" style="--d:2.5s"/><circle cx="894" cy="40" r="1.1" style="--d:0s"/><circle cx="1043" cy="93" r="1.1" style="--d:0.5s"/><circle cx="1192" cy="50" r="1.7" style="--d:1s"/><circle cx="141" cy="103" r="1.1" style="--d:1.5s"/><circle cx="290" cy="60" r="1.1" style="--d:2s"/><circle cx="439" cy="17" r="1.1" style="--d:2.5s"/><circle cx="588" cy="70" r="1.7" style="--d:0s"/><circle cx="737" cy="27" r="1.1" style="--d:0.5s"/><circle cx="886" cy="80" r="1.1" style="--d:1s"/><circle cx="1035" cy="37" r="1.1" style="--d:1.5s"/><circle cx="1184" cy="90" r="1.7" style="--d:2s"/><circle cx="133" cy="47" r="1.1" style="--d:2.5s"/><circle cx="282" cy="100" r="1.1" style="--d:0s"/><circle cx="431" cy="57" r="1.1" style="--d:0.5s"/><circle cx="580" cy="14" r="1.7" style="--d:1s"/><circle cx="729" cy="67" r="1.1" style="--d:1.5s"/><circle cx="878" cy="24" r="1.1" style="--d:2s"/><circle cx="1027" cy="77" r="1.1" style="--d:2.5s"/><circle cx="1176" cy="34" r="1.7" style="--d:0s"/><circle cx="125" cy="87" r="1.1" style="--d:0.5s"/></g>
-    <g class="tw-sun"><circle cx="1110" cy="58" r="64" fill="url(#twHalo)"/><circle cx="1110" cy="58" r="26" fill="#ffcf6b"/></g>
-    <g class="tw-moon"><circle cx="1110" cy="58" r="22" fill="#f1ead6"/><circle cx="1121" cy="50" r="20" class="tw-moon-cut"/></g>
-    <g class="tw-cloud" style="--dur:120s;--from:-30s"><g transform="translate(220 52)"><rect x="0" y="8" width="120" height="26" rx="13"/><circle cx="42" cy="10" r="20"/><circle cx="76" cy="6" r="24"/></g></g>
-    <g class="tw-cloud" style="--dur:160s;--from:-110s"><g transform="translate(700 30)"><rect x="0" y="6" width="90" height="20" rx="10"/><circle cx="32" cy="8" r="15"/><circle cx="58" cy="5" r="18"/></g></g>
+  <!-- Far: the sky, the hills, the clouds. -->
+  <g class="tw-far" data-depth="4">
+    <rect class="tw-sky-d" x="-200" y="-60" width="1600" height="600" fill="url(#twSkyDay)"/>
+    <rect class="tw-sky-n" x="-200" y="-60" width="1600" height="600" fill="url(#twSkyNight)"/>
+    <g class="tw-stars"><circle cx="0" cy="14" r="1.8" style="--d:0s"/><circle cx="137" cy="85" r="1.1" style="--d:0.6s"/><circle cx="274" cy="156" r="1.1" style="--d:1.2s"/><circle cx="411" cy="27" r="1.1" style="--d:1.7999999999999998s"/><circle cx="548" cy="98" r="1.1" style="--d:2.4s"/><circle cx="685" cy="169" r="1.8" style="--d:3s"/><circle cx="822" cy="40" r="1.1" style="--d:3.5999999999999996s"/><circle cx="959" cy="111" r="1.1" style="--d:0s"/><circle cx="1096" cy="182" r="1.1" style="--d:0.6s"/><circle cx="33" cy="53" r="1.1" style="--d:1.2s"/><circle cx="170" cy="124" r="1.8" style="--d:1.7999999999999998s"/><circle cx="307" cy="195" r="1.1" style="--d:2.4s"/><circle cx="444" cy="66" r="1.1" style="--d:3s"/><circle cx="581" cy="137" r="1.1" style="--d:3.5999999999999996s"/><circle cx="718" cy="208" r="1.1" style="--d:0s"/><circle cx="855" cy="79" r="1.8" style="--d:0.6s"/><circle cx="992" cy="150" r="1.1" style="--d:1.2s"/><circle cx="1129" cy="21" r="1.1" style="--d:1.7999999999999998s"/><circle cx="66" cy="92" r="1.1" style="--d:2.4s"/><circle cx="203" cy="163" r="1.1" style="--d:3s"/><circle cx="340" cy="34" r="1.8" style="--d:3.5999999999999996s"/><circle cx="477" cy="105" r="1.1" style="--d:0s"/><circle cx="614" cy="176" r="1.1" style="--d:0.6s"/><circle cx="751" cy="47" r="1.1" style="--d:1.2s"/><circle cx="888" cy="118" r="1.1" style="--d:1.7999999999999998s"/><circle cx="1025" cy="189" r="1.8" style="--d:2.4s"/><circle cx="1162" cy="60" r="1.1" style="--d:3s"/><circle cx="99" cy="131" r="1.1" style="--d:3.5999999999999996s"/><circle cx="236" cy="202" r="1.1" style="--d:0s"/><circle cx="373" cy="73" r="1.1" style="--d:0.6s"/><circle cx="510" cy="144" r="1.8" style="--d:1.2s"/><circle cx="647" cy="15" r="1.1" style="--d:1.7999999999999998s"/><circle cx="784" cy="86" r="1.1" style="--d:2.4s"/><circle cx="921" cy="157" r="1.1" style="--d:3s"/></g>
+    <g class="tw-sun"><circle cx="1090" cy="86" r="70" fill="url(#twHalo)"/><circle cx="1090" cy="86" r="32" fill="#ffcf6b"/></g>
+    <g class="tw-moon"><circle cx="1090" cy="80" r="30" fill="#f6eed6"/><circle cx="1106" cy="70" r="27" class="tw-moon-cut"/></g>
+    <g class="tw-cloud" style="--dur:110s;--from:-20s"><g transform="translate(380 120)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
+    <g class="tw-cloud" style="--dur:150s;--from:-90s"><g transform="translate(820 70)"><rect x="0" y="10" width="120" height="24" rx="12"/><circle cx="44" cy="12" r="20"/><circle cx="76" cy="6" r="24"/></g></g>
+    <g class="tw-cloud" style="--dur:180s;--from:-150s"><g transform="translate(120 70)"><rect x="0" y="8" width="96" height="20" rx="10"/><circle cx="34" cy="10" r="16"/><circle cx="60" cy="6" r="19"/></g></g>
+    <path class="tw-mtn2" d="M-200 400 L40 312 L150 362 L300 276 L440 352 L600 286 L740 346 L880 280 L1020 340 L1160 290 L1400 360 V480 H-200 Z"/>
+    <path class="tw-mtn1" d="M-200 430 Q80 370 250 410 T590 400 T960 392 T1400 410 V480 H-200 Z"/>
   </g>
 
-  <g class="tw-mid" data-depth="10">
-    <!-- The shop: a roof, two floors, a slab between them. -->
-    <rect x="22" y="110" width="1156" height="30" rx="8" class="tw-roof tw-o"/>
-    <rect x="130" y="88" width="64" height="24" rx="4" class="tw-unit tw-o"/><rect x="214" y="96" width="40" height="16" rx="4" class="tw-unit tw-o"/>
-    <rect x="40" y="138" width="1120" height="446" class="tw-shell tw-o"/>
+  <!-- Middle: the block. -->
+  <g class="tw-mid" data-depth="9">
+    <rect class="tw-grass" x="-200" y="470" width="1600" height="90"/>
+    <g class="tw-backrow"><g transform="translate(250 486) scale(1.25)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(308 486) scale(1.4)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(366 486) scale(1.55)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(424 486) scale(1.25)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(482 486) scale(1.4)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(540 486) scale(1.55)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(598 486) scale(1.25)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(656 486) scale(1.4)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(714 486) scale(1.55)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(772 486) scale(1.25)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(830 486) scale(1.4)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(888 486) scale(1.55)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(946 486) scale(1.25)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(1004 486) scale(1.4)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(1062 486) scale(1.55)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(1120 486) scale(1.25)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g></g>
+    <g class="tw-tree" transform="translate(70 476) scale(1.25)"><path d="M-6 0 V-58 M0 -40 L18 -66 M-2 -48 L-22 -70" class="tw-trunk"/><g class="tw-canopy" style="--k:0"><circle cx="0" cy="-92" r="38" class="tw-leaf2"/><circle cx="-34" cy="-70" r="28" class="tw-leaf2"/><circle cx="32" cy="-68" r="30" class="tw-leaf2"/><circle cx="-6" cy="-100" r="30" class="tw-leaf"/><circle cx="-34" cy="-76" r="22" class="tw-leaf"/><circle cx="26" cy="-78" r="24" class="tw-leaf"/><circle cx="8" cy="-120" r="18" class="tw-leaf"/></g></g><g class="tw-tree" transform="translate(1162 478) scale(1.15)"><path d="M-6 0 V-58 M0 -40 L18 -66 M-2 -48 L-22 -70" class="tw-trunk"/><g class="tw-canopy" style="--k:1"><circle cx="0" cy="-92" r="38" class="tw-leaf2"/><circle cx="-34" cy="-70" r="28" class="tw-leaf2"/><circle cx="32" cy="-68" r="30" class="tw-leaf2"/><circle cx="-6" cy="-100" r="30" class="tw-leaf"/><circle cx="-34" cy="-76" r="22" class="tw-leaf"/><circle cx="26" cy="-78" r="24" class="tw-leaf"/><circle cx="8" cy="-120" r="18" class="tw-leaf"/></g></g><g class="tw-tree" transform="translate(1205 486) scale(0.9)"><path d="M-6 0 V-58 M0 -40 L18 -66 M-2 -48 L-22 -70" class="tw-trunk"/><g class="tw-canopy" style="--k:2"><circle cx="0" cy="-92" r="38" class="tw-leaf2"/><circle cx="-34" cy="-70" r="28" class="tw-leaf2"/><circle cx="32" cy="-68" r="30" class="tw-leaf2"/><circle cx="-6" cy="-100" r="30" class="tw-leaf"/><circle cx="-34" cy="-76" r="22" class="tw-leaf"/><circle cx="26" cy="-78" r="24" class="tw-leaf"/><circle cx="8" cy="-120" r="18" class="tw-leaf"/></g></g>
 
-    <g class="tw-room tw-hot" data-id="rjax" style="--tint:#2fae5a">
-      <rect class="tw-back tw-back-rjax" x="54" y="152" width="264" height="186"/>
-      <rect class="tw-floor" x="54" y="324" width="264" height="14"/>
-      
-      <!-- 2019, Renaissance Jax: a robotics bench; the robot finds its target by colour. -->
-      <rect x="70" y="170" width="120" height="84" rx="6" fill="url(#twPeg)" class="tw-pegboard tw-o"/>
-      <path d="M86 186 l14 14 m-4 -14 l-14 14" class="tw-tool"/><rect x="118" y="182" width="8" height="34" rx="3" class="tw-tool-f"/><circle cx="160" cy="198" r="11" class="tw-tool"/><path d="M146 232 h30" class="tw-tool"/>
-      <g class="tw-target-g" transform="translate(286 204)"><path d="M-14 -16 v18 h28 v-18 h-8 v10 h-12 v-10 z" class="tw-target"/></g>
-      <g class="tw-reticle" transform="translate(286 198)"><path d="M-24 -18 v-8 h8 M16 -26 h8 v8 M24 18 v8 h-8 M-16 26 h-8 v-8"/></g>
-      <path d="M232 230 L272 204" class="tw-vision"/>
-      <rect x="64" y="292" width="244" height="12" rx="3" class="tw-bench tw-o"/><rect x="76" y="304" width="10" height="20" class="tw-leg"/><rect x="286" y="304" width="10" height="20" class="tw-leg"/>
-      <g transform="translate(80 252)"><rect x="0" y="0" width="56" height="38" rx="4" class="tw-laptop tw-o"/><path d="M8 10 h20 M8 18 h32 M14 26 h22" class="tw-code"/><rect x="-6" y="38" width="68" height="4" rx="2" class="tw-laptop tw-o"/></g>
-      <g class="tw-frc" transform="translate(160 252)">
-        <rect x="0" y="10" width="78" height="22" rx="5" fill="#2fae5a" class="tw-o"/>
-        <rect x="-4" y="26" width="86" height="14" rx="7" fill="#c8373c" class="tw-o"/>
-        <rect x="10" y="15" width="26" height="3.4" rx="1.7" class="tw-vent"/><rect x="10" y="21" width="26" height="3.4" rx="1.7" class="tw-vent"/>
-        <g class="tw-turret"><rect x="58" y="-12" width="7" height="24" class="tw-leg"/><rect x="52" y="-24" width="22" height="14" rx="4" class="tw-cam tw-o"/><circle cx="72" cy="-17" r="4.6" class="tw-ring-light"/></g>
+    <g class="tw-hot " data-id="shiva" style="--tint:#2f7fb5">
+    <!-- 2020, Shiva Robotics Academy: a billboard by the road, search traffic climbing. -->
+    <g>
+      <rect x="92" y="346" width="9" height="134" class="tw-pole"/><rect x="192" y="346" width="9" height="134" class="tw-pole"/>
+      <rect x="40" y="244" width="212" height="106" rx="10" class="tw-board"/>
+      <image href="assets/logos/opt/shiva.webp" x="52" y="256" width="82" height="82" preserveAspectRatio="xMidYMid meet" class="tw-rounded"/>
+      <g class="tw-bars"><rect x="148" y="306" width="15" height="16" rx="3" style="--i:0"/><rect x="170" y="298" width="15" height="24" rx="3" style="--i:1"/><rect x="192" y="288" width="15" height="34" rx="3" style="--i:2"/><rect x="214" y="274" width="15" height="48" rx="3" style="--i:3"/></g>
+      <path d="M150 300 L226 262 m-14 -1 l14 1 l-3 13" class="tw-arrow"/>
+      <text x="196" y="342" class="tw-plus" text-anchor="middle">+20%</text>
+      <rect x="66" y="236" width="40" height="8" rx="3" class="tw-pole"/><rect x="186" y="236" width="40" height="8" rx="3" class="tw-pole"/>
+    </g></g>
+
+    <g class="tw-hot " data-id="jm" style="--tint:#00857c">
+    <!-- 2025, JM Family Enterprises: the offices next door, dashboards in the windows. -->
+    <g>
+      <rect x="268" y="306" width="190" height="14" rx="3" class="tw-roofcap"/>
+      <rect x="272" y="318" width="182" height="164" class="tw-jm"/>
+      <rect x="280" y="326" width="166" height="40" rx="4" class="tw-jmband"/>
+      <image href="assets/logos/opt/jm-family-light.webp" x="290" y="329" width="146" height="34" preserveAspectRatio="xMidYMid meet"/>
+      <g transform="translate(284 378)"><rect width="48" height="62" rx="3" class="tw-win"/><rect x="8" y="24" width="32" height="20" rx="2" class="tw-screen"/><rect x="12" y="37" width="4" height="3" class="tw-dash" style="--i:0"/><rect x="19" y="33" width="4" height="7" class="tw-dash" style="--i:1"/><rect x="26" y="29" width="4" height="11" class="tw-dash" style="--i:2"/><rect x="33" y="37" width="4" height="3" class="tw-dash" style="--i:3"/><rect x="18" y="44" width="12" height="10" class="tw-desk"/><circle cx="10" cy="48" r="6" class="tw-plant"/></g><g transform="translate(340 378)"><rect width="48" height="62" rx="3" class="tw-win"/><rect x="8" y="24" width="32" height="20" rx="2" class="tw-screen"/><rect x="12" y="33" width="4" height="7" class="tw-dash" style="--i:1"/><rect x="19" y="29" width="4" height="11" class="tw-dash" style="--i:2"/><rect x="26" y="37" width="4" height="3" class="tw-dash" style="--i:3"/><rect x="33" y="33" width="4" height="7" class="tw-dash" style="--i:4"/><rect x="18" y="44" width="12" height="10" class="tw-desk"/></g><g transform="translate(396 378)"><rect width="48" height="62" rx="3" class="tw-win"/><rect x="8" y="24" width="32" height="20" rx="2" class="tw-screen"/><rect x="12" y="29" width="4" height="11" class="tw-dash" style="--i:2"/><rect x="19" y="37" width="4" height="3" class="tw-dash" style="--i:3"/><rect x="26" y="33" width="4" height="7" class="tw-dash" style="--i:4"/><rect x="33" y="29" width="4" height="11" class="tw-dash" style="--i:5"/><rect x="18" y="44" width="12" height="10" class="tw-desk"/><circle cx="38" cy="48" r="6" class="tw-plant"/></g>
+      <rect x="292" y="448" width="34" height="34" rx="2" class="tw-door"/>
+    </g></g>
+
+    <g class="tw-hot " data-id="toyota" style="--tint:#eb0a1e">
+    <!-- 2024, Toyota: the dealership. Showroom, the tall white tower with
+         the emblem, and the service wing (where Hunter's gear lives). -->
+    <g>
+      <rect x="460" y="282" width="310" height="12" rx="3" class="tw-roofcap"/>
+      <rect x="464" y="292" width="302" height="40" class="tw-facade"/><path d="M524 292 V332" class="tw-seam"/><path d="M584 292 V332" class="tw-seam"/><path d="M644 292 V332" class="tw-seam"/><path d="M704 292 V332" class="tw-seam"/><path d="M764 292 V332" class="tw-seam"/>
+      <rect x="464" y="330" width="302" height="9" class="tw-red"/>
+      <rect x="464" y="339" width="302" height="143" class="tw-glass"/>
+      <rect x="464" y="472" width="302" height="10" class="tw-showfloor"/>
+      <image class="tw-car-img" href="assets/images/town/car-bronze-front.webp" x="480" y="386" width="128" height="92" preserveAspectRatio="xMidYMax meet"/><image class="tw-car-img" href="assets/images/town/car-red-front.webp" x="624" y="392" width="122" height="86" preserveAspectRatio="xMidYMax meet"/>
+      <g transform="translate(612 472)"><rect x="-8" y="-14" width="16" height="14" rx="3" class="tw-pot"/><circle cx="0" cy="-26" r="12" class="tw-leaf"/><circle cx="-8" cy="-34" r="8" class="tw-leaf2"/><circle cx="8" cy="-36" r="9" class="tw-leaf"/></g>
+      <rect x="514" y="339" width="4" height="143" class="tw-mull"/><rect x="564" y="339" width="4" height="143" class="tw-mull"/><rect x="614" y="339" width="4" height="143" class="tw-mull"/><rect x="664" y="339" width="4" height="143" class="tw-mull"/><rect x="714" y="339" width="4" height="143" class="tw-mull"/>
+      <path d="M484 350 l-18 60 M530 350 l-30 100 M690 350 l-24 80" class="tw-shine"/>
+
+      <rect x="890" y="282" width="236" height="12" rx="3" class="tw-roofcap"/>
+      <rect x="884" y="292" width="238" height="40" class="tw-facade"/>
+      <text x="1003" y="321" class="tw-service" text-anchor="middle">SERVICE</text>
+      <rect x="884" y="330" width="238" height="9" class="tw-red"/>
+      <rect x="884" y="339" width="238" height="143" class="tw-facade2"/>
+      <rect x="896" y="350" width="114" height="132" rx="3" class="tw-bay"/><rect x="1016" y="350" width="98" height="132" rx="3" class="tw-bay"/>
+      <rect x="896" y="350" width="114" height="6" class="tw-baylight"/><rect x="1016" y="350" width="98" height="6" class="tw-baylight"/>
+
+      <rect x="762" y="228" width="128" height="254" class="tw-tower"/>
+      <image href="assets/logos/opt/toyota-mark.webp" x="776" y="244" width="100" height="80" preserveAspectRatio="xMidYMid meet"/>
+      <rect x="762" y="330" width="128" height="9" class="tw-red"/>
+      <rect x="772" y="394" width="108" height="10" rx="2" class="tw-red"/>
+      <rect x="786" y="404" width="80" height="78" class="tw-glass"/><path d="M826 404 V482 M786 430 H866" class="tw-mullp"/>
+      <rect x="818" y="440" width="3" height="18" rx="1.5" class="tw-handle"/><rect x="831" y="440" width="3" height="18" rx="1.5" class="tw-handle"/>
+      <circle cx="790" cy="500" r="7" class="tw-bollard" style="--i:0"/><circle cx="816" cy="500" r="7" class="tw-bollard" style="--i:1"/><circle cx="842" cy="500" r="7" class="tw-bollard" style="--i:2"/><circle cx="868" cy="500" r="7" class="tw-bollard" style="--i:3"/>
+    </g></g>
+
+    <!-- The Road Force card: HunterNet readings, read at Toyota. -->
+    <g class="tw-hot tw-rf-hot" data-id="toyota" style="--tint:#eb0a1e">
+    <g class="tw-rf">
+      <rect x="584" y="184" width="162" height="78" rx="9" class="tw-card"/>
+      <text x="596" y="202" class="tw-mono tw-card-k">HUNTERNET · ROAD FORCE</text>
+      <path d="M596 236 H734" class="tw-limit"/><text x="734" y="232" class="tw-mono tw-card-s" text-anchor="end">limit</text>
+      <rect x="600" y="238" width="11" height="14" rx="2" class="tw-rf-ok" style="--i:0"/><rect x="619" y="234" width="11" height="18" rx="2" class="tw-rf-ok" style="--i:1"/><rect x="638" y="240" width="11" height="12" rx="2" class="tw-rf-ok" style="--i:2"/><rect x="657" y="222" width="11" height="30" rx="2" class="tw-rf-over" style="--i:3"/><rect x="676" y="236" width="11" height="16" rx="2" class="tw-rf-ok" style="--i:4"/><rect x="695" y="232" width="11" height="20" rx="2" class="tw-rf-ok" style="--i:5"/><rect x="714" y="239" width="11" height="13" rx="2" class="tw-rf-ok" style="--i:6"/>
+      <g class="tw-recall"><rect x="644" y="208" width="42" height="13" rx="3"/><text x="665" y="217.6" class="tw-mono" text-anchor="middle">RECALL</text></g>
+    </g></g>
+
+    <g class="tw-hot " data-id="hunter" style="--tint:#d0202e">
+    <!-- 2026, Hunter Engineering: in Toyota's service bay. The alignment rig
+         (its logo on the crossbar) reading a car's wheels, and a Road Force
+         balancer, whose readings travel up the wire to HunterNet. -->
+    <g>
+      <rect x="906" y="462" width="94" height="9" rx="2" class="tw-lift"/><rect x="914" y="471" width="7" height="11" class="tw-pole"/><rect x="985" y="471" width="7" height="11" class="tw-pole"/>
+      <rect x="950" y="362" width="7" height="36" class="tw-pole"/>
+      <rect x="906" y="358" width="96" height="9" rx="3" class="tw-tbar"/>
+      <rect x="922" y="342" width="64" height="17" rx="3" class="tw-plate"/><image href="assets/logos/opt/hunter.webp" x="925" y="344" width="58" height="13" preserveAspectRatio="xMidYMid meet" class="tw-hlogo"/>
+      <rect x="900" y="364" width="14" height="10" rx="2" class="tw-cam"/><rect x="994" y="364" width="14" height="10" rx="2" class="tw-cam"/>
+      <polygon points="907,374 912,374 926,452 912,452" fill="url(#twBeam)" class="tw-beam"/>
+      <polygon points="1001,374 996,374 982,452 996,452" fill="url(#twBeam)" class="tw-beam" style="animation-delay:-.6s"/>
+      <g class="tw-onlift"><image class="tw-car-img" href="assets/images/town/car-white-back.webp" x="910" y="388" width="88" height="74" preserveAspectRatio="xMidYMax meet"/></g>
+      <g transform="translate(1062 0)">
+        <rect x="-36" y="420" width="56" height="54" rx="5" class="tw-balancer"/><rect x="-36" y="474" width="56" height="8" class="tw-pole"/>
+        <rect x="-34" y="426" width="52" height="16" rx="2" class="tw-plate"/><image href="assets/logos/opt/hunter.webp" x="-31" y="428" width="46" height="12" preserveAspectRatio="xMidYMid meet" class="tw-hlogo"/>
+        <g class="tw-wheel" transform="translate(-14 404)"><circle r="20" class="tw-tyre"/><circle r="10" class="tw-rim"/><path d="M0 -10 V10 M-10 0 H10" class="tw-spoke"/></g>
+        <rect x="18" y="376" width="34" height="26" rx="3" class="tw-screen"/><path d="M22 392 q4 -8 8 0 t8 0 t8 0 t4 -2" class="tw-wave"/>
+        <rect x="32" y="402" width="5" height="18" class="tw-pole"/>
+        <g transform="translate(40 482)"><ellipse cx="0" cy="-8" rx="11" ry="5" class="tw-tyre"/><ellipse cx="0" cy="-18" rx="11" ry="5" class="tw-tyre"/><ellipse cx="0" cy="-28" rx="11" ry="5" class="tw-tyre"/></g>
       </g>
-      <rect class="tw-ring" x="57" y="155" width="258" height="180" rx="6"/>
-    </g>
+    </g></g>
 
-    <g class="tw-room tw-hot" data-id="shiva" style="--tint:#f39c12">
-      <rect class="tw-back tw-back-shiva" x="332" y="152" width="264" height="186"/>
-      <rect class="tw-floor" x="332" y="324" width="264" height="14"/>
-      
-      <!-- 2020, Shiva Robotics Academy: a search desk, the academy climbing to the top. -->
-      <rect x="348" y="172" width="44" height="58" rx="4" class="tw-cork tw-o"/>
-      <rect x="354" y="178" width="14" height="14" class="tw-note" style="fill:#ffd966"/><rect x="372" y="182" width="14" height="14" class="tw-note" style="fill:#9fd3ff"/><rect x="356" y="200" width="14" height="14" class="tw-note" style="fill:#ffb0a0"/><rect x="372" y="208" width="14" height="14" class="tw-note" style="fill:#c6f0a8"/>
-      <rect x="404" y="176" width="176" height="104" rx="8" class="tw-monitor tw-o"/>
-      <rect x="412" y="184" width="160" height="88" rx="4" class="tw-screen-l"/>
-      <rect x="420" y="191" width="144" height="15" rx="7.5" class="tw-searchbar"/><circle cx="430" cy="198.5" r="3.6" class="tw-mag"/>
-      <text x="438" y="202" class="tw-mono tw-type">robotics classes near me</text>
-      <g class="tw-results"><rect x="420" y="214" width="144" height="14" rx="3" class="tw-top"/><text x="426" y="224" class="tw-mono tw-rank">#1</text><rect x="442" y="219" width="70" height="4" rx="2" class="tw-line-a"/>
-      <rect x="420" y="233" width="100" height="4" rx="2" class="tw-line"/><rect x="420" y="242" width="80" height="4" rx="2" class="tw-line"/></g>
-      <g class="tw-bars"><rect x="528" y="258" width="6" height="8" rx="1.5" style="--i:0"/><rect x="537" y="254" width="6" height="12" rx="1.5" style="--i:1"/><rect x="546" y="249" width="6" height="17" rx="1.5" style="--i:2"/><rect x="555" y="243" width="6" height="23" rx="1.5" style="--i:3"/></g>
-      <text x="454" y="265" class="tw-up">+20%</text>
-      <rect x="484" y="280" width="16" height="12" class="tw-leg"/>
-      <rect x="352" y="292" width="232" height="12" rx="3" class="tw-bench tw-o"/><rect x="364" y="304" width="10" height="20" class="tw-leg"/><rect x="562" y="304" width="10" height="20" class="tw-leg"/>
-      <rect class="tw-ring" x="335" y="155" width="258" height="180" rx="6"/>
-    </g>
+    <!-- The wire: Road Force readings from the balancer, up to HunterNet and into Toyota's card. -->
+    <g class="tw-wire"><path d="M1096 380 V312 H898 V222 H746" class="tw-wire-bed"/><path d="M1096 380 V312 H898 V222 H746" class="tw-wire-p"/></g>
 
-    <g class="tw-room tw-hot" data-id="rfa" style="--tint:#e0a800">
-      <rect class="tw-back tw-back-rfa" x="610" y="152" width="264" height="186"/>
-      <rect class="tw-floor" x="610" y="324" width="264" height="14"/>
-      
-      <!-- 2022, Robotics For All: the sign up desk; forms file themselves, the robot posts the replies. -->
-      <rect x="770" y="172" width="92" height="74" rx="6" class="tw-monitor tw-o"/><rect x="776" y="178" width="80" height="62" rx="3" class="tw-screen-l"/>
-      <rect x="782" y="184" width="68" height="7" rx="1.5" class="tw-cell" style="--i:0"/><rect x="782" y="195" width="68" height="7" rx="1.5" class="tw-cell" style="--i:1"/><rect x="782" y="206" width="68" height="7" rx="1.5" class="tw-cell" style="--i:2"/><rect x="782" y="217" width="68" height="7" rx="1.5" class="tw-cell" style="--i:3"/><rect x="782" y="228" width="68" height="7" rx="1.5" class="tw-cell" style="--i:4"/>
-      <rect x="624" y="262" width="128" height="62" rx="5" class="tw-counter tw-o"/><rect x="618" y="256" width="140" height="10" rx="3" class="tw-bench tw-o"/>
-      <g transform="translate(646 228)"><rect width="34" height="28" rx="4" class="tw-tablet tw-o"/><rect x="5" y="6" width="24" height="3" rx="1.5" class="tw-line"/><rect x="5" y="12" width="18" height="3" rx="1.5" class="tw-line"/><rect x="5" y="18" width="12" height="5" rx="2" class="tw-go"/></g>
-      <g class="tw-form"><rect x="690" y="236" width="18" height="22" rx="2" class="tw-paper tw-o"/></g>
-      <g transform="translate(842 290)"><rect x="-4" y="0" width="8" height="34" class="tw-leg"/><rect x="-18" y="-26" width="36" height="28" rx="6" fill="#2d6cdf" class="tw-o"/><rect x="-10" y="-14" width="20" height="4" rx="2" fill="#123a8a"/></g>
-      <g class="tw-rover"><g transform="translate(704 328)">
-        <rect x="-1.6" y="-56" width="3.2" height="10" class="tw-leg"/><circle cx="0" cy="-58" r="3.4" class="tw-blink" fill="#ff5a3d"/>
-        <rect x="-22" y="-48" width="44" height="30" rx="10" fill="#f6c431" class="tw-o"/>
-        <rect x="-14" y="-41" width="11" height="12" rx="3.5" class="tw-eye"/><rect x="3" y="-41" width="11" height="12" rx="3.5" class="tw-eye"/>
-        <circle class="tw-pupil tw-follow" cx="-8.5" cy="-35" r="2.6"/><circle class="tw-pupil tw-follow" cx="8.5" cy="-35" r="2.6"/>
-        <rect x="-17" y="-18" width="34" height="22" rx="5" fill="#2d6cdf" class="tw-o"/>
-        <g class="tw-mail"><rect x="14" y="-30" width="22" height="15" rx="2" class="tw-paper tw-o"/><path d="M15 -29 l10 8 l10 -8" class="tw-fold"/></g>
-        <circle cx="-9" cy="6" r="6" class="tw-tyre"/><circle cx="9" cy="6" r="6" class="tw-tyre"/>
-      </g></g>
-      <rect class="tw-ring" x="613" y="155" width="258" height="180" rx="6"/>
-    </g>
-
-    <g class="tw-room tw-hot" data-id="fics" style="--tint:#fa4616">
-      <rect class="tw-back tw-back-fics" x="888" y="152" width="258" height="186"/>
-      <rect class="tw-floor" x="888" y="324" width="258" height="14"/>
-      
-      <!-- 2023, FICS at UF: the server room, catching the prompts meant to break a chatbot. -->
-      <rect x="904" y="184" width="56" height="140" rx="5" class="tw-rack tw-o"/><rect x="910" y="192" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="917" cy="198" r="1.9" class="tw-led" style="--d:0s"/><circle cx="924" cy="198" r="1.9" class="tw-led" style="--d:0.31s"/><circle cx="931" cy="198" r="1.9" class="tw-led" style="--d:0.62s"/><rect x="910" y="210" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="917" cy="216" r="1.9" class="tw-led" style="--d:0.9299999999999999s"/><circle cx="924" cy="216" r="1.9" class="tw-led" style="--d:1.24s"/><circle cx="931" cy="216" r="1.9" class="tw-led" style="--d:1.55s"/><rect x="910" y="228" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="917" cy="234" r="1.9" class="tw-led" style="--d:0s"/><circle cx="924" cy="234" r="1.9" class="tw-led" style="--d:0.31s"/><circle cx="931" cy="234" r="1.9" class="tw-led" style="--d:0.62s"/><rect x="910" y="246" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="917" cy="252" r="1.9" class="tw-led" style="--d:0.9299999999999999s"/><circle cx="924" cy="252" r="1.9" class="tw-led" style="--d:1.24s"/><circle cx="931" cy="252" r="1.9" class="tw-led" style="--d:1.55s"/><rect x="910" y="264" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="917" cy="270" r="1.9" class="tw-led" style="--d:0s"/><circle cx="924" cy="270" r="1.9" class="tw-led" style="--d:0.31s"/><circle cx="931" cy="270" r="1.9" class="tw-led" style="--d:0.62s"/><rect x="910" y="282" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="917" cy="288" r="1.9" class="tw-led" style="--d:0.9299999999999999s"/><circle cx="924" cy="288" r="1.9" class="tw-led" style="--d:1.24s"/><circle cx="931" cy="288" r="1.9" class="tw-led" style="--d:1.55s"/><rect x="910" y="300" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="917" cy="306" r="1.9" class="tw-led" style="--d:0s"/><circle cx="924" cy="306" r="1.9" class="tw-led" style="--d:0.31s"/><circle cx="931" cy="306" r="1.9" class="tw-led" style="--d:0.62s"/><rect x="968" y="184" width="56" height="140" rx="5" class="tw-rack tw-o"/><rect x="974" y="192" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="981" cy="198" r="1.9" class="tw-led" style="--d:0.62s"/><circle cx="988" cy="198" r="1.9" class="tw-led" style="--d:0.9299999999999999s"/><circle cx="995" cy="198" r="1.9" class="tw-led" style="--d:1.24s"/><rect x="974" y="210" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="981" cy="216" r="1.9" class="tw-led" style="--d:1.55s"/><circle cx="988" cy="216" r="1.9" class="tw-led" style="--d:0s"/><circle cx="995" cy="216" r="1.9" class="tw-led" style="--d:0.31s"/><rect x="974" y="228" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="981" cy="234" r="1.9" class="tw-led" style="--d:0.62s"/><circle cx="988" cy="234" r="1.9" class="tw-led" style="--d:0.9299999999999999s"/><circle cx="995" cy="234" r="1.9" class="tw-led" style="--d:1.24s"/><rect x="974" y="246" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="981" cy="252" r="1.9" class="tw-led" style="--d:1.55s"/><circle cx="988" cy="252" r="1.9" class="tw-led" style="--d:0s"/><circle cx="995" cy="252" r="1.9" class="tw-led" style="--d:0.31s"/><rect x="974" y="264" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="981" cy="270" r="1.9" class="tw-led" style="--d:0.62s"/><circle cx="988" cy="270" r="1.9" class="tw-led" style="--d:0.9299999999999999s"/><circle cx="995" cy="270" r="1.9" class="tw-led" style="--d:1.24s"/><rect x="974" y="282" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="981" cy="288" r="1.9" class="tw-led" style="--d:1.55s"/><circle cx="988" cy="288" r="1.9" class="tw-led" style="--d:0s"/><circle cx="995" cy="288" r="1.9" class="tw-led" style="--d:0.31s"/><rect x="974" y="300" width="44" height="12" rx="2" class="tw-unit-s"/><circle cx="981" cy="306" r="1.9" class="tw-led" style="--d:0.62s"/><circle cx="988" cy="306" r="1.9" class="tw-led" style="--d:0.9299999999999999s"/><circle cx="995" cy="306" r="1.9" class="tw-led" style="--d:1.24s"/>
-      <text x="960" y="180" class="tw-mono tw-tiny" text-anchor="middle">HiPerGator</text>
-      <rect x="1040" y="236" width="96" height="66" rx="6" class="tw-monitor tw-o"/><rect x="1046" y="242" width="84" height="54" rx="3" class="tw-screen-d"/>
-      <g class="tw-bad"><rect x="1052" y="250" width="62" height="18" rx="6" class="tw-bubble"/><text x="1083" y="262.5" class="tw-mono tw-warn" text-anchor="middle">ignore rules</text></g>
-      <g class="tw-shield"><path d="M1110 268 l12 4 v9 q0 10 -12 15 q-12 -5 -12 -15 v-9 z" fill="#2fae5a"/><path d="M1105 281 l4 4 l7 -8" class="tw-tick"/></g>
-      <rect x="1080" y="302" width="14" height="10" class="tw-leg"/><rect x="1034" y="312" width="108" height="10" rx="3" class="tw-bench tw-o"/>
-      <rect class="tw-ring" x="891" y="155" width="252" height="180" rx="6"/>
-    </g>
-
-    <!-- The pennant: University of Florida, hung in the server room. -->
-    <g class="tw-hot tw-pennant" data-id="edu" style="--tint:#0021a5"><rect x="1040" y="168" width="3" height="54" class="tw-leg"/><path d="M1043 170 L1112 184 L1043 198 Z" fill="#0021a5" class="tw-o"/><path d="M1043 198 L1112 184 L1043 212 Z" fill="#fa4616" class="tw-o"/><text x="1060" y="190" class="tw-uf">UF</text></g>
-
-    <!-- Downstairs. -->
-    <g class="tw-room tw-hot" data-id="toyota" style="--tint:#eb0a1e">
-      <rect class="tw-back tw-back-toyota" x="840" y="366" width="306" height="206"/>
-      <rect class="tw-floor" x="840" y="558" width="306" height="14"/>
-      
-      <!-- 2024, Southeast Toyota: the showroom, a crossover on the turntable, tyres on display. -->
-      <rect x="850" y="378" width="286" height="30" rx="5" class="tw-signband tw-o"/>
-      <image href="assets/logos/opt/toyota.webp" x="904" y="382" width="178" height="22" preserveAspectRatio="xMidYMid meet"/>
-      <polygon points="930,408 900,558 1010,558 980,408" fill="url(#twSpot)" class="tw-spotlight"/>
-      <ellipse cx="970" cy="560" rx="104" ry="8" class="tw-turn"/>
-      <g class="tw-show" transform="translate(970 560)"><g class="tw-car-toyota"><g class="tw-o">
-    <rect x="-80" y="-30" width="22" height="30" rx="6" class="tw-tyre"/><rect x="58" y="-30" width="22" height="30" rx="6" class="tw-tyre"/>
-    <path d="M-60 -76 L-48 -112 Q-46 -118 -38 -118 H38 Q46 -118 48 -112 L60 -76 Z" class="tw-paint"/>
-    <path d="M-50 -80 L-41 -108 H41 L50 -80 Z" class="tw-glass-c"/>
-    <rect x="-74" y="-94" width="13" height="10" rx="4" class="tw-paint"/><rect x="61" y="-94" width="13" height="10" rx="4" class="tw-paint"/>
-    <path d="M-86 -24 V-64 Q-86 -76 -74 -78 L74 -78 Q86 -76 86 -64 V-24 Q86 -14 76 -14 H-76 Q-86 -14 -86 -24 Z" class="tw-paint"/>
-    <path d="M-80 -68 L-40 -64 L-44 -55 L-80 -57 Z M80 -68 L40 -64 L44 -55 L80 -57 Z" class="tw-lightlens"/>
-    <rect x="-34" y="-68" width="68" height="10" rx="3" class="tw-grille"/>
-    <ellipse cx="0" cy="-63" rx="9" ry="6" class="tw-badge"/><ellipse cx="0" cy="-63" rx="3.4" ry="6" class="tw-badge-in"/><ellipse cx="0" cy="-65" rx="8" ry="2.6" class="tw-badge-in"/>
-    <path d="M-54 -50 H54 L46 -24 H-46 Z" class="tw-grille"/>
-    <path d="M-50 -46 H50 M-48 -40 H48 M-46 -34 H46 M-44 -28 H44" class="tw-mesh"/>
-    <rect x="-17" y="-44" width="34" height="10" rx="2" class="tw-plate"/>
-    <rect x="-78" y="-38" width="14" height="6" rx="3" class="tw-fog"/><rect x="64" y="-38" width="14" height="6" rx="3" class="tw-fog"/>
-  </g></g></g>
-      <g transform="translate(1106 558)"><ellipse cx="0" cy="-8" rx="24" ry="9" class="tw-tyre tw-o"/><ellipse cx="0" cy="-23" rx="24" ry="9" class="tw-tyre tw-o"/><ellipse cx="0" cy="-38" rx="24" ry="9" class="tw-tyre tw-o"/><ellipse cx="0" cy="-38" rx="9" ry="3.4" class="tw-hub"/></g>
-      <rect class="tw-ring" x="843" y="369" width="300" height="200" rx="6"/>
-    </g>
-
-    <g class="tw-room tw-hot" data-id="jm" style="--tint:#00857c">
-      <rect class="tw-back tw-back-jm" x="530" y="366" width="296" height="206"/>
-      <rect class="tw-floor" x="530" y="558" width="296" height="14"/>
-      
-      <!-- 2025, JM Family: the Lexus side of the house, and the data behind the whole floor. -->
-      <rect x="544" y="378" width="160" height="30" rx="5" class="tw-signband tw-o"/>
-      <image href="assets/logos/opt/jm-lexus.webp" x="554" y="384" width="140" height="18" preserveAspectRatio="xMidYMid meet" class="tw-lexus-mark"/>
-      <rect x="718" y="378" width="96" height="60" rx="6" class="tw-plaque tw-o"/><image class="tw-lg-d" href="assets/logos/opt/jm-family.webp" x="724" y="382" width="84" height="52" preserveAspectRatio="xMidYMid meet"/><image class="tw-lg-l" href="assets/logos/opt/jm-family-light.webp" x="724" y="382" width="84" height="52" preserveAspectRatio="xMidYMid meet"/>
-      <rect x="718" y="448" width="96" height="76" rx="6" class="tw-monitor tw-o"/><rect x="723" y="453" width="86" height="66" rx="3" class="tw-screen-d"/>
-      <g class="tw-check" style="--i:0"><rect x="729" y="459" width="52" height="7" rx="2" class="tw-row"/><text x="789" y="465.5" class="tw-mono tw-mark tw-ok">✓</text></g><g class="tw-check" style="--i:1"><rect x="729" y="471" width="52" height="7" rx="2" class="tw-row"/><text x="789" y="477.5" class="tw-mono tw-mark tw-ok">✓</text></g><g class="tw-check" style="--i:2"><rect x="729" y="483" width="52" height="7" rx="2" class="tw-row"/><text x="789" y="489.5" class="tw-mono tw-mark tw-bad-x">✕</text></g><g class="tw-check" style="--i:3"><rect x="729" y="495" width="52" height="7" rx="2" class="tw-row"/><text x="789" y="501.5" class="tw-mono tw-mark tw-ok">✓</text></g><g class="tw-check" style="--i:4"><rect x="729" y="507" width="52" height="7" rx="2" class="tw-row"/><text x="789" y="513.5" class="tw-mono tw-mark tw-ok">✓</text></g>
-      <polygon points="610,408 580,558 690,558 660,408" fill="url(#twSpot)" class="tw-spotlight" style="animation-delay:-2.5s"/>
-      <ellipse cx="634" cy="560" rx="100" ry="8" class="tw-turn"/>
-      <g class="tw-show" transform="translate(634 560)"><g class="tw-car-lexus"><g class="tw-o">
-    <rect x="-80" y="-26" width="22" height="26" rx="6" class="tw-tyre"/><rect x="58" y="-26" width="22" height="26" rx="6" class="tw-tyre"/>
-    <path d="M-58 -62 L-44 -94 Q-42 -100 -34 -100 H34 Q42 -100 44 -94 L58 -62 Z" class="tw-paint"/>
-    <path d="M-48 -66 L-37 -91 H37 L48 -66 Z" class="tw-glass-c"/>
-    <rect x="-72" y="-78" width="13" height="9" rx="4" class="tw-paint"/><rect x="59" y="-78" width="13" height="9" rx="4" class="tw-paint"/>
-    <path d="M-88 -22 V-52 Q-88 -63 -76 -64 L76 -64 Q88 -63 88 -52 V-22 Q88 -12 78 -12 H-78 Q-88 -12 -88 -22 Z" class="tw-paint"/>
-    <path d="M-84 -57 L-36 -55 L-41 -49 L-80 -49 Z M84 -57 L36 -55 L41 -49 L80 -49 Z" class="tw-lightlens"/>
-    <path d="M-80 -44 L-72 -34 L-58 -42 M80 -44 L72 -34 L58 -42" class="tw-drl"/>
-    <path d="M-28 -60 H28 L16 -43 L38 -16 H-38 L-16 -43 Z" class="tw-grille"/>
-    <path d="M-24 -55 L24 -55 M-19 -48 H19 M-22 -38 H22 M-30 -28 H30 M-35 -21 H35" class="tw-mesh"/>
-    <ellipse cx="0" cy="-51" rx="9" ry="6" class="tw-badge"/><path d="M-3 -55 L-5 -47 H4" class="tw-badge-l"/>
-  </g></g></g>
-      <rect class="tw-ring" x="533" y="369" width="290" height="200" rx="6"/>
-    </g>
-
-    <g class="tw-room tw-hot" data-id="hunter" style="--tint:#b5121b">
-      <rect class="tw-back tw-back-hunter" x="190" y="366" width="326" height="206"/>
-      <rect class="tw-floor" x="190" y="558" width="326" height="14"/>
-      
-      <!-- 2026, Hunter Engineering: the service bay. A Toyota from the showroom on the
-           alignment lift, the rig reading its wheels, the reset going out over the air. -->
-      <rect x="204" y="378" width="190" height="30" rx="5" class="tw-signband tw-o"/>
-      <image href="assets/logos/opt/hunter.webp" x="218" y="382" width="162" height="22" preserveAspectRatio="xMidYMid meet"/>
-      <rect x="204" y="414" width="32" height="96" rx="4" class="tw-console tw-o"/><rect x="209" y="420" width="22" height="16" rx="2" class="tw-screen-d"/><path d="M220 414 v-14" class="tw-antenna"/><circle cx="220" cy="398" r="3" class="tw-led-on"/>
-      <g class="tw-waves" transform="translate(220 396)"><path d="M10 -6 a12 12 0 0 1 0 12" /><path d="M18 -12 a22 22 0 0 1 0 24" style="animation-delay:.4s"/><path d="M26 -18 a32 32 0 0 1 0 36" style="animation-delay:.8s"/></g>
-      <g class="tw-lift">
-        <g transform="translate(350 522)"><g class="tw-car-side"><g class="tw-o">
-    <path d="M-80 -14 Q-82 -30 -66 -33 L-40 -36 Q-24 -56 4 -58 Q32 -58 50 -38 L72 -33 Q84 -30 84 -16 V-10 H-80 Z" class="tw-paint"/>
-    <path d="M-33 -37 Q-20 -51 -2 -53 V-37 Z M3 -53 Q26 -53 41 -37 H3 Z" class="tw-glass-c"/>
-    <path d="M-2 -37 V-14 M-36 -22 H70" class="tw-trim"/>
-    <rect x="72" y="-30" width="11" height="6" rx="3" class="tw-lightlens"/><rect x="-80" y="-30" width="8" height="7" rx="3" class="tw-tail"/>
-    <circle cx="-48" cy="-8" r="15" class="tw-tyre"/><circle cx="50" cy="-8" r="15" class="tw-tyre"/><circle cx="-48" cy="-8" r="6.5" class="tw-hub"/><circle cx="50" cy="-8" r="6.5" class="tw-hub"/>
-  </g></g></g>
-        <rect x="294" y="502" width="16" height="16" rx="3" class="tw-clamp tw-o"/><rect x="392" y="502" width="16" height="16" rx="3" class="tw-clamp tw-o"/>
-        <rect x="252" y="528" width="200" height="10" rx="3" fill="#c8302f" class="tw-o"/>
+    <g class="tw-hot " data-id="fics" style="--tint:#fa4616">
+    <!-- 2023, FICS at UF: a lab on the dealership's roof. Racks, a terminal
+         catching prompts meant to break a chatbot, and a dish that turns to
+         watch the sky. -->
+    <g>
+      <rect x="950" y="232" width="150" height="52" rx="4" class="tw-lab"/>
+      <rect x="944" y="226" width="162" height="9" rx="3" class="tw-roofcap"/>
+      <g transform="translate(960 242)"><rect width="22" height="38" rx="2" class="tw-rack"/><circle cx="6" cy="7" r="1.7" class="tw-led" style="--d:0s"/><circle cx="12" cy="7" r="1.7" class="tw-led" style="--d:0.29s"/><circle cx="6" cy="16" r="1.7" class="tw-led" style="--d:0.33s"/><circle cx="12" cy="16" r="1.7" class="tw-led" style="--d:0.58s"/><circle cx="6" cy="25" r="1.7" class="tw-led" style="--d:0.66s"/><circle cx="12" cy="25" r="1.7" class="tw-led" style="--d:0.8699999999999999s"/><circle cx="6" cy="34" r="1.7" class="tw-led" style="--d:0.99s"/><circle cx="12" cy="34" r="1.7" class="tw-led" style="--d:1.16s"/></g><g transform="translate(990 242)"><rect width="22" height="38" rx="2" class="tw-rack"/><circle cx="6" cy="7" r="1.7" class="tw-led" style="--d:0.66s"/><circle cx="12" cy="7" r="1.7" class="tw-led" style="--d:0.58s"/><circle cx="6" cy="16" r="1.7" class="tw-led" style="--d:0.99s"/><circle cx="12" cy="16" r="1.7" class="tw-led" style="--d:0.8699999999999999s"/><circle cx="6" cy="25" r="1.7" class="tw-led" style="--d:1.32s"/><circle cx="12" cy="25" r="1.7" class="tw-led" style="--d:1.16s"/><circle cx="6" cy="34" r="1.7" class="tw-led" style="--d:0s"/><circle cx="12" cy="34" r="1.7" class="tw-led" style="--d:0s"/></g>
+      <rect x="1022" y="242" width="68" height="34" rx="3" class="tw-screen"/>
+      <g class="tw-bad"><rect x="1028" y="248" width="46" height="13" rx="4" class="tw-bubble"/><text x="1051" y="257.5" class="tw-mono tw-warn" text-anchor="middle">ignore rules</text></g>
+      <g class="tw-shield"><path d="M1078 258 l9 3 v7 q0 7 -9 11 q-9 -4 -9 -11 v-7 z" fill="#22c55e"/><path d="M1074 268 l3 3 l5 -6" class="tw-tick"/></g>
+      <image class=" tw-lg-d" href="assets/logos/opt/fics.webp" x="1052" y="204" width="48" height="22" preserveAspectRatio="xMidYMid meet"/><image class=" tw-lg-l" href="assets/logos/opt/fics-light.webp" x="1052" y="204" width="48" height="22" preserveAspectRatio="xMidYMid meet"/>
+      <g class="tw-dish-g" transform="translate(986 226)">
+        <rect x="-3" y="-16" width="6" height="16" class="tw-pole"/>
+        <g class="tw-dish" transform="translate(0 -16)"><path d="M-22 -14 q22 22 44 0 z" class="tw-dishface"/><path d="M0 -6 l0 -16" class="tw-feed"/><circle cx="0" cy="-24" r="3" class="tw-led-on"/>
+        <g class="tw-pings"><path d="M-10 -34 a14 14 0 0 1 20 0"/><path d="M-18 -42 a26 26 0 0 1 36 0" style="animation-delay:.4s"/></g></g>
       </g>
-      <rect x="262" y="538" width="10" height="34" class="tw-leg"/><rect x="432" y="538" width="10" height="34" class="tw-leg"/>
-      <g transform="translate(486 420)"><rect x="-4" y="0" width="8" height="152" class="tw-leg"/><rect x="-22" y="0" width="44" height="7" rx="3" class="tw-leg"/><rect x="-26" y="-10" width="16" height="14" rx="3" class="tw-cam tw-o"/><rect x="10" y="-10" width="16" height="14" rx="3" class="tw-cam tw-o"/></g>
-      <polygon points="466,416 302,504 302,516" fill="url(#twBeam)" class="tw-beam"/>
-      <polygon points="502,416 400,504 400,516" fill="url(#twBeam)" class="tw-beam" style="animation-delay:-.7s"/>
-      <rect class="tw-ring" x="193" y="369" width="320" height="200" rx="6"/>
-    </g>
+    </g></g>
 
-    <g class="tw-room tw-hot" data-id="adt" style="--tint:#1f6fd1">
-      <rect class="tw-back tw-back-adt" x="54" y="366" width="122" height="206"/>
-      <rect class="tw-floor" x="54" y="558" width="122" height="14"/>
-      
-      <!-- 2026, ADT: the front door, the panel beside it, the sign above it. -->
-      <rect x="66" y="378" width="98" height="38" rx="5" class="tw-signband tw-o"/><image class="" href="assets/logos/opt/adt.webp" x="98" y="381" width="34" height="32" preserveAspectRatio="xMidYMid meet"/>
-      <rect x="70" y="426" width="70" height="146" rx="3" class="tw-door tw-o"/><rect x="78" y="434" width="54" height="128" rx="2" class="tw-door-glass"/>
-      <path d="M86 440 l-8 40 M104 440 l-16 70" class="tw-shine"/>
-      <rect x="128" y="498" width="4" height="22" rx="2" class="tw-leg"/>
-      <rect x="148" y="460" width="20" height="30" rx="4" class="tw-keypad tw-o"/><rect x="151" y="464" width="14" height="7" rx="1.5" class="tw-screen-d"/><circle cx="158" cy="481" r="2.2" class="tw-armed"/>
-      <rect class="tw-ring" x="57" y="369" width="116" height="200" rx="6"/>
-    </g>
+    <!-- Front lawn: a walk to the door, a drive to the service bays, hedges. -->
+    <path d="M800 482 H852 L870 552 H782 Z" class="tw-walk"/>
+    <rect x="884" y="482" width="238" height="70" class="tw-drive"/>
+    <g transform="translate(480 494) scale(0.9)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(560 496) scale(0.8)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(708 494) scale(0.95)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g><g transform="translate(452 498) scale(0.7)"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g>
 
-    <!-- The camera on the corner, outside, watching the street (and the pointer). -->
-    <g class="tw-cctv" transform="translate(40 392)">
-      <rect x="-14" y="-3" width="14" height="6" class="tw-leg"/>
-      <g class="tw-cctv-head" transform="rotate(-24)"><g transform="translate(-14 0)">
-        <polygon points="-20,0 -200,-46 -200,46" fill="url(#twCone)" class="tw-cone" transform="scale(1 .55)"/>
-        <rect x="-30" y="-8" width="32" height="16" rx="5" class="tw-camshell tw-o"/>
-        <rect x="-35" y="-6" width="7" height="12" rx="2" fill="#1f6fd1"/>
-        <circle cx="-5" cy="-3" r="2" class="tw-rec"/>
-      </g></g>
-    </g>
+    <g class="tw-hot " data-id="adt" style="--tint:#1f6fd1">
+    <!-- 2026, ADT: the sign on the lawn, and the camera on the showroom's corner. -->
+    <g>
+      <g transform="translate(920 516)"><rect x="-2" y="-30" width="4" height="40" class="tw-pole"/><image class="" href="assets/logos/opt/adt.webp" x="-22" y="-72" width="44" height="44" preserveAspectRatio="xMidYMid meet"/><text x="0" y="-80" class="tw-mono tw-secured" text-anchor="middle">SECURED BY</text></g>
+      <g class="tw-cctv" transform="translate(462 300)">
+        <rect x="-12" y="-3" width="12" height="6" class="tw-pole"/>
+        <g class="tw-cctv-head" transform="rotate(-24)"><g transform="translate(-12 0)">
+          <polygon points="-18,0 -170,-40 -170,40" fill="url(#twCone)" class="tw-cone" transform="scale(1 .55)"/>
+          <rect x="-26" y="-7" width="28" height="14" rx="4" class="tw-camshell"/>
+          <rect x="-31" y="-5" width="6" height="10" rx="2" fill="#1f6fd1"/>
+          <circle cx="-4" cy="-3" r="1.8" class="tw-rec"/>
+        </g></g>
+      </g>
+    </g></g>
 
+    <g class="tw-hot " data-id="edu" style="--tint:#0021a5">
+    <!-- University of Florida: a pond, a pennant, and a gator having a look. -->
+    <g>
+      <ellipse cx="130" cy="522" rx="112" ry="26" class="tw-pond"/>
+      <ellipse cx="54" cy="512" rx="18" ry="10" class="tw-rock"/><ellipse cx="206" cy="526" rx="16" ry="9" class="tw-rock"/><ellipse cx="170" cy="506" rx="12" ry="7" class="tw-rock"/>
+      <g class="tw-ripples"><ellipse cx="118" cy="526" rx="20" ry="5"/><ellipse cx="118" cy="526" rx="20" ry="5" style="animation-delay:-1.6s"/></g>
+      <g class="tw-gator">
+        <path d="M86 530 q4 -14 18 -14 h30 q10 0 18 8 l10 6 z" class="tw-gator-b"/>
+        <circle cx="102" cy="518" r="7" class="tw-gator-b"/><circle cx="118" cy="518" r="7" class="tw-gator-b"/>
+        <circle cx="102" cy="517" r="3.6" fill="#fff"/><circle cx="118" cy="517" r="3.6" fill="#fff"/>
+        <circle cx="103" cy="517" r="1.8" class="tw-pupil"/><circle cx="119" cy="517" r="1.8" class="tw-pupil"/>
+        <rect x="97" y="511" width="26" height="6" class="tw-lid"/>
+      </g>
+      <rect x="228" y="466" width="3.4" height="58" class="tw-pole"/>
+      <path d="M231 468 l40 11 l-40 11 z" fill="#0021a5"/><path d="M231 479 l40 0 l-40 11 z" fill="#fa4616"/><text x="243" y="483" class="tw-uf">UF</text>
+    </g></g>
+
+    <g class="tw-hot " data-id="rjax" style="--tint:#22c55e">
+    <!-- 2019, Renaissance Jax: a competition robot on the lawn, locking on its target. -->
+    <g>
+      <g transform="translate(300 478)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
+      <g transform="translate(470 500)"><rect x="-2" y="0" width="4" height="34" class="tw-pole"/><path d="M-12 -18 v14 h24 v-14 h-6 v8 h-12 v-8 z" class="tw-target"/></g>
+      <g class="tw-reticle" transform="translate(470 490)"><path d="M-22 -16 v-8 h8 M14 -24 h8 v8 M22 16 v8 h-8 M-14 24 h-8 v-8"/></g>
+      <path d="M402 512 L456 490" class="tw-vision"/>
+      <g transform="translate(330 512)">
+        <rect x="-4" y="16" width="80" height="13" rx="6" fill="#c8373c"/>
+        <rect x="0" y="0" width="72" height="20" rx="4" fill="#22a052"/>
+        <rect x="8" y="5" width="22" height="3" rx="1.5" class="tw-vent"/><rect x="8" y="11" width="22" height="3" rx="1.5" class="tw-vent"/>
+        <circle cx="12" cy="32" r="6" class="tw-tyre"/><circle cx="60" cy="32" r="6" class="tw-tyre"/>
+        <g class="tw-turret"><rect x="44" y="-14" width="6" height="16" class="tw-pole"/><rect x="40" y="-22" width="18" height="10" rx="3" class="tw-cam"/><circle cx="57" cy="-17" r="3.6" class="tw-ringlight"/></g>
+      </g>
+    </g></g>
+
+    <g class="tw-hot " data-id="rfa" style="--tint:#f2b705">
+    <!-- 2022, Robotics For All: the rover, in the colours of its logo. It
+         wanders the lawn, and follows the pointer when it's on the grass. -->
+    <g class="tw-rover" transform="translate(600 538)"><g class="tw-rover-flip"><g class="tw-rover-bob">
+      <rect x="-1.6" y="-60" width="3.2" height="11" class="tw-pole"/><circle cx="0" cy="-62" r="3.6" class="tw-blink" fill="#ff5a3d"/>
+      <rect x="-22" y="-50" width="44" height="31" rx="11" fill="#ffc928" class="tw-ol"/>
+      <rect x="-14" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/><rect x="3" y="-43" width="11" height="12" rx="3.5" class="tw-eye"/>
+      <circle class="tw-pupil2 tw-follow" cx="-8.5" cy="-37" r="2.6"/><circle class="tw-pupil2 tw-follow" cx="8.5" cy="-37" r="2.6"/>
+      <rect x="-17" y="-19" width="34" height="22" rx="6" fill="#2b6fe0" class="tw-ol"/><rect x="-9" y="-15" width="18" height="9" rx="2" fill="#1b4fb4"/>
+      <path d="M-17 -12 l-9 8 M17 -12 l9 8" class="tw-arm"/>
+      <g class="tw-mail"><rect x="20" y="-14" width="20" height="14" rx="2" class="tw-paper"/><path d="M21 -13 l9 7 l9 -7" class="tw-fold"/></g>
+      <circle cx="-10" cy="6" r="6.5" class="tw-tyre"/><circle cx="10" cy="6" r="6.5" class="tw-tyre"/>
+    </g></g></g></g>
+
+    <!-- Lamps along the road. -->
+    <g transform="translate(330 552)" class="tw-lamppost"><circle cx="12" cy="-58" r="34" fill="url(#twLamp)" class="tw-lampglow"/><rect x="-2" y="-62" width="4" height="62" class="tw-pole"/><rect x="-2" y="-64" width="20" height="4" rx="2" class="tw-pole"/><rect x="10" y="-62" width="12" height="5" rx="2" class="tw-bulb"/></g><g transform="translate(760 552)" class="tw-lamppost"><circle cx="12" cy="-58" r="34" fill="url(#twLamp)" class="tw-lampglow"/><rect x="-2" y="-62" width="4" height="62" class="tw-pole"/><rect x="-2" y="-64" width="20" height="4" rx="2" class="tw-pole"/><rect x="10" y="-62" width="12" height="5" rx="2" class="tw-bulb"/></g><g transform="translate(1150 552)" class="tw-lamppost"><circle cx="12" cy="-58" r="34" fill="url(#twLamp)" class="tw-lampglow"/><rect x="-2" y="-62" width="4" height="62" class="tw-pole"/><rect x="-2" y="-64" width="20" height="4" rx="2" class="tw-pole"/><rect x="10" y="-62" width="12" height="5" rx="2" class="tw-bulb"/></g>
+
+    <!-- The threads between jobs, drawn on hover. -->
+    <g class="tw-links"></g>
+    <!-- A pin on every stop. -->
+    <g class="tw-pins"><g class="tw-pin" data-id="rjax" transform="translate(372 488)" style="--tint:#22c55e"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="shiva" transform="translate(145 240)" style="--tint:#2f7fb5"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="fics" transform="translate(1024 238)" style="--tint:#fa4616"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="toyota" transform="translate(826 238)" style="--tint:#eb0a1e"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="jm" transform="translate(362 316)" style="--tint:#00857c"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="hunter" transform="translate(954 352)" style="--tint:#d0202e"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="adt" transform="translate(920 466)" style="--tint:#1f6fd1"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="edu" transform="translate(130 496)" style="--tint:#0021a5"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g><g class="tw-pin" data-id="rfa" style="--tint:#f2b705"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g></g>
   </g>
 
-  <!-- The street. Cars are placed by the script; the cone follows the pointer. -->
-  <g class="tw-near" data-depth="16">
-    <rect x="-200" y="584" width="1600" height="24" class="tw-walk"/>
-    <rect x="-200" y="606" width="1600" height="6" class="tw-curb"/>
-    <rect x="-200" y="612" width="1600" height="100" class="tw-road"/>
-    <g class="tw-dashes"><rect x="-180" y="653" width="28" height="3" rx="1.5"/><rect x="-124" y="653" width="28" height="3" rx="1.5"/><rect x="-68" y="653" width="28" height="3" rx="1.5"/><rect x="-12" y="653" width="28" height="3" rx="1.5"/><rect x="44" y="653" width="28" height="3" rx="1.5"/><rect x="100" y="653" width="28" height="3" rx="1.5"/><rect x="156" y="653" width="28" height="3" rx="1.5"/><rect x="212" y="653" width="28" height="3" rx="1.5"/><rect x="268" y="653" width="28" height="3" rx="1.5"/><rect x="324" y="653" width="28" height="3" rx="1.5"/><rect x="380" y="653" width="28" height="3" rx="1.5"/><rect x="436" y="653" width="28" height="3" rx="1.5"/><rect x="492" y="653" width="28" height="3" rx="1.5"/><rect x="548" y="653" width="28" height="3" rx="1.5"/><rect x="604" y="653" width="28" height="3" rx="1.5"/><rect x="660" y="653" width="28" height="3" rx="1.5"/><rect x="716" y="653" width="28" height="3" rx="1.5"/><rect x="772" y="653" width="28" height="3" rx="1.5"/><rect x="828" y="653" width="28" height="3" rx="1.5"/><rect x="884" y="653" width="28" height="3" rx="1.5"/><rect x="940" y="653" width="28" height="3" rx="1.5"/><rect x="996" y="653" width="28" height="3" rx="1.5"/><rect x="1052" y="653" width="28" height="3" rx="1.5"/><rect x="1108" y="653" width="28" height="3" rx="1.5"/><rect x="1164" y="653" width="28" height="3" rx="1.5"/><rect x="1220" y="653" width="28" height="3" rx="1.5"/><rect x="1276" y="653" width="28" height="3" rx="1.5"/><rect x="1332" y="653" width="28" height="3" rx="1.5"/><rect x="1388" y="653" width="28" height="3" rx="1.5"/><rect x="1444" y="653" width="28" height="3" rx="1.5"/></g>
+  <!-- Near: the road. Cars are placed by the script; the cone follows the pointer. -->
+  <g class="tw-near" data-depth="14">
+    <rect x="-200" y="552" width="1600" height="6" class="tw-curb"/>
+    <rect x="-200" y="558" width="1600" height="70" class="tw-road"/>
+    <g class="tw-dashes"><rect x="-180" y="592" width="28" height="3" rx="1.5"/><rect x="-124" y="592" width="28" height="3" rx="1.5"/><rect x="-68" y="592" width="28" height="3" rx="1.5"/><rect x="-12" y="592" width="28" height="3" rx="1.5"/><rect x="44" y="592" width="28" height="3" rx="1.5"/><rect x="100" y="592" width="28" height="3" rx="1.5"/><rect x="156" y="592" width="28" height="3" rx="1.5"/><rect x="212" y="592" width="28" height="3" rx="1.5"/><rect x="268" y="592" width="28" height="3" rx="1.5"/><rect x="324" y="592" width="28" height="3" rx="1.5"/><rect x="380" y="592" width="28" height="3" rx="1.5"/><rect x="436" y="592" width="28" height="3" rx="1.5"/><rect x="492" y="592" width="28" height="3" rx="1.5"/><rect x="548" y="592" width="28" height="3" rx="1.5"/><rect x="604" y="592" width="28" height="3" rx="1.5"/><rect x="660" y="592" width="28" height="3" rx="1.5"/><rect x="716" y="592" width="28" height="3" rx="1.5"/><rect x="772" y="592" width="28" height="3" rx="1.5"/><rect x="828" y="592" width="28" height="3" rx="1.5"/><rect x="884" y="592" width="28" height="3" rx="1.5"/><rect x="940" y="592" width="28" height="3" rx="1.5"/><rect x="996" y="592" width="28" height="3" rx="1.5"/><rect x="1052" y="592" width="28" height="3" rx="1.5"/><rect x="1108" y="592" width="28" height="3" rx="1.5"/><rect x="1164" y="592" width="28" height="3" rx="1.5"/><rect x="1220" y="592" width="28" height="3" rx="1.5"/><rect x="1276" y="592" width="28" height="3" rx="1.5"/><rect x="1332" y="592" width="28" height="3" rx="1.5"/><rect x="1388" y="592" width="28" height="3" rx="1.5"/><rect x="1444" y="592" width="28" height="3" rx="1.5"/></g>
     <g class="tw-traffic"></g>
-    <g class="tw-cone-pt" opacity="0"><path d="M-12 0 L-4 -30 H4 L12 0 Z" fill="#ff7a1a" class="tw-o"/><path d="M-8.6 -12 H8.6 M-6.4 -21 H6.4" stroke="#fff" stroke-width="3.4"/><rect x="-16" y="-3" width="32" height="5" rx="2" fill="#ff7a1a" class="tw-o"/></g>
-  </g>
-
-  <g class="tw-mid" data-depth="10">
-    <!-- The thread: every job, in order, running through the house. -->
-    <path class="tw-thread-bed" d="M120 352 H1153 V578 H96"/>
-    <path class="tw-thread" d="M120 352 H1153 V578 H96"/>
-    <g class="tw-nodes"><g class="tw-node tw-hot" data-id="rjax" transform="translate(186 352)" style="--tint:#2fae5a"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’19</text></g><g class="tw-node tw-hot" data-id="shiva" transform="translate(464 352)" style="--tint:#f39c12"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’20</text></g><g class="tw-node tw-hot" data-id="rfa" transform="translate(742 352)" style="--tint:#e0a800"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’22</text></g><g class="tw-node tw-hot" data-id="fics" transform="translate(1017 352)" style="--tint:#fa4616"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’23</text></g><g class="tw-node tw-hot" data-id="toyota" transform="translate(993 578)" style="--tint:#eb0a1e"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’24</text></g><g class="tw-node tw-hot" data-id="jm" transform="translate(678 578)" style="--tint:#00857c"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’25</text></g><g class="tw-node tw-hot" data-id="hunter" transform="translate(353 578)" style="--tint:#b5121b"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’26</text></g><g class="tw-node tw-hot" data-id="adt" transform="translate(115 578)" style="--tint:#1f6fd1"><circle r="17" class="tw-node-c"/><text y="5" class="tw-node-t" text-anchor="middle">’26</text></g></g>
+    <g class="tw-cone-pt" opacity="0"><path d="M-10 0 L-3.5 -26 H3.5 L10 0 Z" fill="#ff7a1a"/><path d="M-7.4 -10 H7.4 M-5.4 -18 H5.4" stroke="#fff" stroke-width="3"/><rect x="-14" y="-3" width="28" height="5" rx="2" fill="#ff7a1a"/></g>
+    <rect x="-200" y="628" width="1600" height="20" class="tw-grass"/>
   </g>
 </svg>
           <div class="tw-label" aria-hidden="true"></div>
           <aside class="tw-panel" aria-live="polite" hidden>
-            <button type="button" class="tw-x" aria-label="Back to the whole shop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="tw-x" aria-label="Back to the whole street"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
             <div class="tw-panel-in"></div>
             <div class="tw-nav">
               <button type="button" class="tw-prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></button>
@@ -937,8 +927,8 @@
             </div>
           </aside>
         </div>
-        <div class="tw-chips" role="group" aria-label="Every stop, oldest first"><button type="button" class="tw-chip" data-id="rjax" style="--tint:#2fae5a"><b>’19</b><span>Renaissance Jax</span></button><button type="button" class="tw-chip" data-id="shiva" style="--tint:#f39c12"><b>’20</b><span>Shiva Robotics</span></button><button type="button" class="tw-chip" data-id="rfa" style="--tint:#e0a800"><b>’22</b><span>Robotics For All</span></button><button type="button" class="tw-chip" data-id="fics" style="--tint:#fa4616"><b>’23</b><span>FICS @ UF</span></button><button type="button" class="tw-chip" data-id="toyota" style="--tint:#eb0a1e"><b>’24</b><span>Toyota</span></button><button type="button" class="tw-chip" data-id="jm" style="--tint:#00857c"><b>’25</b><span>JM Family</span></button><button type="button" class="tw-chip" data-id="hunter" style="--tint:#b5121b"><b>’26</b><span>Hunter Engineering</span></button><button type="button" class="tw-chip" data-id="adt" style="--tint:#1f6fd1"><b>’26</b><span>ADT</span></button><button type="button" class="tw-chip" data-id="edu" style="--tint:#0021a5"><b>’26</b><span>University of Florida</span></button></div>
-        <script type="application/json" id="town-data">{"order":["rjax","shiva","rfa","fics","toyota","jm","hunter","adt","edu"],"node":{"rjax":[186,352],"shiva":[464,352],"rfa":[742,352],"fics":[1017,352],"toyota":[993,578],"jm":[678,578],"hunter":[353,578],"adt":[115,578]},"roles":{"rjax":{"id":"rjax","org":"Renaissance Jax","short":"Renaissance Jax","role":"Software Developer","when":"Sep 2019 to Feb 2020","where":"Jacksonville, FL","year":2019,"text":"Gave a competition robot the ability to line itself up on its own. I wrote the vision code that spotted targets by color mid match, so the robot could aim without the driver doing it by hand, and kept the cameras, wiring and code working together all season. My first time writing code that had to work in the real world, not just on a laptop.","stats":[],"tags":["C++","Computer Vision","Git"],"photos":["assets/images/journey/renaissance-jax-800.webp","assets/images/journey/rjax-sensor-960.webp","assets/images/journey/rjax-code-960.webp"],"logo":null,"tint":"#2fae5a","zoom":[44,142,284,206],"prop":"the robotics bench"},"shiva":{"id":"shiva","org":"Shiva Robotics Academy","short":"Shiva Robotics","role":"SEO Analyst","when":"Jun 2020 to Jul 2020","where":"Remote","year":2020,"text":"Grew search visits to the academy's site by 20% in one summer, so more families looking for robotics classes actually found it. I studied what people were searching for, rewrote the parts of the site search engines read, and checked the numbers every week to see what was working.","stats":[],"tags":["Analytics","SEO"],"photos":[],"logo":null,"tint":"#f39c12","zoom":[322,142,284,206],"prop":"the search desk"},"rfa":{"id":"rfa","org":"Robotics For All","short":"Robotics For All","role":"Software Engineering Intern","when":"Mar 2022 to Jan 2023","where":"Palo Alto, CA","year":2022,"text":"Gave volunteers back hours every week. They were copying sign up details between forms and spreadsheets by hand, so I wrote scripts that filed each family's information automatically and sent the confirmation emails. Fewer typos, faster replies to parents, and the start of a habit: finding manual work and making it run on its own.","stats":[],"tags":["JavaScript","Google Apps Script","Automation"],"photos":[],"logo":["roboticsforall","roboticsforall"],"tint":"#e0a800","zoom":[600,142,284,206],"prop":"the sign up desk"},"fics":{"id":"fics","org":"Florida Institute for Cybersecurity Research","short":"FICS @ UF","role":"AI Cybersecurity Researcher","when":"May 2023 to May 2024","where":"Gainesville, FL","year":2023,"text":"Helped find the weak spots in AI chatbots before bad actors could. I built tools that automatically tested ChatGPT with inputs designed to make it misbehave, kept a catalogue of the failures we could reliably repeat, and worked on ways to detect and block them, running some of the experiments on HiPerGator, UF's supercomputer. Early, hands on experience with how AI can fail.","stats":[],"tags":["Python","LLM Security","Research"],"photos":["assets/images/journey/fics-terminal-800.webp"],"logo":["fics","fics-light"],"tint":"#fa4616","zoom":[878,142,278,206],"prop":"the server room"},"toyota":{"id":"toyota","org":"Southeast Toyota Distributors","short":"Toyota","role":"Software Engineering Intern","when":"Jun 2024 to Aug 2024","where":"Jacksonville, FL","year":2024,"text":"Helped cut tire warranty claims by 20% and save over $150k by catching costly tire package recalls before they happened. I analyzed tire data for 51,000 vehicles into 21 reports, automated a file transfer that saved about 350 hours a year, and replaced a manual spreadsheet with a live dashboard that made data entry 5× faster.","stats":[["20%","fewer warranty claims"],["$150k","saved on prevented tire recalls"],["5×","faster data entry"]],"tags":["Python","SQL","Azure Blob","Amazon RDS","Power BI","VBA"],"photos":["assets/images/journey/toyota-sign-800.webp","assets/images/journey/toyota-vpc-lexus-800.webp","assets/images/journey/toyota-road-force-800.webp"],"logo":["toyota","toyota-light"],"tint":"#eb0a1e","zoom":[830,356,326,226],"prop":"the Toyota showroom"},"jm":{"id":"jm","org":"JM Family Enterprises","short":"JM Family","role":"Software Engineering Intern","when":"May 2025 to Nov 2025","where":"Deerfield Beach, FL","year":2025,"text":"Made it easier to spot employees with the wrong system access. I built an automated check in Azure that compared each person's access across Microsoft Graph, Salesforce and MuleSoft, flagged anything that didn't match company policy, and produced exception reports. I also built a service that analyzed 100k+ events from JM Lexus and Toyota dealership systems, and helped set up GPT agents to answer questions about that data.","stats":[],"tags":["Azure Functions","C#/.NET","Microsoft Graph","Salesforce","MuleSoft","App Insights","MCP","RAG"],"photos":["assets/images/journey/jm-campus-800.webp","assets/images/journey/jm-interns-800.webp","assets/images/journey/jm-showroom-800.webp","assets/images/journey/jm-jet-800.webp","assets/images/journey/jm-axe-800.webp"],"logo":["jm-family","jm-family-light"],"tint":"#00857c","zoom":[520,356,316,226],"prop":"the Lexus showroom"},"hunter":{"id":"hunter","org":"Hunter Engineering Company","short":"Hunter Engineering","role":"Software Engineering Co-op, R&D","when":"Jan 2026 to May 2026","where":"St. Louis, MO","year":2026,"text":"Made it possible to reset Hunter's alignment machines remotely instead of sending someone out, across more than 100,000 units worldwide. I designed and built the secure reset workflow myself, in C#/.NET and Blazor on Azure IoT Hub. I also fixed crashes that hit during machine setup, and moved the tests to a safer framework that removed a security and privacy risk.","stats":[["100,000+","units reachable worldwide"],["Moq → NSubstitute","across an enterprise codebase"]],"tags":["C#/.NET","Blazor","Azure IoT Hub","IoT Edge","NSubstitute","Docker"],"photos":["assets/images/journey/hunter-sign-800.webp","assets/images/journey/hunter-shop-800.webp","assets/images/journey/hunter-axe-800.webp","assets/images/journey/hunter-jump-800.webp"],"logo":["hunter","hunter-light"],"tint":"#b5121b","zoom":[180,356,346,226],"prop":"the alignment bay"},"adt":{"id":"adt","org":"ADT","short":"ADT","role":"Software Engineering Intern","when":"May 2026 to Oct 2026","where":"Boca Raton, FL","year":2026,"text":"Designed an AI check to catch false alarms before emergency responders are sent out, and presented it to senior leadership. On ADT's Salesforce platform I cleaned up data to keep it under platform limits, brought test coverage back up so releases could ship, and used AI tools like Claude and Cursor to work through a large codebase faster.","stats":[["False alarms","AI dispatch check, pitched to leadership"],["Under the cap","metadata folded into Custom Objects"],["Coverage","Apex tests back above the deploy bar"]],"tags":["Salesforce","Apex","Custom Objects","Cursor","Claude + MCP","AI"],"photos":["assets/images/journey/adt-hq-800.webp","assets/images/journey/adt-jump-800.webp","assets/images/journey/adt-interns-800.webp","assets/images/journey/adt-stage-800.webp","assets/images/journey/adt-sign-800.webp"],"logo":["adt","adt"],"tint":"#1f6fd1","zoom":[44,356,142,226],"prop":"the front door"},"edu":{"id":"edu","org":"University of Florida","short":"UF","role":"B.S. in Computer Science, Herbert Wertheim College of Engineering","when":"December 2026","where":"Gainesville, FL","year":2026,"text":"Earned the University of Florida AI Certificate, with coursework spanning operating systems, databases, data structures and algorithms, software engineering, artificial intelligence, and cybersecurity.","stats":[],"tags":["AI Certificate","Operating Systems","Databases","Algorithms"],"photos":[],"logo":null,"gator":"assets/images/uf-gator-320.webp","tint":"#0021a5","school":true,"zoom":[878,142,278,206],"prop":"the pennant"}}}</script>
+        <div class="tw-chips" role="group" aria-label="Every stop, oldest first"><button type="button" class="tw-chip" data-id="rjax" style="--tint:#22c55e"><b>’19</b><span>Renaissance Jax</span></button><button type="button" class="tw-chip" data-id="shiva" style="--tint:#2f7fb5"><b>’20</b><span>Shiva Robotics</span></button><button type="button" class="tw-chip" data-id="rfa" style="--tint:#f2b705"><b>’22</b><span>Robotics For All</span></button><button type="button" class="tw-chip" data-id="fics" style="--tint:#fa4616"><b>’23</b><span>FICS @ UF</span></button><button type="button" class="tw-chip" data-id="toyota" style="--tint:#eb0a1e"><b>’24</b><span>Toyota</span></button><button type="button" class="tw-chip" data-id="jm" style="--tint:#00857c"><b>’25</b><span>JM Family</span></button><button type="button" class="tw-chip" data-id="hunter" style="--tint:#d0202e"><b>’26</b><span>Hunter Engineering</span></button><button type="button" class="tw-chip" data-id="adt" style="--tint:#1f6fd1"><b>’26</b><span>ADT</span></button><button type="button" class="tw-chip" data-id="edu" style="--tint:#0021a5"><b>’26</b><span>University of Florida</span></button></div>
+        <script type="application/json" id="town-data">{"order":["rjax","shiva","rfa","fics","toyota","jm","hunter","adt","edu"],"pin":{"shiva":[145,240],"rjax":[372,488],"rfa":null,"edu":[130,496],"jm":[362,316],"toyota":[826,238],"hunter":[954,352],"fics":[1024,238],"adt":[920,466]},"links":[["rjax","shiva","Robotics","From building a competition robot to helping a robotics academy get found by the families looking for it."],["shiva","rfa","Robotics classes","Two robotics education groups: first getting families to the classes, then running the sign ups once they came."],["rfa","fics","Automation","The habit from Robotics For All (find the manual work and make it run itself) became tools that tested AI chatbots on their own."],["fics","edu","UF","FICS is the University of Florida’s cybersecurity institute: research alongside coursework."],["fics","jm","AI","What I learned about how AI fails went into setting up GPT agents at JM Family."],["fics","adt","AI safety","From finding how AI breaks to designing an AI check that catches false alarms at ADT."],["toyota","hunter","HunterNet","At Southeast Toyota I pulled Road Force readings from HunterNet, Hunter’s data service for its balancers. When a tire package’s road force variation passed the limit, Toyota had to issue a recall, so finding and reporting those was mine. Two years later I was at Hunter, building for the machines that took those readings."],["jm","toyota","Parent company","JM Family is the parent of Southeast Toyota. At JM I analysed events from the Toyota and JM Lexus dealership systems."],["hunter","adt","Remote reach","Both 2026: resetting machines safely from afar at Hunter, then deciding from afar whether an alarm is real at ADT."]],"roles":{"rjax":{"id":"rjax","org":"Renaissance Jax","short":"Renaissance Jax","role":"Software Developer","when":"Sep 2019 to Feb 2020","where":"Jacksonville, FL","year":2019,"text":"Gave a competition robot the ability to line itself up on its own. I wrote the vision code that spotted targets by color mid match, so the robot could aim without the driver doing it by hand, and kept the cameras, wiring and code working together all season. My first time writing code that had to work in the real world, not just on a laptop.","stats":[],"tags":["C++","Computer Vision","Git"],"photos":["assets/images/journey/renaissance-jax-800.webp","assets/images/journey/rjax-sensor-960.webp","assets/images/journey/rjax-code-960.webp"],"logo":["renaissance-jax","renaissance-jax"],"tint":"#22c55e","zoom":[270,446,230,110]},"shiva":{"id":"shiva","org":"Shiva Robotics Academy","short":"Shiva Robotics","role":"SEO Analyst","when":"Jun 2020 to Jul 2020","where":"Remote","year":2020,"text":"Grew search visits to the academy's site by 20% in one summer, so more families looking for robotics classes actually found it. I studied what people were searching for, rewrote the parts of the site search engines read, and checked the numbers every week to see what was working.","stats":[],"tags":["Analytics","SEO"],"photos":[],"logo":["shiva","shiva"],"tint":"#2f7fb5","zoom":[26,232,250,140]},"rfa":{"id":"rfa","org":"Robotics For All","short":"Robotics For All","role":"Software Engineering Intern","when":"Mar 2022 to Jan 2023","where":"Palo Alto, CA","year":2022,"text":"Gave volunteers back hours every week. They were copying sign up details between forms and spreadsheets by hand, so I wrote scripts that filed each family's information automatically and sent the confirmation emails. Fewer typos, faster replies to parents, and the start of a habit: finding manual work and making it run on its own.","stats":[],"tags":["JavaScript","Google Apps Script","Automation"],"photos":[],"logo":["roboticsforall","roboticsforall"],"tint":"#f2b705","zoom":null},"fics":{"id":"fics","org":"Florida Institute for Cybersecurity Research","short":"FICS @ UF","role":"AI Cybersecurity Researcher","when":"May 2023 to May 2024","where":"Gainesville, FL","year":2023,"text":"Helped find the weak spots in AI chatbots before bad actors could. I built tools that automatically tested ChatGPT with inputs designed to make it misbehave, kept a catalogue of the failures we could reliably repeat, and worked on ways to detect and block them, running some of the experiments on HiPerGator, UF's supercomputer. Early, hands on experience with how AI can fail.","stats":[],"tags":["Python","LLM Security","Research"],"photos":["assets/images/journey/fics-terminal-800.webp"],"logo":["fics","fics-light"],"tint":"#fa4616","zoom":[930,170,200,130]},"toyota":{"id":"toyota","org":"Southeast Toyota Distributors","short":"Toyota","role":"Software Engineering Intern","when":"Jun 2024 to Aug 2024","where":"Jacksonville, FL","year":2024,"text":"Helped cut tire warranty claims by 20% and save over $150k by catching costly tire package recalls before they happened. I analyzed tire data for 51,000 vehicles into 21 reports, automated a file transfer that saved about 350 hours a year, and replaced a manual spreadsheet with a live dashboard that made data entry 5× faster.","stats":[["20%","fewer warranty claims"],["$150k","saved on prevented tire recalls"],["5×","faster data entry"]],"tags":["Python","SQL","Azure Blob","Amazon RDS","Power BI","VBA"],"photos":["assets/images/journey/toyota-sign-800.webp","assets/images/journey/toyota-vpc-lexus-800.webp","assets/images/journey/toyota-road-force-800.webp"],"logo":["toyota","toyota-light"],"tint":"#eb0a1e","zoom":[456,176,450,316]},"jm":{"id":"jm","org":"JM Family Enterprises","short":"JM Family","role":"Software Engineering Intern","when":"May 2025 to Nov 2025","where":"Deerfield Beach, FL","year":2025,"text":"Made it easier to spot employees with the wrong system access. I built an automated check in Azure that compared each person's access across Microsoft Graph, Salesforce and MuleSoft, flagged anything that didn't match company policy, and produced exception reports. I also built a service that analyzed 100k+ events from JM Lexus and Toyota dealership systems, and helped set up GPT agents to answer questions about that data.","stats":[],"tags":["Azure Functions","C#/.NET","Microsoft Graph","Salesforce","MuleSoft","App Insights","MCP","RAG"],"photos":["assets/images/journey/jm-campus-800.webp","assets/images/journey/jm-interns-800.webp","assets/images/journey/jm-showroom-800.webp","assets/images/journey/jm-jet-800.webp","assets/images/journey/jm-axe-800.webp"],"logo":["jm-family","jm-family-light"],"tint":"#00857c","zoom":[258,292,210,200]},"hunter":{"id":"hunter","org":"Hunter Engineering Company","short":"Hunter Engineering","role":"Software Engineering Co-op, R&D","when":"Jan 2026 to May 2026","where":"St. Louis, MO","year":2026,"text":"Made it possible to reset Hunter's alignment machines remotely instead of sending someone out, across more than 100,000 units worldwide. I designed and built the secure reset workflow myself, in C#/.NET and Blazor on Azure IoT Hub. I also fixed crashes that hit during machine setup, and moved the tests to a safer framework that removed a security and privacy risk.","stats":[["100,000+","units reachable worldwide"],["Moq → NSubstitute","across an enterprise codebase"]],"tags":["C#/.NET","Blazor","Azure IoT Hub","IoT Edge","NSubstitute","Docker"],"photos":["assets/images/journey/hunter-sign-800.webp","assets/images/journey/hunter-shop-800.webp","assets/images/journey/hunter-axe-800.webp","assets/images/journey/hunter-jump-800.webp"],"logo":["hunter","hunter-light"],"tint":"#d0202e","zoom":[890,336,236,152]},"adt":{"id":"adt","org":"ADT","short":"ADT","role":"Software Engineering Intern","when":"May 2026 to Oct 2026","where":"Boca Raton, FL","year":2026,"text":"Designed an AI check to catch false alarms before emergency responders are sent out, and presented it to senior leadership. On ADT's Salesforce platform I cleaned up data to keep it under platform limits, brought test coverage back up so releases could ship, and used AI tools like Claude and Cursor to work through a large codebase faster.","stats":[["False alarms","AI dispatch check, pitched to leadership"],["Under the cap","metadata folded into Custom Objects"],["Coverage","Apex tests back above the deploy bar"]],"tags":["Salesforce","Apex","Custom Objects","Cursor","Claude + MCP","AI"],"photos":["assets/images/journey/adt-hq-800.webp","assets/images/journey/adt-jump-800.webp","assets/images/journey/adt-interns-800.webp","assets/images/journey/adt-stage-800.webp","assets/images/journey/adt-sign-800.webp"],"logo":["adt","adt"],"tint":"#1f6fd1","zoom":[866,440,140,120]},"edu":{"id":"edu","org":"University of Florida","short":"UF","role":"B.S. in Computer Science, Herbert Wertheim College of Engineering","when":"December 2026","where":"Gainesville, FL","year":2026,"text":"Earned the University of Florida AI Certificate, with coursework spanning operating systems, databases, data structures and algorithms, software engineering, artificial intelligence, and cybersecurity.","stats":[],"tags":["AI Certificate","Operating Systems","Databases","Algorithms"],"photos":[],"logo":null,"gator":"assets/images/uf-gator-320.webp","tint":"#0021a5","school":true,"zoom":[14,452,260,110]}}}</script>
       </div>
     </section>
     <!-- town:end -->
@@ -1576,6 +1566,16 @@
         </div>
       </div>
     </section>
+
+    <!-- The last thing on the page, on a computer: for whoever scrolls all
+         the way down, the way into the eras. -->
+    <section class="finale" id="finale" aria-label="Another era">
+      <a href="eras.html">
+        <span class="finale-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <span><span class="finale-k">You made it to the bottom. One more thing</span><span class="finale-t">Try this portfolio in <span class="finale-yr" data-years="1977,1984,1998,2007">1977</span></span><span class="finale-s">The same story, booted on the machines of another time. Pick one and step in.</span></span>
+        <span class="finale-go">Step in <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9m-3.5-4L12.5 8l-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+    </section>
   </main>
 
   <footer class="footer">
@@ -1657,13 +1657,13 @@
   <!-- Toasts -->
   <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
 
-  <script type="module" src="script.js"></script>
+  <script type="module" src="script.js?v=20"></script>
   <script src="haptics.js" defer></script>
   <script src="hop.js" defer></script>
   <script src="brand.js" defer></script>
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
   <script src="mobile.js?v=7" defer></script>
-  <script src="town.js?v=10" defer></script>
+  <script src="town.js?v=23" defer></script>
 </body>
 </html>
