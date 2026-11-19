@@ -2,10 +2,11 @@
    AROUND THE BLOCK: what the street does (see town.css).
    Hover anything and everything that belongs to that place glows. Click and
    the scene leans in, the story in a card beside it; arrows walk the stops
-   in order, Esc or the x steps back. The pointer: the Robotics For All
+   in order, Esc or the x steps back. A JM Family car hauler backs up to the
+   dealership once the block comes into view. The pointer: the Robotics For All
    rover comes over when it's near its corner (and keeps its distance), the
    Renaissance Jax robot drives over and locks its camera on it, the corner
-   camera follows it near the building, and the dish on the roof follows it
+   camera follows it near the building, and the dish on the lab's roof follows it
    through the sky.
    Also here: the finale at the bottom of the page.
    ========================================================================== */
@@ -76,7 +77,7 @@
   // Up, a pause, down, a pause; the scissor arms follow the platform, and
   // the HawkEye's two red beacons keep their lasers on the wheel targets.
   const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg);
-  const BEACONS = [[916 + 75.4 * 0.113, 370 + 112 * 0.214], [916 + 75.4 * 0.918, 370 + 112 * 0.214]], WHEELS = [1020, 1093];
+  const BEACONS = [[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]], WHEELS = [1020, 1093];
   const lift = (now) => {
     const t = (now / 1000) % 9, u = t < 3 ? t / 3 : t < 4.5 ? 1 : t < 7.5 ? 1 - (t - 4.5) / 3 : 0;
     const h = 22 * (0.5 - 0.5 * Math.cos(Math.PI * u)), top = 466 - h;
@@ -96,12 +97,36 @@
   const zoomOf = (id) => (bots[id] ? [bots[id].x - 120, bots[id].y - 110, 240, 150] : D.roles[id].zoom);
 
   /* ---------------------------------------------------------- glow */
-  // Everything that belongs to a place lights together.
+  // Everything that belongs to a place lights together. A filter redrawn
+  // every frame is what makes a zoomed scene crawl (in Safari above all),
+  // so the halo comes from a still copy of the place tucked behind it,
+  // drawn once. Only the parts that move (the lift, the robots, the dish,
+  // the camera, the gator) carry a small live glow of their own.
+  const LIVE = { hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
+  const SKIP = { hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
+  const halos = {};
+  const hotOf = (id) => hots.find((h) => h.dataset.id === id);
   let lit = null;
   const glow = (id) => {
     if (lit === id) return;
+    if (lit) {
+      if (halos[lit]) halos[lit].remove();
+      const h = hotOf(lit); if (h) $$(LIVE[lit] || '.tw-none', h).forEach((n) => { n.style.filter = ''; });
+    }
     lit = id;
-    hots.forEach((h) => { h.style.filter = id && h.dataset.id === id ? `url(#twGlow-${id})` : ''; });
+    const h = id && hotOf(id);
+    if (!h) return;
+    let g = halos[id];
+    if (!g) {
+      g = h.cloneNode(true);
+      g.removeAttribute('data-id'); g.removeAttribute('style');
+      g.setAttribute('class', 'tw-halo'); g.setAttribute('aria-hidden', 'true');
+      g.setAttribute('filter', `url(#twHalo-${id})`);
+      $$('.tw-hit' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
+      halos[id] = g;
+    }
+    h.parentNode.insertBefore(g, h);
+    $$(LIVE[id] || '.tw-none', h).forEach((n) => { n.style.filter = `url(#twGlow-${id})`; });
   };
   // Generous, invisible hit areas, so a small move doesn't drop the hover
   // in the gaps between a thing's parts.
@@ -111,11 +136,16 @@
     const parts = h.firstElementChild && h.firstElementChild.tagName === 'g' ? [...h.firstElementChild.children] : [...h.children];
     const hit = document.createElementNS(NS, 'g');
     hit.setAttribute('class', 'tw-hit');
+    const back = h.getCTM().inverse();
     parts.forEach((p) => {
       let b; try { b = p.getBBox(); } catch (e) { return; }
       if (!b || b.width * b.height === 0) return;
+      const m = back.multiply(p.getCTM()), pt = svg.createSVGPoint();
+      const xs = [], ys = [];
+      [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].forEach(([x, y]) => { pt.x = x; pt.y = y; const q = pt.matrixTransform(m); xs.push(q.x); ys.push(q.y); });
+      const x0 = Math.min(...xs), y0 = Math.min(...ys);
       const r = document.createElementNS(NS, 'rect');
-      r.setAttribute('x', b.x - 4); r.setAttribute('y', b.y - 4); r.setAttribute('width', b.width + 8); r.setAttribute('height', b.height + 8);
+      r.setAttribute('x', x0 - 4); r.setAttribute('y', y0 - 4); r.setAttribute('width', Math.max(...xs) - x0 + 8); r.setAttribute('height', Math.max(...ys) - y0 + 8);
       hit.appendChild(r);
     });
     h.insertBefore(hit, h.firstChild);
@@ -128,8 +158,11 @@
   const tween = (to, ms = 850) => {
     cancelAnimationFrame(anim);
     if (reduced) { setVB(to); return; }
+    // While the scene moves the glow steps aside (redrawing it at every
+    // step of the zoom is the expensive part) and comes back when it lands.
     const from = vb.slice(), t0 = performance.now();
-    const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); setVB(from.map((v, i) => v + (to[i] - v) * k)); if (k < 1) anim = requestAnimationFrame(f); };
+    svg.classList.add('tw-moving');
+    const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); setVB(from.map((v, i) => v + (to[i] - v) * k)); if (k < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving'); };
     anim = requestAnimationFrame(f);
   };
   const frame = (z, left) => {
@@ -155,6 +188,7 @@
       <h3>${esc(r.org)}</h3>
       <p class="tw-p-role">${esc(r.role)}</p>
       <p class="tw-p-when">${esc(r.when)} · ${esc(r.where)}</p>
+      ${r.about ? `<p class="tw-p-about">${esc(r.about)}</p>` : ''}
       <p class="tw-p-text">${esc(r.text)}</p>
       ${r.photos.length ? `<div class="tw-p-pics">${r.photos.map((s) => `<button type="button" aria-label="Open photo"><img src="${s}" alt="" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
       ${r.stats.length ? `<ul class="tw-p-stats">${r.stats.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('')}</ul>` : ''}
@@ -188,7 +222,8 @@
     render(r);
     requestAnimationFrame(() => { panel.classList.add('open'); tween(frame(z, left), wasOpen ? 750 : 900); });
     tw.classList.add('zoomed');
-    lit = null; glow(id);
+    glow(null); glow(id);
+    if (id === 'jm') tw.classList.add('arrive', 'parked');
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
     const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
     hideLabel(); resetParallax();
@@ -309,15 +344,16 @@
       tw.classList.toggle('sky', sky);
       tw.classList.toggle('near', !sky);
       if (sky && dish) {
-        // The dish sits on JM Family's roof at (336, 232); it turns its face to the pointer.
-        const a = Math.atan2(p.x - 336, 232 - p.y) * 180 / Math.PI;
+        // The dish sits on the FICS lab's roof at (44, 284); it turns its face to the pointer.
+        const a = Math.atan2(p.x - 44, 284 - p.y) * 180 / Math.PI;
         dish.style.transform = `translate(0px, -16px) rotate(${clamp(a, -70, 70).toFixed(1)}deg)`;
       } else if (dish) dish.style.transform = '';
       if (!sky && head) {
-        // The camera hangs on the wall at (550, 404), over its sign, looking out to the left;
-        // it turns only as far as its mount allows.
-        const a = Math.atan2(p.y - 404, 550 - p.x) * 180 / Math.PI;
-        head.style.transform = `rotate(${clamp(-a, -55, 30).toFixed(1)}deg)`;
+        // The camera is up at the roofline at (568, 350), looking down over its
+        // sign; it turns only as far as its mount allows.
+        let a = Math.atan2(350 - p.y, 568 - p.x) * 180 / Math.PI;
+        if (a > 90) a -= 360;
+        head.style.transform = `rotate(${clamp(a, -160, -30).toFixed(1)}deg)`;
       } else if (head) head.style.transform = '';
       eyes.forEach((el) => {
         const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
@@ -340,6 +376,11 @@
     svg.classList.toggle('tw-paused', !visible);
     if (visible) go(); else running = false;
   }).observe(stage);
+  if (reduced || !('IntersectionObserver' in window)) tw.classList.add('arrive', 'parked');
+  else {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { tw.classList.add('arrive'); io.disconnect(); } }, { threshold: 0.55 });
+    io.observe(stage);
+  }
   addEventListener('resize', () => { if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); });
   tw._bots = bots;
 })();

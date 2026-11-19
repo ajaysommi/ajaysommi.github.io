@@ -121,7 +121,7 @@
 [data-theme="midnight"] .tw .tw-glassover, [data-theme="terminal"] .tw .tw-glassover { fill: rgba(255, 228, 175, .12); }
 .tw-fo { stroke: var(--tw-line); stroke-width: 2.4; }
 .tw-grid { stroke: var(--tw-seam); stroke-width: 1.6; fill: none; }
-.tw-sommi { font: 800 25px var(--font-sans); letter-spacing: .05em; fill: #2a2c34; }
+.tw-sommi { font: 800 17px var(--font-sans); letter-spacing: .08em; fill: #2a2c34; }
 .tw-portal { fill: #2a2c34; }
 .tw-pillar { fill: var(--tw-tower); }
 .tw-doorglass { fill: #9fc3dd; }
@@ -162,7 +162,7 @@
 .tw-cone { animation: tw-scan 3s ease-in-out infinite; }
 .tw-cctv-head { transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
 .tw:not(.near) .tw-cctv-head { animation: tw-pan 7s ease-in-out infinite; }
-@keyframes tw-pan { 0%, 100% { transform: rotate(-38deg); } 50% { transform: rotate(-6deg); } }
+@keyframes tw-pan { 0%, 100% { transform: rotate(-126deg); } 50% { transform: rotate(-82deg); } }
 
 /* ---------------------------------------------------------- the pond */
 .tw-pond { fill: var(--tw-pond); }
@@ -216,7 +216,7 @@
 .tw-label.on { opacity: 1; transform: translate(-50%, calc(-100% - 12px)) scale(1); }
 
 /* ---------------------------------------------------------- the story card */
-.tw-panel { position: absolute; z-index: 4; top: 14px; bottom: 14px; right: 14px; width: min(390px, 40%); display: flex; flex-direction: column; border: 1px solid var(--stroke); border-radius: 18px; background: color-mix(in oklab, var(--bg) 94%, transparent); -webkit-backdrop-filter: blur(16px) saturate(120%); backdrop-filter: blur(16px) saturate(120%); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .45); color: var(--ink); opacity: 0; transform: translateX(24px); transition: opacity .35s, transform .5s cubic-bezier(.2, .8, .2, 1); }
+.tw-panel { position: absolute; z-index: 4; top: 14px; bottom: 14px; right: 14px; width: min(390px, 40%); display: flex; flex-direction: column; border: 1px solid var(--stroke); border-radius: 18px; background: var(--bg); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .45); color: var(--ink); opacity: 0; transform: translateX(24px); transition: opacity .35s, transform .5s cubic-bezier(.2, .8, .2, 1); }
 .tw-panel[hidden] { display: none; }
 .tw-panel.left { right: auto; left: 14px; transform: translateX(-24px); }
 .tw-panel.open { opacity: 1; transform: none; }
@@ -342,3 +342,31 @@
 .tw-rover.hop .tw-rover-hop { animation: tw-hop .55s cubic-bezier(.3, 1.6, .5, 1); }
 @keyframes tw-hop { 40% { transform: translateY(-9px); } 100% { transform: none; } }
 .tw-rover.wave .tw-blink { animation-duration: .35s; }
+
+/* ---------------------------------------------------------- the FICS lab */
+.tw-labwall { fill: #c8b8a2; }
+[data-theme="midnight"] .tw .tw-labwall, [data-theme="terminal"] .tw .tw-labwall { fill: #6d6252; }
+.tw-distant { opacity: .9; }
+
+/* ---------------------------------------------------------- the car hauler */
+/* Waits off to the left, then backs in slowly and eases to a stop. */
+.tw-truckdrive { transform: translateX(-620px); }
+.tw.arrive .tw-truckdrive { transform: none; transition: transform 9s cubic-bezier(.42, 0, .18, 1); }
+.tw.parked .tw-truckdrive { transition: none; }
+.tw-haz { fill: #ffb21a; animation: tw-hazard 1.1s steps(1) infinite; }
+.tw-haz-glow { animation: tw-hazard 1.1s steps(1) infinite; }
+@keyframes tw-hazard { 0%, 49% { opacity: 1; } 50%, 100% { opacity: .12; } }
+.tw-hazards { pointer-events: none; }
+
+/* ---------------------------------------------------------- gift bows */
+.tw-bow-r, .tw-bow-l { fill: #d8202c; stroke: #8f0f18; stroke-width: .7; }
+.tw-bow-k { fill: #b3141f; stroke: #8f0f18; stroke-width: .7; }
+
+/* ---------------------------------------------------------- the card: what the place is */
+.tw-p-about { margin: 0 0 12px; padding: 8px 10px; border-left: 3px solid var(--tint); border-radius: 4px; background: color-mix(in srgb, var(--tint) 8%, transparent); font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+
+/* The still halo behind whatever is lit (see glow() in town.js). */
+.tw-halo { pointer-events: none; }
+.tw-halo, .tw-halo * { animation: none !important; transition: none !important; }
+.tw-moving .tw-halo { display: none; }
+.tw-moving .tw-hot [style*="twGlow"] { filter: none !important; }

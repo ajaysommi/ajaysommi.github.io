@@ -1,8 +1,8 @@
 /* Builds the desktop scene for the work history (the block between the
    "town:start" and "town:end" markers in index.html): one block of a small
    town where every place I've worked has a spot. A Toyota dealership in the
-   middle, with Hunter's alignment rack in its service bay and the FICS lab
-   on its roof; JM Family's offices next door; Shiva's billboard, the
+   middle, with Hunter's alignment rack in its service bay; a JM Family car
+   hauler backing up to it; the FICS lab on the corner; Shiva's billboard, the
    Renaissance Jax robot and the Robotics For All rover out on the lawn;
    ADT's sign and camera by the showroom; the UF pond.
    Facts come from retro/content.js; the stories here are told a little more
@@ -34,37 +34,47 @@ const STORY = {
   adt: "Designed an AI check that catches false alarms before emergency responders are sent, and pitched it to senior leadership. I also kept ADT's Salesforce platform under its limits and got releases shipping again."
 };
 
+/* What each place is, for anyone who hasn't heard of it. */
+const ABOUT = {
+  rjax: 'A student robotics team in Jacksonville that builds robots for head to head competitions.',
+  shiva: 'A robotics academy that teaches kids to build and code robots.',
+  rfa: 'A volunteer run nonprofit that teaches kids robotics and coding, often for free.',
+  fics: 'The University of Florida’s cybersecurity research institute, where researchers work out how computer systems (and now AI) get attacked, and how to stop it.',
+  toyota: 'Southeast Toyota gets new Toyotas from the factory to more than 170 dealerships across five southeastern states. It’s part of JM Family.',
+  jm: 'One of the largest privately owned companies in the US, based in Florida. It runs Southeast Toyota, which delivers new Toyotas to dealers across the Southeast, along with car loan, warranty and dealership businesses.',
+  hunter: 'Hunter makes the machines repair shops use to align wheels and balance tires.',
+  adt: 'The home security company behind the blue sign.'
+};
+
 /* Where each stop is: the box the scene leans in to, and its pin. */
 const SPOT = {
-  shiva: { zoom: [26, 232, 250, 140], pin: [145, 240] },
+  shiva: { zoom: [196, 186, 190, 110], pin: [290, 196] },
   rjax: { zoom: null, pin: null },
   rfa: { zoom: null, pin: null },
-  edu: { zoom: [10, 480, 260, 110], pin: [120, 520] },
-  jm: { zoom: [262, 292, 200, 200], pin: [362, 316] },
+  edu: { zoom: [6, 480, 270, 110], pin: [120, 520] },
+  jm: { zoom: [130, 424, 96, 64], pin: [162, 446] },
   toyota: { zoom: [456, 200, 450, 290], pin: [640, 230] },
   hunter: { zoom: [902, 330, 236, 160], pin: [1020, 360] },
-  fics: { zoom: [280, 196, 200, 120], pin: [410, 270] },
-  adt: { zoom: [470, 380, 130, 150], pin: [525, 430] }
+  fics: { zoom: [8, 250, 128, 236], pin: [70, 296] },
+  adt: { zoom: [548, 334, 110, 180], pin: [610, 424] }
 };
 /* How the jobs lead into each other, for each card. */
 const LINKS = [
-  ['rjax', 'shiva', 'Robotics, from building one to helping a robotics academy grow.'],
-  ['shiva', 'rfa', 'Robotics education: first finding families, then running their sign ups.'],
-  ['rfa', 'fics', 'Automating manual work became automating AI testing.'],
-  ['fics', 'edu', 'FICS is UF’s cybersecurity institute.'],
-  ['fics', 'jm', 'Knowing how AI fails helped set up GPT agents at JM.'],
-  ['fics', 'adt', 'From breaking AI to an AI check that catches false alarms.'],
-  ['toyota', 'hunter', 'Toyota’s tire data came from Hunter machines, which I later built for.'],
-  ['jm', 'toyota', 'JM Family is Southeast Toyota’s parent company.'],
-  ['hunter', 'adt', 'Both about acting safely from afar.']
+  ['rjax', 'shiva', 'Building a competition robot led to helping a robotics academy reach families.'],
+  ['shiva', 'rfa', 'Not affiliated, but similar work: both teach kids robotics, and at both I helped families find classes and sign up.'],
+  ['fics', 'edu', 'FICS is UF’s cybersecurity research institute.'],
+  ['fics', 'jm', 'What I learned testing AI at FICS carried over to setting up GPT agents at JM.'],
+  ['fics', 'adt', 'Studying how AI fails at FICS fed into designing an AI check at ADT.'],
+  ['jm', 'toyota', 'Southeast Toyota is a JM Family company; its trucks deliver the new cars to dealerships like this one.'],
+  ['toyota', 'hunter', 'Toyota’s tire data came from Hunter machines, which I later built software for.']
 ];
 
 const roles = P.experience.map((e) => ({
   id: e.id, org: e.org, short: e.short, role: e.role, when: e.when, where: e.where, year: e.year,
-  text: STORY[e.id] || e.text, stats: e.stats, tags: e.tags, photos: e.photos.map(big), logo: LOGO[e.id] || null, tint: TINT[e.id]
+  text: STORY[e.id] || e.text, about: ABOUT[e.id] || '', stats: e.stats, tags: e.tags, photos: e.photos.map(big), logo: LOGO[e.id] || null, tint: TINT[e.id]
 }));
 const E = P.education;
-roles.push({ id: 'edu', org: E.school, short: 'UF', role: `${E.degree}, ${E.college}`, when: E.when, where: 'Gainesville, FL', year: 2026, text: E.text, stats: [], tags: E.tags, photos: [], logo: null, gator: E.logo, tint: TINT.edu, school: true });
+roles.push({ id: 'edu', org: E.school, short: 'UF', role: `${E.degree}, ${E.college}`, when: E.when, where: 'Gainesville, FL', year: 2026, text: E.text, about: '', stats: [], tags: E.tags, photos: [], logo: null, gator: E.logo, tint: TINT.edu, school: true });
 const order = roles.map((r) => r.id);
 
 /* ---------------------------------------------------------------- drawing */
@@ -77,6 +87,11 @@ const pic = (f, x, y, w, h, cls = '') => `<image class="${cls}" href="assets/ima
 const hot = (id, inner) => `<g class="tw-hot" data-id="${id}" style="--tint:${TINT[id]}">${inner}</g>`;
 const tree = (x, y, s = 1, k = 0) => `<g class="tw-tree" transform="translate(${x} ${y}) scale(${s})"><path d="M-6 0 V-58 M0 -40 L18 -66 M-2 -48 L-22 -70" class="tw-trunk"/><g class="tw-canopy" style="--k:${k}"><circle cx="0" cy="-92" r="38" class="tw-leaf2"/><circle cx="-34" cy="-70" r="28" class="tw-leaf2"/><circle cx="32" cy="-68" r="30" class="tw-leaf2"/><circle cx="-6" cy="-100" r="30" class="tw-leaf"/><circle cx="-34" cy="-76" r="22" class="tw-leaf"/><circle cx="26" cy="-78" r="24" class="tw-leaf"/><circle cx="8" cy="-120" r="18" class="tw-leaf"/></g></g>`;
 const bush = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-16" cy="-8" r="13" class="tw-leaf2"/><circle cx="14" cy="-8" r="14" class="tw-leaf2"/><circle cx="0" cy="-15" r="16" class="tw-leaf"/><circle cx="-18" cy="-12" r="9" class="tw-leaf"/><circle cx="18" cy="-12" r="10" class="tw-leaf"/></g>`;
+/* A big red gift bow, like the ones on a new car, sitting on the hood. */
+const bow = (cx, cy, s) => `<g class="tw-bow" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)}) scale(${s.toFixed(3)})">
+      <path d="M0 0 L-20 10 L-16 11.5 L0 2.5 Z M0 0 L20 10 L16 11.5 L0 2.5 Z" class="tw-bow-r"/>
+      ${[-150, -112, -68, -30, 8, 172].map((a) => `<ellipse cx="5.2" cy="0" rx="5.6" ry="3" transform="rotate(${a})" class="tw-bow-l"/>`).join('')}
+      <circle r="2.2" class="tw-bow-k"/></g>`;
 /* A showroom: amber light, spots shining down onto the cars, glass in front. */
 const showroom = (x, y, w, h, cars) => {
   const spots = cars.map((c) => c.cx), fy = y + h - 8;
@@ -84,7 +99,7 @@ const showroom = (x, y, w, h, cars) => {
       ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${fy} ${cx - 44},${fy}" class="tw-spotcone" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
       <rect x="${x}" y="${fy}" width="${w}" height="8" class="tw-showfloor"/>
       ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
-      ${cars.map((c) => `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/>` + pic(c.f, c.cx - c.w / 2, fy + 3 - c.w * 0.72, c.w, c.w * 0.72, 'tw-showcar')).join('')}
+      ${cars.map((c) => `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/>` + pic(c.f, c.cx - c.w / 2, fy + 3 - c.w * 0.72, c.w, c.w * 0.72, 'tw-showcar') + bow(c.cx, fy + 3 - c.w * 0.72 * 0.47, c.w / 70)).join('')}
       <rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-glassover"/>
       <path d="M${x + 14} ${y + 8} l-12 ${Math.round(h * 0.4)} M${x + w * 0.42} ${y + 8} l-22 ${Math.round(h * 0.7)}" class="tw-shine"/>`;
 };
@@ -93,6 +108,12 @@ const showroom = (x, y, w, h, cars) => {
 let seed = 7;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
 const STARS = Array.from({ length: 70 }, () => { const r = rnd(); return `<circle cx="${(rnd() * 1200).toFixed(1)}" cy="${(4 + rnd() * 250).toFixed(1)}" r="${(0.5 + r * r * 1.6).toFixed(2)}" style="--t:${(3 + rnd() * 6).toFixed(1)}s;--d:${(-rnd() * 9).toFixed(1)}s;--lo:${(0.15 + rnd() * 0.35).toFixed(2)}"/>`; }).join('');
+
+const TK = { x: 126, w: 330, ground: 486 };
+TK.s = TK.w / 1972; TK.h = 438 * TK.s; TK.y = TK.ground - TK.h;
+const tk = (px, py) => [TK.x + px * TK.s, TK.y + py * TK.s];
+// Its amber marker lights, flashing as hazards while it backs in.
+const HAZ = [[48, 327], [401, 238], [350, 328], [1552, 328], [1953, 370], [755, 392], [1934, 156]].map(([x, y]) => tk(x, y));
 
 const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A drawn town block. Each part of it is a place I've worked; the buttons below open the same stories.">
   <defs>
@@ -105,9 +126,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <radialGradient id="twHalo"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
     <radialGradient id="twBack"><stop offset="0" stop-color="#fff2ec" stop-opacity=".95"/><stop offset=".55" stop-color="#ffd6cc" stop-opacity=".45"/><stop offset="1" stop-color="#ffd6cc" stop-opacity="0"/></radialGradient>
     <radialGradient id="twLamp"><stop offset="0" stop-color="#ffe2a0" stop-opacity=".5"/><stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twHaz"><stop offset="0" stop-color="#ffb21a" stop-opacity=".95"/><stop offset="1" stop-color="#ffb21a" stop-opacity="0"/></radialGradient>
     <linearGradient id="twAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf86"/><stop offset="1" stop-color="#e8a24f"/></linearGradient>
     <linearGradient id="twDayInt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ead8"/><stop offset="1" stop-color="#ddd0b6"/></linearGradient>
-    ${Object.entries(TINT).map(([id, c]) => `<filter id="twGlow-${id}" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/><feGaussianBlur in="d" stdDeviation="4" result="b"/><feFlood flood-color="${c}" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`).join('')}
+    ${Object.entries(TINT).map(([id, c]) => `<filter id="twGlow-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="3.6" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="2.4"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twHalo-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="3.6" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="2.4"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".95"/><feComposite in2="b" operator="in"/></filter>`).join('')}
   </defs>
 
   <!-- Far: the sky, the hills, the clouds. -->
@@ -121,19 +143,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g class="tw-cloud" style="--dur:150s;--from:-90s"><g transform="translate(820 60)"><rect x="0" y="10" width="120" height="24" rx="12"/><circle cx="44" cy="12" r="20"/><circle cx="76" cy="6" r="24"/></g></g>
     <g class="tw-cloud" style="--dur:180s;--from:-150s"><g transform="translate(120 60)"><rect x="0" y="8" width="96" height="20" rx="10"/><circle cx="34" cy="10" r="16"/><circle cx="60" cy="6" r="19"/></g></g>
     <path class="tw-mtn2" d="M-200 400 L40 312 L150 362 L300 276 L440 352 L600 286 L740 346 L880 280 L1020 340 L1160 290 L1400 360 V480 H-200 Z"/>
-    <path class="tw-mtn1" d="M-200 430 Q80 370 250 410 T590 400 T960 392 T1400 410 V480 H-200 Z"/>
-  </g>
-
-  <!-- Middle: the block. -->
-  <g class="tw-mid" data-depth="9">
-    <rect class="tw-grass" x="-200" y="470" width="1600" height="200"/>
-    <g class="tw-backrow">${Array.from({ length: 16 }, (_, i) => bush(250 + i * 58, 486, 1.25 + (i % 3) * 0.15)).join('')}</g>
-    ${tree(66, 476, 1.25, 0)}${tree(1166, 480, 1.1, 1)}
-
     ${hot('shiva', `
-    <!-- 2020, Shiva Robotics Academy: a billboard, search traffic climbing. -->
-    <g>
-      <rect x="92" y="346" width="9" height="134" class="tw-pole"/><rect x="192" y="346" width="9" height="134" class="tw-pole"/>
+    <!-- 2020, Shiva Robotics Academy: a billboard out past the block, search traffic climbing. -->
+    <g transform="translate(185 24.3) scale(.72)" class="tw-distant">
+      <rect x="92" y="346" width="9" height="276" class="tw-pole"/><rect x="192" y="346" width="9" height="276" class="tw-pole"/>
       <rect x="40" y="244" width="212" height="106" rx="10" class="tw-board"/>
       <image href="assets/logos/opt/shiva.webp" x="52" y="256" width="82" height="82" preserveAspectRatio="xMidYMid meet" class="tw-rounded"/>
       <g class="tw-bars">${[16, 24, 34, 48].map((h, i) => `<rect x="${148 + i * 22}" y="${322 - h}" width="15" height="${h}" rx="3" style="--i:${i}"/>`).join('')}</g>
@@ -141,17 +154,49 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <text x="196" y="342" class="tw-plus" text-anchor="middle">+20%</text>
       <rect x="66" y="236" width="40" height="8" rx="3" class="tw-pole"/><rect x="186" y="236" width="40" height="8" rx="3" class="tw-pole"/>
     </g>`)}
+    <path class="tw-mtn1" d="M-200 430 Q80 370 250 410 T590 400 T960 392 T1400 410 V480 H-200 Z"/>
+  </g>
 
-    ${hot('jm', `
-    <!-- 2025, JM Family Enterprises: the offices next door, dashboards in the windows. -->
+  <!-- Middle: the block. -->
+  <g class="tw-mid" data-depth="9">
+    <rect class="tw-grass" x="-200" y="470" width="1600" height="200"/>
+    <g class="tw-backrow">${Array.from({ length: 16 }, (_, i) => bush(250 + i * 58, 486, 1.25 + (i % 3) * 0.15)).join('')}</g>
+    ${tree(1166, 480, 1.1, 1)}
+
+    <!-- FICS at UF: a campus lab building. Its sign on the front, racks and
+         a terminal catching prompts meant to break a chatbot in the window,
+         and a dish on the roof that turns to watch the sky. -->
+    ${hot('fics', `
     <g>
-      <rect x="266" y="306" width="190" height="14" rx="3" class="tw-roofcap"/>
-      <rect x="270" y="318" width="182" height="164" class="tw-jm"/>
-      <rect x="278" y="326" width="166" height="40" rx="4" class="tw-jmband"/>
-      <image href="assets/images/town/jm-tree.webp" x="336" y="328" width="46" height="36" preserveAspectRatio="xMidYMid meet"/>
-      ${[0, 1, 2].map((i) => `<g transform="translate(${282 + i * 56} 378)"><rect width="48" height="62" rx="3" class="tw-win"/><rect x="8" y="24" width="32" height="20" rx="2" class="tw-screen"/>${[0, 1, 2, 3].map((b) => `<rect x="${12 + b * 7}" y="${40 - (3 + ((i + b) % 3) * 4)}" width="4" height="${3 + ((i + b) % 3) * 4}" class="tw-dash" style="--i:${i + b}"/>`).join('')}<rect x="18" y="44" width="12" height="10" class="tw-desk"/>${i === 1 ? '' : `<circle cx="${i ? 38 : 10}" cy="48" r="6" class="tw-plant"/>`}</g>`).join('')}
-      <rect x="290" y="448" width="34" height="34" rx="2" class="tw-door"/>
+      <rect x="12" y="300" width="118" height="10" rx="3" class="tw-roofcap"/>
+      <rect x="16" y="308" width="110" height="176" class="tw-labwall tw-fo"/>
+      <rect x="24" y="318" width="94" height="30" rx="4" class="tw-jmband"/>
+      ${img('fics', 44, 320, 54, 26)}
+      <rect x="24" y="356" width="94" height="40" rx="3" class="tw-lab"/>
+      <g transform="translate(24 360) scale(.627) translate(-950 -234)">
+      ${[0, 1].map((k) => `<g transform="translate(${960 + k * 30} 244)"><rect width="22" height="38" rx="2" class="tw-rack"/>${[0, 1, 2, 3].map((r) => `<circle cx="6" cy="${7 + r * 9}" r="1.7" class="tw-led" style="--d:${((r + k * 2) % 5) * 0.33}s"/><circle cx="12" cy="${7 + r * 9}" r="1.7" class="tw-led" style="--d:${((r + k + 1) % 5) * 0.29}s"/>`).join('')}</g>`).join('')}
+      <rect x="1022" y="244" width="68" height="34" rx="3" class="tw-screen"/>
+      <g class="tw-bad"><rect x="1028" y="250" width="46" height="13" rx="4" class="tw-bubble"/><text x="1051" y="259.5" class="tw-mono tw-warn" text-anchor="middle">ignore rules</text></g>
+      <g class="tw-shield"><path d="M1078 260 l9 3 v7 q0 7 -9 11 q-9 -4 -9 -11 v-7 z" fill="#22c55e"/><path d="M1074 270 l3 3 l5 -6" class="tw-tick"/></g>
+      </g>
+      <rect x="24" y="406" width="40" height="30" rx="2" class="tw-win"/><rect x="78" y="406" width="40" height="30" rx="2" class="tw-win"/>
+      <rect x="54" y="446" width="34" height="38" rx="2" class="tw-door"/>
+      <g class="tw-dish-g" transform="translate(44 300)">
+        <rect x="-3" y="-16" width="6" height="16" class="tw-pole"/>
+        <g class="tw-dish" transform="translate(0 -16)"><path d="M-22 -14 q22 22 44 0 z" class="tw-dishface"/><path d="M0 -6 l0 -16" class="tw-feed"/><circle cx="0" cy="-24" r="3" class="tw-led-on"/>
+        <g class="tw-pings"><path d="M-10 -34 a14 14 0 0 1 20 0"/><path d="M-18 -42 a26 26 0 0 1 36 0" style="animation-delay:.4s"/></g></g>
+      </g>
     </g>`)}
+
+    <!-- 2025, JM Family Enterprises: one of its Southeast Toyota car haulers,
+         backing up to the dealership with its hazards flashing. -->
+    <g class="tw-truckdrive">
+    ${hot('jm', `
+    <g>
+      <image href="assets/images/town/jm-truck.webp" x="${TK.x}" y="${TK.y.toFixed(2)}" width="${TK.w}" height="${TK.h.toFixed(2)}" preserveAspectRatio="none"/>
+      <g class="tw-hazards">${HAZ.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="url(#twHaz)" class="tw-haz-glow"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.5" class="tw-haz"/>`).join('')}</g>
+    </g>`)}
+    </g>
 
     ${hot('toyota', `
     <!-- 2024, Toyota: the dealership. A showroom wing, the tall main block
@@ -165,8 +210,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="556" y="206" width="352" height="12" rx="3" class="tw-roofcap"/>
       <rect x="560" y="216" width="344" height="266" class="tw-facade tw-fo"/>
       <path d="M560 252 H904 M560 288 H904 M560 324 H904 M646 216 V350 M732 216 V350 M818 216 V350" class="tw-grid"/>
-      <ellipse cx="635" cy="270" rx="86" ry="56" fill="url(#twBack)" class="tw-backlit"/><image href="assets/logos/opt/toyota-mark.webp" x="574" y="226" width="122" height="88" preserveAspectRatio="xMidYMid meet" class="tw-tlogo"/>
-      <text x="890" y="336" class="tw-sommi" text-anchor="end">SOMMIVILLE</text>
+      <ellipse cx="660" cy="270" rx="80" ry="52" fill="url(#twBack)" class="tw-backlit"/><image href="assets/logos/opt/toyota-mark.webp" x="604" y="230" width="112" height="80" preserveAspectRatio="xMidYMid meet" class="tw-tlogo"/>
+      <text x="886" y="334" class="tw-sommi" text-anchor="end">SOMMIVILLE</text>
       <rect x="652" y="350" width="244" height="132" class="tw-portal"/>
       ${showroom(658, 356, 232, 126, [{ f: 'car-bronze-front', cx: 702, w: 60 }, { f: 'car-white-front', cx: 846, w: 58 }])}
       <rect x="752" y="388" width="48" height="94" class="tw-pillar tw-fo"/>
@@ -202,48 +247,27 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <polygon class="tw-laser" points="0,0 0,0 0,0"/><polygon class="tw-laser" points="0,0 0,0 0,0"/>
     </g>`)}
 
-    ${hot('fics', `
-    <!-- 2023, FICS at UF: a lab on JM Family's roof. Racks, a terminal
-         catching prompts meant to break a chatbot, and a dish that turns to
-         watch the sky. -->
-    <g>
-      <g transform="translate(-650 20)">
-      <rect x="950" y="234" width="150" height="52" rx="4" class="tw-lab"/>
-      <rect x="944" y="228" width="162" height="9" rx="3" class="tw-roofcap"/>
-      ${[0, 1].map((k) => `<g transform="translate(${960 + k * 30} 244)"><rect width="22" height="38" rx="2" class="tw-rack"/>${[0, 1, 2, 3].map((r) => `<circle cx="6" cy="${7 + r * 9}" r="1.7" class="tw-led" style="--d:${((r + k * 2) % 5) * 0.33}s"/><circle cx="12" cy="${7 + r * 9}" r="1.7" class="tw-led" style="--d:${((r + k + 1) % 5) * 0.29}s"/>`).join('')}</g>`).join('')}
-      <rect x="1022" y="244" width="68" height="34" rx="3" class="tw-screen"/>
-      <g class="tw-bad"><rect x="1028" y="250" width="46" height="13" rx="4" class="tw-bubble"/><text x="1051" y="259.5" class="tw-mono tw-warn" text-anchor="middle">ignore rules</text></g>
-      <g class="tw-shield"><path d="M1078 260 l9 3 v7 q0 7 -9 11 q-9 -4 -9 -11 v-7 z" fill="#22c55e"/><path d="M1074 270 l3 3 l5 -6" class="tw-tick"/></g>
-      ${img('fics', 1046, 200, 56, 26)}
-      <g class="tw-dish-g" transform="translate(986 228)">
-        <rect x="-3" y="-16" width="6" height="16" class="tw-pole"/>
-        <g class="tw-dish" transform="translate(0 -16)"><path d="M-22 -14 q22 22 44 0 z" class="tw-dishface"/><path d="M0 -6 l0 -16" class="tw-feed"/><circle cx="0" cy="-24" r="3" class="tw-led-on"/>
-        <g class="tw-pings"><path d="M-10 -34 a14 14 0 0 1 20 0"/><path d="M-18 -42 a26 26 0 0 1 36 0" style="animation-delay:.4s"/></g></g>
-      </g>
-      </g>
-    </g>`)}
-
     <!-- Front lawn: a walk to the door, a drive to the service bay, hedges. -->
     <path d="M760 482 H792 L816 600 H736 Z" class="tw-walk"/>
     <path d="M914 482 H1124 L1150 600 H898 Z" class="tw-drive"/>
-    ${bush(604, 508, .9)}${bush(662, 510, .8)}${bush(714, 506, .85)}${bush(866, 508, .9)}
+    ${bush(666, 510, .8)}${bush(714, 506, .85)}${bush(866, 508, .9)}
     ${[700, 852].map((x) => `<g transform="translate(${x} 560)" class="tw-lamppost"><circle cx="0" cy="-60" r="30" fill="url(#twLamp)" class="tw-lampglow"/><rect x="-2" y="-60" width="4" height="60" class="tw-pole"/><rect x="-7" y="-66" width="14" height="7" rx="3" class="tw-bulb"/></g>`).join('')}
 
     ${hot('adt', `
-    <!-- 2026, ADT: its sign half hidden in the hedge by the showroom, and its
-         camera on the wall just above it. -->
+    <!-- 2026, ADT: its sign in the hedge in front of the dealership's wall, and
+         its camera up at the roofline looking down over it. -->
     <g>
-      <image href="assets/images/town/adt-sign.webp" x="506" y="428" width="48" height="78" preserveAspectRatio="xMidYMax meet"/>
-      ${bush(540, 510, 1.05)}
-      <g class="tw-cctv" transform="translate(560 404)">
-        <rect x="-10" y="-4" width="10" height="8" rx="1.5" class="tw-pole"/>
-        <g transform="translate(-10 0)"><g class="tw-cctv-head" transform="rotate(-26)">
+      <image href="assets/images/town/adt-sign.webp" x="584" y="430" width="48" height="78" preserveAspectRatio="xMidYMax meet"/>
+      ${bush(612, 514, 1.05)}
+      <g class="tw-cctv" transform="translate(568 350)">
+        <rect x="-5" y="-5" width="10" height="10" rx="2" class="tw-pole"/>
+        <g class="tw-cctv-head" transform="rotate(-108)">
           <polygon points="-30,0 -150,-30 -150,30" fill="url(#twCone)" class="tw-cone tw-nohit" transform="scale(1 .55)"/>
-          <rect x="-8" y="-2.5" width="9" height="5" rx="2" class="tw-pole"/>
+          <g class="tw-cambody"><rect x="-8" y="-2.5" width="9" height="5" rx="2" class="tw-pole"/>
           <rect x="-34" y="-7" width="28" height="14" rx="4" class="tw-camshell"/>
           <rect x="-39" y="-5" width="6" height="10" rx="2" fill="#1f6fd1"/>
-          <circle cx="-12" cy="-3" r="1.8" class="tw-rec"/>
-        </g></g>
+          <circle cx="-12" cy="3" r="1.8" class="tw-rec"/></g>
+        </g>
       </g>
     </g>`)}
 
@@ -251,7 +275,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- University of Florida: a pond, a pennant, and a gator having a look. -->
     <g>
       <ellipse cx="120" cy="548" rx="110" ry="28" class="tw-pond"/>
-      <ellipse cx="44" cy="538" rx="18" ry="10" class="tw-rock"/><ellipse cx="196" cy="552" rx="16" ry="9" class="tw-rock"/><ellipse cx="160" cy="530" rx="12" ry="7" class="tw-rock"/>
+      <ellipse cx="44" cy="538" rx="18" ry="10" class="tw-rock"/><ellipse cx="214" cy="560" rx="14" ry="8" class="tw-rock"/><ellipse cx="160" cy="530" rx="12" ry="7" class="tw-rock"/>
       <g class="tw-ripples"><ellipse cx="108" cy="552" rx="20" ry="5"/><ellipse cx="108" cy="552" rx="20" ry="5" style="animation-delay:-1.6s"/></g>
       <g class="tw-gator" transform="translate(-10 26)">
         <path d="M86 530 q4 -14 18 -14 h30 q10 0 18 8 l10 6 z" class="tw-gator-b"/>
@@ -260,8 +284,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <circle cx="103" cy="517" r="1.8" class="tw-pupil"/><circle cx="119" cy="517" r="1.8" class="tw-pupil"/>
         <rect x="97" y="511" width="26" height="6" class="tw-lid"/>
       </g>
-      <rect x="182" y="486" width="3.4" height="62" class="tw-pole"/>
-      <image href="assets/images/town/uf-pennant.webp" x="185" y="486" width="66" height="22" preserveAspectRatio="xMinYMid meet"/>
+      <rect x="186" y="498" width="3.4" height="58" class="tw-pole"/>
+      <image href="assets/images/town/uf-pennant.webp" x="189" y="498" width="66" height="22" preserveAspectRatio="xMinYMid meet"/>
     </g>`)}
 
     ${hot('rjax', `
@@ -269,7 +293,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
          own patch of lawn. Its camera locks on the target, or on the pointer
          when it comes close, and it drives over for a look. -->
     <g>
-      <g transform="translate(278 504)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
+      <g transform="translate(300 510)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
       <g transform="translate(424 520)"><rect x="-2" y="0" width="4" height="34" class="tw-pole"/><path d="M-12 -18 v14 h24 v-14 h-6 v8 h-12 v-8 z" class="tw-target"/></g>
       <path class="tw-vision" d="M0 0"/>
       <g class="tw-reticle"><path d="M-20 -14 v-7 h7 M13 -21 h7 v7 M20 14 v7 h-7 M-13 21 h-7 v-7"/></g>
