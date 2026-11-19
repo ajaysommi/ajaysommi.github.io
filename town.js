@@ -1,6 +1,8 @@
 /* ==========================================================================
    AROUND THE BLOCK: what the street does (see town.css).
-   Hover anything and everything that belongs to that place glows. Click and
+   On a wide screen the block is the whole page and slides sideways (wheel,
+   drag, arrow keys, the edge buttons). Hover anything and everything that
+   belongs to that place glows. Click and
    the scene leans in, the story in a card beside it; arrows walk the stops
    in order, Esc or the x steps back. A JM Family car hauler backs up to the
    dealership once the block comes into view. The pointer: the Robotics For All
@@ -39,8 +41,21 @@
   const svg = $('.tw-svg', tw), stage = $('.tw-stage', tw), panel = $('.tw-panel', tw), inner = $('.tw-panel-in', panel);
   const label = $('.tw-label', tw), prevB = $('.tw-prev', panel), nextB = $('.tw-next', panel);
   const chips = $$('.tw-chip', tw), hots = $$('.tw-hot', svg);
-  const W0 = 1200, H0 = 600, FULL = [0, 0, W0, H0];
-  let vb = FULL.slice(), anim = 0, cur = null;
+  // The camera: the block is WORLD units wide and fills the window; it
+  // scrolls sideways. Things keep the size they had in the old framed
+  // scene (about 0.95px a unit), the extra window shows more of the street
+  // and more sky.
+  const WORLD = D.W, BOTTOM = 676;
+  let scale = 1, vw = 1200, vh = 600, camX = 0;
+  const measure = () => {
+    const w = stage.clientWidth || innerWidth, h = stage.clientHeight || innerHeight;
+    scale = clamp(h / 940, 0.72, 1.12);
+    vw = w / scale; vh = h / scale;
+    camX = clamp(camX, 0, Math.max(0, WORLD - vw));
+  };
+  const view = () => [camX, BOTTOM - vh, vw, vh];
+  measure();
+  let vb = view(), anim = 0, cur = null;
   const nameOf = (r) => (r.school ? 'University of Florida' : r.short);
   const yy = (r) => `’${String(r.year).slice(2)}`;
 
@@ -49,8 +64,8 @@
   // They move like something with a little weight: a soft spring toward
   // where they want to be, never faster than an amble.
   const bots = {
-    rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1150, y: 556, vx: 0, vy: 0, tx: 1150, ty: 556, face: -1, idleAt: 0, box: [1012, 1172, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
-    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 340, y: 562, vx: 0, vy: 0, tx: 340, ty: 562, face: 1, idleAt: 0, box: [296, 388, 552, 582], reach: 140, keep: 64, pinDy: -40, k: 3, max: 45, s: 0.78, tilt: 0 }
+    rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1850, y: 556, vx: 0, vy: 0, tx: 1850, ty: 556, face: -1, idleAt: 0, box: [1712, 1872, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
+    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 670, y: 562, vx: 0, vy: 0, tx: 670, ty: 562, face: 1, idleAt: 0, box: [626, 718, 552, 582], reach: 140, keep: 64, pinDy: -40, k: 3, max: 45, s: 0.78, tilt: 0 }
   };
   const placeBot = (b) => {
     b.el.setAttribute('transform', `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`);
@@ -60,7 +75,7 @@
   Object.values(bots).forEach(placeBot);
   // The competition robot's camera: on its target, or on the pointer when close.
   const turret = $('.tw-turret', svg), vision = $('.tw-vision', svg), reticle = $('.tw-reticle', svg);
-  const TARGET = [424, 511];
+  const TARGET = [754, 511];
   let aim = TARGET.slice();
   const aimCam = () => {
     const b = bots.rjax, cx = b.x + 13 * b.s * b.face, cy = b.y - 28 * b.s;
@@ -145,7 +160,7 @@
       [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].forEach(([x, y]) => { pt.x = x; pt.y = y; const q = pt.matrixTransform(m); xs.push(q.x); ys.push(q.y); });
       const x0 = Math.min(...xs), y0 = Math.min(...ys);
       const r = document.createElementNS(NS, 'rect');
-      r.setAttribute('x', x0 - 4); r.setAttribute('y', y0 - 4); r.setAttribute('width', Math.max(...xs) - x0 + 8); r.setAttribute('height', Math.max(...ys) - y0 + 8);
+      r.setAttribute('x', x0 - 1); r.setAttribute('y', y0 - 1); r.setAttribute('width', Math.max(...xs) - x0 + 2); r.setAttribute('height', Math.max(...ys) - y0 + 2);
       hit.appendChild(r);
     });
     h.insertBefore(hit, h.firstChild);
@@ -153,7 +168,13 @@
   skip.forEach((n) => { n.style.display = ''; });
 
   /* ---------------------------------------------------------- the lean in */
-  const setVB = (b) => { vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' ')); };
+  const far = $('.tw-far', svg), panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
+  const setVB = (b) => {
+    vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
+    far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${((b[1] - (BOTTOM - vh)) * 0.4).toFixed(2)})`);
+    panL.classList.toggle('on', !cur && camX > 4);
+    panR.classList.toggle('on', !cur && camX < WORLD - vw - 4);
+  };
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const tween = (to, ms = 850) => {
     cancelAnimationFrame(anim);
@@ -167,13 +188,25 @@
   };
   const frame = (z, left) => {
     const [x, y, w, h] = z, cx = x + w / 2, cy = y + h / 2;
-    const free = 1 - (panel.offsetWidth + 28) / stage.clientWidth, A = H0 / W0;
-    let vw = w / (free * 0.88), vh = vw * A;
-    if (vh < h * 1.2) { vh = h * 1.2; vw = vh / A; }
-    vw = Math.min(vw, W0); vh = vw * A;
-    const vx = left ? cx - vw * (1 - free / 2) : cx - vw * (free / 2);
-    return [vx, clamp(cy - vh / 2, -30, H0 - vh + 10), vw, vh];
+    const free = 1 - (panel.offsetWidth + 28) / stage.clientWidth, A = vh / vw;
+    let fw = w / (free * 0.88), fh = fw * A;
+    if (fh < h * 1.25) { fh = h * 1.25; fw = fh / A; }
+    fw = Math.min(fw, vw); fh = fw * A;
+    const fx = left ? cx - fw * (1 - free / 2) : cx - fw * (free / 2);
+    return [fx, clamp(cy - fh / 2, BOTTOM - vh, BOTTOM - fh), fw, fh];
   };
+  // Sliding along the street: the wheel (either direction), dragging, the
+  // arrow keys and the two edge buttons.
+  let glide = 0;
+  const panTo = (x, ms = 600) => {
+    cancelAnimationFrame(glide);
+    const to = clamp(x, 0, Math.max(0, WORLD - vw));
+    if (reduced || ms === 0) { camX = to; setVB(view()); return; }
+    const from = camX, t0 = performance.now();
+    const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); camX = from + (to - from) * k; setVB(view()); if (k < 1) glide = requestAnimationFrame(f); };
+    glide = requestAnimationFrame(f);
+  };
+  setVB(view());
 
   /* ---------------------------------------------------------- the card */
   // Story first, then its photos, then the numbers, the connections and the tools.
@@ -216,7 +249,10 @@
     const wasOpen = !!cur;
     cur = id;
     $$('.tw-big-pic', panel).forEach((n) => n.remove());
-    const z = zoomOf(id), left = z[0] + z[2] / 2 > W0 / 2;
+    const z = zoomOf(id), left = z[0] + z[2] / 2 > vb[0] + vb[2] / 2;
+    cancelAnimationFrame(glide);
+    // when the card closes, the street is left centred on this place
+    camX = clamp(z[0] + z[2] / 2 - vw / 2, 0, Math.max(0, WORLD - vw));
     panel.classList.toggle('left', left);
     panel.hidden = false;
     render(r);
@@ -226,20 +262,21 @@
     if (id === 'jm') tw.classList.add('arrive', 'parked');
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
     const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
-    hideLabel(); resetParallax();
+    hideLabel(); panL.classList.remove('on'); panR.classList.remove('on');
   };
   const close = () => {
     if (!cur) return;
     cur = null;
     panel.classList.remove('open');
     setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
-    tween(FULL, 800);
+    tween(view(), 800);
     tw.classList.remove('zoomed');
     glow(null); over = null;
     chips.forEach((c) => c.classList.remove('on'));
   };
 
-  hots.forEach((h) => h.addEventListener('click', (e) => { e.stopPropagation(); open(h.dataset.id); }));
+  // Clicking the place that's open (or anywhere off it) steps back out.
+  hots.forEach((h) => h.addEventListener('click', (e) => { e.stopPropagation(); if (dragged) return; if (cur === h.dataset.id) close(); else open(h.dataset.id); }));
   chips.forEach((c) => {
     c.addEventListener('click', () => { open(c.dataset.id); stage.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); });
     c.addEventListener('mouseenter', () => { if (!cur) glow(c.dataset.id); });
@@ -248,9 +285,14 @@
   $('.tw-x', panel).addEventListener('click', close);
   prevB.addEventListener('click', () => open(prevB.dataset.id));
   nextB.addEventListener('click', () => open(nextB.dataset.id));
-  svg.addEventListener('click', () => close());
+  svg.addEventListener('click', () => { if (!dragged) close(); });
   document.addEventListener('keydown', (e) => {
-    if (!cur) return;
+    if (!cur) {
+      if (e.target.closest && e.target.closest('input, textarea')) return;
+      if (e.key === 'ArrowRight') panTo(camX + vw * 0.4, 450);
+      else if (e.key === 'ArrowLeft') panTo(camX - vw * 0.4, 450);
+      return;
+    }
     if (e.key === 'Escape') { const big = $('.tw-big-pic', panel); if (big) big.remove(); else close(); }
     else if (e.key === 'ArrowRight' && !nextB.hidden) open(nextB.dataset.id);
     else if (e.key === 'ArrowLeft' && !prevB.hidden) open(prevB.dataset.id);
@@ -282,10 +324,8 @@
   svg.addEventListener('pointerout', (e) => { const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.tw-hot'); hoverTo(to ? to.dataset.id : null); });
 
   /* ---------------------------------------------------------- the pointer */
-  const layers = $$('[data-depth]', svg).map((g) => [g, +g.dataset.depth]);
   const head = $('.tw-cctv-head', svg), dish = $('.tw-dish', svg), eyes = $$('.tw-follow', svg);
   const toSVG = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
-  const resetParallax = () => layers.forEach(([g]) => { g.style.transform = ''; });
   let ptr = null;
   // A robot comes over when the pointer is near its patch, stops short of
   // it, and otherwise ambles about inside the patch.
@@ -335,23 +375,21 @@
     if (praf) return;
     praf = requestAnimationFrame(() => {
       praf = 0;
-      const e = lastE, s = stage.getBoundingClientRect();
-      const nx = (e.clientX - s.left) / s.width - 0.5, ny = (e.clientY - s.top) / s.height - 0.5;
-      if (!cur && !reduced) layers.forEach(([g, d]) => { g.style.transform = `translate(${(-nx * d).toFixed(2)}px, ${(-ny * d * 0.4).toFixed(2)}px)`; });
+      const e = lastE;
       const p = toSVG(e);
       ptr = { x: p.x, y: p.y };
       const sky = p.y < 222;
       tw.classList.toggle('sky', sky);
       tw.classList.toggle('near', !sky);
       if (sky && dish) {
-        // The dish sits on the FICS lab's roof at (44, 284); it turns its face to the pointer.
-        const a = Math.atan2(p.x - 44, 284 - p.y) * 180 / Math.PI;
+        // The dish sits on the FICS lab's roof at (274, 284); it turns its face to the pointer.
+        const a = Math.atan2(p.x - 274, 284 - p.y) * 180 / Math.PI;
         dish.style.transform = `translate(0px, -16px) rotate(${clamp(a, -70, 70).toFixed(1)}deg)`;
       } else if (dish) dish.style.transform = '';
       if (!sky && head) {
-        // The camera is up at the roofline at (568, 350), looking down over its
+        // The camera is up at the roofline at (1268, 350), looking down over its
         // sign; it turns only as far as its mount allows.
-        let a = Math.atan2(350 - p.y, 568 - p.x) * 180 / Math.PI;
+        let a = Math.atan2(350 - p.y, 1268 - p.x) * 180 / Math.PI;
         if (a > 90) a -= 360;
         head.style.transform = `rotate(${clamp(a, -160, -30).toFixed(1)}deg)`;
       } else if (head) head.style.transform = '';
@@ -362,7 +400,6 @@
     });
   });
   stage.addEventListener('pointerleave', () => {
-    resetParallax();
     ptr = null;
     tw.classList.remove('sky', 'near');
     if (head) head.style.transform = '';
@@ -376,11 +413,41 @@
     svg.classList.toggle('tw-paused', !visible);
     if (visible) go(); else running = false;
   }).observe(stage);
+  stage.addEventListener('wheel', (e) => {
+    if (cur || e.ctrlKey) return;
+    const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
+    const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * k;
+    if (!d) return;
+    e.preventDefault();
+    cancelAnimationFrame(glide);
+    camX = clamp(camX + d / scale, 0, Math.max(0, WORLD - vw));
+    setVB(view());
+  }, { passive: false });
+  let drag = null, dragged = false;
+  svg.addEventListener('pointerdown', (e) => {
+    dragged = false;
+    if (cur || e.button !== 0 || e.pointerType === 'touch') return;
+    drag = { x: e.clientX, cam: camX, id: e.pointerId };
+  });
+  addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    if (!dragged && Math.abs(dx) < 6) return;
+    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); }
+    camX = clamp(drag.cam - dx / scale, 0, Math.max(0, WORLD - vw));
+    setVB(view());
+  });
+  addEventListener('pointerup', () => { if (!drag) return; drag = null; tw.classList.remove('dragging'); setTimeout(() => { dragged = false; }, 0); });
+  panL.addEventListener('click', () => panTo(camX - vw * 0.6));
+  panR.addEventListener('click', () => panTo(camX + vw * 0.6));
+  const themeB = $('.tw-theme', tw);
+  if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
+
   if (reduced || !('IntersectionObserver' in window)) tw.classList.add('arrive', 'parked');
   else {
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { tw.classList.add('arrive'); io.disconnect(); } }, { threshold: 0.55 });
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setTimeout(() => tw.classList.add('arrive'), 700); io.disconnect(); } }, { threshold: 0.55 });
     io.observe(stage);
   }
-  addEventListener('resize', () => { if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); });
+  addEventListener('resize', () => { measure(); if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
   tw._bots = bots;
 })();
