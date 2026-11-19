@@ -21,18 +21,24 @@
   const g = $('[data-mx-greeting]', mx);
   if (g) { const h = new Date().getHours(); g.textContent = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 18 ? 'Good afternoon' : 'Good evening'; }
 
-  // Then and now: the portrait turns over to 2006, and back.
-  const ava = $('.mx-ava', mx);
-  if (ava) ava.addEventListener('click', () => {
-    if (ava.classList.contains('turning')) return;
-    ava.classList.add('turning');
-    setTimeout(() => { const on = ava.classList.toggle('flipped'); ava.setAttribute('aria-pressed', String(on)); ava.classList.remove('turning'); }, reduced ? 0 : 200);
-  });
-
-  // The shapes: each tap turns the composition a quarter.
-  const mark = $('.mx-mark', mx);
-  let turns = 0;
-  if (mark) mark.addEventListener('click', () => { turns++; mark.style.transform = `rotate(${turns * 90}deg)`; buzz(6); });
+  // The mark: leans toward a finger resting on it, and a tap knocks its
+  // pieces apart for a moment.
+  const mark = $('.mx-mark', mx), aj = mark && $('.mx-aj', mark);
+  if (mark && aj) {
+    const tilt = (e) => {
+      const r = mark.getBoundingClientRect();
+      const x = clamp((e.clientX - r.left) / r.width - 0.5, -0.8, 0.8), y = clamp((e.clientY - r.top) / r.height - 0.5, -0.8, 0.8);
+      aj.style.setProperty('--ry', (x * 40).toFixed(1) + 'deg'); aj.style.setProperty('--rx', (-y * 40).toFixed(1) + 'deg');
+    };
+    const rest = () => { mark.classList.remove('held'); aj.style.setProperty('--rx', '0deg'); aj.style.setProperty('--ry', '0deg'); };
+    mark.addEventListener('pointerdown', (e) => { mark.classList.add('held'); tilt(e); try { mark.setPointerCapture(e.pointerId); } catch (err) {} });
+    mark.addEventListener('pointermove', (e) => { if (mark.classList.contains('held')) tilt(e); });
+    mark.addEventListener('pointerup', rest); mark.addEventListener('pointercancel', rest);
+    mark.addEventListener('click', () => {
+      mark.classList.add('pop'); buzz(10);
+      setTimeout(() => mark.classList.remove('pop'), 190);
+    });
+  }
   // "Take a look" glides down to the tabs.
   const down = $('.mx-down', mx);
   if (down) down.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.scrollTo({ top: $('.mx-tabs', mx).getBoundingClientRect().top + scrollY, behavior: reduced ? 'auto' : 'smooth' }); });
@@ -42,6 +48,13 @@
   const btns = $$('[role="tab"]', tabs), panels = $$('.mx-panel', pager);
   let cur = 0;
   const W = () => pager.clientWidth || 1;
+  // Each list's items know their place, so they can arrive in order.
+  panels.forEach((p) => ['.mx-tl > li', '.mx-projs > li', '.mx-story-b'].forEach((q) => $$(q, p).forEach((el, k) => el.style.setProperty('--k', Math.min(k, 8)))));
+  const enter = (p) => {
+    if (reduced || !p) return;
+    p.classList.remove('enter'); void p.offsetWidth; p.classList.add('enter');
+    clearTimeout(p._e); p._e = setTimeout(() => p.classList.remove('enter'), 1200);
+  };
   const fit = () => { const p = panels[cur]; if (p) pager.style.height = p.offsetHeight + 'px'; };
   const placeInk = (f) => {
     const i = clamp(Math.floor(f), 0, btns.length - 1), j = clamp(i + 1, 0, btns.length - 1), t = f - i;
@@ -56,6 +69,7 @@
     cur = i;
     btns.forEach((b, k) => b.setAttribute('aria-selected', String(k === i)));
     panels.forEach((p, k) => { p.inert = k !== i; });
+    enter(panels[i]);
     fit();
   };
   let sraf = 0;
@@ -118,7 +132,7 @@
     setTimeout(() => { sheet.hidden = true; scrim.hidden = true; }, reduced ? 0 : 420);
     if (opener && opener.focus) opener.focus({ preventScroll: true });
   };
-  $$('[data-sheet]', mx).forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet, b)));
+  $$('[data-sheet]:not(.mx-chip)', mx).forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet, b)));
   if (scrim) scrim.addEventListener('click', closeSheet);
   if (sheet) {
     let d = null;
@@ -330,6 +344,142 @@
     const ys = yr.dataset.years.split(','); let i = 0;
     setInterval(() => { if (!phone.matches || document.hidden) return; i = (i + 1) % ys.length; yr.textContent = ys[i]; yr.classList.remove('roll'); void yr.offsetWidth; yr.classList.add('roll'); }, 2600);
   }
+
+  /* ---------------------------------------------------------- scroll */
+  /* As the page moves: the hello drifts back, things rise into place, and
+     on the path the stop nearest the middle of the screen lights up. */
+  const hero = $('.mx-hero', mx);
+  const stops = $$('.mx-stop', mx);
+  const rvs = [...$$('.mx-jar-s > *, .mx-eras, .mx-contact > *, .mx-foot', mx)];
+  rvs.forEach((el, i) => { el.setAttribute('data-rv', ''); });
+  $$('.mx-contact > *', mx).forEach((el, i) => el.style.setProperty('--rd', Math.min(i, 5)));
+  $$('.mx-jar-s > *', mx).forEach((el, i) => el.style.setProperty('--rd', i));
+  if ('IntersectionObserver' in window && !reduced) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    rvs.forEach((el) => io.observe(el));
+  } else rvs.forEach((el) => el.classList.add('in'));
+  let lit = null, qraf = 0;
+  const onScroll = () => {
+    qraf = 0;
+    if (!phone.matches) return;
+    const vh = innerHeight;
+    if (hero && !reduced) hero.style.setProperty('--p', clamp(scrollY / (vh * 0.75), 0, 1).toFixed(3));
+    if (cur === 0) {
+      let best = null, bd = 1e9;
+      for (const s of stops) { const r = s.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) continue; const d = Math.abs(r.top + r.height / 2 - vh * 0.48); if (d < bd) { bd = d; best = s; } }
+      if (best && bd > vh * 0.4) best = null;
+      if (best !== lit) { if (lit) lit.classList.remove('lit'); lit = best; if (lit) lit.classList.add('lit'); }
+    }
+  };
+  addEventListener('scroll', () => { if (!qraf) qraf = requestAnimationFrame(onScroll); }, { passive: true });
+  onScroll();
+
+  /* ------------------------------------------------------------- jar */
+  /* The logos drop into a tray when it comes into view, and then they can
+     be picked up and thrown. Plain circles: gravity, walls, and pushing
+     each other apart. A tap that doesn't move opens that role. */
+  const jar = $('.mx-jar', mx), chips = jar ? $$('.mx-chip', jar) : [];
+  if (jar && chips.length) {
+    const B = chips.map((el, i) => ({ el, x: 0, y: 0, vx: 0, vy: 0, r: 46, held: null, i }));
+    let Wj = 0, Hj = 0, running = false, started = false, last = 0, still = 0;
+    const size = () => {
+      Wj = jar.clientWidth; Hj = jar.clientHeight;
+      const d = Math.round(clamp(Wj * 0.27, 78, 104));
+      B.forEach((b) => { b.r = d / 2; b.el.style.setProperty('--d', d + 'px'); });
+    };
+    // A thrown logo leans with its speed and settles back upright, so it stays readable.
+    const place = () => B.forEach((b) => { b.a = (b.a || 0) + (clamp(b.vx * 0.012, -18, 18) - (b.a || 0)) * 0.18; b.el.style.transform = `translate(${(b.x - b.r).toFixed(1)}px, ${(b.y - b.r).toFixed(1)}px) rotate(${b.a.toFixed(1)}deg)`; });
+    const drop = () => {
+      size();
+      B.forEach((b, i) => { b.x = b.r + 6 + ((i * 0.37 + 0.11) % 1) * (Wj - 2 * b.r - 12); b.y = -b.r - i * b.r * 1.15; b.vx = (i % 2 ? 1 : -1) * 40; b.vy = 0; });
+      started = true; start();
+    };
+    const step = (dt) => {
+      const G = 2200, e = 0.38, air = Math.pow(0.6, dt);
+      let moving = 0;
+      for (const b of B) {
+        if (b.held) { const h = b.held; const nx = h.px, ny = h.py; b.vx = (nx - b.x) / Math.max(dt, 1 / 120); b.vy = (ny - b.y) / Math.max(dt, 1 / 120); b.x = nx; b.y = ny; continue; }
+        b.vy += G * dt; b.vx *= air; b.vy *= air;
+        b.x += b.vx * dt; b.y += b.vy * dt;
+      }
+      for (let it = 0; it < 4; it++) {
+        for (let i = 0; i < B.length; i++) for (let j = i + 1; j < B.length; j++) {
+          const a = B[i], c = B[j], dx = c.x - a.x, dy = c.y - a.y, min = a.r + c.r, d2 = dx * dx + dy * dy;
+          if (d2 >= min * min || d2 === 0) continue;
+          const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, o = min - d;
+          const wa = a.held ? 0 : c.held ? 1 : 0.5, wc = c.held ? 0 : a.held ? 1 : 0.5;
+          a.x -= nx * o * wa; a.y -= ny * o * wa; c.x += nx * o * wc; c.y += ny * o * wc;
+          const rv = (c.vx - a.vx) * nx + (c.vy - a.vy) * ny;
+          if (rv < 0) { const imp = -(1 + e) * rv * 0.5; if (!a.held) { a.vx -= imp * nx; a.vy -= imp * ny; } if (!c.held) { c.vx += imp * nx; c.vy += imp * ny; } }
+        }
+        for (const b of B) {
+          if (b.held) continue;
+          if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * e; }
+          if (b.x > Wj - b.r) { b.x = Wj - b.r; b.vx = -Math.abs(b.vx) * e; }
+          if (b.y > Hj - b.r) { b.y = Hj - b.r; b.vy = -Math.abs(b.vy) * e; b.vx *= 0.96; if (Math.abs(b.vy) < 30) b.vy = 0; }
+        }
+      }
+      for (const b of B) if (b.held || Math.abs(b.vx) + Math.abs(b.vy) > 12 || b.y < b.r) moving++;
+      return moving;
+    };
+    const tick = (t) => {
+      if (!running) return;
+      const dt = Math.min(0.033, (t - (last || t)) / 1000) || 1 / 60; last = t;
+      const m = step(dt / 2) + step(dt / 2);
+      place();
+      still = m ? 0 : still + 1;
+      if (still > 40) { running = false; last = 0; return; }
+      requestAnimationFrame(tick);
+    };
+    const start = () => { if (!running && started) { running = true; still = 0; last = 0; requestAnimationFrame(tick); } };
+    if (reduced) { size(); B.forEach((b, i) => { const per = Math.floor(Wj / (b.r * 2)) || 1; b.x = b.r + (i % per) * b.r * 2; b.y = Hj - b.r - Math.floor(i / per) * b.r * 1.8; }); place(); started = true; }
+    else if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es) => { if (es[0].isIntersecting && !started) { drop(); io.disconnect(); } }, { threshold: 0.35 });
+      io.observe(jar);
+    } else drop();
+    addEventListener('resize', () => { if (!started) return; size(); B.forEach((b) => { b.x = clamp(b.x, b.r, Wj - b.r); b.y = Math.min(b.y, Hj - b.r); }); start(); });
+    B.forEach((b) => {
+      const el = b.el;
+      el.addEventListener('pointerdown', (e) => {
+        if (!started) return;
+        const r = jar.getBoundingClientRect();
+        b.held = { id: e.pointerId, px: e.clientX - r.left, py: e.clientY - r.top, ox: e.clientX, oy: e.clientY, t: performance.now(), moved: false };
+        b.held.dx = b.x - b.held.px; b.held.dy = b.y - b.held.py; b.held.px += b.held.dx; b.held.py += b.held.dy;
+        el.classList.add('held'); el.style.zIndex = 3;
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        buzz(6); start();
+      });
+      el.addEventListener('pointermove', (e) => {
+        const h = b.held; if (!h || e.pointerId !== h.id) return;
+        const r = jar.getBoundingClientRect();
+        h.px = clamp(e.clientX - r.left + h.dx, b.r, Wj - b.r); h.py = clamp(e.clientY - r.top + h.dy, b.r, Hj - b.r);
+        if (Math.hypot(e.clientX - h.ox, e.clientY - h.oy) > 6) h.moved = true;
+      });
+      const up = (e) => {
+        const h = b.held; if (!h || e.pointerId !== h.id) return;
+        b.held = null; el.classList.remove('held'); el.style.zIndex = '';
+        const sp = Math.hypot(b.vx, b.vy), cap = 2600;
+        if (sp > cap) { b.vx *= cap / sp; b.vy *= cap / sp; }
+        if (!h.moved && performance.now() - h.t < 450 && e.type === 'pointerup') { b.vx = b.vy = 0; openSheet(el.dataset.sheet, el); }
+        start();
+      };
+      el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+      el.addEventListener('click', (e) => { if (e.detail === 0) openSheet(el.dataset.sheet, el); });
+    });
+  }
+
+  /* ---------------------------------------------------------- prints */
+  // 2006 on top. A tap sends the top print to the back of the pile.
+  const prints = $$('.mx-print', mx);
+  prints.forEach((p) => p.addEventListener('click', () => {
+    if (!p.classList.contains('top') || p.classList.contains('toss')) return;
+    buzz(8);
+    p.classList.add('toss');
+    setTimeout(() => {
+      prints.forEach((o) => o.classList.toggle('top', o !== p));
+      p.classList.remove('toss');
+    }, reduced ? 0 : 250);
+  }));
 
   /* ---------------------------------------------------------- contact */
   // The site's own handler copies anything marked data-copy and says so;

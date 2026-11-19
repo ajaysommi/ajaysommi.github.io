@@ -21,8 +21,16 @@ const usedAt = (skill) => {
 const lead = (t) => { const i = t.indexOf('. '); return i < 0 ? [t, ''] : [t.slice(0, i + 1), t.slice(i + 2)]; };
 const initials = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2);
 const ROLES = [...P.experience].reverse();
-// Logos sit on a white tile, so the versions with dark lettering.
-const LOGO = { rfa: 'roboticsforall', fics: 'fics-light', toyota: 'toyota-light', jm: 'jm-family-light', hunter: 'hunter-light', adt: 'adt' };
+// Each logo comes in two colourings: light lettering for the dark themes,
+// dark lettering for daylight. The page shows whichever suits.
+const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-light'], toyota: ['toyota', 'toyota-light'], jm: ['jm-family', 'jm-family-light'], hunter: ['hunter', 'hunter-light'], adt: ['adt', 'adt'] };
+// The same colour each stop wears on the desktop's path.
+const TINT = { rjax: '#2fae5a', shiva: '#f39c12', rfa: '#f2b705', fics: '#fa4616', toyota: '#eb0a1e', jm: '#00857c', hunter: '#b5121b', adt: '#1f6fd1' };
+const pic = ([d, l], cls = '') => d === l
+  ? `<img class="${cls}" src="assets/logos/opt/${d}.webp" alt="" loading="lazy" decoding="async" />`
+  : `<img class="${cls} lg-d" src="assets/logos/opt/${d}.webp" alt="" loading="lazy" decoding="async" /><img class="${cls} lg-l" src="assets/logos/opt/${l}.webp" alt="" loading="lazy" decoding="async" />`;
+// The mark from the top bar, drawn large, its four pieces separate so they can move.
+const MARK = `<svg class="mx-aj" viewBox="9 8.5 45 42" aria-hidden="true" focusable="false"><path class="mx-aj-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path class="mx-aj-u" d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z"/><rect class="mx-aj-i" x="43.83" y="24.60" width="8.74" height="11.79"/><circle class="mx-aj-d" cx="48.20" cy="17.40" r="5.60"/></svg>`;
 
 const I = {
   chev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -35,18 +43,40 @@ const I = {
   linkedin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.980 3.500a2.490 2.490 0 1 1 0 4.980 2.490 2.490 0 0 1 0-4.980zM3 9.750h4V21H3zM9.500 9.750h3.800v1.540h.060c.530-1 1.820-2.050 3.750-2.050 4 0 4.750 2.640 4.750 6.070V21h-4v-5.050c0-1.200-.020-2.750-1.680-2.750s-1.940 1.310-1.940 2.660V21h-4z"/></svg>',
   flip: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.700-5.600L20 8.700M20 4v4.700h-4.700M20 12a8 8 0 0 1-13.700 5.600L4 15.300M4 20v-4.700h4.700" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
-/* The site's section shapes: the same five flat marks the desktop uses. */
+/* One soft icon per tab, in the site's own drawing: rounded strokes, with a
+   quiet fill that warms up when the tab is chosen. */
+const ic = (fill, line) => `<svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f">${fill}</g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${line}</g></svg>`;
 const SHAPE = {
-  path: '<i class="mx-sh mx-sh-q" aria-hidden="true"></i>',
-  projects: '<i class="mx-sh mx-sh-t" aria-hidden="true"></i>',
-  life: '<i class="mx-sh mx-sh-c" aria-hidden="true"></i>',
-  skills: '<i class="mx-sh mx-sh-s" aria-hidden="true"></i>',
-  words: '<i class="mx-sh mx-sh-h" aria-hidden="true"></i>'
+  // A road with a start and a pin.
+  path: ic('<circle cx="17" cy="7.5" r="4.2"/>', '<path d="M5.5 19.5h6.2a3.3 3.3 0 0 0 0-6.6H9.6a3.3 3.3 0 0 1 0-6.6"/><circle cx="5.5" cy="19.5" r="1.3"/><path d="M17 12.6s-3.6-3-3.6-5.4a3.6 3.6 0 0 1 7.2 0c0 2.4-3.6 5.4-3.6 5.4z"/><circle cx="17" cy="7.2" r="1"/>'),
+  // A window with code in it.
+  projects: ic('<rect x="3.5" y="5" width="17" height="14" rx="3.2"/>', '<rect x="3.5" y="5" width="17" height="14" rx="3.2"/><path d="M9.6 10.4 7.6 12.4l2 2M14.4 10.4l2 2-2 2"/>'),
+  // A screwdriver: repairs and builds, off the clock.
+  life: ic('<circle cx="12" cy="12" r="7.5"/>', '<path d="M14.6 4.8a3.4 3.4 0 0 0-4.4 4.2L4.6 14.6a1.9 1.9 0 0 0 2.7 2.7l5.6-5.6a3.4 3.4 0 0 0 4.2-4.4l-2 2-2.1-.4-.4-2.1z"/>'),
+  // Stacked layers.
+  skills: ic('<path d="M12 4.5 20 9l-8 4.5L4 9z"/>', '<path d="M12 4.5 20 9l-8 4.5L4 9z"/><path d="m4 13 8 4.5 8-4.5"/><path d="m4 16.6 8 4.4 8-4.4" opacity=".55"/>'),
+  // A speech bubble with a quote in it.
+  words: ic('<path d="M5 5.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3v-3H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/>', '<path d="M5 5.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3v-3H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/><path d="M8.6 12.8c0-1.6.6-2.6 1.8-3.1M12.6 12.8c0-1.6.6-2.6 1.8-3.1"/>')
 };
 const TABS = [['path', 'Path', 'experience'], ['projects', 'Projects', 'projects'], ['life', 'Life', 'offclock'], ['skills', 'Skills', 'skills'], ['words', 'Words', 'recs']];
 const langs = [...new Set(P.projects.map((p) => p.lang))];
 
-const logoOf = (e) => LOGO[e.id] ? `<span class="mx-logo"><img src="assets/logos/opt/${LOGO[e.id]}${['toyota', 'jm-family', 'hunter', 'fics'].includes(LOGO[e.id]) ? '' : ''}.webp" alt="" loading="lazy" decoding="async" /></span>` : `<span class="mx-logo mx-logo-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
+const logoOf = (e) => LOGO[e.id] ? `<span class="mx-logo">${pic(LOGO[e.id])}</span>` : `<span class="mx-logo mx-logo-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
+/* A stop on the path: the logo glowing in its own colour, and a much larger,
+   fainter copy of it tipped into the card's corner, the way the Gators mark
+   peers into the education card on the desktop. */
+const stop = (e, i) => {
+  const L = LOGO[e.id];
+  const face = L ? `<span class="mx-st-logo">${pic(L)}</span>` : `<span class="mx-st-logo mx-st-mono" aria-hidden="true">${esc(initials(e.short))}</span>`;
+  const wm = L ? `<span class="mx-st-wm" aria-hidden="true">${pic(L)}</span>` : `<span class="mx-st-wm mx-st-wm-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
+  return `<li style="--tint:${TINT[e.id] || 'var(--accent)'};--k:${i}"><button type="button" class="mx-stop" data-sheet="mx-role-${e.id}">
+            <span class="mx-st-glow" aria-hidden="true"></span>${wm}
+            <span class="mx-st-top">${face}<span class="mx-st-yr">${e.year}</span></span>
+            <span class="mx-st-t"><b>${esc(e.org)}</b><span>${esc(e.role)}</span><span class="mx-st-where">${esc(e.where)}</span></span>
+          </button></li>`;
+};
+/* The logos to toss around: the desktop strip's seven, each opening its role. */
+const JAR = [['rfa', ['roboticsforall', 'roboticsforall'], 'Robotics For All'], ['jm', ['jm-family', 'jm-family-light'], 'JM Family'], ['toyota', ['toyota', 'toyota-light'], 'Southeast Toyota'], ['jm', ['jm-lexus', 'jm-lexus'], 'JM Lexus'], ['adt', ['adt', 'adt'], 'ADT'], ['hunter', ['hunter', 'hunter-light'], 'Hunter Engineering'], ['fics', ['fics', 'fics-light'], 'FICS at UF']];
 
 const roleSheet = (e) => {
   const [a, b] = lead(e.text);
@@ -74,10 +104,10 @@ const html = `<!-- mx:start -->
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <button type="button" class="mx-mark" aria-label="Turn the shapes">
-        <span class="mx-tiles" aria-hidden="true"></span>
+      <button type="button" class="mx-mark" aria-label="Play with the mark">
+        <span class="mx-mark-glow" aria-hidden="true"></span>${MARK}
       </button>
-      <p class="mx-mono mx-greet"><i class="mx-live" aria-hidden="true"></i><span data-mx-greeting>Hello</span></p>
+      <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
       <a class="mx-down" href="#mx-tabs" aria-label="Take a look"><span>Take a look</span><i aria-hidden="true"></i></a>
@@ -92,11 +122,11 @@ const html = `<!-- mx:start -->
       <section class="mx-panel" id="mx-p-path" role="tabpanel" aria-labelledby="mx-tab-path" data-tab="path">
         <p class="mx-intro">Eight roles since 2019. Tap one for the story.</p>
         <ol class="mx-tl">
-          ${ROLES.map((e) => `<li><button type="button" class="mx-row" data-sheet="mx-role-${e.id}">${logoOf(e)}<span class="mx-row-t"><b>${esc(e.org)}</b><span>${esc(e.role)}</span></span><span class="mx-yr mx-mono">${e.year}</span>${I.chev}</button></li>`).join('\n          ')}
+          ${ROLES.map(stop).join('\n          ')}
         </ol>
-        <div class="mx-edu">
-          <img src="${P.education.logo}" alt="" loading="lazy" decoding="async" />
-          <div><p class="mx-mono">Education · ${esc(P.education.when)}</p><b>${esc(P.education.school)}</b><span>${esc(P.education.degree)}, with the UF AI Certificate</span></div>
+        <div class="mx-edu" style="--tint:#fa4616">
+          <img class="mx-edu-wm" src="assets/images/uf-gator-320.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+          <p class="mx-mono">Education · ${esc(P.education.when)}</p><b>${esc(P.education.school)}</b><span>${esc(P.education.degree)}, with the UF AI Certificate</span>
         </div>
       </section>
 
@@ -138,6 +168,15 @@ const html = `<!-- mx:start -->
       </section>
     </div>
 
+    <section class="mx-jar-s" aria-label="Companies I have worked with">
+      <p class="mx-mono mx-kick">Impact delivered at</p>
+      <h2 class="mx-h2">Toss them around.</h2>
+      <p class="mx-sub">Tap one for the story.</p>
+      <div class="mx-jar">
+        ${JAR.map(([id, L, n], i) => `<button type="button" class="mx-chip" data-sheet="mx-role-${id}" aria-label="${esc(n)}" style="--tint:${TINT[id]}" data-i="${i}">${pic(L)}</button>`).join('')}
+      </div>
+    </section>
+
     <a class="mx-eras" href="eras.html">
       <span class="mx-eras-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
       <span class="mx-eras-t"><span class="mx-mono">New</span><b>Try this portfolio in <span class="mx-eras-y" data-years="2000,2003,2007">2000</span></b></span>
@@ -145,13 +184,10 @@ const html = `<!-- mx:start -->
     </a>
 
     <section class="mx-contact" id="m-contact">
-      <button type="button" class="mx-ava" aria-label="Then and now: tap to turn the photo over" aria-pressed="false">
-        <span class="mx-ava-in">
-          <img class="mx-ava-now" src="assets/images/opt/hero-480.webp" alt="Ajay Sommi" loading="lazy" decoding="async" />
-          <img class="mx-ava-then" src="assets/images/offclock/kid-2006-480.webp" alt="Ajay in 2006, at a computer" loading="lazy" decoding="async" />
-        </span>
-        <span class="mx-ava-tag mx-mono" aria-hidden="true"><b class="mx-now">2026</b><b class="mx-then">2006</b></span>
-      </button>
+      <div class="mx-prints" role="group" aria-label="Then and now. Tap the top photo to shuffle">
+        <button type="button" class="mx-print mx-print-now" aria-label="2026"><img src="assets/images/opt/hero-480.webp" alt="Ajay Sommi, 2026" loading="lazy" decoding="async" /><span>2026</span></button>
+        <button type="button" class="mx-print mx-print-then top" aria-label="2006"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay in 2006, at a computer" loading="lazy" decoding="async" /><span>2006</span></button>
+      </div>
       <h2>20+ years of experience.</h2>
       <p>Let’s not be strangers.</p>
       <div class="mx-mailrow">
@@ -164,8 +200,8 @@ const html = `<!-- mx:start -->
         <a class="mx-btn" href="${P.linkedin}" target="_blank" rel="noopener" aria-label="LinkedIn">${I.linkedin}</a>
       </div>
       <p class="mx-facts mx-mono">${esc(P.citizen)} · UF Computer Science · Dec 2026</p>
-      <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
     </section>
+    <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
 
     ${ROLES.map(roleSheet).join('\n    ')}
     ${P.projects.map(projSheet).join('\n    ')}

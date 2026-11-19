@@ -15,7 +15,7 @@
   /* The desktop's content steps aside; its bar, dock, search, loader and
      background stay, so this reads as the same site. */
   main#main, .footer, .rail { display: none !important; }
-  .mx { display: block; position: relative; z-index: 2; padding: calc(18px + env(safe-area-inset-top)) 18px calc(118px + env(safe-area-inset-bottom)); color: var(--ink); font-family: var(--font-sans); -webkit-tap-highlight-color: transparent; }
+  .mx { display: block; position: relative; z-index: 2; padding: calc(18px + env(safe-area-inset-top)) 18px calc(104px + env(safe-area-inset-bottom)); color: var(--ink); font-family: var(--font-sans); -webkit-tap-highlight-color: transparent; }
   .mx-scrim:not([hidden]), .mx-sheet:not([hidden]), .mx-viewer:not([hidden]) { display: block; }
 
   .mx button { font: inherit; color: inherit; cursor: pointer; }
@@ -28,24 +28,23 @@
   /* One screen, one thing: the desktop's shape composition, a hello, the
      name set large, a single line, and a way down. */
   .mx-hero { position: relative; min-height: calc(100svh - 18px - env(safe-area-inset-top)); display: flex; flex-direction: column; justify-content: center; padding: 0 4px 96px; }
-  .mx-mark { align-self: flex-start; width: 84px; height: 84px; margin: 0 0 34px; padding: 0; border: 0; background: none; transition: transform .7s cubic-bezier(.3, 1.5, .5, 1); }
-  .mx-tiles { --t: 28px; display: block; width: calc(var(--t) * 3); height: calc(var(--t) * 3);
-    --c1: var(--accent); --c2: var(--m-blue); --c3: var(--ink); --c4: var(--m-fill-2);
-    background:
-      radial-gradient(circle var(--t) at 100% 100%, var(--c1) calc(100% - .8px), transparent 100%),
-      radial-gradient(circle calc(var(--t) / 2) at 50% 50%, var(--c2) calc(100% - .8px), transparent 100%),
-      linear-gradient(var(--c4), var(--c4)),
-      radial-gradient(circle calc(var(--t) / 2) at 100% 50%, var(--c3) calc(100% - .8px), transparent 100%),
-      radial-gradient(circle var(--t) at 0 0, var(--c4) calc(100% - .8px), transparent 100%),
-      radial-gradient(circle calc(var(--t) / 2) at 50% 50%, var(--c1) calc(100% - .8px), transparent 100%),
-      linear-gradient(var(--c2), var(--c2)),
-      radial-gradient(circle calc(var(--t) / 2) at 50% 0, var(--c1) calc(100% - .8px), transparent 100%),
-      linear-gradient(to top right, var(--c3) calc(50% - .5px), transparent calc(50% + .5px));
-    background-size: var(--t) var(--t); background-repeat: no-repeat;
-    background-position: 0 0, var(--t) 0, calc(var(--t) * 2) 0, 0 var(--t), var(--t) var(--t), calc(var(--t) * 2) var(--t), 0 calc(var(--t) * 2), var(--t) calc(var(--t) * 2), calc(var(--t) * 2) calc(var(--t) * 2); }
-  .mx-greet { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 12px; }
-  .mx-live { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: mx-pulse 2.4s ease-out infinite; }
-  @keyframes mx-pulse { 0% { box-shadow: 0 0 0 0 var(--accent-soft); } 70%, 100% { box-shadow: 0 0 0 9px transparent; } }
+  /* The mark from the top bar, large. A touch tilts it toward the finger;
+     a tap knocks its four pieces apart and they spring back together. */
+  .mx-mark { position: relative; align-self: flex-start; width: 92px; height: 86px; margin: 0 0 34px -4px; padding: 0; border: 0; background: none; perspective: 500px; touch-action: none; }
+  .mx .mx-aj { position: relative; display: block; width: 100%; height: 100%; overflow: visible; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .6s cubic-bezier(.3, 1.6, .5, 1); }
+  .mx-mark.held .mx-aj { transition: transform .12s ease-out; }
+  .mx-aj > * { transform-box: fill-box; transform-origin: center; transition: transform .75s cubic-bezier(.3, 1.7, .45, 1); }
+  .mx-aj-a { fill: var(--ink); } .mx-aj-u { fill: #ff6b35; } .mx-aj-i, .mx-aj-d { fill: #3d68ff; }
+  .mx-mark.pop .mx-aj > * { transition-duration: .18s; transition-timing-function: cubic-bezier(.2, .8, .3, 1); }
+  .mx-mark.pop .mx-aj-a { transform: translate(-5px, 3px) rotate(-9deg); }
+  .mx-mark.pop .mx-aj-u { transform: translate(3px, 6px) rotate(14deg); }
+  .mx-mark.pop .mx-aj-i { transform: translate(7px, -1px) rotate(12deg); }
+  .mx-mark.pop .mx-aj-d { transform: translate(5px, -9px) scale(1.25); }
+  /* A soft light behind it in the mark's two colours, breathing. */
+  .mx-mark-glow { position: absolute; inset: -30% -40% -30% -20%; border-radius: 50%; background: radial-gradient(closest-side at 62% 34%, color-mix(in oklab, #3d68ff 42%, transparent), transparent), radial-gradient(closest-side at 48% 74%, color-mix(in oklab, #ff6b35 38%, transparent), transparent); filter: blur(18px); opacity: .55; animation: mx-breathe 5s ease-in-out infinite; pointer-events: none; }
+  [data-theme="daylight"] .mx-mark-glow { opacity: .4; }
+  @keyframes mx-breathe { 50% { opacity: .3; transform: scale(.9); } }
+  .mx-greet { margin: 0 0 14px; font-size: 12px; }
   .mx-name { margin: 0; font-weight: 600; letter-spacing: -.045em; line-height: .92; }
   .mx-hi { display: block; font-size: clamp(30px, 9vw, 40px); letter-spacing: -.03em; color: var(--ink-2); margin-bottom: 6px; }
   .mx-me { display: block; font-size: clamp(84px, 27vw, 120px); }
@@ -62,70 +61,86 @@
   @keyframes mx-in-c { from { opacity: 0; } }
   html.is-loading .mx-hero > * { animation-play-state: paused; }
 
-  /* The portrait, at the bottom: a tap turns it over to 2006 and back. */
-  .mx-ava { position: relative; display: block; width: 132px; height: 132px; margin: 0 auto 26px; padding: 0; border: 0; border-radius: 50%; background: none; }
-  .mx-ava::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: conic-gradient(from 210deg, var(--accent), var(--accent) 62%, var(--m-blue) 62%, var(--m-blue) 80%, var(--accent) 80%); -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px)); mask: radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px)); transition: transform 1s cubic-bezier(.2, .8, .2, 1); }
-  .mx-ava.flipped::before { transform: rotate(180deg); }
-  .mx-ava-in { position: absolute; inset: 0; transition: transform .2s cubic-bezier(.4, 0, .6, 1); }
-  .mx-ava.turning .mx-ava-in { transform: scaleX(0); }
-  .mx-ava img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--m-fill); }
-  .mx-ava-now { object-position: 40% 30%; }
-  .mx-ava-then { opacity: 0; object-position: 62% 40%; }
-  .mx-ava.flipped .mx-ava-then { opacity: 1; } .mx-ava.flipped .mx-ava-now { opacity: 0; }
-  .mx-ava-tag { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); padding: 2px 9px; border-radius: 999px; background: var(--ink); color: var(--bg); font-size: 10.5px; letter-spacing: .06em; }
-  .mx-ava-tag b { font-weight: 500; }
-  .mx-then { display: none; }
-  .mx-ava.flipped .mx-then { display: inline; } .mx-ava.flipped .mx-now { display: none; }
+  /* Two prints at the bottom, 2006 on top. A tap sends the top one under. */
+  .mx-prints { position: relative; width: 210px; height: 236px; margin: 0 auto 30px; }
+  .mx-print { position: absolute; top: 0; left: 50%; width: 168px; margin-left: -84px; padding: 9px 9px 0; border: 0; border-radius: 3px; background: #fdfcf9; box-shadow: 0 1px 2px rgba(20, 20, 20, .14), 0 16px 32px -14px rgba(20, 20, 20, .4); color: #2a2723; transition: transform .6s cubic-bezier(.3, 1.4, .5, 1); }
+  [data-theme="midnight"] .mx-print, [data-theme="terminal"] .mx-print { background: #f4f1ea; box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 18px 36px -12px rgba(0, 0, 0, .65); }
+  .mx-print img { display: block; width: 150px; height: 168px; object-fit: cover; border-radius: 1px; background: #e8e4dc; }
+  .mx .mx-print span { display: block; color: #2a2723; padding: 8px 0 10px; font: 500 13px var(--font-mono); letter-spacing: .06em; text-align: center; }
+  .mx-print-now { z-index: 1; transform: translate(26px, 10px) rotate(7deg); }
+  .mx-print-now img { object-position: 40% 28%; }
+  .mx-print-then { z-index: 2; transform: translate(-22px, 0) rotate(-6deg); }
+  .mx-print-then img { object-position: 62% 40%; }
+  .mx-print.top { z-index: 3; }
+  .mx-print.toss { transform: translate(120px, -30px) rotate(24deg) !important; transition: transform .25s cubic-bezier(.4, 0, .8, .6); }
   .mx-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
   .mx-cta-3 { grid-template-columns: 1fr 56px 56px; }
   .mx-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 16px; border: 1px solid var(--stroke-hi); border-radius: 999px; background: transparent; color: var(--ink); font: 500 15px var(--font-sans); text-decoration: none; transition: transform .2s, background-color .2s, color .2s; }
   .mx-btn svg { font-size: 18px; }
   .mx-btn-solid { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  .mx-btn:active, .mx-row:active, .mx-proj:active, .mx-copy:active, .mx-mark:active { transform: scale(.96); }
+  .mx-btn:active, .mx-row:active, .mx-proj:active, .mx-copy:active { transform: scale(.96); }
   .mx-facts { margin-top: 18px; }
 
   /* ------------------------------------------------------------------- tabs */
   /* Pinned under the top of the screen once you reach it. The ink under
      the chosen tab slides along with the swipe. */
   .mx-tabs { position: sticky; top: 0; z-index: 5; display: flex; margin: 0 -18px; padding: calc(8px + env(safe-area-inset-top)) 12px 0; background: var(--bg); border-bottom: 1px solid var(--stroke); }
-  .mx-tabs button { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 11px; border: 0; background: none; color: var(--ink-3); font-size: 13px; font-weight: 500; transition: color .25s; }
+  .mx-tabs button { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 10px; border: 0; background: none; color: var(--ink-3); font-size: 13px; font-weight: 500; transition: color .25s; }
   .mx-tabs button[aria-selected="true"] { color: var(--ink); }
-  .mx-ink { position: absolute; left: 0; bottom: -1px; height: 2px; width: 40px; background: var(--ink); border-radius: 2px; transition: transform .1s linear, width .1s linear; }
+  .mx-ink { position: absolute; left: 0; bottom: -1px; height: 2px; width: 40px; background: var(--accent); border-radius: 2px; transition: transform .1s linear, width .1s linear; }
   .mx-tabs.jump .mx-ink { transition: transform .45s cubic-bezier(.2, .8, .2, 1), width .45s cubic-bezier(.2, .8, .2, 1); }
-  /* The five flat shapes, one per tab, as the desktop marks its sections. */
-  .mx-sh { display: block; width: 11px; height: 11px; background: currentColor; opacity: .55; transition: opacity .25s, transform .4s cubic-bezier(.3, 1.6, .5, 1), background-color .25s; }
-  .mx-tabs [aria-selected="true"] .mx-sh { opacity: 1; transform: scale(1.18); }
-  .mx-tabs [aria-selected="true"] .mx-sh-q, .mx-tabs [aria-selected="true"] .mx-sh-c, .mx-tabs [aria-selected="true"] .mx-sh-h { background: var(--accent); }
-  .mx-tabs [aria-selected="true"] .mx-sh-t, .mx-tabs [aria-selected="true"] .mx-sh-s { background: var(--m-blue); }
-  .mx-sh-q { border-radius: 50%; }
-  .mx-sh-t { clip-path: polygon(50% 4%, 100% 96%, 0 96%); }
-  .mx-sh-c { border-radius: 0 100% 0 0; }
-  .mx-sh-s { height: 6px; border-radius: 6px 6px 0 0; margin-top: 5px; }
-  .mx-sh-h { box-sizing: border-box; background: none !important; border: 2.2px solid currentColor; border-radius: 50%; }
-  .mx-tabs [aria-selected="true"] .mx-sh-h { border-color: var(--accent); }
+  /* Soft icons: a rounded line over a quiet fill, warming when chosen. */
+  .mx-ic { display: block; width: 24px !important; height: 24px !important; overflow: visible; transition: transform .45s cubic-bezier(.3, 1.6, .5, 1); }
+  .mx-ic-f { fill: currentColor; opacity: .1; transition: fill .3s, opacity .3s; }
+  .mx-tabs [aria-selected="true"] .mx-ic { transform: translateY(-1px) scale(1.08); }
+  .mx-tabs [aria-selected="true"] .mx-ic-f { fill: var(--accent); opacity: .28; }
+  .mx-tabs [aria-selected="true"] .mx-ic-l { color: var(--ink); }
+  .mx-tabs button:active .mx-ic { transform: scale(.88); }
 
   /* The five panels sit side by side; a sideways swipe moves between them. */
   .mx-pager { display: flex; align-items: flex-start; margin: 0 -18px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; transition: height .35s cubic-bezier(.2, .8, .2, 1); }
   .mx-pager::-webkit-scrollbar { display: none; }
   .mx-panel { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; padding: 18px 18px 6px; }
 
-  /* Path */
-  .mx-tl { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .mx-row { width: 100%; display: grid; grid-template-columns: 40px 1fr auto 14px; align-items: center; gap: 12px; padding: 11px 12px 11px 11px; border: 1px solid var(--stroke); border-radius: var(--r-md); background: var(--surface); text-align: left; transition: transform .2s, border-color .2s; }
-  .mx-row > svg { color: var(--ink-3); font-size: 15px; }
-  .mx-logo { width: 40px; height: 40px; border-radius: 11px; background: #fff; border: 1px solid var(--stroke); display: grid; place-items: center; overflow: hidden; }
-  .mx-logo img { max-width: 30px; max-height: 26px; object-fit: contain; }
-  .mx-logo-t { background: var(--m-fill); color: var(--ink-2); font: 500 13px var(--font-mono); }
-  .mx-row-t { min-width: 0; display: grid; gap: 1px; }
-  .mx-row-t b { font-size: 15px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mx-row-t span { font-size: 13px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mx-yr { color: var(--ink-2); }
-  .mx-edu { display: grid; grid-template-columns: 46px 1fr; gap: 12px; align-items: center; margin-top: 14px; padding: 13px; border: 1px dashed var(--stroke-hi); border-radius: var(--r-md); }
-  .mx-edu img { width: 46px; height: 46px; object-fit: contain; background: #fff; border-radius: 11px; padding: 4px; }
-  .mx-edu div { display: grid; gap: 2px; }
-  .mx-edu b { font-size: 15px; }
-  .mx-edu span:not(.mx-mono) { font-size: 13px; color: var(--ink-2); }
-  .mx-edu .mx-mono { margin: 0; }
+  /* Path: each stop a card lit in its company's colour. The logo glows in
+     that colour; a larger, fainter copy is tipped into the corner, cut off
+     by the card's edge, as the Gators mark is on the desktop. */
+  .mx-tl { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .mx-stop { position: relative; isolation: isolate; overflow: hidden; width: 100%; display: grid; gap: 14px; padding: 16px 16px 15px; border: 1px solid var(--stroke); border-radius: var(--r-lg); background: var(--surface); text-align: left; transition: transform .25s, border-color .4s; }
+  .mx-stop > :not(.mx-st-glow, .mx-st-wm) { position: relative; z-index: 2; }
+  .mx-st-glow { position: absolute; z-index: 0; left: -40px; top: -60px; width: 220px; height: 170px; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in oklab, var(--tint) 34%, transparent), transparent); opacity: .5; transition: opacity .6s, transform .8s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+  [data-theme="daylight"] .mx-st-glow { background: radial-gradient(closest-side, color-mix(in oklab, var(--tint) 20%, transparent), transparent); }
+  .mx-st-wm { position: absolute; z-index: 1; right: -26px; bottom: -30px; width: 150px; height: 110px; display: grid; place-items: center; transform: rotate(-12deg); opacity: .07; pointer-events: none; transition: opacity .6s, transform .8s cubic-bezier(.2, .8, .2, 1); -webkit-mask-image: radial-gradient(110% 110% at 100% 100%, #000 40%, transparent 85%); mask-image: radial-gradient(110% 110% at 100% 100%, #000 40%, transparent 85%); }
+  .mx-st-wm img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); }
+  .mx-st-wm-t { font: 700 92px/1 var(--font-sans); letter-spacing: -.06em; color: var(--tint); }
+  [data-theme="daylight"] .mx-st-wm { opacity: .09; }
+  .mx-st-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; }
+  .mx-st-logo { display: flex; align-items: center; height: 40px; max-width: 150px; }
+  .mx-st-logo img { max-height: 36px; max-width: 150px; object-fit: contain; filter: drop-shadow(0 0 10px color-mix(in oklab, var(--tint) 55%, transparent)); transition: filter .6s; }
+  .mx-st-mono { justify-content: center; width: 40px; border-radius: 12px; background: color-mix(in oklab, var(--tint) 18%, transparent); color: var(--tint); font: 600 14px var(--font-mono); box-shadow: 0 0 18px -4px color-mix(in oklab, var(--tint) 60%, transparent); }
+  .mx-st-yr { padding: 3px 9px; border-radius: 999px; background: color-mix(in oklab, var(--tint) 16%, transparent); color: color-mix(in oklab, var(--tint) 55%, var(--ink)); font: 500 12px var(--font-mono); letter-spacing: .04em; }
+  .mx-st-t { display: grid; gap: 2px; }
+  .mx-st-t b { font-size: 17px; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+  .mx-st-t span { font-size: 14px; color: var(--ink-2); }
+  .mx-st-t .mx-st-where { margin-top: 2px; font: 11px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+  /* The card nearest the middle of the screen lights up as you scroll. */
+  .mx-stop.lit { border-color: color-mix(in oklab, var(--tint) 45%, var(--stroke)); }
+  .mx-stop.lit .mx-st-glow { opacity: 1; transform: translate(10px, 6px) scale(1.15); }
+  .mx-stop.lit .mx-st-wm { opacity: .14; transform: rotate(-6deg) scale(1.06); }
+  [data-theme="daylight"] .mx-stop.lit .mx-st-wm { opacity: .16; }
+  .mx-stop.lit .mx-st-logo img { filter: drop-shadow(0 0 14px color-mix(in oklab, var(--tint) 85%, transparent)); }
+  .mx-stop:active { transform: scale(.975); }
+  /* Logos in the colouring that suits the theme. */
+  .lg-l { display: none; }
+  [data-theme="daylight"] .lg-d { display: none; } [data-theme="daylight"] .lg-l { display: block; }
+  /* School, with the Gators peering in from the corner. */
+  .mx-edu { position: relative; isolation: isolate; overflow: hidden; display: grid; gap: 3px; margin-top: 10px; padding: 16px 16px 18px; border: 1px dashed color-mix(in oklab, var(--tint) 40%, var(--stroke-hi)); border-radius: var(--r-lg); background: radial-gradient(120% 90% at 100% 100%, color-mix(in oklab, var(--tint) 12%, transparent), transparent 60%); }
+  .mx-edu > :not(.mx-edu-wm) { position: relative; z-index: 1; max-width: 76%; }
+  .mx-edu-wm { position: absolute; z-index: 0; right: -38px; bottom: -40px; width: 170px; height: auto; transform: rotate(-12deg); opacity: .2; pointer-events: none; -webkit-mask-image: radial-gradient(120% 120% at 100% 100%, #000 45%, transparent 85%); mask-image: radial-gradient(120% 120% at 100% 100%, #000 45%, transparent 85%); }
+  [data-theme="daylight"] .mx-edu-wm { opacity: .2; }
+  .mx-edu b { font-size: 16px; }
+  .mx-edu span { font-size: 14px; color: var(--ink-2); }
+  .mx-edu .mx-mono { margin: 0 0 4px; color: var(--tint); }
 
   /* Projects */
   .mx-filter, .mx-groups { display: flex; gap: 7px; overflow-x: auto; margin: 0 -18px 14px; padding: 0 18px; scrollbar-width: none; }
@@ -189,6 +204,20 @@
   .mx-dots i { width: 6px; height: 6px; border-radius: 6px; background: var(--stroke-hi); transition: width .35s cubic-bezier(.2, .8, .2, 1), background-color .3s; }
   .mx-dots i.on { width: 18px; background: var(--accent); }
 
+  /* --------------------------------------------------------------- the jar */
+  /* The desktop's logo strip, made for a hand: the logos drop into a tray
+     and can be dragged and flung about. A tap opens that role. */
+  .mx-jar-s { margin-top: 56px; }
+  .mx-kick { margin: 0 0 6px; color: var(--accent); }
+  .mx-h2 { margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.05; }
+  .mx-sub { margin: 6px 0 16px; color: var(--ink-2); font-size: 15px; }
+  .mx-jar { position: relative; height: 300px; border: 1px solid var(--stroke); border-radius: var(--r-xl); background: radial-gradient(90% 70% at 50% 110%, color-mix(in oklab, var(--accent) 9%, transparent), transparent 70%), var(--surface); overflow: hidden; touch-action: pan-y; }
+  .mx-chip { position: absolute; left: 0; top: 0; width: var(--d, 96px); height: var(--d, 96px); display: grid; place-items: center; padding: 0; border: 1px solid var(--stroke-hi); border-radius: 50%; background: var(--bg); box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .45), 0 0 0 0 transparent; touch-action: none; will-change: transform; transform: translate(-200px, -200px); transition: box-shadow .3s, border-color .3s; user-select: none; -webkit-user-select: none; }
+  .mx-chip img { max-width: 66%; max-height: 46%; object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
+  .mx-chip img[src*="jm-lexus"] { filter: brightness(2.1); }
+  [data-theme="daylight"] .mx-chip img[src*="jm-lexus"] { filter: brightness(.55); }
+  .mx-chip.held { border-color: color-mix(in oklab, var(--tint) 70%, transparent); box-shadow: 0 18px 30px -12px rgba(0, 0, 0, .5), 0 0 26px -2px color-mix(in oklab, var(--tint) 55%, transparent); }
+
   /* ---------------------------------------------------------------- eras */
   /* The desktop's banner, in its colours, as one tappable card. */
   .mx-eras { display: grid; grid-template-columns: 34px 1fr 38px; align-items: center; gap: 14px; margin-top: 30px; padding: 14px 14px 14px 16px; border: 1px solid var(--stroke); border-radius: var(--r-lg); background: var(--surface); color: var(--ink); text-decoration: none; }
@@ -204,7 +233,7 @@
   .mx-eras-go { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--bg); font-size: 17px; }
 
   /* ------------------------------------------------------------- contact */
-  .mx-contact { margin-top: 64px; text-align: center; }
+  .mx-contact { margin-top: 84px; text-align: center; }
   .mx-contact h2 { margin: 0; font-size: 26px; letter-spacing: -.03em; }
   .mx-contact > p { margin: 4px 0 18px; color: var(--ink-2); }
   .mx-mailrow { display: grid; grid-template-columns: 1fr 50px; gap: 8px; margin-bottom: 10px; }
@@ -212,7 +241,8 @@
   .mx-mail span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .mx-copy { width: 50px; height: 50px; display: grid; place-items: center; border: 1px solid var(--stroke-hi); border-radius: 50%; background: none; font-size: 18px; transition: transform .2s, background-color .2s, color .2s; }
   .mx-copy.done { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-  .mx-foot { margin-top: 26px; }
+  /* The small print, down at the very bottom, just above the dock. */
+  .mx-foot { margin: 0; padding-top: 22svh; text-align: center; }
 
   /* --------------------------------------------------------------- sheet */
   .mx-scrim { position: fixed; inset: 0; z-index: 80; background: rgba(0, 0, 0, .4); opacity: 0; transition: opacity .3s; }
@@ -224,6 +254,9 @@
   .mx-grab::before { content: ''; width: 38px; height: 5px; border-radius: 5px; background: var(--stroke-hi); }
   .mx-sheet-in { overflow-y: auto; overscroll-behavior: contain; padding: 4px 18px calc(28px + env(safe-area-inset-bottom)); touch-action: pan-y; color: var(--ink); font-family: var(--font-sans); }
   .mxs-head { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: center; margin-bottom: 16px; }
+  .mx-logo { display: grid; place-items: center; overflow: hidden; border: 1px solid var(--stroke); background: var(--surface); }
+  .mx-logo-t { background: var(--m-fill); color: var(--ink-2); font: 500 14px var(--font-mono); }
+  .mx-logo img { object-fit: contain; }
   .mxs-head .mx-logo { width: 52px; height: 52px; border-radius: 14px; }
   .mxs-head .mx-logo img { max-width: 38px; max-height: 32px; }
   .mxs-head-plain { grid-template-columns: 1fr; }
@@ -264,9 +297,23 @@
   .mxv-zone { position: absolute; top: calc(70px + env(safe-area-inset-top)); bottom: 168px; z-index: 2; border: 0; background: none; padding: 0; }
   .mxv-prev { left: 0; width: 35%; } .mxv-next { right: 0; width: 65%; }
 
+  /* ------------------------------------------------------------ on scroll */
+  /* Things rise into place as they come up the screen, a little blurred
+     until they land. The hello drifts back as you leave it. */
+  .mx [data-rv] { opacity: 0; transform: translateY(26px) scale(.98); filter: blur(6px); transition: opacity .8s cubic-bezier(.2, .8, .2, 1), transform .9s cubic-bezier(.2, .8, .2, 1), filter .8s; transition-delay: calc(var(--rd, 0) * 70ms); }
+  .mx [data-rv].in { opacity: 1; transform: none; filter: none; }
+  .mx-hero { --p: 0; }
+  .mx-hero > .mx-name, .mx-hero > .mx-line, .mx-hero > .mx-greet { translate: 0 calc(var(--p) * -60px); opacity: calc(1 - var(--p) * 1.3); }
+  .mx-hero > .mx-name { scale: calc(1 - var(--p) * .08); transform-origin: left center; }
+  .mx-hero > .mx-mark { translate: 0 calc(var(--p) * -110px); rotate: calc(var(--p) * -24deg); }
+  .mx-hero > .mx-down { opacity: calc(1 - var(--p) * 4); }
+  /* Rows in a tab come in one after another when the tab opens. */
+  .mx-panel.enter .mx-tl > li, .mx-panel.enter .mx-projs > li:not(.out), .mx-panel.enter .mx-story-b, .mx-panel.enter .mx-quote, .mx-panel.enter .mx-edu { animation: mx-pop .55s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--k, 0) * 45ms); }
+
   html.mx-lock, html.mx-lock body { overflow: hidden; }
 
   @media (prefers-reduced-motion: reduce) {
     .mx *, .mx-sheet, .mx-viewer { animation: none !important; transition-duration: .01ms !important; }
+    .mx [data-rv] { opacity: 1; transform: none; filter: none; }
   }
 }

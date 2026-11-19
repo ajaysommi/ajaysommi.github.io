@@ -43,7 +43,7 @@
   <style>.sub-short{display:none}@media (max-width:719px){.sub-long{display:none}.sub-short{display:inline}}</style>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css" />
-  <link rel="stylesheet" href="mobile.css?v=7" />
+  <link rel="stylesheet" href="mobile.css?v=9" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -216,17 +216,17 @@
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <button type="button" class="mx-mark" aria-label="Turn the shapes">
-        <span class="mx-tiles" aria-hidden="true"></span>
+      <button type="button" class="mx-mark" aria-label="Play with the mark">
+        <span class="mx-mark-glow" aria-hidden="true"></span><svg class="mx-aj" viewBox="9 8.5 45 42" aria-hidden="true" focusable="false"><path class="mx-aj-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path class="mx-aj-u" d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z"/><rect class="mx-aj-i" x="43.83" y="24.60" width="8.74" height="11.79"/><circle class="mx-aj-d" cx="48.20" cy="17.40" r="5.60"/></svg>
       </button>
-      <p class="mx-mono mx-greet"><i class="mx-live" aria-hidden="true"></i><span data-mx-greeting>Hello</span></p>
+      <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
       <a class="mx-down" href="#mx-tabs" aria-label="Take a look"><span>Take a look</span><i aria-hidden="true"></i></a>
     </section>
 
     <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">
-      <button type="button" role="tab" id="mx-tab-path" aria-controls="mx-p-path" aria-selected="true" data-tab="path"><i class="mx-sh mx-sh-q" aria-hidden="true"></i><span>Path</span></button><button type="button" role="tab" id="mx-tab-projects" aria-controls="mx-p-projects" aria-selected="false" data-tab="projects"><i class="mx-sh mx-sh-t" aria-hidden="true"></i><span>Projects</span></button><button type="button" role="tab" id="mx-tab-life" aria-controls="mx-p-life" aria-selected="false" data-tab="life"><i class="mx-sh mx-sh-c" aria-hidden="true"></i><span>Life</span></button><button type="button" role="tab" id="mx-tab-skills" aria-controls="mx-p-skills" aria-selected="false" data-tab="skills"><i class="mx-sh mx-sh-s" aria-hidden="true"></i><span>Skills</span></button><button type="button" role="tab" id="mx-tab-words" aria-controls="mx-p-words" aria-selected="false" data-tab="words"><i class="mx-sh mx-sh-h" aria-hidden="true"></i><span>Words</span></button>
+      <button type="button" role="tab" id="mx-tab-path" aria-controls="mx-p-path" aria-selected="true" data-tab="path"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><circle cx="17" cy="7.5" r="4.2"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 19.5h6.2a3.3 3.3 0 0 0 0-6.6H9.6a3.3 3.3 0 0 1 0-6.6"/><circle cx="5.5" cy="19.5" r="1.3"/><path d="M17 12.6s-3.6-3-3.6-5.4a3.6 3.6 0 0 1 7.2 0c0 2.4-3.6 5.4-3.6 5.4z"/><circle cx="17" cy="7.2" r="1"/></g></svg><span>Path</span></button><button type="button" role="tab" id="mx-tab-projects" aria-controls="mx-p-projects" aria-selected="false" data-tab="projects"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><rect x="3.5" y="5" width="17" height="14" rx="3.2"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="3.2"/><path d="M9.6 10.4 7.6 12.4l2 2M14.4 10.4l2 2-2 2"/></g></svg><span>Projects</span></button><button type="button" role="tab" id="mx-tab-life" aria-controls="mx-p-life" aria-selected="false" data-tab="life"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><circle cx="12" cy="12" r="7.5"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 4.8a3.4 3.4 0 0 0-4.4 4.2L4.6 14.6a1.9 1.9 0 0 0 2.7 2.7l5.6-5.6a3.4 3.4 0 0 0 4.2-4.4l-2 2-2.1-.4-.4-2.1z"/></g></svg><span>Life</span></button><button type="button" role="tab" id="mx-tab-skills" aria-controls="mx-p-skills" aria-selected="false" data-tab="skills"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><path d="M12 4.5 20 9l-8 4.5L4 9z"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 20 9l-8 4.5L4 9z"/><path d="m4 13 8 4.5 8-4.5"/><path d="m4 16.6 8 4.4 8-4.4" opacity=".55"/></g></svg><span>Skills</span></button><button type="button" role="tab" id="mx-tab-words" aria-controls="mx-p-words" aria-selected="false" data-tab="words"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><path d="M5 5.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3v-3H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3v-3H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/><path d="M8.6 12.8c0-1.6.6-2.6 1.8-3.1M12.6 12.8c0-1.6.6-2.6 1.8-3.1"/></g></svg><span>Words</span></button>
       <i class="mx-ink" aria-hidden="true"></i>
     </nav>
 
@@ -234,18 +234,50 @@
       <section class="mx-panel" id="mx-p-path" role="tabpanel" aria-labelledby="mx-tab-path" data-tab="path">
         <p class="mx-intro">Eight roles since 2019. Tap one for the story.</p>
         <ol class="mx-tl">
-          <li><button type="button" class="mx-row" data-sheet="mx-role-adt"><span class="mx-logo"><img src="assets/logos/opt/adt.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-row-t"><b>ADT</b><span>Software Engineering Intern</span></span><span class="mx-yr mx-mono">2026</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
-          <li><button type="button" class="mx-row" data-sheet="mx-role-hunter"><span class="mx-logo"><img src="assets/logos/opt/hunter-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-row-t"><b>Hunter Engineering Company</b><span>Software Engineering Co-op, R&amp;D</span></span><span class="mx-yr mx-mono">2026</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
-          <li><button type="button" class="mx-row" data-sheet="mx-role-jm"><span class="mx-logo"><img src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-row-t"><b>JM Family Enterprises</b><span>Software Engineering Intern</span></span><span class="mx-yr mx-mono">2025</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
-          <li><button type="button" class="mx-row" data-sheet="mx-role-toyota"><span class="mx-logo"><img src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-row-t"><b>Southeast Toyota Distributors</b><span>Software Engineering Intern</span></span><span class="mx-yr mx-mono">2024</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
-          <li><button type="button" class="mx-row" data-sheet="mx-role-fics"><span class="mx-logo"><img src="assets/logos/opt/fics-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-row-t"><b>Florida Institute for Cybersecurity Research</b><span>AI Cybersecurity Researcher</span></span><span class="mx-yr mx-mono">2023</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
-          <li><button type="button" class="mx-row" data-sheet="mx-role-rfa"><span class="mx-logo"><img src="assets/logos/opt/roboticsforall.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-row-t"><b>Robotics For All</b><span>Software Engineering Intern</span></span><span class="mx-yr mx-mono">2022</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
-          <li><button type="button" class="mx-row" data-sheet="mx-role-shiva"><span class="mx-logo mx-logo-t" aria-hidden="true">SR</span><span class="mx-row-t"><b>Shiva Robotics Academy</b><span>SEO Analyst</span></span><span class="mx-yr mx-mono">2020</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
-          <li><button type="button" class="mx-row" data-sheet="mx-role-rjax"><span class="mx-logo mx-logo-t" aria-hidden="true">RJ</span><span class="mx-row-t"><b>Renaissance Jax</b><span>Software Developer</span></span><span class="mx-yr mx-mono">2019</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></li>
+          <li style="--tint:#1f6fd1;--k:0"><button type="button" class="mx-stop" data-sheet="mx-role-adt">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm" aria-hidden="true"><img class="" src="assets/logos/opt/adt.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-top"><span class="mx-st-logo"><img class="" src="assets/logos/opt/adt.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr">2026</span></span>
+            <span class="mx-st-t"><b>ADT</b><span>Software Engineering Intern</span><span class="mx-st-where">Boca Raton, FL</span></span>
+          </button></li>
+          <li style="--tint:#b5121b;--k:1"><button type="button" class="mx-stop" data-sheet="mx-role-hunter">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm" aria-hidden="true"><img class=" lg-d" src="assets/logos/opt/hunter.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/hunter-light.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/hunter.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/hunter-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr">2026</span></span>
+            <span class="mx-st-t"><b>Hunter Engineering Company</b><span>Software Engineering Co-op, R&amp;D</span><span class="mx-st-where">St. Louis, MO</span></span>
+          </button></li>
+          <li style="--tint:#00857c;--k:2"><button type="button" class="mx-stop" data-sheet="mx-role-jm">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm" aria-hidden="true"><img class=" lg-d" src="assets/logos/opt/jm-family.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/jm-family.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr">2025</span></span>
+            <span class="mx-st-t"><b>JM Family Enterprises</b><span>Software Engineering Intern</span><span class="mx-st-where">Deerfield Beach, FL</span></span>
+          </button></li>
+          <li style="--tint:#eb0a1e;--k:3"><button type="button" class="mx-stop" data-sheet="mx-role-toyota">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm" aria-hidden="true"><img class=" lg-d" src="assets/logos/opt/toyota.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/toyota.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr">2024</span></span>
+            <span class="mx-st-t"><b>Southeast Toyota Distributors</b><span>Software Engineering Intern</span><span class="mx-st-where">Jacksonville, FL</span></span>
+          </button></li>
+          <li style="--tint:#fa4616;--k:4"><button type="button" class="mx-stop" data-sheet="mx-role-fics">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm" aria-hidden="true"><img class=" lg-d" src="assets/logos/opt/fics.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/fics-light.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/fics.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/fics-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr">2023</span></span>
+            <span class="mx-st-t"><b>Florida Institute for Cybersecurity Research</b><span>AI Cybersecurity Researcher</span><span class="mx-st-where">Gainesville, FL</span></span>
+          </button></li>
+          <li style="--tint:#f2b705;--k:5"><button type="button" class="mx-stop" data-sheet="mx-role-rfa">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm" aria-hidden="true"><img class="" src="assets/logos/opt/roboticsforall.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-top"><span class="mx-st-logo"><img class="" src="assets/logos/opt/roboticsforall.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr">2022</span></span>
+            <span class="mx-st-t"><b>Robotics For All</b><span>Software Engineering Intern</span><span class="mx-st-where">Palo Alto, CA</span></span>
+          </button></li>
+          <li style="--tint:#f39c12;--k:6"><button type="button" class="mx-stop" data-sheet="mx-role-shiva">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-t" aria-hidden="true">SR</span>
+            <span class="mx-st-top"><span class="mx-st-logo mx-st-mono" aria-hidden="true">SR</span><span class="mx-st-yr">2020</span></span>
+            <span class="mx-st-t"><b>Shiva Robotics Academy</b><span>SEO Analyst</span><span class="mx-st-where">Remote</span></span>
+          </button></li>
+          <li style="--tint:#2fae5a;--k:7"><button type="button" class="mx-stop" data-sheet="mx-role-rjax">
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-t" aria-hidden="true">RJ</span>
+            <span class="mx-st-top"><span class="mx-st-logo mx-st-mono" aria-hidden="true">RJ</span><span class="mx-st-yr">2019</span></span>
+            <span class="mx-st-t"><b>Renaissance Jax</b><span>Software Developer</span><span class="mx-st-where">Jacksonville, FL</span></span>
+          </button></li>
         </ol>
-        <div class="mx-edu">
-          <img src="assets/images/uf-gator-320.webp" alt="" loading="lazy" decoding="async" />
-          <div><p class="mx-mono">Education · December 2026</p><b>University of Florida</b><span>B.S. in Computer Science, with the UF AI Certificate</span></div>
+        <div class="mx-edu" style="--tint:#fa4616">
+          <img class="mx-edu-wm" src="assets/images/uf-gator-320.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+          <p class="mx-mono">Education · December 2026</p><b>University of Florida</b><span>B.S. in Computer Science, with the UF AI Certificate</span>
         </div>
       </section>
 
@@ -326,6 +358,15 @@
       </section>
     </div>
 
+    <section class="mx-jar-s" aria-label="Companies I have worked with">
+      <p class="mx-mono mx-kick">Impact delivered at</p>
+      <h2 class="mx-h2">Toss them around.</h2>
+      <p class="mx-sub">Tap one for the story.</p>
+      <div class="mx-jar">
+        <button type="button" class="mx-chip" data-sheet="mx-role-rfa" aria-label="Robotics For All" style="--tint:#f2b705" data-i="0"><img class="" src="assets/logos/opt/roboticsforall.webp" alt="" loading="lazy" decoding="async" /></button><button type="button" class="mx-chip" data-sheet="mx-role-jm" aria-label="JM Family" style="--tint:#00857c" data-i="1"><img class=" lg-d" src="assets/logos/opt/jm-family.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></button><button type="button" class="mx-chip" data-sheet="mx-role-toyota" aria-label="Southeast Toyota" style="--tint:#eb0a1e" data-i="2"><img class=" lg-d" src="assets/logos/opt/toyota.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></button><button type="button" class="mx-chip" data-sheet="mx-role-jm" aria-label="JM Lexus" style="--tint:#00857c" data-i="3"><img class="" src="assets/logos/opt/jm-lexus.webp" alt="" loading="lazy" decoding="async" /></button><button type="button" class="mx-chip" data-sheet="mx-role-adt" aria-label="ADT" style="--tint:#1f6fd1" data-i="4"><img class="" src="assets/logos/opt/adt.webp" alt="" loading="lazy" decoding="async" /></button><button type="button" class="mx-chip" data-sheet="mx-role-hunter" aria-label="Hunter Engineering" style="--tint:#b5121b" data-i="5"><img class=" lg-d" src="assets/logos/opt/hunter.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/hunter-light.webp" alt="" loading="lazy" decoding="async" /></button><button type="button" class="mx-chip" data-sheet="mx-role-fics" aria-label="FICS at UF" style="--tint:#fa4616" data-i="6"><img class=" lg-d" src="assets/logos/opt/fics.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/fics-light.webp" alt="" loading="lazy" decoding="async" /></button>
+      </div>
+    </section>
+
     <a class="mx-eras" href="eras.html">
       <span class="mx-eras-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
       <span class="mx-eras-t"><span class="mx-mono">New</span><b>Try this portfolio in <span class="mx-eras-y" data-years="2000,2003,2007">2000</span></b></span>
@@ -333,13 +374,10 @@
     </a>
 
     <section class="mx-contact" id="m-contact">
-      <button type="button" class="mx-ava" aria-label="Then and now: tap to turn the photo over" aria-pressed="false">
-        <span class="mx-ava-in">
-          <img class="mx-ava-now" src="assets/images/opt/hero-480.webp" alt="Ajay Sommi" loading="lazy" decoding="async" />
-          <img class="mx-ava-then" src="assets/images/offclock/kid-2006-480.webp" alt="Ajay in 2006, at a computer" loading="lazy" decoding="async" />
-        </span>
-        <span class="mx-ava-tag mx-mono" aria-hidden="true"><b class="mx-now">2026</b><b class="mx-then">2006</b></span>
-      </button>
+      <div class="mx-prints" role="group" aria-label="Then and now. Tap the top photo to shuffle">
+        <button type="button" class="mx-print mx-print-now" aria-label="2026"><img src="assets/images/opt/hero-480.webp" alt="Ajay Sommi, 2026" loading="lazy" decoding="async" /><span>2026</span></button>
+        <button type="button" class="mx-print mx-print-then top" aria-label="2006"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay in 2006, at a computer" loading="lazy" decoding="async" /><span>2006</span></button>
+      </div>
       <h2>20+ years of experience.</h2>
       <p>Let’s not be strangers.</p>
       <div class="mx-mailrow">
@@ -352,11 +390,11 @@
         <a class="mx-btn" href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.980 3.500a2.490 2.490 0 1 1 0 4.980 2.490 2.490 0 0 1 0-4.980zM3 9.750h4V21H3zM9.500 9.750h3.800v1.540h.060c.530-1 1.820-2.050 3.750-2.050 4 0 4.750 2.640 4.750 6.070V21h-4v-5.050c0-1.200-.020-2.750-1.680-2.750s-1.940 1.310-1.940 2.660V21h-4z"/></svg></a>
       </div>
       <p class="mx-facts mx-mono">U.S. Citizen · UF Computer Science · Dec 2026</p>
-      <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
     </section>
+    <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
 
     <template id="mx-role-adt">
-    <header class="mxs-head"><span class="mx-logo"><img src="assets/logos/opt/adt.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">May 2026 to Oct 2026</p><h3>ADT</h3><p class="mxs-sub">Software Engineering Intern · Boca Raton, FL</p></div></header>
+    <header class="mxs-head"><span class="mx-logo"><img class="" src="assets/logos/opt/adt.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">May 2026 to Oct 2026</p><h3>ADT</h3><p class="mxs-sub">Software Engineering Intern · Boca Raton, FL</p></div></header>
     <div class="mxs-pics"><img src="assets/images/journey/adt-hq-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/adt-jump-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/adt-interns-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/adt-stage-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/adt-sign-800.webp" alt="" loading="lazy" decoding="async" /></div>
     <p class="mxs-lead">Designed an AI check to catch false alarms before emergency responders are sent out, and presented it to senior leadership.</p>
     <p class="mxs-text">On ADT&#39;s Salesforce platform I cleaned up data to keep it under platform limits, brought test coverage back up so releases could ship, and used AI tools like Claude and Cursor to work through a large codebase faster.</p>
@@ -364,7 +402,7 @@
     <ul class="mx-tags"><li>Salesforce</li><li>Apex</li><li>Custom Objects</li><li>Cursor</li><li>Claude + MCP</li><li>AI</li></ul>
   </template>
     <template id="mx-role-hunter">
-    <header class="mxs-head"><span class="mx-logo"><img src="assets/logos/opt/hunter-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">Jan 2026 to May 2026</p><h3>Hunter Engineering Company</h3><p class="mxs-sub">Software Engineering Co-op, R&amp;D · St. Louis, MO</p></div></header>
+    <header class="mxs-head"><span class="mx-logo"><img class=" lg-d" src="assets/logos/opt/hunter.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/hunter-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">Jan 2026 to May 2026</p><h3>Hunter Engineering Company</h3><p class="mxs-sub">Software Engineering Co-op, R&amp;D · St. Louis, MO</p></div></header>
     <div class="mxs-pics"><img src="assets/images/journey/hunter-sign-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/hunter-shop-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/hunter-axe-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/hunter-jump-800.webp" alt="" loading="lazy" decoding="async" /></div>
     <p class="mxs-lead">Made it possible to reset Hunter&#39;s alignment machines remotely instead of sending someone out, across more than 100,000 units worldwide.</p>
     <p class="mxs-text">I designed and built the secure reset workflow myself, in C#/.NET and Blazor on Azure IoT Hub. I also fixed crashes that hit during machine setup, and moved the tests to a safer framework that removed a security and privacy risk.</p>
@@ -372,7 +410,7 @@
     <ul class="mx-tags"><li>C#/.NET</li><li>Blazor</li><li>Azure IoT Hub</li><li>IoT Edge</li><li>NSubstitute</li><li>Docker</li></ul>
   </template>
     <template id="mx-role-jm">
-    <header class="mxs-head"><span class="mx-logo"><img src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">May 2025 to Nov 2025</p><h3>JM Family Enterprises</h3><p class="mxs-sub">Software Engineering Intern · Deerfield Beach, FL</p></div></header>
+    <header class="mxs-head"><span class="mx-logo"><img class=" lg-d" src="assets/logos/opt/jm-family.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">May 2025 to Nov 2025</p><h3>JM Family Enterprises</h3><p class="mxs-sub">Software Engineering Intern · Deerfield Beach, FL</p></div></header>
     <div class="mxs-pics"><img src="assets/images/journey/jm-campus-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/jm-interns-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/jm-showroom-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/jm-jet-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/jm-axe-800.webp" alt="" loading="lazy" decoding="async" /></div>
     <p class="mxs-lead">Made it easier to spot employees with the wrong system access.</p>
     <p class="mxs-text">I built an automated check in Azure that compared each person&#39;s access across Microsoft Graph, Salesforce and MuleSoft, flagged anything that didn&#39;t match company policy, and produced exception reports. I also built a service that analyzed 100k+ events from JM Lexus and Toyota dealership systems, and helped set up GPT agents to answer questions about that data.</p>
@@ -380,7 +418,7 @@
     <ul class="mx-tags"><li>Azure Functions</li><li>C#/.NET</li><li>Microsoft Graph</li><li>Salesforce</li><li>MuleSoft</li><li>App Insights</li><li>MCP</li><li>RAG</li></ul>
   </template>
     <template id="mx-role-toyota">
-    <header class="mxs-head"><span class="mx-logo"><img src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">Jun 2024 to Aug 2024</p><h3>Southeast Toyota Distributors</h3><p class="mxs-sub">Software Engineering Intern · Jacksonville, FL</p></div></header>
+    <header class="mxs-head"><span class="mx-logo"><img class=" lg-d" src="assets/logos/opt/toyota.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">Jun 2024 to Aug 2024</p><h3>Southeast Toyota Distributors</h3><p class="mxs-sub">Software Engineering Intern · Jacksonville, FL</p></div></header>
     <div class="mxs-pics"><img src="assets/images/journey/toyota-sign-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/toyota-vpc-lexus-800.webp" alt="" loading="lazy" decoding="async" /><img src="assets/images/journey/toyota-road-force-800.webp" alt="" loading="lazy" decoding="async" /></div>
     <p class="mxs-lead">Helped cut tire warranty claims by 20% and save over $150k by catching costly tire package recalls before they happened.</p>
     <p class="mxs-text">I analyzed tire data for 51,000 vehicles into 21 reports, automated a file transfer that saved about 350 hours a year, and replaced a manual spreadsheet with a live dashboard that made data entry 5× faster.</p>
@@ -388,7 +426,7 @@
     <ul class="mx-tags"><li>Python</li><li>SQL</li><li>Azure Blob</li><li>Amazon RDS</li><li>Power BI</li><li>VBA</li></ul>
   </template>
     <template id="mx-role-fics">
-    <header class="mxs-head"><span class="mx-logo"><img src="assets/logos/opt/fics-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">May 2023 to May 2024</p><h3>Florida Institute for Cybersecurity Research</h3><p class="mxs-sub">AI Cybersecurity Researcher · Gainesville, FL</p></div></header>
+    <header class="mxs-head"><span class="mx-logo"><img class=" lg-d" src="assets/logos/opt/fics.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/fics-light.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">May 2023 to May 2024</p><h3>Florida Institute for Cybersecurity Research</h3><p class="mxs-sub">AI Cybersecurity Researcher · Gainesville, FL</p></div></header>
     <div class="mxs-pics"><img src="assets/images/journey/fics-terminal-800.webp" alt="" loading="lazy" decoding="async" /></div>
     <p class="mxs-lead">Helped find the weak spots in AI chatbots before bad actors could.</p>
     <p class="mxs-text">I built tools that automatically tested ChatGPT with inputs designed to make it misbehave, kept a catalogue of the failures we could reliably repeat, and worked on ways to detect and block them, running some of the experiments on HiPerGator, UF&#39;s supercomputer. Early, hands on experience with how AI can fail.</p>
@@ -396,7 +434,7 @@
     <ul class="mx-tags"><li>Python</li><li>LLM Security</li><li>Research</li></ul>
   </template>
     <template id="mx-role-rfa">
-    <header class="mxs-head"><span class="mx-logo"><img src="assets/logos/opt/roboticsforall.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">Mar 2022 to Jan 2023</p><h3>Robotics For All</h3><p class="mxs-sub">Software Engineering Intern · Palo Alto, CA</p></div></header>
+    <header class="mxs-head"><span class="mx-logo"><img class="" src="assets/logos/opt/roboticsforall.webp" alt="" loading="lazy" decoding="async" /></span><div><p class="mx-mono">Mar 2022 to Jan 2023</p><h3>Robotics For All</h3><p class="mxs-sub">Software Engineering Intern · Palo Alto, CA</p></div></header>
     
     <p class="mxs-lead">Gave volunteers back hours every week.</p>
     <p class="mxs-text">They were copying sign up details between forms and spreadsheets by hand, so I wrote scripts that filed each family&#39;s information automatically and sent the confirmation emails. Fewer typos, faster replies to parents, and the start of a habit: finding manual work and making it run on its own.</p>
@@ -1356,6 +1394,6 @@
   <script src="brand.js" defer></script>
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
-  <script src="mobile.js?v=4" defer></script>
+  <script src="mobile.js?v=6" defer></script>
 </body>
 </html>
