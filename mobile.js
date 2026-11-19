@@ -60,9 +60,8 @@
     const i = clamp(Math.floor(f), 0, btns.length - 1), j = clamp(i + 1, 0, btns.length - 1), t = f - i;
     const a = btns[i], b = btns[j];
     const x = a.offsetLeft + (b.offsetLeft - a.offsetLeft) * t, w = a.offsetWidth + (b.offsetWidth - a.offsetWidth) * t;
-    const iw = Math.min(40, w * 0.5);
-    ink.style.width = iw + 'px';
-    ink.style.transform = `translateX(${(x + (w - iw) / 2).toFixed(1)}px)`;
+    ink.style.width = w + 'px';
+    ink.style.transform = `translateX(${x.toFixed(1)}px)`;
   };
   const select = (i) => {
     if (i === cur) return;
@@ -80,8 +79,8 @@
   const go = (i, smooth = true) => {
     tabs.classList.add('jump'); setTimeout(() => tabs.classList.remove('jump'), 460);
     // From deep in a long panel, come back up to the tabs first.
-    const top = tabs.getBoundingClientRect().top;
-    if (top <= 1) window.scrollTo({ top: tabs.offsetTop + mx.offsetTop - 0, behavior: reduced ? 'auto' : 'smooth' });
+    const top = pager.getBoundingClientRect().top;
+    if (top < 0) window.scrollTo({ top: top + scrollY - 8, behavior: reduced ? 'auto' : 'smooth' });
     pager.scrollTo({ left: i * W(), behavior: smooth && !reduced ? 'smooth' : 'auto' });
     placeInk(i); select(i);
   };
@@ -97,7 +96,7 @@
     if (key === 'top') { window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); return; }
     if (key === 'contact') { const c = $('#m-contact', mx); window.scrollTo({ top: c.getBoundingClientRect().top + scrollY - 20, behavior: reduced ? 'auto' : 'smooth' }); return; }
     if (!(key in TAB)) return;
-    window.scrollTo({ top: tabs.offsetTop + mx.offsetTop, behavior: reduced ? 'auto' : 'smooth' });
+    window.scrollTo({ top: pager.getBoundingClientRect().top + scrollY - 8, behavior: reduced ? 'auto' : 'smooth' });
     pager.scrollTo({ left: TAB[key] * W(), behavior: reduced ? 'auto' : 'smooth' });
     placeInk(TAB[key]); select(TAB[key]);
   };
@@ -132,7 +131,7 @@
     setTimeout(() => { sheet.hidden = true; scrim.hidden = true; }, reduced ? 0 : 420);
     if (opener && opener.focus) opener.focus({ preventScroll: true });
   };
-  $$('[data-sheet]:not(.mx-chip)', mx).forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet, b)));
+  $$('[data-sheet]', mx).forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet, b)));
   if (scrim) scrim.addEventListener('click', closeSheet);
   if (sheet) {
     let d = null;
@@ -350,10 +349,9 @@
      on the path the stop nearest the middle of the screen lights up. */
   const hero = $('.mx-hero', mx);
   const stops = $$('.mx-stop', mx);
-  const rvs = [...$$('.mx-jar-s > *, .mx-eras, .mx-contact > *, .mx-foot', mx)];
+  const rvs = [...$$('.mx-eras, .mx-contact > *, .mx-foot', mx)];
   rvs.forEach((el, i) => { el.setAttribute('data-rv', ''); });
   $$('.mx-contact > *', mx).forEach((el, i) => el.style.setProperty('--rd', Math.min(i, 5)));
-  $$('.mx-jar-s > *', mx).forEach((el, i) => el.style.setProperty('--rd', i));
   if ('IntersectionObserver' in window && !reduced) {
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
     rvs.forEach((el) => io.observe(el));
@@ -364,6 +362,8 @@
     if (!phone.matches) return;
     const vh = innerHeight;
     if (hero && !reduced) hero.style.setProperty('--p', clamp(scrollY / (vh * 0.75), 0, 1).toFixed(3));
+    const pr = pager.getBoundingClientRect();
+    document.documentElement.classList.toggle('mx-tabbed', pr.top < vh * 0.55 && pr.bottom > vh * 0.62);
     if (cur === 0) {
       let best = null, bd = 1e9;
       for (const s of stops) { const r = s.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) continue; const d = Math.abs(r.top + r.height / 2 - vh * 0.48); if (d < bd) { bd = d; best = s; } }
@@ -374,111 +374,10 @@
   addEventListener('scroll', () => { if (!qraf) qraf = requestAnimationFrame(onScroll); }, { passive: true });
   onScroll();
 
-  /* ------------------------------------------------------------- jar */
-  /* The logos drop into a tray when it comes into view, and then they can
-     be picked up and thrown. Plain circles: gravity, walls, and pushing
-     each other apart. A tap that doesn't move opens that role. */
-  const jar = $('.mx-jar', mx), chips = jar ? $$('.mx-chip', jar) : [];
-  if (jar && chips.length) {
-    const B = chips.map((el, i) => ({ el, x: 0, y: 0, vx: 0, vy: 0, r: 46, held: null, i }));
-    let Wj = 0, Hj = 0, running = false, started = false, last = 0, still = 0;
-    const size = () => {
-      Wj = jar.clientWidth; Hj = jar.clientHeight;
-      const d = Math.round(clamp(Wj * 0.27, 78, 104));
-      B.forEach((b) => { b.r = d / 2; b.el.style.setProperty('--d', d + 'px'); });
-    };
-    // A thrown logo leans with its speed and settles back upright, so it stays readable.
-    const place = () => B.forEach((b) => { b.a = (b.a || 0) + (clamp(b.vx * 0.012, -18, 18) - (b.a || 0)) * 0.18; b.el.style.transform = `translate(${(b.x - b.r).toFixed(1)}px, ${(b.y - b.r).toFixed(1)}px) rotate(${b.a.toFixed(1)}deg)`; });
-    const drop = () => {
-      size();
-      B.forEach((b, i) => { b.x = b.r + 6 + ((i * 0.37 + 0.11) % 1) * (Wj - 2 * b.r - 12); b.y = -b.r - i * b.r * 1.15; b.vx = (i % 2 ? 1 : -1) * 40; b.vy = 0; });
-      started = true; start();
-    };
-    const step = (dt) => {
-      const G = 2200, e = 0.38, air = Math.pow(0.6, dt);
-      let moving = 0;
-      for (const b of B) {
-        if (b.held) { const h = b.held; const nx = h.px, ny = h.py; b.vx = (nx - b.x) / Math.max(dt, 1 / 120); b.vy = (ny - b.y) / Math.max(dt, 1 / 120); b.x = nx; b.y = ny; continue; }
-        b.vy += G * dt; b.vx *= air; b.vy *= air;
-        b.x += b.vx * dt; b.y += b.vy * dt;
-      }
-      for (let it = 0; it < 4; it++) {
-        for (let i = 0; i < B.length; i++) for (let j = i + 1; j < B.length; j++) {
-          const a = B[i], c = B[j], dx = c.x - a.x, dy = c.y - a.y, min = a.r + c.r, d2 = dx * dx + dy * dy;
-          if (d2 >= min * min || d2 === 0) continue;
-          const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, o = min - d;
-          const wa = a.held ? 0 : c.held ? 1 : 0.5, wc = c.held ? 0 : a.held ? 1 : 0.5;
-          a.x -= nx * o * wa; a.y -= ny * o * wa; c.x += nx * o * wc; c.y += ny * o * wc;
-          const rv = (c.vx - a.vx) * nx + (c.vy - a.vy) * ny;
-          if (rv < 0) { const imp = -(1 + e) * rv * 0.5; if (!a.held) { a.vx -= imp * nx; a.vy -= imp * ny; } if (!c.held) { c.vx += imp * nx; c.vy += imp * ny; } }
-        }
-        for (const b of B) {
-          if (b.held) continue;
-          if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * e; }
-          if (b.x > Wj - b.r) { b.x = Wj - b.r; b.vx = -Math.abs(b.vx) * e; }
-          if (b.y > Hj - b.r) { b.y = Hj - b.r; b.vy = -Math.abs(b.vy) * e; b.vx *= 0.96; if (Math.abs(b.vy) < 30) b.vy = 0; }
-        }
-      }
-      for (const b of B) if (b.held || Math.abs(b.vx) + Math.abs(b.vy) > 12 || b.y < b.r) moving++;
-      return moving;
-    };
-    const tick = (t) => {
-      if (!running) return;
-      const dt = Math.min(0.033, (t - (last || t)) / 1000) || 1 / 60; last = t;
-      const m = step(dt / 2) + step(dt / 2);
-      place();
-      still = m ? 0 : still + 1;
-      if (still > 40) { running = false; last = 0; return; }
-      requestAnimationFrame(tick);
-    };
-    const start = () => { if (!running && started) { running = true; still = 0; last = 0; requestAnimationFrame(tick); } };
-    if (reduced) { size(); B.forEach((b, i) => { const per = Math.floor(Wj / (b.r * 2)) || 1; b.x = b.r + (i % per) * b.r * 2; b.y = Hj - b.r - Math.floor(i / per) * b.r * 1.8; }); place(); started = true; }
-    else if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((es) => { if (es[0].isIntersecting && !started) { drop(); io.disconnect(); } }, { threshold: 0.35 });
-      io.observe(jar);
-    } else drop();
-    addEventListener('resize', () => { if (!started) return; size(); B.forEach((b) => { b.x = clamp(b.x, b.r, Wj - b.r); b.y = Math.min(b.y, Hj - b.r); }); start(); });
-    B.forEach((b) => {
-      const el = b.el;
-      el.addEventListener('pointerdown', (e) => {
-        if (!started) return;
-        const r = jar.getBoundingClientRect();
-        b.held = { id: e.pointerId, px: e.clientX - r.left, py: e.clientY - r.top, ox: e.clientX, oy: e.clientY, t: performance.now(), moved: false };
-        b.held.dx = b.x - b.held.px; b.held.dy = b.y - b.held.py; b.held.px += b.held.dx; b.held.py += b.held.dy;
-        el.classList.add('held'); el.style.zIndex = 3;
-        try { el.setPointerCapture(e.pointerId); } catch (err) {}
-        buzz(6); start();
-      });
-      el.addEventListener('pointermove', (e) => {
-        const h = b.held; if (!h || e.pointerId !== h.id) return;
-        const r = jar.getBoundingClientRect();
-        h.px = clamp(e.clientX - r.left + h.dx, b.r, Wj - b.r); h.py = clamp(e.clientY - r.top + h.dy, b.r, Hj - b.r);
-        if (Math.hypot(e.clientX - h.ox, e.clientY - h.oy) > 6) h.moved = true;
-      });
-      const up = (e) => {
-        const h = b.held; if (!h || e.pointerId !== h.id) return;
-        b.held = null; el.classList.remove('held'); el.style.zIndex = '';
-        const sp = Math.hypot(b.vx, b.vy), cap = 2600;
-        if (sp > cap) { b.vx *= cap / sp; b.vy *= cap / sp; }
-        if (!h.moved && performance.now() - h.t < 450 && e.type === 'pointerup') { b.vx = b.vy = 0; openSheet(el.dataset.sheet, el); }
-        start();
-      };
-      el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
-      el.addEventListener('click', (e) => { if (e.detail === 0) openSheet(el.dataset.sheet, el); });
-    });
-  }
-
   /* ---------------------------------------------------------- prints */
-  // 2006 on top. A tap sends the top print to the back of the pile.
-  const prints = $$('.mx-print', mx);
-  prints.forEach((p) => p.addEventListener('click', () => {
-    if (!p.classList.contains('top') || p.classList.contains('toss')) return;
-    buzz(8);
-    p.classList.add('toss');
-    setTimeout(() => {
-      prints.forEach((o) => o.classList.toggle('top', o !== p));
-      p.classList.remove('toss');
-    }, reduced ? 0 : 250);
+  // The 2006 print: a tap gives it a little nudge.
+  $$('.mx-print', mx).forEach((p) => p.addEventListener('click', () => {
+    buzz(8); p.classList.add('nudge'); setTimeout(() => p.classList.remove('nudge'), 180);
   }));
 
   /* ---------------------------------------------------------- contact */

@@ -71,12 +71,10 @@ const stop = (e, i) => {
   const wm = L ? `<span class="mx-st-wm" aria-hidden="true">${pic(L)}</span>` : `<span class="mx-st-wm mx-st-wm-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
   return `<li style="--tint:${TINT[e.id] || 'var(--accent)'};--k:${i}"><button type="button" class="mx-stop" data-sheet="mx-role-${e.id}">
             <span class="mx-st-glow" aria-hidden="true"></span>${wm}
-            <span class="mx-st-top">${face}<span class="mx-st-yr">${e.year}</span></span>
+            <span class="mx-st-top">${face}<span class="mx-st-yr" aria-label="${e.year}">’${String(e.year).slice(2)}</span></span>
             <span class="mx-st-t"><b>${esc(e.org)}</b><span>${esc(e.role)}</span><span class="mx-st-where">${esc(e.where)}</span></span>
           </button></li>`;
 };
-/* The logos to toss around: the desktop strip's seven, each opening its role. */
-const JAR = [['rfa', ['roboticsforall', 'roboticsforall'], 'Robotics For All'], ['jm', ['jm-family', 'jm-family-light'], 'JM Family'], ['toyota', ['toyota', 'toyota-light'], 'Southeast Toyota'], ['jm', ['jm-lexus', 'jm-lexus'], 'JM Lexus'], ['adt', ['adt', 'adt'], 'ADT'], ['hunter', ['hunter', 'hunter-light'], 'Hunter Engineering'], ['fics', ['fics', 'fics-light'], 'FICS at UF']];
 
 const roleSheet = (e) => {
   const [a, b] = lead(e.text);
@@ -110,16 +108,11 @@ const html = `<!-- mx:start -->
       <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
-      <a class="mx-down" href="#mx-tabs" aria-label="Take a look"><span>Take a look</span><i aria-hidden="true"></i></a>
     </section>
-
-    <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">
-      ${TABS.map(([k, t], i) => `<button type="button" role="tab" id="mx-tab-${k}" aria-controls="mx-p-${k}" aria-selected="${i === 0}" data-tab="${k}">${SHAPE[k]}<span>${t}</span></button>`).join('')}
-      <i class="mx-ink" aria-hidden="true"></i>
-    </nav>
 
     <div class="mx-pager">
       <section class="mx-panel" id="mx-p-path" role="tabpanel" aria-labelledby="mx-tab-path" data-tab="path">
+        <h2 class="mx-ph">The path so far</h2>
         <p class="mx-intro">Eight roles since 2019. Tap one for the story.</p>
         <ol class="mx-tl">
           ${ROLES.map(stop).join('\n          ')}
@@ -131,6 +124,7 @@ const html = `<!-- mx:start -->
       </section>
 
       <section class="mx-panel" id="mx-p-projects" role="tabpanel" aria-labelledby="mx-tab-projects" data-tab="projects">
+        <h2 class="mx-ph">Things I’ve built</h2>
         <p class="mx-intro">Things I built to understand how they work.</p>
         <div class="mx-filter" role="group" aria-label="Filter by language"><button type="button" aria-pressed="true" data-lang="all">All <span>${P.projects.length}</span></button>${langs.map((l) => `<button type="button" aria-pressed="false" data-lang="${esc(l)}">${esc(l)} <span>${P.projects.filter((p) => p.lang === l).length}</span></button>`).join('')}</div>
         <ul class="mx-projs">
@@ -142,6 +136,7 @@ const html = `<!-- mx:start -->
       </section>
 
       <section class="mx-panel" id="mx-p-life" role="tabpanel" aria-labelledby="mx-tab-life" data-tab="life">
+        <h2 class="mx-ph">Off the clock</h2>
         <p class="mx-intro">Repairs, teardowns and builds, off the clock. Tap a story.</p>
         <div class="mx-stories">
           ${P.offclock.map((o, i) => `<button type="button" class="mx-story-b" data-story="${i}" style="--i:${i}">
@@ -153,6 +148,7 @@ const html = `<!-- mx:start -->
       </section>
 
       <section class="mx-panel" id="mx-p-skills" role="tabpanel" aria-labelledby="mx-tab-skills" data-tab="skills">
+        <h2 class="mx-ph">Skills</h2>
         <p class="mx-intro">Tap a skill to see where I’ve used it.</p>
         <div class="mx-groups" role="group" aria-label="Skill groups">${P.skills.map(([g], i) => `<button type="button" aria-pressed="${i === 0}" data-g="${i}">${esc(g.replace(', Data & Databases', ' & Data').replace(' & Libraries', '').replace(' & Integration', '').replace(' & Tooling', ''))}</button>`).join('')}</div>
         ${P.skills.map(([, l], i) => `<ul class="mx-skills${i === 0 ? ' on' : ''}" data-g="${i}">${l.map((s) => { const u = usedAt(s); return `<li><button type="button" class="mx-skill${u.length ? ' used' : ''}" data-used="${esc(u.join(' · '))}">${esc(s)}</button></li>`; }).join('')}</ul>`).join('\n        ')}
@@ -160,6 +156,7 @@ const html = `<!-- mx:start -->
       </section>
 
       <section class="mx-panel" id="mx-p-words" role="tabpanel" aria-labelledby="mx-tab-words" data-tab="words">
+        <h2 class="mx-ph">Kind words</h2>
         <p class="mx-intro">From managers, mentors and teammates. Swipe for the next.</p>
         <div class="mx-deck">
           ${P.recs.map(([n, o, q], i) => `<figure class="mx-note" data-i="${i}"><blockquote>${esc(q)}</blockquote><figcaption><span class="mx-av" aria-hidden="true">${initials(n)}</span><span><b>${esc(n)}</b><span class="mx-mono">${esc(o)}</span></span></figcaption></figure>`).join('\n          ')}
@@ -168,15 +165,6 @@ const html = `<!-- mx:start -->
       </section>
     </div>
 
-    <section class="mx-jar-s" aria-label="Companies I have worked with">
-      <p class="mx-mono mx-kick">Impact delivered at</p>
-      <h2 class="mx-h2">Toss them around.</h2>
-      <p class="mx-sub">Tap one for the story.</p>
-      <div class="mx-jar">
-        ${JAR.map(([id, L, n], i) => `<button type="button" class="mx-chip" data-sheet="mx-role-${id}" aria-label="${esc(n)}" style="--tint:${TINT[id]}" data-i="${i}">${pic(L)}</button>`).join('')}
-      </div>
-    </section>
-
     <a class="mx-eras" href="eras.html">
       <span class="mx-eras-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
       <span class="mx-eras-t"><span class="mx-mono">New</span><b>Try this portfolio in <span class="mx-eras-y" data-years="2000,2003,2007">2000</span></b></span>
@@ -184,9 +172,8 @@ const html = `<!-- mx:start -->
     </a>
 
     <section class="mx-contact" id="m-contact">
-      <div class="mx-prints" role="group" aria-label="Then and now. Tap the top photo to shuffle">
-        <button type="button" class="mx-print mx-print-now" aria-label="2026"><img src="assets/images/opt/hero-480.webp" alt="Ajay Sommi, 2026" loading="lazy" decoding="async" /><span>2026</span></button>
-        <button type="button" class="mx-print mx-print-then top" aria-label="2006"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay in 2006, at a computer" loading="lazy" decoding="async" /><span>2006</span></button>
+      <div class="mx-prints">
+        <button type="button" class="mx-print" aria-label="Ajay in 2006, at a computer. Tap to give it a nudge"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay in 2006, at a computer" loading="lazy" decoding="async" /><span>2006</span></button>
       </div>
       <h2>20+ years of experience.</h2>
       <p>Let’s not be strangers.</p>
@@ -202,6 +189,11 @@ const html = `<!-- mx:start -->
       <p class="mx-facts mx-mono">${esc(P.citizen)} · UF Computer Science · Dec 2026</p>
     </section>
     <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
+
+    <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">
+      ${TABS.map(([k, t], i) => `<button type="button" role="tab" id="mx-tab-${k}" aria-controls="mx-p-${k}" aria-selected="${i === 0}" data-tab="${k}">${SHAPE[k]}<span>${t}</span></button>`).join('')}
+      <i class="mx-ink" aria-hidden="true"></i>
+    </nav>
 
     ${ROLES.map(roleSheet).join('\n    ')}
     ${P.projects.map(projSheet).join('\n    ')}

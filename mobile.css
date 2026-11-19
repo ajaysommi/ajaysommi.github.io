@@ -22,12 +22,13 @@
   .mx svg, .mx-sheet svg, .mx-viewer svg { width: 1em; height: 1em; flex: none; }
   .mx-sheet .mx-btn { font-size: 15px; }
   .mx-mono { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
-  .mx-intro { color: var(--ink-2); font-size: 15px; margin: 0 0 14px; }
+  .mx-intro { color: var(--ink-2); font-size: 15px; margin: 0 0 16px; }
+  .mx-ph { margin: 0 0 6px; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.05; }
 
   /* ------------------------------------------------------------------ hello */
   /* One screen, one thing: the desktop's shape composition, a hello, the
      name set large, a single line, and a way down. */
-  .mx-hero { position: relative; min-height: calc(100svh - 18px - env(safe-area-inset-top)); display: flex; flex-direction: column; justify-content: center; padding: 0 4px 96px; }
+  .mx-hero { position: relative; display: flex; flex-direction: column; padding: clamp(56px, 13svh, 130px) 4px 44px; }
   /* The mark from the top bar, large. A touch tilts it toward the finger;
      a tap knocks its four pieces apart and they spring back together. */
   .mx-mark { position: relative; align-self: flex-start; width: 92px; height: 86px; margin: 0 0 34px -4px; padding: 0; border: 0; background: none; perspective: 500px; touch-action: none; }
@@ -42,7 +43,7 @@
   .mx-mark.pop .mx-aj-d { transform: translate(5px, -9px) scale(1.25); }
   /* A soft light behind it in the mark's two colours, breathing. */
   .mx-mark-glow { position: absolute; inset: -30% -40% -30% -20%; border-radius: 50%; background: radial-gradient(closest-side at 62% 34%, color-mix(in oklab, #3d68ff 42%, transparent), transparent), radial-gradient(closest-side at 48% 74%, color-mix(in oklab, #ff6b35 38%, transparent), transparent); filter: blur(18px); opacity: .55; animation: mx-breathe 5s ease-in-out infinite; pointer-events: none; }
-  [data-theme="daylight"] .mx-mark-glow { opacity: .4; }
+  [data-theme="daylight"] .mx-mark-glow { opacity: .22; }
   @keyframes mx-breathe { 50% { opacity: .3; transform: scale(.9); } }
   .mx-greet { margin: 0 0 14px; font-size: 12px; }
   .mx-name { margin: 0; font-weight: 600; letter-spacing: -.045em; line-height: .92; }
@@ -61,18 +62,13 @@
   @keyframes mx-in-c { from { opacity: 0; } }
   html.is-loading .mx-hero > * { animation-play-state: paused; }
 
-  /* Two prints at the bottom, 2006 on top. A tap sends the top one under. */
-  .mx-prints { position: relative; width: 210px; height: 236px; margin: 0 auto 30px; }
-  .mx-print { position: absolute; top: 0; left: 50%; width: 168px; margin-left: -84px; padding: 9px 9px 0; border: 0; border-radius: 3px; background: #fdfcf9; box-shadow: 0 1px 2px rgba(20, 20, 20, .14), 0 16px 32px -14px rgba(20, 20, 20, .4); color: #2a2723; transition: transform .6s cubic-bezier(.3, 1.4, .5, 1); }
+  /* The 2006 print at the bottom. A tap gives it a nudge. */
+  .mx-prints { display: grid; place-items: center; margin: 0 auto 30px; }
+  .mx-print { width: 176px; padding: 9px 9px 0; border: 0; border-radius: 3px; background: #fdfcf9; box-shadow: 0 1px 2px rgba(20, 20, 20, .14), 0 16px 32px -14px rgba(20, 20, 20, .4); transform: rotate(-5deg); transition: transform .7s cubic-bezier(.3, 1.8, .45, 1); }
   [data-theme="midnight"] .mx-print, [data-theme="terminal"] .mx-print { background: #f4f1ea; box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 18px 36px -12px rgba(0, 0, 0, .65); }
-  .mx-print img { display: block; width: 150px; height: 168px; object-fit: cover; border-radius: 1px; background: #e8e4dc; }
-  .mx .mx-print span { display: block; color: #2a2723; padding: 8px 0 10px; font: 500 13px var(--font-mono); letter-spacing: .06em; text-align: center; }
-  .mx-print-now { z-index: 1; transform: translate(26px, 10px) rotate(7deg); }
-  .mx-print-now img { object-position: 40% 28%; }
-  .mx-print-then { z-index: 2; transform: translate(-22px, 0) rotate(-6deg); }
-  .mx-print-then img { object-position: 62% 40%; }
-  .mx-print.top { z-index: 3; }
-  .mx-print.toss { transform: translate(120px, -30px) rotate(24deg) !important; transition: transform .25s cubic-bezier(.4, 0, .8, .6); }
+  .mx-print img { display: block; width: 158px; height: 176px; object-fit: cover; object-position: 62% 40%; border-radius: 1px; background: #e8e4dc; }
+  .mx .mx-print span { display: block; padding: 8px 0 10px; color: #2a2723; font: 500 13px var(--font-mono); letter-spacing: .06em; text-align: center; }
+  .mx-print.nudge { transform: rotate(4deg) scale(1.04); transition-duration: .18s; }
   .mx-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
   .mx-cta-3 { grid-template-columns: 1fr 56px 56px; }
   .mx-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 16px; border: 1px solid var(--stroke-hi); border-radius: 999px; background: transparent; color: var(--ink); font: 500 15px var(--font-sans); text-decoration: none; transition: transform .2s, background-color .2s, color .2s; }
@@ -82,15 +78,20 @@
   .mx-facts { margin-top: 18px; }
 
   /* ------------------------------------------------------------------- tabs */
-  /* Pinned under the top of the screen once you reach it. The ink under
-     the chosen tab slides along with the swipe. */
-  .mx-tabs { position: sticky; top: 0; z-index: 5; display: flex; margin: 0 -18px; padding: calc(8px + env(safe-area-inset-top)) 12px 0; background: var(--bg); border-bottom: 1px solid var(--stroke); }
-  .mx-tabs button { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 10px; border: 0; background: none; color: var(--ink-3); font-size: 13px; font-weight: 500; transition: color .25s; }
+  /* Down by the thumb: a floating bar that rises while you're in the
+     sections, and steps aside for the site's own dock at the top and the
+     bottom of the page. The dock and the bar swap places. */
+  .mx-tabs { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 70; display: flex; padding: 5px; border: 1px solid var(--stroke-hi); border-radius: 26px; background: color-mix(in oklab, var(--bg) 97%, transparent); -webkit-backdrop-filter: blur(14px) saturate(120%); backdrop-filter: blur(14px) saturate(120%); box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .45); translate: 0 calc(100% + 40px); opacity: 0; pointer-events: none; transition: translate .5s cubic-bezier(.2, .9, .2, 1), opacity .3s; }
+  html.mx-tabbed .mx-tabs { translate: none; opacity: 1; pointer-events: auto; }
+  html.mx-tabbed header.nav, html.mx-tabbed .dock-fab { translate: 0 calc(100% + 60px); opacity: 0; pointer-events: none; }
+  header.nav, .dock-fab { transition: translate .5s cubic-bezier(.2, .9, .2, 1), opacity .3s; }
+  .mx-tabs button { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 7px 0 6px; border: 0; background: none; color: var(--ink-3); font-size: 11.5px; font-weight: 500; transition: color .25s; }
   .mx-tabs button[aria-selected="true"] { color: var(--ink); }
-  .mx-ink { position: absolute; left: 0; bottom: -1px; height: 2px; width: 40px; background: var(--accent); border-radius: 2px; transition: transform .1s linear, width .1s linear; }
+  /* The chosen tab sits on a soft pill that slides along with a swipe. */
+  .mx-ink { position: absolute; z-index: 0; left: 0; top: 5px; bottom: 5px; width: 60px; border-radius: 20px; background: var(--m-fill); transition: transform .1s linear, width .1s linear; }
   .mx-tabs.jump .mx-ink { transition: transform .45s cubic-bezier(.2, .8, .2, 1), width .45s cubic-bezier(.2, .8, .2, 1); }
   /* Soft icons: a rounded line over a quiet fill, warming when chosen. */
-  .mx-ic { display: block; width: 24px !important; height: 24px !important; overflow: visible; transition: transform .45s cubic-bezier(.3, 1.6, .5, 1); }
+  .mx-ic { display: block; width: 23px !important; height: 23px !important; overflow: visible; transition: transform .45s cubic-bezier(.3, 1.6, .5, 1); }
   .mx-ic-f { fill: currentColor; opacity: .1; transition: fill .3s, opacity .3s; }
   .mx-tabs [aria-selected="true"] .mx-ic { transform: translateY(-1px) scale(1.08); }
   .mx-tabs [aria-selected="true"] .mx-ic-f { fill: var(--accent); opacity: .28; }
@@ -100,7 +101,7 @@
   /* The five panels sit side by side; a sideways swipe moves between them. */
   .mx-pager { display: flex; align-items: flex-start; margin: 0 -18px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; transition: height .35s cubic-bezier(.2, .8, .2, 1); }
   .mx-pager::-webkit-scrollbar { display: none; }
-  .mx-panel { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; padding: 18px 18px 6px; }
+  .mx-panel { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; padding: 8px 18px 6px; }
 
   /* Path: each stop a card lit in its company's colour. The logo glows in
      that colour; a larger, fainter copy is tipped into the corner, cut off
@@ -109,7 +110,12 @@
   .mx-stop { position: relative; isolation: isolate; overflow: hidden; width: 100%; display: grid; gap: 14px; padding: 16px 16px 15px; border: 1px solid var(--stroke); border-radius: var(--r-lg); background: var(--surface); text-align: left; transition: transform .25s, border-color .4s; }
   .mx-stop > :not(.mx-st-glow, .mx-st-wm) { position: relative; z-index: 2; }
   .mx-st-glow { position: absolute; z-index: 0; left: -40px; top: -60px; width: 220px; height: 170px; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in oklab, var(--tint) 34%, transparent), transparent); opacity: .5; transition: opacity .6s, transform .8s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
-  [data-theme="daylight"] .mx-st-glow { background: radial-gradient(closest-side, color-mix(in oklab, var(--tint) 20%, transparent), transparent); }
+  [data-theme="daylight"] .mx-st-glow { background: radial-gradient(closest-side, color-mix(in oklab, var(--tint) 11%, transparent), transparent); }
+  [data-theme="daylight"] .mx-st-logo img, [data-theme="daylight"] .mx-stop.lit .mx-st-logo img { filter: drop-shadow(0 2px 6px color-mix(in oklab, var(--tint) 22%, transparent)); }
+  [data-theme="daylight"] .mx-st-mono { box-shadow: none; }
+  [data-theme="daylight"] .mx-stop.lit .mx-st-glow { opacity: .9; transform: translate(6px, 4px) scale(1.05); }
+  [data-theme="daylight"] .mx-edu { background: radial-gradient(120% 90% at 100% 100%, color-mix(in oklab, var(--tint) 6%, transparent), transparent 60%); }
+  [data-theme="daylight"] .mx-edu-wm { opacity: .12; }
   .mx-st-wm { position: absolute; z-index: 1; right: -26px; bottom: -30px; width: 150px; height: 110px; display: grid; place-items: center; transform: rotate(-12deg); opacity: .07; pointer-events: none; transition: opacity .6s, transform .8s cubic-bezier(.2, .8, .2, 1); -webkit-mask-image: radial-gradient(110% 110% at 100% 100%, #000 40%, transparent 85%); mask-image: radial-gradient(110% 110% at 100% 100%, #000 40%, transparent 85%); }
   .mx-st-wm img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); }
   .mx-st-wm-t { font: 700 92px/1 var(--font-sans); letter-spacing: -.06em; color: var(--tint); }
@@ -118,7 +124,8 @@
   .mx-st-logo { display: flex; align-items: center; height: 40px; max-width: 150px; }
   .mx-st-logo img { max-height: 36px; max-width: 150px; object-fit: contain; filter: drop-shadow(0 0 10px color-mix(in oklab, var(--tint) 55%, transparent)); transition: filter .6s; }
   .mx-st-mono { justify-content: center; width: 40px; border-radius: 12px; background: color-mix(in oklab, var(--tint) 18%, transparent); color: var(--tint); font: 600 14px var(--font-mono); box-shadow: 0 0 18px -4px color-mix(in oklab, var(--tint) 60%, transparent); }
-  .mx-st-yr { padding: 3px 9px; border-radius: 999px; background: color-mix(in oklab, var(--tint) 16%, transparent); color: color-mix(in oklab, var(--tint) 55%, var(--ink)); font: 500 12px var(--font-mono); letter-spacing: .04em; }
+  .mx-st-yr { color: color-mix(in oklab, var(--tint) 62%, var(--ink)); font: 600 25px/1 var(--font-sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  [data-theme="daylight"] .mx-st-yr { color: color-mix(in oklab, var(--tint) 75%, var(--ink)); }
   .mx-st-t { display: grid; gap: 2px; }
   .mx-st-t b { font-size: 17px; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
   .mx-st-t span { font-size: 14px; color: var(--ink-2); }
@@ -204,20 +211,6 @@
   .mx-dots i { width: 6px; height: 6px; border-radius: 6px; background: var(--stroke-hi); transition: width .35s cubic-bezier(.2, .8, .2, 1), background-color .3s; }
   .mx-dots i.on { width: 18px; background: var(--accent); }
 
-  /* --------------------------------------------------------------- the jar */
-  /* The desktop's logo strip, made for a hand: the logos drop into a tray
-     and can be dragged and flung about. A tap opens that role. */
-  .mx-jar-s { margin-top: 56px; }
-  .mx-kick { margin: 0 0 6px; color: var(--accent); }
-  .mx-h2 { margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.05; }
-  .mx-sub { margin: 6px 0 16px; color: var(--ink-2); font-size: 15px; }
-  .mx-jar { position: relative; height: 300px; border: 1px solid var(--stroke); border-radius: var(--r-xl); background: radial-gradient(90% 70% at 50% 110%, color-mix(in oklab, var(--accent) 9%, transparent), transparent 70%), var(--surface); overflow: hidden; touch-action: pan-y; }
-  .mx-chip { position: absolute; left: 0; top: 0; width: var(--d, 96px); height: var(--d, 96px); display: grid; place-items: center; padding: 0; border: 1px solid var(--stroke-hi); border-radius: 50%; background: var(--bg); box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .45), 0 0 0 0 transparent; touch-action: none; will-change: transform; transform: translate(-200px, -200px); transition: box-shadow .3s, border-color .3s; user-select: none; -webkit-user-select: none; }
-  .mx-chip img { max-width: 66%; max-height: 46%; object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
-  .mx-chip img[src*="jm-lexus"] { filter: brightness(2.1); }
-  [data-theme="daylight"] .mx-chip img[src*="jm-lexus"] { filter: brightness(.55); }
-  .mx-chip.held { border-color: color-mix(in oklab, var(--tint) 70%, transparent); box-shadow: 0 18px 30px -12px rgba(0, 0, 0, .5), 0 0 26px -2px color-mix(in oklab, var(--tint) 55%, transparent); }
-
   /* ---------------------------------------------------------------- eras */
   /* The desktop's banner, in its colours, as one tappable card. */
   .mx-eras { display: grid; grid-template-columns: 34px 1fr 38px; align-items: center; gap: 14px; margin-top: 30px; padding: 14px 14px 14px 16px; border: 1px solid var(--stroke); border-radius: var(--r-lg); background: var(--surface); color: var(--ink); text-decoration: none; }
@@ -242,7 +235,7 @@
   .mx-copy { width: 50px; height: 50px; display: grid; place-items: center; border: 1px solid var(--stroke-hi); border-radius: 50%; background: none; font-size: 18px; transition: transform .2s, background-color .2s, color .2s; }
   .mx-copy.done { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
   /* The small print, down at the very bottom, just above the dock. */
-  .mx-foot { margin: 0; padding-top: 22svh; text-align: center; }
+  .mx-foot { margin: 0; padding-top: 44px; text-align: center; }
 
   /* --------------------------------------------------------------- sheet */
   .mx-scrim { position: fixed; inset: 0; z-index: 80; background: rgba(0, 0, 0, .4); opacity: 0; transition: opacity .3s; }
@@ -306,7 +299,6 @@
   .mx-hero > .mx-name, .mx-hero > .mx-line, .mx-hero > .mx-greet { translate: 0 calc(var(--p) * -60px); opacity: calc(1 - var(--p) * 1.3); }
   .mx-hero > .mx-name { scale: calc(1 - var(--p) * .08); transform-origin: left center; }
   .mx-hero > .mx-mark { translate: 0 calc(var(--p) * -110px); rotate: calc(var(--p) * -24deg); }
-  .mx-hero > .mx-down { opacity: calc(1 - var(--p) * 4); }
   /* Rows in a tab come in one after another when the tab opens. */
   .mx-panel.enter .mx-tl > li, .mx-panel.enter .mx-projs > li:not(.out), .mx-panel.enter .mx-story-b, .mx-panel.enter .mx-quote, .mx-panel.enter .mx-edu { animation: mx-pop .55s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--k, 0) * 45ms); }
 
