@@ -1,0 +1,266 @@
+/* ==========================================================================
+   THE PATH, ON A WIDE SCREEN
+   One drawn dealership lot, every place I've worked a part of it: the
+   showroom, the offices upstairs, the lab on the roof, the service bay, the
+   camera on the corner, the robots in the lot, the billboard by the road and
+   the gator in the pond. Flat shapes in the site's own manner, moving
+   quietly. Click a part and the scene leans in, with its story beside it.
+   Daylight in the light theme; night, windows lit, in the dark ones.
+   ========================================================================== */
+
+.tw-retired { display: none !important; }
+
+.tw {
+  /* daylight */
+  --hill1: #d7d1c3; --hill2: #e0dbcf; --grass: #cbd7ad; --lot: #e4dfd4; --road: #4a4b52; --curb: #f3f0e9;
+  --wall: #f7f5f0; --wall2: #ebe7de; --roof: #3a3c44; --band: #26282e; --glass: #b9d3e8; --win: #cfe0ee;
+  --post: #5b5e68; --trunk: #8a6a4c; --leaf: #8fb76d; --cloud: #ffffff; --pond: #8cc3dc; --gator: #4f8f4b;
+  --board: #ffffff; --lineink: #2c2e35; --bay: #2a2c33; --head: #6f7380; --tyre: #2a2b30; --hub: #c9cbd2;
+  --shine: rgba(255, 255, 255, .45); --pool: rgba(255, 214, 120, 0); --bulb: #d9d5cb;
+  position: relative;
+  margin-top: 8px;
+}
+[data-theme="midnight"] .tw, [data-theme="terminal"] .tw {
+  --hill1: #171a24; --hill2: #1d202c; --grass: #141c17; --lot: #1d1e22; --road: #0e0f12; --curb: #2a2b30;
+  --wall: #2b2c33; --wall2: #24252c; --roof: #121317; --band: #101114; --glass: #18324f; --win: #f2c56a;
+  --post: #50535d; --trunk: #4a3a2c; --leaf: #2c4a2f; --cloud: #2a3048; --pond: #1b3a55; --gator: #3e7a3e;
+  --board: #e9e5dc; --lineink: #101114; --bay: #121318; --head: #2c2d33; --tyre: #0d0d10; --hub: #6b6e78;
+  --shine: rgba(255, 255, 255, .08); --pool: rgba(255, 214, 120, .16); --bulb: #ffd98a;
+}
+
+.tw-stage {
+  position: relative;
+  aspect-ratio: 1200 / 640;
+  border: 1px solid var(--stroke);
+  border-radius: var(--r-xl, 22px);
+  overflow: hidden;
+  background: var(--grass);
+  isolation: isolate;
+}
+.tw-svg { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
+.tw-far, .tw-mid, .tw-near { transition: transform .9s cubic-bezier(.2, .8, .2, 1); }
+
+/* ---------------------------------------------------------- palette */
+.tw-sky-n, .tw-moon, .tw-stars { opacity: 0; transition: opacity .6s; }
+.tw-sky-d, .tw-sun { transition: opacity .6s; }
+[data-theme="midnight"] .tw .tw-sky-n, [data-theme="terminal"] .tw .tw-sky-n,
+[data-theme="midnight"] .tw .tw-moon, [data-theme="terminal"] .tw .tw-moon,
+[data-theme="midnight"] .tw .tw-stars, [data-theme="terminal"] .tw .tw-stars { opacity: 1; }
+[data-theme="midnight"] .tw .tw-sun, [data-theme="terminal"] .tw .tw-sun { opacity: 0; }
+.tw-moon-cut { fill: #11162a; }
+.tw-stars circle { fill: #fff; animation: tw-twinkle 3.2s ease-in-out infinite; animation-delay: var(--d); }
+@keyframes tw-twinkle { 50% { opacity: .25; } }
+.tw-cloud { fill: var(--cloud); opacity: .9; animation: tw-drift var(--dur) linear infinite; animation-delay: var(--from); }
+@keyframes tw-drift { from { transform: translateX(-420px); } to { transform: translateX(1300px); } }
+.tw-hill1 { fill: var(--hill1); } .tw-hill2 { fill: var(--hill2); }
+.tw-grass { fill: var(--grass); } .tw-lot { fill: var(--lot); } .tw-road { fill: var(--road); } .tw-curb { fill: var(--curb); }
+.tw-lines rect { fill: var(--wall); opacity: .8; }
+.tw-dashes rect { fill: #f2efe7; opacity: .7; }
+.tw-wall { fill: var(--wall); } .tw-wall2 { fill: var(--wall2); } .tw-roof { fill: var(--roof); } .tw-band { fill: var(--band); }
+.tw-post { fill: var(--post); } .tw-post-l { stroke: var(--post); stroke-width: 3; stroke-linecap: round; }
+.tw-trunk { fill: var(--trunk); } .tw-tree circle { fill: var(--leaf); }
+.tw-tyre { fill: var(--tyre); } .tw-hub { fill: var(--hub); }
+.tw-car-win { fill: rgba(255, 255, 255, .55); }
+[data-theme="midnight"] .tw .tw-car-win, [data-theme="terminal"] .tw .tw-car-win { fill: rgba(170, 200, 255, .35); }
+.tw-lamp { fill: #ffe7a8; }
+.tw-mono { font-family: var(--font-mono); }
+.tw-bulb { fill: var(--bulb); }
+.tw-pool { fill: var(--pool); }
+/* The logo that suits the ground it's on. */
+.tw-lg-l { display: none; }
+[data-theme="daylight"] .tw .tw-lg-d { display: none; } [data-theme="daylight"] .tw .tw-lg-l { display: inline; }
+
+/* ---------------------------------------------------------- billboard */
+.tw-board { fill: var(--board); stroke: var(--lineink); stroke-width: 3; }
+.tw-search { fill: #efece5; }
+.tw-mag { fill: none; stroke: #6a6d77; stroke-width: 2; stroke-linecap: round; }
+.tw-type { font-size: 10px; fill: #3b3d45; }
+.tw-caret { fill: #3b3d45; animation: tw-caret 1s steps(1) infinite; }
+@keyframes tw-caret { 50% { opacity: 0; } }
+.tw-bars rect { fill: #f39c12; transform-box: fill-box; transform-origin: bottom; animation: tw-grow 4.8s cubic-bezier(.2, .8, .2, 1) infinite; animation-delay: calc(var(--i) * .12s); }
+@keyframes tw-grow { 0%, 8% { transform: scaleY(.15); } 40%, 85% { transform: scaleY(1); } 100% { transform: scaleY(.15); } }
+.tw-up { fill: none; stroke: #2fae5a; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+.tw-big { font: 700 19px var(--font-sans); fill: #2fae5a; letter-spacing: -.02em; }
+
+/* ---------------------------------------------------------- pond and gator */
+.tw-pond { fill: var(--pond); }
+.tw-ripples ellipse { fill: none; stroke: #fff; stroke-opacity: .5; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: tw-ripple 3.2s ease-out infinite; }
+@keyframes tw-ripple { from { transform: scale(.6); opacity: 1; } to { transform: scale(3.4); opacity: 0; } }
+.tw-gator { animation: tw-peek 7s ease-in-out infinite; }
+@keyframes tw-peek { 0%, 12% { transform: translateY(14px); } 24%, 70% { transform: translateY(0); } 82%, 100% { transform: translateY(14px); } }
+.tw-gator-b { fill: var(--gator); }
+.tw-pupil { fill: #1a1b1f; }
+.tw-lid { fill: var(--gator); transform-box: fill-box; transform-origin: top; transform: scaleY(0); animation: tw-blink 7s infinite; }
+@keyframes tw-blink { 0%, 44% { transform: scaleY(0); } 46% { transform: scaleY(1); } 48%, 100% { transform: scaleY(0); } }
+
+/* ---------------------------------------------------------- the competition robot */
+.tw-target { fill: none; stroke: #46f28a; stroke-width: 3; stroke-linejoin: round; }
+.tw-vision { stroke: #46f28a; stroke-width: 2; stroke-dasharray: 5 6; animation: tw-march 1.2s linear infinite; opacity: .8; }
+@keyframes tw-march { to { stroke-dashoffset: -22; } }
+.tw-reticle path { fill: none; stroke: #46f28a; stroke-width: 2.4; stroke-linecap: round; }
+.tw-reticle { animation: tw-lock 3s cubic-bezier(.2, .8, .2, 1) infinite; }
+@keyframes tw-lock { 0% { transform: translate(452px, 446px) scale(1.7) rotate(25deg); opacity: 0; } 30%, 80% { transform: translate(452px, 446px) scale(1) rotate(0); opacity: 1; } 100% { transform: translate(452px, 446px) scale(1); opacity: 0; } }
+.tw-vent { fill: rgba(0, 0, 0, .25); }
+.tw-cam { fill: #2a2b30; }
+.tw-turret { transform-box: fill-box; transform-origin: 50% 100%; animation: tw-aim 3s ease-in-out infinite; }
+@keyframes tw-aim { 0% { transform: rotate(-8deg); } 30%, 100% { transform: rotate(0); } }
+.tw-ring { animation: tw-glow 1.4s ease-in-out infinite; }
+@keyframes tw-glow { 50% { opacity: .45; } }
+
+/* ---------------------------------------------------------- the delivery robot */
+.tw-rover { animation: tw-roll 11s ease-in-out infinite; }
+@keyframes tw-roll { 0%, 6% { transform: translateX(0); } 44%, 56% { transform: translateX(110px); } 94%, 100% { transform: translateX(0); } }
+.tw-rover-in { animation: tw-bob .5s ease-in-out infinite alternate; }
+@keyframes tw-bob { to { translate: 0 -1.6px; } }
+.tw-eye { fill: #1a1b1f; }
+.tw-rover .tw-pupil { fill: #fff; }
+.tw-blink { animation: tw-glow 1s steps(1) infinite; }
+.tw-mail { animation: tw-hand 11s ease-in-out infinite; }
+@keyframes tw-hand { 0%, 40% { transform: translateY(0); opacity: 1; } 48% { transform: translate(14px, -30px); opacity: 0; } 50%, 90% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: translateY(0); } }
+
+/* ---------------------------------------------------------- offices upstairs */
+.tw-plaque { fill: #fff; stroke: var(--stroke); }
+[data-theme="midnight"] .tw .tw-plaque, [data-theme="terminal"] .tw .tw-plaque { fill: #1b1c21; }
+.tw-win { fill: var(--win); }
+.tw-screen { fill: #1d2433; }
+.tw-dash { fill: #00b3a4; transform-box: fill-box; transform-origin: bottom; animation: tw-tick 2.6s ease-in-out infinite; animation-delay: calc(var(--i) * -.45s); }
+@keyframes tw-tick { 50% { transform: scaleY(.45); } }
+.tw-head { fill: var(--head); }
+
+/* ---------------------------------------------------------- showroom */
+.tw-glass { fill: var(--glass); }
+.tw-turn { fill: rgba(255, 255, 255, .55); }
+[data-theme="midnight"] .tw .tw-turn, [data-theme="terminal"] .tw .tw-turn { fill: rgba(255, 240, 210, .25); }
+/* The car turns on its turntable: a flat drawing, so it turns by narrowing
+   to its nose and opening out the other way. */
+.tw-spin { transform-box: fill-box; transform-origin: center; animation: tw-turntable 9s ease-in-out infinite; }
+@keyframes tw-turntable { 0%, 18% { transform: scaleX(1); } 32% { transform: scaleX(.12); } 34% { transform: scaleX(-.12); } 50%, 68% { transform: scaleX(-1); } 82% { transform: scaleX(-.12); } 84% { transform: scaleX(.12); } 100% { transform: scaleX(1); } }
+.tw-spot { transform-box: fill-box; transform-origin: top; animation: tw-sweep 5s ease-in-out infinite alternate; }
+@keyframes tw-sweep { from { transform: skewX(12deg); } to { transform: skewX(-12deg); } }
+.tw-shine { stroke: var(--shine); stroke-width: 10; }
+.tw-mull { fill: var(--wall); }
+
+/* ---------------------------------------------------------- rooftop lab */
+.tw-rack { fill: #23252c; }
+.tw-unit { fill: #34373f; }
+.tw-led { fill: #46f28a; animation: tw-glow 1.3s steps(1) infinite; animation-delay: var(--d); }
+.tw-led:nth-of-type(3n) { fill: #ff9a3d; }
+.tw-tiny { font-size: 7.5px; fill: #c9ccd4; letter-spacing: .04em; }
+.tw-dish { fill: var(--wall); stroke: var(--post); stroke-width: 2; }
+.tw-led-on { fill: #ff5a3d; animation: tw-glow 1s steps(1) infinite; }
+.tw-pings path { fill: none; stroke: #fa4616; stroke-width: 2.4; stroke-linecap: round; animation: tw-ping 1.6s ease-out infinite; }
+@keyframes tw-ping { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+.tw-bubble { fill: #fff; stroke: #e0473b; stroke-width: 2; }
+.tw-warn { font-size: 8.6px; fill: #e0473b; font-weight: 600; }
+/* A prompt meant to break the chatbot floats up, a shield catches it. */
+.tw-bad { animation: tw-attack 5s ease-in-out infinite; }
+@keyframes tw-attack { 0% { transform: translateY(16px); opacity: 0; } 20%, 55% { transform: none; opacity: 1; } 70%, 100% { transform: translateY(-6px) scale(.9); opacity: 0; } }
+.tw-shield { transform-box: fill-box; transform-origin: center; animation: tw-catch 5s cubic-bezier(.3, 1.6, .5, 1) infinite; }
+@keyframes tw-catch { 0%, 38% { transform: scale(0); } 48%, 80% { transform: scale(1); } 92%, 100% { transform: scale(0); } }
+
+/* ---------------------------------------------------------- service bay */
+.tw-bay { fill: var(--bay); }
+.tw-bay-light { fill: #fff3cf; opacity: .9; }
+.tw-door { fill: #9aa0ab; }
+.tw-lift { animation: tw-raise 8s ease-in-out infinite; }
+@keyframes tw-raise { 0%, 10% { transform: translateY(6px); } 30%, 80% { transform: translateY(0); } 100% { transform: translateY(6px); } }
+.tw-clamps rect { fill: #e8e3d6; stroke: #2a2b30; stroke-width: 1.5; }
+.tw-beam { animation: tw-scan 2.2s ease-in-out infinite; }
+@keyframes tw-scan { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+.tw-console { fill: #3a3d46; }
+.tw-waves path { fill: none; stroke: #b5121b; stroke-width: 3; stroke-linecap: round; animation: tw-ping 1.8s ease-out infinite; }
+.tw-iot rect, .tw-iot circle { fill: var(--wall); stroke: #b5121b; stroke-width: 2; }
+.tw-iot rect { stroke: none; }
+.tw-iot .tw-reset { fill: none; stroke: #b5121b; stroke-width: 2.2; stroke-linecap: round; transform-box: fill-box; transform-origin: center; animation: tw-turn 2.4s linear infinite; }
+@keyframes tw-turn { to { transform: rotate(360deg); } }
+
+/* ---------------------------------------------------------- camera and sign */
+.tw-cctv-head { transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.tw:not(.tracking) .tw-cctv-head { animation: tw-pan 7s ease-in-out infinite; }
+@keyframes tw-pan { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(-44deg); } }
+.tw-rec { fill: #ff3b30; animation: tw-glow 1s steps(1) infinite; }
+.tw-cone { animation: tw-scan 3s ease-in-out infinite; }
+
+/* ---------------------------------------------------------- road */
+.tw-drive { animation: tw-go var(--t, 16s) linear infinite; }
+.tw-drive-r { --t: 15s; }
+.tw-drive-r2 { --t: 15s; animation-delay: -7.5s; }
+.tw-drive-l { --t: 19s; animation-name: tw-back; animation-delay: -4s; }
+@keyframes tw-go { from { transform: translateX(-120px); } to { transform: translateX(1320px); } }
+@keyframes tw-back { from { transform: translateX(1320px); } to { transform: translateX(-120px); } }
+
+/* ---------------------------------------------------------- what can be opened */
+.tw-hot { cursor: pointer; outline: none; }
+.tw-hot:hover, .tw-hot.hl { filter: url(#twGlow); }
+.tw.zoomed .tw-hot, .tw.zoomed .tw-hot:hover { filter: none; }
+.tw-pin { pointer-events: none; }
+.tw-pin-ring { fill: none; stroke: #ff6b35; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: tw-pin 2.4s ease-out infinite; }
+.tw-pin-dot { fill: #ff6b35; stroke: #fff; stroke-width: 1.6; }
+@keyframes tw-pin { from { transform: scale(.6); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
+.tw.zoomed .tw-pin { opacity: 0; transition: opacity .3s; }
+.tw-pin.seen .tw-pin-ring { animation: none; opacity: 0; }
+
+.tw-hint { position: absolute; left: 16px; top: 14px; z-index: 2; display: flex; align-items: center; gap: 8px; margin: 0; padding: 6px 11px; border-radius: 999px; background: color-mix(in oklab, var(--bg) 82%, transparent); border: 1px solid var(--stroke); font: 11px var(--font-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); transition: opacity .3s; pointer-events: none; }
+.tw-hint i { width: 7px; height: 7px; border-radius: 50%; background: #ff6b35; }
+.tw.zoomed .tw-hint { opacity: 0; }
+
+.tw-label { position: absolute; z-index: 3; left: 0; top: 0; padding: 6px 10px; border-radius: 10px; background: var(--ink); color: var(--bg); font: 500 13px var(--font-sans); white-space: nowrap; pointer-events: none; opacity: 0; transform: translate(-50%, calc(-100% - 12px)) scale(.92); transition: opacity .18s, transform .25s cubic-bezier(.3, 1.5, .5, 1); }
+.tw-label b { font-family: var(--font-mono); font-weight: 500; color: var(--tint, #ff6b35); margin-right: 6px; }
+.tw-label.on { opacity: 1; transform: translate(-50%, calc(-100% - 12px)) scale(1); }
+
+/* ---------------------------------------------------------- the story card */
+.tw-panel { position: absolute; z-index: 4; top: 14px; bottom: 14px; right: 14px; width: min(390px, 40%); display: flex; flex-direction: column; border: 1px solid var(--stroke); border-radius: 18px; background: color-mix(in oklab, var(--bg) 94%, transparent); -webkit-backdrop-filter: blur(16px) saturate(120%); backdrop-filter: blur(16px) saturate(120%); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .45); color: var(--ink); opacity: 0; transform: translateX(24px); transition: opacity .35s, transform .5s cubic-bezier(.2, .8, .2, 1); }
+.tw-panel[hidden] { display: none; }
+.tw-panel.left { right: auto; left: 14px; transform: translateX(-24px); }
+.tw-panel.open { opacity: 1; transform: none; }
+.tw-panel-in { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 22px 22px 12px; scrollbar-width: thin; }
+.tw-panel-in.swap { animation: tw-swap .45s cubic-bezier(.2, .8, .2, 1); }
+@keyframes tw-swap { from { opacity: 0; transform: translateY(10px); } }
+.tw-x { position: absolute; z-index: 2; top: 12px; right: 12px; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--stroke); border-radius: 50%; background: var(--bg); color: var(--ink); cursor: pointer; }
+.tw-x svg { width: 15px; height: 15px; }
+.tw-p-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-right: 40px; margin-bottom: 14px; }
+.tw-p-logo { display: flex; align-items: center; height: 40px; }
+.tw-p-logo img { max-height: 38px; max-width: 160px; object-fit: contain; filter: drop-shadow(0 0 12px color-mix(in oklab, var(--tint) 45%, transparent)); }
+[data-theme="daylight"] .tw-p-logo img { filter: none; }
+.tw-p-logo .lg-l { display: none; }
+[data-theme="daylight"] .tw-p-logo .lg-d { display: none; } [data-theme="daylight"] .tw-p-logo .lg-l { display: block; }
+.tw-p-mono { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: color-mix(in oklab, var(--tint) 18%, transparent); color: var(--tint); font: 600 15px var(--font-mono); }
+.tw-p-yr { font: 600 30px/1 var(--font-sans); letter-spacing: -.03em; color: color-mix(in oklab, var(--tint) 65%, var(--ink)); }
+.tw-panel h3 { margin: 0 0 4px; font-size: 22px; line-height: 1.15; letter-spacing: -.025em; }
+.tw-p-role { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.tw-p-when { margin: 6px 0 16px; font: 11px var(--font-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+.tw-p-text { margin: 0 0 16px; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); }
+.tw-p-stats { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tw-p-stats li { padding: 10px 12px; border-radius: 12px; background: var(--m-fill); }
+.tw-p-stats b { display: block; font-size: 17px; letter-spacing: -.02em; }
+.tw-p-stats span { display: block; font-size: 12px; line-height: 1.35; color: var(--ink-3); }
+.tw-p-tags { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tw-p-tags li { padding: 4px 9px; border-radius: 6px; background: var(--m-fill); color: var(--ink-2); font: 11px var(--font-mono); }
+.tw-p-pics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 6px; }
+.tw-p-pics button { padding: 0; border: 0; border-radius: 10px; overflow: hidden; aspect-ratio: 1; background: var(--m-fill); cursor: zoom-in; }
+.tw-p-pics img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
+.tw-p-pics button:hover img { transform: scale(1.06); }
+.tw-p-gator { display: block; width: 120px; margin: 4px 0 14px; }
+/* A photo opened from the card fills the card. */
+.tw-big-pic { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: 14px; border-radius: 18px; background: color-mix(in oklab, var(--bg) 96%, transparent); cursor: zoom-out; animation: tw-swap .35s cubic-bezier(.2, .8, .2, 1); }
+.tw-big-pic img { max-width: 100%; max-height: 100%; border-radius: 12px; object-fit: contain; }
+.tw-nav { display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--stroke); }
+.tw-nav button { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 50%; height: 36px; padding: 0 12px; border: 1px solid var(--stroke); border-radius: 999px; background: none; color: var(--ink-2); font: 500 13px var(--font-sans); cursor: pointer; transition: background-color .2s, color .2s; }
+.tw-nav button:hover { background: var(--m-fill); color: var(--ink); }
+.tw-nav button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tw-nav svg { width: 15px; height: 15px; flex: none; }
+
+/* ---------------------------------------------------------- years below */
+.tw-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.tw-chip { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px 0 12px; border: 1px solid var(--stroke); border-radius: 999px; background: var(--surface); color: var(--ink); font: 500 14px var(--font-sans); cursor: pointer; transition: border-color .2s, background-color .2s, transform .2s; }
+.tw-chip b { font-weight: 600; color: color-mix(in oklab, var(--tint) 65%, var(--ink)); letter-spacing: -.02em; }
+.tw-chip:hover, .tw-chip.on { border-color: color-mix(in oklab, var(--tint) 55%, var(--stroke)); background: color-mix(in oklab, var(--tint) 8%, var(--surface)); }
+.tw-chip:active { transform: scale(.96); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tw *, .tw *::before { animation: none !important; }
+  .tw-far, .tw-mid, .tw-near { transition: none; }
+}
+
+/* Off screen, the lot holds still. */
+.tw-paused *, .tw-paused { animation-play-state: paused !important; }
