@@ -120,8 +120,8 @@
   // so the halo comes from a still copy of the place tucked behind it,
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
-  const LIVE = { tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
+  const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
+  const SKIP = { 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
   const halos = {};
   const hotOf = (id) => hots.find((h) => h.dataset.id === id);
   let lit = null;
@@ -177,7 +177,8 @@
   const setVB = (b) => {
     vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
     far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${((b[1] - (BOTTOM - vh)) * 0.4).toFixed(2)})`);
-    if (!arrived && camX < 1500) arrive();
+    // the truck backs in once its waiting spot is well in view
+    if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
     panL.classList.toggle('on', !cur && camX > 4);
     panR.classList.toggle('on', !cur && camX < WORLD - vw - 4);
   };
@@ -230,7 +231,9 @@
       ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
       ${r.about ? `<p class="tw-p-about">${esc(r.about)}</p>` : ''}
       <p class="tw-p-text">${esc(r.text)}</p>
+      ${r.quote ? `<blockquote class="tw-p-quote">“${esc(r.quote)}”</blockquote>` : ''}
       ${r.photos.length ? `<div class="tw-p-pics">${r.photos.map((s) => `<button type="button" aria-label="Open photo"><img src="${s}" alt="" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
+      ${r.steps ? `<ol class="tw-p-steps">${r.steps.map(([f, t, c]) => `<li><button type="button" aria-label="Open photo"><img src="${f}" alt="" loading="lazy" decoding="async" /></button><div><b>${esc(t)}</b><span>${esc(c)}</span></div></li>`).join('')}</ol>` : ''}
       ${r.stats.length ? `<ul class="tw-p-stats">${r.stats.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('')}</ul>` : ''}
       ${links.length ? `<div class="tw-p-links"><h4>How it connects</h4>${links.map(([a, b, long]) => { const o = D.roles[a === r.id ? b : a]; return `<button type="button" class="tw-p-link" data-go="${o.id}" style="--lt:${o.tint}"><b>${esc(nameOf(o))} ${yy(o)}</b> ${esc(long)}</button>`; }).join('')}</div>` : ''}
       ${r.url ? `<p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.url)}" target="_blank" rel="noopener">See the code ↗</a></p>` : ''}
@@ -243,7 +246,7 @@
     if (n) { $('span', nextB).textContent = n.school ? 'UF' : n.short; nextB.dataset.id = n.id; }
     nextB.style.marginLeft = 'auto';
     $$('.tw-p-link', inner).forEach((b) => b.addEventListener('click', () => open(b.dataset.go)));
-    $$('.tw-p-pics button', inner).forEach((b) => b.addEventListener('click', () => {
+    $$('.tw-p-pics button, .tw-p-steps button', inner).forEach((b) => b.addEventListener('click', () => {
       const big = document.createElement('div');
       big.className = 'tw-big-pic';
       big.innerHTML = `<img src="${b.querySelector('img').src}" alt="" />`;
@@ -268,6 +271,8 @@
     render(r);
     requestAnimationFrame(() => { panel.classList.add('open'); tween(frame(z, left), wasOpen ? 750 : 900); });
     tw.classList.add('zoomed');
+    // the Civic's hood swings up while its stop is open
+    tw.classList.toggle('hood', id === 'p-civic');
     glow(null); glow(id);
     if (id === 'jm') { arrived = true; tw.classList.add('arrive', 'parked'); }
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
@@ -277,6 +282,7 @@
   const close = () => {
     if (!cur) return;
     cur = null;
+    tw.classList.remove('hood');
     panel.classList.remove('open');
     setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
     tween(view(), 800);
@@ -477,72 +483,10 @@
   // Its display rolls through the eras it can take you to.
   const tmYr = $('.tw-tm-yr', svg);
   if (tmYr && !reduced) { const ys = ['1977', '1984', '1998', '2007']; let k = 0; setInterval(() => { k = (k + 1) % ys.length; tmYr.textContent = ys[k]; }, 1400); }
-  // Stepping in: the screen goes blank, the AJ mark comes in from the top
-  // left to the middle, turns to pixels, the pixels take the screen, and the
-  // eras (the old school machines) open.
-  let travelling = false;
+  // Stepping in plays the standard site's own trip to the eras: the mark
+  // flies from the bar to the middle and the era picker loads (hop.js).
   function timeTravel() {
-    if (travelling) return;
-    travelling = true;
-    const dest = 'eras.html';
-    if (reduced) { location.href = dest; return; }
-    const cs = getComputedStyle(document.body), ink = cs.color || '#16171c', bg = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' ? cs.backgroundColor : '#0b0d12';
-    const ov = document.createElement('div');
-    ov.className = 'tt'; ov.style.background = bg;
-    document.body.appendChild(ov);
-    requestAnimationFrame(() => ov.classList.add('blank'));
-    const mark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="9 8.5 45 42" width="450" height="420"><path d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z" fill="${ink}"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg>`;
-    const im = new Image();
-    im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(mark);
-    const S = Math.min(innerWidth, innerHeight) * 0.32, dpr = Math.min(2, devicePixelRatio || 1);
-    const cv = document.createElement('canvas');
-    cv.className = 'tt-logo'; cv.width = Math.round(S * dpr); cv.height = Math.round(S * 42 / 45 * dpr);
-    cv.style.width = S + 'px'; cv.style.height = (S * 42 / 45) + 'px';
-    cv.style.left = (innerWidth - S) / 2 + 'px'; cv.style.top = (innerHeight - S * 42 / 45) / 2 + 'px';
-    ov.appendChild(cv);
-    const g = cv.getContext('2d');
-    const draw = (res) => {
-      g.clearRect(0, 0, cv.width, cv.height);
-      if (!res) { g.imageSmoothingEnabled = true; g.drawImage(im, 0, 0, cv.width, cv.height); return; }
-      const t = document.createElement('canvas'); t.width = res; t.height = Math.max(1, Math.round(res * 42 / 45));
-      t.getContext('2d').drawImage(im, 0, 0, t.width, t.height);
-      g.imageSmoothingEnabled = false; g.drawImage(t, 0, 0, cv.width, cv.height);
-    };
-    const src = document.querySelector('header.nav .brand-aj');
-    const from = src && src.getBoundingClientRect().width ? src.getBoundingClientRect() : { left: 18, top: 18, width: 27, height: 25 };
-    const go = () => { location.href = dest; };
-    const safety = setTimeout(go, 4200);
-    const start = () => {
-      draw(0);
-      const fx = from.left + from.width / 2 - innerWidth / 2, fy = from.top + from.height / 2 - innerHeight / 2, k = from.width / S;
-      const fly = cv.animate([{ transform: `translate(${fx}px, ${fy}px) scale(${k})`, opacity: 0.2 }, { transform: 'none', opacity: 1 }], { duration: 900, delay: 380, easing: 'cubic-bezier(.2, .8, .2, 1)', fill: 'both' });
-      fly.onfinish = () => {
-        // into pixels: each step coarser
-        const steps = [56, 30, 16, 9];
-        let i = 0;
-        const tick = () => {
-          if (i < steps.length) { draw(steps[i++]); setTimeout(tick, 150); return; }
-          // then the pixels take the screen
-          const px = document.createElement('canvas'), P = 44;
-          px.className = 'tt-px'; px.width = Math.ceil(innerWidth / P); px.height = Math.ceil(innerHeight / P);
-          ov.appendChild(px);
-          const q = px.getContext('2d'), cells = [];
-          for (let y = 0; y < px.height; y++) for (let x = 0; x < px.width; x++) cells.push([x, y]);
-          for (let j = cells.length - 1; j > 0; j--) { const r = Math.floor(Math.random() * (j + 1)); [cells[j], cells[r]] = [cells[r], cells[j]]; }
-          const cols = ['#0b0d12', '#0b0d12', '#0b0d12', '#16331f', '#1f6fd1', '#ff6b35', '#3d68ff'];
-          let n = 0;
-          const fill = () => {
-            const per = Math.ceil(cells.length / 14);
-            for (let m = 0; m < per && n < cells.length; m++, n++) { q.fillStyle = cols[(Math.random() * cols.length) | 0]; q.fillRect(cells[n][0], cells[n][1], 1, 1); }
-            if (n < cells.length) requestAnimationFrame(fill);
-            else { q.fillStyle = '#0b0d12'; q.fillRect(0, 0, px.width, px.height); clearTimeout(safety); setTimeout(go, 160); }
-          };
-          requestAnimationFrame(fill);
-        };
-        setTimeout(tick, 220);
-      };
-    };
-    if (im.complete && im.naturalWidth) start(); else { im.onload = start; im.onerror = go; }
+    if (window.hopTo) window.hopTo('eras.html'); else location.href = 'eras.html';
   }
 
   /* ---------------------------------------------------------- weather */
