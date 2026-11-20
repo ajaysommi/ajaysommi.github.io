@@ -583,7 +583,9 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
   const ps = POSTERS[em === 'l' ? 'main' : 'wing'];
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-int"/>
       <rect x="${x}" y="${y + h - 22}" width="${w}" height="3" class="tw-baseboard"/>
-      ${ps.map((p) => poster(p, y + 16)).join('')}
+      ${em === 'l'
+        ? [['mural-l', 660, 90, 900 / 238], ['mural-r', 801, 88, 900 / 225]].map(([n, mx, mw, ar]) => `<image href="assets/images/town/${n}.webp" x="${mx}" y="${y + 14}" width="${mw}" height="${(mw / ar).toFixed(2)}" preserveAspectRatio="none" class="tw-mural"/><rect x="${mx}" y="${y + 14}" width="${mw}" height="${(mw / ar).toFixed(2)}" class="tw-mural-f"/>`).join('')
+        : `<image href="assets/images/town/lounge.webp" x="${x + 2}" y="${(y + h - 8 - 96 / 2.222).toFixed(2)}" width="96" height="${(96 / 2.222).toFixed(2)}" preserveAspectRatio="none" class="tw-mural"/>`}
       ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${fy} ${cx - 44},${fy}" class="tw-spotcone" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
       <rect x="${x}" y="${fy}" width="${w}" height="8" class="tw-showfloor"/>
       ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
@@ -893,7 +895,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-adt-alarm tw-nohit"><circle cx="608" cy="458" r="58" fill="url(#twAdtGlow)" opacity=".8"/><ellipse cx="600" cy="510" rx="62" ry="8" fill="url(#twAdtPool)" opacity=".7"/></g>
       <image href="assets/images/town/adt-sign.webp?v=2" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/>
       <image href="assets/images/town/adt-sign-lit.webp" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
-      <g class="tw-adtbush">${bush(634, 518, .95)}<g class="tw-adt-rim tw-nohit">${bush(634, 518, .95).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}</g></g>
+      <g class="tw-adtbush">${bush(580, 518, .8)}${bush(634, 518, .95)}<g class="tw-adt-rim tw-nohit">${bush(580, 518, .8).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}${bush(634, 518, .95).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}</g></g>
       <g class="tw-cctv" transform="translate(568 350)">
         <rect x="-5" y="-5" width="10" height="10" rx="2" class="tw-pole"/>
         <g class="tw-cctv-head" transform="rotate(-108)">
