@@ -501,7 +501,7 @@
 
 /* ---------------------------------------------------------- the street along the bottom */
 .tw-sidewalk { fill: #cfc9bd; } .tw-curb { fill: #a9a499; } .tw-road { fill: #55565c; }
-.tw-lane { stroke: #f2d16b; stroke-width: 2.4; stroke-dasharray: 26 22; fill: none; }
+.tw-lane { stroke: #f2d16b; stroke-width: 1.7; fill: none; }
 [data-theme="midnight"] .tw .tw-sidewalk, [data-theme="terminal"] .tw .tw-sidewalk { fill: #5d5c62; }
 [data-theme="midnight"] .tw .tw-curb, [data-theme="terminal"] .tw .tw-curb { fill: #45444a; }
 [data-theme="midnight"] .tw .tw-road, [data-theme="terminal"] .tw .tw-road { fill: #2a2b31; }
@@ -695,7 +695,7 @@
 .tw-warmglow { pointer-events: none; }
 
 /* How to get around: a small card in the middle, the gesture drawn out. */
-.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 18px; background: color-mix(in oklab, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
+.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 18px; background: color-mix(in oklab, var(--bg) 76%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
 .tw-hint.out { opacity: 0; scale: .97; transition: opacity .45s, scale .45s; }
 @keyframes tw-hintin { from { opacity: 0; scale: .94; translate: -50% -42%; } }
 .tw-hint p { margin: 0; display: grid; gap: 3px; max-width: 250px; }
@@ -901,7 +901,7 @@
 .tw-hint-wheel { position: absolute; left: 50%; top: 6px; width: 5px; height: 9px; margin-left: -2.5px; border-radius: 3px; background: var(--ink); opacity: .85; animation: tw-wheel 1.4s cubic-bezier(.45, 0, .3, 1) infinite; }
 @keyframes tw-wheel { 0% { transform: translateY(-2px); opacity: 0; } 25% { opacity: .9; } 70% { transform: translateY(7px); opacity: .9; } 100% { transform: translateY(9px); opacity: 0; } }
 .tw-hint-cable { position: absolute; left: 50%; top: -9px; width: 1.4px; height: 9px; background: color-mix(in oklab, var(--ink) 40%, transparent); translate: -50% 0; }
-.tw-hint p { max-width: 270px; }
+.tw-hint p { max-width: none; white-space: nowrap; }
 
 /* The dealership's loading bay. */
 .tw-baysign { fill: #2a2c34; } .tw-baysign-t { font: 800 4.4px var(--font-sans); letter-spacing: .14em; fill: #f4f1ea; }
@@ -1029,3 +1029,51 @@
 .tw-pc-quote { margin: 0 0 12px; padding: 0 0 0 12px; border-left: 3px solid #f05a2b; font: italic 500 14.5px/1.5 Georgia, serif; color: #3a332b; }
 .tw-pc-sign { margin: 6px 0 0; font: italic 500 15px/1.4 Georgia, serif; color: #5a4c3c; }
 .tw-pc-sign b { display: block; margin-top: 2px; font: italic 700 26px/1.1 Georgia, serif; color: #19633a; letter-spacing: -.01em; }
+
+/* ---------------------------------------------------------- round 8 */
+/* The dock along the showroom's base. */
+.tw-dock { fill: var(--tw-panel2); stroke: var(--tw-line); stroke-width: 1.4; }
+.tw-dock-edge { stroke: #f2b705; stroke-width: 1.6; stroke-dasharray: 2.4 2.4; }
+.tw-rail { fill: none; stroke: #8e939d; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.tw-ramp { fill: #a7a9ae; stroke: var(--tw-line); stroke-width: 1.2; stroke-linejoin: round; }
+[data-theme="midnight"] .tw .tw-ramp, [data-theme="terminal"] .tw .tw-ramp { fill: #6d7079; }
+/* The welcome sign: "Welcome to" in a script; the big letters stand proud of
+   the board, and cast a soft shadow down into the lamps' light. */
+.tw-wel-s { font: italic 400 15px 'Snell Roundhand', 'Apple Chancery', 'Segoe Script', 'Brush Script MT', cursive; letter-spacing: .01em; fill: #f3e3bf; }
+.tw-wel-edge { fill: #3e2515; }
+.tw-wel-sh { fill: rgba(20, 10, 4, .55); opacity: 0; transition: opacity .9s; }
+[data-theme="midnight"] .tw.signlit .tw-wel-sh, [data-theme="terminal"] .tw.signlit .tw-wel-sh { opacity: 1; }
+/* The portal: a ring of dark stone, a purple swirl, motes drifting up. */
+.tw-pt-stone { fill: #1d1029; stroke: #3d2556; stroke-width: 1.6; }
+.tw-pt-pad { fill: rgba(60, 20, 100, .35); }
+.tw-pt-arm { fill: none; stroke: rgba(240, 220, 255, .7); stroke-width: 4; stroke-linecap: round; }
+.tw-pt-ring { fill: none; stroke: rgba(216, 180, 254, .45); stroke-width: 3; stroke-dasharray: 10 8; }
+.tw-pt-swirl { animation: tw-spin 7s linear infinite; }
+.tw-pt-back { animation-duration: 11s; animation-direction: reverse; }
+.tw-pt-halo { animation: tw-ptpulse 4s ease-in-out infinite; }
+@keyframes tw-ptpulse { 50% { opacity: .55; } }
+.tw-pt-mote { fill: #e9d5ff; opacity: 0; transform-box: fill-box; animation: tw-mote 3.6s ease-out infinite; animation-delay: var(--d); }
+@keyframes tw-mote { 0% { opacity: 0; transform: translate(0, 0); } 25% { opacity: .9; } 100% { opacity: 0; transform: translate(var(--x), -90px); } }
+/* FICS: a navy monument sign in a brick planter; HiPerGator's cables. */
+.tw-fics-slab { fill: #0b2266; stroke: var(--tw-line); stroke-width: 1.2; }
+.tw-fics-top { fill: #fa4616; }
+.tw-fics-plate { fill: #f8f6f0; }
+.tw-fics-t { font: 800 3.7px var(--font-sans); letter-spacing: .08em; fill: #f8f6f0; }
+.tw-planter2 { fill: #9a4a32; stroke: var(--tw-line); stroke-width: .9; }
+.tw-hcable { fill: none; stroke: var(--c); stroke-width: 2.3; stroke-linecap: round; }
+.tw-ziptie { stroke: #f4f1ea; stroke-width: 1; stroke-linecap: round; }
+.tw-conduit { fill: #5d616b; stroke: var(--tw-line); stroke-width: .6; }
+/* The postcard follows the theme. */
+[data-theme="midnight"] .tw-panel.tw-postcard, [data-theme="terminal"] .tw-panel.tw-postcard { background: #1e1a15; color: #efe6d6; border-color: #3a3128; }
+[data-theme="midnight"] .tw-panel.tw-postcard .tw-x, [data-theme="terminal"] .tw-panel.tw-postcard .tw-x { background: #1e1a15; color: #efe6d6; border-color: #4a3f33; }
+[data-theme="midnight"] .tw-pc-note p, [data-theme="terminal"] .tw-pc-note p { color: #e6dccb; }
+[data-theme="midnight"] .tw-pc-note, [data-theme="terminal"] .tw-pc-note { background: repeating-linear-gradient(180deg, transparent 0 23.3px, rgba(239, 230, 214, .1) 23.3px 24.3px); background-position: 0 1px; }
+[data-theme="midnight"] .tw-pc-greet, [data-theme="terminal"] .tw-pc-greet { color: #d9b98f; }
+[data-theme="midnight"] .tw-pc-town, [data-theme="terminal"] .tw-pc-town { background-image: linear-gradient(180deg, #ffb35c 0%, #ff7a3c 45%, #4fbf7f 46%, #2e8b57 100%); -webkit-text-stroke: 0; }
+[data-theme="midnight"] .tw-pc-mark, [data-theme="terminal"] .tw-pc-mark { border-color: rgba(255, 140, 120, .5); color: rgba(255, 150, 130, .75); }
+[data-theme="midnight"] .tw-pc-mark::after, [data-theme="terminal"] .tw-pc-mark::after { background: repeating-linear-gradient(180deg, rgba(255, 140, 120, .45) 0 2px, transparent 2px 7px); }
+[data-theme="midnight"] .tw-pc-quote, [data-theme="terminal"] .tw-pc-quote { color: #efe6d6; }
+[data-theme="midnight"] .tw-pc-sign, [data-theme="terminal"] .tw-pc-sign { color: #cdbfa8; }
+[data-theme="midnight"] .tw-pc-sign b, [data-theme="terminal"] .tw-pc-sign b { color: #6fd39b; }
+[data-theme="midnight"] .tw-pc-snap figcaption, [data-theme="terminal"] .tw-pc-snap figcaption { color: #5a4c3c; }
+.tw-pc-stamp { cursor: default; }

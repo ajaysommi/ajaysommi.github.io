@@ -287,19 +287,19 @@
     const to = clamp(x, 0, Math.max(0, WORLD - vw));
     if (reduced || ms === 0) { camX = to; setVB(view()); return; }
     const from = camX, t0 = performance.now();
-    const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); camX = from + (to - from) * k; setVB(view()); if (k < 1) glide = requestAnimationFrame(f); };
+    const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); camX = from + (to - from) * k; slid(); setVB(view()); if (k < 1) glide = requestAnimationFrame(f); };
     glide = requestAnimationFrame(f);
   };
   setVB(view());
   /* The opening: the street starts up in the sky, and the moment the mark
-     sets off for the corner it comes down to the visitor center, easing in
-     and out (smootherstep) so it starts and lands without a jolt. After
-     dark a shooting star or two crosses as it comes down; nothing after it
-     lands. Half a second after it lands, the lamps on the welcome sign come
-     on (after dark). */
+     sets off for the corner it comes down to the visitor center in one
+     continuous glide: slowest up among the stars, easing in and out so it
+     starts and lands without a jolt. Half a second after it lands, the lamps
+     on the welcome sign come on (after dark). */
   let intro = false;
-  const INTRO = 2500, RISE = 420;
+  const INTRO = 3400, RISE = 420;
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
+  const glideDown = (u) => Math.pow(smooth(u), 1.3);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
   const loader = document.getElementById('pageLoader');
   const startBar = () => { if (barOn) return; barOn = true; paintBar(); };
@@ -307,17 +307,12 @@
     intro = true;
     tw.classList.add('intro');
     setVB([camX, BOTTOM - vh - RISE, vw, vh]);
-    const meteors = document.createElement('div');
-    meteors.className = 'tw-meteors'; meteors.setAttribute('aria-hidden', 'true');
-    meteors.innerHTML = '<i></i><i></i>';
-    stage.appendChild(meteors);
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
-      if (!intro || cur) { tw.classList.remove('intro'); meteors.remove(); lampsOn(); hint(); return; }
-      tw.classList.add('shoot');
-      tween(view(), INTRO, smooth);
-      setTimeout(() => { intro = false; tw.classList.remove('intro', 'shoot'); meteors.remove(); lampsOn(); hint(); }, INTRO + 80);
+      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); hint(); return; }
+      tween(view(), INTRO, glideDown);
+      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); }, INTRO + 80);
     };
     // the street starts down as the mark takes off; the browser's bar turns
     // sky coloured once the loading screen has cleared
@@ -339,7 +334,7 @@
     const h = document.createElement('div');
     h.className = 'tw-hint';
     h.setAttribute('role', 'status');
-    h.innerHTML = `<div class="tw-hint-g" aria-hidden="true"><div class="tw-hint-pad"><span class="tw-hint-dots"><i></i><i></i></span><span class="tw-hint-ar l"></span><span class="tw-hint-ar r"></span></div><span class="tw-hint-or">or</span><div class="tw-hint-mouse"><span class="tw-hint-wheel"></span><span class="tw-hint-cable"></span></div></div><p><b>Scroll to look around</b><span>Swipe sideways with two fingers on a trackpad, or roll the mouse wheel. You can also drag the street.</span></p>`;
+    h.innerHTML = `<div class="tw-hint-g" aria-hidden="true"><div class="tw-hint-pad"><span class="tw-hint-dots"><i></i><i></i></span><span class="tw-hint-ar l"></span><span class="tw-hint-ar r"></span></div><span class="tw-hint-or">or</span><div class="tw-hint-mouse"><span class="tw-hint-wheel"></span><span class="tw-hint-cable"></span></div></div><p><b>Scroll to look around</b><span>Two-finger swipe on a trackpad,<br>or roll the mouse wheel.<br>You can also drag the street.</span></p>`;
     stage.appendChild(h);
     const bye = () => { if (!h.isConnected || h.classList.contains('out')) return; h.classList.add('out'); setTimeout(() => h.remove(), 500); ['wheel', 'pointerdown', 'keydown'].forEach((t) => removeEventListener(t, bye, true)); };
     ['wheel', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, bye, true));
@@ -357,12 +352,12 @@
     const d = new Date(), day = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
     return `<div class="tw-pc">
       <div class="tw-pc-top"><span class="tw-pc-greet">Greetings from</span><span class="tw-pc-town">SOMMIVILLE</span></div>
-      <div class="tw-pc-stampwrap"><button type="button" class="tw-pc-stamp" aria-label="Open photo"><img src="${r.photos[0]}" alt="" /></button><span class="tw-pc-mark" aria-hidden="true"><b>VISITOR CENTER</b><i>${esc(day)}</i></span></div>
+      <div class="tw-pc-stampwrap"><span class="tw-pc-stamp"><img src="${r.photos[0]}" alt="Ajay Sommi" /></span><span class="tw-pc-mark" aria-hidden="true"><b>VISITOR CENTER</b><i>${esc(day)}</i></span></div>
       <div class="tw-pc-note">${r.lines.map((l) => `<p>${esc(l)}</p>`).join('')}</div>
       ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
       <figure class="tw-pc-snap"><button type="button" aria-label="Open photo"><img src="${r.photos[1]}" alt="" loading="lazy" decoding="async" /></button><figcaption>Me, a long time ago</figcaption></figure>
       ${r.quote ? `<blockquote class="tw-pc-quote">“${esc(r.quote)}”</blockquote>` : ''}
-      <p class="tw-pc-sign">Wish you were here,<b>Ajay</b></p>
+      <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
     </div>`;
   };
   const render = (r) => {
@@ -375,7 +370,7 @@
       inner.scrollTop = 0;
       inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
       prevB.hidden = nextB.hidden = true;
-      $$('.tw-pc-stamp, .tw-pc-snap button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
+      $$('.tw-pc-snap button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
       return;
     }
     inner.innerHTML = `
@@ -498,8 +493,15 @@
     label.classList.add('on');
   };
   let over = null, offT = 0;
+  let sliding = 0, pendingHover;
+  const slid = () => {
+    if (!sliding) { svg.classList.add('tw-moving'); hideLabel(); }
+    clearTimeout(sliding);
+    sliding = setTimeout(() => { sliding = 0; svg.classList.remove('tw-moving'); if (pendingHover !== undefined) { const p = pendingHover; pendingHover = undefined; hoverTo(p); } }, 160);
+  };
   const hoverTo = (id) => {
     if (cur) return;
+    if (sliding) { pendingHover = id; return; }
     clearTimeout(offT);
     if (id) { if (id !== over) { over = id; glow(id); showLabel(id); } return; }
     if (!over) return;
@@ -582,9 +584,11 @@
         if (a > 90) a -= 360;
         head.style.transform = `rotate(${clamp(a, -160, -30).toFixed(1)}deg)`;
       } else if (head) head.style.transform = '';
+      // (the rover is drawn flipped when it faces left, so its eyes' x is too)
+      const fx = bots.rfa.face < 0 ? -1 : 1;
       eyes.forEach((el) => {
         const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
-        el.style.transform = `translate(${(dx / d * 2.4).toFixed(2)}px, ${(dy / d * 2.4).toFixed(2)}px)`;
+        el.style.transform = `translate(${(dx / d * 2.4 * fx).toFixed(2)}px, ${(dy / d * 2.4).toFixed(2)}px)`;
       });
     });
   });
@@ -611,6 +615,7 @@
     cancelAnimationFrame(glide);
     if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); }
     camX = clamp(camX + d / scale, 0, Math.max(0, WORLD - vw));
+    slid();
     setVB(view());
   }, { passive: false });
   let drag = null, dragged = false;
@@ -625,6 +630,7 @@
     if (!dragged && Math.abs(dx) < 6) return;
     if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); } }
     camX = clamp(drag.cam - dx / scale, 0, Math.max(0, WORLD - vw));
+    slid();
     setVB(view());
   });
   addEventListener('pointerup', () => { if (!drag) return; drag = null; tw.classList.remove('dragging'); setTimeout(() => { dragged = false; }, 0); });

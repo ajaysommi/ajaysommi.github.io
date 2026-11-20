@@ -108,7 +108,7 @@ const html = `<!-- mx:start -->
       <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
-      <button type="button" class="mx-cue"><span>Scroll down to get to know me</span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
+      <button type="button" class="mx-cue" aria-label="Scroll down"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
     </section>
 
     <div class="mx-pager">
