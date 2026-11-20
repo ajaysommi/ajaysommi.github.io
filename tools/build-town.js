@@ -561,20 +561,20 @@ const profile = (kind, x, y, w, col) => {
 };
 // [centre, width, model, body, colour, backdrop]
 const POSTERS = {
-  wing: [[474, 17, 'COROLLA', 'sedan', '#e8e4da', 'b'], [512, 50, 'SUPRA', 'sport', '#d93a2b', 's'], [550, 17, '4RUNNER', 'boxy', '#5a6b4a', 'b']],
-  main: [[667, 16, 'CAMRY', 'sedan', '#9aa3ad', 's'], [702, 50, 'SIENNA', 'van', '#c9c2b4', 'b'], [739.5, 20, 'TACOMA', 'truck', '#c0392b', 's'],
-         [811, 18, 'TUNDRA', 'truck', '#3b4a5c', 'b'], [846, 50, 'LAND CRUISER', 'boxy', '#e6dcc4', 's'], [880.5, 15, 'PRIUS', 'sedan', '#3a7bd5', 'b']]
+  wing: [[482, 25, 'COROLLA', 'sedan', '#e8e4da', 'b'], [512, 25, 'SUPRA', 'sport', '#d93a2b', 's'], [542, 25, '4RUNNER', 'boxy', '#5a6b4a', 'b']],
+  main: [[672, 25, 'CAMRY', 'sedan', '#9aa3ad', 's'], [702, 25, 'SIENNA', 'van', '#c9c2b4', 'b'], [732, 25, 'TACOMA', 'truck', '#c0392b', 's'],
+         [816, 25, 'TUNDRA', 'truck', '#3b4a5c', 'b'], [846, 25, 'LAND CRUISER', 'boxy', '#e6dcc4', 's'], [876, 25, 'PRIUS', 'sedan', '#3a7bd5', 'b']]
 };
 const poster = ([cx, w, name, kind, col, bg], top) => {
   const h = w * 0.78, x = cx - w / 2, m = w * 0.07;
   const sky = bg === 's' ? 'url(#twPosterSun)' : 'url(#twPosterSky)';
-  const ih = h - m * 2 - w * 0.13;
+  const ih = h - m * 2;
   return `<g class="tw-poster-f"><rect x="${x.toFixed(2)}" y="${top}" width="${w}" height="${h.toFixed(2)}" class="tw-pp-frame"/>
     <rect x="${(x + m).toFixed(2)}" y="${(top + m).toFixed(2)}" width="${(w - m * 2).toFixed(2)}" height="${ih.toFixed(2)}" fill="${sky}"/>
     <path d="M${(x + m).toFixed(2)} ${(top + m + ih * .62).toFixed(2)} l${((w - m * 2) * .35).toFixed(2)} ${(-ih * .3).toFixed(2)} l${((w - m * 2) * .25).toFixed(2)} ${(ih * .16).toFixed(2)} l${((w - m * 2) * .4).toFixed(2)} ${(-ih * .22).toFixed(2)} V${(top + m + ih).toFixed(2)} H${(x + m).toFixed(2)} Z" class="tw-pp-hill"/>
     <path d="M${(x + w - m - (w - m * 2) * .3).toFixed(2)} ${(top + m + ih).toFixed(2)} l${((w - m * 2) * .12).toFixed(2)} ${(-ih * .16).toFixed(2)} h${((w - m * 2) * .06).toFixed(2)} l${(-(w - m * 2) * .12).toFixed(2)} ${(ih * .16).toFixed(2)} z M${(x + w - m - (w - m * 2) * .14).toFixed(2)} ${(top + m + ih).toFixed(2)} l${((w - m * 2) * .12).toFixed(2)} ${(-ih * .16).toFixed(2)} h${((w - m * 2) * .02).toFixed(2)} v${(ih * .16).toFixed(2)} z" class="tw-pp-stripe"/>
     ${profile(kind, x + m + (w - m * 2) * .12, top + m + ih * .36, (w - m * 2) * .76, col)}
-    <text x="${cx}" y="${(top + h - m * .9).toFixed(2)}" class="tw-pp-t" style="font-size:${(w * .085).toFixed(2)}px" text-anchor="middle">${name}</text></g>`;
+    </g>`;
 };
 const showroom = (x, y, w, h, cars, em = 'l') => {
   const ex = em === 'l' ? x + 9 : x + w - 9;
@@ -583,7 +583,7 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
   const ps = POSTERS[em === 'l' ? 'main' : 'wing'];
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-int"/>
       <rect x="${x}" y="${y + h - 22}" width="${w}" height="3" class="tw-baseboard"/>
-      ${ps.map((p) => poster(p, y + 14 + (p[1] > 30 ? 0 : 7))).join('')}
+      ${ps.map((p) => poster(p, y + 16)).join('')}
       ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${fy} ${cx - 44},${fy}" class="tw-spotcone" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
       <rect x="${x}" y="${fy}" width="${w}" height="8" class="tw-showfloor"/>
       ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
@@ -893,7 +893,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-adt-alarm tw-nohit"><circle cx="608" cy="458" r="58" fill="url(#twAdtGlow)" opacity=".8"/><ellipse cx="600" cy="510" rx="62" ry="8" fill="url(#twAdtPool)" opacity=".7"/></g>
       <image href="assets/images/town/adt-sign.webp?v=2" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/>
       <image href="assets/images/town/adt-sign-lit.webp" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
-      <g class="tw-adtbush">${bush(612, 514, 1.05)}<g class="tw-adt-rim tw-nohit">${bush(612, 514, 1.05).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}</g></g>
+      <g class="tw-adtbush">${bush(634, 518, .95)}<g class="tw-adt-rim tw-nohit">${bush(634, 518, .95).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}</g></g>
       <g class="tw-cctv" transform="translate(568 350)">
         <rect x="-5" y="-5" width="10" height="10" rx="2" class="tw-pole"/>
         <g class="tw-cctv-head" transform="rotate(-108)">
