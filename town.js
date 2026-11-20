@@ -115,7 +115,7 @@
     armB.setAttribute('d', `M1004 474 L1110 ${top.toFixed(1)}`);
     pivot.setAttribute('cy', ((474 + top) / 2).toFixed(1));
     lasers.forEach((l, i) => {
-      const [bx, by] = BEACONS[i], tx = WHEELS[i], ty = 442 - h;
+      const [bx, by] = BEACONS[i], tx = WHEELS[i], ty = 445.7 - h;
       l.setAttribute('points', `${bx},${by - 1.6} ${bx},${by + 1.6} ${tx},${(ty + 2).toFixed(1)} ${tx},${(ty - 2).toFixed(1)}`);
     });
   };
@@ -132,7 +132,7 @@
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-night, .tw-snowimg', shiva: '.tw-bars' };
+  const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-hallglow, .tw-snowimg', shiva: '.tw-bars' };
   SKIP.hunter += ', .tw-hk-lcd'; SKIP['p-civic'] += ', .tw-snowimg';
   const halos = {};
   const stickers = $$('.tw-adtsticker', svg);
@@ -151,6 +151,8 @@
       c.setAttribute('filterUnits', 'userSpaceOnUse');
       c.setAttribute('x', (b.x - m).toFixed(1)); c.setAttribute('y', (b.y - m).toFixed(1));
       c.setAttribute('width', (b.width + 2 * m).toFixed(1)); c.setAttribute('height', (b.height + 2 * m).toFixed(1));
+      // a big place gets a wider glow, or it's lost along its long edges
+      if (Math.max(b.width, b.height) > 300) { const bl = c.querySelector('feGaussianBlur'); if (bl) bl.setAttribute('stdDeviation', '6.5'); c.setAttribute('x', (b.x - 30).toFixed(1)); c.setAttribute('y', (b.y - 30).toFixed(1)); c.setAttribute('width', (b.width + 60).toFixed(1)); c.setAttribute('height', (b.height + 60).toFixed(1)); }
       defs.appendChild(c);
       url = `url(#${c.id})`;
     }
@@ -297,7 +299,8 @@
      starts and lands without a jolt. Half a second after it lands, the lamps
      on the welcome sign come on (after dark). */
   let intro = false;
-  const INTRO = 3400, RISE = 420;
+  // it starts high enough that only sky and stars show (the hills too are out of sight)
+  const INTRO = 3800, RISE = 780;
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
   const glideDown = (u) => Math.pow(smooth(u), 1.3);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
@@ -974,6 +977,8 @@
   const dmgIn = (h, id) => { const b = BODY[id] && $(BODY[id], h); if (!b) return dmgRoot(h); let g = b.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); b.appendChild(g); } return g; };
   const pokeAny = (id, e) => {
     const h = hotOf(id); if (!h) return;
+    // the welcome sign is solid wood: nothing to crack
+    if (e.target.closest && e.target.closest('.tw-woodsign')) return;
     const n = (hits[id] || 0) + 1;
     if (n > 6) return;
     hits[id] = n;

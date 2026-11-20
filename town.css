@@ -99,7 +99,6 @@
 .tw-plate { fill: #1b1c21; }
 .tw-hlogo { pointer-events: none; }
 .tw-cam { fill: #1b1c21; }
-.tw-beam { animation: tw-scan 2.2s ease-in-out infinite; }
 @keyframes tw-scan { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
 .tw-onlift { animation: tw-raise 8s ease-in-out infinite; }
 @keyframes tw-raise { 0%, 12% { transform: translateY(5px); } 30%, 80% { transform: none; } 100% { transform: translateY(5px); } }
@@ -664,7 +663,6 @@
 @keyframes tw-adtpulse { 50% { opacity: .65; } }
 /* the police */
 .tw-police { visibility: hidden; transform: translateX(1700px); }
-.tw.police .tw-police { visibility: visible; transform: none; transition: transform 6s cubic-bezier(.12, .55, .25, 1); }
 .tw-pc-body { fill: #16181d; stroke: var(--tw-line); stroke-width: 1.2; }
 .tw-pc-door { fill: #f3f2ee; } .tw-pc-win { fill: #8fa6bb; } .tw-pc-pillar { stroke: #16181d; stroke-width: 2; }
 .tw-pc-t { font: 800 6px var(--font-sans); letter-spacing: .08em; fill: #16181d; }
@@ -1058,7 +1056,7 @@
 .tw-fics-slab { fill: #0b2266; stroke: var(--tw-line); stroke-width: 1.2; }
 .tw-fics-top { fill: #fa4616; }
 .tw-fics-plate { fill: #f8f6f0; }
-.tw-fics-t { font: 800 3.7px var(--font-sans); letter-spacing: .08em; fill: #f8f6f0; }
+.tw-fics-t { font: 800 3.25px var(--font-sans); letter-spacing: .05em; fill: #f8f6f0; }
 .tw-planter2 { fill: #9a4a32; stroke: var(--tw-line); stroke-width: .9; }
 .tw-hcable { fill: none; stroke: var(--c); stroke-width: 2.3; stroke-linecap: round; }
 .tw-ziptie { stroke: #f4f1ea; stroke-width: 1; stroke-linecap: round; }
@@ -1077,3 +1075,12 @@
 [data-theme="midnight"] .tw-pc-sign b, [data-theme="terminal"] .tw-pc-sign b { color: #6fd39b; }
 [data-theme="midnight"] .tw-pc-snap figcaption, [data-theme="terminal"] .tw-pc-snap figcaption { color: #5a4c3c; }
 .tw-pc-stamp { cursor: default; }
+
+/* round 9 */
+.tw-fics-inset { fill: #0e2a7a; stroke: #fa4616; stroke-width: .7; }
+.tw-showbg { opacity: .92; }
+[data-theme="midnight"] .tw .tw-showbg, [data-theme="terminal"] .tw .tw-showbg { opacity: .8; }
+
+.tw-showcar { opacity: 1; }
+.tw.alarm :is(.tw-carimg, .tw-bow) { filter: url(#twDimMore); }
+.tw-label b { color: color-mix(in oklab, var(--tint) 55%, var(--bg)); }
