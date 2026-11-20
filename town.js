@@ -182,6 +182,8 @@
       halos[id] = g;
     }
     h.parentNode.insertBefore(g, h);
+    // the open place keeps its glow while the scene leans in
+    g.classList.toggle('keep', id === cur);
     $$(LIVE[id] || '.tw-none', h).forEach((n) => { n.style.filter = fitted(n, `twGlow-${id}`); });
   };
   // Generous, invisible hit areas, so a small move doesn't drop the hover
@@ -430,6 +432,7 @@
     tw.classList.add('zoomed');
     // the Civic's hood swings up while its stop is open
     tw.classList.toggle('hood', id === 'p-civic');
+    hots.forEach((x) => x.classList.toggle('tw-cur', x.dataset.id === id));
     glow(null); glow(id);
     if (id === 'jm') { arrived = true; tw.classList.add('arrive', 'parked'); }
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
@@ -444,6 +447,7 @@
     setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
     tween(view(), 800);
     tw.classList.remove('zoomed');
+    hots.forEach((x) => x.classList.remove('tw-cur'));
     glow(null); over = null;
     chips.forEach((c) => c.classList.remove('on'));
   };

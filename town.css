@@ -363,8 +363,8 @@
 /* The still halo behind whatever is lit (see glow() in town.js). */
 .tw-halo { pointer-events: none; }
 .tw-halo, .tw-halo * { animation: none !important; transition: none !important; }
-.tw-moving .tw-halo { display: none; }
-.tw-moving .tw-hot [style*="twGlow"] { filter: none !important; }
+.tw-moving .tw-halo:not(.keep) { display: none; }
+.tw-moving .tw-hot:not(.tw-cur) [style*="twGlow"] { filter: none !important; }
 
 /* ---------------------------------------------------------- lights after dark */
 .tw-night { opacity: 0; transition: opacity .6s; pointer-events: none; }
@@ -1104,10 +1104,15 @@
 .tw-clamp-hub { fill: #8e939d; }
 .tw-tgt-sq { fill: #fff; }
 .tw-laser { animation: tw-zap 1.4s steps(1) infinite; }
-.tw-laser + .tw-laser { animation-delay: -.7s; }
+.tw-laser + .tw-laser { animation-delay: 0s; }
 @keyframes tw-zap { 0% { opacity: 1; } 4% { opacity: 0; } 8% { opacity: 1; } 12% { opacity: 0; } 16% { opacity: 1; } 20% { opacity: 0; } 24% { opacity: .9; } 28%, 100% { opacity: 0; } }
 
 .tw-mural-f { fill: none; stroke: #1d1e22; stroke-width: 1.1; }
 
 .tw-furn { pointer-events: none; }
 [data-theme="midnight"] .tw .tw-furn, [data-theme="terminal"] .tw .tw-furn { opacity: .92; }
+
+/* By day the alarm just turns the showroom lights off: dimmer, not dark. */
+[data-theme="daylight"] .tw.alarm .tw-int { fill: #cfd2d7 !important; }
+[data-theme="daylight"] .tw-alarm-dark { opacity: .22; }
+[data-theme="daylight"] .tw.alarm .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twDim) !important; }
