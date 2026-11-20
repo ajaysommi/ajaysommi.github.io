@@ -360,8 +360,11 @@
   /* As the page moves: the hello drifts back, things rise into place, and
      on the path the stop nearest the middle of the screen lights up. */
   const hero = $('.mx-hero', mx);
+  // The cue at the bottom of the first screen: a tap does what it says.
+  const cue = $('.mx-cue', mx);
+  if (cue) cue.addEventListener('click', () => window.scrollTo({ top: pager.getBoundingClientRect().top + scrollY - 70, behavior: reduced ? 'auto' : 'smooth' }));
   const stops = $$('.mx-stop', mx);
-  const rvs = [...$$('.mx-contact > *, .mx-foot', mx)];
+  const rvs = [...$$('.mx-contact > *, .mx-tt, .mx-foot', mx)];
   rvs.forEach((el, i) => { el.setAttribute('data-rv', ''); });
   $$('.mx-contact > *', mx).forEach((el, i) => el.style.setProperty('--rd', Math.min(i, 5)));
   if ('IntersectionObserver' in window && !reduced) {

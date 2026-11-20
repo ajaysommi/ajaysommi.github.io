@@ -52,7 +52,7 @@ window.STORY = (function () {
     const next = set.slice(set.indexOf(id) + 1).concat(set.slice(0, set.indexOf(id))).find((m) => !seen(m));
     const out = [`Chapter ${c.n} of 7.${from && CHAPTERS[from] ? ` You just came from ${CHAPTERS[from].name}.` : ''}`, ...c.lines];
     if (next) out.push(`The next part is ${WHERE[next]}.`);
-    else out.push(`That’s every machine here. The rest of the story is on a ${set === COMPUTERS ? 'phone' : 'computer'}, and today’s version is on the standard site.`);
+    else out.push(`That’s every machine here. The rest of the story is on a ${set === COMPUTERS ? 'phone' : 'computer'}, and today’s version is back in Sommiville.`);
     out.push('Ajay');
     return out;
   };

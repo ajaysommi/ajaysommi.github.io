@@ -476,7 +476,8 @@
       will-change: transform;
       transition: transform 1.9s var(--m-ease) var(--delay, 0s);
     }
-    .m-quarter { border-radius: 0 100% 0 0; }
+    /* its curve faces into the screen: the square corner sits off the edge */
+    .m-quarter { border-radius: 0 0 0 100%; }
     .m-disc { border-radius: 50%; }
   }
 

@@ -42,14 +42,13 @@
   const label = $('.tw-label', tw), prevB = $('.tw-prev', panel), nextB = $('.tw-next', panel);
   const chips = $$('.tw-chip', tw), hots = $$('.tw-hot', svg);
   // The camera: the block is WORLD units wide and fills the window; it
-  // scrolls sideways. Things keep the size they had in the old framed
-  // scene (about 0.95px a unit), the extra window shows more of the street
-  // and more sky.
+  // scrolls sideways. The window shows about 640 units top to bottom, so
+  // the street and the buildings take up most of it and the sky the rest.
   const WORLD = D.W, BOTTOM = 676;
   let scale = 1, vw = 1200, vh = 600, camX = 0;
   const measure = () => {
     const w = stage.clientWidth || innerWidth, h = stage.clientHeight || innerHeight;
-    scale = clamp(h / 940, 0.72, 1.12);
+    scale = clamp(h / 640, 0.8, 1.7);
     vw = w / scale; vh = h / scale;
     camX = clamp(camX, 0, Math.max(0, WORLD - vw));
   };
@@ -90,6 +89,18 @@
     reticle.setAttribute('transform', `translate(${aim[0].toFixed(1)} ${aim[1].toFixed(1)})`);
   };
   aimCam();
+  // Its beam and its targeting box drift, slowly, toward the colour of
+  // whatever the pointer is over: a lighter shade of it, so they still show.
+  const RJ0 = [31, 209, 42], rjc = RJ0.slice();
+  const rgbOf = (hex) => { const n = parseInt(hex.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+  let rjSet = '';
+  const tintBeam = (dt) => {
+    const id = typeof over === 'string' ? over : null, t = id && D.roles[id] && id !== 'rjax' ? rgbOf(D.roles[id].tint).map((c) => c * 0.62 + 255 * 0.38) : RJ0;
+    const k = Math.min(1, dt * 0.9);
+    for (let i = 0; i < 3; i++) rjc[i] += (t[i] - rjc[i]) * k;
+    const c = `rgb(${rjc.map((v) => Math.round(v)).join(',')})`;
+    if (c !== rjSet) { rjSet = c; vision.style.stroke = c; reticle.style.setProperty('--rj', c); }
+  };
 
   /* ---------------------------------------------------------- Hunter's lift */
   // Up, a pause, down, a pause; the scissor arms follow the platform, and
@@ -121,7 +132,7 @@
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { toyota: '.tw-strobes, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
+  const SKIP = { toyota: '.tw-alarmin, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples, .tw-hall-n, .tw-night', shiva: '.tw-bars' };
   const halos = {};
   const stickers = $$('.tw-adtsticker', svg);
   const hotOf = (id) => hots.find((h) => h.dataset.id === id);
@@ -143,7 +154,7 @@
       g.removeAttribute('data-id'); g.removeAttribute('style');
       g.setAttribute('class', 'tw-halo'); g.setAttribute('aria-hidden', 'true');
       g.setAttribute('filter', `url(#twHalo-${id})`);
-      $$('.tw-hit' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
+      $$('.tw-hit, .tw-dmg' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
       halos[id] = g;
     }
     h.parentNode.insertBefore(g, h);
@@ -177,9 +188,23 @@
   let arrived = false;
   const arrive = () => { arrived = true; tw.classList.add('arrive'); };
   const far = $('.tw-far', svg), panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
+  // The sun and the moon hold their place on the screen and their size,
+  // whether the street slides or leans in; only tilting up into the sky (the
+  // opening) moves them, a little.
+  const skyG = $('.tw-sky-fixed', svg), moonG = $('.tw-moon', svg), sunG = $('.tw-sun', svg), shoot = $('.tw-shooting', svg);
+  let skyOff = 0;
+  const placeSky = (b) => {
+    const k = b[2] / vw;
+    if (Math.abs(k - 1) < 0.003) skyOff = b[1] - (BOTTOM - vh);
+    skyG.setAttribute('transform', `translate(${b[0].toFixed(2)} ${b[1].toFixed(2)}) scale(${k.toFixed(4)})`);
+    const my = Math.max(60, vh * 0.15) - skyOff * 0.22;
+    moonG.setAttribute('transform', `translate(${(vw * 0.8).toFixed(1)} ${my.toFixed(1)})`);
+    sunG.setAttribute('transform', `translate(${(vw * 0.8).toFixed(1)} ${(my + 6).toFixed(1)})`);
+  };
   const setVB = (b) => {
     vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
     far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${((b[1] - (BOTTOM - vh)) * 0.4).toFixed(2)})`);
+    placeSky(b);
     // the truck backs in once its waiting spot is well in view
     if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
     panL.classList.toggle('on', !cur && camX > 4);
@@ -219,13 +244,40 @@
   setVB(view());
   /* The opening: once the mark has flown up into the bar, the street starts
      up in the sky and slowly comes down to the visitor center. */
+  // It eases in and out (smootherstep), so it starts and lands without a jolt,
+  // and while it comes down the stars sparkle and one shoots across.
   let intro = false;
+  const INTRO = 2700, RISE = 420;
+  const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
   if (!reduced && document.documentElement.classList.contains('is-loading')) {
     intro = true;
-    setVB([camX, BOTTOM - vh - 820, vw, vh]);
-    const start = () => setTimeout(() => { if (intro && !cur) { tween(view(), 3800, (u) => 1 - Math.pow(1 - u, 3) * (1 - u * 0.15)); setTimeout(() => { intro = false; }, 3800); } }, 950);
+    tw.classList.add('intro');
+    setVB([camX, BOTTOM - vh - RISE, vw, vh]);
+    const start = () => setTimeout(() => {
+      if (!intro || cur) { tw.classList.remove('intro'); return; }
+      tw.classList.add('shoot');
+      tween(view(), INTRO, smooth);
+      setTimeout(() => { intro = false; tw.classList.remove('intro'); hint(); }, INTRO + 150);
+    }, 420);
     const mo = new MutationObserver(() => { if (!document.documentElement.classList.contains('is-loading')) { mo.disconnect(); start(); } });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  } else setTimeout(() => hint(), 900);
+  if (shoot) shoot.setAttribute('transform', `translate(${(vw * 0.42).toFixed(1)} ${(vh * 0.16).toFixed(1)})`);
+
+  /* ---------------------------------------------------------- how to get around */
+  // Once the street has settled, a small card in the middle shows how to
+  // move along it, with the gesture drawn out; it goes once you do.
+  function hint() {
+    try { if (sessionStorage.getItem('sommiville-hint')) return; sessionStorage.setItem('sommiville-hint', '1'); } catch (e) {}
+    if (cur || !matchMedia('(min-width: 720px)').matches) return;
+    const h = document.createElement('div');
+    h.className = 'tw-hint';
+    h.setAttribute('role', 'status');
+    h.innerHTML = `<div class="tw-hint-pad" aria-hidden="true"><span class="tw-hint-dots"><i></i><i></i></span><span class="tw-hint-ar l"></span><span class="tw-hint-ar r"></span></div><p><b>Scroll sideways to look around</b><span>Swipe with two fingers on the trackpad, use the mouse wheel, or drag the street</span></p>`;
+    stage.appendChild(h);
+    const bye = () => { if (!h.isConnected || h.classList.contains('out')) return; h.classList.add('out'); setTimeout(() => h.remove(), 500); ['wheel', 'pointerdown', 'keydown'].forEach((t) => removeEventListener(t, bye, true)); };
+    ['wheel', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, bye, true));
+    setTimeout(bye, 7000);
   }
 
   /* ---------------------------------------------------------- the card */
@@ -394,13 +446,13 @@
     if (!running) return;
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
     if (dt > 0 && !cur) {
-      steer(bots.rfa, dt, now);
-      const close = steer(bots.rjax, dt, now) && Math.hypot(ptr.x - bots.rjax.x, ptr.y - bots.rjax.y) < 230;
+      if (!bots.rfa.dead) steer(bots.rfa, dt, now);
+      const close = !bots.rjax.dead && steer(bots.rjax, dt, now) && Math.hypot(ptr.x - bots.rjax.x, ptr.y - bots.rjax.y) < 230;
       const want = close ? [ptr.x, ptr.y] : TARGET;
       aim = [aim[0] + (want[0] - aim[0]) * Math.min(1, dt * 2.5), aim[1] + (want[1] - aim[1]) * Math.min(1, dt * 2.5)];
       aimCam();
     }
-    if (dt > 0) lift(now);
+    if (dt > 0) { lift(now); tintBeam(dt); }
     requestAnimationFrame(loop);
   };
   const go = () => { if (running || reduced || !visible) return; running = true; lastT = 0; requestAnimationFrame(loop); };
@@ -415,12 +467,12 @@
       const e = lastE;
       const p = toSVG(e);
       ptr = { x: p.x, y: p.y };
-      const sky = p.y < 222;
+      const sky = p.y < 330;
       tw.classList.toggle('sky', sky);
       tw.classList.toggle('near', !sky);
       if (sky && dish) {
-        // The dish sits on the FICS lab's roof at (274, 284); it turns its face to the pointer.
-        const a = Math.atan2(p.x - 274, 284 - p.y) * 180 / Math.PI;
+        // The dish sits on HiPerGator's roof at (3014, 388); it turns its face to the pointer.
+        const a = Math.atan2(p.x - 3014, 388 - p.y) * 180 / Math.PI;
         dish.style.transform = `translate(0px, -16px) rotate(${clamp(a, -70, 70).toFixed(1)}deg)`;
       } else if (dish) dish.style.transform = '';
       if (!sky && head) {
@@ -515,25 +567,36 @@
   // leaves turning) is done in town.css. In the snow the rover shivers, then
   // puts on its jacket and beanie.
   const wxc = $('.tw-wx', stage), rover = bots.rfa.el;
-  let wx = 'clear', parts = [], wxRaf = 0, wxLast = 0, coldT = 0;
+  let wx = 'clear', parts = [], wxRaf = 0, wxLast = 0, coldT = 0, wxCam = null, snowT = 0;
+  const snowAmt = document.getElementById('twSnowAmt');
   const sizeWx = () => { const d = Math.min(2, devicePixelRatio || 1); wxc.width = stage.clientWidth * d; wxc.height = stage.clientHeight * d; wxc.getContext('2d').setTransform(d, 0, 0, d, 0, 0); };
   const spawn = (mode, any) => {
     const w = stage.clientWidth, h = stage.clientHeight, y = any ? Math.random() * h : -20;
-    if (mode === 'snow') return { x: Math.random() * w, y, r: 1 + Math.random() * 2.4, vy: 28 + Math.random() * 46, ph: Math.random() * 6.3, sw: 10 + Math.random() * 22 };
-    if (mode === 'rain') return { x: Math.random() * (w + 200), y, l: 10 + Math.random() * 12, vy: 820 + Math.random() * 380 };
-    return { x: Math.random() * w, y, r: 3.4 + Math.random() * 2.8, vy: 36 + Math.random() * 40, ph: Math.random() * 6.3, sw: 30 + Math.random() * 40, rot: Math.random() * 6.3, c: ['#e9952f', '#c2541c', '#d9b13b', '#a8401a'][(Math.random() * 4) | 0] };
+    const z = 0.75 + Math.random() * 0.45;
+    if (mode === 'snow') return { x: Math.random() * w, y, z, vx: 0, r: (1 + Math.random() * 2.4) * z, vy: (28 + Math.random() * 46) * z, ph: Math.random() * 6.3, sw: 10 + Math.random() * 22 };
+    if (mode === 'rain') return { x: Math.random() * (w + 200), y, z, vx: 0, l: (10 + Math.random() * 12) * z, vy: (820 + Math.random() * 380) * z };
+    return { x: Math.random() * w, y, z, vx: 0, r: 3.4 + Math.random() * 2.8, vy: 36 + Math.random() * 40, ph: Math.random() * 6.3, sw: 30 + Math.random() * 40, rot: Math.random() * 6.3, c: ['#e9952f', '#c2541c', '#d9b13b', '#a8401a'][(Math.random() * 4) | 0] };
   };
   const wxLoop = (t) => {
     const dt = Math.min(0.05, (t - (wxLast || t)) / 1000); wxLast = t;
     const c = wxc.getContext('2d'), w = stage.clientWidth, h = stage.clientHeight;
     c.clearRect(0, 0, w, h);
     const night = /midnight|terminal/.test(document.documentElement.dataset.theme || '');
+    // how far the street moved since the last frame, on screen
+    let dx = 0;
+    if (wxCam && Math.abs(vb[2] - wxCam[1]) < 0.01) dx = (vb[0] - wxCam[0]) * (w / vb[2]);
+    wxCam = [vb[0], vb[2]];
+    const wake = dt > 0 ? clamp(dx / dt, -4000, 4000) : 0, decay = Math.exp(-dt * 2.2);
     parts.forEach((p, i) => {
-      p.y += p.vy * dt;
+      p.x -= dx * p.z;
+      p.vx = p.vx * decay + wake * 0.26 * p.z * dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt - Math.abs(p.vx) * dt * (wx === 'rain' ? 0.05 : 0.35);
+      if (p.x < -40) p.x += w + 80; else if (p.x > w + 40) p.x -= w + 80;
       if (wx === 'snow') { p.ph += dt * 1.3; const x = p.x + Math.sin(p.ph) * p.sw; c.fillStyle = night ? 'rgba(235,240,255,.9)' : 'rgba(255,255,255,.95)'; c.beginPath(); c.arc(x, p.y, p.r, 0, 6.283); c.fill(); }
-      else if (wx === 'rain') { p.x -= p.vy * 0.16 * dt; c.strokeStyle = night ? 'rgba(170,190,230,.45)' : 'rgba(90,120,160,.45)'; c.lineWidth = 1.3; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x + p.l * 0.16, p.y - p.l); c.stroke(); }
+      else if (wx === 'rain') { p.x -= p.vy * 0.16 * dt; const sk = 0.16 - p.vx / p.vy; c.strokeStyle = night ? 'rgba(170,190,230,.45)' : 'rgba(90,120,160,.45)'; c.lineWidth = 1.3 * p.z; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x + p.l * sk, p.y - p.l); c.stroke(); }
       else { p.ph += dt * 1.6; p.rot += dt * 2; const x = p.x + Math.sin(p.ph) * p.sw; c.save(); c.translate(x, p.y); c.rotate(p.rot); c.fillStyle = p.c; c.beginPath(); c.ellipse(0, 0, p.r * 1.6, p.r * 0.8, 0, 0, 6.283); c.fill(); c.restore(); }
-      if (p.y > h + 20 || p.x < -40) parts[i] = spawn(wx, false);
+      if (p.y > h + 20) parts[i] = spawn(wx, false);
     });
     wxRaf = requestAnimationFrame(wxLoop);
   };
@@ -543,14 +606,22 @@
     tw.classList.remove('wx-rain', 'wx-snow', 'wx-fall');
     if (mode !== 'clear') tw.classList.add('wx-' + mode);
     document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => { const on = b.dataset.wx === mode; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
-    cancelAnimationFrame(wxRaf); wxLast = 0;
+    cancelAnimationFrame(wxRaf); wxLast = 0; wxCam = null;
     clearTimeout(coldT);
+    // snow settles on top of everything it can, a little more every few seconds
+    clearInterval(snowT);
+    if (snowAmt) {
+      let v = 0; snowAmt.setAttribute('flood-opacity', '0');
+      if (mode === 'snow' && !reduced) snowT = setInterval(() => { v = Math.min(1, v + 0.03); snowAmt.setAttribute('flood-opacity', v.toFixed(2)); if (v >= 1) clearInterval(snowT); }, 600);
+      else if (mode === 'snow') snowAmt.setAttribute('flood-opacity', '1');
+    }
     rover.classList.remove('cold', 'jacket');
     if (mode === 'snow') { rover.classList.add('cold'); coldT = setTimeout(() => rover.classList.add('jacket'), 3200); }
     sizeWx();
     const n = mode === 'snow' ? 190 : mode === 'rain' ? 260 : mode === 'fall' ? 34 : 0;
     parts = Array.from({ length: reduced ? Math.round(n / 4) : n }, () => spawn(mode, true));
     if (n) wxRaf = requestAnimationFrame(wxLoop); else wxc.getContext('2d').clearRect(0, 0, wxc.width, wxc.height);
+    tw.classList.toggle('wx-on', !!n);
   };
   document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => b.addEventListener('click', () => { setWeather(b.dataset.wx); shut(); }));
   addEventListener('resize', () => { if (wx !== 'clear') sizeWx(); });
@@ -559,16 +630,17 @@
   // Click a place again while you're looking at it and it takes the hit:
   // the Civic's windows crack (and give way) and its bumpers fall off; the
   // MacBook's screen breaks, then it catches fire; the showroom glass
-  // cracks, spreads and comes down, which sets off the alarm (the ADT sign
-  // lights up, the lights flash, the police come), and a car hit through the
-  // broken glass goes off too. It all stays as you left it, even after a reload,
-  // until the menu's tow and repair.
-  const DKEY = 'sommiville-damage';
+  // cracks, spreads and comes down, which sets off the alarm (the lights
+  // inside drop, a red glow and a white strobe come on, the ADT sign lights
+  // up, the police come), and a car hit through the broken glass goes off
+  // too. Everything else wears it step by step: a nick, then more, then
+  // worse, then smoke, then fire, and at last it blows up and sets the
+  // ground around it alight. A fresh visit always starts clean.
   const fresh = () => ({ civ: { cr: D.civic.wins.map(() => []), sh: D.civic.wins.map(() => 0), fb: 0, rb: 0, dents: [] }, mac: 0, toy: 0, pts: [], cars: {}, police: 0 });
   let dmg = fresh();
-  try { const j = JSON.parse(localStorage.getItem(DKEY) || 'null'); if (j && j.civ) dmg = Object.assign(fresh(), j); } catch (e) {}
-  const save = () => { try { localStorage.setItem(DKEY, JSON.stringify(dmg)); } catch (e) {} if (fixItem) fixItem.hidden = !damaged(); };
-  const damaged = () => dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || dmg.civ.cr.some((c) => c.length);
+  const hits = {};
+  const damaged = () => dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || dmg.civ.cr.some((c) => c.length) || Object.keys(hits).length;
+  const save = () => { if (fixItem) fixItem.hidden = !damaged(); };
   const localPt = (el, e) => { const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
   const inPoly = (x, y, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) o = !o; } return o; };
   const seeded = (n) => { let v = Math.abs(Math.floor(n * 9301 + 49297)) % 2147483646 + 1; return () => (v = (v * 16807) % 2147483647) / 2147483647; };
@@ -634,6 +706,7 @@
   // The showroom
   const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
   const SIZE = [0, 5, 13, 30];
+  let policeT = 0;
   const drawShowroom = (now) => {
     const broke = dmg.toy >= 4;
     crG.innerHTML = broke ? '' : dmg.pts.map(([x, y], k) => crack(x, y, SIZE[dmg.toy] * (k === dmg.pts.length - 1 ? 1 : 0.9), x * 3 + y * 5 + k, `tw-crk tw-crk-g lv${dmg.toy}`) + (dmg.toy >= 3 ? crack(x + 8, y - 6, 18, x + y, 'tw-crk tw-crk-g lv3') : '')).join('');
@@ -641,10 +714,9 @@
     tw.classList.toggle('alarm', broke);
     if (broke && now) tw.classList.add('shatter');
     showcars.forEach((g) => { const on = !!dmg.cars[g.dataset.car]; g.classList.toggle('hit', on); g.classList.toggle('alarm', on); });
-    if (broke) {
-      if (dmg.police) tw.classList.add('police', 'police-here');
-      else { clearTimeout(drawShowroom.t); drawShowroom.t = setTimeout(() => { dmg.police = 1; save(); tw.classList.add('police'); }, 9000); }
-    } else { clearTimeout(drawShowroom.t); tw.classList.remove('police', 'police-here', 'shatter'); }
+    clearTimeout(policeT);
+    if (broke) { if (!dmg.police) policeT = setTimeout(() => { dmg.police = 1; tw.classList.add('police'); }, 9000); }
+    else tw.classList.remove('police', 'shatter');
   };
   const pokeShowroom = (e) => {
     const car = e.target.closest && e.target.closest('.tw-showcar');
@@ -662,19 +734,117 @@
     drawShowroom(true); save(); refresh('toyota');
   };
 
+  /* Everything else. Glass and screens crack; the rest dents and scorches.
+     Marks land where it was hit; things that move carry their marks along. */
+  const GLASSY = new Set(['vc', 'edu', 'fics', 'p-betai', 'p-oldlap', 'p-lcd', 'p-dehum', 'tm']);
+  const BODY = { rjax: '.tw-frc-flip', rfa: '.tw-rover-shiver' };
+  const boxes = {};
+  // (the size goes on a group around it: the flicker animates the flame's own transform)
+  const flame = (x, y, k, i = 0) => `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(2)})"><path d="M0 0 c-2.4 -1.4 -2.6 -4 -1 -6.2 c.2 1.4 1 2 1.6 2.2 c-.4 -2.6 .6 -4.8 2.6 -6.2 c-.6 2.2 .4 3.8 1.4 4.8 c.6 -1 .7 -2 .5 -3 c1.8 2.4 1.8 5.6 -.6 8.4 z" class="tw-flame" style="--d:${(-i * 0.17 % 0.6).toFixed(2)}s"/></g>`;
+  const add = (g, html) => { g.insertAdjacentHTML('beforeend', html); };
+  const dmgRoot = (h) => { let g = h.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); h.appendChild(g); } return g; };
+  const dmgIn = (h, id) => { const b = BODY[id] && $(BODY[id], h); if (!b) return dmgRoot(h); let g = b.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); b.appendChild(g); } return g; };
+  const boom = (g, x, y, s) => {
+    const fx = NSel('g', { class: 'tw-boom', transform: `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${s.toFixed(2)})` });
+    fx.innerHTML = `<circle r="26" fill="url(#twBoom)" class="tw-boom-ball"/><circle r="12" class="tw-boom-flash"/>` + Array.from({ length: 14 }, (_, i) => { const a = (i / 14) * 6.283 + Math.random() * 0.4, d = 18 + Math.random() * 26; return `<path d="M0 0 l${(1.4 + Math.random() * 2).toFixed(1)} -1 l.6 ${(1.6 + Math.random() * 1.4).toFixed(1)} z" class="tw-debris" style="--x:${(Math.cos(a) * d).toFixed(1)}px;--y:${(Math.sin(a) * d - 14).toFixed(1)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg"/>`; }).join('');
+    g.appendChild(fx);
+    setTimeout(() => fx.remove(), 1500);
+    stage.classList.remove('tw-shake'); void stage.offsetWidth; stage.classList.add('tw-shake');
+  };
+  // fire on the ground: a scorch, flames, a glow
+  const groundFire = (g, x, y, s, i) => add(g, `<g class="tw-gfire" style="--i:${i}"><ellipse cx="${x.toFixed(1)}" cy="${(y + 1).toFixed(1)}" rx="${(16 * s).toFixed(1)}" ry="${(3.6 * s).toFixed(1)}" fill="url(#twScorch)"/><circle cx="${x.toFixed(1)}" cy="${(y - 4 * s).toFixed(1)}" r="${(14 * s).toFixed(1)}" fill="url(#twFireGlow)" class="tw-fireglow"/>${[-6, 0, 6].map((dx, k) => flame(x + dx * s, y, s * (0.8 + (k % 2) * 0.4), i * 3 + k)).join('')}</g>`);
+  const pokeAny = (id, e) => {
+    const h = hotOf(id); if (!h) return;
+    const n = hits[id] = (hits[id] || 0) + 1;
+    const root = dmgRoot(h), marks = dmgIn(h, id);
+    if (!boxes[id]) { const b = h.getBBox(); boxes[id] = { x: b.x, y: b.y, w: b.width, h: b.height }; }
+    const B = boxes[id], s = clamp(Math.sqrt(B.w * B.h) / 70, 0.35, 2.8);
+    const q = localPt(marks, e), r = localPt(root, e);
+    const glassy = GLASSY.has(id);
+    if (n <= 4) {
+      const big = n === 4 ? 1.8 : 1;
+      if (glassy) add(marks, crack(q.x, q.y, 6 * s * big, q.x * 7 + q.y + n, 'tw-crk tw-crk-any'));
+      else add(marks, `<g class="tw-nick"><ellipse cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" rx="${(2.2 * s * big).toFixed(2)}" ry="${(1.4 * s * big).toFixed(2)}" class="tw-scorch"/><path d="M${(q.x - 2.4 * s * big).toFixed(1)} ${(q.y + 0.6 * s).toFixed(1)} q${(2.4 * s * big).toFixed(1)} ${(-2.6 * s * big).toFixed(1)} ${(4.8 * s * big).toFixed(1)} 0" class="tw-dent"/></g>`);
+      if (n === 4) { add(root, `<g class="tw-gsmoke" transform="translate(${r.x.toFixed(1)} ${(r.y - 2 * s).toFixed(1)}) scale(${s.toFixed(2)})">${[0, 1, 2, 3].map((k) => `<circle cx="${(k - 1.5) * 2}" cy="0" r="${2.2 + (k % 2)}" style="--d:${(-k * 0.6).toFixed(1)}s;--dx:${k % 2 ? -7 : 7}px"/>`).join('')}</g>`); h.classList.add('smoking'); }
+    } else if (n <= 6) {
+      add(root, `<g class="tw-onfire"><circle cx="${r.x.toFixed(1)}" cy="${(r.y - 3 * s).toFixed(1)}" r="${(12 * s * (n - 3) / 2).toFixed(1)}" fill="url(#twFireGlow)" class="tw-fireglow"/>${Array.from({ length: n === 5 ? 3 : 6 }, (_, k) => flame(r.x + (k - (n === 5 ? 1 : 2.5)) * 3.4 * s, r.y + (k % 2) * 2 * s, s * (n === 5 ? 1 : 1.5) * (0.8 + (k % 3) * 0.2), k)).join('')}</g>`);
+    } else if (n === 7) {
+      boom(root, r.x, r.y, s * 1.6);
+      h.classList.add('charred');
+      if (bots[id]) bots[id].dead = true;
+      const gy = B.y + B.h;
+      add(root, `<g class="tw-onfire">${Array.from({ length: 7 }, (_, k) => flame(B.x + B.w * (0.15 + k * 0.12), B.y + B.h * (0.35 + (k % 3) * 0.2), s * 1.4 * (0.8 + (k % 2) * 0.5), k + 3)).join('')}</g>`);
+      [-1, 1].forEach((side, k) => groundFire(root, r.x + side * (B.w / 2 + 12 * s), gy, s * 0.9, k));
+    } else if (n <= 14) {
+      // and it spreads, a little further each time
+      const k = n - 7, side = k % 2 ? 1 : -1, gy = B.y + B.h;
+      groundFire(root, r.x + side * (B.w / 2 + (12 + k * 11) * s), gy + (k % 3) * 2, s * (0.8 + Math.random() * 0.5), k + 2);
+    } else return;
+    refresh(id); save();
+  };
+
+  // The hard drive: a tap leaves a spot and sets the platter spinning; press
+  // and hold and the head scores a ring all the way round as it spins.
+  const hddRot = $('.tw-hdd-rot', svg), hddRings = $('.tw-hdd-rings', svg);
+  let hddHold = 0, hddRing = null, hddHeld = false;
+  const pokeDrive = (e) => {
+    if (hddHeld) { hddHeld = false; return; }
+    const n = hits['p-drive'] || 0;
+    if (n >= 3) { pokeAny('p-drive', e); return; }
+    hits['p-drive'] = n + 1;
+    hddRot.classList.add('spin');
+    const [cx, cy, R] = hddRot.dataset.c.split(',').map(Number), a = n * 2.1 + 0.8, d = R * (0.35 + n * 0.17);
+    add(hddRings, `<circle cx="${(cx + Math.cos(a) * d).toFixed(2)}" cy="${(cy + Math.sin(a) * d).toFixed(2)}" r="${(0.4 + n * 0.12).toFixed(2)}" class="tw-hdd-spot"/>`);
+    save(); refresh('p-drive');
+  };
+  if (hddRot) {
+    const dh = hotOf('p-drive');
+    dh.addEventListener('pointerdown', (e) => {
+      if (cur !== 'p-drive' || e.button !== 0) return;
+      clearTimeout(hddHold);
+      hddHold = setTimeout(() => {
+        const [cx, cy, R] = hddRot.dataset.c.split(',').map(Number), q = localPt(hddRot.parentNode, e);
+        const rr = clamp(Math.hypot(q.x - cx, q.y - cy), R * 0.22, R * 0.96), C = 2 * Math.PI * rr;
+        hddRot.classList.add('spin', 'fast');
+        hddRing = NSel('circle', { cx, cy, r: rr.toFixed(2), class: 'tw-hdd-scratch', 'stroke-dasharray': C.toFixed(2), 'stroke-dashoffset': C.toFixed(2) });
+        hddRings.appendChild(hddRing);
+        hddHeld = true;
+        const ring = hddRing, t0 = performance.now();
+        const draw = (t) => { if (ring !== hddRing) return; const u = Math.min(1, (t - t0) / 1300); ring.setAttribute('stroke-dashoffset', (C * (1 - u)).toFixed(2)); if (u < 1) requestAnimationFrame(draw); };
+        requestAnimationFrame(draw);
+        hits['p-drive'] = Math.max(1, hits['p-drive'] || 0); save();
+      }, 260);
+    });
+    const up = () => {
+      clearTimeout(hddHold);
+      if (hddRing) { hddRing = null; hddRot.classList.remove('fast'); refresh('p-drive'); }
+    };
+    addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  }
+
   function poke(id, e) {
     if (id === 'p-civic') pokeCivic(e);
     else if (id === 'p-macbook') { if (dmg.mac >= 2) return; dmg.mac++; drawMac(); save(); }
     else if (id === 'toyota') pokeShowroom(e);
+    else if (id === 'p-drive') pokeDrive(e);
+    else pokeAny(id, e);
   }
   function repair() {
-    dmg = fresh(); save();
-    tw.classList.remove('glass-broke', 'alarm', 'police', 'police-here', 'shatter');
-    drawCivic(); drawMac(); drawShowroom(false);
-    ['p-civic', 'toyota'].forEach(refresh);
+    dmg = fresh();
+    Object.keys(hits).forEach((k) => delete hits[k]);
+    $$('.tw-dmg', svg).forEach((g) => g.remove());
+    hots.forEach((h) => h.classList.remove('charred', 'smoking'));
+    Object.values(bots).forEach((b) => { b.dead = false; });
+    if (hddRings) { hddRings.innerHTML = ''; hddRot.classList.remove('spin', 'fast'); }
+    clearTimeout(policeT);
+    tw.classList.remove('glass-broke', 'alarm', 'police', 'shatter');
+    drawCivic(); drawMac(); drawShowroom(false); save();
+    Object.keys(halos).forEach(refresh);
   }
   drawCivic(); drawMac(); drawShowroom(false);
-  if (fixItem) fixItem.hidden = !damaged();
+  // Damage used to be kept between visits; it isn't any more.
+  try { localStorage.removeItem('sommiville-damage'); } catch (e) {}
+  if (fixItem) fixItem.hidden = true;
 
   tw._bots = bots;
   tw._weather = setWeather;

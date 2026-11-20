@@ -25,7 +25,7 @@ const ROLES = [...P.experience].reverse();
 // dark lettering for daylight. The page shows whichever suits.
 const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-light'], toyota: ['toyota', 'toyota-light'], jm: ['jm-family', 'jm-family-light'], hunter: ['hunter', 'hunter-light'], adt: ['adt', 'adt'], shiva: ['shiva', 'shiva'], rjax: ['renaissance-jax', 'renaissance-jax'] };
 // Where the corner copy should show the whole logo rather than a cropped piece of it.
-const WHOLE = { toyota: ['toyota-full', 'toyota-full'], jm: ['jm-family', 'jm-family-light'] };
+const WHOLE = { toyota: ['toyota-mark', 'toyota-mark'], jm: ['jm-tree', 'jm-tree'] };
 // The same colour each stop wears on the desktop's path.
 const TINT = { rjax: '#2fae5a', shiva: '#f39c12', rfa: '#f2b705', fics: '#fa4616', toyota: '#eb0a1e', jm: '#00857c', hunter: '#b5121b', adt: '#1f6fd1' };
 const pic = ([d, l], cls = '') => d === l
@@ -108,6 +108,7 @@ const html = `<!-- mx:start -->
       <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
+      <button type="button" class="mx-cue"><span>Scroll down to get to know me</span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
     </section>
 
     <div class="mx-pager">
@@ -181,7 +182,8 @@ const html = `<!-- mx:start -->
         <a class="mx-btn" href="${P.linkedin}" target="_blank" rel="noopener" aria-label="LinkedIn">${I.linkedin}</a>
       </div>
     </section>
-    <p class="mx-foot mx-mono">© 2026 Ajay Sommi<a class="mx-tt" href="eras.html" aria-label="Travel back in time"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></a></p>
+    <a class="mx-tt" href="eras.html"><span class="mx-tt-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></span><span>Step into the time machine</span></a>
+    <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
 
     <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">
       ${TABS.map(([k, t], i) => `<button type="button" role="tab" id="mx-tab-${k}" aria-controls="mx-p-${k}" aria-selected="${i === 0}" data-tab="${k}">${SHAPE[k]}<span>${t}</span></button>`).join('')}

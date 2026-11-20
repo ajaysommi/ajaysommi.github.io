@@ -351,7 +351,7 @@
       <div class="pk-in">
         <div class="pk-head">${I.pxmark(36)}<h1>Choose an era</h1><p>Each one is the portfolio on a computer from its year.</p></div>
         <div class="pk-row" role="listbox" aria-label="Eras">${OPTS.map((e, i) => `<button type="button" class="pk-d${e.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="pk-art">${e.art}</span><span class="pk-y">${e.label || e.year}</span><b>${esc(e.machine || e.name)}</b></button>`).join('')}</div>
-      </div><a class="pk-home" href="index.html">‹ Standard site</a>`;
+      </div><a class="pk-home" href="index.html">‹ Back</a>`;
     const tick = () => { const c = pick.querySelector('.sm-clock'); if (c) c.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
     tick(); setInterval(() => { if (!pick.hidden) tick(); }, 15000);
     const disks = [...pick.querySelectorAll('.pk-d')];
@@ -403,7 +403,7 @@
     const bar = document.createElement('div');
     bar.className = 'dk-bar';
     bar.hidden = true;
-    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><button type="button" class="dk-chip dk-lights" data-k="lights" aria-pressed="false" aria-label="Lights" title="Lights"><svg class="ico-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">Standard site</a>`;
+    bar.innerHTML = `<button type="button" class="dk-chip" data-k="eras">‹ Choose another era</button><span></span><button type="button" class="dk-chip dk-lights" data-k="lights" aria-pressed="false" aria-label="Lights" title="Lights"><svg class="ico-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 13.4A9 9 0 1 1 10.6 3a7 7 0 0 0 10.4 10.4Z" fill="currentColor"/></svg><svg class="ico-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button><a class="dk-chip" href="${window.PORTFOLIO.resume}" target="_blank" rel="noopener">Resume</a><a class="dk-chip" href="index.html">‹ Back</a>`;
     /* The room's lights follow the site's light or dark theme, which
        follows the device's own setting unless the visitor picked one; the
        switch picks one, for here and for the standard site. The 1983
@@ -1055,7 +1055,7 @@
     pick.innerHTML = TIMEART(true) + `
       <div class="mp-head">${I.pxmark(32)}<h1>Choose an era</h1><p>Each one is the portfolio on a device from its year.</p></div>
       <div class="mp-rail" role="listbox" aria-label="Eras">${PICKS.map((p, i) => `<button type="button" class="mp-card${p.href ? ' is-now' : ''}" role="option" data-i="${i}"><span class="mp-art">${PHONE_ART[p.id]}</span><span class="mp-y">${p.year}</span><b>${esc(p.name)}</b></button>`).join('')}</div>
-      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div><a class="pk-home" href="index.html">‹ Standard site</a>`;
+      <div class="mp-dots">${PICKS.map((_, i) => `<i data-i="${i}"></i>`).join('')}</div><a class="pk-home" href="index.html">‹ Back</a>`;
     const rail = pick.querySelector('.mp-rail');
     const cards = [...pick.querySelectorAll('.mp-card')];
     const dots = [...pick.querySelectorAll('.mp-dots i')];
@@ -1094,7 +1094,7 @@
     std.className = 'mp-site';
     std.href = 'index.html';
     std.hidden = true;
-    std.textContent = 'Standard site';
+    std.textContent = "‹ Back";
     document.body.appendChild(std);
     const LOOK = { nokia: ['#243a6e', 0.22], pocket: ['#5b4a86', 0.22], iphone: ['#ffffff', 0.16] };
 

@@ -42,9 +42,9 @@
        browser still holding yesterday's stylesheet can never show both. -->
   <style>.sub-short{display:none}@media (max-width:719px){.sub-long{display:none}.sub-short{display:inline}}</style>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="minimal.css" />
-  <link rel="stylesheet" href="mobile.css?v=12" />
-  <link rel="stylesheet" href="town.css?v=49" />
+  <link rel="stylesheet" href="minimal.css?v=2" />
+  <link rel="stylesheet" href="mobile.css?v=14" />
+  <link rel="stylesheet" href="town.css?v=50" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -177,18 +177,18 @@
       <div class="tw-navx tw-popwrap">
         <button class="icon-btn" id="twWx" type="button" aria-label="Weather and seasons" title="Weather and seasons" aria-expanded="false" aria-controls="twWxPop"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M6.6 19.4h10.8a4.6 4.6 0 0 0 .5-9.2 6.1 6.1 0 0 0-11.7 1.6 3.8 3.8 0 0 0 .4 7.6Z" fill="currentColor"/></svg></button>
         <div class="tw-pop" id="twWxPop" role="menu" hidden>
-          <button type="button" role="menuitemradio" data-wx="clear" class="on"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="#f5b52e"/></svg></span>Clear</button>
-          <button type="button" role="menuitemradio" data-wx="rain"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1.4c2.6 3.4 4.7 6 4.7 8.6a4.7 4.7 0 0 1-9.4 0C3.3 7.4 5.4 4.8 8 1.4Z" fill="#3d68ff"/></svg></span>Rain</button>
-          <button type="button" role="menuitemradio" data-wx="snow"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M6.6 1.6h2.8v4l3.4-2 1.4 2.4L10.8 8l3.4 2-1.4 2.4-3.4-2v4H6.6v-4l-3.4 2L1.8 10l3.4-2-3.4-2 1.4-2.4 3.4 2Z" fill="#7cc4f2"/></svg></span>Snow</button>
-          <button type="button" role="menuitemradio" data-wx="fall"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 14V2a12 12 0 0 1 12 12Z" fill="#ff6b35"/></svg></span>Fall</button>
+          <button type="button" role="menuitemradio" data-wx="clear" class="on"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.3" fill="currentColor"/><path d="M8 1.3v1.7M8 13v1.7M1.3 8h1.7M13 8h1.7M3.3 3.3l1.2 1.2M11.5 11.5l1.2 1.2M3.3 12.7l1.2-1.2M11.5 4.5l1.2-1.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>Clear</button>
+          <button type="button" role="menuitemradio" data-wx="rain"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4.5 9.4h7.1a2.8 2.8 0 0 0 .3-5.6 3.9 3.9 0 0 0-7.3 1 2.3 2.3 0 0 0-.1 4.6Z" fill="currentColor"/><path d="M5.5 11.5l-.9 2.3M8.5 11.5l-.9 2.3M11.5 11.5l-.9 2.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>Rain</button>
+          <button type="button" role="menuitemradio" data-wx="snow"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1.3v13.4M2.2 4.6l11.6 6.8M2.2 11.4l11.6-6.8M6.2 2.3 8 3.9l1.8-1.6M6.2 13.7 8 12.1l1.8 1.6M2.1 6.9l2.3.4-.6 2.3M13.9 9.1l-2.3-.4.6-2.3M2.1 9.1l2.3-.4-.6-2.3M13.9 6.9l-2.3.4.6 2.3" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Snow</button>
+          <button type="button" role="menuitemradio" data-wx="fall"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1 9.4 3.8l1.7-.8-.3 2.8 2.5-1.4-.5 2 2 .5-2.4 2.4.7 1.4-3.4-.4.2 2.6H8.4V15h-.8v-2.1H6.1l.2-2.6-3.4.4.7-1.4L1.2 6.9l2-.5-.5-2 2.5 1.4L4.9 3l1.7.8Z" fill="currentColor"/></svg></span>Fall</button>
         </div>
       </div>
       <div class="tw-navx tw-popwrap">
         <button class="icon-btn" id="twMenu" type="button" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="twMenuPop"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span></button>
         <div class="tw-pop" id="twMenuPop" role="menu" hidden>
-          <a role="menuitem" href="classic.html"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2.6" fill="#3d68ff"/></svg></span>Classic portfolio</a>
-          <button type="button" role="menuitem" data-go="fix" hidden><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M6.2 1.8h3.6v4.4h4.4v3.6H9.8v4.4H6.2V9.8H1.8V6.2h4.4Z" fill="#22a06b"/></svg></span>Tow &amp; repair</button>
-          <a role="menuitem" href="resume.html"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1.6 14.6 13.8H1.4Z" fill="#ff6b35"/></svg></span>Résumé</a>
+          <a role="menuitem" href="classic.html"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1.2 14.8 5v1.4H1.2V5ZM2.6 7.4h2v5h-2Zm4.4 0h2v5H7Zm4.4 0h2v5h-2ZM1.2 13.2h13.6V15H1.2Z" fill="currentColor"/></svg></span>Classic portfolio</a>
+          <button type="button" role="menuitem" data-go="fix" hidden><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M10.9 1.4a3.7 3.7 0 0 0-3.4 5L1.9 12a1.45 1.45 0 0 0 2.1 2.1l5.6-5.6a3.7 3.7 0 0 0 5-3.4l-2.3 2.3-2.1-.6-.6-2.1Z" fill="currentColor"/></svg></span>Tow &amp; repair</button>
+          <a role="menuitem" href="resume.html"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.4 1.2h6.2l3.4 3.4v9.6a.6.6 0 0 1-.6.6H3.4a.6.6 0 0 1-.6-.6V1.8a.6.6 0 0 1 .6-.6Zm1.7 6.4v1.3h5.8V7.6Zm0 2.7v1.3h5.8v-1.3Zm0-5.4v1.3h3.2V4.9Z" fill="currentColor"/></svg></span>Résumé</a>
         </div>
       </div>
 
@@ -240,6 +240,7 @@
       <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
+      <button type="button" class="mx-cue"><span>Scroll down to get to know me</span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
     </section>
 
     <div class="mx-pager">
@@ -258,12 +259,12 @@
             <span class="mx-st-t"><b>Hunter Engineering Company</b><span>Software Engineering Co-op, R&amp;D</span><span class="mx-st-where">St. Louis, MO</span></span>
           </button></li>
           <li style="--tint:#00857c;--k:2"><button type="button" class="mx-stop" data-sheet="mx-role-jm">
-            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-whole" aria-hidden="true"><img class=" lg-d" src="assets/logos/opt/jm-family.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-whole" aria-hidden="true"><img class="" src="assets/logos/opt/jm-tree.webp" alt="" loading="lazy" decoding="async" /></span>
             <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/jm-family.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr" aria-label="2025">’25</span></span>
             <span class="mx-st-t"><b>JM Family Enterprises</b><span>Software Engineering Intern</span><span class="mx-st-where">Deerfield Beach, FL</span></span>
           </button></li>
           <li style="--tint:#eb0a1e;--k:3"><button type="button" class="mx-stop" data-sheet="mx-role-toyota">
-            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-whole" aria-hidden="true"><img class="" src="assets/logos/opt/toyota-full.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-whole" aria-hidden="true"><img class="" src="assets/logos/opt/toyota-mark.webp" alt="" loading="lazy" decoding="async" /></span>
             <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/toyota.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr" aria-label="2024">’24</span></span>
             <span class="mx-st-t"><b>Southeast Toyota Distributors</b><span>Software Engineering Intern</span><span class="mx-st-where">Jacksonville, FL</span></span>
           </button></li>
@@ -391,7 +392,8 @@
         <a class="mx-btn" href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.980 3.500a2.490 2.490 0 1 1 0 4.980 2.490 2.490 0 0 1 0-4.980zM3 9.750h4V21H3zM9.500 9.750h3.800v1.540h.060c.530-1 1.820-2.050 3.750-2.050 4 0 4.750 2.640 4.750 6.070V21h-4v-5.050c0-1.200-.020-2.750-1.680-2.750s-1.940 1.310-1.940 2.660V21h-4z"/></svg></a>
       </div>
     </section>
-    <p class="mx-foot mx-mono">© 2026 Ajay Sommi<a class="mx-tt" href="eras.html" aria-label="Travel back in time"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></a></p>
+    <a class="mx-tt" href="eras.html"><span class="mx-tt-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></span><span>Step into the time machine</span></a>
+    <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
 
     <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">
       <button type="button" role="tab" id="mx-tab-path" aria-controls="mx-p-path" aria-selected="true" data-tab="path"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><circle cx="17" cy="7.5" r="4.2"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 19.5h6.2a3.3 3.3 0 0 0 0-6.6H9.6a3.3 3.3 0 0 1 0-6.6"/><circle cx="5.5" cy="19.5" r="1.3"/><path d="M17 12.6s-3.6-3-3.6-5.4a3.6 3.6 0 0 1 7.2 0c0 2.4-3.6 5.4-3.6 5.4z"/><circle cx="17" cy="7.2" r="1"/></g></svg><span>Path</span></button><button type="button" role="tab" id="mx-tab-projects" aria-controls="mx-p-projects" aria-selected="false" data-tab="projects"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><rect x="3.5" y="5" width="17" height="14" rx="3.2"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="3.2"/><path d="M9.6 10.4 7.6 12.4l2 2M14.4 10.4l2 2-2 2"/></g></svg><span>Projects</span></button><button type="button" role="tab" id="mx-tab-life" aria-controls="mx-p-life" aria-selected="false" data-tab="life"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><circle cx="12" cy="12" r="7.5"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 4.8a3.4 3.4 0 0 0-4.4 4.2L4.6 14.6a1.9 1.9 0 0 0 2.7 2.7l5.6-5.6a3.4 3.4 0 0 0 4.2-4.4l-2 2-2.1-.4-.4-2.1z"/></g></svg><span>Life</span></button><button type="button" role="tab" id="mx-tab-skills" aria-controls="mx-p-skills" aria-selected="false" data-tab="skills"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><path d="M12 4.5 20 9l-8 4.5L4 9z"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 20 9l-8 4.5L4 9z"/><path d="m4 13 8 4.5 8-4.5"/><path d="m4 16.6 8 4.4 8-4.4" opacity=".55"/></g></svg><span>Skills</span></button><button type="button" role="tab" id="mx-tab-words" aria-controls="mx-p-words" aria-selected="false" data-tab="words"><svg class="mx-ic" viewBox="0 0 24 24" aria-hidden="true"><g class="mx-ic-f"><path d="M5 5.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3v-3H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/></g><g class="mx-ic-l" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3v-3H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/><path d="M8.6 12.8c0-1.6.6-2.6 1.8-3.1M12.6 12.8c0-1.6.6-2.6 1.8-3.1"/></g></svg><span>Words</span></button>
@@ -1405,13 +1407,13 @@
   <!-- Toasts -->
   <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
 
-  <script type="module" src="script.js?v=20"></script>
+  <script type="module" src="script.js?v=21"></script>
   <script src="haptics.js" defer></script>
   <script src="hop.js" defer></script>
   <script src="brand.js" defer></script>
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
-  <script src="mobile.js?v=8" defer></script>
-  <script src="town.js?v=49" defer></script>
+  <script src="mobile.js?v=9" defer></script>
+  <script src="town.js?v=50" defer></script>
 </body>
 </html>
