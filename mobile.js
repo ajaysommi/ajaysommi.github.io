@@ -390,9 +390,16 @@
   onScroll();
 
   /* ---------------------------------------------------------- prints */
-  // The 2006 print: a tap gives it a little nudge.
+  // The 2006 print: a tap opens it big, over everything; a tap anywhere puts it back.
   $$('.mx-print', mx).forEach((p) => p.addEventListener('click', () => {
-    buzz(8); p.classList.add('nudge'); setTimeout(() => p.classList.remove('nudge'), 180);
+    buzz(8);
+    const lb = document.createElement('div');
+    lb.className = 'mx-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', 'Photo');
+    lb.innerHTML = `<figure><img src="assets/images/offclock/kid-2006-640.webp" alt="Ajay as a kid, at a computer" /><figcaption>2006</figcaption></figure>`;
+    const esc = (e) => { if (e.key === 'Escape') bye(); };
+    const bye = () => { lb.classList.add('out'); setTimeout(() => lb.remove(), 260); removeEventListener('keydown', esc); };
+    lb.addEventListener('click', bye); addEventListener('keydown', esc);
+    document.body.appendChild(lb);
   }));
 
   /* ---------------------------------------------------------- contact */

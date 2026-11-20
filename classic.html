@@ -43,8 +43,8 @@
   <style>.sub-short{display:none}@media (max-width:719px){.sub-long{display:none}.sub-short{display:inline}}</style>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css?v=2" />
-  <link rel="stylesheet" href="mobile.css?v=14" />
-  <link rel="stylesheet" href="town.css?v=50" />
+  <link rel="stylesheet" href="mobile.css?v=15" />
+  <link rel="stylesheet" href="town.css?v=51" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -66,6 +66,15 @@
          the mark already standing there instead of assembling it. */
       try {
         if (sessionStorage.getItem('hop-home')) { sessionStorage.removeItem('hop-home'); root.classList.add('mk-landed'); }
+      } catch (e) {}
+      /* The browser's own bar starts the colour of the loading screen (for
+         whichever theme is on, not the system's); on the town, town.js then
+         gives it the sky's colour. */
+      try {
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.parentNode.removeChild(m); });
+        var tc = document.createElement('meta'); tc.name = 'theme-color';
+        tc.content = root.dataset.theme === 'daylight' ? '#eef2f8' : '#050814';
+        document.head.appendChild(tc);
       } catch (e) {}
       root.classList.add('js');
       /* Holds the page still behind the loading screen; script.js lets it go,
@@ -179,8 +188,8 @@
         <div class="tw-pop" id="twWxPop" role="menu" hidden>
           <button type="button" role="menuitemradio" data-wx="clear" class="on"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.3" fill="currentColor"/><path d="M8 1.3v1.7M8 13v1.7M1.3 8h1.7M13 8h1.7M3.3 3.3l1.2 1.2M11.5 11.5l1.2 1.2M3.3 12.7l1.2-1.2M11.5 4.5l1.2-1.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>Clear</button>
           <button type="button" role="menuitemradio" data-wx="rain"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4.5 9.4h7.1a2.8 2.8 0 0 0 .3-5.6 3.9 3.9 0 0 0-7.3 1 2.3 2.3 0 0 0-.1 4.6Z" fill="currentColor"/><path d="M5.5 11.5l-.9 2.3M8.5 11.5l-.9 2.3M11.5 11.5l-.9 2.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>Rain</button>
-          <button type="button" role="menuitemradio" data-wx="snow"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1.3v13.4M2.2 4.6l11.6 6.8M2.2 11.4l11.6-6.8M6.2 2.3 8 3.9l1.8-1.6M6.2 13.7 8 12.1l1.8 1.6M2.1 6.9l2.3.4-.6 2.3M13.9 9.1l-2.3-.4.6-2.3M2.1 9.1l2.3-.4-.6-2.3M13.9 6.9l-2.3.4.6 2.3" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Snow</button>
-          <button type="button" role="menuitemradio" data-wx="fall"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1 9.4 3.8l1.7-.8-.3 2.8 2.5-1.4-.5 2 2 .5-2.4 2.4.7 1.4-3.4-.4.2 2.6H8.4V15h-.8v-2.1H6.1l.2-2.6-3.4.4.7-1.4L1.2 6.9l2-.5-.5-2 2.5 1.4L4.9 3l1.7.8Z" fill="currentColor"/></svg></span>Fall</button>
+          <button type="button" role="menuitemradio" data-wx="snow"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M8.00 5.60L8.00 1.70M10.08 6.80L13.46 4.85M10.08 9.20L13.46 11.15M8.00 10.40L8.00 14.30M5.92 9.20L2.54 11.15M5.92 6.80L2.54 4.85" stroke-width="1.3"/><path d="M8.00 4.00l-1.24 -1.24M8.00 4.00l1.24 -1.24M11.46 6.00l0.45 -1.69M11.46 6.00l1.69 0.45M11.46 10.00l1.69 -0.45M11.46 10.00l0.45 1.69M8.00 12.00l1.24 1.24M8.00 12.00l-1.24 1.24M4.54 10.00l-0.45 1.69M4.54 10.00l-1.69 -0.45M4.54 6.00l-1.69 0.45M4.54 6.00l-0.45 -1.69" stroke-width="1.1"/></g><g fill="currentColor"><polygon points="8.00,5.80 9.91,6.90 9.91,9.10 8.00,10.20 6.09,9.10 6.09,6.90"/><circle cx="8.00" cy="1.25" r=".8"/><circle cx="13.85" cy="4.62" r=".8"/><circle cx="13.85" cy="11.38" r=".8"/><circle cx="8.00" cy="14.75" r=".8"/><circle cx="2.15" cy="11.38" r=".8"/><circle cx="2.15" cy="4.62" r=".8"/></g></svg></span>Snow</button>
+          <button type="button" role="menuitemradio" data-wx="fall"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 .8 9.3 3.4l1.5-.7-.3 2.9 2.1-1.7.5 1.5 2.1-.3-1 2.2 1.1.7-3.1 2.3.6 1.3-3.6-.6-.6.4v3.8H7.4v-3.8l-.6-.4-3.6.6.6-1.3L.7 8l1.1-.7-1-2.2 2.1.3.5-1.5 2.1 1.7-.3-2.9 1.5.7Z" fill="currentColor"/></svg></span>Fall</button>
         </div>
       </div>
       <div class="tw-navx tw-popwrap">
@@ -259,12 +268,12 @@
             <span class="mx-st-t"><b>Hunter Engineering Company</b><span>Software Engineering Co-op, R&amp;D</span><span class="mx-st-where">St. Louis, MO</span></span>
           </button></li>
           <li style="--tint:#00857c;--k:2"><button type="button" class="mx-stop" data-sheet="mx-role-jm">
-            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-whole" aria-hidden="true"><img class="" src="assets/logos/opt/jm-tree.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-mark" aria-hidden="true"><img class="" src="assets/logos/opt/jm-tree.webp" alt="" loading="lazy" decoding="async" /></span>
             <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/jm-family.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/jm-family-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr" aria-label="2025">’25</span></span>
             <span class="mx-st-t"><b>JM Family Enterprises</b><span>Software Engineering Intern</span><span class="mx-st-where">Deerfield Beach, FL</span></span>
           </button></li>
           <li style="--tint:#eb0a1e;--k:3"><button type="button" class="mx-stop" data-sheet="mx-role-toyota">
-            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-whole" aria-hidden="true"><img class="" src="assets/logos/opt/toyota-mark.webp" alt="" loading="lazy" decoding="async" /></span>
+            <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm mx-st-wm-mark" aria-hidden="true"><img class="" src="assets/logos/opt/toyota-emblem.webp" alt="" loading="lazy" decoding="async" /></span>
             <span class="mx-st-top"><span class="mx-st-logo"><img class=" lg-d" src="assets/logos/opt/toyota.webp" alt="" loading="lazy" decoding="async" /><img class=" lg-l" src="assets/logos/opt/toyota-light.webp" alt="" loading="lazy" decoding="async" /></span><span class="mx-st-yr" aria-label="2024">’24</span></span>
             <span class="mx-st-t"><b>Southeast Toyota Distributors</b><span>Software Engineering Intern</span><span class="mx-st-where">Jacksonville, FL</span></span>
           </button></li>
@@ -378,7 +387,7 @@
 
     <section class="mx-contact" id="m-contact">
       <div class="mx-prints">
-        <button type="button" class="mx-print" aria-label="Ajay as a kid, at a computer. Tap to give it a nudge"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay as a kid, at a computer" loading="lazy" decoding="async" /></button>
+        <button type="button" class="mx-print" aria-label="Ajay as a kid, at a computer. Tap to see it bigger"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay as a kid, at a computer" loading="lazy" decoding="async" /></button>
       </div>
       <h2>20+ years of experience.</h2>
       <p>Let’s not be strangers.</p>
@@ -393,6 +402,7 @@
       </div>
     </section>
     <a class="mx-tt" href="eras.html"><span class="mx-tt-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></span><span>Step into the time machine</span></a>
+    <p class="mx-psst"><span class="mx-psst-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5V15H4ZM2 17h20l-1 2H3Z" fill="currentColor"/></svg></span><span><b>Psst.</b> This page has another side to it, a place you can wander around in. It only opens on a computer.</span></p>
     <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
 
     <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">
@@ -1407,13 +1417,13 @@
   <!-- Toasts -->
   <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
 
-  <script type="module" src="script.js?v=21"></script>
+  <script type="module" src="script.js?v=22"></script>
   <script src="haptics.js" defer></script>
   <script src="hop.js" defer></script>
   <script src="brand.js" defer></script>
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
-  <script src="mobile.js?v=9" defer></script>
-  <script src="town.js?v=50" defer></script>
+  <script src="mobile.js?v=10" defer></script>
+  <script src="town.js?v=51" defer></script>
 </body>
 </html>

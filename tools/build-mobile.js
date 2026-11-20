@@ -24,8 +24,8 @@ const ROLES = [...P.experience].reverse();
 // Each logo comes in two colourings: light lettering for the dark themes,
 // dark lettering for daylight. The page shows whichever suits.
 const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-light'], toyota: ['toyota', 'toyota-light'], jm: ['jm-family', 'jm-family-light'], hunter: ['hunter', 'hunter-light'], adt: ['adt', 'adt'], shiva: ['shiva', 'shiva'], rjax: ['renaissance-jax', 'renaissance-jax'] };
-// Where the corner copy should show the whole logo rather than a cropped piece of it.
-const WHOLE = { toyota: ['toyota-mark', 'toyota-mark'], jm: ['jm-tree', 'jm-tree'] };
+// For these the corner copy is just the mark (the emblem, the tree), not the wordmark.
+const MARKONLY = { toyota: ['toyota-emblem', 'toyota-emblem'], jm: ['jm-tree', 'jm-tree'] };
 // The same colour each stop wears on the desktop's path.
 const TINT = { rjax: '#2fae5a', shiva: '#f39c12', rfa: '#f2b705', fics: '#fa4616', toyota: '#eb0a1e', jm: '#00857c', hunter: '#b5121b', adt: '#1f6fd1' };
 const pic = ([d, l], cls = '') => d === l
@@ -70,7 +70,7 @@ const logoOf = (e) => LOGO[e.id] ? `<span class="mx-logo">${pic(LOGO[e.id])}</sp
 const stop = (e, i) => {
   const L = LOGO[e.id];
   const face = L ? `<span class="mx-st-logo">${pic(L)}</span>` : `<span class="mx-st-logo mx-st-mono" aria-hidden="true">${esc(initials(e.short))}</span>`;
-  const wm = WHOLE[e.id] ? `<span class="mx-st-wm mx-st-wm-whole" aria-hidden="true">${pic(WHOLE[e.id])}</span>` : L ? `<span class="mx-st-wm" aria-hidden="true">${pic(L)}</span>` : `<span class="mx-st-wm mx-st-wm-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
+  const wm = MARKONLY[e.id] ? `<span class="mx-st-wm mx-st-wm-mark" aria-hidden="true">${pic(MARKONLY[e.id])}</span>` : L ? `<span class="mx-st-wm" aria-hidden="true">${pic(L)}</span>` : `<span class="mx-st-wm mx-st-wm-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
   return `<li style="--tint:${TINT[e.id] || 'var(--accent)'};--k:${i}"><button type="button" class="mx-stop" data-sheet="mx-role-${e.id}">
             <span class="mx-st-glow" aria-hidden="true"></span>${wm}
             <span class="mx-st-top">${face}<span class="mx-st-yr" aria-label="${e.year}">’${String(e.year).slice(2)}</span></span>
@@ -168,7 +168,7 @@ const html = `<!-- mx:start -->
 
     <section class="mx-contact" id="m-contact">
       <div class="mx-prints">
-        <button type="button" class="mx-print" aria-label="Ajay as a kid, at a computer. Tap to give it a nudge"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay as a kid, at a computer" loading="lazy" decoding="async" /></button>
+        <button type="button" class="mx-print" aria-label="Ajay as a kid, at a computer. Tap to see it bigger"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay as a kid, at a computer" loading="lazy" decoding="async" /></button>
       </div>
       <h2>20+ years of experience.</h2>
       <p>Let’s not be strangers.</p>
@@ -183,6 +183,7 @@ const html = `<!-- mx:start -->
       </div>
     </section>
     <a class="mx-tt" href="eras.html"><span class="mx-tt-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></span><span>Step into the time machine</span></a>
+    <p class="mx-psst"><span class="mx-psst-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5V15H4ZM2 17h20l-1 2H3Z" fill="currentColor"/></svg></span><span><b>Psst.</b> This page has another side to it, a place you can wander around in. It only opens on a computer.</span></p>
     <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
 
     <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">

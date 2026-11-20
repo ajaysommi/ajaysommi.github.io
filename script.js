@@ -958,8 +958,8 @@ function setTheme(name, announce = true, remember = true) {
   // The browser's own bar takes this colour: on the town, the sky's.
   let meta = document.querySelector('meta[name="theme-color"]:not([media])');
   if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.appendChild(meta); }
-  const sky = !root.classList.contains('classic') && document.getElementById('town');
-  meta.content = name === 'daylight' ? (sky ? '#9fcbef' : '#eef2f8') : (sky ? '#070a1a' : '#050814');
+  const sky = !root.classList.contains('classic') && document.getElementById('town') && window.__twBar && window.__twBar();
+  meta.content = sky || (name === 'daylight' ? '#eef2f8' : '#050814');
   syncLogoTheme();
   if (announce) toast(`${name[0].toUpperCase()}${name.slice(1)} theme`);
 }

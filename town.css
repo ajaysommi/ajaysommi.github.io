@@ -14,7 +14,7 @@
 
 .tw {
   --tw-line: #2a2c34; --tw-grass: #9cc46f; --tw-leaf: #6fae4f; --tw-leaf2: #4f8f3c; --tw-trunk: #7a5a3e;
-  --tw-mtn1: #b8cbb0; --tw-mtn2: #c8d4de; --tw-cloud: #ffffff; --tw-road: #3d3f47; --tw-curb: #e9e5dc;
+  --tw-mtn1: #a9c49c; --tw-mtn2: #b2c3d6; --tw-cloud: #ffffff; --tw-road: #3d3f47; --tw-curb: #e9e5dc;
   --tw-panel: #f6f6f5; --tw-panel2: #e1e3e7; --tw-tower: #fbfbfa; --tw-roofcap: #c9ccd2; --tw-seam: #e2e4e8;
   --tw-glass: #bcd6ea; --tw-showfloor: #d9dde3; --tw-bay: #3a3d46; --tw-red: #e1262d;
   --tw-jm: #44506e; --tw-jmband: #2b3550; --tw-win: #bfd6ea; --tw-walk: #ddd6c8; --tw-drive: #c9c5bc;
@@ -46,7 +46,6 @@
 @keyframes tw-twinkle { 50% { opacity: 1; } }
 .tw-cloud { fill: var(--tw-cloud); opacity: .92; animation: tw-drift var(--dur) linear infinite; animation-delay: var(--from); }
 @keyframes tw-drift { from { transform: translateX(-900px); } to { transform: translateX(2500px); } }
-.tw-mtn1 { fill: var(--tw-mtn1); } .tw-mtn2 { fill: var(--tw-mtn2); }
 .tw-grass { fill: var(--tw-grass); }
 .tw-leaf { fill: var(--tw-leaf); } .tw-leaf2 { fill: var(--tw-leaf2); }
 .tw-trunk { fill: none; stroke: var(--tw-trunk); stroke-width: 9; stroke-linecap: round; }
@@ -82,7 +81,7 @@
 .tw-red { fill: var(--tw-red); }
 .tw-glass { fill: var(--tw-glass); }
 .tw-showfloor { fill: var(--tw-showfloor); }
-.tw-mull, .tw-handle { fill: #8e939d; }
+.tw-handle { fill: #8e939d; }
 .tw-mullp { stroke: #8e939d; stroke-width: 3; }
 .tw-shine { stroke: rgba(255, 255, 255, .45); stroke-width: 9; stroke-linecap: round; }
 [data-theme="midnight"] .tw .tw-shine, [data-theme="terminal"] .tw .tw-shine { stroke: rgba(255, 255, 255, .14); }
@@ -433,11 +432,7 @@
 .tw-vc-halo { fill: url(#twVcLight); opacity: .35; pointer-events: none; }
 [data-theme="midnight"] .tw .tw-vc-halo, [data-theme="terminal"] .tw .tw-vc-halo { opacity: 1; }
 [data-theme="midnight"] .tw .tw-vcwood, [data-theme="terminal"] .tw .tw-vcwood { fill: #5e3d26; }
-.tw-pine1 { fill: #2f6b3f; } .tw-pine2 { fill: #255a34; } .tw-trunk-f { fill: #5a3d27; }
-[data-theme="midnight"] .tw .tw-pine1, [data-theme="terminal"] .tw .tw-pine1 { fill: #1f4a2c; }
-[data-theme="midnight"] .tw .tw-pine2, [data-theme="terminal"] .tw .tw-pine2 { fill: #183b23; }
-.tw-pine1, .tw-pine2 { transition: fill 6s; }
-.tw.wx-snow .tw-pine1 { fill: #dfe8ec; transition: fill 24s; } .tw.wx-snow .tw-pine2 { fill: #9fb6ad; transition: fill 24s; }
+.tw-trunk-f { fill: #5a3d27; }
 .tw-dir { fill: #f4f1ea; stroke: var(--tw-line); stroke-width: 2; stroke-linejoin: round; }
 .tw-dir-t { font: 700 8.6px var(--font-sans); letter-spacing: .06em; fill: #2a2c34; }
 /* the Classic Line bus stop */
@@ -491,17 +486,7 @@
 [data-theme="midnight"] .tw .tw-overcast, [data-theme="terminal"] .tw .tw-overcast { fill: #0b0f1d; }
 .tw.wx-rain .tw-overcast { opacity: .5; }
 .tw.wx-snow .tw-overcast { opacity: .32; }
-.tw-snowcap { fill: #fbfdff; transform: scaleY(0); transform-box: fill-box; transform-origin: 50% 100%; transition: transform 2.5s; pointer-events: none; }
-.tw.wx-snow .tw-snowcap { transform: scaleY(1); transition: transform 22s cubic-bezier(.3, 0, .6, 1) 2s; }
-.tw-snowground { fill: #f3f7fa; opacity: 0; transition: opacity 3s; pointer-events: none; }
-.tw.wx-snow .tw-snowground { opacity: .93; transition: opacity 28s ease-in 1s; }
 [data-theme="midnight"] .tw :is(.tw-snowcap, .tw-snowground), [data-theme="terminal"] .tw :is(.tw-snowcap, .tw-snowground) { fill: #d8e0ec; }
-.tw-leaf, .tw-leaf2, .tw-grass { transition: fill 6s; }
-.tw.wx-snow .tw-leaf { fill: #eef3f6; transition: fill 24s; } .tw.wx-snow .tw-leaf2 { fill: #cbd7de; transition: fill 24s; }
-.tw.wx-fall .tw-leaf { fill: #e9952f; } .tw.wx-fall .tw-leaf2 { fill: #c2541c; } .tw.wx-fall .tw-grass { fill: #b8b46c; }
-[data-theme="midnight"] .tw.wx-fall .tw-leaf, [data-theme="terminal"] .tw.wx-fall .tw-leaf { fill: #a8601f; }
-[data-theme="midnight"] .tw.wx-fall .tw-leaf2, [data-theme="terminal"] .tw.wx-fall .tw-leaf2 { fill: #7d3a16; }
-[data-theme="midnight"] .tw.wx-fall .tw-grass, [data-theme="terminal"] .tw.wx-fall .tw-grass { fill: #4d5a33; }
 /* The rover in the snow: shivers, then bundles up. */
 .tw-jacket, .tw-beanie { opacity: 0; transform: translateY(-16px); transition: opacity .4s, transform .6s cubic-bezier(.3, 1.6, .5, 1); }
 .tw-rover.jacket :is(.tw-jacket, .tw-beanie) { opacity: 1; transform: none; }
@@ -521,8 +506,6 @@
 [data-theme="midnight"] .tw .tw-curb, [data-theme="terminal"] .tw .tw-curb { fill: #45444a; }
 [data-theme="midnight"] .tw .tw-road, [data-theme="terminal"] .tw .tw-road { fill: #2a2b31; }
 [data-theme="midnight"] .tw .tw-lane, [data-theme="terminal"] .tw .tw-lane { stroke: #9c8644; }
-.tw-snowslope { fill: #fbfdff; opacity: 0; transition: opacity 2.5s; pointer-events: none; }
-.tw.wx-snow .tw-snowslope { opacity: 1; transition: opacity 20s ease-in 3s; }
 
 /* ---------------------------------------------------------- the garage and the Civic */
 .tw-house { fill: #e2d6c1; } [data-theme="midnight"] .tw .tw-house, [data-theme="terminal"] .tw .tw-house { fill: #9d927f; }
@@ -702,7 +685,6 @@
 [data-theme="midnight"] .tw .tw-sparkles, [data-theme="terminal"] .tw .tw-sparkles { opacity: 1; }
 .tw-sparkles path { fill: #fffbe8; transform-box: fill-box; transform-origin: center; animation: tw-sparkle var(--t) ease-in-out infinite; animation-delay: var(--d); }
 @keyframes tw-sparkle { 0%, 100% { opacity: .15; scale: .55; } 45% { opacity: 1; scale: 1; } 55% { opacity: .9; scale: .9; } }
-.tw.intro .tw-sparkles path { animation-duration: 1.8s; }
 .tw-stars circle { animation-name: tw-twinkle2; }
 @keyframes tw-twinkle2 { 0%, 100% { opacity: var(--lo); } 50% { opacity: 1; } }
 .tw-shooting { fill: none; stroke: #fffbe8; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 26 200; stroke-dashoffset: 26; }
@@ -731,13 +713,7 @@
 .tw.arrive .tw-truckdrive { transition: transform 4.6s cubic-bezier(.45, 0, .2, 1) .3s; }
 
 /* ---------------------------------------------------------- the lawn */
-.tw-tuft { fill: none; stroke: #7fae55; stroke-width: .8; stroke-linecap: round; opacity: .8; transition: stroke 6s; }
-[data-theme="midnight"] .tw .tw-tuft, [data-theme="terminal"] .tw .tw-tuft { stroke: #2f5636; }
 .tw-flower { fill: var(--c); }
-.tw-flowers { transition: opacity 4s; }
-.tw.wx-snow .tw-flowers { opacity: 0; transition: opacity 18s; }
-.tw.wx-snow .tw-tuft { stroke: #e9eff3; transition: stroke 20s; }
-.tw.wx-fall .tw-tuft { stroke: #a39a55; }
 .tw-mulch { fill: #6b4a2e; }
 .tw-palmtrunk { fill: none; stroke: #9a7550; stroke-width: 5; stroke-linecap: round; }
 .tw-palmrings { fill: none; stroke: #6b4f33; stroke-width: 5.4; stroke-dasharray: .9 3.4; }
@@ -773,7 +749,7 @@
 .tw-aframe { fill: none; stroke: #8b5e3c; stroke-width: 1.8; stroke-linecap: round; }
 .tw-chalkfr { fill: #a8774a; stroke: #6b4428; stroke-width: .6; } .tw-chalk { fill: #23352c; }
 .tw-chalk-h { font: 800 3.3px var(--font-sans); fill: #fbf6e8; letter-spacing: .02em; }
-.tw-chalk-t { font: 500 2.8px var(--font-mono); fill: #e9e4d6; } .tw-chalk-o { fill: #ffd166; }
+.tw-chalk-t { font: 500 2.55px var(--font-mono); fill: #e9e4d6; } .tw-chalk-o { fill: #ffd166; }
 .tw-chalk-l { fill: none; stroke: #e9e4d6; stroke-width: .4; stroke-linecap: round; }
 .tw-livwin { fill: #4a372a; } [data-theme="midnight"] .tw .tw-livwin, [data-theme="terminal"] .tw .tw-livwin { fill: #2c2018; }
 .tw-tvglow { animation: tw-tv 3.2s steps(4) infinite; }
@@ -854,7 +830,6 @@
 .tw-debris { fill: #2a2018; transform-box: fill-box; animation: tw-debris 1.1s cubic-bezier(.2, .6, .5, 1) forwards; }
 @keyframes tw-debris { to { transform: translate(var(--x), calc(var(--y) + 26px)) rotate(var(--r)); opacity: 0; } }
 /* (SVG filters, not CSS ones: Safari draws no CSS filter effects on SVG shapes) */
-.tw-hot.charred > :not(.tw-dmg):not(.tw-hit) { filter: url(#twChar); }
 .tw-stage.tw-shake .tw-svg { animation: tw-shake .45s cubic-bezier(.3, 0, .3, 1); }
 @keyframes tw-shake { 15% { transform: translate(-5px, 2px); } 30% { transform: translate(5px, -3px); } 45% { transform: translate(-3px, 2px); } 60% { transform: translate(3px, -1px); } 80% { transform: translate(-1px, 1px); } }
 /* the hard drive: spinning, scored */
@@ -866,4 +841,191 @@
 /* ---------------------------------------------------------- snow on everything */
 /* Snow settles on the top of whatever it can: the truck and the cars it
    carries, the Civic, the emblem's curves, the letters (twSnowOn). */
-.tw.wx-snow .tw-snowable { filter: url(#twSnowOn); }
+
+/* ---------------------------------------------------------- round 7 */
+/* Weather that settles builds up and melts off in steps (town.js sets
+   --snow and --fall, 0 to 1, a step every half second). */
+.tw {
+  --snow: 0; --fall: 0;
+  --tw-pine1: #2f6b3f; --tw-pine2: #255a34; --tw-tuft: #7fae55;
+  --fall-leaf: #e9952f; --fall-leaf2: #c2541c; --fall-grass: #b8b46c; --fall-tuft: #a39a55;
+}
+[data-theme="midnight"] .tw, [data-theme="terminal"] .tw {
+  --tw-pine1: #1f4a2c; --tw-pine2: #183b23; --tw-tuft: #2f5636;
+  --fall-leaf: #a8601f; --fall-leaf2: #7d3a16; --fall-grass: #4d5a33; --fall-tuft: #55552f;
+}
+.tw-mtn1 { fill: var(--tw-mtn1); } .tw-mtn2 { fill: var(--tw-mtn2); }
+.tw-leaf { fill: color-mix(in srgb, #eef3f6 calc(var(--snow) * 100%), color-mix(in srgb, var(--fall-leaf) calc(var(--fall) * 100%), var(--tw-leaf))); }
+.tw-leaf2 { fill: color-mix(in srgb, #cbd7de calc(var(--snow) * 100%), color-mix(in srgb, var(--fall-leaf2) calc(var(--fall) * 100%), var(--tw-leaf2))); }
+.tw-grass { fill: color-mix(in srgb, var(--fall-grass) calc(var(--fall) * 100%), var(--tw-grass)); }
+.tw-pine1 { fill: color-mix(in srgb, #dfe8ec calc(var(--snow) * 100%), var(--tw-pine1)); }
+.tw-pine2 { fill: color-mix(in srgb, #9fb6ad calc(var(--snow) * 100%), var(--tw-pine2)); }
+.tw-tuft { fill: none; stroke-width: .8; stroke-linecap: round; opacity: .8; stroke: color-mix(in srgb, #e9eff3 calc(var(--snow) * 100%), color-mix(in srgb, var(--fall-tuft) calc(var(--fall) * 100%), var(--tw-tuft))); }
+.tw-flowers { opacity: calc(1 - var(--snow)); }
+.tw-snowcap { fill: #fbfdff; transform: scaleY(var(--snow)); transform-box: fill-box; transform-origin: 50% 100%; pointer-events: none; }
+.tw-snowground { fill: #f3f7fa; opacity: calc(var(--snow) * .93); pointer-events: none; }
+.tw-snowslope { fill: #fbfdff; opacity: var(--snow); pointer-events: none; }
+.tw-snowimg { opacity: var(--snow); pointer-events: none; }
+.tw-textsnow { opacity: var(--snow); fill: #fbfdff !important; pointer-events: none; }
+[data-theme="midnight"] .tw :is(.tw-snowcap, .tw-snowground, .tw-snowslope, .tw-textsnow), [data-theme="terminal"] .tw :is(.tw-snowcap, .tw-snowground, .tw-snowslope, .tw-textsnow) { fill: #d8e0ec !important; }
+/* nothing of the snow is drawn at all until it starts settling */
+.tw:not(.snowy) :is(.tw-snowimg, .tw-textsnow, .tw-snowcap, .tw-snowslope, .tw-snowground) { display: none; }
+
+/* The hills: rocky faces and strata on the far range, darker woods on the near ridge. */
+.tw-mtn2-sh { fill: rgba(30, 42, 72, .17); }
+.tw-mtn2-st { fill: none; stroke: rgba(255, 255, 255, .26); stroke-width: 1.3; stroke-linecap: round; }
+.tw-mtn1-sh { fill: rgba(26, 60, 30, .16); }
+[data-theme="midnight"] .tw .tw-mtn2-sh, [data-theme="terminal"] .tw .tw-mtn2-sh { fill: rgba(4, 6, 20, .3); }
+[data-theme="midnight"] .tw .tw-mtn2-st, [data-theme="terminal"] .tw .tw-mtn2-st { stroke: rgba(255, 255, 255, .07); }
+[data-theme="midnight"] .tw .tw-mtn1-sh, [data-theme="terminal"] .tw .tw-mtn1-sh { fill: rgba(0, 0, 10, .2); }
+
+/* One or two shooting stars as the opening comes down, after dark; none after. */
+.tw-meteors { position: absolute; inset: 0; z-index: 1; pointer-events: none; display: none; }
+[data-theme="midnight"] .tw.shoot .tw-meteors, [data-theme="terminal"] .tw.shoot .tw-meteors { display: block; }
+.tw-meteors i { position: absolute; width: 150px; height: 2px; margin-left: -75px; border-radius: 2px; background: linear-gradient(90deg, rgba(255, 251, 232, 0), rgba(255, 251, 232, .95)); opacity: 0; }
+.tw-meteors i:nth-child(1) { left: 62%; top: 8%; animation: tw-meteor 1.05s cubic-bezier(.3, .55, .45, 1) .35s 1 both; }
+.tw-meteors i:nth-child(2) { left: 30%; top: 15%; width: 110px; animation: tw-meteor 0.9s cubic-bezier(.3, .55, .45, 1) 1.45s 1 both; }
+@keyframes tw-meteor { 0% { opacity: 0; transform: rotate(158deg) translateX(0); } 18% { opacity: 1; } 75% { opacity: .85; } 100% { opacity: 0; transform: rotate(158deg) translateX(320px); } }
+
+/* The welcome sign's lamps, after dark, once the opening has landed. */
+.tw-lamparm2 { fill: none; stroke: #2a2c34; stroke-width: 1.8; stroke-linecap: round; }
+.tw-lamphead { fill: #2a2c34; stroke: #15161a; stroke-width: .6; }
+.tw-signlight { opacity: 0; transition: opacity .9s ease-out; }
+[data-theme="midnight"] .tw.signlit .tw-signlight, [data-theme="terminal"] .tw.signlit .tw-signlight { opacity: 1; }
+
+/* How to get around: the trackpad and the mouse, both drawn. */
+.tw-hint-g { display: flex; align-items: center; gap: 8px; flex: none; }
+.tw-hint-or { font: 500 11px var(--font-mono); color: var(--ink-3); }
+.tw-hint-mouse { position: relative; width: 26px; height: 40px; border: 1.6px solid color-mix(in oklab, var(--ink) 45%, transparent); border-radius: 13px; }
+.tw-hint-mouse::before { content: ''; position: absolute; left: 50%; top: 0; width: 1.4px; height: 12px; background: color-mix(in oklab, var(--ink) 30%, transparent); translate: -50% 0; }
+.tw-hint-wheel { position: absolute; left: 50%; top: 6px; width: 5px; height: 9px; margin-left: -2.5px; border-radius: 3px; background: var(--ink); opacity: .85; animation: tw-wheel 1.4s cubic-bezier(.45, 0, .3, 1) infinite; }
+@keyframes tw-wheel { 0% { transform: translateY(-2px); opacity: 0; } 25% { opacity: .9; } 70% { transform: translateY(7px); opacity: .9; } 100% { transform: translateY(9px); opacity: 0; } }
+.tw-hint-cable { position: absolute; left: 50%; top: -9px; width: 1.4px; height: 9px; background: color-mix(in oklab, var(--ink) 40%, transparent); translate: -50% 0; }
+.tw-hint p { max-width: 270px; }
+
+/* The dealership's loading bay. */
+.tw-baysign { fill: #2a2c34; } .tw-baysign-t { font: 800 4.4px var(--font-sans); letter-spacing: .14em; fill: #f4f1ea; }
+.tw-bayin { fill: #2a2c32; } .tw-bayfloor { stroke: #3d4048; stroke-width: 1; }
+[data-theme="midnight"] .tw .tw-bayin, [data-theme="terminal"] .tw .tw-bayin { fill: #3b3127; }
+.tw-rolldoor { fill: #c9ccd2; stroke: var(--tw-line); stroke-width: .8; } .tw-rolldoor-l { stroke: #8e939d; stroke-width: .6; }
+.tw-dock { fill: #8e939d; stroke: var(--tw-line); stroke-width: .6; }
+.tw-ramp { fill: #a2a4aa; stroke: var(--tw-line); stroke-width: .9; stroke-linejoin: round; } .tw-ramp-l { stroke: #f2b705; stroke-width: 1.4; stroke-linecap: round; }
+
+/* The alarm: dark inside, one small red emergency light that stays on, the
+   white strobe; the door goes dark with it; the sticker on the glass goes
+   with the glass. */
+.tw-alarm-dark { fill: #0d0809; opacity: .8; }
+.tw-emerg-box { fill: #ff3a2a; stroke: #5a0a0a; stroke-width: .6; }
+.tw.alarm .tw-int { fill: #120b0c !important; }
+.tw-dooralarm { opacity: 0; } .tw.alarm .tw-dooralarm { opacity: 1; }
+.tw.alarm .tw-doorglass { fill: #160e10; }
+.tw.glass-broke .tw-onglass { display: none; }
+.tw-proj { fill: #fff; }
+
+/* The cars on the truck, each with its own alarm once it's hit. */
+.tw-tc-al { pointer-events: none; }
+.tw-tc-w { animation: tw-onoff 1.13s steps(1) infinite; animation-delay: -.52s; }
+.tw-tc-a { animation: tw-onoff 1s steps(1) infinite; }
+.tw-tc-r { animation: tw-onoff 1s steps(1) infinite; animation-delay: -.5s; }
+
+/* Screens: the HawkEye's and the TV's crack, bleed, then glitch. */
+.tw-hk-lcd, .tw-tvlcd { display: none; pointer-events: none; }
+.tw-hot.lcd1 .tw-hk-lcd, .tw-hot.tv1 .tw-tvlcd { display: inline; }
+.tw-tvlcd-bleed { fill: rgba(28, 26, 46, .62); opacity: 0; }
+.tw-hot:is(.lcd2, .tv2) .tw-tvlcd-bleed { opacity: 1; }
+.tw-tvlcd-bar { opacity: 0; }
+.tw-hot:is(.lcd3, .tv3) .tw-tvlcd-bar { opacity: 1; animation: tw-glitch 1.4s steps(2) infinite; }
+.tw-lcd-crack2 { fill: none; stroke: #eef3f8; stroke-width: .24; stroke-linecap: round; }
+
+/* BetAI's window: a little glass on it, until it gives way. */
+.tw-winglass { fill: rgba(205, 228, 248, .2); stroke: rgba(255, 255, 255, .3); stroke-width: .4; pointer-events: none; }
+.tw-winsheen { fill: none; stroke: rgba(255, 255, 255, .32); stroke-width: 1.6; stroke-linecap: round; pointer-events: none; }
+[data-theme="midnight"] .tw .tw-winglass, [data-theme="terminal"] .tw .tw-winglass { fill: rgba(170, 200, 240, .12); }
+[data-theme="midnight"] .tw .tw-winsheen, [data-theme="terminal"] .tw .tw-winsheen { stroke: rgba(255, 255, 255, .14); }
+.tw-hot.bw-broke :is(.tw-winglass, .tw-winsheen) { display: none; }
+.tw-hedge { display: none; fill: rgba(205, 228, 245, .55); stroke: rgba(255, 255, 255, .7); stroke-width: .3; pointer-events: none; }
+.tw-hot.bw-broke .tw-hedge, .tw-hwin.broke .tw-hedge { display: inline; }
+
+/* The house: its windows and door can be broken. */
+.tw-hwin, .tw-hdoor { cursor: pointer; }
+.tw-hhole { fill: #15110f; display: none; }
+.tw-hwin.broke .tw-hhole { display: inline; }
+.tw-hwin.broke .tw-valance { display: none; }
+.tw-doorway { fill: #120e0c; }
+.tw-hdoor-in { transform-box: fill-box; transform-origin: 0% 50%; transition: transform .7s cubic-bezier(.3, 1.3, .5, 1); }
+.tw-hdoor.open .tw-hdoor-in { transform: scaleX(.3) skewY(9deg); }
+.tw-yard-lit, .tw-yard-glow, .tw-yard-pool { opacity: 0; transition: opacity .5s; }
+.tw.home-alarm .tw-yard-lit { opacity: 1; animation: tw-adtbuzz 3.2s ease-in-out infinite; }
+.tw.home-alarm .tw-yard-glow { opacity: .8; } .tw.home-alarm .tw-yard-pool { opacity: .75; }
+
+/* The police: the SUV rolls in; everything on it flashes red and blue, the
+   headlights wig-wag white. */
+.tw-police { visibility: hidden; pointer-events: none; }
+.tw-police-a { transform: translateX(1700px); }
+.tw-police-b { transform: translateX(1300px); }
+.tw.police .tw-police-a, .tw.police-home .tw-police-b { visibility: visible; transform: none; transition: transform 6s cubic-bezier(.12, .55, .25, 1); }
+.tw-pl { opacity: 0; }
+.tw.police .tw-police-a .tw-pl-r, .tw.police-home .tw-police-b .tw-pl-r { animation: tw-onoff .64s steps(1) infinite; }
+.tw.police .tw-police-a .tw-pl-b, .tw.police-home .tw-police-b .tw-pl-b { animation: tw-onoff .64s steps(1) infinite; animation-delay: -.32s; }
+.tw.police .tw-police-a .tw-pl-w, .tw.police-home .tw-police-b .tw-pl-w { animation: tw-onoff .32s steps(1) infinite; }
+.tw-pl-rc { fill: #ffd6d0; } .tw-pl-bc { fill: #dbe7ff; } .tw-pl-wc { fill: #fff; }
+
+/* Malachowsky Hall: the rooms and the glass, day or night, behind the
+   facade; broken windows show the rooms plainly. */
+.tw-dayonly { transition: opacity .6s; }
+[data-theme="midnight"] .tw .tw-dayonly, [data-theme="terminal"] .tw .tw-dayonly { opacity: 0; }
+.tw-crk-hall { fill: none; stroke: rgba(40, 60, 82, .8); stroke-width: .34; stroke-linecap: round; }
+[data-theme="midnight"] .tw .tw-crk-hall, [data-theme="terminal"] .tw .tw-crk-hall { stroke: rgba(255, 246, 225, .9); }
+
+/* HiPerGator's room: black racks, gold GPU trays, orange labels, blue cables. */
+.tw-hpg-room { fill: #e3e5e9; } [data-theme="midnight"] .tw .tw-hpg-room, [data-theme="terminal"] .tw .tw-hpg-room { fill: #cfd3dc; }
+.tw-hpg-floor { stroke: #c2c6cd; stroke-width: 1; }
+.tw-hpg-tray { fill: none; stroke: #2aa38c; stroke-width: 1.1; }
+.tw-rack { fill: #15171c; }
+.tw-rack-lab { fill: #0c0d10; } .tw-rack-t { font: 800 1.45px var(--font-sans); fill: #ff6a2b; }
+.tw-gpu { fill: url(#twGpu); stroke: #8c7f55; stroke-width: .2; } .tw-gpu-h { fill: #4a4436; }
+.tw-netsw { fill: #23262e; stroke: #3a3e48; stroke-width: .2; } .tw-cable { fill: none; stroke: #3b6fd8; stroke-width: .35; }
+.tw-hpg-glass { fill: rgba(190, 215, 235, .14); stroke: #2e3546; stroke-width: .8; }
+.tw-hpg-mull { stroke: #2e3546; stroke-width: 1.2; }
+.tw-hpg-shine { fill: none; stroke: rgba(255, 255, 255, .3); stroke-width: 2.4; stroke-linecap: round; pointer-events: none; }
+[data-theme="midnight"] .tw .tw-hpg-shine, [data-theme="terminal"] .tw .tw-hpg-shine { stroke: rgba(255, 255, 255, .1); }
+
+/* The rover, when the alarm goes off: an "oh no", a "!", and off to its corner, shaking. */
+.tw-ohno, .tw-eek { display: none; }
+.tw-ohno { fill: #1a1b1f; }
+.tw-eek { font: 900 15px var(--font-sans); fill: #ff5a3d; }
+.tw-rover.scared .tw-smile { display: none; }
+.tw-rover.scared :is(.tw-ohno, .tw-eek) { display: inline; }
+.tw-rover.scared .tw-rover-shiver { animation: tw-shiver .08s linear infinite; }
+.tw-rover.scared .tw-blink { animation-duration: .3s; }
+
+/* The visitor center's card: a postcard. */
+.tw-panel.tw-postcard { background: #fbf7ee; color: #2b2620; border-color: #e6dcc7; }
+[data-theme="midnight"] .tw-panel.tw-postcard, [data-theme="terminal"] .tw-panel.tw-postcard { background: #f3ecdc; }
+.tw-panel.tw-postcard .tw-x { background: #fbf7ee; color: #2b2620; border-color: #ddd1b8; }
+.tw-panel.tw-postcard .tw-nav { display: none; }
+.tw-panel.tw-postcard .tw-panel-in { padding: 20px 20px 18px; }
+.tw-pc { position: relative; }
+.tw-pc-top { display: grid; margin: 4px 44px 14px 0; }
+.tw-pc-greet { font: italic 500 17px/1 Georgia, 'Times New Roman', serif; color: #7a5a3a; margin-left: 2px; }
+.tw-pc-town { font: 900 38px/1 var(--font-sans); letter-spacing: -.02em; background: linear-gradient(180deg, #ff9a3c 0%, #f05a2b 45%, #19633a 46%, #2e8b57 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: .6px rgba(43, 38, 32, .35); }
+.tw-pc-stampwrap { position: relative; float: right; width: 106px; height: 128px; margin: -2px -4px 6px 12px; }
+.tw-pc-stamp { position: absolute; right: 8px; top: 4px; width: 82px; height: 100px; padding: 6px; border: 0; background: #fff; cursor: zoom-in; rotate: 4deg; isolation: isolate; filter: drop-shadow(0 5px 8px rgba(0, 0, 0, .28)); }
+/* the perforated edge: a ring of white with holes punched in it, just outside the stamp */
+.tw-pc-stamp::before { content: ''; position: absolute; inset: -4px; z-index: -1; background: radial-gradient(circle at center, transparent 2.6px, #fff 3px) -1px -1px / 8px 8px; }
+.tw-pc-stamp img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.05) contrast(1.02); }
+.tw-pc-mark { position: absolute; left: -26px; bottom: -6px; width: 74px; height: 74px; display: grid; place-content: center; text-align: center; border: 2px solid rgba(160, 50, 40, .55); border-radius: 50%; color: rgba(160, 50, 40, .7); rotate: -14deg; pointer-events: none; }
+.tw-pc-mark b { font: 800 6.8px/1.3 var(--font-mono); letter-spacing: .08em; }
+.tw-pc-mark i { font: 700 7.6px/1.4 var(--font-mono); font-style: normal; }
+.tw-pc-mark::after { content: ''; position: absolute; left: 62px; top: 22px; width: 64px; height: 30px; background: repeating-linear-gradient(180deg, rgba(160, 50, 40, .5) 0 2px, transparent 2px 7px); border-radius: 6px; -webkit-mask: linear-gradient(90deg, #000, transparent); mask: linear-gradient(90deg, #000, transparent); }
+.tw-pc-note p { margin: 0 0 10px; font: 400 15px/1.62 var(--font-sans); color: #3a332b; }
+.tw-pc-note p:first-child { font-weight: 600; font-size: 16px; }
+.tw-pc-note { background: repeating-linear-gradient(180deg, transparent 0 23.3px, rgba(120, 100, 70, .14) 23.3px 24.3px); background-position: 0 1px; }
+.tw-pc .tw-p-ph { clear: both; }
+.tw-pc-snap { clear: both; width: 170px; margin: 12px auto 14px; padding: 8px 8px 0; background: #fff; rotate: -3deg; box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .45); }
+.tw-pc-snap button { display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; background: #eee; cursor: zoom-in; overflow: hidden; }
+.tw-pc-snap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tw-pc-snap figcaption { padding: 7px 0 9px; text-align: center; font: italic 500 13px Georgia, serif; color: #5a4c3c; }
+.tw-pc-quote { margin: 0 0 12px; padding: 0 0 0 12px; border-left: 3px solid #f05a2b; font: italic 500 14.5px/1.5 Georgia, serif; color: #3a332b; }
+.tw-pc-sign { margin: 6px 0 0; font: italic 500 15px/1.4 Georgia, serif; color: #5a4c3c; }
+.tw-pc-sign b { display: block; margin-top: 2px; font: italic 700 26px/1.1 Georgia, serif; color: #19633a; letter-spacing: -.01em; }

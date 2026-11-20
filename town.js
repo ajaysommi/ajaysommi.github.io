@@ -132,9 +132,31 @@
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { toyota: '.tw-alarmin, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples, .tw-hall-n, .tw-night', shiva: '.tw-bars' };
+  const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-night, .tw-snowimg', shiva: '.tw-bars' };
+  SKIP.hunter += ', .tw-hk-lcd'; SKIP['p-civic'] += ', .tw-snowimg';
   const halos = {};
   const stickers = $$('.tw-adtsticker', svg);
+  // A filter's region is a box around what it's on; sized as a share of that
+  // box, a small or thin thing's glow got cut off square. So each gets its own
+  // copy of the filter, sized to it with room to spare, in its own units.
+  const defs = $('defs', svg);
+  let nf = 0;
+  const fitted = (node, base) => {
+    if (node._fit && node._fit[0] === base) return node._fit[1];
+    let b = null; try { b = node.getBBox(); } catch (e) {}
+    let url = `url(#${base})`;
+    if (b && (b.width || b.height)) {
+      const c = document.getElementById(base).cloneNode(true), m = 18;
+      c.id = `${base}-${++nf}`;
+      c.setAttribute('filterUnits', 'userSpaceOnUse');
+      c.setAttribute('x', (b.x - m).toFixed(1)); c.setAttribute('y', (b.y - m).toFixed(1));
+      c.setAttribute('width', (b.width + 2 * m).toFixed(1)); c.setAttribute('height', (b.height + 2 * m).toFixed(1));
+      defs.appendChild(c);
+      url = `url(#${c.id})`;
+    }
+    node._fit = [base, url];
+    return url;
+  };
   const hotOf = (id) => hots.find((h) => h.dataset.id === id);
   let lit = null;
   const glow = (id) => {
@@ -145,7 +167,7 @@
     }
     if (lit === 'adt') stickers.forEach((n) => { n.style.filter = ''; });
     lit = id;
-    if (id === 'adt') stickers.forEach((n) => { n.style.filter = 'url(#twGlow-adt)'; });
+    if (id === 'adt') stickers.forEach((n) => { n.style.filter = fitted(n, 'twGlow-adt'); });
     const h = id && hotOf(id);
     if (!h) return;
     let g = halos[id];
@@ -153,12 +175,12 @@
       g = h.cloneNode(true);
       g.removeAttribute('data-id'); g.removeAttribute('style');
       g.setAttribute('class', 'tw-halo'); g.setAttribute('aria-hidden', 'true');
-      g.setAttribute('filter', `url(#twHalo-${id})`);
+      g.setAttribute('filter', fitted(h, `twHalo-${id}`));
       $$('.tw-hit, .tw-dmg' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
       halos[id] = g;
     }
     h.parentNode.insertBefore(g, h);
-    $$(LIVE[id] || '.tw-none', h).forEach((n) => { n.style.filter = `url(#twGlow-${id})`; });
+    $$(LIVE[id] || '.tw-none', h).forEach((n) => { n.style.filter = fitted(n, `twGlow-${id}`); });
   };
   // Generous, invisible hit areas, so a small move doesn't drop the hover
   // in the gaps between a thing's parts.
@@ -188,23 +210,50 @@
   let arrived = false;
   const arrive = () => { arrived = true; tw.classList.add('arrive'); };
   const far = $('.tw-far', svg), panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
-  // The sun and the moon hold their place on the screen and their size,
-  // whether the street slides or leans in; only tilting up into the sky (the
-  // opening) moves them, a little.
-  const skyG = $('.tw-sky-fixed', svg), moonG = $('.tw-moon', svg), sunG = $('.tw-sun', svg), shoot = $('.tw-shooting', svg);
-  let skyOff = 0;
-  const placeSky = (b) => {
-    const k = b[2] / vw;
-    if (Math.abs(k - 1) < 0.003) skyOff = b[1] - (BOTTOM - vh);
-    skyG.setAttribute('transform', `translate(${b[0].toFixed(2)} ${b[1].toFixed(2)}) scale(${k.toFixed(4)})`);
-    const my = Math.max(60, vh * 0.15) - skyOff * 0.22;
-    moonG.setAttribute('transform', `translate(${(vw * 0.8).toFixed(1)} ${my.toFixed(1)})`);
-    sunG.setAttribute('transform', `translate(${(vw * 0.8).toFixed(1)} ${(my + 6).toFixed(1)})`);
+  // The sun and the moon are in the sky, with the stars: set once, where
+  // they look right from the visitor center; after that they move as the
+  // sky does (a little as the street slides, out of view as it leans in).
+  const moonG = $('.tw-moon', svg), sunG = $('.tw-sun', svg);
+  const placeOrbs = () => {
+    const x = homeX() * 0.4 + vw * 0.8, y = BOTTOM - vh + Math.max(64, vh * 0.16);
+    moonG.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+    sunG.setAttribute('transform', `translate(${x.toFixed(1)} ${(y + 6).toFixed(1)})`);
   };
+  placeOrbs();
+  // The colour of the sky at the top of the window (night or day, greyer in
+  // rain or snow), for the browser's own bar and the page behind the street.
+  const hex = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+  const skyAt = (y, night) => {
+    const st = night ? D.sky.night : D.sky.day, t = clamp((y + 700) / 1300, 0, 1);
+    let i = 1; while (i < st.length - 1 && st[i][0] < t) i++;
+    const [o0, c0] = st[i - 1], [o1, c1] = st[i];
+    return mix(hex(c0), hex(c1), clamp((t - o0) / (o1 - o0 || 1), 0, 1));
+  };
+  let barOn = false, barSet = '', barMeta = null, farY = 0, wxGrey = 0;
+  const isNight = () => /midnight|terminal/.test(document.documentElement.dataset.theme || '');
+  const barColour = () => {
+    const n = isNight();
+    let c = skyAt(vb[1] - farY + 2, n);
+    if (wxGrey) c = mix(c, hex(n ? '#0b0f1d' : '#77828f'), wxGrey);
+    return '#' + c.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
+  };
+  const paintBar = () => {
+    if (!barOn) return;
+    const c = barColour();
+    if (c === barSet) return;
+    barSet = c;
+    if (!barMeta) barMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+    if (barMeta) barMeta.content = c;
+    stage.style.backgroundColor = c;
+  };
+  // script.js asks for it when the theme changes
+  window.__twBar = () => { if (!barOn) return null; barSet = ''; requestAnimationFrame(paintBar); return barColour(); };
   const setVB = (b) => {
     vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
-    far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${((b[1] - (BOTTOM - vh)) * 0.4).toFixed(2)})`);
-    placeSky(b);
+    farY = (b[1] - (BOTTOM - vh)) * 0.4;
+    far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${farY.toFixed(2)})`);
+    paintBar();
     // the truck backs in once its waiting spot is well in view
     if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
     panL.classList.toggle('on', !cur && camX > 4);
@@ -242,52 +291,93 @@
     glide = requestAnimationFrame(f);
   };
   setVB(view());
-  /* The opening: once the mark has flown up into the bar, the street starts
-     up in the sky and slowly comes down to the visitor center. */
-  // It eases in and out (smootherstep), so it starts and lands without a jolt,
-  // and while it comes down the stars sparkle and one shoots across.
+  /* The opening: the street starts up in the sky, and the moment the mark
+     sets off for the corner it comes down to the visitor center, easing in
+     and out (smootherstep) so it starts and lands without a jolt. After
+     dark a shooting star or two crosses as it comes down; nothing after it
+     lands. Half a second after it lands, the lamps on the welcome sign come
+     on (after dark). */
   let intro = false;
-  const INTRO = 2700, RISE = 420;
+  const INTRO = 2500, RISE = 420;
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
-  if (!reduced && document.documentElement.classList.contains('is-loading')) {
+  const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
+  const loader = document.getElementById('pageLoader');
+  const startBar = () => { if (barOn) return; barOn = true; paintBar(); };
+  if (!reduced && loader && document.documentElement.classList.contains('is-loading')) {
     intro = true;
     tw.classList.add('intro');
     setVB([camX, BOTTOM - vh - RISE, vw, vh]);
-    const start = () => setTimeout(() => {
-      if (!intro || cur) { tw.classList.remove('intro'); return; }
+    const meteors = document.createElement('div');
+    meteors.className = 'tw-meteors'; meteors.setAttribute('aria-hidden', 'true');
+    meteors.innerHTML = '<i></i><i></i>';
+    stage.appendChild(meteors);
+    let begun = false;
+    const begin = () => {
+      if (begun) return; begun = true;
+      if (!intro || cur) { tw.classList.remove('intro'); meteors.remove(); lampsOn(); hint(); return; }
       tw.classList.add('shoot');
       tween(view(), INTRO, smooth);
-      setTimeout(() => { intro = false; tw.classList.remove('intro'); hint(); }, INTRO + 150);
-    }, 420);
-    const mo = new MutationObserver(() => { if (!document.documentElement.classList.contains('is-loading')) { mo.disconnect(); start(); } });
+      setTimeout(() => { intro = false; tw.classList.remove('intro', 'shoot'); meteors.remove(); lampsOn(); hint(); }, INTRO + 80);
+    };
+    // the street starts down as the mark takes off; the browser's bar turns
+    // sky coloured once the loading screen has cleared
+    const mo = new MutationObserver(() => {
+      const gone = !document.documentElement.classList.contains('is-loading');
+      if (loader.classList.contains('is-flying') || loader.classList.contains('is-revealing') || gone) begin();
+      if (loader.classList.contains('is-revealing') || gone) { startBar(); mo.disconnect(); }
+    });
+    mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  } else setTimeout(() => hint(), 900);
-  if (shoot) shoot.setAttribute('transform', `translate(${(vw * 0.42).toFixed(1)} ${(vh * 0.16).toFixed(1)})`);
+    setTimeout(() => { begin(); startBar(); }, 7500);
+  } else { startBar(); lampsOn(); setTimeout(() => hint(), 700); }
 
   /* ---------------------------------------------------------- how to get around */
   // Once the street has settled, a small card in the middle shows how to
   // move along it, with the gesture drawn out; it goes once you do.
   function hint() {
-    try { if (sessionStorage.getItem('sommiville-hint')) return; sessionStorage.setItem('sommiville-hint', '1'); } catch (e) {}
-    if (cur || !matchMedia('(min-width: 720px)').matches) return;
+    if (cur || !matchMedia('(min-width: 720px)').matches || $('.tw-hint', stage)) return;
     const h = document.createElement('div');
     h.className = 'tw-hint';
     h.setAttribute('role', 'status');
-    h.innerHTML = `<div class="tw-hint-pad" aria-hidden="true"><span class="tw-hint-dots"><i></i><i></i></span><span class="tw-hint-ar l"></span><span class="tw-hint-ar r"></span></div><p><b>Scroll sideways to look around</b><span>Swipe with two fingers on the trackpad, use the mouse wheel, or drag the street</span></p>`;
+    h.innerHTML = `<div class="tw-hint-g" aria-hidden="true"><div class="tw-hint-pad"><span class="tw-hint-dots"><i></i><i></i></span><span class="tw-hint-ar l"></span><span class="tw-hint-ar r"></span></div><span class="tw-hint-or">or</span><div class="tw-hint-mouse"><span class="tw-hint-wheel"></span><span class="tw-hint-cable"></span></div></div><p><b>Scroll to look around</b><span>Swipe sideways with two fingers on a trackpad, or roll the mouse wheel. You can also drag the street.</span></p>`;
     stage.appendChild(h);
     const bye = () => { if (!h.isConnected || h.classList.contains('out')) return; h.classList.add('out'); setTimeout(() => h.remove(), 500); ['wheel', 'pointerdown', 'keydown'].forEach((t) => removeEventListener(t, bye, true)); };
     ['wheel', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, bye, true));
-    setTimeout(bye, 7000);
+    setTimeout(bye, 8000);
   }
 
   /* ---------------------------------------------------------- the card */
   // Story first, then its photos, then the numbers, the connections and the tools.
   const logo = (L) => L[0] === L[1] ? `<img src="assets/logos/opt/${L[0]}.webp" alt="" />` : `<img class="lg-d" src="assets/logos/opt/${L[0]}.webp" alt="" /><img class="lg-l" src="assets/logos/opt/${L[1]}.webp" alt="" />`;
   const linksOf = (id) => D.links.filter((l) => l[0] === id || l[1] === id);
+  // The visitor center's card: a postcard from Sommiville, a stamp with my
+  // face on it, a postmark with today's date, a note, a photo from when I was
+  // little, and my name at the bottom.
+  const postcard = (r) => {
+    const d = new Date(), day = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+    return `<div class="tw-pc">
+      <div class="tw-pc-top"><span class="tw-pc-greet">Greetings from</span><span class="tw-pc-town">SOMMIVILLE</span></div>
+      <div class="tw-pc-stampwrap"><button type="button" class="tw-pc-stamp" aria-label="Open photo"><img src="${r.photos[0]}" alt="" /></button><span class="tw-pc-mark" aria-hidden="true"><b>VISITOR CENTER</b><i>${esc(day)}</i></span></div>
+      <div class="tw-pc-note">${r.lines.map((l) => `<p>${esc(l)}</p>`).join('')}</div>
+      ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
+      <figure class="tw-pc-snap"><button type="button" aria-label="Open photo"><img src="${r.photos[1]}" alt="" loading="lazy" decoding="async" /></button><figcaption>Me, a long time ago</figcaption></figure>
+      ${r.quote ? `<blockquote class="tw-pc-quote">“${esc(r.quote)}”</blockquote>` : ''}
+      <p class="tw-pc-sign">Wish you were here,<b>Ajay</b></p>
+    </div>`;
+  };
   const render = (r) => {
     const i = D.order.indexOf(r.id), p = D.roles[D.order[i - 1]], n = D.roles[D.order[i + 1]];
     panel.style.setProperty('--tint', r.tint);
     const links = linksOf(r.id);
+    panel.classList.toggle('tw-postcard', !!r.postcard);
+    if (r.postcard) {
+      inner.innerHTML = postcard(r);
+      inner.scrollTop = 0;
+      inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
+      prevB.hidden = nextB.hidden = true;
+      $$('.tw-pc-stamp, .tw-pc-snap button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
+      return;
+    }
     inner.innerHTML = `
       <div class="tw-p-top"><span class="tw-p-logo">${r.logo ? logo(r.logo) : r.gator ? `<img src="${r.gator}" alt="" style="max-height:42px" />` : ''}</span><span class="tw-p-yr">${yy(r)}</span></div>
       <h3>${esc(r.org)}</h3>
@@ -360,7 +450,14 @@
 
   // Clicking off the open place steps back out; clicking the place itself
   // again plays with it (see the damage, below).
-  hots.forEach((h) => h.addEventListener('click', (e) => { e.stopPropagation(); if (dragged) return; if (cur === h.dataset.id) poke(h.dataset.id, e); else open(h.dataset.id); }));
+  hots.forEach((h) => h.addEventListener('click', (e) => {
+    e.stopPropagation(); if (dragged) return;
+    if (cur === h.dataset.id) poke(h.dataset.id, e);
+    // ADT's and Hunter's stops sit on the dealership: clicking off them goes
+    // back out, not into the dealership
+    else if (cur === 'adt' || cur === 'hunter') close();
+    else open(h.dataset.id);
+  }));
   stickers.forEach((n) => {
     n.addEventListener('click', (e) => { e.stopPropagation(); if (!dragged && cur !== 'adt') open('adt'); });
   });
@@ -420,20 +517,21 @@
   // it, and otherwise ambles about inside the patch.
   const steer = (b, dt, now) => {
     const [x0, x1, y0, y1] = b.box;
-    const near = ptr && !cur && ptr.x > x0 - b.reach && ptr.x < x1 + b.reach && ptr.y > y0 - b.reach && ptr.y < y1 + b.reach;
-    if (near) {
+    const near = !b.scared && ptr && !cur && ptr.x > x0 - b.reach && ptr.x < x1 + b.reach && ptr.y > y0 - b.reach && ptr.y < y1 + b.reach;
+    if (b.scared) { b.tx = x1; b.ty = y0; }
+    else if (near) {
       const side = ptr.x >= b.x ? -1 : 1;
       b.tx = clamp(ptr.x + side * b.keep, x0, x1); b.ty = clamp(ptr.y, y0, y1);
     } else if (now > b.idleAt) { b.tx = x0 + Math.random() * (x1 - x0); b.ty = y0 + Math.random() * (y1 - y0); b.idleAt = now + 3500 + Math.random() * 4000; }
     const dx = b.tx - b.x, dy = b.ty - b.y, d = Math.hypot(dx, dy);
-    const k = near ? b.k : b.k * 0.5, damp = 2 * Math.sqrt(k);
+    const k = near || b.scared ? b.k * 1.4 : b.k * 0.5, damp = 2 * Math.sqrt(k);
     b.vx += (dx * k - b.vx * damp) * dt; b.vy += (dy * k - b.vy * damp) * dt;
-    const sp = Math.hypot(b.vx, b.vy), cap = near ? b.max : b.max * 0.45;
+    const sp = Math.hypot(b.vx, b.vy), cap = near ? b.max : b.scared ? b.max * 1.5 : b.max * 0.45;
     if (sp > cap) { b.vx *= cap / sp; b.vy *= cap / sp; }
     b.x = clamp(b.x + b.vx * dt, x0, x1); b.y = clamp(b.y + b.vy * dt, y0, y1);
     b.tilt += (clamp(b.vx * 0.14, -9, 9) * b.face - b.tilt) * Math.min(1, dt * 6);
     // Face the pointer when it's close, otherwise the way it's going.
-    if (near) b.face = ptr.x >= b.x ? 1 : -1; else if (Math.abs(b.vx) > 4) b.face = b.vx > 0 ? 1 : -1;
+    if (b.scared && d < 4) b.face = -1; else if (near) b.face = ptr.x >= b.x ? 1 : -1; else if (Math.abs(b.vx) > 4) b.face = b.vx > 0 ? 1 : -1;
     b.el.classList.toggle('still', sp < 3);
     if (near && !b.near) { b.el.classList.remove('hop'); void b.el.getBoundingClientRect(); b.el.classList.add('hop'); }
     b.near = near;
@@ -445,8 +543,10 @@
   const loop = (now) => {
     if (!running) return;
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
-    if (dt > 0 && !cur) {
+    if (dt > 0 && (!cur || bots.rfa.scared)) {
       if (!bots.rfa.dead) steer(bots.rfa, dt, now);
+    }
+    if (dt > 0 && !cur) {
       const close = !bots.rjax.dead && steer(bots.rjax, dt, now) && Math.hypot(ptr.x - bots.rjax.x, ptr.y - bots.rjax.y) < 230;
       const want = close ? [ptr.x, ptr.y] : TARGET;
       aim = [aim[0] + (want[0] - aim[0]) * Math.min(1, dt * 2.5), aim[1] + (want[1] - aim[1]) * Math.min(1, dt * 2.5)];
@@ -471,8 +571,8 @@
       tw.classList.toggle('sky', sky);
       tw.classList.toggle('near', !sky);
       if (sky && dish) {
-        // The dish sits on HiPerGator's roof at (3014, 388); it turns its face to the pointer.
-        const a = Math.atan2(p.x - 3014, 388 - p.y) * 180 / Math.PI;
+        // The dish sits on HiPerGator's roof at (3080, 382); it turns its face to the pointer.
+        const a = Math.atan2(p.x - 3080, 382 - p.y) * 180 / Math.PI;
         dish.style.transform = `translate(0px, -16px) rotate(${clamp(a, -70, 70).toFixed(1)}deg)`;
       } else if (dish) dish.style.transform = '';
       if (!sky && head) {
@@ -563,13 +663,25 @@
 
   /* ---------------------------------------------------------- weather */
   // Clear, rain, snow or fall. The falling things are drawn on a canvas
-  // over the street; what settles (snow on the roofs and the lawn, the
-  // leaves turning) is done in town.css. In the snow the rover shivers, then
-  // puts on its jacket and beanie.
-  const wxc = $('.tw-wx', stage), rover = bots.rfa.el;
-  let wx = 'clear', parts = [], wxRaf = 0, wxLast = 0, coldT = 0, wxCam = null, snowT = 0;
-  const snowAmt = document.getElementById('twSnowAmt');
-  const sizeWx = () => { const d = Math.min(2, devicePixelRatio || 1); wxc.width = stage.clientWidth * d; wxc.height = stage.clientHeight * d; wxc.getContext('2d').setTransform(d, 0, 0, d, 0, 0); };
+  // over the street. What settles (snow on the roofs, the cars, the letters
+  // and the lawn; the leaves turning) builds up a step every half second,
+  // and melts off the same way when the weather changes: a few steps cost
+  // far less than redrawing the whole street every frame. In the snow the
+  // rover shivers, then puts on its jacket and beanie.
+  const wxc = $('.tw-wx', stage), rover = bots.rfa.el, wctx = wxc.getContext('2d');
+  let wx = 'clear', parts = [], wxRaf = 0, wxLast = 0, coldT = 0, wxCam = null;
+  let snowV = 0, fallV = 0, settleT = 0;
+  const settle = () => {
+    const ts = wx === 'snow' ? 1 : 0, tf = wx === 'fall' ? 1 : 0;
+    snowV = reduced ? ts : snowV + clamp(ts - snowV, -0.032, 0.03);
+    fallV = reduced ? tf : fallV + clamp(tf - fallV, -0.08, 0.08);
+    tw.style.setProperty('--snow', snowV.toFixed(3));
+    tw.style.setProperty('--fall', fallV.toFixed(3));
+    tw.classList.toggle('snowy', snowV > 0.002);
+    if (Math.abs(ts - snowV) < 0.002 && Math.abs(tf - fallV) < 0.002) { clearInterval(settleT); settleT = 0; }
+  };
+  // the canvas at the screen's own size (one pixel per point is plenty for rain and snow)
+  const sizeWx = () => { wxc.width = stage.clientWidth; wxc.height = stage.clientHeight; };
   const spawn = (mode, any) => {
     const w = stage.clientWidth, h = stage.clientHeight, y = any ? Math.random() * h : -20;
     const z = 0.75 + Math.random() * 0.45;
@@ -579,25 +691,29 @@
   };
   const wxLoop = (t) => {
     const dt = Math.min(0.05, (t - (wxLast || t)) / 1000); wxLast = t;
-    const c = wxc.getContext('2d'), w = stage.clientWidth, h = stage.clientHeight;
+    const c = wctx, w = wxc.width, h = wxc.height;
     c.clearRect(0, 0, w, h);
-    const night = /midnight|terminal/.test(document.documentElement.dataset.theme || '');
+    const night = isNight();
     // how far the street moved since the last frame, on screen
     let dx = 0;
     if (wxCam && Math.abs(vb[2] - wxCam[1]) < 0.01) dx = (vb[0] - wxCam[0]) * (w / vb[2]);
     wxCam = [vb[0], vb[2]];
     const wake = dt > 0 ? clamp(dx / dt, -4000, 4000) : 0, decay = Math.exp(-dt * 2.2);
-    parts.forEach((p, i) => {
+    if (wx === 'snow') { c.fillStyle = night ? 'rgba(235,240,255,.9)' : 'rgba(255,255,255,.95)'; c.beginPath(); }
+    else if (wx === 'rain') { c.strokeStyle = night ? 'rgba(170,190,230,.45)' : 'rgba(90,120,160,.45)'; c.lineWidth = 1.2; c.beginPath(); }
+    for (let i = 0; i < parts.length; i++) {
+      let p = parts[i];
       p.x -= dx * p.z;
       p.vx = p.vx * decay + wake * 0.26 * p.z * dt;
       p.x += p.vx * dt;
       p.y += p.vy * dt - Math.abs(p.vx) * dt * (wx === 'rain' ? 0.05 : 0.35);
       if (p.x < -40) p.x += w + 80; else if (p.x > w + 40) p.x -= w + 80;
-      if (wx === 'snow') { p.ph += dt * 1.3; const x = p.x + Math.sin(p.ph) * p.sw; c.fillStyle = night ? 'rgba(235,240,255,.9)' : 'rgba(255,255,255,.95)'; c.beginPath(); c.arc(x, p.y, p.r, 0, 6.283); c.fill(); }
-      else if (wx === 'rain') { p.x -= p.vy * 0.16 * dt; const sk = 0.16 - p.vx / p.vy; c.strokeStyle = night ? 'rgba(170,190,230,.45)' : 'rgba(90,120,160,.45)'; c.lineWidth = 1.3 * p.z; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x + p.l * sk, p.y - p.l); c.stroke(); }
+      if (p.y > h + 20) { p = parts[i] = spawn(wx, false); }
+      if (wx === 'snow') { p.ph += dt * 1.3; const x = p.x + Math.sin(p.ph) * p.sw; c.moveTo(x + p.r, p.y); c.arc(x, p.y, p.r, 0, 6.283); }
+      else if (wx === 'rain') { p.x -= p.vy * 0.16 * dt; const sk = 0.16 - p.vx / p.vy; c.moveTo(p.x, p.y); c.lineTo(p.x + p.l * sk, p.y - p.l); }
       else { p.ph += dt * 1.6; p.rot += dt * 2; const x = p.x + Math.sin(p.ph) * p.sw; c.save(); c.translate(x, p.y); c.rotate(p.rot); c.fillStyle = p.c; c.beginPath(); c.ellipse(0, 0, p.r * 1.6, p.r * 0.8, 0, 0, 6.283); c.fill(); c.restore(); }
-      if (p.y > h + 20) parts[i] = spawn(wx, false);
-    });
+    }
+    if (wx === 'snow') c.fill(); else if (wx === 'rain') c.stroke();
     wxRaf = requestAnimationFrame(wxLoop);
   };
   const setWeather = (mode) => {
@@ -608,38 +724,38 @@
     document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => { const on = b.dataset.wx === mode; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
     cancelAnimationFrame(wxRaf); wxLast = 0; wxCam = null;
     clearTimeout(coldT);
-    // snow settles on top of everything it can, a little more every few seconds
-    clearInterval(snowT);
-    if (snowAmt) {
-      let v = 0; snowAmt.setAttribute('flood-opacity', '0');
-      if (mode === 'snow' && !reduced) snowT = setInterval(() => { v = Math.min(1, v + 0.03); snowAmt.setAttribute('flood-opacity', v.toFixed(2)); if (v >= 1) clearInterval(snowT); }, 600);
-      else if (mode === 'snow') snowAmt.setAttribute('flood-opacity', '1');
-    }
+    if (!settleT) settleT = setInterval(settle, 450);
+    settle();
+    wxGrey = mode === 'rain' ? 0.5 : mode === 'snow' ? 0.32 : 0; barSet = ''; paintBar();
     rover.classList.remove('cold', 'jacket');
     if (mode === 'snow') { rover.classList.add('cold'); coldT = setTimeout(() => rover.classList.add('jacket'), 3200); }
     sizeWx();
-    const n = mode === 'snow' ? 190 : mode === 'rain' ? 260 : mode === 'fall' ? 34 : 0;
+    const n = mode === 'snow' ? 190 : mode === 'rain' ? 240 : mode === 'fall' ? 34 : 0;
     parts = Array.from({ length: reduced ? Math.round(n / 4) : n }, () => spawn(mode, true));
-    if (n) wxRaf = requestAnimationFrame(wxLoop); else wxc.getContext('2d').clearRect(0, 0, wxc.width, wxc.height);
+    if (n) wxRaf = requestAnimationFrame(wxLoop); else wctx.clearRect(0, 0, wxc.width, wxc.height);
     tw.classList.toggle('wx-on', !!n);
   };
   document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => b.addEventListener('click', () => { setWeather(b.dataset.wx); shut(); }));
   addEventListener('resize', () => { if (wx !== 'clear') sizeWx(); });
 
   /* ---------------------------------------------------------- the damage */
-  // Click a place again while you're looking at it and it takes the hit:
-  // the Civic's windows crack (and give way) and its bumpers fall off; the
-  // MacBook's screen breaks, then it catches fire; the showroom glass
-  // cracks, spreads and comes down, which sets off the alarm (the lights
-  // inside drop, a red glow and a white strobe come on, the ADT sign lights
-  // up, the police come), and a car hit through the broken glass goes off
-  // too. Everything else wears it step by step: a nick, then more, then
-  // worse, then smoke, then fire, and at last it blows up and sets the
-  // ground around it alight. A fresh visit always starts clean.
-  const fresh = () => ({ civ: { cr: D.civic.wins.map(() => []), sh: D.civic.wins.map(() => 0), fb: 0, rb: 0, dents: [] }, mac: 0, toy: 0, pts: [], cars: {}, police: 0 });
+  // Click a place again while you're looking at it and it takes the hit.
+  // The Civic's windows crack (and give way) and its bumpers fall off; the
+  // MacBook's screen breaks, then it catches fire. The showroom glass takes
+  // a good few hits before it comes down, and that sets off the alarm: the
+  // lights inside go out but for a red emergency light in the corner and a
+  // white strobe, the ADT sign lights up, the rover runs for its corner, the
+  // police come; a car hit through the broken glass goes off too. A car on
+  // the truck, dented or cracked, sets off its own alarm. Malachowsky's
+  // windows crack and give way, one at a time; the HawkEye's screen and the
+  // BetAI TV break (the TV once its window is gone); the house's windows and
+  // its door give in if you keep at them, its ADT sign lights up and the
+  // police come. Everything else takes nicks and cracks. A fresh visit always
+  // starts clean.
+  const fresh = () => ({ civ: { cr: D.civic.wins.map(() => []), sh: D.civic.wins.map(() => 0), fb: 0, rb: 0, dents: [] }, mac: 0, toy: 0, pts: [], cars: {}, police: 0, tcars: {}, hk: 0, bw: 0, bwPts: [], tv: 0, hwin: [0, 0], hdoor: 0, home: 0, hall: {} });
   let dmg = fresh();
   const hits = {};
-  const damaged = () => dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || dmg.civ.cr.some((c) => c.length) || Object.keys(hits).length;
+  const damaged = () => dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || dmg.civ.cr.some((c) => c.length) || Object.keys(hits).length || Object.keys(dmg.tcars).length || dmg.hk || dmg.bw || dmg.hwin[0] || dmg.hwin[1] || dmg.hdoor || Object.keys(dmg.hall).length;
   const save = () => { if (fixItem) fixItem.hidden = !damaged(); };
   const localPt = (el, e) => { const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
   const inPoly = (x, y, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) o = !o; } return o; };
@@ -660,6 +776,20 @@
   };
   const NSel = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
   const refresh = (id) => { if (halos[id]) { halos[id].remove(); delete halos[id]; } if (lit === id) { lit = null; glow(id); } };
+  const add = (g, html) => { g.insertAdjacentHTML('beforeend', html); };
+  // a dent: a dark crease and a little bare metal
+  const nick = (x, y, k) => `<g class="tw-nick"><ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(2.2 * k).toFixed(2)}" ry="${(1.4 * k).toFixed(2)}" class="tw-scorch"/><path d="M${(x - 2.4 * k).toFixed(1)} ${(y + 0.6 * k).toFixed(1)} q${(2.4 * k).toFixed(1)} ${(-2.6 * k).toFixed(1)} ${(4.8 * k).toFixed(1)} 0" class="tw-dent"/></g>`;
+  // glass falling out of a window that gives way, down to the ground
+  const fallShards = (g, poly, ground) => {
+    const xs = poly.map((q) => q[0]), ys = poly.map((q) => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y1 = Math.max(...ys);
+    const n = clamp(Math.round((x1 - x0) / 2.4), 5, 12);
+    for (let i = 0; i < n; i++) {
+      const x = x0 + Math.random() * (x1 - x0), y = y1 - Math.random() * 6;
+      const sh = NSel('path', { d: `M${x.toFixed(2)} ${y.toFixed(2)} l${(1 + Math.random() * 1.6).toFixed(2)} ${(-1 - Math.random()).toFixed(2)} l${(0.4 + Math.random()).toFixed(2)} ${(1.6 + Math.random()).toFixed(2)} z`, class: 'tw-fallshard', style: `--fx:${((Math.random() - 0.5) * 14).toFixed(1)}px;--fy:${(ground - y + Math.random() * 3).toFixed(1)}px;--fr:${(Math.random() * 400 - 200).toFixed(0)}deg;animation-delay:${(Math.random() * 0.15).toFixed(2)}s` });
+      g.appendChild(sh);
+      setTimeout(() => sh.remove(), 1600);
+    }
+  };
 
   // The Civic
   const civHot = hotOf('p-civic'), civG = $('.tw-civ-dmg', civHot), winG = $$('.tw-civ-win', civHot), dentG = $('.tw-civ-dents', civHot), bumpF = $('.tw-bump-f', civHot), bumpR = $('.tw-bump-r', civHot);
@@ -673,16 +803,6 @@
     bumpF.classList.toggle('off', !!c.fb);
     bumpR.classList.toggle('off', !!c.rb);
   };
-  // glass falling out of a window that gives way
-  const fallGlass = (poly) => {
-    const xs = poly.map((q) => q[0]), ys = poly.map((q) => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y1 = Math.max(...ys);
-    for (let i = 0; i < 9; i++) {
-      const x = x0 + Math.random() * (x1 - x0), y = y1 - Math.random() * 6;
-      const sh = NSel('path', { d: `M${x.toFixed(2)} ${y.toFixed(2)} l${(1 + Math.random() * 1.6).toFixed(2)} ${(-1 - Math.random()).toFixed(2)} l${(0.4 + Math.random()).toFixed(2)} ${(1.6 + Math.random()).toFixed(2)} z`, class: 'tw-fallshard', style: `--fx:${((Math.random() - 0.5) * 14).toFixed(1)}px;--fy:${(D.civic.ground - y + Math.random() * 3).toFixed(1)}px;--fr:${(Math.random() * 400 - 200).toFixed(0)}deg;animation-delay:${(Math.random() * 0.15).toFixed(2)}s` });
-      civG.appendChild(sh);
-      setTimeout(() => sh.remove(), 1600);
-    }
-  };
   const pokeCivic = (e) => {
     const q = localPt(civG, e), c = dmg.civ;
     const inB = (b) => q.x >= b.x && q.x <= b.x + b.w && q.y >= b.y && q.y <= b.y + b.h;
@@ -693,7 +813,7 @@
       if (i >= 0) {
         if (c.sh[i]) return;
         c.cr[i].push([+q.x.toFixed(2), +q.y.toFixed(2)]);
-        if (c.cr[i].length >= 3) { c.sh[i] = 1; fallGlass(D.civic.wins[i]); }
+        if (c.cr[i].length >= 3) { c.sh[i] = 1; fallShards(civG, D.civic.wins[i], D.civic.ground); }
       } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
       else return;
     }
@@ -703,15 +823,17 @@
   // The MacBook
   const drawMac = () => { tw.classList.toggle('mac-lcd', dmg.mac >= 1); tw.classList.toggle('mac-fire', dmg.mac >= 2); };
 
-  // The showroom
+  // The showroom: it takes BREAK hits for the glass to come down.
   const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
-  const SIZE = [0, 5, 13, 30];
+  const BREAK = 8, SIZE = [0, 3, 5, 7.5, 10, 13.5, 18, 24];
   let policeT = 0;
+  const scare = (on) => { bots.rfa.scared = on; bots.rfa.el.classList.toggle('scared', on); };
   const drawShowroom = (now) => {
-    const broke = dmg.toy >= 4;
-    crG.innerHTML = broke ? '' : dmg.pts.map(([x, y], k) => crack(x, y, SIZE[dmg.toy] * (k === dmg.pts.length - 1 ? 1 : 0.9), x * 3 + y * 5 + k, `tw-crk tw-crk-g lv${dmg.toy}`) + (dmg.toy >= 3 ? crack(x + 8, y - 6, 18, x + y, 'tw-crk tw-crk-g lv3') : '')).join('');
+    const broke = dmg.toy >= BREAK, lv = Math.min(3, Math.ceil(dmg.toy * 3 / (BREAK - 1)));
+    crG.innerHTML = broke ? '' : dmg.pts.map(([x, y], k) => crack(x, y, SIZE[dmg.toy] * (k === dmg.pts.length - 1 ? 1 : 0.9), x * 3 + y * 5 + k, `tw-crk tw-crk-g lv${lv}`) + (dmg.toy >= BREAK - 2 ? crack(x + 8, y - 6, 16, x + y, 'tw-crk tw-crk-g lv3') : '')).join('');
     tw.classList.toggle('glass-broke', broke);
     tw.classList.toggle('alarm', broke);
+    scare(broke);
     if (broke && now) tw.classList.add('shatter');
     showcars.forEach((g) => { const on = !!dmg.cars[g.dataset.car]; g.classList.toggle('hit', on); g.classList.toggle('alarm', on); });
     clearTimeout(policeT);
@@ -720,7 +842,7 @@
   };
   const pokeShowroom = (e) => {
     const car = e.target.closest && e.target.closest('.tw-showcar');
-    if (dmg.toy >= 4) {
+    if (dmg.toy >= BREAK) {
       if (!car || dmg.cars[car.dataset.car]) return;
       dmg.cars[car.dataset.car] = 1;
     } else {
@@ -734,52 +856,126 @@
     drawShowroom(true); save(); refresh('toyota');
   };
 
-  /* Everything else. Glass and screens crack; the rest dents and scorches.
-     Marks land where it was hit; things that move carry their marks along. */
-  const GLASSY = new Set(['vc', 'edu', 'fics', 'p-betai', 'p-oldlap', 'p-lcd', 'p-dehum', 'tm']);
+  // The cars on the truck: each one hit sets off its own alarm.
+  // (where each sits on the picture, and its headlights and taillights)
+  const TCARS = [
+    [0.178, 0.377, 0.006, 0.305], [0.381, 0.599, 0.019, 0.305], [0.601, 0.787, 0.057, 0.305], [0.793, 0.981, 0.019, 0.305],
+    [0.184, 0.37, 0.406, 0.724], [0.394, 0.57, 0.46, 0.724], [0.597, 0.773, 0.406, 0.724], [0.799, 0.979, 0.406, 0.724]
+  ];
+  const jmHot = hotOf('jm'), tcG = $('.tw-tcars', jmHot);
+  const pokeTruck = (e) => {
+    const T = D.truck, q = localPt(tcG, e), fx = (q.x - T.x) / T.w, fy = (q.y - T.y) / T.h;
+    const i = TCARS.findIndex(([a, b, c, d]) => fx >= a && fx <= b && fy >= c && fy <= d);
+    if (i < 0) { pokeAny('jm', e); return; }
+    const n = dmg.tcars[i] = (dmg.tcars[i] || 0) + 1;
+    if (n > 6) return;
+    const [a, b, c, d] = TCARS[i], glass = fy < c + (d - c) * 0.42;
+    add(tcG, glass ? crack(q.x, q.y, 2.6 + n * 0.5, q.x * 5 + q.y + n, 'tw-crk tw-crk-any') : nick(q.x, q.y, 0.75));
+    if (n === 1) {
+      const P = (u, v) => [(T.x + u * T.w).toFixed(1), (T.y + v * T.h).toFixed(1)];
+      const hd = P(a + 0.012, c + (d - c) * 0.5), tl = P(b - 0.01, c + (d - c) * 0.4);
+      add(tcG, `<g class="tw-tc-al"><g class="tw-tc-w"><circle cx="${hd[0]}" cy="${hd[1]}" r="12" fill="url(#twLedBulb)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" class="tw-proj"/><polygon points="${hd[0]},${(+hd[1] - 2).toFixed(1)} ${hd[0]},${(+hd[1] + 2).toFixed(1)} ${(+hd[0] - 34).toFixed(1)},${(+hd[1] + 10).toFixed(1)} ${(+hd[0] - 34).toFixed(1)},${(+hd[1] - 6).toFixed(1)}" fill="url(#twLed)" opacity=".75"/></g><g class="tw-tc-a"><circle cx="${hd[0]}" cy="${hd[1]}" r="10" fill="url(#twHaz)"/><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twHaz)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" fill="#ffd27a"/><circle cx="${tl[0]}" cy="${tl[1]}" r="1.6" fill="#ffd27a"/></g><g class="tw-tc-r"><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twTail)"/></g></g>`);
+    }
+    save();
+  };
+
+  // The HawkEye's screen
+  const hkHot = hotOf('hunter'), hkG = $('.tw-hk-lcd', hkHot), hkCr = $('.tw-hk-cr', hkHot);
+  const pokeHunter = (e) => {
+    const q = localPt(hkG, e);
+    if (q.x < 935 || q.x > 960 || q.y < 410.4 || q.y > 426) { pokeAny('hunter', e); return; }
+    if (dmg.hk >= 4) return;
+    dmg.hk++;
+    add(hkCr, crack(q.x, q.y, 4 + dmg.hk * 2.2, q.x * 3 + q.y + dmg.hk, 'tw-lcd-crack2') + `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${(0.7 + dmg.hk * 0.25).toFixed(2)}" class="tw-lcd-ink"/>`);
+    hkHot.classList.add('lcd' + dmg.hk);
+    save();
+  };
+
+  // BetAI: the living room window, then the TV behind it
+  const betHot = hotOf('p-betai'), bwG = $('.tw-bwcr', betHot), tvCr = $('.tw-tvlcd-cr', betHot);
+  const WIN = [[3414, 404], [3462, 404], [3462, 440], [3414, 440]];
+  const pokeBet = (e) => {
+    const q = localPt(bwG, e);
+    if (dmg.bw < 6) {
+      dmg.bw++;
+      if (dmg.bw < 6) add(bwG, crack(clamp(q.x, 3416, 3460), clamp(q.y, 406, 438), 4 + dmg.bw * 1.6, q.x + q.y * 3 + dmg.bw, `tw-crk tw-crk-g lv${Math.min(3, Math.ceil(dmg.bw / 2))}`));
+      else { bwG.innerHTML = ''; betHot.classList.add('bw-broke'); fallShards(bwG, WIN, 446); houseAlarm(); }
+    } else if (dmg.tv < 4) {
+      dmg.tv++;
+      add(tvCr, crack(clamp(q.x, 3426, 3450), clamp(q.y, 413.5, 426.5), 3 + dmg.tv * 1.8, q.x * 2 + q.y + dmg.tv, 'tw-lcd-crack2') + `<circle cx="${clamp(q.x, 3426, 3450).toFixed(1)}" cy="${clamp(q.y, 413.5, 426.5).toFixed(1)}" r="${(0.6 + dmg.tv * 0.25).toFixed(2)}" class="tw-lcd-ink"/>`);
+      betHot.classList.add('tv' + dmg.tv);
+    } else return;
+    save(); refresh('p-betai');
+  };
+
+  // The house: its windows give way after a few hits, the door after a few
+  // more; either sets off its alarm (the ADT sign, then the police).
+  const HOME_STOPS = new Set(['p-betai', 'p-avl', 'p-gatorgoods', 'p-sommiscript']);
+  const hwins = $$('.tw-hwin', svg), hdoor = $('.tw-hdoor', svg);
+  let homeT = 0;
+  function houseAlarm() {
+    if (dmg.home) return;
+    dmg.home = 1;
+    tw.classList.add('home-alarm');
+    clearTimeout(homeT);
+    homeT = setTimeout(() => tw.classList.add('police-home'), 6000);
+  }
+  const pokeHouse = (el, e) => {
+    const g = $('.tw-hcr', el), q = localPt(g, e);
+    if (el === hdoor) {
+      if (dmg.hdoor >= 8) return;
+      dmg.hdoor++;
+      if (dmg.hdoor < 8) add(g, q.y < 448 ? crack(q.x, q.y, 2.4 + dmg.hdoor * 0.4, q.x + q.y + dmg.hdoor, 'tw-crk tw-crk-any') : nick(q.x, q.y, 0.7 + dmg.hdoor * 0.06));
+      else { el.classList.add('open'); houseAlarm(); }
+    } else {
+      const i = +el.dataset.w;
+      if (dmg.hwin[i] >= 6) return;
+      dmg.hwin[i]++;
+      if (dmg.hwin[i] < 6) add(g, crack(q.x, q.y, 3 + dmg.hwin[i] * 1.2, q.x * 3 + q.y + dmg.hwin[i], `tw-crk tw-crk-g lv${Math.min(3, Math.ceil(dmg.hwin[i] / 2))}`));
+      else { g.innerHTML = ''; el.classList.add('broke'); const r = $('.tw-homewin', el), x = +r.getAttribute('x'), y = +r.getAttribute('y'); fallShards(g, [[x, y], [x + 24, y], [x + 24, y + 28], [x, y + 28]], 486); houseAlarm(); }
+    }
+    save();
+  };
+  [...hwins, hdoor].forEach((el) => el && el.addEventListener('click', (e) => {
+    if (dragged || (cur && !HOME_STOPS.has(cur))) return;
+    e.stopPropagation();
+    pokeHouse(el, e);
+  }));
+
+  // Malachowsky Hall: each window cracks, then gives way (the glass gone,
+  // the rooms behind it plain to see).
+  const hallCr = $('.tw-hall-cr', svg), hallHoles = $('.tw-hall-holes', svg);
+  const pokeHall = (e) => {
+    const q = localPt(hallCr, e), i = D.hall.polys.findIndex((p) => inPoly(q.x, q.y, p));
+    if (i < 0) { pokeAny('edu', e); return; }
+    const n = dmg.hall[i] = (dmg.hall[i] || 0) + 1, P = D.hall.polys[i];
+    if (n > 3) return;
+    if (n < 3) add(hallCr, crack(q.x, q.y, 3 + n * 2.4, q.x * 3 + q.y + n, 'tw-crk tw-crk-hall'));
+    else {
+      hallHoles.appendChild(NSel('polygon', { points: P.map((p) => p.join(',')).join(' '), fill: '#000' }));
+      add(hallCr, P.map(([x, y], k) => crack(x, y, 2.2, x * 7 + k, 'tw-crk tw-crk-hall')).join(''));
+      fallShards(hallCr, P, D.hall.ground);
+    }
+    save();
+  };
+
+  /* Everything else: glass and screens crack; the rest takes nicks. Marks
+     land where it was hit; things that move carry their marks along. */
+  const GLASSY = new Set(['vc', 'fics', 'p-oldlap', 'p-lcd', 'p-dehum', 'tm']);
   const BODY = { rjax: '.tw-frc-flip', rfa: '.tw-rover-shiver' };
   const boxes = {};
-  // (the size goes on a group around it: the flicker animates the flame's own transform)
-  const flame = (x, y, k, i = 0) => `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(2)})"><path d="M0 0 c-2.4 -1.4 -2.6 -4 -1 -6.2 c.2 1.4 1 2 1.6 2.2 c-.4 -2.6 .6 -4.8 2.6 -6.2 c-.6 2.2 .4 3.8 1.4 4.8 c.6 -1 .7 -2 .5 -3 c1.8 2.4 1.8 5.6 -.6 8.4 z" class="tw-flame" style="--d:${(-i * 0.17 % 0.6).toFixed(2)}s"/></g>`;
-  const add = (g, html) => { g.insertAdjacentHTML('beforeend', html); };
   const dmgRoot = (h) => { let g = h.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); h.appendChild(g); } return g; };
   const dmgIn = (h, id) => { const b = BODY[id] && $(BODY[id], h); if (!b) return dmgRoot(h); let g = b.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); b.appendChild(g); } return g; };
-  const boom = (g, x, y, s) => {
-    const fx = NSel('g', { class: 'tw-boom', transform: `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${s.toFixed(2)})` });
-    fx.innerHTML = `<circle r="26" fill="url(#twBoom)" class="tw-boom-ball"/><circle r="12" class="tw-boom-flash"/>` + Array.from({ length: 14 }, (_, i) => { const a = (i / 14) * 6.283 + Math.random() * 0.4, d = 18 + Math.random() * 26; return `<path d="M0 0 l${(1.4 + Math.random() * 2).toFixed(1)} -1 l.6 ${(1.6 + Math.random() * 1.4).toFixed(1)} z" class="tw-debris" style="--x:${(Math.cos(a) * d).toFixed(1)}px;--y:${(Math.sin(a) * d - 14).toFixed(1)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg"/>`; }).join('');
-    g.appendChild(fx);
-    setTimeout(() => fx.remove(), 1500);
-    stage.classList.remove('tw-shake'); void stage.offsetWidth; stage.classList.add('tw-shake');
-  };
-  // fire on the ground: a scorch, flames, a glow
-  const groundFire = (g, x, y, s, i) => add(g, `<g class="tw-gfire" style="--i:${i}"><ellipse cx="${x.toFixed(1)}" cy="${(y + 1).toFixed(1)}" rx="${(16 * s).toFixed(1)}" ry="${(3.6 * s).toFixed(1)}" fill="url(#twScorch)"/><circle cx="${x.toFixed(1)}" cy="${(y - 4 * s).toFixed(1)}" r="${(14 * s).toFixed(1)}" fill="url(#twFireGlow)" class="tw-fireglow"/>${[-6, 0, 6].map((dx, k) => flame(x + dx * s, y, s * (0.8 + (k % 2) * 0.4), i * 3 + k)).join('')}</g>`);
   const pokeAny = (id, e) => {
     const h = hotOf(id); if (!h) return;
-    const n = hits[id] = (hits[id] || 0) + 1;
-    const root = dmgRoot(h), marks = dmgIn(h, id);
+    const n = (hits[id] || 0) + 1;
+    if (n > 6) return;
+    hits[id] = n;
+    const marks = dmgIn(h, id);
     if (!boxes[id]) { const b = h.getBBox(); boxes[id] = { x: b.x, y: b.y, w: b.width, h: b.height }; }
-    const B = boxes[id], s = clamp(Math.sqrt(B.w * B.h) / 70, 0.35, 2.8);
-    const q = localPt(marks, e), r = localPt(root, e);
-    const glassy = GLASSY.has(id);
-    if (n <= 4) {
-      const big = n === 4 ? 1.8 : 1;
-      if (glassy) add(marks, crack(q.x, q.y, 6 * s * big, q.x * 7 + q.y + n, 'tw-crk tw-crk-any'));
-      else add(marks, `<g class="tw-nick"><ellipse cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" rx="${(2.2 * s * big).toFixed(2)}" ry="${(1.4 * s * big).toFixed(2)}" class="tw-scorch"/><path d="M${(q.x - 2.4 * s * big).toFixed(1)} ${(q.y + 0.6 * s).toFixed(1)} q${(2.4 * s * big).toFixed(1)} ${(-2.6 * s * big).toFixed(1)} ${(4.8 * s * big).toFixed(1)} 0" class="tw-dent"/></g>`);
-      if (n === 4) { add(root, `<g class="tw-gsmoke" transform="translate(${r.x.toFixed(1)} ${(r.y - 2 * s).toFixed(1)}) scale(${s.toFixed(2)})">${[0, 1, 2, 3].map((k) => `<circle cx="${(k - 1.5) * 2}" cy="0" r="${2.2 + (k % 2)}" style="--d:${(-k * 0.6).toFixed(1)}s;--dx:${k % 2 ? -7 : 7}px"/>`).join('')}</g>`); h.classList.add('smoking'); }
-    } else if (n <= 6) {
-      add(root, `<g class="tw-onfire"><circle cx="${r.x.toFixed(1)}" cy="${(r.y - 3 * s).toFixed(1)}" r="${(12 * s * (n - 3) / 2).toFixed(1)}" fill="url(#twFireGlow)" class="tw-fireglow"/>${Array.from({ length: n === 5 ? 3 : 6 }, (_, k) => flame(r.x + (k - (n === 5 ? 1 : 2.5)) * 3.4 * s, r.y + (k % 2) * 2 * s, s * (n === 5 ? 1 : 1.5) * (0.8 + (k % 3) * 0.2), k)).join('')}</g>`);
-    } else if (n === 7) {
-      boom(root, r.x, r.y, s * 1.6);
-      h.classList.add('charred');
-      if (bots[id]) bots[id].dead = true;
-      const gy = B.y + B.h;
-      add(root, `<g class="tw-onfire">${Array.from({ length: 7 }, (_, k) => flame(B.x + B.w * (0.15 + k * 0.12), B.y + B.h * (0.35 + (k % 3) * 0.2), s * 1.4 * (0.8 + (k % 2) * 0.5), k + 3)).join('')}</g>`);
-      [-1, 1].forEach((side, k) => groundFire(root, r.x + side * (B.w / 2 + 12 * s), gy, s * 0.9, k));
-    } else if (n <= 14) {
-      // and it spreads, a little further each time
-      const k = n - 7, side = k % 2 ? 1 : -1, gy = B.y + B.h;
-      groundFire(root, r.x + side * (B.w / 2 + (12 + k * 11) * s), gy + (k % 3) * 2, s * (0.8 + Math.random() * 0.5), k + 2);
-    } else return;
+    const B = boxes[id], s = clamp(Math.sqrt(B.w * B.h) / 70, 0.35, 2), q = localPt(marks, e), big = 1 + (n - 1) * 0.14;
+    if (GLASSY.has(id)) add(marks, crack(q.x, q.y, 6 * s * big, q.x * 7 + q.y + n, 'tw-crk tw-crk-any'));
+    else add(marks, nick(q.x, q.y, s * big));
     refresh(id); save();
   };
 
@@ -827,17 +1023,26 @@
     else if (id === 'p-macbook') { if (dmg.mac >= 2) return; dmg.mac++; drawMac(); save(); }
     else if (id === 'toyota') pokeShowroom(e);
     else if (id === 'p-drive') pokeDrive(e);
+    else if (id === 'jm') pokeTruck(e);
+    else if (id === 'hunter') pokeHunter(e);
+    else if (id === 'p-betai') pokeBet(e);
+    else if (id === 'edu') pokeHall(e);
     else pokeAny(id, e);
   }
   function repair() {
     dmg = fresh();
     Object.keys(hits).forEach((k) => delete hits[k]);
     $$('.tw-dmg', svg).forEach((g) => g.remove());
-    hots.forEach((h) => h.classList.remove('charred', 'smoking'));
+    [tcG, hkCr, bwG, tvCr, hallCr, hallHoles].forEach((g) => { if (g) g.innerHTML = ''; });
+    $$('.tw-hcr', svg).forEach((g) => { g.innerHTML = ''; });
+    hwins.forEach((w) => w.classList.remove('broke'));
+    if (hdoor) hdoor.classList.remove('open');
+    hkHot.classList.remove('lcd1', 'lcd2', 'lcd3', 'lcd4');
+    betHot.classList.remove('bw-broke', 'tv1', 'tv2', 'tv3', 'tv4');
     Object.values(bots).forEach((b) => { b.dead = false; });
     if (hddRings) { hddRings.innerHTML = ''; hddRot.classList.remove('spin', 'fast'); }
-    clearTimeout(policeT);
-    tw.classList.remove('glass-broke', 'alarm', 'police', 'shatter');
+    clearTimeout(policeT); clearTimeout(homeT);
+    tw.classList.remove('glass-broke', 'alarm', 'police', 'shatter', 'home-alarm', 'police-home');
     drawCivic(); drawMac(); drawShowroom(false); save();
     Object.keys(halos).forEach(refresh);
   }
@@ -848,4 +1053,5 @@
 
   tw._bots = bots;
   tw._weather = setWeather;
+  tw._poke = (id, e) => poke(id, e);
 })();
