@@ -1116,3 +1116,14 @@
 [data-theme="daylight"] .tw.alarm .tw-int { fill: #cfd2d7 !important; }
 [data-theme="daylight"] .tw-alarm-dark { opacity: .22; }
 [data-theme="daylight"] .tw.alarm .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twDim) !important; }
+
+/* round 11: the HawkEye's lasers flicker without a break; the cars stay solid
+   when the glass is gone and are only a little dimmer by day; faster police lights */
+.tw-laser { animation: tw-zap2 .2s steps(1) infinite; }
+.tw-laser + .tw-laser { animation-delay: 0s; }
+@keyframes tw-zap2 { 0% { opacity: 1; } 35% { opacity: .2; } 55% { opacity: .95; } 80% { opacity: .35; } }
+.tw.alarm .tw-showcar, .tw.glass-broke .tw-showcar { opacity: 1; }
+[data-theme="daylight"] .tw.alarm .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twDimDay) !important; }
+.tw.police .tw-police-a .tw-pl-r, .tw.police-home .tw-police-b .tw-pl-r { animation-duration: .34s; }
+.tw.police .tw-police-a .tw-pl-b, .tw.police-home .tw-police-b .tw-pl-b { animation-duration: .34s; animation-delay: -.17s; }
+.tw.police .tw-police-a .tw-pl-w, .tw.police-home .tw-police-b .tw-pl-w { animation-duration: .17s; }
