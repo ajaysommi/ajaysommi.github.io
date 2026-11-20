@@ -703,6 +703,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twMoonHalo"><stop offset="0" stop-color="#fff6dc" stop-opacity=".3"/><stop offset=".45" stop-color="#fff6dc" stop-opacity=".14"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></radialGradient>
+    <linearGradient id="twBulge" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".1"/><stop offset=".22" stop-color="#000" stop-opacity=".03"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset=".78" stop-color="#000" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity=".1"/></linearGradient>
     <linearGradient id="twPosterSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fa6c9"/><stop offset="1" stop-color="#d9e4ea"/></linearGradient>
     <linearGradient id="twPosterSun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f08a5d"/><stop offset="1" stop-color="#f6c99a"/></linearGradient>
     <filter id="twBehindGlass" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".72" intercept=".2"/><feFuncG type="linear" slope=".72" intercept=".19"/><feFuncB type="linear" slope=".72" intercept=".18"/></feComponentTransfer></filter>
@@ -838,9 +839,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="462" y="332" width="100" height="10" class="tw-red"/>
       ${showroom(462, 342, 100, 140, [{ f: 'prius', cx: 512, w: 58 }], 'r')}
 
-      <rect x="556" y="206" width="352" height="12" rx="3" class="tw-roofcap"/>
-      <rect x="560" y="216" width="344" height="266" class="tw-facade tw-fo"/>
-      <path d="M560 252 H904 M560 288 H904 M560 324 H904 M646 216 V350 M732 216 V350 M818 216 V350" class="tw-grid"/>
+      <path d="M556 212 Q732 192 908 212 L908 220 Q732 200 556 220 Z" class="tw-roofcap"/>
+      <path d="M560 218 Q732 198.6 904 218 V482 H560 Z" class="tw-facade tw-fo"/>
+      <path d="M560 218 Q732 198.6 904 218 V482 H560 Z" fill="url(#twBulge)" class="tw-nohit"/>
+      <path d="M560 253 Q732 237 904 253 M560 289 Q732 275.6 904 289 M560 325 Q732 314.4 904 325 M646 211.4 V350 M732 209 V350 M818 211.4 V350" class="tw-grid"/>
       <ellipse cx="640" cy="270" rx="80" ry="52" fill="url(#twBack)" class="tw-backlit"/><image href="assets/logos/opt/toyota-mark.webp" x="584" y="230" width="112" height="80" preserveAspectRatio="xMidYMid meet" class="tw-tlogo"/><image href="assets/images/town/snow-tmark.webp" x="584" y="230" width="112" height="80" preserveAspectRatio="xMidYMid meet" class="tw-snowimg"/>
       <text x="886" y="332.9" class="tw-sommi tw-textsnow" text-anchor="end">SOMMIVILLE</text><text x="886" y="334" class="tw-sommi" text-anchor="end">SOMMIVILLE</text>
       <rect x="652" y="350" width="244" height="132" class="tw-portal"/>
@@ -1064,7 +1066,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     </g>
 
     <!-- Snow, when it snows: it settles on the roofs and the ground (town.css). -->
-    <g class="tw-snowy" aria-hidden="true">${[[443.8, 200, 152.6], [1158, 324, 108], [1256, 206, 352], [1604, 284, 234]].map(([x, y, w]) => `<rect x="${x - 1}" y="${y - 7}" width="${w + 2}" height="8.5" rx="4" class="tw-snowcap"/>`).join('')}</g>
+    <g class="tw-snowy" aria-hidden="true">${[[443.8, 200, 152.6], [1158, 324, 108], [1604, 284, 234]].map(([x, y, w]) => `<rect x="${x - 1}" y="${y - 7}" width="${w + 2}" height="8.5" rx="4" class="tw-snowcap"/>`).join('')}<path d="M1255 212 Q1432 186 1609 212 L1609 205 Q1432 179 1255 205 Z" class="tw-snowcap"/></g>
 
     ${police(1236, 'tw-police-a')}${police(4012, 'tw-police-b')}
 

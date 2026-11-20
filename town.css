@@ -1142,3 +1142,10 @@
 .tw-showcar:not(.alarm) .tw-carlights { display: none; }
 [data-theme="daylight"] .tw :is(.tw-signlight, .tw-wel-sh) { display: none; }
 .tw:not(.home-alarm) :is(.tw-yard-lit, .tw-yard-glow, .tw-yard-pool) { display: none; }
+
+/* the HawkEye's two lasers take turns, rapid-fire, without a pause */
+.tw-laser + .tw-laser { animation-delay: -.1s; }
+/* the bar in the corner, a touch more see-through */
+@media (min-width: 720px) {
+  html:not(.classic) header.nav.glass { background: color-mix(in oklab, var(--surface-solid, var(--surface)) 80%, transparent); }
+}
