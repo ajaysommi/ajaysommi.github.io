@@ -1108,3 +1108,6 @@
 @keyframes tw-zap { 0% { opacity: 1; } 4% { opacity: 0; } 8% { opacity: 1; } 12% { opacity: 0; } 16% { opacity: 1; } 20% { opacity: 0; } 24% { opacity: .9; } 28%, 100% { opacity: 0; } }
 
 .tw-mural-f { fill: none; stroke: #1d1e22; stroke-width: 1.1; }
+
+.tw-furn { pointer-events: none; }
+[data-theme="midnight"] .tw .tw-furn, [data-theme="terminal"] .tw .tw-furn { opacity: .92; }

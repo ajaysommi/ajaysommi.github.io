@@ -583,12 +583,12 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
   const ps = POSTERS[em === 'l' ? 'main' : 'wing'];
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-int"/>
       <rect x="${x}" y="${y + h - 22}" width="${w}" height="3" class="tw-baseboard"/>
-      ${em === 'l'
-        ? [['mural-l', 660, 90, 900 / 238], ['mural-r', 801, 88, 900 / 225]].map(([n, mx, mw, ar]) => `<image href="assets/images/town/${n}.webp" x="${mx}" y="${y + 14}" width="${mw}" height="${(mw / ar).toFixed(2)}" preserveAspectRatio="none" class="tw-mural"/><rect x="${mx}" y="${y + 14}" width="${mw}" height="${(mw / ar).toFixed(2)}" class="tw-mural-f"/>`).join('')
-        : `<image href="assets/images/town/lounge.webp" x="${x + 2}" y="${(y + h - 8 - 96 / 2.222).toFixed(2)}" width="96" height="${(96 / 2.222).toFixed(2)}" preserveAspectRatio="none" class="tw-mural"/>`}
+      ${em === 'l' ? `<image href="assets/images/town/mural.webp" x="${x + 2}" y="${y + 10}" width="${w - 4}" height="${((w - 4) / 8.09).toFixed(2)}" preserveAspectRatio="none" class="tw-mural"/>` : ''}
       ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${fy} ${cx - 44},${fy}" class="tw-spotcone" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
       <rect x="${x}" y="${fy}" width="${w}" height="8" class="tw-showfloor"/>
       ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
+      <!-- the reception and lounge from the mural picture, standing on the floor (one scale for both rooms) -->
+      ${(() => { const k = 232 / 1476, fw = em === 'l' ? 1476 * k : 584 * k, fh = 318 * k; return `<image href="assets/images/town/${em === 'l' ? 'furn-r' : 'furn-l'}.webp" x="${(em === 'l' ? x : x + 4).toFixed(1)}" y="${(fy + 0.6 - fh).toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" preserveAspectRatio="none" class="tw-furn"/>`; })()}
       <g class="tw-alarmin tw-nohit"><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-dark"/><circle cx="${ex}" cy="${y + 9}" r="30" fill="url(#twEmerg)"/><rect x="${ex - 4.5}" y="${y + 4}" width="9" height="4.6" rx="1.2" class="tw-emerg-box"/><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-white"/></g>
       ${cars.map((c) => { const K = CAR[c.f], H = c.w * K.a, x0 = c.cx - c.w / 2, y0 = fy + 3 - H, at = (fx, fy2) => [(x0 + c.w * fx).toFixed(1), (y0 + H * fy2).toFixed(1)]; const ws = at(.36, .17);
         const drl = (cls, f) => `<image href="assets/images/town/car-${c.f}-drl.webp" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" class="${cls}" filter="url(#${f})"/>`;
