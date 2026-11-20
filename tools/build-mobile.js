@@ -23,7 +23,9 @@ const initials = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2);
 const ROLES = [...P.experience].reverse();
 // Each logo comes in two colourings: light lettering for the dark themes,
 // dark lettering for daylight. The page shows whichever suits.
-const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-light'], toyota: ['toyota', 'toyota-light'], jm: ['jm-family', 'jm-family-light'], hunter: ['hunter', 'hunter-light'], adt: ['adt', 'adt'] };
+const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-light'], toyota: ['toyota', 'toyota-light'], jm: ['jm-family', 'jm-family-light'], hunter: ['hunter', 'hunter-light'], adt: ['adt', 'adt'], shiva: ['shiva', 'shiva'], rjax: ['renaissance-jax', 'renaissance-jax'] };
+// Where the corner copy should show the whole logo rather than a cropped piece of it.
+const WHOLE = { toyota: ['toyota-full', 'toyota-full'], jm: ['jm-family', 'jm-family-light'] };
 // The same colour each stop wears on the desktop's path.
 const TINT = { rjax: '#2fae5a', shiva: '#f39c12', rfa: '#f2b705', fics: '#fa4616', toyota: '#eb0a1e', jm: '#00857c', hunter: '#b5121b', adt: '#1f6fd1' };
 const pic = ([d, l], cls = '') => d === l
@@ -68,7 +70,7 @@ const logoOf = (e) => LOGO[e.id] ? `<span class="mx-logo">${pic(LOGO[e.id])}</sp
 const stop = (e, i) => {
   const L = LOGO[e.id];
   const face = L ? `<span class="mx-st-logo">${pic(L)}</span>` : `<span class="mx-st-logo mx-st-mono" aria-hidden="true">${esc(initials(e.short))}</span>`;
-  const wm = L ? `<span class="mx-st-wm" aria-hidden="true">${pic(L)}</span>` : `<span class="mx-st-wm mx-st-wm-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
+  const wm = WHOLE[e.id] ? `<span class="mx-st-wm mx-st-wm-whole" aria-hidden="true">${pic(WHOLE[e.id])}</span>` : L ? `<span class="mx-st-wm" aria-hidden="true">${pic(L)}</span>` : `<span class="mx-st-wm mx-st-wm-t" aria-hidden="true">${esc(initials(e.short))}</span>`;
   return `<li style="--tint:${TINT[e.id] || 'var(--accent)'};--k:${i}"><button type="button" class="mx-stop" data-sheet="mx-role-${e.id}">
             <span class="mx-st-glow" aria-hidden="true"></span>${wm}
             <span class="mx-st-top">${face}<span class="mx-st-yr" aria-label="${e.year}">’${String(e.year).slice(2)}</span></span>
@@ -102,9 +104,7 @@ const html = `<!-- mx:start -->
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <button type="button" class="mx-mark" aria-label="Play with the mark">
-        <span class="mx-mark-glow" aria-hidden="true"></span>${MARK}
-      </button>
+      <span class="mx-face"><span class="mx-mark-glow" aria-hidden="true"></span><img src="${P.photo}" alt="Ajay Sommi" decoding="async" /></span>
       <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
@@ -165,15 +165,9 @@ const html = `<!-- mx:start -->
       </section>
     </div>
 
-    <a class="mx-eras" href="eras.html">
-      <span class="mx-eras-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
-      <span class="mx-eras-t"><span class="mx-mono">New</span><b>Try this portfolio in <span class="mx-eras-y" data-years="2000,2003,2007">2000</span></b></span>
-      <span class="mx-eras-go">${I.right}</span>
-    </a>
-
     <section class="mx-contact" id="m-contact">
       <div class="mx-prints">
-        <button type="button" class="mx-print" aria-label="Ajay in 2006, at a computer. Tap to give it a nudge"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay in 2006, at a computer" loading="lazy" decoding="async" /><span>2006</span></button>
+        <button type="button" class="mx-print" aria-label="Ajay as a kid, at a computer. Tap to give it a nudge"><img src="assets/images/offclock/kid-2006-480.webp" alt="Ajay as a kid, at a computer" loading="lazy" decoding="async" /></button>
       </div>
       <h2>20+ years of experience.</h2>
       <p>Let’s not be strangers.</p>
@@ -186,9 +180,8 @@ const html = `<!-- mx:start -->
         <a class="mx-btn" href="${P.github}" target="_blank" rel="noopener" aria-label="GitHub">${I.github}</a>
         <a class="mx-btn" href="${P.linkedin}" target="_blank" rel="noopener" aria-label="LinkedIn">${I.linkedin}</a>
       </div>
-      <p class="mx-facts mx-mono">${esc(P.citizen)} · UF Computer Science · Dec 2026</p>
     </section>
-    <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
+    <p class="mx-foot mx-mono">© 2026 Ajay Sommi<a class="mx-tt" href="eras.html" aria-label="Travel back in time"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></a></p>
 
     <nav class="mx-tabs" id="mx-tabs" aria-label="Sections" role="tablist">
       ${TABS.map(([k, t], i) => `<button type="button" role="tab" id="mx-tab-${k}" aria-controls="mx-p-${k}" aria-selected="${i === 0}" data-tab="${k}">${SHAPE[k]}<span>${t}</span></button>`).join('')}

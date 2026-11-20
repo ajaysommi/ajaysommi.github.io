@@ -68,7 +68,7 @@
   // where they want to be, never faster than an amble.
   const bots = {
     rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1850, y: 556, vx: 0, vy: 0, tx: 1850, ty: 556, face: -1, idleAt: 0, box: [1712, 1872, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
-    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 670, y: 562, vx: 0, vy: 0, tx: 670, ty: 562, face: 1, idleAt: 0, box: [626, 718, 552, 582], reach: 140, keep: 64, pinDy: -40, k: 3, max: 45, s: 0.78, tilt: 0 }
+    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 632, y: 582, vx: 0, vy: 0, tx: 632, ty: 582, face: 1, idleAt: 0, box: [590, 676, 574, 588], reach: 140, keep: 64, pinDy: -40, k: 3, max: 45, s: 0.78, tilt: 0 }
   };
   const placeBot = (b) => {
     b.el.setAttribute('transform', `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`);
@@ -78,7 +78,7 @@
   Object.values(bots).forEach(placeBot);
   // The competition robot's camera: on its target, or on the pointer when close.
   const turret = $('.tw-turret', svg), vision = $('.tw-vision', svg), reticle = $('.tw-reticle', svg);
-  const TARGET = [754, 511];
+  const TARGET = [714, 535];
   let aim = TARGET.slice();
   const aimCam = () => {
     const b = bots.rjax, cx = b.x + 13 * b.s * b.face, cy = b.y - 28 * b.s;
@@ -121,8 +121,9 @@
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
+  const SKIP = { toyota: '.tw-strobes, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm', jm: '.tw-hazards', edu: '.tw-gator, .tw-ripples', shiva: '.tw-bars' };
   const halos = {};
+  const stickers = $$('.tw-adtsticker', svg);
   const hotOf = (id) => hots.find((h) => h.dataset.id === id);
   let lit = null;
   const glow = (id) => {
@@ -131,7 +132,9 @@
       if (halos[lit]) halos[lit].remove();
       const h = hotOf(lit); if (h) $$(LIVE[lit] || '.tw-none', h).forEach((n) => { n.style.filter = ''; });
     }
+    if (lit === 'adt') stickers.forEach((n) => { n.style.filter = ''; });
     lit = id;
+    if (id === 'adt') stickers.forEach((n) => { n.style.filter = 'url(#twGlow-adt)'; });
     const h = id && hotOf(id);
     if (!h) return;
     let g = halos[id];
@@ -183,14 +186,14 @@
     panR.classList.toggle('on', !cur && camX < WORLD - vw - 4);
   };
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const tween = (to, ms = 850) => {
+  const tween = (to, ms = 850, fn = ease) => {
     cancelAnimationFrame(anim);
     if (reduced) { setVB(to); return; }
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
     const from = vb.slice(), t0 = performance.now();
     svg.classList.add('tw-moving');
-    const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); setVB(from.map((v, i) => v + (to[i] - v) * k)); if (k < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving'); };
+    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); setVB(from.map((v, i) => v + (to[i] - v) * k)); if (u < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving'); };
     anim = requestAnimationFrame(f);
   };
   const frame = (z, left) => {
@@ -214,6 +217,16 @@
     glide = requestAnimationFrame(f);
   };
   setVB(view());
+  /* The opening: once the mark has flown up into the bar, the street starts
+     up in the sky and slowly comes down to the visitor center. */
+  let intro = false;
+  if (!reduced && document.documentElement.classList.contains('is-loading')) {
+    intro = true;
+    setVB([camX, BOTTOM - vh - 820, vw, vh]);
+    const start = () => setTimeout(() => { if (intro && !cur) { tween(view(), 3800, (u) => 1 - Math.pow(1 - u, 3) * (1 - u * 0.15)); setTimeout(() => { intro = false; }, 3800); } }, 950);
+    const mo = new MutationObserver(() => { if (!document.documentElement.classList.contains('is-loading')) { mo.disconnect(); start(); } });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }
 
   /* ---------------------------------------------------------- the card */
   // Story first, then its photos, then the numbers, the connections and the tools.
@@ -246,22 +259,24 @@
     if (n) { $('span', nextB).textContent = n.school ? 'UF' : n.short; nextB.dataset.id = n.id; }
     nextB.style.marginLeft = 'auto';
     $$('.tw-p-link', inner).forEach((b) => b.addEventListener('click', () => open(b.dataset.go)));
-    $$('.tw-p-pics button, .tw-p-steps button', inner).forEach((b) => b.addEventListener('click', () => {
-      const big = document.createElement('div');
-      big.className = 'tw-big-pic';
-      big.innerHTML = `<img src="${b.querySelector('img').src}" alt="" />`;
-      big.addEventListener('click', () => big.remove());
-      panel.appendChild(big);
-    }));
+    $$('.tw-p-pics button, .tw-p-steps button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
   };
 
+  // A photo from a card opens over the whole window; a click or Esc puts it back.
+  const lightbox = (src) => {
+    const lb = document.createElement('div');
+    lb.className = 'tw-lightbox';
+    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', 'Photo');
+    lb.innerHTML = `<img src="${esc(src)}" alt="" /><button type="button" class="tw-lb-x" aria-label="Close photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`;
+    lb.addEventListener('click', () => { lb.classList.add('out'); setTimeout(() => lb.remove(), 220); });
+    document.body.appendChild(lb);
+  };
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
     if (r.special) { timeTravel(); return; }
     const wasOpen = !!cur;
     cur = id;
-    $$('.tw-big-pic', panel).forEach((n) => n.remove());
     const z = zoomOf(id), left = z[0] + z[2] / 2 > vb[0] + vb[2] / 2;
     cancelAnimationFrame(glide);
     // when the card closes, the street is left centred on this place
@@ -291,8 +306,12 @@
     chips.forEach((c) => c.classList.remove('on'));
   };
 
-  // Clicking the place that's open (or anywhere off it) steps back out.
-  hots.forEach((h) => h.addEventListener('click', (e) => { e.stopPropagation(); if (dragged) return; if (cur === h.dataset.id) close(); else open(h.dataset.id); }));
+  // Clicking off the open place steps back out; clicking the place itself
+  // again plays with it (see the damage, below).
+  hots.forEach((h) => h.addEventListener('click', (e) => { e.stopPropagation(); if (dragged) return; if (cur === h.dataset.id) poke(h.dataset.id, e); else open(h.dataset.id); }));
+  stickers.forEach((n) => {
+    n.addEventListener('click', (e) => { e.stopPropagation(); if (!dragged && cur !== 'adt') open('adt'); });
+  });
   chips.forEach((c) => {
     c.addEventListener('click', () => { open(c.dataset.id); stage.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); });
     c.addEventListener('mouseenter', () => { if (!cur) glow(c.dataset.id); });
@@ -303,13 +322,14 @@
   nextB.addEventListener('click', () => open(nextB.dataset.id));
   svg.addEventListener('click', () => { if (!dragged) close(); });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !cur) { const big = $('.tw-lightbox'); if (big) { big.remove(); return; } }
     if (!cur) {
       if (e.target.closest && e.target.closest('input, textarea')) return;
       if (e.key === 'ArrowRight') panTo(camX + vw * 0.4, 450);
       else if (e.key === 'ArrowLeft') panTo(camX - vw * 0.4, 450);
       return;
     }
-    if (e.key === 'Escape') { const big = $('.tw-big-pic', panel); if (big) big.remove(); else close(); }
+    if (e.key === 'Escape') { const big = $('.tw-lightbox'); if (big) big.remove(); else close(); }
     else if (e.key === 'ArrowRight' && !nextB.hidden) open(nextB.dataset.id);
     else if (e.key === 'ArrowLeft' && !prevB.hidden) open(prevB.dataset.id);
   });
@@ -336,8 +356,9 @@
     if (!over) return;
     offT = setTimeout(() => { over = null; glow(null); hideLabel(); }, 160);
   };
-  svg.addEventListener('pointerover', (e) => { const h = e.target.closest && e.target.closest('.tw-hot'); hoverTo(h ? h.dataset.id : null); });
-  svg.addEventListener('pointerout', (e) => { const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.tw-hot'); hoverTo(to ? to.dataset.id : null); });
+  const idAt = (t) => { if (!t || !t.closest) return null; if (t.closest('.tw-adtsticker')) return 'adt'; const h = t.closest('.tw-hot'); return h ? h.dataset.id : null; };
+  svg.addEventListener('pointerover', (e) => hoverTo(idAt(e.target)));
+  svg.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
 
   /* ---------------------------------------------------------- the pointer */
   const head = $('.tw-cctv-head', svg), dish = $('.tw-dish', svg), eyes = $$('.tw-follow', svg);
@@ -436,6 +457,7 @@
     if (!d) return;
     e.preventDefault();
     cancelAnimationFrame(glide);
+    if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); }
     camX = clamp(camX + d / scale, 0, Math.max(0, WORLD - vw));
     setVB(view());
   }, { passive: false });
@@ -449,7 +471,7 @@
     if (!drag || e.pointerId !== drag.id) return;
     const dx = e.clientX - drag.x;
     if (!dragged && Math.abs(dx) < 6) return;
-    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); }
+    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); } }
     camX = clamp(drag.cam - dx / scale, 0, Math.max(0, WORLD - vw));
     setVB(view());
   });
@@ -465,8 +487,6 @@
   // Home (and the logo) slide back to the visitor center; the weather and
   // the menu open small lists under the bar.
   const goHome = () => { if (cur) { camX = homeX(); close(); } else panTo(homeX(), 1100); };
-  const homeB = document.getElementById('twHome');
-  if (homeB) homeB.addEventListener('click', goHome);
   const brand = document.querySelector('header.nav .brand');
   if (brand) brand.addEventListener('click', (e) => { if (!matchMedia('(min-width: 720px)').matches) return; e.preventDefault(); goHome(); });
   const pops = [['twWx', 'twWxPop'], ['twMenu', 'twMenuPop']].map(([b, p]) => [document.getElementById(b), document.getElementById(p)]).filter(([b, p]) => b && p);
@@ -474,8 +494,8 @@
   pops.forEach(([b, p]) => b.addEventListener('click', (e) => { e.stopPropagation(); const was = !p.hidden; shut(); if (!was) { p.hidden = false; b.setAttribute('aria-expanded', 'true'); } }));
   document.addEventListener('click', (e) => { if (!e.target.closest('.tw-popwrap')) shut(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
-  const tmItem = document.querySelector('#twMenuPop [data-go="time"]');
-  if (tmItem) tmItem.addEventListener('click', () => { shut(); timeTravel(); });
+  const fixItem = document.querySelector('#twMenuPop [data-go="fix"]');
+  if (fixItem) fixItem.addEventListener('click', () => { shut(); repair(); });
   const exit = $('.tw-exit', svg);
   if (exit) exit.addEventListener('click', (e) => { e.stopPropagation(); if (dragged) e.preventDefault(); });
 
@@ -534,6 +554,127 @@
   };
   document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => b.addEventListener('click', () => { setWeather(b.dataset.wx); shut(); }));
   addEventListener('resize', () => { if (wx !== 'clear') sizeWx(); });
+
+  /* ---------------------------------------------------------- the damage */
+  // Click a place again while you're looking at it and it takes the hit:
+  // the Civic's windows crack (and give way) and its bumpers fall off; the
+  // MacBook's screen breaks, then it catches fire; the showroom glass
+  // cracks, spreads and comes down, which sets off the alarm (the ADT sign
+  // lights up, the lights flash, the police come), and a car hit through the
+  // broken glass goes off too. It all stays as you left it, even after a reload,
+  // until the menu's tow and repair.
+  const DKEY = 'sommiville-damage';
+  const fresh = () => ({ civ: { cr: D.civic.wins.map(() => []), sh: D.civic.wins.map(() => 0), fb: 0, rb: 0, dents: [] }, mac: 0, toy: 0, pts: [], cars: {}, police: 0 });
+  let dmg = fresh();
+  try { const j = JSON.parse(localStorage.getItem(DKEY) || 'null'); if (j && j.civ) dmg = Object.assign(fresh(), j); } catch (e) {}
+  const save = () => { try { localStorage.setItem(DKEY, JSON.stringify(dmg)); } catch (e) {} if (fixItem) fixItem.hidden = !damaged(); };
+  const damaged = () => dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || dmg.civ.cr.some((c) => c.length);
+  const localPt = (el, e) => { const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
+  const inPoly = (x, y, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) o = !o; } return o; };
+  const seeded = (n) => { let v = Math.abs(Math.floor(n * 9301 + 49297)) % 2147483646 + 1; return () => (v = (v * 16807) % 2147483647) / 2147483647; };
+  // A crack: rays out from where it was hit, each bending a little, and a
+  // broken ring around the middle.
+  const crack = (x, y, size, seed, cls = 'tw-crk') => {
+    const r = seeded(seed), n = 6 + Math.floor(r() * 4), ends = [];
+    let d = '';
+    for (let i = 0; i < n; i++) {
+      let a = (i / n) * Math.PI * 2 + r() * 0.6, px = x, py = y;
+      const L = size * (0.55 + r() * 0.6), segs = 2 + Math.floor(r() * 2);
+      d += `M${x.toFixed(2)} ${y.toFixed(2)}`;
+      for (let k = 1; k <= segs; k++) { a += (r() - 0.5) * 0.7; px += Math.cos(a) * L / segs; py += Math.sin(a) * L / segs; d += ` L${px.toFixed(2)} ${py.toFixed(2)}`; if (k === 1) ends.push([px, py]); }
+    }
+    ends.forEach(([ex, ey], i) => { if (r() < 0.75) { const [nx, ny] = ends[(i + 1) % ends.length]; d += ` M${ex.toFixed(2)} ${ey.toFixed(2)} L${nx.toFixed(2)} ${ny.toFixed(2)}`; } });
+    return `<path d="${d}" class="${cls}"/>`;
+  };
+  const NSel = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+  const refresh = (id) => { if (halos[id]) { halos[id].remove(); delete halos[id]; } if (lit === id) { lit = null; glow(id); } };
+
+  // The Civic
+  const civHot = hotOf('p-civic'), civG = $('.tw-civ-dmg', civHot), winG = $$('.tw-civ-win', civHot), dentG = $('.tw-civ-dents', civHot), bumpF = $('.tw-bump-f', civHot), bumpR = $('.tw-bump-r', civHot);
+  const drawCivic = () => {
+    const c = dmg.civ;
+    winG.forEach((g, i) => {
+      const w = D.civic.wins[i];
+      g.innerHTML = (c.sh[i] ? `<polygon points="${w.map((q) => q.join(',')).join(' ')}" class="tw-civ-hole"/>` + w.map(([x, y], k) => crack(x, y, 2.4, x * 7 + k, 'tw-crk tw-crk-edge')).join('') : '') + c.cr[i].map(([x, y]) => crack(x, y, 5.5, x * 13 + y, c.sh[i] ? 'tw-crk tw-crk-edge' : 'tw-crk')).join('');
+    });
+    dentG.innerHTML = c.dents.map(([x, y], k) => `<path d="M${(x - 1.6).toFixed(2)} ${(y + 0.4).toFixed(2)} q1.6 -1.6 3.2 0" class="tw-dent"/><path d="M${(x - 1).toFixed(2)} ${(y + 1.2).toFixed(2)} l2 -.2" class="tw-scuff" style="--k:${k}"/>`).join('');
+    bumpF.classList.toggle('off', !!c.fb);
+    bumpR.classList.toggle('off', !!c.rb);
+  };
+  // glass falling out of a window that gives way
+  const fallGlass = (poly) => {
+    const xs = poly.map((q) => q[0]), ys = poly.map((q) => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y1 = Math.max(...ys);
+    for (let i = 0; i < 9; i++) {
+      const x = x0 + Math.random() * (x1 - x0), y = y1 - Math.random() * 6;
+      const sh = NSel('path', { d: `M${x.toFixed(2)} ${y.toFixed(2)} l${(1 + Math.random() * 1.6).toFixed(2)} ${(-1 - Math.random()).toFixed(2)} l${(0.4 + Math.random()).toFixed(2)} ${(1.6 + Math.random()).toFixed(2)} z`, class: 'tw-fallshard', style: `--fx:${((Math.random() - 0.5) * 14).toFixed(1)}px;--fy:${(D.civic.ground - y + Math.random() * 3).toFixed(1)}px;--fr:${(Math.random() * 400 - 200).toFixed(0)}deg;animation-delay:${(Math.random() * 0.15).toFixed(2)}s` });
+      civG.appendChild(sh);
+      setTimeout(() => sh.remove(), 1600);
+    }
+  };
+  const pokeCivic = (e) => {
+    const q = localPt(civG, e), c = dmg.civ;
+    const inB = (b) => q.x >= b.x && q.x <= b.x + b.w && q.y >= b.y && q.y <= b.y + b.h;
+    if (!c.fb && inB(D.civic.fb)) c.fb = 1;
+    else if (!c.rb && inB(D.civic.rb)) c.rb = 1;
+    else {
+      const i = D.civic.wins.findIndex((w) => inPoly(q.x, q.y, w));
+      if (i >= 0) {
+        if (c.sh[i]) return;
+        c.cr[i].push([+q.x.toFixed(2), +q.y.toFixed(2)]);
+        if (c.cr[i].length >= 3) { c.sh[i] = 1; fallGlass(D.civic.wins[i]); }
+      } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
+      else return;
+    }
+    drawCivic(); save(); refresh('p-civic');
+  };
+
+  // The MacBook
+  const drawMac = () => { tw.classList.toggle('mac-lcd', dmg.mac >= 1); tw.classList.toggle('mac-fire', dmg.mac >= 2); };
+
+  // The showroom
+  const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
+  const SIZE = [0, 5, 13, 30];
+  const drawShowroom = (now) => {
+    const broke = dmg.toy >= 4;
+    crG.innerHTML = broke ? '' : dmg.pts.map(([x, y], k) => crack(x, y, SIZE[dmg.toy] * (k === dmg.pts.length - 1 ? 1 : 0.9), x * 3 + y * 5 + k, `tw-crk tw-crk-g lv${dmg.toy}`) + (dmg.toy >= 3 ? crack(x + 8, y - 6, 18, x + y, 'tw-crk tw-crk-g lv3') : '')).join('');
+    tw.classList.toggle('glass-broke', broke);
+    tw.classList.toggle('alarm', broke);
+    if (broke && now) tw.classList.add('shatter');
+    showcars.forEach((g) => { const on = !!dmg.cars[g.dataset.car]; g.classList.toggle('hit', on); g.classList.toggle('alarm', on); });
+    if (broke) {
+      if (dmg.police) tw.classList.add('police', 'police-here');
+      else { clearTimeout(drawShowroom.t); drawShowroom.t = setTimeout(() => { dmg.police = 1; save(); tw.classList.add('police'); }, 9000); }
+    } else { clearTimeout(drawShowroom.t); tw.classList.remove('police', 'police-here', 'shatter'); }
+  };
+  const pokeShowroom = (e) => {
+    const car = e.target.closest && e.target.closest('.tw-showcar');
+    if (dmg.toy >= 4) {
+      if (!car || dmg.cars[car.dataset.car]) return;
+      dmg.cars[car.dataset.car] = 1;
+    } else {
+      const q = localPt(crG, e);
+      // onto the nearest pane of glass
+      let best = null, bd = 1e9;
+      D.glass.forEach(([x, y, w, h]) => { const cx = clamp(q.x, x + 6, x + w - 6), cy = clamp(q.y, y + 6, y + h - 6), d = Math.hypot(cx - q.x, cy - q.y); if (d < bd) { bd = d; best = [cx, cy]; } });
+      dmg.pts.push(best.map((n) => +n.toFixed(1)));
+      dmg.toy++;
+    }
+    drawShowroom(true); save(); refresh('toyota');
+  };
+
+  function poke(id, e) {
+    if (id === 'p-civic') pokeCivic(e);
+    else if (id === 'p-macbook') { if (dmg.mac >= 2) return; dmg.mac++; drawMac(); save(); }
+    else if (id === 'toyota') pokeShowroom(e);
+  }
+  function repair() {
+    dmg = fresh(); save();
+    tw.classList.remove('glass-broke', 'alarm', 'police', 'police-here', 'shatter');
+    drawCivic(); drawMac(); drawShowroom(false);
+    ['p-civic', 'toyota'].forEach(refresh);
+  }
+  drawCivic(); drawMac(); drawShowroom(false);
+  if (fixItem) fixItem.hidden = !damaged();
 
   tw._bots = bots;
   tw._weather = setWeather;

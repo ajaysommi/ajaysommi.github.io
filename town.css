@@ -586,3 +586,113 @@
 .tw-p-steps b::before { content: counter(st) ". "; color: var(--tint); }
 .tw-p-steps span { font-size: 13px; line-height: 1.5; color: var(--ink-2); }
 .tw-p-quote { margin: -4px 0 16px; padding: 0 0 0 12px; border-left: 3px solid var(--tint); font: italic 500 15px/1.5 var(--font-sans); color: var(--ink); }
+
+/* ---------------------------------------------------------- round 5 */
+/* The bar's glyphs, matched to the moon: filled, the same weight. */
+.tw-pop [hidden] { display: none !important; }
+.tw-sh { display: grid; place-items: center; width: 18px; height: 18px; flex: none; }
+.tw-sh svg { width: 16px; height: 16px; }
+@media (min-width: 720px) {
+  header.nav #twWx svg { width: 27px; height: 27px; }
+  header.nav #twMenu .burger { width: 20px; gap: 4.2px; }
+  header.nav #twMenu .burger i { height: 2.8px; border-radius: 3px; }
+  header.nav #twMenu[aria-expanded="true"] .burger i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  header.nav #twMenu[aria-expanded="true"] .burger i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  html.classic header.nav .tw-classic-back svg { width: 26px; height: 26px; }
+}
+
+/* A photo opened from a card fills the window. */
+.tw-lightbox { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: 4vh 4vw; background: rgba(8, 9, 12, .9); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); cursor: zoom-out; animation: tw-lb .28s cubic-bezier(.2, .8, .2, 1); }
+.tw-lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 14px; object-fit: contain; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .8); animation: tw-lbi .38s cubic-bezier(.2, .8, .2, 1); }
+.tw-lightbox.out { opacity: 0; transition: opacity .2s; }
+.tw-lb-x { position: absolute; top: 18px; right: 18px; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(255, 255, 255, .25); border-radius: 50%; background: rgba(255, 255, 255, .08); color: #fff; cursor: pointer; }
+.tw-lb-x svg { width: 20px; height: 20px; }
+@keyframes tw-lb { from { opacity: 0; } }
+@keyframes tw-lbi { from { opacity: 0; transform: scale(.94); } }
+
+/* The home with the garage: warm siding, lit windows, a porch light. */
+.tw-housewall { fill: #d8c09b; } [data-theme="midnight"] .tw .tw-housewall, [data-theme="terminal"] .tw .tw-housewall { fill: #8f7a5c; }
+.tw-chimney { fill: #9a5440; stroke: var(--tw-line); stroke-width: 2; }
+.tw-sill { fill: #f3ead8; } .tw-planter { fill: #7a4a2a; }
+.tw-homedoor { fill: #7b2f26; stroke: var(--tw-line); stroke-width: 1.6; } .tw-knob { fill: #e9c46a; }
+.tw-porchlamp { fill: #ffe0a0; stroke: var(--tw-line); stroke-width: .8; }
+.tw-porchglow { opacity: .55; } [data-theme="midnight"] .tw .tw-porchglow, [data-theme="terminal"] .tw .tw-porchglow { opacity: 1; }
+.tw-gint { fill: #4a3b2e; }
+.tw-string { fill: none; stroke: #2a2c34; stroke-width: .6; }
+.tw-bulb2 { fill: #ffd885; animation: tw-twinkle 3s ease-in-out infinite; animation-delay: calc(var(--k) * -.37s); }
+@keyframes tw-twinkle { 50% { opacity: .55; } }
+.tw-bike { fill: none; stroke: #d9d2c4; stroke-width: 1.3; stroke-linecap: round; }
+.tw-rug { fill: #a3472c; opacity: .75; }
+.tw-adtsticker { cursor: pointer; }
+
+/* The Civic, damaged */
+.tw-crashbar { fill: #26282e; } .tw-crashbar-l { stroke: #5a5d66; stroke-width: .8; }
+.tw-bump { transform-box: fill-box; transition: transform .75s cubic-bezier(.6, 0, .45, 1.35); }
+.tw-bump-f { transform-origin: 0% 100%; } .tw-bump-r { transform-origin: 100% 100%; }
+.tw-bump-f.off { transform: translate(0, 3.6px) rotate(-80deg); }
+.tw-bump-r.off { transform: translate(0, 3.6px) rotate(80deg); }
+.tw-crk { fill: none; stroke: rgba(255, 255, 255, .9); stroke-width: .32; stroke-linecap: round; stroke-linejoin: round; }
+.tw-crk-edge { stroke: rgba(225, 238, 250, .8); stroke-width: .45; }
+.tw-civ-hole { fill: #121419; opacity: .92; }
+.tw-dent { fill: none; stroke: rgba(0, 0, 0, .55); stroke-width: .55; }
+.tw-scuff { stroke: rgba(255, 255, 255, .45); stroke-width: .35; }
+.tw-fallshard { fill: rgba(220, 236, 250, .95); transform-box: fill-box; transform-origin: center; animation: tw-fall 1.1s cubic-bezier(.5, 0, 1, .6) forwards; }
+@keyframes tw-fall { to { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); opacity: .2; } }
+
+/* The MacBook: a broken panel, then a fire */
+.tw-mac-lcd { opacity: 0; transition: opacity .15s; } .tw.mac-lcd .tw-mac-lcd { opacity: 1; }
+.tw-lcd-bleed { fill: rgba(40, 40, 60, .55); }
+.tw.mac-lcd .tw-mac-lcd rect[fill] { animation: tw-glitch 1.4s steps(2) infinite; }
+@keyframes tw-glitch { 50% { opacity: .35; } }
+.tw-lcd-crack { fill: none; stroke: #eef3f8; stroke-width: .2; stroke-linecap: round; }
+.tw-lcd-ink { fill: #000; opacity: .85; }
+.tw-mac-fire { opacity: 0; transition: opacity .3s; } .tw.mac-fire .tw-mac-fire { opacity: 1; }
+.tw-flame { fill: #ff8a1f; stroke: #ffd36b; stroke-width: .25; transform-box: fill-box; transform-origin: 50% 100%; animation: tw-flicker .32s ease-in-out infinite alternate; animation-delay: var(--d); }
+@keyframes tw-flicker { from { transform: scale(1, .82) skewX(-4deg); } to { transform: scale(.92, 1.12) skewX(5deg); } }
+.tw-fireglow { animation: tw-twinkle .5s ease-in-out infinite; }
+.tw-smoke-x { display: none; }
+.tw.mac-fire .tw-smoke-x { display: inline; fill: #55585e; opacity: 0; transform-box: fill-box; transform-origin: center; animation: tw-smoke2 2.4s ease-out infinite; animation-delay: var(--d); }
+@keyframes tw-smoke2 { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 15% { opacity: .75; } 100% { opacity: 0; transform: translate(var(--dx), -34px) scale(3.4); } }
+
+/* The showroom glass: cracks that spread, then it comes down */
+.tw-crk-g { stroke: rgba(255, 255, 255, .95); }
+.tw-crk-g.lv1 { opacity: .3; stroke-width: .3; } .tw-crk-g.lv2 { opacity: .6; stroke-width: .45; } .tw-crk-g.lv3 { opacity: .95; stroke-width: .6; }
+[data-theme="daylight"] .tw-crk-g, :root:not([data-theme]) .tw-crk-g { stroke: rgba(70, 90, 110, .9); }
+.tw-glassedge, .tw-shards { display: none; }
+.tw.glass-broke :is(.tw-glassover, .tw-shine) { display: none; }
+.tw.glass-broke .tw-glassedge { display: inline; fill: rgba(205, 228, 245, .55); stroke: rgba(255, 255, 255, .7); stroke-width: .5; }
+.tw.glass-broke .tw-shards { display: inline; }
+.tw-shard { fill: rgba(215, 235, 250, .9); stroke: rgba(120, 150, 175, .6); stroke-width: .3; }
+.tw.shatter .tw-shards { animation: tw-shardsin .6s cubic-bezier(.5, 0, 1, .6); }
+@keyframes tw-shardsin { from { transform: translateY(-40px); opacity: 0; } }
+.tw.glass-broke .tw-showcar { opacity: 1; }
+.tw-wscrack { fill: none; stroke: rgba(255, 255, 255, .95); stroke-width: .5; stroke-linecap: round; opacity: 0; }
+.tw-showcar.hit .tw-wscrack { opacity: 1; }
+.tw-showcar { cursor: pointer; }
+.tw-carlights { opacity: 0; } .tw-showcar.alarm .tw-carlights { opacity: 1; }
+/* hazards on while the headlights are off, and the other way round, never quite in step */
+.tw-showcar.alarm .tw-hzs { animation: tw-onoff 1s steps(1) infinite; }
+.tw-showcar.alarm .tw-heads { animation: tw-onoff 1.13s steps(1) infinite; animation-delay: -.52s; }
+@keyframes tw-onoff { 0% { opacity: 1; } 50% { opacity: 0; } }
+/* the alarm: strobes around the dealership, the ADT sign lit blue */
+.tw-strobes { opacity: 0; } .tw.alarm .tw-strobes { opacity: 1; }
+.tw-strobe { opacity: 0; } .tw-strobe.r { fill: rgba(255, 40, 40, .32); } .tw-strobe.b { fill: rgba(235, 242, 255, .4); }
+.tw-strobe-c.r { fill: #ff3030; } .tw-strobe-c.b { fill: #f4f8ff; } .tw-strobe-c { opacity: 0; }
+.tw.alarm :is(.tw-strobe, .tw-strobe-c) { animation: tw-strobe .7s steps(1) infinite; animation-delay: var(--d); }
+@keyframes tw-strobe { 0% { opacity: 1; } 18% { opacity: 0; } 30% { opacity: 1; } 45% { opacity: 0; } }
+.tw-adt-alarm { opacity: 0; transition: opacity .6s; }
+.tw.alarm .tw-adt-alarm { opacity: 1; animation: tw-adtpulse 2.2s ease-in-out infinite; }
+@keyframes tw-adtpulse { 50% { opacity: .65; } }
+.tw.alarm .tw-adtsign { filter: drop-shadow(0 0 3px #4aa8ff) drop-shadow(0 0 8px #1f6fd1) brightness(1.15); }
+/* the police */
+.tw-police { visibility: hidden; transform: translateX(1700px); }
+.tw.police .tw-police { visibility: visible; transform: none; transition: transform 6s cubic-bezier(.12, .55, .25, 1); }
+.tw.police-here .tw-police { transition: none; }
+.tw-pc-body { fill: #16181d; stroke: var(--tw-line); stroke-width: 1.2; }
+.tw-pc-door { fill: #f3f2ee; } .tw-pc-win { fill: #8fa6bb; } .tw-pc-pillar { stroke: #16181d; stroke-width: 2; }
+.tw-pc-t { font: 800 6px var(--font-sans); letter-spacing: .08em; fill: #16181d; }
+.tw-pc-head { fill: #fff6d0; } .tw-pc-tail { fill: #ff3b30; }
+.tw-pc-barbase { fill: #2a2c34; } .tw-pc-r { fill: #ff2b2b; } .tw-pc-b { fill: #2b6bff; }
+.tw-pc-gr { fill: rgba(255, 43, 43, .35); } .tw-pc-gb { fill: rgba(43, 107, 255, .35); }
+.tw-pc-r, .tw-pc-gr { animation: tw-onoff .5s steps(1) infinite; }
+.tw-pc-b, .tw-pc-gb { animation: tw-onoff .5s steps(1) infinite; animation-delay: -.25s; }

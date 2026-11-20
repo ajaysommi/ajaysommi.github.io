@@ -55,7 +55,8 @@
     p.classList.remove('enter'); void p.offsetWidth; p.classList.add('enter');
     clearTimeout(p._e); p._e = setTimeout(() => p.classList.remove('enter'), 1200);
   };
-  const fit = () => { const p = panels[cur]; if (p) pager.style.height = p.offsetHeight + 'px'; };
+  let jumping = 0;
+  const fit = () => { if (jumping) return; const p = panels[cur]; if (p) pager.style.height = p.offsetHeight + 'px'; };
   const placeInk = (f) => {
     const i = clamp(Math.floor(f), 0, btns.length - 1), j = clamp(i + 1, 0, btns.length - 1), t = f - i;
     const a = btns[i], b = btns[j];
@@ -71,24 +72,35 @@
     enter(panels[i]);
     fit();
   };
+  // Leaving the bar where it was found: the dock stays, the tabs sit just above it.
+  const nav = document.getElementById('siteNav');
+  const dock = () => { if (!phone.matches || !nav) return; const r = nav.getBoundingClientRect(); if (r.height) document.documentElement.style.setProperty('--mx-dock', Math.max(0, innerHeight - r.top) + 'px'); };
   let sraf = 0;
   pager.addEventListener('scroll', () => {
     cancelAnimationFrame(sraf);
-    sraf = requestAnimationFrame(() => { const f = pager.scrollLeft / W(); placeInk(f); select(Math.round(f)); });
+    // While a tapped tab slides into place, the panels it passes are left alone.
+    sraf = requestAnimationFrame(() => { if (jumping) return; const f = pager.scrollLeft / W(); placeInk(f); select(Math.round(f)); });
   }, { passive: true });
   const go = (i, smooth = true) => {
+    if (i === cur && !jumping) { const t = pager.getBoundingClientRect().top; if (t < 0) window.scrollTo({ top: t + scrollY - 8, behavior: reduced ? 'auto' : 'smooth' }); return; }
     tabs.classList.add('jump'); setTimeout(() => tabs.classList.remove('jump'), 460);
-    // From deep in a long panel, come back up to the tabs first.
+    // From deep in a long panel, start the new one at its top (at once: two
+    // smooth scrolls at the same time, down and across, are what stuttered).
     const top = pager.getBoundingClientRect().top;
-    if (top < 0) window.scrollTo({ top: top + scrollY - 8, behavior: reduced ? 'auto' : 'smooth' });
-    pager.scrollTo({ left: i * W(), behavior: smooth && !reduced ? 'smooth' : 'auto' });
+    if (top < 0) window.scrollTo({ top: top + scrollY - 8, behavior: 'auto' });
+    // Hold the height while the panels slide, then settle on the new one.
+    clearTimeout(jumping);
+    pager.style.height = Math.max(panels[cur].offsetHeight, panels[i].offsetHeight) + 'px';
+    jumping = setTimeout(() => { jumping = 0; fit(); }, smooth && !reduced ? 560 : 0);
     placeInk(i); select(i);
+    pager.scrollTo({ left: i * W(), behavior: smooth && !reduced ? 'smooth' : 'auto' });
   };
   btns.forEach((b, i) => b.addEventListener('click', () => go(i)));
   panels.forEach((p, k) => { p.inert = k !== 0; });
   if ('ResizeObserver' in window) new ResizeObserver(fit).observe(pager), panels.forEach((p) => new ResizeObserver(() => { if (p === panels[cur]) fit(); }).observe(p));
-  addEventListener('resize', () => { pager.scrollLeft = cur * W(); placeInk(cur); fit(); });
-  requestAnimationFrame(() => { placeInk(0); fit(); });
+  addEventListener('resize', () => { pager.scrollLeft = cur * W(); placeInk(cur); fit(); dock(); });
+  requestAnimationFrame(() => { placeInk(0); fit(); dock(); });
+  setTimeout(dock, 1500);
 
   /* Bring a tab into view from anywhere: scrolled to, then switched. */
   const TAB = { experience: 0, education: 0, projects: 1, offclock: 2, skills: 3, recs: 4 };
@@ -349,7 +361,7 @@
      on the path the stop nearest the middle of the screen lights up. */
   const hero = $('.mx-hero', mx);
   const stops = $$('.mx-stop', mx);
-  const rvs = [...$$('.mx-eras, .mx-contact > *, .mx-foot', mx)];
+  const rvs = [...$$('.mx-contact > *, .mx-foot', mx)];
   rvs.forEach((el, i) => { el.setAttribute('data-rv', ''); });
   $$('.mx-contact > *', mx).forEach((el, i) => el.style.setProperty('--rd', Math.min(i, 5)));
   if ('IntersectionObserver' in window && !reduced) {
@@ -363,7 +375,7 @@
     const vh = innerHeight;
     if (hero && !reduced) hero.style.setProperty('--p', clamp(scrollY / (vh * 0.75), 0, 1).toFixed(3));
     const pr = pager.getBoundingClientRect();
-    document.documentElement.classList.toggle('mx-tabbed', pr.top < vh * 0.55 && pr.bottom > vh * 0.62);
+    document.documentElement.classList.toggle('mx-tabbed', pr.top < vh * 0.55 && pr.bottom > vh * 0.3);
     if (cur === 0) {
       let best = null, bd = 1e9;
       for (const s of stops) { const r = s.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) continue; const d = Math.abs(r.top + r.height / 2 - vh * 0.48); if (d < bd) { bd = d; best = s; } }

@@ -45,7 +45,7 @@ const WORLD = 5480 - EAST;
 const HOME = 2850 - EAST;   // the visitor center, where the street starts
 const OFF = { edu: 170, fics: 230, shiva: 230, rjax: 330, toyota: 700, hunter: 700, adt: 700, vc: -EAST, tm: -EAST };
 // The truck waits a little way up the street and backs in once you get near.
-const TRUCK_WAIT = 280;
+const TRUCK_WAIT = 110;
 
 /* What each place is, for anyone who hasn't heard of it. */
 const ABOUT = {
@@ -74,7 +74,7 @@ const BENCH = [
   { id: 'p-drive', name: 'Hard drive', tint: '#64748b', step: [1], title: 'The dead hard drive', zoom: [3821, 418, 120, 66], pin: [3881, 453] },
   { id: 'p-iron', name: 'Pencil iron', tint: '#f59e0b', step: [2], title: 'The homemade soldering iron', zoom: [3856, 418, 120, 66], pin: [3916, 453] },
   { id: 'p-lid', name: 'Auto lid', tint: '#14b8a6', step: [5, 6], title: 'The self opening toilet lid', zoom: [3900, 418, 120, 66], pin: [3960, 450] },
-  { id: 'p-oldlap', name: 'Old laptop', tint: '#475569', step: [4], title: 'The smallest OS I could find', zoom: [3936, 418, 120, 66], pin: [3996, 449] },
+  { id: 'p-oldlap', name: 'Old laptop', tint: '#475569', step: [4], badge: 'Try', role: 'Off the clock · an experiment, just for fun', title: 'The smallest OS I could find', zoom: [3936, 418, 120, 66], pin: [3996, 449] },
   { id: 'p-dehum', name: 'Dehumidifier', tint: '#38bdf8', step: [3], title: 'Why did the dehumidifier stop?', zoom: [3971, 418, 120, 66], pin: [4031, 438] }
 ];
 /* Then the software, one lot each. PLACEHOLDERS: each lot is a stand-in
@@ -99,13 +99,13 @@ const SPOT = {
   rjax: { zoom: null, pin: null },
   rfa: { zoom: null, pin: null },
   edu: { zoom: [6, 480, 270, 110], pin: [120, 520] },
-  jm: { zoom: [540, 372, 210, 120], pin: [604, 420] },
+  jm: { zoom: [400, 250, 560, 290], pin: [604, 420] },
   toyota: { zoom: [456, 200, 450, 290], pin: [640, 230] },
   hunter: { zoom: [902, 330, 236, 160], pin: [1020, 360] },
   fics: { zoom: [8, 250, 128, 236], pin: [70, 296] },
   adt: { zoom: [548, 334, 110, 180], pin: [610, 424] },
   vc: { zoom: [2560, 280, 580, 230], pin: [2960, 290] },
-  tm: { zoom: [3320, 330, 140, 170], pin: [3390, 344] },
+  tm: { zoom: [5330, 400, 120, 100], pin: null },
   ...Object.fromEntries(BENCH.map((p) => [p.id, { zoom: p.zoom, pin: p.pin }])),
   ...Object.fromEntries(PROJECTS.map((p) => [p.id, { zoom: [p.x - 16, 330, 202, 186], pin: [p.x + 85, 360] }]))
 };
@@ -126,7 +126,13 @@ const roles = P.experience.map((e) => ({
 }));
 const E = P.education;
 roles.push({ id: 'edu', org: E.school, short: 'UF', role: `${E.degree}, ${E.college}`, when: E.when, where: 'Gainesville, FL', year: 2026, text: E.text, about: '', stats: [], tags: E.tags, photos: [], logo: null, gator: E.logo, tint: TINT.edu, school: true });
-roles.push({ id: 'vc', org: 'Sommiville Visitor Center', short: 'Visitor center', badge: 'Hi', role: `${P.name}, ${P.title}`, when: 'University of Florida, Class of 2026', where: 'Florida', text: P.about.join(' '), quote: P.quote, about: '', stats: [['2006', 'my first time at the family computer'], ['200k', 'miles on the Civic I keep fixing myself'], ['UF ’26', 'B.S. in Computer Science']], tags: [], photos: [big(P.photo), 'assets/images/offclock/kid-2006-640.webp'], logo: null, tint: TINT.vc, ph: 'Add more personal photos and a few lines about life outside work: hobbies, family, where I grew up, favourite places.', go: [['Classic portfolio', 'classic.html'], ['Résumé', 'resume.html'], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Email', 'mailto:' + P.email]] });
+const HELLO = [
+  'Hi, I’m Ajay. Thanks for stopping by, and make yourself at home.',
+  'I’m a software engineer finishing my Computer Science degree at the University of Florida. I like figuring out how things work, whether that’s a big codebase, an old laptop nobody wanted, or the Civic sitting in my garage down the street.',
+  'Head left and you’ll pass every place I’ve worked, from a student robotics team to internships at Toyota, JM Family, Hunter and ADT. Head right for the things I’ve built and fixed on my own time. Wander around and click whatever catches your eye.',
+  'And if anything here makes you want to talk, the door’s always open.'
+].join(' ');
+roles.push({ id: 'vc', org: 'Welcome to Sommiville', short: 'Visitor center', badge: 'Hi', role: `${P.name} · ${P.title}`, when: 'University of Florida, Class of 2026', where: '', text: HELLO, quote: P.quote, about: '', stats: [], tags: [], photos: [big(P.photo), 'assets/images/offclock/kid-2006-640.webp'], logo: null, tint: TINT.vc, ph: 'Add more personal photos and a few lines about life outside work: hobbies, family, where I grew up, favourite places.', go: [['Classic portfolio', 'classic.html'], ['Résumé', 'resume.html'], ['GitHub', P.github], ['LinkedIn', P.linkedin], ['Email', 'mailto:' + P.email]] });
 roles.push({ id: 'tm', org: 'Time machine', short: 'Time machine', badge: '1977', role: '', when: '', where: '', text: '', about: '', stats: [], tags: [], photos: [], logo: null, tint: TINT.tm, special: true });
 const stepsOf = (list) => list.map(([f, t, c]) => [big(f), t, c]);
 BENCH.forEach((p) => {
@@ -135,7 +141,7 @@ BENCH.forEach((p) => {
   else if (p.id === 'p-macbook') roles.push({ ...base, org: OC.macbook.title, role: 'Off the clock · my 2011 MacBook Pro', text: OC.macbook.lede, steps: stepsOf(OC.macbook.steps) });
   else {
     const st = p.step.map((k) => EL[k]);
-    roles.push({ ...base, org: p.title, role: 'Off the clock · learning electronics', about: OC.electronics.lede, text: st.map((x) => x[2]).join(' '), photos: st.map((x) => big(x[0])) });
+    roles.push({ ...base, badge: p.badge || base.badge, org: p.title, role: p.role || 'Off the clock · learning electronics', about: OC.electronics.lede, text: st.map((x) => x[2]).join(' '), photos: st.map((x) => big(x[0])) });
   }
 });
 PROJECTS.forEach((p) => {
@@ -171,6 +177,10 @@ const lot = (p) => hot(p.id, `
       <text x="${p.x + 85}" y="503" class="tw-ph-note" text-anchor="middle">TODO: draw ${esc(p.name.toLowerCase())}</text>
     </g>`);
 
+/* A tiny "secured by ADT" sticker, on the doors around town. They light
+   up with ADT's stop, and clicking one opens it. */
+const sticker = (x, y, w = 9) => `<image href="assets/images/town/adt-sticker.webp" x="${x}" y="${y}" width="${w}" height="${(w / 2.79).toFixed(2)}" class="tw-adtsticker"/>`;
+
 /* A pine, for the woods behind the visitor center. */
 const pine = (x, base, h) => { const w = h * 0.42; return `<g class="tw-pine"><rect x="${x - 3}" y="${base - h * 0.14}" width="6" height="${h * 0.14}" class="tw-trunk-f"/>${[0, 1, 2, 3].map((k) => { const top = base - h + k * h * 0.2, bw = w * (0.45 + k * 0.2); return `<path d="M${x} ${top} L${x + bw / 2} ${top + h * 0.34} H${x - bw / 2} Z" class="${k % 2 ? 'tw-pine2' : 'tw-pine1'}"/>`; }).join('')}</g>`; };
 
@@ -194,7 +204,7 @@ const visitorCenter = () => {
       <rect x="2814" y="420" width="72" height="50" rx="2" fill="url(#twVcGlass)"/><path d="M2838 420 V470 M2862 420 V470 M2814 445 H2886" class="tw-mull"/>
       <rect x="3032" y="416" width="78" height="30" rx="2" class="tw-vcplaque"/>
       <text x="3071" y="429" class="tw-vcplaque-t" text-anchor="middle">WELCOME</text><text x="3071" y="441" class="tw-vcplaque-t" text-anchor="middle">CENTER</text>
-      <rect x="3036" y="452" width="70" height="22" rx="2" fill="url(#twVcGlass)"/><path d="M3071 452 V474" class="tw-mull"/>
+      <rect x="3036" y="452" width="70" height="22" rx="2" fill="url(#twVcGlass)"/><path d="M3071 452 V474" class="tw-mull"/>${sticker(3092, 455)}
       <path d="M${VC.l - 14} ${VC.eave + 6} L${VC.c} ${VC.apex - 4} L${VC.r + 14} ${VC.eave + 6} L${VC.r + 6} ${VC.eave + 10} L${VC.c} ${VC.apex + 10} L${VC.l - 6} ${VC.eave + 10} Z" class="tw-vcroof"/>
       <path d="M${VC.l - 14} ${VC.eave + 6} L${VC.c} ${VC.apex - 4} L${VC.r + 14} ${VC.eave + 6}" class="tw-vcfascia"/>
       <rect x="${VC.l - 12}" y="486" width="${VC.r - VC.l + 24}" height="9" class="tw-vcdeck"/>
@@ -240,20 +250,47 @@ CV.u = CV.w / 900; CV.h = 364 * CV.u; CV.y = CV.ground - CV.h;
 const cv = (px, py) => [CV.x + px * CV.u, CV.y + py * CV.u];
 const HOOD = [[30.4, 193.7], [67.2, 172.2], [106.4, 158.4], [153.0, 148.6], [187.4, 141.7], [215.8, 144.7], [218.7, 160.4], [153.0, 168.2], [104.0, 177.1], [65.7, 187.8], [41.2, 199.6]].map(([x, y]) => cv(x, y));
 const HINGE = cv(217.3, 150), HOOD_UP = 58;
+// The bumpers (cut out of the picture, civic-fbump / civic-rbump) and the windows, for the damage.
+const box = (x0, y0, x1, y1) => { const [x, y] = cv(x0, y0), [X, Y] = cv(x1, y1); return { x, y, w: X - x, h: Y - y }; };
+const FB = box(0, 224, 113, 341), RB = box(797, 215, 900, 341);
+const WINS = [
+  [[218, 148], [300, 108], [372, 78], [388, 82], [330, 122], [266, 150]],
+  [[322, 150], [352, 106], [400, 82], [505, 72], [490, 150]],
+  [[525, 72], [600, 72], [665, 85], [672, 148], [512, 150]],
+  [[676, 100], [700, 112], [708, 148], [680, 148]]
+].map((w) => w.map(([x, y]) => cv(x, y).map((n) => +n.toFixed(2))));
 // where the hood's front edge ends up, open, for the prop rod
 const hoodTip = (() => { const [x, y] = HOOD[0], [hx, hy] = HINGE, a = HOOD_UP * Math.PI / 180; return [hx + (x - hx) * Math.cos(a) - (y - hy) * Math.sin(a), hy + (x - hx) * Math.sin(a) + (y - hy) * Math.cos(a)]; })();
+const home = () => `
+    <rect x="3486" y="262" width="14" height="40" class="tw-chimney"/>
+    <rect x="3446" y="330" width="92" height="156" class="tw-housewall tw-fo"/>
+    <path d="M3436 338 L3492 288 L3548 338 L3542 342 L3492 296 L3442 342 Z" class="tw-shingle"/>
+    ${[[3456, 350], [3504, 350]].map(([x, y]) => `<rect x="${x}" y="${y}" width="24" height="26" rx="2" fill="url(#twVcGlass)" class="tw-homewin"/><path d="M${x + 12} ${y} V${y + 26} M${x} ${y + 13} H${x + 24}" class="tw-mull"/><rect x="${x - 3}" y="${y + 26}" width="30" height="3" rx="1" class="tw-sill"/>`).join('')}
+    <rect x="3454" y="410" width="32" height="30" rx="2" fill="url(#twVcGlass)" class="tw-homewin"/><path d="M3470 410 V440 M3454 425 H3486" class="tw-mull"/>
+    <rect x="3452" y="440" width="36" height="6" rx="2" class="tw-planter"/><circle cx="3459" cy="438" r="4" class="tw-leaf"/><circle cx="3470" cy="437" r="5" class="tw-leaf2"/><circle cx="3481" cy="438" r="4" class="tw-leaf"/>
+    <rect x="3500" y="434" width="26" height="52" rx="2" class="tw-homedoor"/><circle cx="3521" cy="461" r="1.4" class="tw-knob"/>
+    <rect x="3504" y="440" width="18" height="10" rx="1" fill="url(#twVcGlass)"/>${sticker(3504, 452, 7)}
+    <circle cx="3513" cy="420" r="14" fill="url(#twVcLight)" class="tw-porchglow"/><rect x="3510" y="418" width="6" height="8" rx="1.5" class="tw-porchlamp"/>
+    <rect x="3496" y="486" width="34" height="5" class="tw-vcstep"/>
+    <path d="M3500 491 h26 l8 113 h-42 z" class="tw-walk"/>`;
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);
   return `
+    ${home()}
     <rect x="3536" y="374" width="238" height="112" class="tw-house tw-fo"/>
     <path d="M3526 378 L3655 326 L3784 378 L3776 382 L3655 334 L3534 382 Z" class="tw-shingle"/>
     <rect x="3566" y="400" width="178" height="86" class="tw-gint"/>
     <rect x="3566" y="400" width="178" height="86" fill="url(#twGarageLight)" class="tw-glight"/>
     <rect x="3640" y="402" width="30" height="3" rx="1.5" class="tw-lamp"/>
+    <path d="M3568 409 Q3590 416 3612 409 Q3634 416 3656 409 Q3678 416 3700 409 Q3722 416 3742 409" class="tw-string"/>
+    ${[3576, 3590, 3604, 3620, 3634, 3648, 3664, 3678, 3692, 3708, 3722, 3736].map((x, k) => `<circle cx="${x}" cy="${(411.5 + Math.sin(k * 1.4) * 1.6).toFixed(1)}" r="1.5" class="tw-bulb2" style="--k:${k}"/>`).join('')}
     <path d="M3574 432 H3626 M3574 454 H3626 M3690 430 H3738" class="tw-shelf"/>
     <rect x="3578" y="420" width="12" height="12" class="tw-box"/><rect x="3594" y="424" width="16" height="8" class="tw-box"/><rect x="3584" y="444" width="20" height="10" class="tw-box"/>
-    <rect x="3700" y="420" width="10" height="10" class="tw-box"/><rect x="3716" y="452" width="22" height="34" rx="2" class="tw-toolbox"/><path d="M3716 462 H3738 M3716 472 H3738" class="tw-toolbox-l"/>
+    <g class="tw-bike"><circle cx="3700" cy="452" r="7"/><circle cx="3724" cy="452" r="7"/><path d="M3700 452 L3710 440 H3722 L3724 452 M3710 440 L3714 452 H3724 M3708 436 h5 M3721 437 l2 -3"/></g>
+    <rect x="3700" y="420" width="10" height="10" class="tw-box"/><rect x="3716" y="420" width="12" height="8" rx="1" class="tw-jar"/>
+    <rect x="3592" y="470" width="64" height="14" rx="3" class="tw-rug"/>
     <rect x="3562" y="396" width="186" height="8" rx="1" class="tw-gdoor"/><path d="M3562 400 H3748" class="tw-gdoor-l"/>
+    ${sticker(3750, 420, 8)}
     <path d="M3566 486 H3744 L3770 604 H3540 Z" class="tw-drive"/>
     ${hot('p-civic', `
     <g>
@@ -265,7 +302,10 @@ const garage = () => {
         <path d="M${(CV.x + 7).toFixed(1)} ${(hy + 6).toFixed(1)} L${(hoodTip[0] + 2).toFixed(1)} ${(hoodTip[1] + 1.2).toFixed(1)}" class="tw-prop"/>
       </g>
       <ellipse cx="${CV.x + CV.w / 2}" cy="${CV.ground}" rx="${CV.w * 0.46}" ry="3" class="tw-carshadow"/>
-      <image href="assets/images/town/civic-body.webp" x="${CV.x}" y="${CV.y.toFixed(2)}" width="${CV.w}" height="${CV.h.toFixed(2)}" preserveAspectRatio="none"/>
+      ${[FB, RB].map((b) => `<rect x="${(b.x + b.w * 0.08).toFixed(2)}" y="${(b.y + b.h * 0.18).toFixed(2)}" width="${(b.w * 0.84).toFixed(2)}" height="${(b.h * 0.6).toFixed(2)}" rx="1" class="tw-crashbar"/><path d="M${(b.x + b.w * 0.1).toFixed(2)} ${(b.y + b.h * 0.34).toFixed(2)} h${(b.w * 0.8).toFixed(2)}" class="tw-crashbar-l"/>`).join('')}
+      <image href="assets/images/town/civic-body2.webp" x="${CV.x}" y="${CV.y.toFixed(2)}" width="${CV.w}" height="${CV.h.toFixed(2)}" preserveAspectRatio="none"/>
+      ${[['f', FB], ['r', RB]].map(([k, b]) => `<g class="tw-bump tw-bump-${k}"><image href="assets/images/town/civic-${k}bump.webp" x="${b.x.toFixed(2)}" y="${b.y.toFixed(2)}" width="${b.w.toFixed(2)}" height="${b.h.toFixed(2)}" preserveAspectRatio="none"/></g>`).join('')}
+      <g class="tw-civ-dmg">${WINS.map((w, i) => `<g clip-path="url(#twCivWin${i})" class="tw-civ-win" data-w="${i}"></g>`).join('')}<g class="tw-civ-dents"></g></g>
       <g transform="translate(${hx.toFixed(2)} ${hy.toFixed(2)})"><g class="tw-civ-hood" style="transform-origin:${((217.3 - 39.237) / 180 * 100).toFixed(1)}% ${((150 - 143.706) / 56 * 100).toFixed(1)}%;--up:${HOOD_UP}deg"><path d="M${HOOD.slice(6).map(([x, y]) => `${(x - hx).toFixed(2)} ${(y - hy).toFixed(2)}`).join(' L')}" class="tw-hood-under"/><image href="assets/images/town/civic-hood.webp" x="${(ix - hx).toFixed(2)}" y="${(iy - hy).toFixed(2)}" width="${(180 * CV.u).toFixed(2)}" height="${(56 * CV.u).toFixed(2)}" preserveAspectRatio="none"/></g></g>
       <g class="tw-night tw-nohit"><polygon points="${cv(70, 190)} ${cv(70, 200)} ${(CV.x - 56).toFixed(1)},${(cv(70, 200)[1] + 18).toFixed(1)} ${(CV.x - 56).toFixed(1)},${(cv(70, 190)[1] - 6).toFixed(1)}" fill="url(#twHead)"/><circle cx="${cv(60, 196)[0].toFixed(1)}" cy="${cv(60, 196)[1].toFixed(1)}" r="5" fill="url(#twBulb)"/></g>
     </g>`)}
@@ -294,9 +334,15 @@ const bench = () => `
     <rect x="3794" y="494" width="262" height="3" class="tw-benchleg"/>
     ${hot('p-macbook', `<g>
       <image href="assets/images/town/macbook.webp" x="3806" y="455.7" width="22" height="12.3" preserveAspectRatio="none"/>
-      <g transform="translate(3817 465.6) rotate(-12)" class="tw-spanner"><rect x="-5.2" y="-.55" width="10.4" height="1.1" rx=".5"/><path d="M5 -1.7 a1.9 1.9 0 1 1 0 3.4 l.9 -1.05 v-1.3 z"/><circle cx="-5.4" cy="0" r="1.45"/><circle cx="-5.4" cy="0" r=".6" class="tw-spanner-h"/></g>
+      <g class="tw-mac-lcd" clip-path="url(#twMacScr)">
+        <rect x="3808.6" y="456.4" width="16.8" height="10.1" class="tw-lcd-bleed"/>
+        ${[[3810, '#ff2bd6'], [3811.2, '#29f0ff'], [3816.5, '#3dff6e'], [3821, '#fff'], [3823.4, '#ff2bd6']].map(([x, c]) => `<rect x="${x}" y="456.4" width=".5" height="10.1" fill="${c}"/>`).join('')}
+        <path d="M3818 461 l-3.4 -4.6 M3818 461 l5.2 -3 M3818 461 l6 2.6 M3818 461 l-1 5.5 M3818 461 l-6.6 3.2 M3818 461 l-7 -1.6 M3815.8 458 l2.4 -.6 M3821.6 459.4 l.6 2.2 M3813.6 462.4 l1.4 2" class="tw-lcd-crack"/>
+        <circle cx="3818" cy="461" r="1.6" class="tw-lcd-ink"/>
+      </g>
+      <g class="tw-mac-fire tw-nohit">${[[3812, 1], [3817.5, 1.35], [3823, 1.1]].map(([x, k], i) => `<path d="M${x} 466 c-2.4 -1.4 -2.6 -4 -1 -6.2 c.2 1.4 1 2 1.6 2.2 c-.4 -2.6 .6 -4.8 2.6 -6.2 c-.6 2.2 .4 3.8 1.4 4.8 c.6 -1 .7 -2 .5 -3 c1.8 2.4 1.8 5.6 -.6 8.4 z" transform="translate(${x} 466) scale(${k}) translate(${-x} -466)" class="tw-flame" style="--d:${(-i * 0.23).toFixed(2)}s"/>`).join('')}<circle cx="3818" cy="462" r="9" fill="url(#twFireGlow)" class="tw-fireglow"/></g>
     </g>`)}
-    <g class="tw-smoke" aria-hidden="true">${[0, 1, 2].map((k) => `<circle cx="${3815 + k * 2.6}" cy="455" r="${1.6 + k * 0.3}" style="--d:${(-k * 0.8).toFixed(1)}s;--dx:${k % 2 ? -3 : 3}px"/>`).join('')}</g>
+    <g class="tw-smoke" aria-hidden="true">${[0, 1, 2].map((k) => `<circle cx="${3815 + k * 2.6}" cy="455" r="${1.6 + k * 0.3}" style="--d:${(-k * 0.8).toFixed(1)}s;--dx:${k % 2 ? -3 : 3}px"/>`).join('')}${[0, 1, 2, 3, 4].map((k) => `<circle class="tw-smoke-x" cx="${3810 + k * 4}" cy="452" r="${2.2 + (k % 2)}" style="--d:${(-k * 0.5).toFixed(1)}s;--dx:${k % 2 ? -5 : 5}px"/>`).join('')}</g>
     ${hot('p-lcd', `<g>
       <rect x="3840" y="464" width="20" height="4" rx="1" class="tw-pcb"/>
       <rect x="3842" y="451" width="16" height="12" rx="1" class="tw-lcdcase"/><rect x="3843.5" y="453" width="13" height="7" class="tw-lcd"/>
@@ -338,9 +384,14 @@ const showroom = (x, y, w, h, cars) => {
       ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${fy} ${cx - 44},${fy}" class="tw-spotcone" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
       <rect x="${x}" y="${fy}" width="${w}" height="8" class="tw-showfloor"/>
       ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
-      ${cars.map((c) => `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/><g class="tw-showcar">` + pic(c.f, c.cx - c.w / 2, fy + 3 - c.w * 0.72, c.w, c.w * 0.72) + bow(c.cx, fy + 3 - c.w * 0.72 * 0.6, c.w * 0.5) + '</g>').join('')}
+      ${cars.map((c) => { const y0 = fy + 3 - c.w * 0.72, H = c.w * 0.72, at = (fx, fy2) => [(c.cx - c.w / 2 + c.w * fx).toFixed(1), (y0 + H * fy2).toFixed(1)]; const [l1, l2, h1, h2, ws] = [at(.22, .48), at(.78, .48), at(.09, .47), at(.91, .47), at(.36, .16)];
+        return `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/><g class="tw-showcar" data-car="${c.f}">` + pic(c.f, c.cx - c.w / 2, y0, c.w, H) + bow(c.cx, fy + 3 - c.w * 0.72 * 0.6, c.w * 0.5)
+          + `<path d="M${ws[0]} ${ws[1]} l-5 -3.4 M${ws[0]} ${ws[1]} l6 -4 M${ws[0]} ${ws[1]} l9 1.6 M${ws[0]} ${ws[1]} l-7 2.4 M${ws[0]} ${ws[1]} l2 5 M${ws[0]} ${ws[1]} l12 -2.6" class="tw-wscrack"/>`
+          + `<g class="tw-carlights tw-nohit"><g class="tw-heads">${[l1, l2].map(([a, b]) => `<circle cx="${a}" cy="${b}" r="9" fill="url(#twLedBulb)"/>`).join('')}</g><g class="tw-hzs">${[h1, h2].map(([a, b]) => `<circle cx="${a}" cy="${b}" r="7" fill="url(#twHaz)"/>`).join('')}</g></g></g>`; }).join('')}
       <rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-glassover"/>
-      <path d="M${x + 14} ${y + 8} l-12 ${Math.round(h * 0.4)} M${x + w * 0.42} ${y + 8} l-22 ${Math.round(h * 0.7)}" class="tw-shine"/>`;
+      <path d="M${x + 14} ${y + 8} l-12 ${Math.round(h * 0.4)} M${x + w * 0.42} ${y + 8} l-22 ${Math.round(h * 0.7)}" class="tw-shine"/>
+      <path d="M${x} ${y} l7 0 l-4 10 l6 6 l-9 7 Z M${x + w} ${y} l-10 0 l5 8 l-6 9 l11 4 Z M${x} ${y + h - 8} l0 -16 l8 8 l5 8 Z M${x + w} ${y + h - 8} l0 -12 l-9 6 l-3 6 Z M${x + w * 0.4} ${y} l12 0 l-5 9 Z" class="tw-glassedge"/>
+      <g class="tw-shards">${Array.from({ length: Math.round(w / 9) }, (_, i) => { const sx = x + 4 + i * 9 + (i * 37 % 5), sy = y + h + 2 + (i * 13 % 7); return `<path d="M${sx} ${sy} l${2 + i % 3} -1.6 l1 ${1.4 + i % 2} z" class="tw-shard"/>`; }).join('')}</g>`;
 };
 
 // Stars: scattered at random (the same random every build), each with its own size and slow breath.
@@ -386,6 +437,13 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <linearGradient id="twVcGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a1"/><stop offset=".6" stop-color="#f7b867"/><stop offset="1" stop-color="#e48f45"/></linearGradient>
     <radialGradient id="twVcLight"><stop offset="0" stop-color="#ffc977" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
     <linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
+    <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twFireGlow"><stop offset="0" stop-color="#ffb347" stop-opacity=".8"/><stop offset="1" stop-color="#ff5a1f" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twBar"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".3" stop-color="currentColor" stop-opacity=".8"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></radialGradient>
+    <clipPath id="twShowGlass"><rect x="462" y="342" width="100" height="140"/><rect x="658" y="356" width="232" height="126"/></clipPath>
+    <clipPath id="twMacScr"><rect x="3808.6" y="456.4" width="16.8" height="10.1"/></clipPath>
+    ${WINS.map((w, i) => `<clipPath id="twCivWin${i}"><polygon points="${w.map((p) => p.join(',')).join(' ')}"/></clipPath>`).join('')}
     <linearGradient id="twDayInt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ead8"/><stop offset="1" stop-color="#ddd0b6"/></linearGradient>
     ${Object.entries(TINT).map(([id, c]) => `<filter id="twGlow-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="3.6" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="2.4"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twHalo-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="3.6" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="2.4"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".95"/><feComposite in2="b" operator="in"/></filter>`).join('')}
   </defs>
@@ -448,7 +506,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-shield"><path d="M1078 260 l9 3 v7 q0 7 -9 11 q-9 -4 -9 -11 v-7 z" fill="#22c55e"/><path d="M1074 270 l3 3 l5 -6" class="tw-tick"/></g>
       </g>
       <rect x="24" y="406" width="40" height="30" rx="2" class="tw-win"/><rect x="78" y="406" width="40" height="30" rx="2" class="tw-win"/>
-      <rect x="54" y="446" width="34" height="38" rx="2" class="tw-door"/>
+      <rect x="54" y="446" width="34" height="38" rx="2" class="tw-door"/>${sticker(74, 452)}
       <g class="tw-dish-g" transform="translate(44 300)">
         <rect x="-3" y="-16" width="6" height="16" class="tw-pole"/>
         <g class="tw-dish" transform="translate(0 -16)"><path d="M-22 -14 q22 22 44 0 z" class="tw-dishface"/><path d="M0 -6 l0 -16" class="tw-feed"/><circle cx="0" cy="-24" r="3" class="tw-led-on"/>
@@ -485,9 +543,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <text x="886" y="334" class="tw-sommi" text-anchor="end">SOMMIVILLE</text>
       <rect x="652" y="350" width="244" height="132" class="tw-portal"/>
       ${showroom(658, 356, 232, 126, [{ f: 'car-bronze-front', cx: 702, w: 60 }, { f: 'car-white-front', cx: 846, w: 58 }])}
+      <g class="tw-cracks" clip-path="url(#twShowGlass)"></g>
       <rect x="752" y="388" width="48" height="94" class="tw-pillar tw-fo"/>
       <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo"/>
-      <rect x="760" y="426" width="32" height="56" class="tw-doorglass"/><path d="M776 426 V482" class="tw-mullp"/>
+      <rect x="760" y="426" width="32" height="56" class="tw-doorglass"/><path d="M776 426 V482" class="tw-mullp"/>${sticker(779, 432)}
 
       <rect x="904" y="284" width="234" height="12" rx="3" class="tw-roofcap"/>
       <rect x="904" y="294" width="230" height="188" class="tw-facade2 tw-fo"/>
@@ -495,6 +554,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="904" y="330" width="230" height="8" class="tw-red"/>
       <rect x="914" y="344" width="210" height="138" rx="3" class="tw-bay"/>
       <rect x="914" y="344" width="210" height="6" class="tw-baylight"/>
+      <g class="tw-strobes tw-nohit">${[[470, 328], [600, 210], [760, 210], [868, 210], [960, 288], [1110, 288], [776, 390]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="16" class="tw-strobe ${i % 2 ? 'b' : 'r'}" style="--d:${(i * 0.13).toFixed(2)}s"/><circle cx="${x}" cy="${y}" r="3" class="tw-strobe-c ${i % 2 ? 'b' : 'r'}" style="--d:${(i * 0.13).toFixed(2)}s"/>`).join('')}</g>
     </g>`)}
 
     ${hot('hunter', `
@@ -531,8 +591,9 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- 2026, ADT: its sign in the hedge in front of the dealership's wall, and
          its camera up at the roofline looking down over it. -->
     <g transform="translate(${OFF.adt} 0)">
-      <image href="assets/images/town/adt-sign.webp?v=2" x="584" y="430" width="48" height="78" preserveAspectRatio="xMidYMax meet"/>
-      ${bush(612, 514, 1.05)}
+      <g class="tw-adt-alarm tw-nohit"><ellipse cx="608" cy="512" rx="70" ry="16" fill="url(#twAdtPool)"/><circle cx="608" cy="452" r="46" fill="url(#twAdtGlow)"/></g>
+      <image href="assets/images/town/adt-sign.webp?v=2" x="584" y="430" width="48" height="78" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/>
+      <g class="tw-adtbush">${bush(612, 514, 1.05)}</g>
       <g class="tw-cctv" transform="translate(568 350)">
         <rect x="-5" y="-5" width="10" height="10" rx="2" class="tw-pole"/>
         <g class="tw-cctv-head" transform="rotate(-108)">
@@ -567,8 +628,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
          own patch of lawn. Its camera locks on the target, or on the pointer
          when it comes close, and it drives over for a look. -->
     <g>
-      <g transform="translate(630 510)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
-      <g transform="translate(754 520)"><rect x="-2" y="0" width="4" height="34" class="tw-pole"/><path d="M-12 -18 v14 h24 v-14 h-6 v8 h-12 v-8 z" class="tw-target"/></g>
+      <g transform="translate(590 534)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
+      <g transform="translate(714 544)"><rect x="-2" y="0" width="4" height="34" class="tw-pole"/><path d="M-12 -18 v14 h24 v-14 h-6 v8 h-12 v-8 z" class="tw-target"/></g>
       <path class="tw-vision" d="M0 0"/>
       <g class="tw-reticle"><path d="M-20 -14 v-7 h7 M13 -21 h7 v7 M20 14 v7 h-7 M-13 21 h-7 v-7"/></g>
       <g class="tw-frc"><g class="tw-frc-flip">
@@ -598,6 +659,17 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-beanie"><path d="M-21 -46 q21 -19 42 0 z" fill="#e63946" class="tw-ol"/><rect x="-22" y="-51" width="44" height="6" rx="3" fill="#f4f1ea" class="tw-ol"/></g>
     </g></g></g></g></g>`)}
 
+    <!-- The police, once the showroom's alarm has gone off for a while. -->
+    <g class="tw-police" aria-hidden="true"><g transform="translate(1330 640)">
+      <path d="M2 -6 q-2 -9 8 -10 l16 -2 l10 -10 h30 l12 10 l14 2 q6 1 6 8 v8 h-96 z" class="tw-pc-body"/>
+      <path d="M38 -26 h27 l9 8 h-44 z" class="tw-pc-win"/><path d="M52 -26 v8" class="tw-pc-pillar"/>
+      <path d="M26 -16 h64 v12 h-64 z" class="tw-pc-door"/><text x="58" y="-7" class="tw-pc-t" text-anchor="middle">POLICE</text>
+      <rect x="2" y="-12" width="5" height="3" rx="1" class="tw-pc-head"/><rect x="92" y="-12" width="5" height="3" rx="1" class="tw-pc-tail"/>
+      <g class="tw-pc-bar"><rect x="44" y="-32" width="22" height="5" rx="2" class="tw-pc-barbase"/><rect x="45" y="-31.4" width="10" height="3.8" rx="1.4" class="tw-pc-r"/><rect x="55" y="-31.4" width="10" height="3.8" rx="1.4" class="tw-pc-b"/>
+        <circle cx="50" cy="-30" r="16" fill="url(#twBar)" class="tw-pc-gr"/><circle cx="60" cy="-30" r="16" fill="url(#twBar)" class="tw-pc-gb"/></g>
+      ${[20, 78].map((x) => `<circle cx="${x}" cy="2" r="7.5" class="tw-tyre"/><circle cx="${x}" cy="2" r="3" class="tw-hub"/>`).join('')}
+    </g></g>
+
     <!-- East of here everything is drawn in its own coordinates and slid
          back by EAST (see the top). -->
     <g transform="translate(${-EAST} 0)">
@@ -615,8 +687,15 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <path d="M2451 438 H2557 l11 11 l-11 11 H2451 Z" class="tw-dir"/><text x="2506" y="452.5" class="tw-dir-t" text-anchor="middle">WHAT I’VE BUILT</text>
     </g>
     ${busStop()}
+
+    <!-- What I've built: the garage and the bench (the real things), then
+         the software lots (placeholders for now, see PROJECTS). -->
+    ${garage()}
+    ${bench()}
+    ${PROJECTS.map((p) => `<path d="M${p.x + 114} 486 h40 l6 118 h-52 z" class="tw-walk"/>`).join('')}
+    ${PROJECTS.map(lot).join('')}
     ${hot('tm', `
-    <g>
+    <g transform="translate(5398 487) scale(.5) translate(-3390 -487)">
       <ellipse cx="3390" cy="487" rx="66" ry="10" class="tw-tm-pad"/>
       <ellipse cx="3390" cy="485" rx="52" ry="6.5" class="tw-tm-glow"/>
       <path d="M3366 382 l-9 -12 M3414 382 l9 -12" class="tw-feed"/><circle cx="3357" cy="369" r="3" class="tw-led-on"/><circle cx="3423" cy="369" r="3" class="tw-led-on"/>
@@ -627,24 +706,18 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <text x="3390" y="365.5" class="tw-tm-yr" text-anchor="middle">1977</text>
       <text x="3390" y="343" class="tw-tm-t" text-anchor="middle">TIME MACHINE</text>
     </g>`)}
-
-    <!-- What I've built: the garage and the bench (the real things), then
-         the software lots (placeholders for now, see PROJECTS). -->
-    ${garage()}
-    ${bench()}
-    ${PROJECTS.map((p) => `<path d="M${p.x + 114} 486 h40 l6 118 h-52 z" class="tw-walk"/>`).join('')}
-    ${PROJECTS.map(lot).join('')}
-    ${tree(2290, 482, 1.15, 2)}${tree(5420, 482, 1.25, 0)}
-    <g class="tw-snowy" aria-hidden="true">${[[2568, 388, 208], [3142, 408, 100], [3352, 350, 76], [3766, 390, 316], ...PROJECTS.map((p) => [p.x, 362, 170])].map(([x, y, w]) => `<rect x="${x - 1}" y="${y - 7}" width="${w + 2}" height="8.5" rx="4" class="tw-snowcap"/>`).join('')}
+    ${tree(2290, 482, 1.15, 2)}${tree(5428, 486, 1.25, 0)}${bush(5376, 492, .9)}
+    <g class="tw-snowy" aria-hidden="true">${[[2568, 388, 208], [3142, 408, 100], [3766, 390, 316], ...PROJECTS.map((p) => [p.x, 362, 170])].map(([x, y, w]) => `<rect x="${x - 1}" y="${y - 7}" width="${w + 2}" height="8.5" rx="4" class="tw-snowcap"/>`).join('')}
       <path d="M${VC.l - 14} ${VC.eave + 6} L${VC.c} ${VC.apex - 4} L${VC.r + 14} ${VC.eave + 6} L${VC.r + 8} ${VC.eave + 1} L${VC.c} ${VC.apex - 12} L${VC.l - 8} ${VC.eave + 1} Z" class="tw-snowslope"/>
-      <path d="M3526 378 L3655 326 L3784 378 L3780 372 L3655 320 L3530 372 Z" class="tw-snowslope"/></g>
+      <path d="M3526 378 L3655 326 L3784 378 L3780 372 L3655 320 L3530 372 Z" class="tw-snowslope"/>
+      <path d="M3436 338 L3492 288 L3548 338 L3544 332 L3492 282 L3440 332 Z" class="tw-snowslope"/></g>
     </g>
 
     <!-- Snow, when it snows: it settles on the roofs and the ground (town.css). -->
     <g class="tw-snowy" aria-hidden="true">${[[242, 300, 118], [443.8, 200, 152.6], [1158, 324, 108], [1256, 206, 352], [1604, 284, 234]].map(([x, y, w]) => `<rect x="${x - 1}" y="${y - 7}" width="${w + 2}" height="8.5" rx="4" class="tw-snowcap"/>`).join('')}</g>
 
     <!-- A pin on every stop. -->
-    <g class="tw-pins">${roles.map((r) => { const at = SPOT[r.id].pin ? [SPOT[r.id].pin[0] + (OFF[r.id] || 0), SPOT[r.id].pin[1]] : null; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
+    <g class="tw-pins">${roles.filter((r) => SPOT[r.id].pin || r.id === 'rjax' || r.id === 'rfa').map((r) => { const at = SPOT[r.id].pin ? [SPOT[r.id].pin[0] + (OFF[r.id] || 0), SPOT[r.id].pin[1]] : null; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
   </g>
 </svg>`;
 
@@ -653,6 +726,8 @@ const data = {
   order: [...work.map((r) => r.id), 'vc', ...BENCH.map((p) => p.id), ...PROJECTS.map((p) => p.id)],
   W: WORLD, home: HOME,
   truck: { wait: TRUCK_WAIT, right: TK.x + TK.w - TRUCK_WAIT },
+  civic: { wins: WINS, fb: FB, rb: RB, ground: CV.ground },
+  glass: [[462, 342, 100, 140], [658, 356, 232, 126]],
   pin: Object.fromEntries(Object.entries(SPOT).map(([k, v]) => [k, v.pin ? [v.pin[0] + (OFF[k] || 0), v.pin[1]] : null])),
   links: LINKS,
   roles: Object.fromEntries(roles.map((r) => { const z = SPOT[r.id].zoom; return [r.id, { ...r, zoom: z ? [z[0] + (OFF[r.id] || 0), z[1], z[2], z[3]] : null }]; }))
