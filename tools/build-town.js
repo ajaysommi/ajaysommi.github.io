@@ -543,14 +543,47 @@ const bench = () => `
    alarm goes off those strips light up, white, then amber, out of step. */
 // l: the headlamps; p: the LED low-beam projectors under the running lights
 const CAR = { prius: { a: 0.742, l: [[0.169, 0.463], [0.835, 0.464]], p: [[0.135, 0.487], [0.865, 0.487]] }, bz: { a: 0.781, l: [[0.192, 0.432], [0.811, 0.432]], p: [[0.125, 0.405], [0.875, 0.405]] }, gh: { a: 0.814, l: [[0.152, 0.388], [0.847, 0.387]], p: [[0.112, 0.425], [0.888, 0.425]] } };
+/* A Toyota in profile, for the posters: a few body shapes, its own colour. */
+const PROFILE = {
+  van: { b: [[0, .6], [.03, .44], [.17, .36], [.31, .13], [.95, .11], [1, .3], [1, .62]], w: [[.33, .17], [.93, .15], [.95, .34], [.24, .36]], r: [.2, .8] },
+  suv: { b: [[0, .6], [.02, .42], [.2, .35], [.3, .12], [.86, .1], [.98, .3], [1, .6]], w: [[.32, .16], [.84, .14], [.92, .33], [.24, .35]], r: [.2, .8] },
+  boxy: { b: [[0, .6], [.02, .35], [.21, .31], [.25, .09], [.96, .09], [1, .14], [1, .6]], w: [[.27, .13], [.93, .13], [.93, .3], [.25, .31]], r: [.2, .8] },
+  sedan: { b: [[0, .62], [.04, .48], [.24, .42], [.36, .2], [.64, .18], [.8, .4], [.97, .44], [1, .62]], w: [[.38, .23], [.62, .21], [.75, .4], [.3, .42]], r: [.2, .8] },
+  truck: { b: [[0, .6], [.02, .42], [.21, .36], [.29, .12], [.55, .12], [.57, .36], [1, .37], [1, .62]], w: [[.31, .16], [.53, .16], [.53, .34], [.24, .36]], r: [.2, .82] },
+  sport: { b: [[0, .66], [.05, .52], [.32, .44], [.46, .25], [.64, .23], [.84, .42], [1, .48], [1, .66]], w: [[.47, .28], [.62, .26], [.74, .42], [.38, .44]], r: [.21, .79] }
+};
+const profile = (kind, x, y, w, col) => {
+  const P = PROFILE[kind], h = w * 0.42, pt = ([u, v]) => `${(x + u * w).toFixed(2)},${(y + v * h).toFixed(2)}`;
+  const body = `<polygon points="${P.b.map(pt).join(' ')} ${pt([1, .8])} ${pt([0, .8])}" fill="${col}" class="tw-pp-body"/>`;
+  const win = `<polygon points="${P.w.map(pt).join(' ')}" class="tw-pp-win"/>`;
+  const wheels = P.r.map((u) => `<circle cx="${(x + u * w).toFixed(2)}" cy="${(y + .8 * h).toFixed(2)}" r="${(w * .085).toFixed(2)}" class="tw-pp-tyre"/><circle cx="${(x + u * w).toFixed(2)}" cy="${(y + .8 * h).toFixed(2)}" r="${(w * .035).toFixed(2)}" class="tw-pp-hub"/>`).join('');
+  return body + win + wheels;
+};
+// [centre, width, model, body, colour, backdrop]
+const POSTERS = {
+  wing: [[474, 17, 'COROLLA', 'sedan', '#e8e4da', 'b'], [512, 50, 'SUPRA', 'sport', '#d93a2b', 's'], [550, 17, '4RUNNER', 'boxy', '#5a6b4a', 'b']],
+  main: [[667, 16, 'CAMRY', 'sedan', '#9aa3ad', 's'], [702, 50, 'SIENNA', 'van', '#c9c2b4', 'b'], [739.5, 20, 'TACOMA', 'truck', '#c0392b', 's'],
+         [811, 18, 'TUNDRA', 'truck', '#3b4a5c', 'b'], [846, 50, 'LAND CRUISER', 'boxy', '#e6dcc4', 's'], [880.5, 15, 'PRIUS', 'sedan', '#3a7bd5', 'b']]
+};
+const poster = ([cx, w, name, kind, col, bg], top) => {
+  const h = w * 0.78, x = cx - w / 2, m = w * 0.07;
+  const sky = bg === 's' ? 'url(#twPosterSun)' : 'url(#twPosterSky)';
+  const ih = h - m * 2 - w * 0.13;
+  return `<g class="tw-poster-f"><rect x="${x.toFixed(2)}" y="${top}" width="${w}" height="${h.toFixed(2)}" class="tw-pp-frame"/>
+    <rect x="${(x + m).toFixed(2)}" y="${(top + m).toFixed(2)}" width="${(w - m * 2).toFixed(2)}" height="${ih.toFixed(2)}" fill="${sky}"/>
+    <path d="M${(x + m).toFixed(2)} ${(top + m + ih * .62).toFixed(2)} l${((w - m * 2) * .35).toFixed(2)} ${(-ih * .3).toFixed(2)} l${((w - m * 2) * .25).toFixed(2)} ${(ih * .16).toFixed(2)} l${((w - m * 2) * .4).toFixed(2)} ${(-ih * .22).toFixed(2)} V${(top + m + ih).toFixed(2)} H${(x + m).toFixed(2)} Z" class="tw-pp-hill"/>
+    <path d="M${(x + w - m - (w - m * 2) * .3).toFixed(2)} ${(top + m + ih).toFixed(2)} l${((w - m * 2) * .12).toFixed(2)} ${(-ih * .16).toFixed(2)} h${((w - m * 2) * .06).toFixed(2)} l${(-(w - m * 2) * .12).toFixed(2)} ${(ih * .16).toFixed(2)} z M${(x + w - m - (w - m * 2) * .14).toFixed(2)} ${(top + m + ih).toFixed(2)} l${((w - m * 2) * .12).toFixed(2)} ${(-ih * .16).toFixed(2)} h${((w - m * 2) * .02).toFixed(2)} v${(ih * .16).toFixed(2)} z" class="tw-pp-stripe"/>
+    ${profile(kind, x + m + (w - m * 2) * .12, top + m + ih * .36, (w - m * 2) * .76, col)}
+    <text x="${cx}" y="${(top + h - m * .9).toFixed(2)}" class="tw-pp-t" style="font-size:${(w * .085).toFixed(2)}px" text-anchor="middle">${name}</text></g>`;
+};
 const showroom = (x, y, w, h, cars, em = 'l') => {
   const ex = em === 'l' ? x + 9 : x + w - 9;
   const spots = cars.map((c) => c.cx), fy = y + h - 8;
-  // the back wall: the reception picture, as tall as the room; the main
-  // room centres it on the door pillar, the wing shows its left end
-  const bw = h * 2056 / 568, bx = em === 'l' ? 776 - bw / 2 : x - bw * 0.05;
+  // the back wall: a plain wall, a baseboard, and the posters
+  const ps = POSTERS[em === 'l' ? 'main' : 'wing'];
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-int"/>
-      <g clip-path="url(#twShowGlass)"><image href="assets/images/town/showroom-bg.webp" x="${bx.toFixed(1)}" y="${y}" width="${bw.toFixed(1)}" height="${h}" preserveAspectRatio="none" class="tw-showbg"/></g>
+      <rect x="${x}" y="${y + h - 22}" width="${w}" height="3" class="tw-baseboard"/>
+      ${ps.map((p) => poster(p, y + 14 + (p[1] > 30 ? 0 : 7))).join('')}
       ${spots.map((cx, i) => `<polygon points="${cx - 10},${y} ${cx + 10},${y} ${cx + 44},${fy} ${cx - 44},${fy}" class="tw-spotcone" style="--i:${i}"/><rect x="${cx - 9}" y="${y}" width="18" height="4" rx="2" class="tw-lamp"/>`).join('')}
       <rect x="${x}" y="${fy}" width="${w}" height="8" class="tw-showfloor"/>
       ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
@@ -622,7 +655,7 @@ const HILLS = (() => {
   const jag = (a, b) => { const out = []; const n = Math.max(2, Math.round((b[0] - a[0]) / (8 + r() * 6))); for (let i = 1; i < n; i++) { const t = i / n; out.push([a[0] + (b[0] - a[0]) * t + (r() - 0.5) * 3, a[1] + (b[1] - a[1]) * t + (r() - 0.5) * 7]); } out.push(b); return out; };
   const ridge = [keys[0]]; const segs = [];
   for (let i = 1; i < keys.length; i++) { const j = jag(keys[i - 1], keys[i]); segs.push(j); ridge.push(...j); }
-  const far = `M${f(ridge[0][0])} ${f(ridge[0][1])}` + ridge.slice(1).map((p) => ` L${f(p[0])} ${f(p[1])}`).join('') + ` V480 H-420 Z`;
+  const far = `M${f(ridge[0][0])} ${f(ridge[0][1])}` + ridge.slice(1).map((p) => ` L${f(p[0])} ${f(p[1])}`).join('') + ` V900 H-420 Z`;
   // the shaded face: from each peak down its right side, back up a gully
   let farShade = '', strata = '';
   for (let i = 1; i < keys.length - 1; i += 2) {
@@ -635,7 +668,7 @@ const HILLS = (() => {
   const yAt = (xx) => 404 - 14 * Math.sin(xx / 260) - 9 * Math.sin(xx / 97 + 1.3) - 5 * Math.sin(xx / 41 + 0.4);
   let near = `M-420 ${f(yAt(-420))}`, xx = -420;
   while (xx < WORLD + 420) { const step = 7 + r() * 10, nx = xx + step, b = 2 + r() * 5; near += ` Q${f(xx + step / 2)} ${f(yAt(xx + step / 2) - b * 1.6)} ${f(nx)} ${f(yAt(nx))}`; xx = nx; }
-  near += ` V480 H-420 Z`;
+  near += ` V900 H-420 Z`;
   // darker patches on it (woods further down the slope)
   let nearShade = '';
   for (let px = -380; px < WORLD + 380; px += 90 + r() * 140) { const w = 40 + r() * 70, y0 = yAt(px) + 14 + r() * 10; nearShade += `M${f(px)} ${f(y0)} q${f(w / 2)} ${f(-8 - r() * 6)} ${f(w)} 0 q${f(-w / 2)} ${f(10 + r() * 6)} ${f(-w)} 0 Z `; }
@@ -666,12 +699,16 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twMoonHalo"><stop offset="0" stop-color="#fff6dc" stop-opacity=".3"/><stop offset=".45" stop-color="#fff6dc" stop-opacity=".14"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></radialGradient>
+    <linearGradient id="twPosterSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fa6c9"/><stop offset="1" stop-color="#d9e4ea"/></linearGradient>
+    <linearGradient id="twPosterSun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f08a5d"/><stop offset="1" stop-color="#f6c99a"/></linearGradient>
+    <filter id="twBehindGlass" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".72" intercept=".2"/><feFuncG type="linear" slope=".72" intercept=".19"/><feFuncB type="linear" slope=".72" intercept=".18"/></feComponentTransfer></filter>
+    <filter id="twBehindGlassN" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".7" intercept=".2"/><feFuncG type="linear" slope=".68" intercept=".14"/><feFuncB type="linear" slope=".64" intercept=".06"/></feComponentTransfer></filter>
     <radialGradient id="twEmerg"><stop offset="0" stop-color="#ff3b2b" stop-opacity=".95"/><stop offset=".35" stop-color="#e0141c" stop-opacity=".45"/><stop offset="1" stop-color="#a00810" stop-opacity="0"/></radialGradient>
     <radialGradient id="twPlR"><stop offset="0" stop-color="#ff5a4a" stop-opacity=".95"/><stop offset=".4" stop-color="#ff1f1f" stop-opacity=".45"/><stop offset="1" stop-color="#ff1f1f" stop-opacity="0"/></radialGradient>
     <radialGradient id="twPlB"><stop offset="0" stop-color="#6aa2ff" stop-opacity=".95"/><stop offset=".4" stop-color="#2b6bff" stop-opacity=".45"/><stop offset="1" stop-color="#2b6bff" stop-opacity="0"/></radialGradient>
     <linearGradient id="twSignBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff4d0" stop-opacity=".3"/><stop offset="1" stop-color="#fff4d0" stop-opacity=".02"/></linearGradient>
-    <filter id="twRavDrl" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation=".9" result="b"/><feFlood flood-color="#dcefff" flood-opacity=".9"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="twRavTail" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="1" result="b"/><feFlood flood-color="#ff2b1f" flood-opacity=".85"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="twRavDrl" x="-20%" y="-30%" width="140%" height="160%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="1.3" result="b"/><feFlood flood-color="#e4f3ff"/><feComposite in2="b" operator="in" result="g"/><feGaussianBlur in="SourceAlpha" stdDeviation=".45" result="b2"/><feFlood flood-color="#ffffff"/><feComposite in2="b2" operator="in" result="g2"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="g2"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="twRavTail" x="-20%" y="-30%" width="140%" height="160%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="1.4" result="b"/><feFlood flood-color="#ff2014"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <filter id="twSoftLight" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3.2"/></filter>
     <filter id="twDimMore" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".3"/><feFuncG type="linear" slope=".26"/><feFuncB type="linear" slope=".28"/></feComponentTransfer></filter>
     <filter id="twTextSh" x="-10%" y="-30%" width="120%" height="170%"><feGaussianBlur stdDeviation=".7"/></filter>
@@ -807,7 +844,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo"/><image href="assets/images/town/snow-temblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-snowimg"/>
       <rect x="760" y="426" width="32" height="56" class="tw-doorglass"/>
       <g class="tw-dooralarm tw-nohit"><rect x="760" y="426" width="32" height="56" class="tw-alarm-dark"/><rect x="760" y="426" width="32" height="56" class="tw-alarm-white"/></g>
-      <path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 444, 11, 'tw-onglass')}
+      <path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 437, 11, 'tw-onglass')}
 
       <rect x="904" y="284" width="234" height="12" rx="3" class="tw-roofcap"/>
       <rect x="904" y="294" width="230" height="188" class="tw-facade2 tw-fo"/>
@@ -833,7 +870,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <image href="assets/images/town/rav4-side.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-car-img"/>
         <image href="assets/images/town/rav4-drl.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" filter="url(#twRavDrl)" class="tw-nohit"/>
         <image href="assets/images/town/rav4-tail.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" filter="url(#twRavTail)" class="tw-nohit"/>
-        ${[1020, 1093].map((x) => `<g transform="translate(${x} ${RAV.wy.toFixed(1)})"><rect x="-8" y="-8" width="16" height="16" rx="2" class="tw-tgt"/>${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<rect x="${-5.6 + c * 4}" y="${-5.6 + r * 4}" width="3.2" height="3.2" rx=".6" class="tw-tgt-sq"/>`).join('')).join('')}</g>`).join('')}
+        ${[1020, 1093].map((x) => `<g transform="translate(${x} ${RAV.wy.toFixed(1)})"><path d="M-1 -9 V9 M-4.6 -8.6 H2.6 M-4.6 8.6 H2.6 M-1 0 H6" class="tw-clamp"/><rect x="-2.4" y="-2" width="2.8" height="4" rx=".6" class="tw-clamp-hub"/><path d="M5 -8.5 h10.4 l3.6 8.5 l-3.6 8.5 h-10.4 z" class="tw-tgt"/>${[0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<path d="M${6.6 + c * 3.4} ${-6.6 + r * 3.9} l2.4 1.3 l-2.4 1.3 z" class="tw-tgt-sq"/>`).join('')).join('')}</g>`).join('')}
         <rect x="990" y="456" width="132" height="10" rx="2" class="tw-lift"/>
         <path d="M997 456 l6 -9 h5 l3 9 z" class="tw-chock"/><rect x="997" y="453" width="14" height="3" class="tw-chockband"/>
         <image href="assets/logos/opt/hunter.webp" x="1036" y="457.5" width="40" height="7" preserveAspectRatio="xMidYMid meet"/>
@@ -854,8 +891,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
          its camera up at the roofline looking down over it. -->
     <g transform="translate(${OFF.adt} 0)">
       <g class="tw-adt-alarm tw-nohit"><circle cx="608" cy="458" r="58" fill="url(#twAdtGlow)" opacity=".8"/><ellipse cx="600" cy="510" rx="62" ry="8" fill="url(#twAdtPool)" opacity=".7"/></g>
-      <image href="assets/images/town/adt-sign.webp?v=2" x="584" y="430" width="48" height="78" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/>
-      <image href="assets/images/town/adt-sign-lit.webp" x="584" y="430" width="48" height="78" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
+      <image href="assets/images/town/adt-sign.webp?v=2" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/>
+      <image href="assets/images/town/adt-sign-lit.webp" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
       <g class="tw-adtbush">${bush(612, 514, 1.05)}<g class="tw-adt-rim tw-nohit">${bush(612, 514, 1.05).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}</g></g>
       <g class="tw-cctv" transform="translate(568 350)">
         <rect x="-5" y="-5" width="10" height="10" rx="2" class="tw-pole"/>

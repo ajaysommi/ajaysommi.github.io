@@ -1084,3 +1084,25 @@
 .tw-showcar { opacity: 1; }
 .tw.alarm :is(.tw-carimg, .tw-bow) { filter: url(#twDimMore); }
 .tw-label b { color: color-mix(in oklab, var(--tint) 55%, var(--bg)); }
+
+/* round 10 */
+/* The showroom: a plain wall by day (amber only at night), the posters,
+   and the cars behind the glass: softened, but solid. */
+.tw-int { fill: #e9ebee; }
+[data-theme="midnight"] .tw .tw-int, [data-theme="terminal"] .tw .tw-int { fill: url(#twAmber); }
+.tw-baseboard { fill: #c9ccd2; } [data-theme="midnight"] .tw .tw-baseboard, [data-theme="terminal"] .tw .tw-baseboard { fill: #c98d4e; }
+.tw-pp-frame { fill: #f7f5f0; stroke: #2a2c34; stroke-width: .7; }
+.tw-pp-hill { fill: rgba(70, 90, 120, .55); } .tw-pp-stripe { fill: #d93a2b; }
+.tw-pp-body { stroke: rgba(0, 0, 0, .35); stroke-width: .25; } .tw-pp-win { fill: #2c3442; }
+.tw-pp-tyre { fill: #1d1e22; } .tw-pp-hub { fill: #b9bcc4; }
+.tw-pp-t { font-family: var(--font-sans); font-weight: 800; letter-spacing: .06em; fill: #2a2c34; }
+.tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twBehindGlass); }
+[data-theme="midnight"] .tw .tw-showcar :is(.tw-carimg, .tw-bow), [data-theme="terminal"] .tw .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twBehindGlassN); }
+.tw.alarm .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twDimMore) !important; }
+/* Hunter: targets on wheel clamps; the lasers fire in quick bursts. */
+.tw-clamp { fill: none; stroke: #c9ccd2; stroke-width: 1.3; stroke-linecap: round; }
+.tw-clamp-hub { fill: #8e939d; }
+.tw-tgt-sq { fill: #fff; }
+.tw-laser { animation: tw-zap 1.4s steps(1) infinite; }
+.tw-laser + .tw-laser { animation-delay: -.7s; }
+@keyframes tw-zap { 0% { opacity: 1; } 4% { opacity: 0; } 8% { opacity: 1; } 12% { opacity: 0; } 16% { opacity: 1; } 20% { opacity: 0; } 24% { opacity: .9; } 28%, 100% { opacity: 0; } }

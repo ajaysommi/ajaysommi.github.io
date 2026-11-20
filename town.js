@@ -106,7 +106,7 @@
   // Up, a pause, down, a pause; the scissor arms follow the platform, and
   // the HawkEye's two red beacons keep their lasers on the wheel targets.
   const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg);
-  const BEACONS = [[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]], WHEELS = [1020, 1093];
+  const BEACONS = [[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]], WHEELS = [1032, 1105];
   const lift = (now) => {
     const t = (now / 1000) % 9, u = t < 3 ? t / 3 : t < 4.5 ? 1 : t < 7.5 ? 1 - (t - 4.5) / 3 : 0;
     const h = 22 * (0.5 - 0.5 * Math.cos(Math.PI * u)), top = 466 - h;
@@ -251,15 +251,17 @@
   };
   // script.js asks for it when the theme changes
   window.__twBar = () => { if (!barOn) return null; barSet = ''; requestAnimationFrame(paintBar); return barColour(); };
+  let explored = false;
   const setVB = (b) => {
     vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
-    farY = (b[1] - (BOTTOM - vh)) * 0.4;
+    farY = (b[1] - (BOTTOM - vh)) * 0.12;
     far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${farY.toFixed(2)})`);
     paintBar();
     // the truck backs in once its waiting spot is well in view
     if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
-    panL.classList.toggle('on', !cur && camX > 4);
-    panR.classList.toggle('on', !cur && camX < WORLD - vw - 4);
+    // the edge arrows wait until the street has been moved at least once
+    panL.classList.toggle('on', explored && !cur && camX > 4);
+    panR.classList.toggle('on', explored && !cur && camX < WORLD - vw - 4);
   };
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const tween = (to, ms = 850, fn = ease) => {
@@ -300,7 +302,7 @@
      on the welcome sign come on (after dark). */
   let intro = false;
   // it starts high enough that only sky and stars show (the hills too are out of sight)
-  const INTRO = 3800, RISE = 780;
+  const INTRO = 3400, RISE = 480;
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
   const glideDown = (u) => Math.pow(smooth(u), 1.3);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
@@ -472,6 +474,7 @@
     if (e.key === 'Escape' && !cur) { const big = $('.tw-lightbox'); if (big) { big.remove(); return; } }
     if (!cur) {
       if (e.target.closest && e.target.closest('input, textarea')) return;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') explored = true;
       if (e.key === 'ArrowRight') panTo(camX + vw * 0.4, 450);
       else if (e.key === 'ArrowLeft') panTo(camX - vw * 0.4, 450);
       return;
@@ -618,6 +621,7 @@
     cancelAnimationFrame(glide);
     if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); }
     camX = clamp(camX + d / scale, 0, Math.max(0, WORLD - vw));
+    explored = true;
     slid();
     setVB(view());
   }, { passive: false });
@@ -633,6 +637,7 @@
     if (!dragged && Math.abs(dx) < 6) return;
     if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); } }
     camX = clamp(drag.cam - dx / scale, 0, Math.max(0, WORLD - vw));
+    explored = true;
     slid();
     setVB(view());
   });
