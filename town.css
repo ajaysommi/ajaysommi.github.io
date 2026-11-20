@@ -1127,3 +1127,8 @@
 .tw.police .tw-police-a .tw-pl-r, .tw.police-home .tw-police-b .tw-pl-r { animation-duration: .34s; }
 .tw.police .tw-police-a .tw-pl-b, .tw.police-home .tw-police-b .tw-pl-b { animation-duration: .34s; animation-delay: -.17s; }
 .tw.police .tw-police-a .tw-pl-w, .tw.police-home .tw-police-b .tw-pl-w { animation-duration: .17s; }
+
+/* the strobe lights up the cars too, flash for flash */
+.tw-strobecars { opacity: 0; }
+.tw.alarm .tw-strobecars { animation: tw-wflash2 1.2s steps(1) infinite; }
+@keyframes tw-wflash2 { 0% { opacity: .55; } 7% { opacity: 0; } 14% { opacity: .45; } 21% { opacity: 0; } }

@@ -598,6 +598,8 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
           + `<path d="M${ws[0]} ${ws[1]} l-5 -3.4 M${ws[0]} ${ws[1]} l6 -4 M${ws[0]} ${ws[1]} l9 1.6 M${ws[0]} ${ws[1]} l-7 2.4 M${ws[0]} ${ws[1]} l2 5 M${ws[0]} ${ws[1]} l12 -2.6" class="tw-wscrack"/>`
           + `<g class="tw-carlights tw-nohit"><g class="tw-heads">${K.l.map(([a, b]) => { const [px, py] = at(a, b); return `<ellipse cx="${px}" cy="${py}" rx="9" ry="5" fill="url(#twLedBulb)" opacity=".7"/>`; }).join('')}${K.p.map(([a, b]) => { const [px, py] = at(a, b); return `<circle cx="${px}" cy="${py}" r="4.6" fill="url(#twLedBulb)"/><circle cx="${px}" cy="${py}" r="1.15" class="tw-proj"/>`; }).join('')}${drl('tw-drl', 'twDrlW')}</g>`
           + `<g class="tw-hzs">${K.l.map(([a, b]) => { const [px, py] = at(a, b); return `<ellipse cx="${px}" cy="${py}" rx="8" ry="4.4" fill="url(#twHaz)" opacity=".8"/>`; }).join('')}${drl('tw-drl', 'twDrlA')}</g></g></g>`; }).join('')}
+      <!-- the alarm's white strobe catching the cars, in step with it -->
+      <g class="tw-strobecars tw-nohit">${cars.map((c) => { const H = c.w * CAR[c.f].a; return `<image href="assets/images/town/car-${c.f}.webp" x="${(c.cx - c.w / 2).toFixed(1)}" y="${(fy + 3 - H).toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" filter="url(#twWhiteOut)"/>` + bow(c.cx, fy + 3 - H + H * 0.125 - c.w * 0.4 * 0.799 * 0.4, c.w * 0.4).replace('class="tw-bow"', 'filter="url(#twWhiteOut)"'); }).join('')}</g>
       <rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-glassover"/>
       <path d="M${x + 14} ${y + 8} l-12 ${Math.round(h * 0.4)} M${x + w * 0.42} ${y + 8} l-22 ${Math.round(h * 0.7)}" class="tw-shine"/>
       <path d="M${x} ${y} l7 0 l-4 10 l6 6 l-9 7 Z M${x + w} ${y} l-10 0 l5 8 l-6 9 l11 4 Z M${x} ${y + h - 8} l0 -16 l8 8 l5 8 Z M${x + w} ${y + h - 8} l0 -12 l-9 6 l-3 6 Z M${x + w * 0.4} ${y} l12 0 l-5 9 Z" class="tw-glassedge"/>
@@ -714,6 +716,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <filter id="twSoftLight" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3.2"/></filter>
     <filter id="twDimMore" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".3"/><feFuncG type="linear" slope=".26"/><feFuncB type="linear" slope=".28"/></feComponentTransfer></filter>
     <filter id="twDimDay" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".84"/><feFuncG type="linear" slope=".82"/><feFuncB type="linear" slope=".84"/></feComponentTransfer></filter>
+    <filter id="twWhiteOut" color-interpolation-filters="sRGB"><feFlood flood-color="#f4f8ff"/><feComposite in2="SourceAlpha" operator="in"/></filter>
     <filter id="twTextSh" x="-10%" y="-30%" width="120%" height="170%"><feGaussianBlur stdDeviation=".7"/></filter>
     <radialGradient id="twSignWash"><stop offset="0" stop-color="#ffe9b0" stop-opacity=".2"/><stop offset="1" stop-color="#ffe9b0" stop-opacity="0"/></radialGradient>
     <linearGradient id="twGpu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2d8b0"/><stop offset="1" stop-color="#b6a676"/></linearGradient>
