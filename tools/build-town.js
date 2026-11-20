@@ -593,8 +593,8 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
       ${cars.map((c) => { const K = CAR[c.f], H = c.w * K.a, x0 = c.cx - c.w / 2, y0 = fy + 3 - H, at = (fx, fy2) => [(x0 + c.w * fx).toFixed(1), (y0 + H * fy2).toFixed(1)]; const ws = at(.36, .17);
         const drl = (cls, f) => `<image href="assets/images/town/car-${c.f}-drl.webp" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" class="${cls}" filter="url(#${f})"/>`;
         return `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/><g class="tw-showcar" data-car="${c.f}">`
-          + `<image href="assets/images/town/car-${c.f}.webp" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" class="tw-carimg"/>`
-          + bow(c.cx, y0 + H * 0.125 - c.w * 0.4 * 0.799 * 0.4, c.w * 0.4)
+          // behind the glass: softened toward the room, by day and at night (baked into the pictures)
+          + ['g tw-dayonly', 'gn tw-night'].map((v) => { const [sfx, cls] = v.split(' '); return `<image href="assets/images/town/car-${c.f}-${sfx}.webp" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" class="tw-carimg ${cls}"/>` + bow(c.cx, y0 + H * 0.125 - c.w * 0.4 * 0.799 * 0.4, c.w * 0.4).replace('bow.webp', `bow-${sfx}.webp`).replace('class="tw-bow"', `class="tw-bow ${cls}"`); }).join('')
           + `<path d="M${ws[0]} ${ws[1]} l-5 -3.4 M${ws[0]} ${ws[1]} l6 -4 M${ws[0]} ${ws[1]} l9 1.6 M${ws[0]} ${ws[1]} l-7 2.4 M${ws[0]} ${ws[1]} l2 5 M${ws[0]} ${ws[1]} l12 -2.6" class="tw-wscrack"/>`
           + `<g class="tw-carlights tw-nohit"><g class="tw-heads">${K.l.map(([a, b]) => { const [px, py] = at(a, b); return `<ellipse cx="${px}" cy="${py}" rx="9" ry="5" fill="url(#twLedBulb)" opacity=".7"/>`; }).join('')}${K.p.map(([a, b]) => { const [px, py] = at(a, b); return `<circle cx="${px}" cy="${py}" r="4.6" fill="url(#twLedBulb)"/><circle cx="${px}" cy="${py}" r="1.15" class="tw-proj"/>`; }).join('')}${drl('tw-drl', 'twDrlW')}</g>`
           + `<g class="tw-hzs">${K.l.map(([a, b]) => { const [px, py] = at(a, b); return `<ellipse cx="${px}" cy="${py}" rx="8" ry="4.4" fill="url(#twHaz)" opacity=".8"/>`; }).join('')}${drl('tw-drl', 'twDrlA')}</g></g></g>`; }).join('')}
@@ -874,8 +874,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <circle class="tw-pivot" cx="1057" cy="470" r="3"/>
       <g class="tw-plat">
         <image href="assets/images/town/rav4-side.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-car-img"/>
-        <image href="assets/images/town/rav4-drl.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" filter="url(#twRavDrl)" class="tw-nohit"/>
-        <image href="assets/images/town/rav4-tail.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" filter="url(#twRavTail)" class="tw-nohit"/>
+        <image href="assets/images/town/rav4-drl-lit.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-nohit"/>
+        <image href="assets/images/town/rav4-tail-lit.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-nohit"/>
         ${[1020, 1093].map((x) => `<g transform="translate(${x} ${RAV.wy.toFixed(1)})"><path d="M-1 -9 V9 M-4.6 -8.6 H2.6 M-4.6 8.6 H2.6 M-1 0 H6" class="tw-clamp"/><rect x="-2.4" y="-2" width="2.8" height="4" rx=".6" class="tw-clamp-hub"/><path d="M5 -8.5 h10.4 l3.6 8.5 l-3.6 8.5 h-10.4 z" class="tw-tgt"/>${[0, 1, 2, 3].map((r) => [0, 1, 2].map((c) => `<path d="M${6.6 + c * 3.4} ${-6.6 + r * 3.9} l2.4 1.3 l-2.4 1.3 z" class="tw-tgt-sq"/>`).join('')).join('')}</g>`).join('')}
         <rect x="990" y="456" width="132" height="10" rx="2" class="tw-lift"/>
         <path d="M997 456 l6 -9 h5 l3 9 z" class="tw-chock"/><rect x="997" y="453" width="14" height="3" class="tw-chockband"/>

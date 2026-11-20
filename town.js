@@ -164,7 +164,7 @@
   const glow = (id) => {
     if (lit === id) return;
     if (lit) {
-      if (halos[lit]) halos[lit].remove();
+      if (halos[lit]) { halos[lit].remove(); halos[lit]._lite.remove(); }
       const h = hotOf(lit); if (h) $$(LIVE[lit] || '.tw-none', h).forEach((n) => { n.style.filter = ''; });
     }
     if (lit === 'adt') stickers.forEach((n) => { n.style.filter = ''; });
@@ -179,11 +179,21 @@
       g.setAttribute('class', 'tw-halo'); g.setAttribute('aria-hidden', 'true');
       g.setAttribute('filter', fitted(h, `twHalo-${id}`));
       $$('.tw-hit, .tw-dmg' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
+      // and a light copy for while the scene leans in: the place's shapes in
+      // its colour, outlined thick, no blur (the blur redrawn every frame of
+      // a zoom is what made it crawl), so the glow never goes out
+      const lite = g.cloneNode(true);
+      lite.removeAttribute('filter');
+      lite.setAttribute('class', 'tw-halo tw-halo-lite');
+      lite.style.setProperty('--tint', getComputedStyle(h).getPropertyValue('--tint'));
+      $$('image, text', lite).forEach((n) => n.remove());
+      g._lite = lite;
       halos[id] = g;
     }
+    h.parentNode.insertBefore(g._lite, h);
     h.parentNode.insertBefore(g, h);
     // the open place keeps its glow while the scene leans in
-    g.classList.toggle('keep', id === cur);
+    g.classList.toggle('keep', id === cur); g._lite.classList.toggle('keep', id === cur);
     $$(LIVE[id] || '.tw-none', h).forEach((n) => { n.style.filter = fitted(n, `twGlow-${id}`); });
   };
   // Generous, invisible hit areas, so a small move doesn't drop the hover
@@ -793,7 +803,7 @@
     return `<path d="${d}" class="${cls}"/>`;
   };
   const NSel = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
-  const refresh = (id) => { if (halos[id]) { halos[id].remove(); delete halos[id]; } if (lit === id) { lit = null; glow(id); } };
+  const refresh = (id) => { if (halos[id]) { halos[id].remove(); halos[id]._lite.remove(); delete halos[id]; } if (lit === id) { lit = null; glow(id); } };
   const add = (g, html) => { g.insertAdjacentHTML('beforeend', html); };
   // a dent: a dark crease and a little bare metal
   const nick = (x, y, k) => `<g class="tw-nick"><ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(2.2 * k).toFixed(2)}" ry="${(1.4 * k).toFixed(2)}" class="tw-scorch"/><path d="M${(x - 2.4 * k).toFixed(1)} ${(y + 0.6 * k).toFixed(1)} q${(2.4 * k).toFixed(1)} ${(-2.6 * k).toFixed(1)} ${(4.8 * k).toFixed(1)} 0" class="tw-dent"/></g>`;

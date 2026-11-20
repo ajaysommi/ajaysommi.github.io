@@ -90,7 +90,7 @@
 .tw-bay { fill: var(--tw-bay); }
 .tw-baylight { fill: #fff3cf; opacity: .9; }
 .tw-pot { fill: #c9b9a2; }
-.tw-car-img { filter: drop-shadow(0 4px 4px rgba(0, 0, 0, .25)); }
+.tw-car-img { }
 .tw-bollard { fill: #e1262d; }
 
 /* ---------------------------------------------------------- Hunter in the bay */
@@ -363,7 +363,10 @@
 /* The still halo behind whatever is lit (see glow() in town.js). */
 .tw-halo { pointer-events: none; }
 .tw-halo, .tw-halo * { animation: none !important; transition: none !important; }
-.tw-moving .tw-halo:not(.keep) { display: none; }
+.tw-moving .tw-halo:not(.tw-halo-lite) { display: none; }
+.tw-halo-lite { display: none; }
+.tw-moving .tw-halo-lite.keep { display: inline; opacity: .5; }
+.tw-halo-lite * { fill: var(--tint) !important; stroke: var(--tint) !important; stroke-width: 6px !important; stroke-linejoin: round !important; stroke-dasharray: none !important; filter: none !important; }
 .tw-moving .tw-hot:not(.tw-cur) [style*="twGlow"] { filter: none !important; }
 
 /* ---------------------------------------------------------- lights after dark */
@@ -1096,8 +1099,6 @@
 .tw-pp-body { stroke: rgba(0, 0, 0, .35); stroke-width: .25; } .tw-pp-win { fill: #2c3442; }
 .tw-pp-tyre { fill: #1d1e22; } .tw-pp-hub { fill: #b9bcc4; }
 .tw-pp-t { font-family: var(--font-sans); font-weight: 800; letter-spacing: .06em; fill: #2a2c34; }
-.tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twBehindGlass); }
-[data-theme="midnight"] .tw .tw-showcar :is(.tw-carimg, .tw-bow), [data-theme="terminal"] .tw .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twBehindGlassN); }
 .tw.alarm .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twDimMore) !important; }
 /* Hunter: targets on wheel clamps; the lasers fire in quick bursts. */
 .tw-clamp { fill: none; stroke: #c9ccd2; stroke-width: 1.3; stroke-linecap: round; }
@@ -1132,3 +1133,12 @@
 .tw-strobecars { opacity: 0; }
 .tw.alarm .tw-strobecars { animation: tw-wflash2 1.2s steps(1) infinite; }
 @keyframes tw-wflash2 { 0% { opacity: .55; } 7% { opacity: 0; } 14% { opacity: .45; } 21% { opacity: 0; } }
+
+/* Speed: what can't be seen isn't drawn at all (an invisible layer still
+   costs a redraw on every frame of a zoom). */
+[data-theme="daylight"] .tw .tw-night { display: none; }
+[data-theme="midnight"] .tw .tw-dayonly, [data-theme="terminal"] .tw .tw-dayonly { display: none; }
+.tw:not(.alarm) :is(.tw-strobecars, .tw-adtsign-lit, .tw-alarmin, .tw-dooralarm, .tw-adt-alarm) { display: none; }
+.tw-showcar:not(.alarm) .tw-carlights { display: none; }
+[data-theme="daylight"] .tw :is(.tw-signlight, .tw-wel-sh) { display: none; }
+.tw:not(.home-alarm) :is(.tw-yard-lit, .tw-yard-glow, .tw-yard-pool) { display: none; }
