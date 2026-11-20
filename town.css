@@ -1149,3 +1149,49 @@
 @media (min-width: 720px) {
   html:not(.classic) header.nav.glass { background: color-mix(in oklab, var(--surface-solid, var(--surface)) 80%, transparent); }
 }
+
+/* the showroom cars' night pictures: shown at night, and clickable */
+[data-theme="daylight"] .tw .tw-nightcar { display: none; }
+
+/* round 12 */
+/* the card sits under the corner bar only when it's on that side */
+@media (min-width: 720px) { .tw-panel:not(.left) { top: 16px; } }
+/* the bay's drive: concrete slabs, tyre tracks, oil spots */
+.tw-joint { stroke: rgba(0, 0, 0, .14); stroke-width: .8; fill: none; }
+.tw-tracks { stroke: rgba(0, 0, 0, .07); stroke-width: 7; fill: none; stroke-linecap: round; }
+.tw-oil { fill: rgba(20, 20, 24, .16); }
+/* Shiva's billboard: a catwalk, floodlights; lit from below after dark, and still */
+.tw-bb-brace { stroke: var(--tw-pole); stroke-width: 3; fill: none; }
+.tw-bb-walk { fill: #4a4d55; } .tw-bb-rail { stroke: #4a4d55; stroke-width: 1.6; fill: none; }
+.tw-bb-arm { stroke: #3a3d46; stroke-width: 2; } .tw-bb-lamp { fill: #2a2c34; }
+.tw-bb-beams, .tw-bb-wash { display: none; }
+[data-theme="midnight"] .tw :is(.tw-bb-beams, .tw-bb-wash), [data-theme="terminal"] .tw :is(.tw-bb-beams, .tw-bb-wash) { display: inline; }
+[data-theme="midnight"] .tw .tw-bars rect, [data-theme="terminal"] .tw .tw-bars rect { animation: none; transform: none; }
+[data-theme="midnight"] .tw .tw-board, [data-theme="terminal"] .tw .tw-board { fill: #f4efe2; }
+/* the garage */
+.tw-gfloorline { stroke: rgba(0, 0, 0, .18); stroke-width: .8; }
+.tw-bracket { fill: none; stroke: #6b5338; stroke-width: .8; }
+.tw-tape { stroke: #c9a46a; stroke-width: 1.4; } .tw-boxlabel { fill: #f4f1ea; }
+.tw-canlid { fill: #b9bcc4; } .tw-canband { stroke: rgba(0, 0, 0, .25); stroke-width: .6; }
+.tw-toolbox { fill: #c0392b; stroke: #6b1d15; stroke-width: .6; } .tw-toolbox-l { fill: none; stroke: #6b1d15; stroke-width: .6; }
+.tw-print { } .tw-printwire { fill: none; stroke: #2a2c34; stroke-width: .3; }
+.tw-handle2 { stroke: #a0703a; stroke-width: 1.4; stroke-linecap: round; fill: none; }
+.tw-rake { stroke: #8e939d; stroke-width: .8; fill: none; } .tw-shovel { fill: #8e939d; stroke: #5d616b; stroke-width: .4; }
+.tw-hook { fill: #5d616b; } .tw-hose circle { fill: none; stroke: #2f8a3c; stroke-width: 1.2; }
+.tw-bin { fill: var(--c); stroke: rgba(0, 0, 0, .3); stroke-width: .4; } .tw-binlid { fill: #e8e4da; stroke: rgba(0, 0, 0, .25); stroke-width: .3; }
+.tw-gdoor-h { fill: #8e939d; }
+/* the shed's tools */
+.tw-woodhandle { fill: #a0703a; stroke: #6b4428; stroke-width: .4; }
+.tw-steel { fill: #9aa0a8; stroke: #4a4d55; stroke-width: .5; }
+.tw-pegcut { fill: #d6b78a; }
+.tw-shaft { stroke: #b9bcc4; stroke-width: .9; }
+.tw-jaw { stroke: #6b6f78; stroke-width: 1.6; stroke-linecap: round; } .tw-grip { stroke: #d93a2b; stroke-width: 2; stroke-linecap: round; }
+.tw-sawblade { fill: #c9ccd2; stroke: #6b6f78; stroke-width: .5; } .tw-teeth { fill: none; stroke: #6b6f78; stroke-width: .4; }
+.tw-sawhandle { fill: #b0763a; stroke: #6b4428; stroke-width: .5; fill-rule: evenodd; }
+.tw-spool { fill: #6b4428; }
+.tw-tape-m { fill: #f2b705; stroke: #6b5a10; stroke-width: .5; } .tw-tape-c { fill: #2a2c34; } .tw-tape-t { stroke: #e9e5dc; stroke-width: 1; }
+.tw-clamp2 { fill: none; stroke: #e9741f; stroke-width: 1.6; stroke-linejoin: round; }
+.tw-benchedge { stroke: rgba(255, 255, 255, .25); stroke-width: .6; }
+.tw-drawers { fill: #c0392b; stroke: #6b1d15; stroke-width: .6; } .tw-drawerline { stroke: #6b1d15; stroke-width: .5; } .tw-drawerpull { fill: #e9e5dc; }
+.tw-stool { fill: #3a3d46; } .tw-stool-l { stroke: #3a3d46; stroke-width: 1.2; fill: none; }
+.tw-bucket { fill: #f2b705; stroke: #8a6a10; stroke-width: .5; } .tw-bucket-h { fill: none; stroke: #6b6f78; stroke-width: .5; }

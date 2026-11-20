@@ -132,7 +132,7 @@
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-hallglow, .tw-snowimg', shiva: '.tw-bars' };
+  const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-hallglow, .tw-snowimg', shiva: '.tw-bars, .tw-bb-beams, .tw-bb-wash' };
   SKIP.hunter += ', .tw-hk-lcd'; SKIP['p-civic'] += ', .tw-snowimg';
   const halos = {};
   const stickers = $$('.tw-adtsticker', svg);
@@ -927,7 +927,7 @@
     if (dmg.bw < 6) {
       dmg.bw++;
       if (dmg.bw < 6) add(bwG, crack(clamp(q.x, 3416, 3460), clamp(q.y, 406, 438), 4 + dmg.bw * 1.6, q.x + q.y * 3 + dmg.bw, `tw-crk tw-crk-g lv${Math.min(3, Math.ceil(dmg.bw / 2))}`));
-      else { bwG.innerHTML = ''; betHot.classList.add('bw-broke'); fallShards(bwG, WIN, 446); houseAlarm(); }
+      else { bwG.innerHTML = ''; betHot.classList.add('bw-broke'); fallShards(bwG, WIN, 446); }
     } else if (dmg.tv < 4) {
       dmg.tv++;
       add(tvCr, crack(clamp(q.x, 3426, 3450), clamp(q.y, 413.5, 426.5), 3 + dmg.tv * 1.8, q.x * 2 + q.y + dmg.tv, 'tw-lcd-crack2') + `<circle cx="${clamp(q.x, 3426, 3450).toFixed(1)}" cy="${clamp(q.y, 413.5, 426.5).toFixed(1)}" r="${(0.6 + dmg.tv * 0.25).toFixed(2)}" class="tw-lcd-ink"/>`);
