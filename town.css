@@ -1410,3 +1410,49 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-beacon { animation: tw-alt-b .36s steps(1) infinite; }
 .tw-beacon + .tw-beacon { animation-delay: -.18s; }
 @keyframes tw-alt-b { 0% { opacity: 1; } 50%, 100% { opacity: .45; } }
+
+/* round 18 */
+/* the dish: tracking whenever the pointer is near it */
+.tw.dishon .tw-dish { animation: none; }
+/* the HawkEye's lasers, three times as quick */
+.tw-laser { animation-duration: .12s; } .tw-laser + .tw-laser { animation-delay: -.06s; }
+.tw-beacon { animation-duration: .12s; } .tw-beacon + .tw-beacon { animation-delay: -.06s; }
+/* the photo from long ago, uncropped */
+.tw-pc-snap { width: 230px; }
+.tw-pc-snap button { aspect-ratio: 4 / 3; }
+/* the Civic's parts, on hang tags like a service bay's */
+.tw-tag-t { font: 800 3.5px var(--font-sans); letter-spacing: .07em; fill: #f4f1ea; stroke: none; paint-order: normal; }
+.tw-tag-bg { fill: #1c1f26; stroke: #ff6b35; stroke-width: .45; }
+.tw-tag-hole { fill: none; stroke: #8a8f99; stroke-width: .4; }
+.tw-tag-bar { fill: #ff6b35; }
+.tw-tag-l { stroke: #ff6b35; stroke-width: .45; stroke-dasharray: 1.4 .8; }
+.tw-tag-d { fill: #ff6b35; } .tw-tag-ring { fill: rgba(255, 107, 53, .25); stroke: #ff6b35; stroke-width: .35; }
+/* the gator in the pond */
+.tw-gator-b { fill: #3f7a3d; }
+.tw-gator-s { fill: #2f6230; }
+.tw-gator-hi { fill: #5e9a53; opacity: .85; }
+.tw-gator-jaw { fill: none; stroke: #234a24; stroke-width: .8; stroke-linecap: round; }
+.tw-gator-tooth { fill: #f3efe2; }
+.tw-gator-nos { fill: #142313; }
+.tw-gator-sc { fill: #2f6230; opacity: .7; }
+.tw-gator-brow { fill: none; stroke: #2a5729; stroke-width: 1.1; stroke-linecap: round; }
+.tw-gator-iris { fill: #d6c445; }
+.tw-gator-wet { fill: none; stroke: rgba(255, 255, 255, .4); stroke-width: .7; stroke-linecap: round; }
+.tw-lid { fill: #3f7a3d; }
+/* the off the clock stories: a bigger window, bigger pictures, bigger and fuller type */
+.tw-panel.tw-oc { width: min(580px, 50%); }
+.tw-oc .tw-panel-in .tw-p-text { font-size: 17px; line-height: 1.6; font-weight: 600; }
+.tw-oc .tw-p-about { font-size: 16px; }
+.tw-oc .tw-p-steps { gap: 18px; }
+.tw-oc .tw-p-steps li { grid-template-columns: 168px 1fr; gap: 16px; }
+.tw-oc .tw-p-steps button { border-radius: 12px; }
+.tw-oc .tw-p-steps b { font-size: 18px; margin-bottom: 4px; }
+.tw-oc .tw-p-steps b::before { font-size: 20px; font-weight: 900; }
+.tw-oc .tw-p-steps span { display: block; font-size: 16.5px; line-height: 1.55; font-weight: 600; }
+.tw-oc .tw-p-pics { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.tw-oc .tw-p-pics button { border-radius: 12px; }
+.tw-oc-one .tw-p-pics { grid-template-columns: 1fr; }
+.tw-oc-one .tw-p-pics button, .tw-oc-two .tw-p-pics button { aspect-ratio: auto; }
+.tw-oc-one .tw-p-pics img { height: auto; max-height: 56vh; object-fit: contain; display: block; }
+/* the step numbers, readable after dark */
+[data-theme="midnight"] .tw-p-steps b::before, [data-theme="terminal"] .tw-p-steps b::before { color: color-mix(in oklab, var(--tint) 45%, #fff); }

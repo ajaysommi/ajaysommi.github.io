@@ -112,7 +112,7 @@
   };
   const tintBeam = (dt) => {
     const t = overCol ? shade(overCol) : RJ0;
-    const k = Math.min(1, dt * 0.9);
+    const k = Math.min(1, dt * 7);
     for (let i = 0; i < 3; i++) rjc[i] += (t[i] - rjc[i]) * k;
     const c = `rgb(${rjc.map((v) => Math.round(v)).join(',')})`;
     if (c !== rjSet) { rjSet = c; vision.style.stroke = c; reticle.style.setProperty('--rj', c); }
@@ -196,6 +196,7 @@
       g.setAttribute('filter', fitted(h, `twHalo-${id}`));
       $$('.tw-hit, .tw-dmg' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
       $$('.tw-bump.off', g).forEach((n) => n.classList.remove('off'));
+      $$('.tw-snowimg, .tw-textsnow, .tw-snowy', g).forEach((n) => n.remove());
       // and a light copy for while the scene leans in: the place's shapes in
       // its colour, outlined thick, no blur (the blur redrawn every frame of
       // a zoom is what made it crawl), so the glow never goes out
@@ -441,6 +442,7 @@
     panel.style.setProperty('--tint', r.tint);
     const links = linksOf(r.id);
     panel.classList.toggle('tw-postcard', !!r.postcard);
+    if (r.postcard) panel.classList.remove('tw-oc', 'tw-oc-one', 'tw-oc-two');
     if (r.postcard) {
       inner.innerHTML = postcard(r);
       inner.scrollTop = 0;
@@ -451,6 +453,10 @@
     }
     const side = /^p-/.test(r.id);
     const [kind, subj] = side ? (/ · /.test(r.role) ? r.role.split(' · ') : ['Side project', r.role]) : [];
+    const oc = side && kind === 'Off the clock';
+    panel.classList.toggle('tw-oc', oc);
+    panel.classList.toggle('tw-oc-one', oc && !r.steps && r.photos.length === 1);
+    panel.classList.toggle('tw-oc-two', oc && !r.steps && r.photos.length === 2);
     inner.innerHTML = side ? `
       <div class="tw-p-eyebrow"><span class="tw-p-chip">${esc(kind)}</span></div>
       <h3 class="tw-p-sideh">${esc(r.org)}</h3>
@@ -591,7 +597,7 @@
   };
   const idAt = (t) => { if (!t || !t.closest) return null; if (t.closest('.tw-adtsticker')) return 'adt'; const h = t.closest('.tw-hot'); return h ? h.dataset.id : null; };
   svg.addEventListener('pointerover', (e) => { overCol = colOf(e); hoverTo(idAt(e.target)); });
-  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (n - colT > 120) { colT = n; overCol = colOf(e); } });
+  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (n - colT > 45) { colT = n; overCol = colOf(e); } });
   svg.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
 
   /* ---------------------------------------------------------- the pointer */
@@ -655,7 +661,9 @@
       const sky = p.y < 330;
       tw.classList.toggle('sky', sky);
       tw.classList.toggle('near', !sky);
-      if (sky && dish) {
+      const dishOn = !!dish && (p.y < 376 || Math.hypot(p.x - 3080, p.y - 382) < 120);
+      tw.classList.toggle('dishon', dishOn);
+      if (dishOn) {
         // The dish sits on HiPerGator's roof at (3080, 382); it turns its face to the pointer.
         const a = Math.atan2(p.x - 3080, 382 - p.y) * 180 / Math.PI;
         dish.style.transform = `translate(0px, -16px) rotate(${clamp(a, -70, 70).toFixed(1)}deg)`;
@@ -677,7 +685,7 @@
   });
   stage.addEventListener('pointerleave', () => {
     ptr = null;
-    tw.classList.remove('sky', 'near');
+    tw.classList.remove('sky', 'near', 'dishon');
     if (head) head.style.transform = '';
     if (dish) dish.style.transform = '';
     eyes.forEach((el) => { el.style.transform = ''; });
@@ -739,7 +747,7 @@
   const fixItem = document.querySelector('#twMenuPop [data-go="fix"]');
   if (fixItem) fixItem.addEventListener('click', () => { shut(); repair(); });
   const exit = $('.tw-exit', svg);
-  if (exit) exit.addEventListener('click', (e) => { e.stopPropagation(); if (dragged) e.preventDefault(); });
+  if (exit) exit.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); if (dragged) return; if (window.hopTo) window.hopTo('classic.html'); else location.href = 'classic.html'; });
 
   /* ---------------------------------------------------------- the time machine */
   // Its display rolls through the eras it can take you to.
@@ -761,10 +769,13 @@
   const wxc = $('.tw-wx', stage), rover = bots.rfa.el, wctx = wxc.getContext('2d');
   let wx = 'clear', parts = [], wxRaf = 0, wxLast = 0, coldT = 0, wxCam = null;
   let snowV = 0, fallV = 0, settleT = 0;
+  let settleAt = 0;
   const settle = () => {
     const ts = wx === 'snow' ? 1 : 0, tf = wx === 'fall' ? 1 : 0;
-    snowV = reduced ? ts : snowV + clamp(ts - snowV, -0.032, 0.03);
-    fallV = reduced ? tf : fallV + clamp(tf - fallV, -0.08, 0.08);
+    const now = performance.now(), dt = settleAt ? Math.min(0.6, (now - settleAt) / 1000) : 0; settleAt = now;
+    // building up: a step every half second; melting: many small steps, so it fades away evenly
+    snowV = reduced ? ts : snowV + clamp(ts - snowV, -0.3 * dt, 0.066 * dt);
+    fallV = reduced ? tf : fallV + clamp(tf - fallV, -0.4 * dt, 0.18 * dt);
     tw.style.setProperty('--snow', snowV.toFixed(3));
     tw.style.setProperty('--fall', fallV.toFixed(3));
     tw.classList.toggle('snowy', snowV > 0.002);
@@ -814,7 +825,8 @@
     document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => { const on = b.dataset.wx === mode; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
     cancelAnimationFrame(wxRaf); wxLast = 0; wxCam = null;
     clearTimeout(coldT);
-    if (!settleT) settleT = setInterval(settle, 450);
+    clearInterval(settleT); settleAt = performance.now();
+    settleT = setInterval(settle, (mode !== 'snow' && snowV > 0.002) || (mode !== 'fall' && fallV > 0.002) ? 40 : 450);
     settle();
     wxGrey = mode === 'rain' ? 0.5 : mode === 'snow' ? 0.32 : 0; barSet = ''; paintBar();
     rover.classList.remove('cold', 'jacket');
@@ -989,7 +1001,7 @@
     if (dmg.bw < 6) {
       dmg.bw++;
       if (dmg.bw < 6) add(bwG, crack(clamp(q.x, 3416, 3460), clamp(q.y, 406, 438), 4 + dmg.bw * 1.6, q.x + q.y * 3 + dmg.bw, `tw-crk tw-crk-g lv${Math.min(3, Math.ceil(dmg.bw / 2))}`));
-      else { bwG.innerHTML = ''; betHot.classList.add('bw-broke'); fallShards(bwG, WIN, 446); }
+      else { bwG.innerHTML = ''; betHot.classList.add('bw-broke'); fallShards(bwG, WIN, 446); houseAlarm(); }
     } else if (dmg.tv < 4) {
       dmg.tv++;
       add(tvCr, crack(clamp(q.x, 3426, 3450), clamp(q.y, 413.5, 426.5), 3 + dmg.tv * 1.8, q.x * 2 + q.y + dmg.tv, 'tw-lcd-crack2') + `<circle cx="${clamp(q.x, 3426, 3450).toFixed(1)}" cy="${clamp(q.y, 413.5, 426.5).toFixed(1)}" r="${(0.6 + dmg.tv * 0.25).toFixed(2)}" class="tw-lcd-ink"/>`);
