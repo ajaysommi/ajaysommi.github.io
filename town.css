@@ -1501,51 +1501,9 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: url("assets/images/town/press-grain.svg") repeat; opacity: .075;
 }
-.tw-owner { display: none; }
-.tw-wayfinding { display: none; }
 @media (min-width: 720px) {
-  html:not(.classic) header.nav.glass {
-    background: #fbf6e9; border: 1px solid #b9beaa;
-    box-shadow: 0 2px 0 #526c6424, 0 5px 18px #345d4c14;
-    -webkit-backdrop-filter: none; backdrop-filter: none;
-  }
-  html:not(.classic):not([data-theme="daylight"]) header.nav.glass { background: #253635; border-color: #54625a; }
-  html:not(.classic) header.nav .brand { display: inline-flex; align-items: center; width: auto; gap: 9px; }
-  html:not(.classic) .tw-owner {
-    display: grid; gap: 3px; justify-items: start; margin: 0 5px 0 0;
-    padding: 1px 15px 1px 0; border-right: 1px solid #8a978a66;
-    color: #234b43; text-align: left;
-  }
-  html:not(.classic):not([data-theme="daylight"]) .tw-owner { color: #f2e6ca; }
-  .tw-owner strong { font: bold 20px/1 Georgia, serif; letter-spacing: -.045em; }
-  .tw-owner > span { font: 500 11px/1.15 var(--font-mono); letter-spacing: .008em; }
   .tw-svg { touch-action: pan-y pinch-zoom; cursor: grab; }
-  .tw-wayfinding {
-    display: flex; align-items: center; gap: 14px; position: absolute; z-index: 3;
-    bottom: max(14px, env(safe-area-inset-bottom)); left: max(16px, env(safe-area-inset-left));
-    transition: opacity .24s, visibility .24s;
-  }
-  .tw.zoomed .tw-wayfinding, .tw.intro .tw-wayfinding { opacity: 0; visibility: hidden; pointer-events: none; }
-  .tw-guide {
-    display: inline-flex; align-items: center; gap: 9px; position: relative;
-    min-height: 43px; padding: 0 14px 0 12px; border-radius: 11px;
-    background: var(--tw-paper) url("assets/images/town/press-grain.svg") 0 0 / 180px;
-    background-blend-mode: soft-light; border: 1px solid var(--tw-paper-rule);
-    color: var(--tw-forest-ink); font: 750 15px/1.2 'Nunito', var(--font-sans);
-    box-shadow: 0 2px 0 #263c3640, 0 4px 15px #142e351f;
-    transition: transform .2s, box-shadow .2s;
-  }
-  .tw-guide svg { width: 23px; height: 23px; }
-  .tw-guide .tw-guide-caret { width: 12px; height: 12px; margin-left: 3px; }
-  .tw-guide select { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; font-size: 16px; }
-  .tw-guide:hover { transform: translateY(-2px); box-shadow: 0 3px 0 #263c3640, 0 6px 18px #142e3526; }
-  .tw-guide:focus-within { outline: 2px solid var(--tw-forest-ink); outline-offset: 3px; }
-  .tw-gesture { color: #fff9e9; font: 650 13px/1.35 'Nunito', var(--font-sans); text-shadow: 0 1px 4px #1f302a; transition: opacity .4s; }
-  .tw-wayfinding.explored .tw-gesture { opacity: 0; }
   .tw-panel .tw-x { width: 38px; height: 38px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tw-guide, .tw-wayfinding, .tw-gesture { transition: none; }
 }
 
 .tw-sign-stones { fill: #aaa898; stroke: #6b7269; stroke-width: .85; stroke-linejoin: round; }
@@ -1557,3 +1515,41 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 [data-theme="midnight"] .tw-cloudbank, [data-theme="terminal"] .tw-cloudbank { fill: #8383a2; opacity: .29; }
 [data-theme="midnight"] .tw :is(.tw-needle,.tw-leaf-etch,.tw-water-line,.tw-stone-glints),
 [data-theme="terminal"] .tw :is(.tw-needle,.tw-leaf-etch,.tw-water-line,.tw-stone-glints) { opacity: .28; }
+
+/* round 22 */
+/* the hint card in the middle, back */
+/* How to get around: a small card in the middle, the gesture drawn out. */
+.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 18px; background: color-mix(in oklab, var(--bg) 76%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
+.tw-hint.out { opacity: 0; scale: .97; transition: opacity .45s, scale .45s; }
+@keyframes tw-hintin { from { opacity: 0; scale: .94; translate: -50% -42%; } }
+.tw-hint p { margin: 0; display: grid; gap: 3px; max-width: 250px; }
+.tw-hint b { font: 650 15px/1.25 var(--font-sans); }
+.tw-hint span { font: 400 12.5px/1.4 var(--font-sans); color: var(--ink-2); }
+.tw-hint-pad { position: relative; flex: none; width: 66px; height: 46px; border: 1.6px solid color-mix(in oklab, var(--ink) 45%, transparent); border-radius: 9px; }
+.tw-hint-dots { position: absolute; left: 50%; top: 50%; display: flex; gap: 5px; translate: -50% -50%; animation: tw-swipe 2.2s cubic-bezier(.45, 0, .3, 1) infinite; }
+.tw-hint-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); opacity: .85; }
+@keyframes tw-swipe { 0%, 100% { transform: translateX(13px); } 50% { transform: translateX(-13px); } }
+.tw-hint-ar { position: absolute; top: 50%; width: 6px; height: 6px; border: solid color-mix(in oklab, var(--ink) 50%, transparent); border-width: 1.6px 1.6px 0 0; }
+.tw-hint-ar.l { left: 5px; transform: translateY(-50%) rotate(-135deg); } .tw-hint-ar.r { right: 5px; transform: translateY(-50%) rotate(45deg); }
+/* How to get around: the trackpad and the mouse, both drawn. */
+.tw-hint-g { display: flex; align-items: center; gap: 8px; flex: none; }
+.tw-hint-or { font: 500 11px var(--font-mono); color: var(--ink-3); }
+.tw-hint-mouse { position: relative; width: 26px; height: 40px; border: 1.6px solid color-mix(in oklab, var(--ink) 45%, transparent); border-radius: 13px; }
+.tw-hint-mouse::before { content: ''; position: absolute; left: 50%; top: 0; width: 1.4px; height: 12px; background: color-mix(in oklab, var(--ink) 30%, transparent); translate: -50% 0; }
+.tw-hint-wheel { position: absolute; left: 50%; top: 6px; width: 5px; height: 9px; margin-left: -2.5px; border-radius: 3px; background: var(--ink); opacity: .85; animation: tw-wheel 1.4s cubic-bezier(.45, 0, .3, 1) infinite; }
+@keyframes tw-wheel { 0% { transform: translateY(-2px); opacity: 0; } 25% { opacity: .9; } 70% { transform: translateY(7px); opacity: .9; } 100% { transform: translateY(9px); opacity: 0; } }
+.tw-hint-cable { position: absolute; left: 50%; top: -9px; width: 1.4px; height: 9px; background: color-mix(in oklab, var(--ink) 40%, transparent); translate: -50% 0; }
+.tw-hint p { max-width: none; white-space: nowrap; }
+.tw-hint { font-family: 'Nunito', var(--font-sans); }
+
+/* daytime: a clearer, bluer look (less of the warm cast) */
+.tw {
+  --tw-grass: #9ec070; --tw-leaf: #80ab5a; --tw-leaf2: #578a50; --tw-tuft: #85a75e;
+  --tw-mtn2: #a3b9cc; --tw-mtn1: #a0bba2; --tw-far-ridge: #bfcbd6; --tw-scree: #d3d5cd;
+  --tw-wood-far: #9db9ac; --tw-pond: #7fb6c8;
+}
+.tw-cloudbank { fill: #f7fbff; }
+.tw-cirrus { stroke: #ffffff; }
+.tw-mtn2-st { stroke: #f4f6f2; }
+/* the ADT signs, once lit, stay lit (no breathing) */
+.tw.alarm .tw-adtsign-lit, .tw.alarm .tw-adt-alarm, .tw.home-alarm .tw-yard-lit { animation: none; }

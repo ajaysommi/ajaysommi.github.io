@@ -789,7 +789,7 @@ const police = (x, cls) => {
 };
 // The moon's crescent, worked out from its two circles.
 const MOON = (() => { const R = 30, r2 = 27, cx = 16, cy = -10, d = Math.hypot(cx, cy), a = (R * R - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(R * R - a * a), px = a * cx / d, py = a * cy / d, ox = -cy / d * h, oy = cx / d * h; const p1 = [px + ox, py + oy], p2 = [px - ox, py - oy]; return `M${p1[0].toFixed(2)} ${p1[1].toFixed(2)} A${R} ${R} 0 1 1 ${p2[0].toFixed(2)} ${p2[1].toFixed(2)} A${r2} ${r2} 0 0 0 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)} Z`; })();
-const SKY_DAY = [[0, '#427da3'], [.45, '#82c1ce'], [.62, '#a8d6d9'], [.78, '#dae7d8'], [.91, '#f9e6c7'], [1, '#f4deb5']];
+const SKY_DAY = [[0, '#3582cc'], [.45, '#63abe2'], [.62, '#8cc3ea'], [.8, '#c4e0f2'], [.92, '#e3eef0'], [1, '#eef2ea']];
 const SKY_NIGHT = [[0, '#090f26'], [.55, '#1c2b4a'], [.80, '#414769'], [1, '#8d6877']];
 const skyHex = (st, y) => {
   const t = Math.min(1, Math.max(0, (y + 700) / 1300)); let i = 1; while (i < st.length - 1 && st[i][0] < t) i++;
@@ -846,7 +846,7 @@ const HILLS = (() => {
   return { far, farShade, strata, scree, near };
 })();
 
-const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A drawn town block. Each part of it is a place I've worked; the town guide opens the same stories.">
+const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A drawn town block. Each part of it is a place I've worked; the buttons below open the same stories.">
   <defs>
     ${landscapeDefs.trim()}
     <linearGradient id="twSkyDay" gradientUnits="userSpaceOnUse" x1="0" y1="-700" x2="0" y2="600">${SKY_DAY.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>
@@ -1022,10 +1022,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- The hedge along the back of the lawn (none where the truck parks). -->
     <g class="tw-backrow">${Array.from({ length: 36 }, (_, i) => 150 + i * 58).filter((x) => x < 270 || x > 1850).map((x, i) => bush(x, 486, 1.25 + (i % 3) * 0.15)).join('')}</g>
     <!-- The car hauler's own lane: concrete, from behind the woods to the dealership's dock. -->
-    <path d="M-800 481.6 H1136 L1140 489.4 H-800 Z" class="tw-apron"/>
-    <path d="M-800 481.6 H1136 L1140 489.4 H-800 Z" fill="url(#twConcrete)" class="tw-nohit"/>
-    <path d="${Array.from({ length: 49 }, (_, i) => -800 + i * 40).map((x) => `M${x} 481.8 L${x + .6} 489.2`).join(' ')}" class="tw-joint tw-nohit"/>
-    <path d="M-800 481.6 H1136 M-800 489.4 H1140" class="tw-apron-edge tw-nohit"/>
+    <path d="M-800 481.6 H1166 L1170 489.4 H-800 Z" class="tw-apron"/>
+    <path d="M-800 481.6 H1166 L1170 489.4 H-800 Z" fill="url(#twConcrete)" class="tw-nohit"/>
+    <path d="${Array.from({ length: 50 }, (_, i) => -800 + i * 40).map((x) => `M${x} 481.8 L${x + .6} 489.2`).join(' ')}" class="tw-joint tw-nohit"/>
+    <path d="M-800 481.6 H1166 M-800 489.4 H1170" class="tw-apron-edge tw-nohit"/>
     <!-- Out on the west end: a little wood, wildflowers, a bench under the trees. -->
     ${pine(18, 488, 150)}${tree(70, 482, 1.25, 0)}${pine(132, 486, 120)}${tree(196, 486, 1.05, 1)}${pine(256, 490, 170)}${tree(318, 488, 1.15, 2)}
     ${[[40, 520, .8], [150, 530, .7], [262, 516, .9], [350, 532, .6], [96, 496, .85], [214, 497, .8], [326, 496, .9], [404, 497, .62]].map(([x, y, k]) => bush(x, y, k)).join('')}
@@ -1401,15 +1401,6 @@ const html = `<!-- town:start -->
           ${svg}
           <canvas class="tw-wx" aria-hidden="true"></canvas>
           <div class="tw-label" aria-hidden="true"></div>
-          <div class="tw-wayfinding">
-            <label class="tw-guide">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2.5 5.5 6-2 7 3 6-2v14l-6 2-7-3-6 2z" fill="#c8d8b2" stroke="currentColor" stroke-linejoin="round" stroke-width="1.4"/><path d="m8.5 3.5 0 14m7-11v14" stroke="currentColor" stroke-width="1.2"/><path d="m4 14 3-3.4 5 1.5 3-2.7 4-1.2" stroke="#bd723d" fill="none" stroke-width="1.5" stroke-dasharray="1 1.5" stroke-linecap="round"/></svg>
-              <span aria-hidden="true">Town guide</span>
-              <svg class="tw-guide-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="m2 7.5 4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <select aria-label="Town guide, choose a stop"><option value="">Choose a stop</option>${guideOptions}</select>
-            </label>
-            <span class="tw-gesture">Scroll or drag to explore</span>
-          </div>
           <button type="button" class="tw-pan tw-pan-l" aria-label="Look left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <button type="button" class="tw-pan tw-pan-r" aria-label="Look right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <aside class="tw-panel" aria-live="polite" hidden>

@@ -296,8 +296,6 @@
   };
   // script.js asks for it when the theme changes
   window.__twBar = () => { if (!barOn) return null; barSet = ''; requestAnimationFrame(paintBar); return barColour(); };
-  const wayfinding = $('.tw-wayfinding', stage);
-  const guide = $('select', wayfinding);
   let explored = false, actorFrame = 0, lastT = 0, visible = true;
   let showRover = false, showRobot = false, showLift = false;
   const syncActors = () => {
@@ -318,7 +316,6 @@
     paintBar(); syncActors();
     // the truck backs in once its waiting spot is well in view
     if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
-    wayfinding.classList.toggle('explored', explored);
     // the edge arrows wait until the street has been moved at least once
     panL.classList.toggle('on', explored && !cur && camX > 4);
     panR.classList.toggle('on', explored && !cur && camX < WORLD - vw - 4);
@@ -402,9 +399,9 @@
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
-      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); setTimeout(flyAway, 1200); return; }
+      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); hint(); setTimeout(flyAway, 1200); return; }
       tween(view(), INTRO, glideDown);
-      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); flyAway(); }, INTRO + 80);
+      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); flyAway(); }, INTRO + 80);
     };
     // the street starts down as the mark takes off; the browser's bar turns
     // sky coloured once the loading screen has cleared
@@ -416,7 +413,22 @@
     mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     setTimeout(() => { begin(); startBar(); }, 7500);
-  } else { startBar(); lampsOn(); setTimeout(flyAway, 1600); }
+  } else { startBar(); lampsOn(); setTimeout(() => hint(), 700); setTimeout(flyAway, 1600); }
+
+  /* ---------------------------------------------------------- how to get around */
+  // Once the street has settled, a small card in the middle shows how to
+  // move along it, with the gesture drawn out; it goes once you do.
+  function hint() {
+    if (cur || !matchMedia('(min-width: 720px)').matches || $('.tw-hint', stage)) return;
+    const h = document.createElement('div');
+    h.className = 'tw-hint';
+    h.setAttribute('role', 'status');
+    h.innerHTML = `<div class="tw-hint-g" aria-hidden="true"><div class="tw-hint-pad"><span class="tw-hint-dots"><i></i><i></i></span><span class="tw-hint-ar l"></span><span class="tw-hint-ar r"></span></div><span class="tw-hint-or">or</span><div class="tw-hint-mouse"><span class="tw-hint-wheel"></span><span class="tw-hint-cable"></span></div></div><p><b>Scroll to look around</b><span>Two-finger swipe on a trackpad,<br>or roll the mouse wheel.<br>You can also drag the street.</span></p>`;
+    stage.appendChild(h);
+    const bye = () => { if (!h.isConnected || h.classList.contains('out')) return; h.classList.add('out'); setTimeout(() => h.remove(), 500); ['wheel', 'pointerdown', 'keydown'].forEach((t) => removeEventListener(t, bye, true)); };
+    ['wheel', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, bye, true));
+    setTimeout(bye, 8000);
+  }
 
   /* ---------------------------------------------------------- the card */
   // Story first, then its photos, then the numbers, the connections and the tools.
@@ -504,7 +516,6 @@
     lb.addEventListener('click', () => { lb.classList.add('out'); setTimeout(() => lb.remove(), 220); });
     document.body.appendChild(lb);
   };
-  let returnToGuide = false;
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
@@ -537,7 +548,6 @@
     setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
     tween(view(), 800);
     tw.classList.remove('zoomed');
-    if (returnToGuide) { guide.focus({ preventScroll: true }); returnToGuide = false; }
     hots.forEach((x) => x.classList.remove('tw-cur'));
     glow(null); over = null;
     chips.forEach((c) => c.classList.remove('on'));
@@ -561,15 +571,6 @@
     c.addEventListener('click', () => { open(c.dataset.id); stage.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); });
     c.addEventListener('mouseenter', () => { if (!cur) glow(c.dataset.id); });
     c.addEventListener('mouseleave', () => { if (!cur) glow(null); });
-  });
-  guide.addEventListener('change', () => {
-    const id = guide.value;
-    if (!id) return;
-    guide.value = '';
-    explored = true;
-    returnToGuide = true;
-    open(id);
-    if (cur) $('.tw-x', panel).focus({ preventScroll: true });
   });
   $('.tw-x', panel).addEventListener('click', close);
   prevB.addEventListener('click', () => open(prevB.dataset.id));

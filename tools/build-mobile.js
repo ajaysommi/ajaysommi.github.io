@@ -106,10 +106,7 @@ const html = `<!-- mx:start -->
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <span class="mx-face"><img src="${P.photo}" alt="Ajay Sommi" decoding="async" />
-        <span class="mx-profession">Software engineer</span>
-        <span class="mx-postage" aria-hidden="true"><i></i></span>
-      </span>
+      <span class="mx-face"><img src="${P.photo}" alt="Ajay Sommi" decoding="async" /></span>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
       <button type="button" class="mx-cue" aria-label="Scroll down"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>

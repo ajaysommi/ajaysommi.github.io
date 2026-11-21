@@ -43,7 +43,7 @@ const definitions = `
     <path d="M8 3v13m8 11 .2 13m10-31v14" fill="none" stroke="#ffe0a6" stroke-width=".65" opacity=".54"/>
   </pattern>
   <linearGradient id="twMeadowLight" x1="0" y1="0" x2=".1" y2="1">
-    <stop stop-color="#f9ebad" stop-opacity=".24"/><stop offset=".54" stop-color="#ffd389" stop-opacity=".07"/><stop offset="1" stop-color="#355340" stop-opacity=".14"/>
+    <stop stop-color="#f2f6dc" stop-opacity=".14"/><stop offset=".54" stop-color="#fbf3d6" stop-opacity=".03"/><stop offset="1" stop-color="#355340" stop-opacity=".14"/>
   </linearGradient>
   <linearGradient id="twSunDisc" x2=".3" y2="1"><stop stop-color="#fff4bd"/><stop offset=".65" stop-color="#ffdd82"/><stop offset="1" stop-color="#efb96d"/></linearGradient>
 `;
