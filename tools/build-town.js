@@ -1046,6 +1046,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="994" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/><rect x="1112" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/>
       <path class="tw-arm-b" d="M1004 474 L1110 466"/><path class="tw-arm-a" d="M1110 474 L1004 466"/>
       <circle class="tw-pivot" cx="1057" cy="470" r="3"/>
+      <polygon class="tw-laser tw-laser-far" data-b="1" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser tw-laser-far" data-b="1" data-w="1" points="0,0 0,0 0,0"/>
       <g class="tw-plat">
         <image href="assets/images/town/rav4-side.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-car-img"/>
         <image href="assets/images/town/rav4-drl-lit.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-nohit"/>
@@ -1055,7 +1056,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <path d="M997 456 l6 -9 h5 l3 9 z" class="tw-chock"/><rect x="997" y="453" width="14" height="3" class="tw-chockband"/>
         <image href="assets/logos/opt/hunter.webp" x="1036" y="457.5" width="40" height="7" preserveAspectRatio="xMidYMid meet"/>
       </g>
-      <polygon class="tw-laser" points="0,0 0,0 0,0"/><polygon class="tw-laser" points="0,0 0,0 0,0"/>
+      <polygon class="tw-laser" data-b="0" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser" data-b="0" data-w="1" points="0,0 0,0 0,0"/>
       <g class="tw-beacons tw-nohit">${[[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]].map(([x, y]) => `<g class="tw-beacon"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.4" fill="url(#twBeacon)"/><rect x="${(x - 1.1).toFixed(1)}" y="${(y - 1.6).toFixed(1)}" width="2.2" height="3.2" rx=".5" class="tw-beacon-c"/></g>`).join('')}</g>
     </g>`)}
 
@@ -1142,7 +1143,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <circle cx="-6.6" cy="-22" r="1.2" fill="#ffd35c"/><circle cx="6.6" cy="-22" r="1.2" fill="#ffd35c"/>
       <rect x="-4" y="-25" width="8" height="3" fill="#3a3d46"/>
       <rect x="-26.5" y="-38" width="5" height="3.2" fill="#7d828c"/><rect x="21.5" y="-38" width="5" height="3.2" fill="#7d828c"/>
-      <circle cx="-28" cy="-36.4" r="3.2" fill="#9aa0aa" class="tw-ol tw-blink"/><circle cx="28" cy="-36.4" r="3.2" fill="#9aa0aa" class="tw-ol"/>
+      <circle cx="-28" cy="-36.4" r="3.2" fill="#9aa0aa" class="tw-ol"/><circle cx="28" cy="-36.4" r="3.2" fill="#9aa0aa" class="tw-ol"/>
       <rect x="-22" y="-52" width="44" height="28" rx="7" fill="#ffc928" class="tw-ol"/>
       <g class="tw-eyes"><rect x="-13.5" y="-44" width="10" height="10" rx="2.4" class="tw-eye"/><rect x="3.5" y="-44" width="10" height="10" rx="2.4" class="tw-eye"/></g>
       <g class="tw-eyes"><circle class="tw-pupil2 tw-follow" cx="-8.5" cy="-39" r="2.1"/><circle class="tw-pupil2 tw-follow" cx="8.5" cy="-39" r="2.1"/></g><path d="M-5 -29.4 q5 3 10 0" class="tw-smile"/><ellipse cx="0" cy="-29" rx="2.2" ry="2.5" class="tw-ohno"/><text x="15" y="-56" class="tw-eek" text-anchor="middle">!</text>

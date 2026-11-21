@@ -131,7 +131,7 @@
     armB.setAttribute('d', `M1004 474 L1110 ${top.toFixed(1)}`);
     pivot.setAttribute('cy', ((474 + top) / 2).toFixed(1));
     lasers.forEach((l, i) => {
-      const [bx, by] = BEACONS[i], tx = WHEELS[i], ty = 445.7 - h;
+      const [bx, by] = BEACONS[+l.dataset.b], tx = WHEELS[+l.dataset.w], ty = 445.7 - h;
       l.setAttribute('points', `${bx},${by - 1.6} ${bx},${by + 1.6} ${tx},${(ty + 2).toFixed(1)} ${tx},${(ty - 2).toFixed(1)}`);
     });
   };
@@ -294,8 +294,11 @@
     panR.classList.toggle('on', explored && !cur && camX < WORLD - vw - 4);
   };
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  let zoomUntil = 0;
+  const zooming = () => performance.now() < zoomUntil;
   const tween = (to, ms = 850, fn = ease) => {
     cancelAnimationFrame(anim);
+    zoomUntil = reduced ? 0 : performance.now() + ms + 40;
     if (reduced) { setVB(to); return; }
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
@@ -548,7 +551,7 @@
   svg.addEventListener('click', () => { if (!dragged) close(); });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !cur) { const big = $('.tw-lightbox'); if (big) { big.remove(); return; } }
-    if (intro && /^Arrow|^Page|^Home$|^End$/.test(e.key)) { e.preventDefault(); return; }
+    if ((intro || zooming()) && /^Arrow|^Page|^Home$|^End$/.test(e.key)) { e.preventDefault(); return; }
     if (!cur) {
       if (e.target.closest && e.target.closest('input, textarea')) return;
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') explored = true;
@@ -698,7 +701,7 @@
     if (visible) go(); else running = false;
   }).observe(stage);
   stage.addEventListener('wheel', (e) => {
-    if (intro) { e.preventDefault(); return; }
+    if (intro || zooming()) { e.preventDefault(); return; }
     if (cur || e.ctrlKey || document.documentElement.classList.contains('is-loading')) return;
     const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * k;
@@ -712,7 +715,7 @@
   let drag = null, dragged = false;
   svg.addEventListener('pointerdown', (e) => {
     dragged = false;
-    if (intro || cur || e.button !== 0 || e.pointerType === 'touch') return;
+    if (intro || cur || zooming() || e.button !== 0 || e.pointerType === 'touch') return;
     drag = { x: e.clientX, cam: camX, id: e.pointerId };
   });
   addEventListener('pointermove', (e) => {
@@ -726,8 +729,8 @@
     setVB(view());
   });
   addEventListener('pointerup', () => { if (!drag) return; drag = null; tw.classList.remove('dragging'); setTimeout(() => { dragged = false; }, 0); });
-  panL.addEventListener('click', () => panTo(camX - vw * 0.6));
-  panR.addEventListener('click', () => panTo(camX + vw * 0.6));
+  panL.addEventListener('click', () => { if (!zooming()) panTo(camX - vw * 0.6); });
+  panR.addEventListener('click', () => { if (!zooming()) panTo(camX + vw * 0.6); });
   const themeB = $('.tw-theme', tw);
   if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
 

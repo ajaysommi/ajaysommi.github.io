@@ -1456,3 +1456,10 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-oc-one .tw-p-pics img { height: auto; max-height: 56vh; object-fit: contain; display: block; }
 /* the step numbers, readable after dark */
 [data-theme="midnight"] .tw-p-steps b::before, [data-theme="terminal"] .tw-p-steps b::before { color: color-mix(in oklab, var(--tint) 45%, #fff); }
+
+/* round 20 */
+/* clouds fade in and out at the ends of their drift, so none ever appears from nowhere */
+@keyframes tw-drift { 0% { transform: translateX(-900px); opacity: 0; } 7% { opacity: 1; } 93% { opacity: 1; } 100% { transform: translateX(2500px); opacity: 0; } }
+/* HawkEye: the near head's pair and the far head's pair take turns */
+.tw-laser + .tw-laser { animation-delay: 0s; }
+.tw-laser.tw-laser-far { animation-delay: -.03s; }
