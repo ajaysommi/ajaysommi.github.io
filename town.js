@@ -224,6 +224,9 @@
     hit.setAttribute('class', 'tw-hit');
     const back = h.getCTM().inverse();
     parts.forEach((p) => {
+      // only what is drawn counts: Chrome measures hidden pieces too (ADT's
+      // alarm glow, a big circle, made the dealership wall part of ADT)
+      if (p.matches('.tw-nohit, .tw-snowimg, .tw-snowy, .tw-textsnow')) return;
       let b; try { b = p.getBBox(); } catch (e) { return; }
       if (!b || b.width * b.height === 0) return;
       const m = back.multiply(p.getCTM()), pt = svg.createSVGPoint();
@@ -303,8 +306,8 @@
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
     const from = vb.slice(), t0 = performance.now();
-    svg.classList.add('tw-moving');
-    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); setVB(from.map((v, i) => v + (to[i] - v) * k)); if (u < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving'); };
+    svg.classList.add('tw-moving'); if (ms < 2000) svg.classList.add('tw-zooming');
+    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); setVB(from.map((v, i) => v + (to[i] - v) * k)); if (u < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving', 'tw-zooming'); };
     anim = requestAnimationFrame(f);
   };
   const frame = (z, left) => {
@@ -531,7 +534,8 @@
   // again plays with it (see the damage, below).
   hots.forEach((h) => h.addEventListener('click', (e) => {
     e.stopPropagation(); if (dragged) return;
-    if (cur === h.dataset.id) poke(h.dataset.id, e);
+    // the open place itself takes the hit; ADT's bushes just step back out
+    if (cur === h.dataset.id) { if (e.target.closest('.tw-adtbush')) close(); else poke(h.dataset.id, e); }
     // ADT's and Hunter's stops sit on the dealership: clicking off them goes
     // back out, not into the dealership
     else if (cur === 'adt' || cur === 'hunter') close();
@@ -708,7 +712,7 @@
     if (!d) return;
     e.preventDefault();
     cancelAnimationFrame(glide);
-    if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); }
+    if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving', 'tw-zooming'); }
     explored = true;
     glideBy(d / scale);
   }, { passive: false });
@@ -722,7 +726,7 @@
     if (!drag || e.pointerId !== drag.id) return;
     const dx = e.clientX - drag.x;
     if (!dragged && Math.abs(dx) < 6) return;
-    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); glideStop(); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); } }
+    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); glideStop(); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving', 'tw-zooming'); } }
     camX = clamp(drag.cam - dx / scale, 0, Math.max(0, WORLD - vw));
     explored = true;
     slid();
@@ -1076,6 +1080,8 @@
     const h = hotOf(id); if (!h) return;
     // the welcome sign is solid wood: nothing to crack
     if (e.target.closest && e.target.closest('.tw-woodsign')) return;
+    // bushes and trees don't dent: clicking one just steps back out
+    if (e.target.closest && e.target.closest('.tw-leaf, .tw-leaf2, .tw-canopy')) { close(); return; }
     const n = (hits[id] || 0) + 1;
     if (n > 6) return;
     hits[id] = n;

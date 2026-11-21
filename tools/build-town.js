@@ -909,7 +909,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
   <g class="tw-far">
     <rect class="tw-sky-d" x="-800" y="-1600" width="${WORLD + 1600}" height="2140" fill="url(#twSkyDay)"/>
     <rect class="tw-sky-n" x="-800" y="-1600" width="${WORLD + 1600}" height="2140" fill="url(#twSkyNight)"/>
-    <g class="tw-stars">${STARS}</g>
+    <g class="tw-stars">${(() => { const c = STARS.split('<circle').filter((x) => x.trim()).map((x) => '<circle' + x); const G = 7; return Array.from({ length: G }, (_, g) => `<g class="tw-stargrp" style="--gt:${(4 + (g % 3) * 1.6).toFixed(1)}s;--gd:${(-g * 1.3).toFixed(1)}s">${c.filter((_, i) => i % G === g).join('')}</g>`).join(''); })()}</g>
     <!-- The sun and the moon are in the sky with the stars: they stay put while
          the street slides (a little, as the sky does), and lean out of view
          when the scene leans in. town.js sets where, once. -->

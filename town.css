@@ -1463,3 +1463,26 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* HawkEye: the near head's pair and the far head's pair take turns */
 .tw-laser + .tw-laser { animation-delay: 0s; }
 .tw-laser.tw-laser-far { animation-delay: -.03s; }
+
+/* round 21 */
+/* the stars twinkle in seven groups, not one by one: two hundred separately
+   animated stars were each a layer of their own in Chrome, and the street
+   between them was cut into dozens more, all redrawn on every frame of a zoom */
+.tw-stars circle { animation: none !important; opacity: calc(var(--lo) + .3); }
+[data-theme="midnight"] .tw .tw-stargrp, [data-theme="terminal"] .tw .tw-stargrp { animation: tw-stargrp var(--gt) ease-in-out var(--gd) infinite; }
+@keyframes tw-stargrp { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+/* text picked out in a card takes the card's own color */
+.tw-panel ::selection { background: color-mix(in oklab, var(--tint) 26%, transparent); color: inherit; }
+[data-theme="midnight"] .tw-panel ::selection, [data-theme="terminal"] .tw-panel ::selection { background: color-mix(in oklab, var(--tint) 45%, transparent); }
+/* while the view zooms, the little looping effects (twinkles, blinks, sway)
+   stop: Chrome gives each running one a layer of its own and cuts the street
+   into dozens of pieces around them, every one redrawn at every step of a
+   zoom (the stalls and the odd blank frame). Pausing isn't enough, the
+   layers stay; stopped, the street is drawn as one. Anything that would
+   visibly jump on restarting (clouds, the gator, the butterfly) keeps going. */
+.tw-zooming :is(.tw-stargrp, .tw-pin-ring, .tw-canopy, .tw-led, .tw-led-on, .tw-bulb2, .tw-haz-glow, .tw-haz, .tw-laser, .tw-beacon, .tw-pt-mote, .tw-spotcone, .tw-pool, .tw-flame, .tw-steam circle, .tw-smoke circle, .tw-eyes, .tw-bfly-wing, .tw-ripples ellipse, .tw-tvp, .tw-tvball, .tw-tvglow, .tw-rec, .tw-ringlight, .tw-fireglow, .tw-hot-tip, .tw-lid, .tw-vision, .tw-rover-bob, .tw-cctv-head, .tw-cone, .tw-dish, .tw-lidflap, .tw-pt-swirl) { animation-name: none !important; }
+.tw-zooming :is(.tw-bars rect, .tw-dash, .tw-pings path, .tw-reticle path, .tw-tvbars rect) { animation-name: none !important; }
+/* the clouds drift without layers of their own: they're behind everything, so
+   their layers split the whole street in Chrome (visibility can't run on the
+   compositor, so the drift is drawn the ordinary way; six small clouds, cheap) */
+@keyframes tw-drift { 0% { transform: translateX(-900px); opacity: 0; visibility: visible; } 7% { opacity: 1; } 93% { opacity: 1; } 100% { transform: translateX(2500px); opacity: 0; visibility: visible; } }
