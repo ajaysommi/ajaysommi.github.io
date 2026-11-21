@@ -17,6 +17,7 @@ const window = {};
 const src = fs.readFileSync(path.join(root, 'retro/content.js'), 'utf8');
 new Function('window', src.slice(0, src.indexOf('/* Small helpers every machine shares. */')))(window);
 const P = window.PORTFOLIO;
+const { STORY, ABOUT, PROJ_TEXT } = require('./copy.js');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const has = (f) => fs.existsSync(path.join(root, f));
 const big = (s) => { for (const k of ['-800', '-960']) { const f = s.replace(/-(400|480)\.webp$/, k + '.webp'); if (f !== s && has(f)) return f; } return s; };
@@ -25,16 +26,7 @@ const TINT = { vc: '#19633a', tm: '#8b5cf6', rjax: '#1fd12a', shiva: '#2f7fb5', 
 const LOGO = { rfa: ['roboticsforall', 'roboticsforall'], fics: ['fics', 'fics-light'], toyota: ['toyota', 'toyota-light'], jm: ['jm-family', 'jm-family-light'], hunter: ['hunter', 'hunter-light'], adt: ['adt', 'adt'], shiva: ['shiva', 'shiva'], rjax: ['renaissance-jax', 'renaissance-jax'] };
 
 /* Each story, told plainly: what changed because of the work, then how. */
-const STORY = {
-  rjax: "Taught a competition robot to aim by itself. I wrote the camera code that spotted targets mid match, so it lined up its shots without the driver's help.",
-  shiva: "Helped more families find robotics classes: search visits grew 20% in one summer after I reworked the academy's site around what parents were actually searching for.",
-  rfa: "Saved volunteers hours every week. My scripts filed each family's sign up details and sent their confirmation emails automatically, so nobody had to copy them by hand.",
-  fics: "Found weak spots in AI chatbots before bad actors could. I built tools that automatically tried to trick ChatGPT into misbehaving, and helped work out how to block those tricks.",
-  toyota: "Caught bad tire packages before they became recalls: 20% fewer tire warranty claims and over $150k saved. I tracked tire readings from Hunter balancers (sent through HunterNet) across 51,000 vehicles and flagged any package over the limit. I also automated work that saved about 350 hours a year.",
-  jm: "Made it easy to spot employees with access they shouldn't have, using an automated check across Microsoft Graph, Salesforce and MuleSoft. I also analysed 100k+ events from JM Lexus and Toyota dealerships and helped set up GPT agents that answer questions about them.",
-  hunter: "Made it possible to reset Hunter's alignment machines remotely instead of sending a technician, across 100,000+ machines worldwide. I designed and built the secure reset myself, and fixed crashes during machine setup.",
-  adt: "Designed an AI check that catches false alarms before emergency responders are sent, and pitched it to senior leadership. I also kept ADT's Salesforce platform under its limits and got releases shipping again."
-};
+
 
 /* The block is wider now (it fills the window and scrolls sideways), so
    each place keeps its drawing and is moved along the street by OFF. */
@@ -54,16 +46,7 @@ const HOMESH = 700 + SH;
 const TRUCK_WAIT = 110;
 
 /* What each place is, for anyone who hasn't heard of it. */
-const ABOUT = {
-  rjax: 'A student robotics team in Jacksonville that builds robots for head to head competitions.',
-  shiva: 'A robotics academy that teaches kids to build and code robots.',
-  rfa: 'A volunteer run nonprofit that teaches kids robotics and coding, often for free.',
-  fics: 'The University of Florida’s cybersecurity research institute, where researchers work out how computer systems (and now AI) get attacked, and how to stop it.',
-  toyota: 'Southeast Toyota gets new Toyotas from the factory to more than 170 dealerships across five southeastern states. It’s part of JM Family.',
-  jm: 'One of the largest privately owned companies in the US, based in Florida. It runs Southeast Toyota, which delivers new Toyotas to dealers across the Southeast, and JM Lexus, its own Lexus dealership, along with car loan and warranty businesses.',
-  hunter: 'Hunter makes the machines repair shops use to align wheels and balance tires.',
-  adt: 'The home security company behind the blue sign.'
-};
+
 
 /* East of the visitor center: what I've built.
    First the garage: my Civic out front, steaming, and beside it a wide
@@ -79,9 +62,9 @@ const BENCH = [
   { id: 'p-lcd', name: 'Arduino', tint: '#0ea5e9', step: [0], title: 'My first Arduino circuit', zoom: [3790, 418, 120, 66], pin: [3850, 446] },
   { id: 'p-drive', name: 'Hard drive', tint: '#64748b', step: [1], title: 'The dead hard drive', zoom: [3821, 418, 120, 66], pin: [3881, 453] },
   { id: 'p-iron', name: 'Pencil iron', tint: '#f59e0b', step: [2], title: 'The homemade soldering iron', zoom: [3856, 418, 120, 66], pin: [3916, 453] },
-  { id: 'p-lid', name: 'Auto lid', tint: '#14b8a6', step: [5, 6], title: 'The self opening toilet lid', zoom: [3900, 418, 120, 66], pin: [3960, 450] },
+  { id: 'p-lid', name: 'Auto lid', tint: '#14b8a6', step: [5, 6], role: 'Off the clock · a college group project', title: 'The self-opening toilet lid', zoom: [3900, 418, 120, 66], pin: [3960, 450] },
   { id: 'p-oldlap', name: 'Old laptop', tint: '#475569', step: [4], badge: 'Try', role: 'Off the clock · an experiment, just for fun', title: 'The smallest OS I could find', zoom: [3936, 418, 120, 66], pin: [3996, 449] },
-  { id: 'p-dehum', name: 'Dehumidifier', tint: '#38bdf8', step: [3], title: 'Why did the dehumidifier stop?', zoom: [3971, 418, 120, 66], pin: [4031, 438] }
+  { id: 'p-dehum', name: 'Dehumidifier', tint: '#38bdf8', step: [3], role: 'Off the clock · a teardown', title: 'Why did the dehumidifier stop?', zoom: [3971, 418, 120, 66], pin: [4031, 438] }
 ];
 /* Then the software, each as a real thing around the house: the balanced
    tree is a topiary trimmed into a perfect binary tree, the marketplace is a
@@ -139,7 +122,7 @@ const HELLO = [
   'I’m a Gator, a proud University of Florida graduate, and I’m happiest when I’m figuring out how something works, usually by opening it up to look inside.',
   'Wander around, poke at whatever catches your eye, and say hi if you’d like.'
 ];
-roles.push({ id: 'vc', org: 'Welcome to Sommiville', short: 'Visitor center', badge: 'Start', role: P.name, when: '', where: '', text: HELLO.join(' '), lines: HELLO, quote: P.quote, about: '', stats: [], tags: [], photos: [big(P.photo), 'assets/images/offclock/kid-2006-640.webp'], logo: null, tint: TINT.vc, ph: 'Add more personal photos and a few lines about life outside work: hobbies, family, where I grew up, favourite places.', postcard: true });
+roles.push({ id: 'vc', org: 'Welcome to Sommiville', short: 'Visitor center', badge: 'Start', role: P.name, when: '', where: '', text: HELLO.join(' '), lines: HELLO, quote: P.quote, about: '', stats: [], tags: [], photos: [big(P.photo), 'assets/images/offclock/kid-2006-640.webp'], logo: null, tint: TINT.vc, ph: 'Add more personal photos and a few lines about life outside work: hobbies, family, where I grew up, favorite places.', postcard: true });
 roles.push({ id: 'tm', org: 'Time machine', short: 'A strange portal', badge: '1977', role: '', when: '', where: '', text: '', about: '', stats: [], tags: [], photos: [], logo: null, tint: TINT.tm, special: true });
 const stepsOf = (list) => list.map(([f, t, c]) => [big(f), t, c]);
 BENCH.forEach((p) => {
@@ -148,12 +131,12 @@ BENCH.forEach((p) => {
   else if (p.id === 'p-macbook') roles.push({ ...base, org: OC.macbook.title, role: 'Off the clock · my 2011 MacBook Pro', text: OC.macbook.lede, steps: stepsOf(OC.macbook.steps) });
   else {
     const st = p.step.map((k) => EL[k]);
-    roles.push({ ...base, badge: p.badge || base.badge, org: p.title, role: p.role || 'Off the clock · learning electronics', about: OC.electronics.lede, text: st.map((x) => x[2]).join(' '), photos: st.map((x) => big(x[0])) });
+    roles.push({ ...base, badge: p.badge || base.badge, org: p.title, role: p.role || 'Off the clock · learning electronics', about: p.id === 'p-lcd' ? OC.electronics.lede : '', text: st.map((x) => x[2]).join(' '), photos: st.map((x) => big(x[0])) });
   }
 });
 PROJECTS.forEach((p) => {
   const s = P[p.src[0]].find((q) => q.id === p.src[1]) || {};
-  roles.push({ id: p.id, org: s.full, short: p.name, badge: 'Build', role: s.kind, when: s.stack, where: '', text: s.text, about: '', stats: [], tags: String(s.stack || '').split(' / '), photos: s.shot ? [big(s.shot)] : [], logo: null, tint: p.tint, url: s.url || '' });
+  roles.push({ id: p.id, org: s.full, short: p.name, badge: 'Build', role: s.kind, when: s.stack, where: '', text: PROJ_TEXT[p.src[1]] || s.text, about: '', stats: [], tags: String(s.stack || '').split(' / '), photos: s.shot ? [big(s.shot)] : [], logo: null, tint: p.tint, url: s.url || '' });
 });
 const order = roles.map((r) => r.id);
 
@@ -414,8 +397,15 @@ const garden = () => {
   return `<g class="tw-garden">
     ${beds}${blooms}
     ${shrub(VC.c - 84, 513, 1)}${shrub(VC.c + 84, 513, 1)}${shrub(VC.c - 150, 530, .8)}${shrub(VC.c + 158, 528, .75)}
-    <!-- a flowering border along the front of the deck, either side of the steps -->
-    ${[[VC.l + 4, VC.c - 64], [VC.c + 64, VC.r - 4]].map(([a, b]) => Array.from({ length: Math.floor((b - a) / 7) }, (_, i) => { const x = a + 3 + i * 7, y = 499 + (i % 2) * 1.6; return `<circle cx="${x}" cy="${y}" r="${3.4 + (i % 3) * .5}" class="${i % 2 ? 'tw-leaf2' : 'tw-leaf'}"/><circle cx="${x + .8}" cy="${(y - 2.2).toFixed(1)}" r="1.3" class="tw-flower" style="--c:${COL[(i * 3) % COL.length]}"/>`; }).join('')).join('')}
+    <!-- a full bed along the front of the deck, either side of the steps: soil, two rows of shrubs, flowers, a few spikes of lavender -->
+    ${[[VC.l - 12, VC.c - 60], [VC.c + 60, VC.r + 12]].map(([a, b]) => {
+      let o = `<path d="M${a} 495 H${b} V503.6 Q${(a + b) / 2} 505.4 ${a} 503.6 Z" class="tw-soil"/>`;
+      const n = Math.floor((b - a) / 6.4);
+      for (let i = 0; i <= n; i++) { const x = a + 2 + i * ((b - a - 4) / n), r = 4.2 + ((i * 7) % 5) * .45; o += `<circle cx="${x.toFixed(1)}" cy="${(496.6 - (i % 2) * 1.4).toFixed(1)}" r="${r.toFixed(2)}" class="${i % 3 ? 'tw-leaf2' : 'tw-leaf'}"/>`; }
+      for (let i = 0; i <= n; i += 3) { const x = a + 5 + i * ((b - a - 8) / n); o += `<path d="M${x.toFixed(1)} 498 v-11 M${(x + 1.6).toFixed(1)} 498 v-8.6 M${(x - 1.6).toFixed(1)} 498 v-9.4" class="tw-lav-s"/><path d="M${x.toFixed(1)} 487 v-4 M${(x + 1.6).toFixed(1)} 489.4 v-3.4 M${(x - 1.6).toFixed(1)} 488.6 v-3.6" class="tw-lav"/>`; }
+      for (let i = 0; i <= n; i++) { const x = a + 4 + i * ((b - a - 8) / n), y = 500.6 + (i % 2) * 1.2; o += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(3.4 + (i % 3) * .5).toFixed(2)}" class="${i % 2 ? 'tw-leaf' : 'tw-leaf2'}"/><circle cx="${(x + .6).toFixed(1)}" cy="${(y - 2.6).toFixed(1)}" r="1.35" class="tw-flower" style="--c:${COL[(i * 3) % COL.length]}"/><circle cx="${(x - 1.8).toFixed(1)}" cy="${(y - .6).toFixed(1)}" r="1.1" class="tw-flower" style="--c:${COL[(i * 5 + 2) % COL.length]}"/>`; }
+      return o;
+    }).join('')}
     <!-- clumps of flowers out on the lawn -->
     ${[[VC.c - 196, 566], [VC.c - 100, 586], [VC.c + 100, 582], [VC.c + 196, 562], [VC.c - 170, 512], [VC.c + 178, 586]].map(([x, y], j) => Array.from({ length: 6 }, (_, i) => { const a = i / 6 * Math.PI * 2, px = x + Math.cos(a) * 4.4, py = y + Math.sin(a) * 1.8; return `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="2.2" class="tw-leaf2"/><circle cx="${px.toFixed(1)}" cy="${(py - 1.8).toFixed(1)}" r="1.15" class="tw-flower" style="--c:${COL[(i + j * 2) % COL.length]}"/>`; }).join('')).join('')}
     ${lamp(edge(-1, 532) - 1, 532)}${lamp(edge(1, 532) + 1, 532)}${lamp(edge(-1, 572) - 1, 572)}${lamp(edge(1, 572) + 1, 572)}
@@ -554,7 +544,6 @@ const garage = () => {
     <rect x="3700" y="420" width="10" height="10" class="tw-box"/><rect x="3716" y="420" width="12" height="8" rx="1" class="tw-jar"/>
     <rect x="3592" y="470" width="64" height="14" rx="3" class="tw-rug"/>
     <rect x="3562" y="396" width="186" height="8" rx="1" class="tw-gdoor"/><path d="M3562 398.6 H3748 M3562 401.4 H3748" class="tw-gdoor-l"/><rect x="3650" y="402" width="10" height="1.6" rx=".6" class="tw-gdoor-h"/>
-    ${sticker(3750, 420, 8)}
     <path d="M3566 486 H3744 L3769 600 H3541 Z" class="tw-drive"/>
     <path d="M3566 486 H3744 L3769 600 H3541 Z" fill="url(#twConcrete)" class="tw-nohit"/>
     <path d="M3559.4 518 H3750.6 M3550 563 H3760 M3655 486 V600" class="tw-joint tw-nohit"/>
@@ -878,6 +867,11 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <clipPath id="twGarBleed"><rect x="3532" y="300" width="40" height="100"/></clipPath>
     <clipPath id="twCivBay"><path d="M${HOOD.map((p) => p.map((n) => n.toFixed(2)).join(' ')).join(' L')} Z"/></clipPath>
     <radialGradient id="twBeacon"><stop offset="0" stop-color="#ffd0c8"/><stop offset=".3" stop-color="#ff4a3a" stop-opacity=".85"/><stop offset="1" stop-color="#ff2a1a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twPuff"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".55" stop-color="#f1f3f6" stop-opacity=".6"/><stop offset="1" stop-color="#e8ebef" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twPuffG"><stop offset="0" stop-color="#9ea3ab" stop-opacity=".9"/><stop offset=".55" stop-color="#9ea3ab" stop-opacity=".5"/><stop offset="1" stop-color="#9ea3ab" stop-opacity="0"/></radialGradient>
+    <radialGradient id="twPuffD"><stop offset="0" stop-color="#4f5258" stop-opacity=".95"/><stop offset=".55" stop-color="#55585e" stop-opacity=".55"/><stop offset="1" stop-color="#55585e" stop-opacity="0"/></radialGradient>
+    <linearGradient id="twEndL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#05070c" stop-opacity="1"/><stop offset=".82" stop-color="#05070c" stop-opacity=".82"/><stop offset="1" stop-color="#05070c" stop-opacity="0"/></linearGradient>
+    <linearGradient id="twEndR" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#05070c" stop-opacity="1"/><stop offset=".82" stop-color="#05070c" stop-opacity=".82"/><stop offset="1" stop-color="#05070c" stop-opacity="0"/></linearGradient>
     <radialGradient id="twPortalIn"><stop offset="0" stop-color="#f0d9ff"/><stop offset=".3" stop-color="#b56cff"/><stop offset=".75" stop-color="#6a1fd1"/><stop offset="1" stop-color="#2a0a5e"/></radialGradient>
     <radialGradient id="twPortalGlow"><stop offset=".45" stop-color="#a855f7" stop-opacity=".45"/><stop offset="1" stop-color="#a855f7" stop-opacity="0"/></radialGradient>
     <clipPath id="twTvScr"><rect x="3424.4" y="412" width="27.2" height="16.2"/></clipPath>
@@ -921,6 +915,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g class="tw-sun"><circle r="74" fill="url(#twHalo)"/><circle r="32" fill="#ffcf6b"/></g>
     <g class="tw-moon"><circle cx="-7" cy="5" r="62" fill="url(#twMoonHalo)"/><path d="${MOON}" fill="#f6eed6"/></g>
     <rect class="tw-overcast" x="-800" y="-1600" width="${WORLD + 1600}" height="2140"/>
+    <g class="tw-wxclouds"><g transform="translate(-300 80) scale(1.9)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(120 30) scale(2.2)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(560 90) scale(1.7)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(980 10) scale(2.3)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(1400 70) scale(1.9)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(1820 20) scale(2.1)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(2240 80) scale(1.8)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(2660 25) scale(2.2)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(3080 75) scale(1.9)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(3500 20) scale(2.1)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(3920 80) scale(1.8)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(4340 25) scale(2.2)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g><g transform="translate(4760 70) scale(1.9)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
     <g class="tw-cloud" style="--dur:110s;--from:-20s;--skyd:${skyHex(SKY_DAY, 132)};--skyn:${skyHex(SKY_NIGHT, 132)}"><g transform="translate(380 110) scale(1.0)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
     <g class="tw-cloud" style="--dur:150s;--from:-90s;--skyd:${skyHex(SKY_DAY, 75)};--skyn:${skyHex(SKY_NIGHT, 75)}"><g transform="translate(820 60) scale(0.7)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
     <g class="tw-cloud" style="--dur:180s;--from:-150s;--skyd:${skyHex(SKY_DAY, 72)};--skyn:${skyHex(SKY_NIGHT, 72)}"><g transform="translate(120 60) scale(0.55)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
@@ -974,10 +969,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- The hedge along the back of the lawn (none where the truck parks). -->
     <g class="tw-backrow">${Array.from({ length: 36 }, (_, i) => 150 + i * 58).filter((x) => x < 270 || x > 1850).map((x, i) => bush(x, 486, 1.25 + (i % 3) * 0.15)).join('')}</g>
     <!-- The car hauler's own lane: concrete, from behind the woods to the dealership's dock. -->
-    <path d="M60 481.6 H1136 L1140 489.4 H60 Z" class="tw-apron"/>
-    <path d="M60 481.6 H1136 L1140 489.4 H60 Z" fill="url(#twConcrete)" class="tw-nohit"/>
-    <path d="${Array.from({ length: 27 }, (_, i) => 80 + i * 40).map((x) => `M${x} 481.8 L${x + .6} 489.2`).join(' ')}" class="tw-joint tw-nohit"/>
-    <path d="M60 481.6 H1136 M60 489.4 H1140" class="tw-apron-edge tw-nohit"/>
+    <path d="M-800 481.6 H1136 L1140 489.4 H-800 Z" class="tw-apron"/>
+    <path d="M-800 481.6 H1136 L1140 489.4 H-800 Z" fill="url(#twConcrete)" class="tw-nohit"/>
+    <path d="${Array.from({ length: 49 }, (_, i) => -800 + i * 40).map((x) => `M${x} 481.8 L${x + .6} 489.2`).join(' ')}" class="tw-joint tw-nohit"/>
+    <path d="M-800 481.6 H1136 M-800 489.4 H1140" class="tw-apron-edge tw-nohit"/>
     <!-- Out on the west end: a little wood, wildflowers, a bench under the trees. -->
     ${pine(18, 488, 150)}${tree(70, 482, 1.25, 0)}${pine(132, 486, 120)}${tree(196, 486, 1.05, 1)}${pine(256, 490, 170)}${tree(318, 488, 1.15, 2)}
     ${[[40, 520, .8], [150, 530, .7], [262, 516, .9], [350, 532, .6], [96, 496, .85], [214, 497, .8], [326, 496, .9], [404, 497, .62]].map(([x, y, k]) => bush(x, y, k)).join('')}
@@ -1059,7 +1054,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <path d="M997 456 l6 -9 h5 l3 9 z" class="tw-chock"/><rect x="997" y="453" width="14" height="3" class="tw-chockband"/>
         <image href="assets/logos/opt/hunter.webp" x="1036" y="457.5" width="40" height="7" preserveAspectRatio="xMidYMid meet"/>
       </g>
-      <polygon class="tw-laser" points="0,0 0,0 0,0"/><polygon class="tw-laser" points="0,0 0,0 0,0"/><polygon class="tw-laser" points="0,0 0,0 0,0"/><polygon class="tw-laser" points="0,0 0,0 0,0"/>
+      <polygon class="tw-laser" points="0,0 0,0 0,0"/><polygon class="tw-laser" points="0,0 0,0 0,0"/>
       <g class="tw-beacons tw-nohit">${[[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]].map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.4" fill="url(#twBeacon)"/><rect x="${(x - 1.1).toFixed(1)}" y="${(y - 1.6).toFixed(1)}" width="2.2" height="3.2" rx=".5" class="tw-beacon-c"/>`).join('')}</g>
     </g>`)}
 
@@ -1084,7 +1079,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <image href="assets/images/town/adt-sign.webp?v=2" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/>
       <image href="assets/images/town/adt-sign-lit.webp" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
       <g class="tw-adtbush">${bush(580, 518, .8)}${bush(634, 518, .95)}<g class="tw-adt-rim tw-nohit">${bush(580, 518, .8).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}${bush(634, 518, .95).replace(/class="tw-leaf2?"/g, 'fill="url(#twAdtRim)"')}</g></g>
-      <g class="tw-cctv" transform="translate(568 340.4)">
+      <g class="tw-cctv" transform="translate(551 337.4)">
         <rect x="-5" y="-5" width="10" height="10" rx="2" class="tw-pole"/>
         <g class="tw-cctv-head" transform="rotate(-108)">
           <polygon points="-30,0 -150,-30 -150,30" fill="url(#twCone)" class="tw-cone tw-nohit" transform="scale(1 .55)"/>
@@ -1097,7 +1092,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     </g>`)}
 
     <!-- a pocket-sized competition field for the robot -->
-    <g class="tw-court tw-nohit" aria-hidden="true">
+    <g class="tw-court" aria-hidden="true">
       <path d="M574 566 H700 L708 597 H566 Z" class="tw-court-floor"/>
       <path d="M574 566 H700 L708 597 H566 Z" fill="url(#twConcrete)" opacity=".5"/>
       <path d="M637 566 V597 M596 566 L592 597 M678 566 L682 597" class="tw-court-line"/>
@@ -1280,6 +1275,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
 
     ${police(1236, 'tw-police-a')}${police(4012, 'tw-police-b')}
 
+    <!-- Past either end of the street, darkness. -->
+    <g class="tw-ends tw-nohit" aria-hidden="true"><rect x="-800" y="-1700" width="980" height="3000" fill="url(#twEndL)"/><rect x="${WORLD - 180}" y="-1700" width="980" height="3000" fill="url(#twEndR)"/></g>
     <!-- A pin on every stop. -->
     <g class="tw-pins">${roles.filter((r) => SPOT[r.id].pin || r.id === 'rjax' || r.id === 'rfa').map((r) => { const at = SPOT[r.id].pin ? [SPOT[r.id].pin[0] + (OFF[r.id] || 0), SPOT[r.id].pin[1]] : null; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
   </g>

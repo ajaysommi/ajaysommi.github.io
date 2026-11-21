@@ -57,7 +57,7 @@ window.PORTFOLIO = (function () {
         id: 'fics', short: 'FICS @ UF', year: 2023,
         org: 'Florida Institute for Cybersecurity Research', role: 'AI Cybersecurity Researcher',
         when: 'May 2023 to May 2024', where: 'Gainesville, FL',
-        text: "Helped find the weak spots in AI chatbots before bad actors could. I built tools that automatically tested ChatGPT with inputs designed to make it misbehave, kept a catalogue of the failures we could reliably repeat, and worked on ways to detect and block them, running some of the experiments on HiPerGator, UF's supercomputer. Early, hands on experience with how AI can fail.",
+        text: "Helped find the weak spots in AI chatbots before bad actors could. I built tools that automatically tested ChatGPT with inputs designed to make it misbehave, kept a catalog of the failures we could reliably repeat, and worked on ways to detect and block them, running some of the experiments on HiPerGator, UF's supercomputer. Early, hands on experience with how AI can fail.",
         stats: [],
         tags: ['Python', 'LLM Security', 'Research'],
         photos: [J + 'fics-terminal-400.webp']

@@ -3116,7 +3116,7 @@ const palette = (() => {
      placeholder types out things worth searching for. */
   const ext = (url) => () => window.open(url, '_blank', 'noopener');
   const commands = [
-    { title: 'Top',              group: 0, run: go('top') },
+    { title: document.documentElement.classList.contains('classic') ? 'Top' : 'Visitor center', group: 0, run: go('top') },
     { title: 'The Path',         group: 0, keys: 'career journey roles experience', run: go('experience') },
     { title: 'Education',        group: 0, keys: 'uf school', run: go('education') },
     { title: 'Projects',         group: 0, keys: 'featured work', run: go('projects') },

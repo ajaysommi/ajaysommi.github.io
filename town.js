@@ -98,12 +98,17 @@
   let rjSet = '', overCol = null;
   // a shade of a colour that still stands apart from it: lighter on dark things, deeper on light ones
   const shade = (c) => { const l = (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255; return l > 0.6 ? c.map((v) => v * 0.62) : c.map((v) => v * 0.6 + 255 * 0.4); };
-  const colOf = (t) => {
-    if (!t || !t.closest || t.closest('.tw-rover, .tw-frc')) return null;
-    const h = t.closest('.tw-hot'); if (h && h.dataset.id !== 'rjax' && D.roles[h.dataset.id] && t.tagName === 'image') return rgbOf(D.roles[h.dataset.id].tint);
-    const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(getComputedStyle(t).fill || '');
-    if (m && (m[4] === undefined || +m[4] > 0.3)) return [+m[1], +m[2], +m[3]];
-    return h && D.roles[h.dataset.id] && h.dataset.id !== 'rjax' ? rgbOf(D.roles[h.dataset.id].tint) : null;
+  // the first solid colour under the pointer (patterns and glows are looked through)
+  const colOf = (e) => {
+    for (const t of document.elementsFromPoint(e.clientX, e.clientY)) {
+      if (t === svg || !svg.contains(t)) break;
+      if (t.closest('.tw-rover, .tw-frc, .tw-vision, .tw-reticle, .tw-halo')) continue;
+      const h = t.closest('.tw-hot'), id = h && h.dataset.id;
+      if (t.tagName === 'image') { if (id && id !== 'rjax' && D.roles[id]) return rgbOf(D.roles[id].tint); continue; }
+      const cs = getComputedStyle(t), m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(cs.fill || '');
+      if (m && (m[4] === undefined || +m[4] > 0.3) && +cs.opacity > 0.3) return [+m[1], +m[2], +m[3]];
+    }
+    return null;
   };
   const tintBeam = (dt) => {
     const t = overCol ? shade(overCol) : RJ0;
@@ -126,9 +131,8 @@
     armB.setAttribute('d', `M1004 474 L1110 ${top.toFixed(1)}`);
     pivot.setAttribute('cy', ((474 + top) / 2).toFixed(1));
     lasers.forEach((l, i) => {
-      const k = i >> 1, o = i & 1 ? 1 : -1, [bx, by] = BEACONS[k], tx = WHEELS[k], ty = 445.7 - h;
-      const b0 = by + o * 0.9, t0 = ty + o * 1.7;
-      l.setAttribute('points', `${bx},${(b0 - 0.5).toFixed(1)} ${bx},${(b0 + 0.5).toFixed(1)} ${tx},${(t0 + 0.8).toFixed(1)} ${tx},${(t0 - 0.8).toFixed(1)}`);
+      const [bx, by] = BEACONS[i], tx = WHEELS[i], ty = 445.7 - h;
+      l.setAttribute('points', `${bx},${by - 1.6} ${bx},${by + 1.6} ${tx},${(ty + 2).toFixed(1)} ${tx},${(ty - 2).toFixed(1)}`);
     });
   };
   lift(0);
@@ -311,13 +315,35 @@
   // arrow keys and the two edge buttons.
   let glide = 0;
   const panTo = (x, ms = 600) => {
-    cancelAnimationFrame(glide);
+    cancelAnimationFrame(glide); if (typeof glideStop === 'function') glideStop();
     const to = clamp(x, 0, Math.max(0, WORLD - vw));
     if (reduced || ms === 0) { camX = to; setVB(view()); return; }
     const from = camX, t0 = performance.now();
     const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); camX = from + (to - from) * k; slid(); setVB(view()); if (k < 1) glide = requestAnimationFrame(f); };
     glide = requestAnimationFrame(f);
   };
+  /* Gliding: the wheel, a trackpad and the arrow keys only say where the
+     street should be; once a frame it eases there, so the motion is smooth
+     and the scene is laid out once per frame however fast the input comes.
+     Holding an arrow key keeps it rolling at an even pace. */
+  let gTo = null, gRaf = 0, gT = 0, keyDir = 0;
+  const glideStep = (t) => {
+    const dt = Math.min(0.05, Math.max(0.001, (t - gT) / 1000)); gT = t;
+    const max = Math.max(0, WORLD - vw);
+    if (keyDir) gTo = clamp(gTo + keyDir * 820 / scale * dt, 0, max);
+    const d = gTo - camX;
+    camX = Math.abs(d) < 0.2 && !keyDir ? gTo : camX + d * (1 - Math.exp(-dt * 15));
+    slid(); setVB(view());
+    if (camX !== gTo || keyDir) gRaf = requestAnimationFrame(glideStep); else { gRaf = 0; gTo = null; }
+  };
+  const glideBy = (dx) => {
+    cancelAnimationFrame(glide);
+    gTo = clamp((gTo === null ? camX : gTo) + dx, 0, Math.max(0, WORLD - vw));
+    if (!gRaf) { gT = performance.now(); gRaf = requestAnimationFrame(glideStep); }
+  };
+  const glideStop = () => { cancelAnimationFrame(gRaf); gRaf = 0; gTo = null; keyDir = 0; };
+  document.addEventListener('keyup', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') keyDir = 0; });
+  addEventListener('blur', () => { keyDir = 0; });
   setVB(view());
   /* The opening: the street starts up in the sky, and the moment the mark
      sets off for the corner it comes down to the visitor center in one
@@ -461,7 +487,7 @@
     const wasOpen = !!cur;
     cur = id;
     const z = zoomOf(id), left = z[0] + z[2] / 2 > vb[0] + vb[2] / 2;
-    cancelAnimationFrame(glide);
+    cancelAnimationFrame(glide); glideStop();
     // when the card closes, the street is left centred on this place
     camX = clamp(z[0] + z[2] / 2 - vw / 2, 0, Math.max(0, WORLD - vw));
     panel.classList.toggle('left', left);
@@ -472,7 +498,7 @@
     // the Civic's hood swings up while its stop is open
     tw.classList.toggle('hood', id === 'p-civic');
     hots.forEach((x) => x.classList.toggle('tw-cur', x.dataset.id === id));
-    glow(null); glow(id);
+    if (lit !== id) { glow(null); glow(id); } else if (halos[id]) { halos[id].classList.add('keep'); halos[id]._lite.classList.add('keep'); }
     if (id === 'jm') { arrived = true; tw.classList.add('arrive', 'parked'); }
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
     const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
@@ -519,8 +545,13 @@
     if (!cur) {
       if (e.target.closest && e.target.closest('input, textarea')) return;
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') explored = true;
-      if (e.key === 'ArrowRight') panTo(camX + vw * 0.4, 450);
-      else if (e.key === 'ArrowLeft') panTo(camX - vw * 0.4, 450);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        if (!e.repeat) glideBy(dir * vw * 0.1);
+        keyDir = dir;
+        if (!gRaf) { gT = performance.now(); gTo = gTo === null ? camX : gTo; gRaf = requestAnimationFrame(glideStep); }
+      }
       return;
     }
     if (e.key === 'Escape') { const big = $('.tw-lightbox'); if (big) big.remove(); else close(); }
@@ -558,7 +589,8 @@
     offT = setTimeout(() => { over = null; glow(null); hideLabel(); }, 160);
   };
   const idAt = (t) => { if (!t || !t.closest) return null; if (t.closest('.tw-adtsticker')) return 'adt'; const h = t.closest('.tw-hot'); return h ? h.dataset.id : null; };
-  svg.addEventListener('pointerover', (e) => { overCol = colOf(e.target); hoverTo(idAt(e.target)); });
+  svg.addEventListener('pointerover', (e) => { overCol = colOf(e); hoverTo(idAt(e.target)); });
+  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (n - colT > 120) { colT = n; overCol = colOf(e); } });
   svg.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
 
   /* ---------------------------------------------------------- the pointer */
@@ -665,10 +697,8 @@
     e.preventDefault();
     cancelAnimationFrame(glide);
     if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); }
-    camX = clamp(camX + d / scale, 0, Math.max(0, WORLD - vw));
     explored = true;
-    slid();
-    setVB(view());
+    glideBy(d / scale);
   }, { passive: false });
   let drag = null, dragged = false;
   svg.addEventListener('pointerdown', (e) => {
@@ -680,7 +710,7 @@
     if (!drag || e.pointerId !== drag.id) return;
     const dx = e.clientX - drag.x;
     if (!dragged && Math.abs(dx) < 6) return;
-    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); } }
+    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); glideStop(); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving'); } }
     camX = clamp(drag.cam - dx / scale, 0, Math.max(0, WORLD - vw));
     explored = true;
     slid();

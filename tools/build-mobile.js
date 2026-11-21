@@ -10,6 +10,7 @@ const window = {};
 const src = fs.readFileSync(path.join(root, 'retro/content.js'), 'utf8');
 new Function('window', src.slice(0, src.indexOf('/* Small helpers every machine shares. */')))(window);
 const P = window.PORTFOLIO;
+const { STORY, ABOUT, PROJ_TEXT } = require('./copy.js');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const has = (f) => fs.existsSync(path.join(root, f));
 const mid = (s) => { for (const k of ['-960', '-800']) { const f = s.replace(/-(400|480)\.webp$/, k + '.webp'); if (f !== s && has(f)) return f; } return s; };
@@ -79,9 +80,10 @@ const stop = (e, i) => {
 };
 
 const roleSheet = (e) => {
-  const [a, b] = lead(e.text);
+  const [a, b] = lead(STORY[e.id] || e.text);
   return `<template id="mx-role-${e.id}">
-    <header class="mxs-head">${logoOf(e)}<div><p class="mx-mono">${esc(e.when)}</p><h3>${esc(e.org)}</h3><p class="mxs-sub">${esc(e.role)} · ${esc(e.where)}</p></div></header>
+    <header class="mxs-head">${logoOf(e)}<div><p class="mx-mono">${esc(e.when)}</p><h3>${esc(e.org)}</h3><p class="mxs-sub">${esc(e.role)}</p><p class="mxs-sub mxs-where">${esc(e.where)}</p></div></header>
+    ${ABOUT[e.id] ? `<p class="mxs-about">${esc(ABOUT[e.id])}</p>` : ''}
     ${e.photos.length ? `<div class="mxs-pics">${e.photos.map((s) => `<img src="${mid(s)}" alt="" loading="lazy" decoding="async" />`).join('')}</div>` : ''}
     <p class="mxs-lead">${esc(a)}</p>
     ${b ? `<p class="mxs-text">${esc(b)}</p>` : ''}
@@ -92,7 +94,7 @@ const roleSheet = (e) => {
 const projSheet = (p) => `<template id="mx-proj-${p.id}">
     ${p.shot ? `<img class="mxs-shot" src="${p.shot.replace('-480', '-960')}" alt="${esc(p.name)} screenshot" loading="lazy" decoding="async" />` : ''}
     <header class="mxs-head mxs-head-plain"><div><p class="mx-mono">${esc(p.kind)}</p><h3>${esc(p.full)}</h3></div></header>
-    <p class="mxs-text">${esc(p.text)}</p>
+    <p class="mxs-text">${esc(PROJ_TEXT[p.id] || p.text)}</p>
     <ul class="mx-tags">${p.stack.split(' / ').map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
     ${p.url ? `<a class="mx-btn mx-btn-solid mxs-go" href="${esc(p.url)}" target="_blank" rel="noopener">${I.github} View on GitHub ${I.arrow}</a>` : '<p class="mxs-soon mx-mono">In progress, not public yet</p>'}
   </template>`;

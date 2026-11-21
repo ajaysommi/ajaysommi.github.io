@@ -1301,7 +1301,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-label b { font-family: 'Nunito', var(--font-sans); font-weight: 800; }
 /* the year: big, sliding in from the card's own edge and cut off by it */
 .tw-p-top { position: relative; }
-.tw-p-yr { position: absolute; z-index: 0; top: 34px; right: -74px; padding-left: 6px; font: 900 84px/1 'Nunito', var(--font-sans); letter-spacing: -.05em; color: transparent; background: linear-gradient(90deg, color-mix(in oklab, var(--tint) 30%, transparent) 0%, color-mix(in oklab, var(--tint) 34%, transparent) 38%, color-mix(in oklab, var(--tint) 52%, transparent) 100%); -webkit-background-clip: text; background-clip: text; pointer-events: none; white-space: nowrap; animation: tw-yr .9s cubic-bezier(.2, .8, .2, 1) .08s both; }
+.tw-p-yr { position: absolute; z-index: 0; top: 34px; right: -74px; padding-left: 6px; font: 900 84px/1 'Nunito', var(--font-sans); letter-spacing: -.05em; color: transparent; background: linear-gradient(90deg, color-mix(in oklab, var(--tint) 14%, transparent) 0%, color-mix(in oklab, var(--tint) 34%, transparent) 40%, color-mix(in oklab, var(--tint) 78%, transparent) 100%); -webkit-background-clip: text; background-clip: text; pointer-events: none; white-space: nowrap; animation: tw-yr .9s cubic-bezier(.2, .8, .2, 1) .08s both; }
 .tw-p-logo { position: relative; z-index: 1; }
 @keyframes tw-yr { from { transform: translateX(80px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .tw-p-yr { animation: none; } }
@@ -1345,7 +1345,6 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-court-edge { stroke: #2f3238; stroke-width: 1.6; }
 [data-theme="midnight"] .tw .tw-court-floor, [data-theme="terminal"] .tw .tw-court-floor { fill: #3a3d44; }
 /* the HawkEye: thinner strands, each on its own beat, and bright lamps */
-.tw-laser:nth-of-type(odd) { animation-delay: -.05s; } .tw-laser:nth-of-type(4n+3), .tw-laser:nth-of-type(4n+4) { animation-duration: .17s; }
 .tw-beacon-c { fill: #ffe0da; } .tw-beacons { animation: tw-beacon .4s steps(2) infinite; }
 @keyframes tw-beacon { 50% { opacity: .75; } }
 /* the dish in one piece */
@@ -1358,7 +1357,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-glamp-p { fill: #3a3d46; } .tw-glamp { fill: #2a2c34; }
 .tw-bath { fill: #b9bcc4; stroke: #6f7380; stroke-width: .6; } .tw-bathwater { fill: #7cc4ef; } .tw-dial { fill: #c9a46a; stroke: #6b4428; stroke-width: .5; } .tw-gnomon { fill: none; stroke: #3e2515; stroke-width: .8; }
 .tw-bird { fill: #c2541c; } .tw-beak { fill: #f2b705; } .tw-birdtail { stroke: #7a3412; stroke-width: 1; }
-.tw-bfly { transform: translate(2862px, 520px) scale(1.7); }
+.tw-bfly { transform: translate(2792px, 548px) scale(1.7); }
 .tw-bfly-path { animation: tw-bfly-roam 11s ease-in-out infinite; }
 .tw-bfly-bob { animation: tw-bfly-bob .9s ease-in-out infinite; }
 .tw-bfly-w path { transform-box: fill-box; animation: tw-flap .16s ease-in-out infinite alternate; }
@@ -1366,7 +1365,33 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-bfly-wing { fill: #3b82f6; stroke: #1e3a8a; stroke-width: .5; } .tw-bfly-body { stroke: #1e293b; stroke-width: 1; stroke-linecap: round; }
 @keyframes tw-flap { to { transform: scaleX(.25); } }
 @keyframes tw-bfly-bob { 50% { transform: translateY(-2.4px); } }
-@keyframes tw-bfly-roam { 0% { transform: translate(0, 0); } 20% { transform: translate(34px, 14px); } 40% { transform: translate(78px, 4px); } 60% { transform: translate(52px, 30px); } 80% { transform: translate(14px, 22px); } 100% { transform: translate(0, 0); } }
-.tw.bfly-away .tw-bfly { transition: transform 4s cubic-bezier(.4, 0, .6, 1), opacity 4s ease-in; transform: translate(3260px, 240px) scale(1.7); opacity: 0; }
+@keyframes tw-bfly-roam { 0% { transform: translate(0, 0); } 20% { transform: translate(26px, -12px); } 40% { transform: translate(48px, 6px); } 60% { transform: translate(20px, 22px); } 80% { transform: translate(-22px, 8px); } 100% { transform: translate(0, 0); } }
+.tw.bfly-away .tw-bfly { transition: transform 4s cubic-bezier(.4, 0, .6, 1), opacity 4s ease-in; transform: translate(2500px, 250px) scale(1.7); opacity: 0; }
 /* the house's trim, slimmer and less bright */
 .tw-fascia { stroke: #e6dcc6; stroke-width: 1.6; } .tw-trim { stroke: #e6dcc6; stroke-width: 1.6; }
+
+/* round 16 */
+/* the card, a little wider, its title clear of the year */
+.tw-panel { width: min(440px, 44%); }
+.tw-panel:not(.tw-postcard) .tw-panel-in h3, .tw-panel .tw-p-role { padding-right: 68px; }
+/* the house without its pale edging */
+.tw-fascia, .tw-trim { stroke: rgba(0, 0, 0, .16); stroke-width: 1; }
+/* after dark the round trees and bushes darken with the grass; the billboard's lamps are lit */
+[data-theme="midnight"] .tw, [data-theme="terminal"] .tw { --tw-leaf: #2f5c33; --tw-leaf2: #22462a; }
+[data-theme="midnight"] .tw .tw-bb-lamp, [data-theme="terminal"] .tw .tw-bb-lamp { fill: #fff1c2; }
+/* soft steam and smoke */
+.tw-steam circle { fill: url(#twPuff); }
+.tw-smoke circle { fill: url(#twPuffG); }
+.tw.mac-fire .tw-smoke-x, .tw-gsmoke circle { fill: url(#twPuffD); }
+/* rain and snow: the sun goes in, a grey lid of cloud comes over */
+.tw-wxclouds { opacity: 0; fill: #c5cad1; transition: opacity 2.4s; pointer-events: none; }
+[data-theme="midnight"] .tw .tw-wxclouds, [data-theme="terminal"] .tw .tw-wxclouds { fill: #2a2e44; }
+.tw.wx-rain .tw-wxclouds { opacity: .96; } .tw.wx-snow .tw-wxclouds { opacity: .9; }
+.tw.wx-rain :is(.tw-sun, .tw-moon), .tw.wx-snow :is(.tw-sun, .tw-moon) { opacity: 0; transition: opacity 2s; }
+.tw.wx-rain .tw-cloud { fill: #aeb4bd; } [data-theme="midnight"] .tw.wx-rain .tw-cloud, [data-theme="terminal"] .tw.wx-rain .tw-cloud { fill: #3a3f58; }
+/* the robot's field */
+.tw-court { cursor: default; }
+/* the lavender in the bed by the deck */
+.tw-lav-s { stroke: #4f8f3c; stroke-width: .7; fill: none; } .tw-lav { stroke: #9b7fe0; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+/* the very ends of the street */
+.tw-ends { pointer-events: none; }
