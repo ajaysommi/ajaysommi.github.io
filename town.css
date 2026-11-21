@@ -1415,8 +1415,8 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* the dish: tracking whenever the pointer is near it */
 .tw.dishon .tw-dish { animation: none; }
 /* the HawkEye's lasers, three times as quick */
-.tw-laser { animation-duration: .12s; } .tw-laser + .tw-laser { animation-delay: -.06s; }
-.tw-beacon { animation-duration: .12s; } .tw-beacon + .tw-beacon { animation-delay: -.06s; }
+.tw-laser { animation-duration: .06s; } .tw-laser + .tw-laser { animation-delay: -.03s; }
+.tw-beacon { animation-duration: .06s; } .tw-beacon + .tw-beacon { animation-delay: -.03s; }
 /* the photo from long ago, uncropped */
 .tw-pc-snap { width: 230px; }
 .tw-pc-snap button { aspect-ratio: 4 / 3; }
