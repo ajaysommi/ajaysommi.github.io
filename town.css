@@ -1395,3 +1395,18 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-lav-s { stroke: #4f8f3c; stroke-width: .7; fill: none; } .tw-lav { stroke: #9b7fe0; stroke-width: 1.5; stroke-linecap: round; fill: none; }
 /* the very ends of the street */
 .tw-ends { pointer-events: none; }
+
+/* round 17 */
+/* Toyota at night: no wash of light behind; the emblem itself glows */
+.tw-backlit { display: none; }
+[data-theme="midnight"] .tw .tw-tlogo, [data-theme="terminal"] .tw .tw-tlogo { filter: none; }
+[data-theme="midnight"] .tw .tw-tmark, [data-theme="terminal"] .tw .tw-tmark { filter: url(#twToyLit); }
+[data-theme="midnight"] .tw .tw-temb, [data-theme="terminal"] .tw .tw-temb { filter: url(#twToyLitS); }
+/* the HawkEye's two lasers take turns: one on while the other is off */
+.tw-laser { animation: tw-alt .36s steps(1) infinite; }
+.tw-laser + .tw-laser { animation-delay: -.18s; }
+@keyframes tw-alt { 0% { opacity: 1; } 22% { opacity: .78; } 34% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.tw-beacons { animation: none; }
+.tw-beacon { animation: tw-alt-b .36s steps(1) infinite; }
+.tw-beacon + .tw-beacon { animation-delay: -.18s; }
+@keyframes tw-alt-b { 0% { opacity: 1; } 50%, 100% { opacity: .45; } }

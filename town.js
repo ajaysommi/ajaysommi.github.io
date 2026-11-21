@@ -195,6 +195,7 @@
       g.setAttribute('class', 'tw-halo'); g.setAttribute('aria-hidden', 'true');
       g.setAttribute('filter', fitted(h, `twHalo-${id}`));
       $$('.tw-hit, .tw-dmg' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
+      $$('.tw-bump.off', g).forEach((n) => n.classList.remove('off'));
       // and a light copy for while the scene leans in: the place's shapes in
       // its colour, outlined thick, no blur (the blur redrawn every frame of
       // a zoom is what made it crawl), so the glow never goes out

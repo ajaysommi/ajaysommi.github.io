@@ -708,6 +708,10 @@ const onScrollFrame = (() => {
       ['#experience .section-head'],
       ['#experience .section-lede'],
       ['#pathCompact'],
+      // the phone layout's first screen
+      ['.mx-hero > .mx-face', '.96'],
+      ['.mx-hero > .mx-name'],
+      ['.mx-hero > .mx-line'],
       // (Not the nav or the phone's dock: they are frosted glass, which a browser
       // has to blur again on every frame of anything animating them. The paper
       // fading is what shows them, with the logo's place left empty for the mark.)
@@ -765,6 +769,7 @@ const onScrollFrame = (() => {
         if (scaleFrom) frames.scale = [scaleFrom, '1'];
         const delay = Math.round(TS + 60 + MOVE * .5 * k), dur = 720;
         entrances.push(ani(node, frames, { duration: dur, delay, easing: 'cubic-bezier(.2, .8, .25, 1.04)', ...fx }));
+        if (node.parentNode && node.parentNode.classList.contains('mx-hero')) node.parentNode.classList.add('mx-js-in');
         latest = Math.max(latest, delay + dur);
       });
     }

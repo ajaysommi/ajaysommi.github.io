@@ -435,3 +435,13 @@
   html:not(.classic)::after { content: 'Turn your phone upright to look around'; position: fixed; inset: 0; z-index: 2147483647; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--bg, #121212); color: var(--ink, #edebe6); font: 800 20px 'Nunito', system-ui, sans-serif; text-align: center; }
   html:not(.classic), html:not(.classic) body { overflow: hidden !important; }
 }
+
+/* round 17 */
+@media (max-width: 719px) {
+  /* the company logos glow a touch less */
+  .mx-st-logo img { filter: drop-shadow(0 0 8px color-mix(in oklab, var(--tint) 44%, transparent)); }
+  :root:not([data-theme="daylight"]) .mx-stop.lit .mx-st-logo img { filter: drop-shadow(0 0 12px color-mix(in oklab, var(--tint) 70%, transparent)); }
+  :root:not([data-theme="daylight"]) .mx-stop.lit .mx-st-glow { opacity: .88; }
+  /* the first screen drifts in after the mark, the way the main page does (script.js runs it) */
+  .mx-hero.mx-js-in > :not(.mx-cue) { animation: none; }
+}
