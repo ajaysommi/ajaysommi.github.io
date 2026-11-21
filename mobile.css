@@ -363,3 +363,39 @@
   .mx::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: calc(var(--mx-dock, 80px) + 96px); background: linear-gradient(to bottom, color-mix(in oklab, var(--bg) 0%, transparent), var(--bg) 42%); pointer-events: none; opacity: 0; transition: opacity .3s; }
   html.mx-tabbed .mx::after { opacity: 1; }
 }
+
+/* round 14 */
+@media (max-width: 719px) {
+  /* a warmer, rounder face */
+  .mx, .mx-sheet, .mx-viewer, .mx-tabs { font-family: 'Nunito', var(--font-sans); }
+  .mx .mx-mono, .mx-sheet .mx-mono { font-family: 'Nunito', var(--font-sans); font-weight: 700; letter-spacing: .03em; }
+  .mx h1, .mx h2, .mx-name, .mx-ph { font-family: 'Nunito', var(--font-sans); font-weight: 800; letter-spacing: -.02em; }
+  /* the page's soft shapes come in gently, a moment after the page */
+  html.is-loading .bg { opacity: 0; }
+  html:not(.is-loading) .bg { animation: mx-bgin 1.8s ease .5s both; }
+  @keyframes mx-bgin { from { opacity: 0; } }
+  /* the little arrow sits well above the dock, clearly about the page, not the menu */
+  .mx .mx-cue { bottom: calc(var(--mx-dock, 80px) + 46px); }
+  /* the two bars: a clear gap between them */
+  .mx-tabs { bottom: calc(var(--mx-dock, calc(76px + env(safe-area-inset-bottom))) + 14px); }
+  .mx::after { height: calc(var(--mx-dock, 80px) + 106px); }
+  /* UF: gator blue and orange, not a dashed line */
+  .mx-edu { border: 2px solid transparent; background: linear-gradient(var(--bg), var(--bg)) padding-box, linear-gradient(120deg, #0021a5, #3b5bdb 45%, #fa4616) border-box; }
+  [data-theme="daylight"] .mx-edu { background: linear-gradient(var(--bg), var(--bg)) padding-box, linear-gradient(120deg, #0021a5, #3b5bdb 45%, #fa4616) border-box; }
+  .mx-edu .mx-mono { color: #fa4616; }
+  /* Off the clock: a stack of wide story cards */
+  .mx-stories { grid-template-columns: 1fr; gap: 12px; }
+  .mx-story-b { grid-template-columns: auto 1fr auto; justify-items: start; align-items: center; gap: 14px; padding: 12px 14px 12px 12px; border: 1px solid var(--stroke); border-radius: 20px; background: var(--surface); text-align: left; color: var(--ink-3); }
+  .mx-story-b .mx-ring { width: 84px; height: 84px; }
+  .mx-story-t { display: grid; gap: 4px; }
+  .mx-story-l { font-size: 16px; font-weight: 800; color: var(--ink); text-wrap: balance; }
+  .mx-story-s { font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+  .mx-story-b > svg { width: 18px; height: 18px; }
+  .mx-quote { margin-top: 4px; }
+}
+@media (max-width: 719px) {
+  /* the small labels, in the same warm face, in sentence case */
+  .mx, .mx-sheet, .mx-viewer, .mx-lb { --font-mono: 'Nunito', ui-rounded, system-ui, sans-serif; }
+  .mx-mono, .mx-st-t .mx-st-where { text-transform: none; font-weight: 700; letter-spacing: .02em; font-size: 12.5px; }
+  .mx-tags li { border-radius: 999px; font-weight: 600; font-size: 12px; }
+}

@@ -139,7 +139,7 @@ const HELLO = [
   'I’m a Gator, a proud University of Florida graduate, and I’m happiest when I’m figuring out how something works, usually by opening it up to look inside.',
   'Wander around, poke at whatever catches your eye, and say hi if you’d like.'
 ];
-roles.push({ id: 'vc', org: 'Welcome to Sommiville', short: 'Visitor center', badge: 'Hi', role: P.name, when: '', where: '', text: HELLO.join(' '), lines: HELLO, quote: P.quote, about: '', stats: [], tags: [], photos: [big(P.photo), 'assets/images/offclock/kid-2006-640.webp'], logo: null, tint: TINT.vc, ph: 'Add more personal photos and a few lines about life outside work: hobbies, family, where I grew up, favourite places.', postcard: true });
+roles.push({ id: 'vc', org: 'Welcome to Sommiville', short: 'Visitor center', badge: '👋', role: P.name, when: '', where: '', text: HELLO.join(' '), lines: HELLO, quote: P.quote, about: '', stats: [], tags: [], photos: [big(P.photo), 'assets/images/offclock/kid-2006-640.webp'], logo: null, tint: TINT.vc, ph: 'Add more personal photos and a few lines about life outside work: hobbies, family, where I grew up, favourite places.', postcard: true });
 roles.push({ id: 'tm', org: 'Time machine', short: 'A strange portal', badge: '1977', role: '', when: '', where: '', text: '', about: '', stats: [], tags: [], photos: [], logo: null, tint: TINT.tm, special: true });
 const stepsOf = (list) => list.map(([f, t, c]) => [big(f), t, c]);
 BENCH.forEach((p) => {
@@ -325,22 +325,57 @@ const visitorCenter = () => {
       ${[VC.c - 34, VC.c, VC.c + 34].map((x) => `<path d="M${x} ${gy + 20} V${gy + 34}" class="tw-beam-t"/><circle cx="${x}" cy="${gy + 37}" r="3.4" class="tw-pendant"/>`).join('')}
       <path d="M${gl + 30} ${gy + 4} V${VC.base} M${VC.c} ${gy + 20} V${VC.base} M${gr - 30} ${gy + 4} V${VC.base} M${gl} 430 H${gr} M${gl} 458 H${gr}" class="tw-mull"/>
       <rect x="${gl - 4}" y="${gy - 2}" width="6" height="${VC.base - gy + 2}" class="tw-vcpost"/><rect x="${gr - 2}" y="${gy - 2}" width="6" height="${VC.base - gy + 2}" class="tw-vcpost"/>
+      <!-- log corners, a stone skirt along the walls -->
+      <rect x="${VC.l + 5}" y="${VC.eave - 2}" width="8" height="${VC.base - VC.eave + 2}" rx="3" class="tw-log"/><rect x="${VC.r - 13}" y="${VC.eave - 2}" width="8" height="${VC.base - VC.eave + 2}" rx="3" class="tw-log"/>
+      ${[[VC.l + 13, gl - 5], [gr + 5, VC.r - 13]].map(([a, b]) => `<rect x="${a}" y="474" width="${b - a}" height="12" class="tw-skirt"/>` + Array.from({ length: Math.floor((b - a) / 9) }, (_, i) => `<rect x="${(a + 1 + i * 9 + (i % 2) * 1.5).toFixed(1)}" y="${475 + (i % 2) * 5.2}" width="${7 - (i % 3)}" height="4.8" rx="1.6" class="tw-skirt-s"/>`).join('')).join('')}
+      <rect x="${VC.l + 13}" y="472.4" width="${gl - VC.l - 18}" height="2" class="tw-skirtcap"/><rect x="${gr + 5}" y="472.4" width="${VC.r - gr - 18}" height="2" class="tw-skirtcap"/>
+      <!-- the window: a trimmed frame, a sill and a flower box -->
+      <rect x="2811" y="417" width="78" height="56" rx="2" class="tw-vctrim"/>
       <rect x="2814" y="420" width="72" height="50" rx="2" fill="url(#twVcGlass)"/><path d="M2838 420 V470 M2862 420 V470 M2814 445 H2886" class="tw-mull"/>
+      <rect x="2808" y="470" width="84" height="3.4" rx="1" class="tw-sill"/>
+      ${[2818, 2826, 2834, 2842, 2850, 2858, 2866, 2874, 2882].map((x, k) => `<circle cx="${x}" cy="${474 - (k % 2) * 1.6}" r="3.2" class="${k % 2 ? 'tw-leaf2' : 'tw-leaf'}"/><circle cx="${x + 1.2}" cy="${472.4 - (k % 2) * 1.6}" r="1.2" class="tw-flower" style="--c:${['#ff6b8b', '#ffd166', '#f8f4ea', '#c084fc'][k % 4]}"/>`).join('')}
+      <rect x="2812" y="474" width="76" height="7" rx="1.2" class="tw-fbox"/>
       <rect x="3032" y="416" width="78" height="30" rx="2" class="tw-vcplaque"/>
       <text x="3071" y="429" class="tw-vcplaque-t" text-anchor="middle">WELCOME</text><text x="3071" y="441" class="tw-vcplaque-t" text-anchor="middle">CENTER</text>
+      <rect x="3033" y="449" width="76" height="28" rx="2" class="tw-vctrim"/>
       <rect x="3036" y="452" width="70" height="22" rx="2" fill="url(#twVcGlass)"/><path d="M3071 452 V474" class="tw-mull"/>${sticker(3092, 455)}
+      <rect x="3030" y="474" width="82" height="3.4" rx="1" class="tw-sill"/>
+      <!-- double glass doors in the middle of the glass front, with handles; a lantern either side -->
+      <rect x="${VC.c - 21}" y="440" width="42" height="46" class="tw-vcdoorf"/>
+      <rect x="${VC.c - 18}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor"/><rect x="${VC.c + 1}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor"/>
+      <path d="M${VC.c - 4} 458 v10 M${VC.c + 4} 458 v10" class="tw-vchandle"/>
+      ${[gl - 12, gr + 12].map((x) => `<g transform="translate(${x} 444)"><path d="M0 -10 v4" class="tw-vchandle"/><path d="M-4 -6 h8 l-1 10 h-6 z" class="tw-lantern"/><rect x="-2.6" y="-4.6" width="5.2" height="7.2" class="tw-lantern-g"/><path d="M-5 -6 h10" class="tw-vchandle"/><circle r="9" cy="-1" fill="url(#twBulb)" class="tw-night tw-nohit"/></g>`).join('')}
+      <!-- a stone chimney on the left slope -->
+      <rect x="2852" y="${(roofY(2852) - 30).toFixed(1)}" width="22" height="40" class="tw-chim"/>
+      <path d="${[0, 1, 2, 3].map((k) => `M2852 ${(roofY(2852) - 30 + 8 + k * 8).toFixed(1)} H2874`).join(' ')} ${[0, 1, 2, 3].map((k) => `M${2858 + (k % 2) * 8} ${(roofY(2852) - 30 + k * 8).toFixed(1)} v8`).join(' ')}" class="tw-chim-l"/>
+      <rect x="2849" y="${(roofY(2852) - 34).toFixed(1)}" width="28" height="5" rx="1" class="tw-chimcap"/>
       <path d="M${VC.l - 14} ${VC.eave + 6} L${VC.c} ${VC.apex - 4} L${VC.r + 14} ${VC.eave + 6} L${VC.r + 6} ${VC.eave + 10} L${VC.c} ${VC.apex + 10} L${VC.l - 6} ${VC.eave + 10} Z" class="tw-vcroof"/>
+      <path d="M${VC.l - 14} ${VC.eave + 6} L${VC.c} ${VC.apex - 4} L${VC.r + 14} ${VC.eave + 6} L${VC.r + 6} ${VC.eave + 10} L${VC.c} ${VC.apex + 10} L${VC.l - 6} ${VC.eave + 10} Z" fill="url(#twShingles)" class="tw-nohit" opacity=".55"/>
+      <!-- rafter tails under the eaves, and timber brackets at each end -->
+      <path d="${Array.from({ length: 15 }, (_, i) => VC.l - 2 + i * 11).filter((x) => x < VC.c - 6).map((x) => { const y = VC.eave + 10 - (x - VC.l + 6) * (VC.eave - VC.apex) / (VC.c - VC.l + 6); return `M${x} ${y.toFixed(1)} l-2 4`; }).join(' ')} ${Array.from({ length: 15 }, (_, i) => VC.r + 2 - i * 11).filter((x) => x > VC.c + 6).map((x) => { const y = VC.eave + 10 - (VC.r + 6 - x) * (VC.eave - VC.apex) / (VC.r + 6 - VC.c); return `M${x} ${y.toFixed(1)} l2 4`; }).join(' ')}" class="tw-rafter"/>
+      <path d="M${VC.l + 10} ${VC.eave + 30} L${VC.l - 4} ${VC.eave + 10} M${VC.l + 10} ${VC.eave + 30} V${VC.eave + 12} M${VC.r - 10} ${VC.eave + 30} L${VC.r + 4} ${VC.eave + 10} M${VC.r - 10} ${VC.eave + 30} V${VC.eave + 12}" class="tw-knee"/>
+      <path d="M${VC.c - 6} ${VC.apex - 2} h12 l-6 -5 z" class="tw-ridgecap"/>
       <path d="M${VC.l - 14} ${VC.eave + 6} L${VC.c} ${VC.apex - 4} L${VC.r + 14} ${VC.eave + 6}" class="tw-vcfascia"/>
       <rect x="${VC.l - 12}" y="486" width="${VC.r - VC.l + 24}" height="9" class="tw-vcdeck"/>
       <path d="M${VC.c - 52} 495 h104 v6 h-104 z M${VC.c - 58} 501 h116 v6 h-116 z" class="tw-vcstep"/>
+      <!-- planters by the steps -->
+      ${[VC.c - 70, VC.c + 70].map((x) => `<path d="M${x - 7} 488 h14 l-2 11 h-10 z" class="tw-pot"/><circle cx="${x - 4}" cy="485" r="4.4" class="tw-leaf2"/><circle cx="${x + 4}" cy="485" r="4.6" class="tw-leaf"/><circle cx="${x}" cy="481" r="5" class="tw-leaf"/>${[[-4, 483], [3, 480], [5, 485], [-1, 478.6]].map(([dx, dy], k) => `<circle cx="${x + dx}" cy="${dy}" r="1.3" class="tw-flower" style="--c:${['#ffd166', '#ff8fab', '#ffffff', '#ff6b8b'][k]}"/>`).join('')}`).join('')}
       ${[2832, 3088].map((x) => `<rect x="${x - 16}" y="478" width="32" height="3" rx="1" class="tw-bench"/><rect x="${x - 14}" y="481" width="2.4" height="5" class="tw-bench"/><rect x="${x + 11.6}" y="481" width="2.4" height="5" class="tw-bench"/>`).join('')}
       <g transform="translate(3140 486)"><rect x="-1.4" y="-150" width="2.8" height="150" class="tw-pole"/><path d="M1.4 -148 h26 l-5 8 l5 8 h-26 z" class="tw-vcflag"/></g>
       <g class="tw-woodsign">
         <path d="M2596 486 q-4 -26 10 -28 h130 q14 2 10 28 z" class="tw-stone"/>
         ${[[2610, 474, 9], [2632, 468, 8], [2656, 476, 10], [2682, 469, 9], [2708, 476, 9], [2730, 469, 8]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 0.7}" class="tw-stone2"/>`).join('')}
+        ${Array.from({ length: 16 }, (_, i) => 2598 + i * 10).map((x, k) => `<circle cx="${x}" cy="${488 + (k % 3)}" r="${3.6 + (k % 2)}" class="${k % 2 ? 'tw-leaf2' : 'tw-leaf'}"/><circle cx="${x + 1.4}" cy="${485.4 + (k % 3)}" r="1.4" class="tw-flower" style="--c:${['#ff6b8b', '#ffd166', '#c084fc', '#ffffff', '#ff8fab'][k % 5]}"/>`).join('')}
         <rect x="2604" y="378" width="10" height="84" rx="3" class="tw-log"/><rect x="2730" y="378" width="10" height="84" rx="3" class="tw-log"/>
+        <path d="M2604 378 l5 -7 l5 7 z M2730 378 l5 -7 l5 7 z" class="tw-logcap"/>
+        <path d="M2607 384 v70 M2611 390 v60 M2733 386 v66 M2737 392 v58" class="tw-bark"/>
+        <path d="M2654 452 v10 M2690 452 v10" class="tw-chainl"/>
+        <rect x="2648" y="461" width="48" height="14" rx="3" class="tw-wood2"/><text x="2672" y="471.4" class="tw-pop" text-anchor="middle">POP. 1</text>
         <rect x="2568" y="388" width="208" height="64" rx="7" class="tw-wood"/>
+        <rect x="2568" y="388" width="208" height="64" rx="7" fill="url(#twGrain)" class="tw-nohit" opacity=".9"/>
         <rect x="2575" y="395" width="194" height="50" rx="4" class="tw-wood-ln"/>
+        <rect x="2579" y="399" width="186" height="42" rx="3" class="tw-wood-ln2"/>
+        ${[[2574, 393.6], [2770, 393.6], [2574, 446.4], [2770, 446.4]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.7" class="tw-bolt"/>`).join('')}
         <text x="2672" y="412" class="tw-wel-s tw-textsnow" text-anchor="middle">Welcome to</text><text x="2672" y="413" class="tw-wel-s" text-anchor="middle">Welcome to</text>
         <text x="2672" y="440" class="tw-wel-b tw-wel-sh tw-nohit" text-anchor="middle" filter="url(#twTextSh)">SOMMIVILLE</text>
         <text x="2672.4" y="438.4" class="tw-wel-b tw-wel-edge" text-anchor="middle">SOMMIVILLE</text>
@@ -461,7 +496,10 @@ const garage = () => {
     <g class="tw-cans">${[[3609, '#3b6fd8'], [3616, '#f2b705'], [3623, '#e8e4da']].map(([x, c]) => `<rect x="${x}" y="447" width="5.6" height="7" rx=".8" fill="${c}"/><rect x="${x - .3}" y="446.2" width="6.2" height="1.4" rx=".6" class="tw-canlid"/><path d="M${x + .6} 450 h4.4" class="tw-canband"/>`).join('')}</g>
     <rect x="3631" y="448" width="9" height="6" rx="1" class="tw-toolbox"/><path d="M3633 448 v-1.4 h5 v1.4 M3631 450.6 h9" class="tw-toolbox-l"/>
     <!-- a framed print on the wall: the iPhone 4S, taken apart -->
-    <image href="assets/images/town/iphone-frame.webp" x="3653" y="413" width="15" height="11.25" preserveAspectRatio="none" class="tw-nohit tw-print"/>
+    <g class="tw-nohit tw-print"><rect x="3653" y="413" width="15" height="11.25" rx=".5" class="tw-pr-frame"/><rect x="3654.1" y="414.1" width="12.8" height="9.05" class="tw-pr-mat"/>
+      <rect x="3655.2" y="415.6" width="2.6" height="5" rx=".5" class="tw-pr-ph"/><rect x="3658.6" y="415.6" width="2.6" height="5" rx=".5" class="tw-pr-ph2"/><rect x="3662.2" y="415.6" width="2.6" height="5" rx=".5" class="tw-pr-ph"/>
+      <rect x="3655.6" y="416.4" width="1.8" height="3.2" class="tw-pr-scr"/><rect x="3658.9" y="416" width="2" height="1" fill="#d8a531"/><rect x="3659.2" y="417.6" width="1.4" height="1.6" fill="#7d838c"/>
+      <circle cx="3665.6" cy="416.4" r=".35" fill="#c9ccd2"/><rect x="3665.2" y="417.4" width="1" height="2.4" fill="#2a2c32"/><rect x="3655.4" y="421.4" width="9.6" height=".5" fill="#c9ccd2"/></g>
     <path d="M3660.5 413 l-2.6 -2.4 M3660.5 413 l2.6 -2.4" class="tw-printwire tw-nohit"/>
     <!-- a rake and a shovel against the wall, a hose on its hook -->
     <path d="M3671 486 L3664 432 M3678 486 L3681 438" class="tw-handle2"/><path d="M3659.4 431 h9.2 M3660 431 v3 M3662 431 v3 M3664 431 v3 M3666 431 v3 M3668 431 v3" class="tw-rake"/><path d="M3678.4 486 q-2.4 -1 -2 -6 l4.8 -1.4 q1.6 5 -.6 7.6 z" class="tw-shovel"/>
@@ -481,8 +519,9 @@ const garage = () => {
     <ellipse cx="3610" cy="531.6" rx="11" ry="2" class="tw-oil tw-nohit"/><ellipse cx="3604" cy="534" rx="4.4" ry="1" class="tw-oil tw-nohit"/><ellipse cx="3676" cy="583" rx="6" ry="1.4" class="tw-oil tw-nohit"/>
     ${home()}
     <g class="tw-civtools tw-nohit" aria-hidden="true">
-      ${[['oil', 3549, 534, 4.6, 9.6], ['acpro', 3554.6, 535, 5.6, 11], ['jack', 3560.6, 537.4, 26, 14.4], ['stand1', 3573, 550, 9.8, 14.2], ['stand2', 3585, 550, 9.6, 17.2], ['torque', 3600, 547.6, 19, 2.1], ['feeler', 3622, 546.6, 4.4, 2.6]].map(([n, x, b, w, h]) => `<ellipse cx="${(x + w / 2).toFixed(1)}" cy="${b}" rx="${(w * 0.48).toFixed(1)}" ry="${Math.max(0.5, Math.min(1.2, w * 0.08)).toFixed(2)}" class="tw-carshadow"/><image href="assets/images/town/tool-${n}.webp" x="${x}" y="${(b - h).toFixed(2)}" width="${w}" height="${h}" preserveAspectRatio="none"/>`).join('')}
-      <g transform="rotate(-3 3562 545)"><image href="assets/images/town/tool-handle.webp" x="3548" y="543" width="26" height="2.2" preserveAspectRatio="none"/></g>
+      ${[['oil', 3557, 535, 6, 12.6], ['acpro', 3564.2, 536, 7.6, 15], ['stand1', 3584, 556, 9.8, 14.2], ['stand2', 3597, 556, 9.6, 17.2], ['torque', 3610, 552, 19, 2.1], ['feeler', 3633, 551, 4.4, 2.6]].map(([n, x, b, w, h]) => `<ellipse cx="${(x + w / 2).toFixed(1)}" cy="${b}" rx="${(w * 0.48).toFixed(1)}" ry="${Math.max(0.5, Math.min(1.2, w * 0.08)).toFixed(2)}" class="tw-carshadow"/><image href="assets/images/town/tool-${n}.webp" x="${x}" y="${(b - h).toFixed(2)}" width="${w}" height="${h}" preserveAspectRatio="none"/>`).join('')}
+      <ellipse cx="3585.2" cy="538.6" rx="11.6" ry="1.5" transform="rotate(-6.6 3585.2 538.6)" class="tw-carshadow"/><image href="assets/images/town/tool-jack.webp" x="3572.6" y="526.2" width="24" height="13.33" preserveAspectRatio="none"/>
+      <ellipse cx="3568" cy="555.2" rx="12" ry=".6" class="tw-carshadow"/><image href="assets/images/town/tool-handle.webp" x="3556" y="553" width="24" height="2" preserveAspectRatio="none"/>
     </g>
     ${hot('p-civic', `
     <g>
@@ -686,6 +725,12 @@ const police = (x, cls) => {
 const MOON = (() => { const R = 30, r2 = 27, cx = 16, cy = -10, d = Math.hypot(cx, cy), a = (R * R - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(R * R - a * a), px = a * cx / d, py = a * cy / d, ox = -cy / d * h, oy = cx / d * h; const p1 = [px + ox, py + oy], p2 = [px - ox, py - oy]; return `M${p1[0].toFixed(2)} ${p1[1].toFixed(2)} A${R} ${R} 0 1 1 ${p2[0].toFixed(2)} ${p2[1].toFixed(2)} A${r2} ${r2} 0 0 0 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)} Z`; })();
 const SKY_DAY = [[0, '#2f7fd0'], [0.45, '#5aa2e6'], [0.62, '#7db9ee'], [0.84, '#c6e2f6'], [1, '#eef4f0']];
 const SKY_NIGHT = [[0, '#070a1a'], [0.55, '#14183a'], [1, '#3a2b55']];
+const skyHex = (st, y) => {
+  const t = Math.min(1, Math.max(0, (y + 700) / 1300)); let i = 1; while (i < st.length - 1 && st[i][0] < t) i++;
+  const [o0, c0] = st[i - 1], [o1, c1] = st[i], u = Math.min(1, Math.max(0, (t - o0) / (o1 - o0 || 1)));
+  const h = (c) => [1, 3, 5].map((k) => parseInt(c.slice(k, k + 2), 16));
+  const a = h(c0), b = h(c1); return '#' + a.map((v, k) => Math.round(v + (b[k] - v) * u).toString(16).padStart(2, '0')).join('');
+};
 /* Hunter's RAV4 (the picture, cut out): its wheels on the targets at 1020
    and 1093, its tyres on the lift. */
 const RAV = { s: 73 / 1150 }; RAV.w = 1881 * RAV.s; RAV.h = 709 * RAV.s; RAV.x = 1020 - 353 * RAV.s; RAV.y = 455.6 - RAV.h; RAV.wy = RAV.y + 553 * RAV.s;
@@ -774,6 +819,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <filter id="twRavTail" x="-20%" y="-30%" width="140%" height="160%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="1.4" result="b"/><feFlood flood-color="#ff2014"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <filter id="twSoftLight" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3.2"/></filter>
     <filter id="twDimMore" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".3"/><feFuncG type="linear" slope=".26"/><feFuncB type="linear" slope=".28"/></feComponentTransfer></filter>
+    <filter id="twDimHalf" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".67"/><feFuncG type="linear" slope=".63"/><feFuncB type="linear" slope=".65"/></feComponentTransfer></filter>
     <filter id="twDimDay" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".84"/><feFuncG type="linear" slope=".82"/><feFuncB type="linear" slope=".84"/></feComponentTransfer></filter>
     <filter id="twWhiteOut" color-interpolation-filters="sRGB"><feFlood flood-color="#f4f8ff"/><feComposite in2="SourceAlpha" operator="in"/></filter>
     <filter id="twTextSh" x="-10%" y="-30%" width="120%" height="170%"><feGaussianBlur stdDeviation=".7"/></filter>
@@ -782,6 +828,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <pattern id="twPerf" patternUnits="userSpaceOnUse" width="1.1" height="1.1"><circle cx=".55" cy=".55" r=".26" fill="rgba(70, 60, 30, .42)"/></pattern>
     <linearGradient id="twHill1" gradientUnits="userSpaceOnUse" x1="0" y1="350" x2="0" y2="480"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>
     <clipPath id="twPortalClip"><ellipse cx="3390" cy="428" rx="40" ry="53"/></clipPath>
+    <linearGradient id="twPolySheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".4" stop-color="#fff" stop-opacity=".04"/><stop offset=".55" stop-color="#fff" stop-opacity=".18"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <clipPath id="twGarSnow"><rect x="3546.6" y="300" width="240" height="100"/></clipPath>
     <radialGradient id="twPortalIn"><stop offset="0" stop-color="#f0d9ff"/><stop offset=".3" stop-color="#b56cff"/><stop offset=".75" stop-color="#6a1fd1"/><stop offset="1" stop-color="#2a0a5e"/></radialGradient>
     <radialGradient id="twPortalGlow"><stop offset=".45" stop-color="#a855f7" stop-opacity=".45"/><stop offset="1" stop-color="#a855f7" stop-opacity="0"/></radialGradient>
     <clipPath id="twTvScr"><rect x="3424.4" y="412" width="27.2" height="16.2"/></clipPath>
@@ -825,12 +873,12 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g class="tw-sun"><circle r="74" fill="url(#twHalo)"/><circle r="32" fill="#ffcf6b"/></g>
     <g class="tw-moon"><circle cx="-7" cy="5" r="62" fill="url(#twMoonHalo)"/><path d="${MOON}" fill="#f6eed6"/></g>
     <rect class="tw-overcast" x="-800" y="-1600" width="${WORLD + 1600}" height="2140"/>
-    <g class="tw-cloud" style="--dur:110s;--from:-20s"><g transform="translate(380 110) scale(1.0)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
-    <g class="tw-cloud" style="--dur:150s;--from:-90s"><g transform="translate(820 60) scale(0.7)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
-    <g class="tw-cloud" style="--dur:180s;--from:-150s"><g transform="translate(120 60) scale(0.55)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
-    <g class="tw-cloud" style="--dur:170s;--from:-40s"><g transform="translate(1500 -120) scale(0.8)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
-    <g class="tw-cloud" style="--dur:210s;--from:-120s"><g transform="translate(600 -220) scale(0.65)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
-    <g class="tw-cloud" style="--dur:140s;--from:-70s"><g transform="translate(1900 30) scale(0.9)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
+    <g class="tw-cloud" style="--dur:110s;--from:-20s;--skyd:${skyHex(SKY_DAY, 132)};--skyn:${skyHex(SKY_NIGHT, 132)}"><g transform="translate(380 110) scale(1.0)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
+    <g class="tw-cloud" style="--dur:150s;--from:-90s;--skyd:${skyHex(SKY_DAY, 75)};--skyn:${skyHex(SKY_NIGHT, 75)}"><g transform="translate(820 60) scale(0.7)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
+    <g class="tw-cloud" style="--dur:180s;--from:-150s;--skyd:${skyHex(SKY_DAY, 72)};--skyn:${skyHex(SKY_NIGHT, 72)}"><g transform="translate(120 60) scale(0.55)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
+    <g class="tw-cloud" style="--dur:170s;--from:-40s;--skyd:${skyHex(SKY_DAY, -102)};--skyn:${skyHex(SKY_NIGHT, -102)}"><g transform="translate(1500 -120) scale(0.8)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
+    <g class="tw-cloud" style="--dur:210s;--from:-120s;--skyd:${skyHex(SKY_DAY, -206)};--skyn:${skyHex(SKY_NIGHT, -206)}"><g transform="translate(600 -220) scale(0.65)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
+    <g class="tw-cloud" style="--dur:140s;--from:-70s;--skyd:${skyHex(SKY_DAY, 50)};--skyn:${skyHex(SKY_NIGHT, 50)}"><g transform="translate(1900 30) scale(0.9)"><rect x="0" y="14" width="180" height="30" rx="15"/><circle cx="60" cy="16" r="28"/><circle cx="104" cy="8" r="36"/><circle cx="140" cy="22" r="20"/></g></g>
     <ellipse class="tw-night tw-warmglow" cx="${WORLD / 2}" cy="470" rx="${WORLD}" ry="210" fill="url(#twWarm)"/>
     <path class="tw-mtn2" d="${HILLS.far}"/>
     <path class="tw-mtn2-sh" d="${HILLS.farShade}"/>
@@ -875,6 +923,11 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     </g>`)}
     <!-- The hedge along the back of the lawn (none where the truck parks). -->
     <g class="tw-backrow">${Array.from({ length: 36 }, (_, i) => 150 + i * 58).filter((x) => x < 270 || x > 1850).map((x, i) => bush(x, 486, 1.25 + (i % 3) * 0.15)).join('')}</g>
+    <!-- The car hauler's own lane: concrete, from behind the woods to the dealership's dock. -->
+    <path d="M1132 473 H372 Q300 473 230 466 L120 458 L120 470 Q290 486 380 495 H1140 Z" class="tw-apron"/>
+    <path d="M1132 473 H372 Q300 473 230 466 L120 458 L120 470 Q290 486 380 495 H1140 Z" fill="url(#twConcrete)" class="tw-nohit"/>
+    <path d="${Array.from({ length: 19 }, (_, i) => 400 + i * 40).map((x) => `M${x} 473.4 L${x + 1.4} 494.6`).join(' ')} M300 470.6 L312 489 M230 466.4 L244 482" class="tw-joint tw-nohit"/>
+    <path d="M372 473 H1132 M380 495 H1140" class="tw-apron-edge tw-nohit"/>
     <!-- Out on the west end: a little wood, wildflowers, a bench under the trees. -->
     ${pine(18, 488, 150)}${tree(70, 482, 1.25, 0)}${pine(132, 486, 120)}${tree(196, 486, 1.05, 1)}${pine(256, 490, 170)}${tree(318, 488, 1.15, 2)}
     ${[[40, 520, .8], [150, 530, .7], [262, 516, .9], [350, 532, .6]].map(([x, y, k]) => bush(x, y, k)).join('')}
@@ -967,8 +1020,6 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- the drive into the service bay: concrete slabs, tyre tracks, a couple of oil spots -->
     <path d="M914 482 H1124 L1147 600 H900 Z" fill="url(#twConcrete)" class="tw-nohit"/>
     <path d="M907.5 520 H1131.4 M903.3 560 H1139 M1019 482 V600" class="tw-joint"/>
-    <path d="M968 482 L955 600 M986 482 L978 600 M1052 482 L1060 600 M1070 482 L1083 600" class="tw-tracks"/>
-    <ellipse cx="1010" cy="507" rx="9" ry="2.6" class="tw-oil"/><ellipse cx="1046" cy="538" rx="6" ry="1.8" class="tw-oil"/><ellipse cx="1030" cy="497" rx="4" ry="1.2" class="tw-oil"/>
     ${[[470, 492, .62], [512, 494, .56], [548, 492, .5], [688, 492, .55], [731, 493, .58], [822, 492, .58], [890, 493, .55]].map(([x, y, k]) => bush(x, y, k)).join('')}
     ${bush(666, 510, .8)}${bush(714, 506, .85)}${bush(866, 508, .9)}
     ${[700, 852].map((x) => `<g transform="translate(${x} 560)" class="tw-lamppost"><circle cx="0" cy="-60" r="30" fill="url(#twLamp)" class="tw-lampglow"/><rect x="-2" y="-60" width="4" height="60" class="tw-pole"/><rect x="-7" y="-66" width="14" height="7" rx="3" class="tw-bulb"/></g>`).join('')}
@@ -1004,12 +1055,19 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <path class="tw-vision" d="M0 0"/>
       <g class="tw-reticle"><path d="M-20 -14 v-7 h7 M13 -21 h7 v7 M20 14 v7 h-7 M-13 21 h-7 v-7"/></g>
       <g class="tw-frc"><g class="tw-frc-flip">
-        <rect x="-38" y="6" width="76" height="12" rx="6" fill="#1b1d22"/>
-        <rect x="-34" y="-12" width="68" height="20" rx="5" fill="#1fd12a" class="tw-ol"/>
-        <rect x="-26" y="-7" width="22" height="3" rx="1.5" fill="#fff" opacity=".8"/><rect x="-26" y="-1" width="22" height="3" rx="1.5" fill="#fff" opacity=".8"/>
-        <circle cx="-22" cy="20" r="6" class="tw-tyre"/><circle cx="22" cy="20" r="6" class="tw-tyre"/>
-        <rect x="10" y="-26" width="6" height="16" class="tw-pole"/>
-        <g class="tw-turret" transform="translate(13 -28)"><rect x="-9" y="-6" width="18" height="11" rx="3" class="tw-cam"/><circle cx="7" cy="-0.5" r="3.6" class="tw-ringlight"/></g>
+        <circle cx="-25" cy="21" r="5" class="tw-tyre"/><circle cx="25" cy="21" r="5" class="tw-tyre"/><circle cx="0" cy="21" r="5" class="tw-tyre"/>
+        <rect x="-35" y="-34" width="70" height="40" class="tw-frc-poly"/>
+        ${[[-24, -4, 7], [-10, -2, 7], [5, -3, 7], [19, -4, 7], [-17, -15, 6.6], [-2, -16, 6.8], [13, -15, 6.6], [-26, -18, 6], [24, -17, 6], [-8, -27, 6], [7, -28, 6.2]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" class="tw-frc-ball"/><path d="M${(x - r * .62).toFixed(1)} ${(y - r * .05).toFixed(1)} q${(r * .12).toFixed(1)} ${(-r * .5).toFixed(1)} ${(r * .58).toFixed(1)} ${(-r * .55).toFixed(1)}" class="tw-frc-seam"/>`).join('')}
+        <rect x="-35" y="-34" width="70" height="40" fill="url(#twPolySheen)" class="tw-frc-polyedge"/>
+        ${[-35, -12, 10, 31].map((x) => `<rect x="${x}" y="-36" width="4" height="42" class="tw-frc-al"/><path d="M${x + 2} -33 V4" class="tw-frc-holes"/>`).join('')}
+        <rect x="-38" y="-38" width="76" height="4" rx="1" class="tw-frc-al"/><path d="M-36 -36 H36" class="tw-frc-holes"/>
+        <path d="M-20 -38 l6 -12 h14 l8 12 z" class="tw-frc-plate"/><circle cx="-12" cy="-46" r="4.2" class="tw-frc-roll"/><circle cx="-2" cy="-47" r="4.2" class="tw-frc-roll"/><circle cx="-12" cy="-46" r="1.4" class="tw-frc-axle"/><circle cx="-2" cy="-47" r="1.4" class="tw-frc-axle"/>
+        <path d="M4 -41 q10 -6 22 -1" class="tw-frc-chain"/>
+        <rect x="21" y="-46" width="4" height="10" class="tw-frc-al"/>
+        <rect x="-41" y="2" width="82" height="17" rx="7" class="tw-frc-bump"/>
+        <path d="M-37 6.5 H37" class="tw-frc-bumpl"/>
+        <text x="0" y="15.6" class="tw-frc-86" text-anchor="middle">86</text>
+        <g class="tw-turret" transform="translate(23 -48)"><rect x="-8" y="-5.4" width="16" height="10" rx="2.6" class="tw-cam"/><circle cx="6.4" cy="-0.4" r="3.2" class="tw-ringlight"/></g>
       </g></g>
     </g>`)}
 
@@ -1131,7 +1189,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     ${[[4236, 504, .7], [4290, 506, .6], [4344, 502, .75]].map(([x, y, k]) => bush(x, y, k)).join('')}
     ${[4200, 4212, 4226, 4248, 4276, 4300, 4330].map((x, k) => `<circle cx="${x}" cy="${512 + (k % 3) * 2}" r="1.6" class="tw-flower" style="--c:${['#ff6b8b', '#ffd166', '#c084fc', '#ff8fab', '#f97316'][k % 5]}"/>`).join('')}
     <g class="tw-snowy" aria-hidden="true"><rect x="3765" y="383" width="318" height="8.5" rx="4" class="tw-snowcap"/>
-      <path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3782 375.4 Q3720 346 3655 318 Q3590 346 3528 375.4 Z" class="tw-snowslope"/>
+      <path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3782 375.4 Q3720 346 3655 318 Q3590 346 3528 375.4 Z" class="tw-snowslope" clip-path="url(#twGarSnow)"/>
       <g transform="${houseT}"><path d="M3392 333 Q3431 300 3470.6 259.4 Q3510 298.6 3549.4 333.4 L3545 329 Q3510 292 3470.6 252.6 Q3431 294 3396 329 Z" class="tw-snowslope"/>
       <path d="M3484.6 427 L3509 410.4 L3533.4 427 L3530 423 L3509 406 L3488 423 Z" class="tw-snowslope"/>
       <rect x="3493" y="237" width="25" height="6" rx="3" class="tw-snowcap"/></g></g>

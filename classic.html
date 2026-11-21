@@ -31,6 +31,8 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap" />
   <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400..900;1,400..700&display=swap" />
+  <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Silkscreen&family=VT323&display=swap&text=0123456789NEWXPRIMTALSTEPnewxprimtalstep" />
 
   <link rel="preload" as="image" fetchpriority="high"
@@ -43,8 +45,8 @@
   <style>.sub-short{display:none}@media (max-width:719px){.sub-long{display:none}.sub-short{display:inline}}</style>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css?v=2" />
-  <link rel="stylesheet" href="mobile.css?v=17" />
-  <link rel="stylesheet" href="town.css?v=63" />
+  <link rel="stylesheet" href="mobile.css?v=19" />
+  <link rel="stylesheet" href="town.css?v=64" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -73,7 +75,7 @@
       try {
         document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.parentNode.removeChild(m); });
         var tc = document.createElement('meta'); tc.name = 'theme-color';
-        tc.content = root.dataset.theme === 'daylight' ? '#eef2f8' : '#050814';
+        tc.content = root.dataset.theme === 'daylight' ? '#f2f0eb' : root.dataset.theme === 'terminal' ? '#0b0d0b' : '#121212';
         document.head.appendChild(tc);
       } catch (e) {}
       root.classList.add('js');
@@ -245,8 +247,7 @@
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <span class="mx-face"><span class="mx-mark-glow" aria-hidden="true"></span><img src="assets/images/opt/hero-480.webp" alt="Ajay Sommi" decoding="async" /></span>
-      <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
+      <span class="mx-face"><img src="assets/images/opt/hero-480.webp" alt="Ajay Sommi" decoding="async" /></span>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
       <button type="button" class="mx-cue" aria-label="Scroll down"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
@@ -255,7 +256,7 @@
     <div class="mx-pager">
       <section class="mx-panel" id="mx-p-path" role="tabpanel" aria-labelledby="mx-tab-path" data-tab="path">
         <h2 class="mx-ph">The path so far</h2>
-        <p class="mx-intro">Eight roles since 2019. Tap one for the story.</p>
+        <p class="mx-intro">Where I’ve worked so far, newest first. Tap one for the story.</p>
         <ol class="mx-tl">
           <li style="--tint:#1f6fd1;--k:0"><button type="button" class="mx-stop" data-sheet="mx-role-adt">
             <span class="mx-st-glow" aria-hidden="true"></span><span class="mx-st-wm" aria-hidden="true"><img class="" src="assets/logos/opt/adt.webp" alt="" loading="lazy" decoding="async" /></span>
@@ -342,13 +343,13 @@
         <div class="mx-stories">
           <button type="button" class="mx-story-b" data-story="0" style="--i:0">
             <span class="mx-ring"><img src="assets/images/offclock/ard-tool-480.webp" alt="" loading="lazy" decoding="async" /></span>
-            <span class="mx-story-l">Learning electronics by building (and breaking)</span>
+            <span class="mx-story-t"><span class="mx-story-l">Learning electronics by building (and breaking)</span><span class="mx-story-s">Hello, world · 7 photos</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button><button type="button" class="mx-story-b" data-story="1" style="--i:1">
             <span class="mx-ring"><img src="assets/images/offclock/mac-paste-480.webp" alt="" loading="lazy" decoding="async" /></span>
-            <span class="mx-story-l">Bringing a MacBook back from the dead</span>
+            <span class="mx-story-t"><span class="mx-story-l">Bringing a MacBook back from the dead</span><span class="mx-story-s">Gutted · 5 photos</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button><button type="button" class="mx-story-b" data-story="2" style="--i:2">
             <span class="mx-ring"><img src="assets/images/offclock/diag-goggles-480.webp" alt="" loading="lazy" decoding="async" /></span>
-            <span class="mx-story-l">Working on my own car</span>
+            <span class="mx-story-t"><span class="mx-story-l">Working on my own car</span><span class="mx-story-s">AC out, mid summer · 5 photos</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
         <figure class="mx-quote"><blockquote>“I hope I never run out of things I don’t understand.”</blockquote><figcaption class="mx-mono">What keeps me building</figcaption></figure>
@@ -1424,6 +1425,6 @@
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
   <script src="mobile.js?v=10" defer></script>
-  <script src="town.js?v=63" defer></script>
+  <script src="town.js?v=64" defer></script>
 </body>
 </html>

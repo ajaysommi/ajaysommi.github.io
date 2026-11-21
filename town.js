@@ -67,7 +67,7 @@
   // where they want to be, never faster than an amble.
   const bots = {
     rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1850, y: 556, vx: 0, vy: 0, tx: 1850, ty: 556, face: -1, idleAt: 0, box: [1712, 1872, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
-    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 632, y: 582, vx: 0, vy: 0, tx: 632, ty: 582, face: 1, idleAt: 0, box: [590, 676, 574, 588], reach: 140, keep: 64, pinDy: -40, k: 3, max: 45, s: 0.78, tilt: 0 }
+    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 632, y: 582, vx: 0, vy: 0, tx: 632, ty: 582, face: 1, idleAt: 0, box: [590, 676, 574, 588], reach: 140, keep: 64, pinDy: -58, k: 3, max: 45, s: 0.78, tilt: 0 }
   };
   const placeBot = (b) => {
     b.el.setAttribute('transform', `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`);
@@ -80,10 +80,10 @@
   const TARGET = [714, 535];
   let aim = TARGET.slice();
   const aimCam = () => {
-    const b = bots.rjax, cx = b.x + 13 * b.s * b.face, cy = b.y - 28 * b.s;
+    const b = bots.rjax, cx = b.x + 23 * b.s * b.face, cy = b.y - 48 * b.s;
     let a = Math.atan2(aim[1] - cy, (aim[0] - cx) * b.face) * 180 / Math.PI;
     a = clamp(a, -55, 55);
-    turret.setAttribute('transform', `translate(13 -28) rotate(${a.toFixed(1)})`);
+    turret.setAttribute('transform', `translate(23 -48) rotate(${a.toFixed(1)})`);
     const ex = cx + 7 * b.s * b.face * Math.cos(a * Math.PI / 180), ey = cy + 7 * b.s * Math.sin(a * Math.PI / 180);
     vision.setAttribute('d', `M${ex.toFixed(1)} ${ey.toFixed(1)} L${aim[0].toFixed(1)} ${aim[1].toFixed(1)}`);
     reticle.setAttribute('transform', `translate(${aim[0].toFixed(1)} ${aim[1].toFixed(1)})`);
@@ -377,6 +377,13 @@
       <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
     </div>`;
   };
+  // where each place lives on the web (the same links as the classic site's logo strip)
+  const SITES = {
+    adt: ['adt.com', 'https://en.wikipedia.org/wiki/ADT_Inc.'], hunter: ['hunter.com', 'https://www.hunter.com'],
+    jm: ['JM Family', 'https://en.wikipedia.org/wiki/JM_Family_Enterprises'], toyota: ['Southeast Toyota', 'https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors'],
+    fics: ['FICS Research', 'https://fics.institute.ufl.edu'], rfa: ['roboticsforall.net', 'https://www.roboticsforall.net'], edu: ['ufl.edu', 'https://www.ufl.edu']
+  };
+  SITES.adt[0] = 'About ADT'; SITES.jm[0] = 'About JM Family'; SITES.toyota[0] = 'About Southeast Toyota';
   const rest = (r, links) => `
       ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
       ${r.about ? `<p class="tw-p-about">${esc(r.about)}</p>` : ''}
@@ -412,7 +419,8 @@
       <div class="tw-p-top"><span class="tw-p-logo">${r.logo ? logo(r.logo) : r.gator ? `<img src="${r.gator}" alt="" style="max-height:42px" />` : ''}</span><span class="tw-p-yr">${yy(r)}</span></div>
       <h3>${esc(r.org)}</h3>
       <p class="tw-p-role">${esc(r.role)}</p>
-      ${r.when || r.where ? `<p class="tw-p-when">${esc([r.when, r.where].filter(Boolean).join(' · '))}</p>` : ''}
+      ${r.when || r.where ? `<p class="tw-p-meta">${r.when ? `<span><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.2" width="12" height="10.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.6 6.6h10.8M5.4 1.8v2.8M10.6 1.8v2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>${esc(r.when.replace(' to ', ' – '))}</span>` : ''}${r.where ? `<span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14.6s4.8-4.4 4.8-8.2A4.8 4.8 0 0 0 3.2 6.4c0 3.8 4.8 8.2 4.8 8.2z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.7" fill="currentColor"/></svg>${esc(r.where)}</span>` : ''}</p>` : ''}
+      ${SITES[r.id] ? `<p class="tw-p-site"><a href="${SITES[r.id][1]}" target="_blank" rel="noopener">${esc(SITES[r.id][0])}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5h6.5V10M12.2 3.8 4 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>` : ''}
 ` + rest(r, links);
     inner.scrollTop = 0;
     inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
@@ -494,6 +502,7 @@
   svg.addEventListener('click', () => { if (!dragged) close(); });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !cur) { const big = $('.tw-lightbox'); if (big) { big.remove(); return; } }
+    if (intro && /^Arrow|^Page|^Home$|^End$/.test(e.key)) { e.preventDefault(); return; }
     if (!cur) {
       if (e.target.closest && e.target.closest('input, textarea')) return;
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') explored = true;
@@ -635,6 +644,7 @@
     if (visible) go(); else running = false;
   }).observe(stage);
   stage.addEventListener('wheel', (e) => {
+    if (intro) { e.preventDefault(); return; }
     if (cur || e.ctrlKey || document.documentElement.classList.contains('is-loading')) return;
     const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * k;
@@ -650,7 +660,7 @@
   let drag = null, dragged = false;
   svg.addEventListener('pointerdown', (e) => {
     dragged = false;
-    if (cur || e.button !== 0 || e.pointerType === 'touch') return;
+    if (intro || cur || e.button !== 0 || e.pointerType === 'touch') return;
     drag = { x: e.clientX, cam: camX, id: e.pointerId };
   });
   addEventListener('pointermove', (e) => {

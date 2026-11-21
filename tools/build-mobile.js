@@ -104,8 +104,7 @@ const html = `<!-- mx:start -->
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <span class="mx-face"><span class="mx-mark-glow" aria-hidden="true"></span><img src="${P.photo}" alt="Ajay Sommi" decoding="async" /></span>
-      <p class="mx-mono mx-greet"><span data-mx-greeting>Hello</span></p>
+      <span class="mx-face"><img src="${P.photo}" alt="Ajay Sommi" decoding="async" /></span>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
       <button type="button" class="mx-cue" aria-label="Scroll down"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
@@ -114,7 +113,7 @@ const html = `<!-- mx:start -->
     <div class="mx-pager">
       <section class="mx-panel" id="mx-p-path" role="tabpanel" aria-labelledby="mx-tab-path" data-tab="path">
         <h2 class="mx-ph">The path so far</h2>
-        <p class="mx-intro">Eight roles since 2019. Tap one for the story.</p>
+        <p class="mx-intro">Where I’ve worked so far, newest first. Tap one for the story.</p>
         <ol class="mx-tl">
           ${ROLES.map(stop).join('\n          ')}
         </ol>
@@ -142,7 +141,7 @@ const html = `<!-- mx:start -->
         <div class="mx-stories">
           ${P.offclock.map((o, i) => `<button type="button" class="mx-story-b" data-story="${i}" style="--i:${i}">
             <span class="mx-ring"><img src="${o.cover}" alt="" loading="lazy" decoding="async" /></span>
-            <span class="mx-story-l">${esc(o.title)}</span>
+            <span class="mx-story-t"><span class="mx-story-l">${esc(o.title)}</span><span class="mx-story-s">${esc(String(o.steps[0][1]).replace(/\.$/, ''))} · ${o.steps.length} photos</span></span>${I.chev}
           </button>`).join('')}
         </div>
         <figure class="mx-quote"><blockquote>“${esc(P.quote)}”</blockquote><figcaption class="mx-mono">What keeps me building</figcaption></figure>

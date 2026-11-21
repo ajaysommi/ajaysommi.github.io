@@ -964,7 +964,7 @@
 .tw-police { visibility: hidden; pointer-events: none; }
 .tw-police-a { transform: translateX(1700px); }
 .tw-police-b { transform: translateX(1300px); }
-.tw.police .tw-police-a, .tw.police-home .tw-police-b { visibility: visible; transform: none; transition: transform 8.5s cubic-bezier(.3, .62, .4, 1); }
+.tw.police .tw-police-a, .tw.police-home .tw-police-b { visibility: visible; transform: none; transition: transform 6.2s cubic-bezier(.3, .6, .62, 1); }
 .tw-pl { opacity: 0; }
 .tw.police .tw-police-a .tw-pl-r, .tw.police-home .tw-police-b .tw-pl-r { animation: tw-onoff .64s steps(1) infinite; }
 .tw.police .tw-police-a .tw-pl-b, .tw.police-home .tw-police-b .tw-pl-b { animation: tw-onoff .64s steps(1) infinite; animation-delay: -.32s; }
@@ -1239,4 +1239,79 @@
 .tw-p-subj + .tw-p-text, .tw-p-subj + .tw-p-about, .tw-p-stack + .tw-p-text, .tw-p-stack + .tw-p-about, .tw-p-sideh + .tw-p-text, .tw-p-sideh + .tw-p-about { margin-top: 16px; }
 .tw-bb-shade { display: none; }
 [data-theme="midnight"] .tw .tw-bb-shade, [data-theme="terminal"] .tw .tw-bb-shade { display: inline; }
-.tw:not(.hall-holed) .tw-hall-in { display: none; }
+
+/* round 14 */
+/* while the loading screen is up, the stage behind it is the loader's paper (Safari tints its bar from it) */
+html.is-loading #experience .tw-stage { background: var(--bg); }
+/* clouds: solid, in the colour they always showed over the sky */
+.tw-cloud { opacity: 1; fill: color-mix(in srgb, var(--tw-cloud) 92%, var(--skyd, #9fcbef)); }
+[data-theme="midnight"] .tw .tw-cloud, [data-theme="terminal"] .tw .tw-cloud { fill: color-mix(in srgb, var(--tw-cloud) 92%, var(--skyn, #14183a)); }
+/* by day, the dealership with its lights out: a little dimmer than before */
+[data-theme="daylight"] .tw.alarm .tw-showcar :is(.tw-carimg, .tw-bow) { filter: url(#twDimHalf) !important; }
+[data-theme="daylight"] .tw-alarm-dark { opacity: .28; }
+/* the car hauler's lane */
+.tw-apron { fill: #cfc9bd; } .tw-apron-edge { stroke: rgba(0, 0, 0, .14); stroke-width: .8; fill: none; }
+[data-theme="midnight"] .tw .tw-apron, [data-theme="terminal"] .tw .tw-apron { fill: #56555b; }
+/* team 86's robot */
+.tw-frc-poly { fill: rgba(196, 224, 244, .3); stroke: #8f99a5; stroke-width: .8; }
+.tw-frc-polyedge { stroke: none; }
+.tw-frc-ball { fill: #f6c915; stroke: #b48a00; stroke-width: .6; }
+.tw-frc-seam { fill: none; stroke: #2f9a3a; stroke-width: .6; }
+.tw-frc-al { fill: #c9ced6; stroke: #7a818b; stroke-width: .6; }
+.tw-frc-holes { stroke: #59606a; stroke-width: 1.3; stroke-dasharray: 1 2.2; fill: none; }
+.tw-frc-plate { fill: #b9bfc7; stroke: #6c737c; stroke-width: .7; stroke-linejoin: round; }
+.tw-frc-roll { fill: #25b04a; stroke: #12672a; stroke-width: .7; } .tw-frc-axle { fill: #dfe3e8; }
+.tw-frc-chain { fill: none; stroke: #1c1e23; stroke-width: 2.8; stroke-dasharray: 1.6 .8; }
+.tw-frc-bump { fill: #22e03a; stroke: #138a22; stroke-width: 1.6; }
+.tw-frc-bumpl { stroke: rgba(255, 255, 255, .28); stroke-width: .9; }
+.tw-frc-86 { font: 900 11.5px 'Nunito', var(--font-sans); fill: #fff; letter-spacing: .04em; }
+/* the visitor center's details */
+.tw-chim { fill: #8e8f93; stroke: var(--tw-line); stroke-width: 1.2; } .tw-chim-l { stroke: #6c6d72; stroke-width: .8; fill: none; } .tw-chimcap { fill: #55565c; stroke: var(--tw-line); stroke-width: 1; }
+.tw-rafter { stroke: #2c1b11; stroke-width: 2.2; stroke-linecap: round; fill: none; }
+.tw-knee { stroke: #4a2f20; stroke-width: 2.6; stroke-linecap: round; fill: none; }
+.tw-ridgecap { fill: #2c1b11; }
+.tw-skirt { fill: #7f8086; } .tw-skirt-s { fill: #a6a7aa; stroke: #6c6d72; stroke-width: .5; } .tw-skirtcap { fill: #5f6066; }
+.tw-vctrim { fill: #d9b98a; stroke: #6e4427; stroke-width: .8; }
+.tw-sill { fill: #e2c79b; stroke: #6e4427; stroke-width: .6; } .tw-fbox { fill: #6e4427; stroke: #3e2515; stroke-width: .6; }
+.tw-vcdoorf { fill: #3b2a1e; } .tw-vcdoor { stroke: #3b2a1e; stroke-width: .8; }
+.tw-vchandle { stroke: #c9a46a; stroke-width: 1.4; stroke-linecap: round; fill: none; }
+.tw-lantern { fill: #2a2c34; } .tw-lantern-g { fill: #ffe7a8; }
+.tw-pot { fill: #b5562d; stroke: #6b2e14; stroke-width: .6; }
+.tw-logcap { fill: #3e2515; } .tw-bark { stroke: rgba(0, 0, 0, .22); stroke-width: .8; fill: none; }
+.tw-chainl { stroke: #7d828c; stroke-width: 1; stroke-dasharray: 1.4 1; fill: none; }
+.tw-wood2 { fill: #6b4428; stroke: #3e2515; stroke-width: 1.4; }
+.tw-pop { font: 800 6.4px 'Nunito', var(--font-sans); letter-spacing: .2em; fill: #f3e3bf; }
+.tw-wood-ln2 { fill: none; stroke: rgba(233, 214, 174, .3); stroke-width: .8; }
+.tw-bolt { fill: #c9a46a; stroke: #3e2515; stroke-width: .5; }
+[data-theme="midnight"] .tw :is(.tw-vctrim, .tw-sill), [data-theme="terminal"] .tw :is(.tw-vctrim, .tw-sill) { fill: #8a7152; }
+[data-theme="midnight"] .tw .tw-skirt, [data-theme="terminal"] .tw .tw-skirt { fill: #55565c; }
+[data-theme="midnight"] .tw .tw-skirt-s, [data-theme="terminal"] .tw .tw-skirt-s { fill: #707176; }
+/* the iPhone print, flat */
+.tw-pr-frame { fill: #1f2026; } .tw-pr-mat { fill: #f4f2ec; } .tw-pr-ph { fill: #2a2c32; } .tw-pr-ph2 { fill: #8d939b; } .tw-pr-scr { fill: #3d4048; }
+
+/* The cards, in a warmer, rounder face */
+.tw-panel, .tw-label, .tw-hint { font-family: 'Nunito', var(--font-sans); }
+.tw-panel-in h3 { font-family: 'Nunito', var(--font-sans); font-weight: 800; letter-spacing: -.01em; position: relative; z-index: 1; }
+.tw-p-role { font-weight: 600; position: relative; z-index: 1; }
+.tw-p-text, .tw-p-about { font-family: 'Nunito', var(--font-sans); }
+.tw-p-links h4, .tw-p-tags li, .tw-p-chip, .tw-p-stack { font-family: 'Nunito', var(--font-sans); letter-spacing: .02em; }
+.tw-p-links h4 { font-weight: 800; font-size: 12px; text-transform: none; letter-spacing: .01em; }
+.tw-p-tags li { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 4px 10px; }
+.tw-p-chip { font-size: 12px; font-weight: 800; text-transform: none; letter-spacing: .02em; }
+.tw-label b { font-family: 'Nunito', var(--font-sans); font-weight: 800; }
+/* the year: big, sliding in from the card's own edge and cut off by it */
+.tw-p-top { position: relative; }
+.tw-p-yr { position: absolute; z-index: 0; top: 34px; right: -74px; font: 900 84px/1 'Nunito', var(--font-sans); letter-spacing: -.05em; color: transparent; background: linear-gradient(90deg, transparent 4%, color-mix(in oklab, var(--tint) 16%, transparent) 38%, color-mix(in oklab, var(--tint) 52%, transparent) 100%); -webkit-background-clip: text; background-clip: text; pointer-events: none; white-space: nowrap; animation: tw-yr .9s cubic-bezier(.2, .8, .2, 1) .08s both; }
+.tw-p-logo { position: relative; z-index: 1; }
+@keyframes tw-yr { from { transform: translateX(80px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tw-p-yr { animation: none; } }
+/* when and where: two little tags */
+.tw-p-meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; position: relative; z-index: 1; }
+.tw-p-meta span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 8px; border-radius: 999px; background: color-mix(in oklab, var(--tint) 10%, transparent); color: var(--ink-2); font: 700 12.5px/1.2 'Nunito', var(--font-sans); }
+.tw-p-meta svg { width: 14px; height: 14px; flex: none; color: color-mix(in oklab, var(--tint) 75%, var(--ink)); }
+/* and a link to the place */
+.tw-p-site { margin: -4px 0 16px; }
+.tw-p-site a { display: inline-flex; align-items: center; gap: 5px; color: color-mix(in oklab, var(--tint) 70%, var(--ink)); font: 800 13px 'Nunito', var(--font-sans); text-decoration: none; border-bottom: 1.5px solid color-mix(in oklab, var(--tint) 40%, transparent); padding-bottom: 1px; }
+.tw-p-site a:hover { border-bottom-color: var(--tint); }
+.tw-p-site svg { width: 12px; height: 12px; }
+.tw-frc-seam { stroke: rgba(255, 255, 255, .6); stroke-width: .9; stroke-linecap: round; }
