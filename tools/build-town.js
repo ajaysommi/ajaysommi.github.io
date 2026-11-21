@@ -512,7 +512,7 @@ const home = () => `
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);
   return `
-    <rect x="3536" y="374" width="238" height="112" class="tw-house tw-fo"/>
+    <rect x="3536" y="378" width="238" height="108" class="tw-house"/><path d="M3536 381 V486 H3774 V381" fill="none" class="tw-fo tw-nohit"/>
     <path d="M3534 379 L3655 330 L3776 379 Z" class="tw-house"/><path d="M3534 379 L3655 330 L3776 379 Z" fill="url(#twSiding)" class="tw-nohit"/>
     <circle cx="3655" cy="358" r="7" class="tw-atticfr"/><circle cx="3655" cy="358" r="5.2" class="tw-vent"/><path d="M3650.4 355.4 h9.2 M3649.8 358 h10.4 M3650.4 360.6 h9.2" class="tw-ventl"/>
     <path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3778 384.6 Q3716 358 3655 332.6 Q3594 358 3532 384.6 Z" class="tw-roof"/><path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3778 384.6 Q3716 358 3655 332.6 Q3594 358 3532 384.6 Z" fill="url(#twShingles)" class="tw-nohit"/>
@@ -863,7 +863,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <clipPath id="twPortalClip"><ellipse cx="3390" cy="428" rx="40" ry="53"/></clipPath>
     <linearGradient id="twPolySheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".4" stop-color="#fff" stop-opacity=".04"/><stop offset=".55" stop-color="#fff" stop-opacity=".18"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/></linearGradient>
     <clipPath id="twGarSnow"><rect x="3532" y="300" width="240" height="100"/></clipPath>
-    <clipPath id="twGarBleed"><rect x="3532" y="300" width="40" height="100"/></clipPath>
+    <clipPath id="twGarBleed"><rect x="3516" y="300" width="56" height="100"/></clipPath>
     <clipPath id="twCivBay"><path d="M${HOOD.map((p) => p.map((n) => n.toFixed(2)).join(' ')).join(' L')} Z"/></clipPath>
     <radialGradient id="twBeacon"><stop offset="0" stop-color="#ffd0c8"/><stop offset=".3" stop-color="#ff4a3a" stop-opacity=".85"/><stop offset="1" stop-color="#ff2a1a" stop-opacity="0"/></radialGradient>
     <radialGradient id="twPuff"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".55" stop-color="#f1f3f6" stop-opacity=".6"/><stop offset="1" stop-color="#e8ebef" stop-opacity="0"/></radialGradient>
