@@ -385,7 +385,7 @@
      on the welcome sign come on (after dark). */
   let intro = false;
   // it starts high enough that only sky and stars show (the hills too are out of sight)
-  const INTRO = 2600, RISE = 350;
+  const INTRO = 4100, RISE = 480;
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
   const glideDown = (u) => Math.pow(smooth(u), 1.75);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
