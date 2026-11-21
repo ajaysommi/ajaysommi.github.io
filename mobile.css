@@ -399,3 +399,25 @@
   .mx-mono, .mx-st-t .mx-st-where { text-transform: none; font-weight: 700; letter-spacing: .02em; font-size: 12.5px; }
   .mx-tags li { border-radius: 999px; font-weight: 600; font-size: 12px; }
 }
+
+/* round 15 */
+@media (max-width: 719px) {
+  /* the first screen comes in as the mark flies to its corner, drifting the same way */
+  html.is-loading:has(.page-loader.is-flying) .mx-hero > *, html.is-loading:has(.page-loader.is-revealing) .mx-hero > * { animation-play-state: running; }
+  .mx-hero > * { animation-duration: .8s; }
+  .mx-hero > :nth-child(2) { animation-delay: .05s; } .mx-hero > :nth-child(3) { animation-delay: .1s; } .mx-hero > :nth-child(4) { animation-delay: .16s; } .mx-hero > :nth-child(5) { animation-delay: .4s; }
+  @keyframes mx-in { from { opacity: 0; transform: translate(12px, -14px); } }
+  /* and as it scrolls away it softens out of focus */
+  .mx-hero > .mx-name, .mx-hero > .mx-line, .mx-hero > .mx-face { filter: blur(calc(var(--p, 0) * 9px)); }
+  .mx-hero > .mx-face { opacity: calc(1 - var(--p, 0) * 1.2); translate: 0 calc(var(--p, 0) * -40px); }
+  /* fuller, warmer type on the path */
+  .mx-st-t b { font-size: 18px; font-weight: 800; letter-spacing: -.01em; }
+  .mx-st-t span { font-size: 15px; font-weight: 600; }
+  .mx-intro { font-size: 16px; font-weight: 500; }
+  .mx-proj-t b { font-weight: 800; } .mx-proj-t span { font-weight: 600; }
+  .mx-note blockquote { font-weight: 600; }
+  .mx-edu b { font-size: 17px; font-weight: 800; } .mx-edu span { font-size: 15px; font-weight: 600; }
+  /* skills used on the job: tinted, not dotted */
+  .mx-skill.used::before, .mx-skill.on::before { content: none; }
+  .mx-skill.used { border-color: color-mix(in oklab, var(--accent) 55%, var(--stroke)); color: var(--ink); font-weight: 700; background: color-mix(in oklab, var(--accent) 10%, transparent); }
+}

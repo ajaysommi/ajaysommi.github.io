@@ -226,11 +226,20 @@
       if (count) count.textContent = `${i + 1} / ${n}`;
     };
     const next = (dir) => {
+      if (dir > 0) {
+        // back: the one before slides in from the left, on top
+        lay();
+        const el = order.pop(); order.unshift(el);
+        el.style.transition = 'none'; el.style.zIndex = String(n + 1); el.style.opacity = '0';
+        el.style.transform = `translate3d(${-(deck.clientWidth + 60)}px,-10px,0) rotate(-14deg)`;
+        void el.offsetWidth; lay();
+        return;
+      }
       const el = order[0];
       el.style.transition = 'transform .4s cubic-bezier(.3,.6,.4,1), opacity .4s';
       el.style.transform = `translate3d(${dir * (deck.clientWidth + 60)}px,-10px,0) rotate(${dir * 14}deg)`;
       el.style.opacity = '0';
-      setTimeout(() => { if (dir > 0) order.push(order.shift()); else order.push(order.shift()); lay(); }, reduced ? 0 : 230);
+      setTimeout(() => { order.push(order.shift()); lay(); }, reduced ? 0 : 230);
     };
     let d = null;
     deck.addEventListener('pointerdown', (e) => {
@@ -387,6 +396,35 @@
     }
   };
   addEventListener('scroll', () => { if (!qraf) qraf = requestAnimationFrame(onScroll); }, { passive: true });
+  /* The hinge: like the fold of a phone that opens, what is near the top or
+     bottom edge softens and leans as the page moves, more the faster it moves,
+     in either direction, and settles crisp the moment it stops. */
+  if (!reduced) {
+    let lastY = scrollY, lastT = performance.now(), mv = 0, dir = 1, hraf = 0;
+    const parts = () => $$('.mx-ph, .mx-intro, .mx-tl > li, .mx-edu, .mx-projs > li, .mx-story-b, .mx-quote, .mx-groups, .mx-skills.on, .mx-deck, .mx-contact > *, .mx-foot', mx);
+    let list = parts(); setTimeout(() => { list = parts(); }, 1500);
+    const hinge = () => {
+      hraf = 0;
+      const now = performance.now(), y = scrollY, dt = Math.max(8, now - lastT), v = (y - lastY) / dt;
+      if (y !== lastY) dir = Math.sign(y - lastY);
+      lastY = y; lastT = now;
+      mv = mv * 0.82 + Math.min(1, Math.abs(v) / 2.2) * 0.18;
+      const vh = innerHeight, Z = vh * 0.24, bot = vh - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--mx-dock')) || 80);
+      for (const el of list) {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < -40 || r.top > vh + 40) continue;
+        const e = Math.max(0, Math.min(1, (Z - r.top) / Z), Math.min(1, (r.bottom - (bot - Z)) / Z));
+        const k = e * mv;
+        el.style.filter = k > 0.02 ? `blur(${(k * 7).toFixed(2)}px)` : '';
+        el.style.translate = k > 0.02 ? `0 ${(-dir * k * 12).toFixed(1)}px` : '';
+        el.style.scale = k > 0.02 ? `${(1 - k * 0.035).toFixed(4)} ${(1 + k * 0.05).toFixed(4)}` : '';
+      }
+      if (mv > 0.004 || Math.abs(v) > 0.01) hraf = requestAnimationFrame(hinge);
+      else { mv = 0; for (const el of list) { el.style.filter = el.style.translate = el.style.scale = ''; } }
+    };
+    addEventListener('scroll', () => { if (!hraf && phone.matches) hraf = requestAnimationFrame(hinge); }, { passive: true });
+    pager.addEventListener('scroll', () => { list = parts(); }, { passive: true });
+  }
   onScroll();
 
   /* ---------------------------------------------------------- prints */

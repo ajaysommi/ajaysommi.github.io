@@ -67,13 +67,15 @@
   // where they want to be, never faster than an amble.
   const bots = {
     rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1850, y: 556, vx: 0, vy: 0, tx: 1850, ty: 556, face: -1, idleAt: 0, box: [1712, 1872, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
-    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 632, y: 582, vx: 0, vy: 0, tx: 632, ty: 582, face: 1, idleAt: 0, box: [590, 676, 574, 588], reach: 140, keep: 64, pinDy: -58, k: 3, max: 45, s: 0.78, tilt: 0 }
+    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 632, y: 578, vx: 0, vy: 0, tx: 632, ty: 578, face: 1, idleAt: 0, box: [602, 670, 574, 580], reach: 140, keep: 64, pinDy: -58, k: 3, max: 45, s: 0.78, tilt: 0 }
   };
   const placeBot = (b) => {
     b.el.setAttribute('transform', `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`);
     b.flip.setAttribute('transform', `scale(${(b.face * b.s).toFixed(3)} ${b.s}) rotate(${b.tilt.toFixed(1)})`);
     b.pin.setAttribute('transform', `translate(${b.x.toFixed(1)} ${(b.y + b.pinDy).toFixed(1)})`);
+    if (b.num) b.num.setAttribute('transform', `scale(${b.face} 1)`);
   };
+  bots.rjax.num = $('.tw-frc-86', svg);
   Object.values(bots).forEach(placeBot);
   // The competition robot's camera: on its target, or on the pointer when close.
   const turret = $('.tw-turret', svg), vision = $('.tw-vision', svg), reticle = $('.tw-reticle', svg);
@@ -93,9 +95,18 @@
   // whatever the pointer is over: a lighter shade of it, so they still show.
   const RJ0 = [31, 209, 42], rjc = RJ0.slice();
   const rgbOf = (hex) => { const n = parseInt(hex.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
-  let rjSet = '';
+  let rjSet = '', overCol = null;
+  // a shade of a colour that still stands apart from it: lighter on dark things, deeper on light ones
+  const shade = (c) => { const l = (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255; return l > 0.6 ? c.map((v) => v * 0.62) : c.map((v) => v * 0.6 + 255 * 0.4); };
+  const colOf = (t) => {
+    if (!t || !t.closest || t.closest('.tw-rover, .tw-frc')) return null;
+    const h = t.closest('.tw-hot'); if (h && h.dataset.id !== 'rjax' && D.roles[h.dataset.id] && t.tagName === 'image') return rgbOf(D.roles[h.dataset.id].tint);
+    const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(getComputedStyle(t).fill || '');
+    if (m && (m[4] === undefined || +m[4] > 0.3)) return [+m[1], +m[2], +m[3]];
+    return h && D.roles[h.dataset.id] && h.dataset.id !== 'rjax' ? rgbOf(D.roles[h.dataset.id].tint) : null;
+  };
   const tintBeam = (dt) => {
-    const id = typeof over === 'string' ? over : null, t = id && D.roles[id] && id !== 'rjax' ? rgbOf(D.roles[id].tint).map((c) => c * 0.62 + 255 * 0.38) : RJ0;
+    const t = overCol ? shade(overCol) : RJ0;
     const k = Math.min(1, dt * 0.9);
     for (let i = 0; i < 3; i++) rjc[i] += (t[i] - rjc[i]) * k;
     const c = `rgb(${rjc.map((v) => Math.round(v)).join(',')})`;
@@ -115,8 +126,9 @@
     armB.setAttribute('d', `M1004 474 L1110 ${top.toFixed(1)}`);
     pivot.setAttribute('cy', ((474 + top) / 2).toFixed(1));
     lasers.forEach((l, i) => {
-      const [bx, by] = BEACONS[i], tx = WHEELS[i], ty = 445.7 - h;
-      l.setAttribute('points', `${bx},${by - 1.6} ${bx},${by + 1.6} ${tx},${(ty + 2).toFixed(1)} ${tx},${(ty - 2).toFixed(1)}`);
+      const k = i >> 1, o = i & 1 ? 1 : -1, [bx, by] = BEACONS[k], tx = WHEELS[k], ty = 445.7 - h;
+      const b0 = by + o * 0.9, t0 = ty + o * 1.7;
+      l.setAttribute('points', `${bx},${(b0 - 0.5).toFixed(1)} ${bx},${(b0 + 0.5).toFixed(1)} ${tx},${(t0 + 0.8).toFixed(1)} ${tx},${(t0 - 0.8).toFixed(1)}`);
     });
   };
   lift(0);
@@ -186,7 +198,7 @@
       lite.removeAttribute('filter');
       lite.setAttribute('class', 'tw-halo tw-halo-lite');
       lite.style.setProperty('--tint', getComputedStyle(h).getPropertyValue('--tint'));
-      $$('image, text', lite).forEach((n) => n.remove());
+      $$('image, text, .tw-nohit, .tw-night, .tw-vc-halo', lite).forEach((n) => n.remove());
       g._lite = lite;
       halos[id] = g;
     }
@@ -318,6 +330,7 @@
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
   const glideDown = (u) => Math.pow(smooth(u), 1.75);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
+  const flyAway = () => { const b = $('.tw-bfly', svg); if (!b || tw.classList.contains('bfly-away')) return; tw.classList.add('bfly-away'); setTimeout(() => b.remove(), 4200); };
   const loader = document.getElementById('pageLoader');
   const startBar = () => { if (barOn) return; barOn = true; paintBar(); };
   if (!reduced && loader && document.documentElement.classList.contains('is-loading')) {
@@ -327,9 +340,9 @@
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
-      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); hint(); return; }
+      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); hint(); setTimeout(flyAway, 1200); return; }
       tween(view(), INTRO, glideDown);
-      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); }, INTRO + 80);
+      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); flyAway(); }, INTRO + 80);
     };
     // the street starts down as the mark takes off; the browser's bar turns
     // sky coloured once the loading screen has cleared
@@ -341,7 +354,7 @@
     mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     setTimeout(() => { begin(); startBar(); }, 7500);
-  } else { startBar(); lampsOn(); setTimeout(() => hint(), 700); }
+  } else { startBar(); lampsOn(); setTimeout(() => hint(), 700); setTimeout(flyAway, 1600); }
 
   /* ---------------------------------------------------------- how to get around */
   // Once the street has settled, a small card in the middle shows how to
@@ -381,7 +394,7 @@
   const SITES = {
     adt: ['adt.com', 'https://en.wikipedia.org/wiki/ADT_Inc.'], hunter: ['hunter.com', 'https://www.hunter.com'],
     jm: ['JM Family', 'https://en.wikipedia.org/wiki/JM_Family_Enterprises'], toyota: ['Southeast Toyota', 'https://en.wikipedia.org/wiki/Southeast_Toyota_Distributors'],
-    fics: ['FICS Research', 'https://fics.institute.ufl.edu'], rfa: ['roboticsforall.net', 'https://www.roboticsforall.net'], edu: ['ufl.edu', 'https://www.ufl.edu']
+    fics: ['FICS Research', 'https://fics.institute.ufl.edu'], shiva: ['shivarobotics.com', 'https://www.shivarobotics.com'], rfa: ['roboticsforall.net', 'https://www.roboticsforall.net'], edu: ['ufl.edu', 'https://www.ufl.edu']
   };
   SITES.adt[0] = 'About ADT'; SITES.jm[0] = 'About JM Family'; SITES.toyota[0] = 'About Southeast Toyota';
   const rest = (r, links) => `
@@ -412,7 +425,7 @@
     const side = /^p-/.test(r.id);
     const [kind, subj] = side ? (/ · /.test(r.role) ? r.role.split(' · ') : ['Side project', r.role]) : [];
     inner.innerHTML = side ? `
-      <div class="tw-p-eyebrow"><span class="tw-p-chip"><i></i>${esc(kind)}</span></div>
+      <div class="tw-p-eyebrow"><span class="tw-p-chip">${esc(kind)}</span></div>
       <h3 class="tw-p-sideh">${esc(r.org)}</h3>
       ${subj ? `<p class="tw-p-subj">${esc(subj.charAt(0).toUpperCase() + subj.slice(1))}</p>` : ''}
       ${r.when ? `<p class="tw-p-stack">${esc(r.when)}</p>` : ''}` + rest(r, links) : `
@@ -521,7 +534,7 @@
   const hideLabel = () => label.classList.remove('on');
   const showLabel = (id) => {
     const r = D.roles[id], s = stage.getBoundingClientRect(), pin = $(`.tw-pin[data-id="${id}"]`, svg);
-    if (!pin) return;
+    if (!pin) { hideLabel(); return; }
     const at = pin.getBoundingClientRect();
     label.style.setProperty('--tint', r.tint);
     label.innerHTML = `<b>${yy(r)}</b>${esc(nameOf(r))}`;
@@ -545,7 +558,7 @@
     offT = setTimeout(() => { over = null; glow(null); hideLabel(); }, 160);
   };
   const idAt = (t) => { if (!t || !t.closest) return null; if (t.closest('.tw-adtsticker')) return 'adt'; const h = t.closest('.tw-hot'); return h ? h.dataset.id : null; };
-  svg.addEventListener('pointerover', (e) => hoverTo(idAt(e.target)));
+  svg.addEventListener('pointerover', (e) => { overCol = colOf(e.target); hoverTo(idAt(e.target)); });
   svg.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
 
   /* ---------------------------------------------------------- the pointer */

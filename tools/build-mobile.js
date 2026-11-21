@@ -152,12 +152,12 @@ const html = `<!-- mx:start -->
         <p class="mx-intro">Tap a skill to see where I’ve used it.</p>
         <div class="mx-groups" role="group" aria-label="Skill groups">${P.skills.map(([g], i) => `<button type="button" aria-pressed="${i === 0}" data-g="${i}">${esc(g.replace(', Data & Databases', ' & Data').replace(' & Libraries', '').replace(' & Integration', '').replace(' & Tooling', ''))}</button>`).join('')}</div>
         ${P.skills.map(([, l], i) => `<ul class="mx-skills${i === 0 ? ' on' : ''}" data-g="${i}">${l.map((s) => { const u = usedAt(s); return `<li><button type="button" class="mx-skill${u.length ? ' used' : ''}" data-used="${esc(u.join(' · '))}">${esc(s)}</button></li>`; }).join('')}</ul>`).join('\n        ')}
-        <p class="mx-used" aria-live="polite"><span class="mx-mono">Dots mark skills used on the job</span></p>
+        <p class="mx-used" aria-live="polite"><span class="mx-mono">Highlighted skills are ones I’ve used on the job</span></p>
       </section>
 
       <section class="mx-panel" id="mx-p-words" role="tabpanel" aria-labelledby="mx-tab-words" data-tab="words">
         <h2 class="mx-ph">Kind words</h2>
-        <p class="mx-intro">From managers, mentors and teammates. Swipe for the next.</p>
+        <p class="mx-intro">From managers, mentors and teammates. Swipe left for the next, right to go back.</p>
         <div class="mx-deck">
           ${P.recs.map(([n, o, q], i) => `<figure class="mx-note" data-i="${i}"><blockquote>${esc(q)}</blockquote><figcaption><span class="mx-av" aria-hidden="true">${initials(n)}</span><span><b>${esc(n)}</b><span class="mx-mono">${esc(o)}</span></span></figcaption></figure>`).join('\n          ')}
         </div>

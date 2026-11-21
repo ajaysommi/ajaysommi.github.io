@@ -964,7 +964,7 @@
 .tw-police { visibility: hidden; pointer-events: none; }
 .tw-police-a { transform: translateX(1700px); }
 .tw-police-b { transform: translateX(1300px); }
-.tw.police .tw-police-a, .tw.police-home .tw-police-b { visibility: visible; transform: none; transition: transform 6.2s cubic-bezier(.3, .6, .62, 1); }
+.tw.police .tw-police-a, .tw.police-home .tw-police-b { visibility: visible; transform: none; transition: transform 3.8s cubic-bezier(.25, .62, .38, 1); }
 .tw-pl { opacity: 0; }
 .tw.police .tw-police-a .tw-pl-r, .tw.police-home .tw-police-b .tw-pl-r { animation: tw-onoff .64s steps(1) infinite; }
 .tw.police .tw-police-a .tw-pl-b, .tw.police-home .tw-police-b .tw-pl-b { animation: tw-onoff .64s steps(1) infinite; animation-delay: -.32s; }
@@ -1301,7 +1301,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-label b { font-family: 'Nunito', var(--font-sans); font-weight: 800; }
 /* the year: big, sliding in from the card's own edge and cut off by it */
 .tw-p-top { position: relative; }
-.tw-p-yr { position: absolute; z-index: 0; top: 34px; right: -74px; font: 900 84px/1 'Nunito', var(--font-sans); letter-spacing: -.05em; color: transparent; background: linear-gradient(90deg, transparent 4%, color-mix(in oklab, var(--tint) 16%, transparent) 38%, color-mix(in oklab, var(--tint) 52%, transparent) 100%); -webkit-background-clip: text; background-clip: text; pointer-events: none; white-space: nowrap; animation: tw-yr .9s cubic-bezier(.2, .8, .2, 1) .08s both; }
+.tw-p-yr { position: absolute; z-index: 0; top: 34px; right: -74px; padding-left: 6px; font: 900 84px/1 'Nunito', var(--font-sans); letter-spacing: -.05em; color: transparent; background: linear-gradient(90deg, color-mix(in oklab, var(--tint) 30%, transparent) 0%, color-mix(in oklab, var(--tint) 34%, transparent) 38%, color-mix(in oklab, var(--tint) 52%, transparent) 100%); -webkit-background-clip: text; background-clip: text; pointer-events: none; white-space: nowrap; animation: tw-yr .9s cubic-bezier(.2, .8, .2, 1) .08s both; }
 .tw-p-logo { position: relative; z-index: 1; }
 @keyframes tw-yr { from { transform: translateX(80px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .tw-p-yr { animation: none; } }
@@ -1315,3 +1315,58 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-p-site a:hover { border-bottom-color: var(--tint); }
 .tw-p-site svg { width: 12px; height: 12px; }
 .tw-frc-seam { stroke: rgba(255, 255, 255, .6); stroke-width: .9; stroke-linecap: round; }
+
+/* round 15 */
+/* the corner bar: nearly solid, frosted */
+@media (min-width: 720px) {
+  html:not(.classic) header.nav.glass { background: color-mix(in oklab, var(--surface-solid, var(--surface)) 93%, transparent); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); }
+}
+/* the cards: one warm face throughout, a touch larger and fuller, even spacing */
+.tw-panel:not(.tw-postcard) .tw-panel-in, .tw-panel:not(.tw-postcard) .tw-panel-in *, .tw-nav button { font-family: 'Nunito', ui-rounded, system-ui, sans-serif !important; }
+.tw-panel:not(.tw-postcard) .tw-p-text { font-size: 15.5px; line-height: 1.6; font-weight: 500; }
+.tw-panel:not(.tw-postcard) .tw-p-about { font-size: 14.5px; font-weight: 500; }
+.tw-panel .tw-p-role { font-size: 15px; font-weight: 600; }
+.tw-p-stats b { font-size: 19px; font-weight: 800; }
+.tw-p-stats span { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.tw-p-link { font-size: 14.5px !important; line-height: 1.5; font-weight: 500; }
+.tw-p-link b { font-weight: 800; color: color-mix(in oklab, var(--lt) 60%, var(--ink)); }
+.tw-p-link b::before { content: none; }
+.tw-p-links h4 { font-size: 13px; }
+.tw-p-tags li { font-size: 12.5px; font-weight: 700; }
+.tw-p-steps b { font-weight: 800; } .tw-p-steps span { font-weight: 500; font-size: 14px; }
+.tw-nav button { font-weight: 700; }
+.tw-panel-in :is(.tw-p-about, .tw-p-text, .tw-p-pics, .tw-p-steps, .tw-p-stats, .tw-p-links, .tw-p-gos, .tw-p-tags, .tw-p-quote) { margin-top: 0; margin-bottom: 18px; }
+/* the eyebrow on side cards: a plain word in the card's colour */
+.tw-p-chip { padding: 0; border: 0; background: none; color: color-mix(in oklab, var(--tint) 75%, var(--ink)); font-size: 13.5px; font-weight: 800; letter-spacing: .01em; }
+/* the robot's field */
+.tw-court-floor { fill: #5d6169; stroke: #3d4048; stroke-width: .8; } .tw-court-line { stroke: rgba(255, 255, 255, .55); stroke-width: .8; fill: none; }
+.tw-court-rail { stroke: #9aa3ad; stroke-width: 1.2; } .tw-court-post { fill: #9aa3ad; } .tw-court-poly { fill: rgba(200, 226, 245, .22); stroke: rgba(154, 163, 173, .6); stroke-width: .5; }
+.tw-court-blue { fill: #2563eb; } .tw-court-red { fill: #dc2626; } .tw-court-hub { fill: #1d4ed8; } .tw-court-hubr { fill: #b91c1c; }
+.tw-court-edge { stroke: #2f3238; stroke-width: 1.6; }
+[data-theme="midnight"] .tw .tw-court-floor, [data-theme="terminal"] .tw .tw-court-floor { fill: #3a3d44; }
+/* the HawkEye: thinner strands, each on its own beat, and bright lamps */
+.tw-laser:nth-of-type(odd) { animation-delay: -.05s; } .tw-laser:nth-of-type(4n+3), .tw-laser:nth-of-type(4n+4) { animation-duration: .17s; }
+.tw-beacon-c { fill: #ffe0da; } .tw-beacons { animation: tw-beacon .4s steps(2) infinite; }
+@keyframes tw-beacon { 50% { opacity: .75; } }
+/* the dish in one piece */
+.tw-dishyoke { fill: #8e939d; stroke: var(--tw-line); stroke-width: 1; } .tw-dishbolt { fill: #5d616b; stroke: var(--tw-line); stroke-width: .8; }
+.tw-dishshade { fill: none; stroke: rgba(0, 0, 0, .14); stroke-width: 2.4; } .tw-dishrim { fill: #dfe3e8; stroke: var(--tw-line); stroke-width: 1.2; }
+.tw-strut { stroke: #5d616b; stroke-width: 1.1; fill: none; } .tw-lnb { fill: #3a3d46; }
+/* the visitor center's flag and garden, and the butterfly */
+.tw-vcflag { fill: #e9a23b; } .tw-vcflag-p { fill: #fff7e6; }
+.tw-soil { fill: #6b4a2e; } [data-theme="midnight"] .tw .tw-soil, [data-theme="terminal"] .tw .tw-soil { fill: #3e2c1d; }
+.tw-glamp-p { fill: #3a3d46; } .tw-glamp { fill: #2a2c34; }
+.tw-bath { fill: #b9bcc4; stroke: #6f7380; stroke-width: .6; } .tw-bathwater { fill: #7cc4ef; } .tw-dial { fill: #c9a46a; stroke: #6b4428; stroke-width: .5; } .tw-gnomon { fill: none; stroke: #3e2515; stroke-width: .8; }
+.tw-bird { fill: #c2541c; } .tw-beak { fill: #f2b705; } .tw-birdtail { stroke: #7a3412; stroke-width: 1; }
+.tw-bfly { transform: translate(2862px, 520px) scale(1.7); }
+.tw-bfly-path { animation: tw-bfly-roam 11s ease-in-out infinite; }
+.tw-bfly-bob { animation: tw-bfly-bob .9s ease-in-out infinite; }
+.tw-bfly-w path { transform-box: fill-box; animation: tw-flap .16s ease-in-out infinite alternate; }
+.tw-bfly-w path:first-child { transform-origin: 100% 40%; } .tw-bfly-w path:last-child { transform-origin: 0% 40%; }
+.tw-bfly-wing { fill: #3b82f6; stroke: #1e3a8a; stroke-width: .5; } .tw-bfly-body { stroke: #1e293b; stroke-width: 1; stroke-linecap: round; }
+@keyframes tw-flap { to { transform: scaleX(.25); } }
+@keyframes tw-bfly-bob { 50% { transform: translateY(-2.4px); } }
+@keyframes tw-bfly-roam { 0% { transform: translate(0, 0); } 20% { transform: translate(34px, 14px); } 40% { transform: translate(78px, 4px); } 60% { transform: translate(52px, 30px); } 80% { transform: translate(14px, 22px); } 100% { transform: translate(0, 0); } }
+.tw.bfly-away .tw-bfly { transition: transform 4s cubic-bezier(.4, 0, .6, 1), opacity 4s ease-in; transform: translate(3260px, 240px) scale(1.7); opacity: 0; }
+/* the house's trim, slimmer and less bright */
+.tw-fascia { stroke: #e6dcc6; stroke-width: 1.6; } .tw-trim { stroke: #e6dcc6; stroke-width: 1.6; }
