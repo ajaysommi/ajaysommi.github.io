@@ -16,7 +16,8 @@
      background stay, so this reads as the same site. */
   main#main, .footer, .rail { display: none !important; }
   .mx { display: block; position: relative; z-index: 2; padding: calc(18px + env(safe-area-inset-top)) 18px calc(var(--mx-dock, 80px) + 10px); color: var(--ink); font-family: var(--font-sans); -webkit-tap-highlight-color: transparent; }
-  .mx-scrim:not([hidden]), .mx-sheet:not([hidden]), .mx-viewer:not([hidden]) { display: block; }
+  .mx-scrim:not([hidden]), .mx-viewer:not([hidden]) { display: block; }
+  .mx-sheet:not([hidden]) { display: flex; }
 
   .mx button { font: inherit; color: inherit; cursor: pointer; }
   .mx svg, .mx-sheet svg, .mx-viewer svg { width: 1em; height: 1em; flex: none; }
@@ -267,7 +268,7 @@
   .mx-sheet.drag { transition: none; }
   .mx-grab { flex: none; width: 100%; height: 26px; display: grid; place-items: center; cursor: grab; }
   .mx-grab::before { content: ''; width: 38px; height: 5px; border-radius: 5px; background: var(--stroke-hi); }
-  .mx-sheet-in { overflow-y: auto; overscroll-behavior: contain; padding: 4px 18px calc(28px + env(safe-area-inset-bottom)); touch-action: pan-y; color: var(--ink); font-family: var(--font-sans); }
+  .mx-sheet-in { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 18px calc(28px + env(safe-area-inset-bottom)); touch-action: pan-y; color: var(--ink); font-family: var(--font-sans); }
   .mxs-head { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: center; margin-bottom: 16px; }
   .mx-logo { display: grid; place-items: center; overflow: hidden; border: 1px solid var(--stroke); background: var(--surface); }
   .mx-logo-t { background: var(--m-fill); color: var(--ink-2); font: 500 14px var(--font-mono); }
@@ -351,4 +352,14 @@
   .mx-psst-i { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: color-mix(in oklab, var(--accent) 16%, transparent); color: var(--accent); animation: mx-psst 3.6s ease-in-out infinite; }
   .mx-psst-i svg { width: 18px; height: 18px; }
   @keyframes mx-psst { 0%, 80%, 100% { transform: none; } 86% { transform: translateY(-3px) rotate(-6deg); } 92% { transform: translateY(0) rotate(4deg); } }
+}
+
+/* round 13: the two bars at the bottom read as one block. The tab bar sits
+   a little tighter on the dock, and a soft fade of the page's own paper
+   runs behind both, so nothing peeks through the gap between them. */
+@media (max-width: 719px) {
+  .mx-tabs { bottom: calc(var(--mx-dock, calc(76px + env(safe-area-inset-bottom))) + 4px); }
+  .mx-tabs button { padding: 5px 0 4px; }
+  .mx::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; height: calc(var(--mx-dock, 80px) + 96px); background: linear-gradient(to bottom, color-mix(in oklab, var(--bg) 0%, transparent), var(--bg) 42%); pointer-events: none; opacity: 0; transition: opacity .3s; }
+  html.mx-tabbed .mx::after { opacity: 1; }
 }

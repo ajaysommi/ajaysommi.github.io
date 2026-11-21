@@ -958,7 +958,8 @@
   // The era picker, and the standard site (the home page) with its own
   // loading screen to land on.
   const isEras = (u) => /\/eras\.html$/.test(u.pathname);
-  const isClassic = (u) => /\/(index\.html)?$/.test(u.pathname);
+  const isClassic = (u) => /\/(index\.html|classic\.html)?$/.test(u.pathname);
+  const pageOf = (u) => u.pathname.replace(/\/index\.html$/, '/');
 
   // Arriving from a click on Resume (see resume.html's head): start once the
   // fonts are in, so the layout the sheet lands on has stopped moving.
@@ -979,7 +980,7 @@
     if (u.origin !== location.origin || !/^https?:$/.test(u.protocol)) return;
     if (u.pathname === location.pathname) return;          // same page, an anchor
     if (/\.pdf$/i.test(u.pathname)) return;
-    if (isClassic(u) && isClassic(location)) return;       // home to itself
+    if (pageOf(u) === pageOf(location)) return;             // home to itself
     e.preventDefault();
     go(u.href);
   });

@@ -964,7 +964,7 @@
 .tw-police { visibility: hidden; pointer-events: none; }
 .tw-police-a { transform: translateX(1700px); }
 .tw-police-b { transform: translateX(1300px); }
-.tw.police .tw-police-a, .tw.police-home .tw-police-b { visibility: visible; transform: none; transition: transform 6s cubic-bezier(.12, .55, .25, 1); }
+.tw.police .tw-police-a, .tw.police-home .tw-police-b { visibility: visible; transform: none; transition: transform 8.5s cubic-bezier(.3, .62, .4, 1); }
 .tw-pl { opacity: 0; }
 .tw.police .tw-police-a .tw-pl-r, .tw.police-home .tw-police-b .tw-pl-r { animation: tw-onoff .64s steps(1) infinite; }
 .tw.police .tw-police-a .tw-pl-b, .tw.police-home .tw-police-b .tw-pl-b { animation: tw-onoff .64s steps(1) infinite; animation-delay: -.32s; }
@@ -1195,3 +1195,48 @@
 .tw-drawers { fill: #c0392b; stroke: #6b1d15; stroke-width: .6; } .tw-drawerline { stroke: #6b1d15; stroke-width: .5; } .tw-drawerpull { fill: #e9e5dc; }
 .tw-stool { fill: #3a3d46; } .tw-stool-l { stroke: #3a3d46; stroke-width: 1.2; fill: none; }
 .tw-bucket { fill: #f2b705; stroke: #8a6a10; stroke-width: .5; } .tw-bucket-h { fill: none; stroke: #6b6f78; stroke-width: .5; }
+
+/* round 13 */
+/* flowers on the lawn go under the snow too */
+.tw .tw-flower { opacity: calc(1 - var(--snow, 0)); }
+/* the theme's note shows up top on the street, clear of the police on the near lane */
+@media (min-width: 720px) { html:not(.classic) .toast-host { top: 18px; bottom: auto; } }
+/* Shiva's billboard after dark: only the board is lit; its legs, braces and catwalk fall into shadow */
+[data-theme="midnight"] .tw .tw-hot[data-id="shiva"] .tw-pole, [data-theme="terminal"] .tw .tw-hot[data-id="shiva"] .tw-pole { fill: #24262d; }
+[data-theme="midnight"] .tw .tw-hot[data-id="shiva"] .tw-bb-brace, [data-theme="terminal"] .tw .tw-hot[data-id="shiva"] .tw-bb-brace { stroke: #24262d; }
+[data-theme="midnight"] .tw .tw-bb-walk, [data-theme="terminal"] .tw .tw-bb-walk { fill: #2b2d34; }
+[data-theme="midnight"] .tw .tw-bb-rail, [data-theme="terminal"] .tw .tw-bb-rail { stroke: #2b2d34; }
+[data-theme="midnight"] .tw .tw-bb-arm, [data-theme="terminal"] .tw .tw-bb-arm { stroke: #1c1d22; }
+[data-theme="midnight"] .tw .tw-bb-lamp, [data-theme="terminal"] .tw .tw-bb-lamp { fill: #16171b; }
+/* the portal, quieter */
+.tw-portal-g { opacity: .66; }
+.tw-portal-g .tw-pt-halo { opacity: .3; animation: none; }
+.tw-portal-g .tw-pt-mote:nth-child(odd) { display: none; }
+/* the road: patches, cracks, potholes, a manhole; the sidewalk's joints */
+.tw-swjoint { stroke: rgba(0, 0, 0, .16); stroke-width: .7; fill: none; }
+.tw-swcrack, .tw-dcrack { stroke: rgba(0, 0, 0, .2); stroke-width: .45; fill: none; stroke-linejoin: round; }
+.tw-patch { fill: rgba(0, 0, 0, .1); stroke: rgba(0, 0, 0, .12); stroke-width: .5; }
+.tw-rcrack { stroke: rgba(0, 0, 0, .3); stroke-width: .6; fill: none; stroke-linejoin: round; }
+.tw-ph-rim { fill: rgba(255, 255, 255, .1); stroke: rgba(0, 0, 0, .4); stroke-width: .6; }
+.tw-ph-hole { fill: rgba(8, 8, 12, .62); }
+.tw-gravel { fill: rgba(255, 255, 255, .22); }
+.tw-mh-rim { fill: #3e3f45; stroke: rgba(0, 0, 0, .35); stroke-width: .6; }
+.tw-mh { fill: #4a4b51; } .tw-mh-l { stroke: rgba(0, 0, 0, .3); stroke-width: .45; fill: none; }
+[data-theme="midnight"] .tw .tw-mh-rim, [data-theme="terminal"] .tw .tw-mh-rim { fill: #1d1e23; }
+[data-theme="midnight"] .tw .tw-mh, [data-theme="terminal"] .tw .tw-mh { fill: #24252b; }
+.tw.snowy .tw-swjoint, .tw.snowy .tw-swcrack { opacity: calc(1 - var(--snow, 0)); }
+/* the Civic's tools, out of the way of any tap */
+.tw-civtools { pointer-events: none; }
+/* the rover's arms, the colour of its head */
+.tw-rover .tw-arm { stroke: #ffc928; }
+/* Off the clock and the side projects: a chip, the title, one quiet line */
+.tw-p-eyebrow { display: flex; align-items: center; min-height: 32px; margin: 2px 44px 14px 0; }
+.tw-p-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid color-mix(in oklab, var(--tint) 40%, var(--stroke)); border-radius: 999px; background: color-mix(in oklab, var(--tint) 12%, transparent); color: color-mix(in oklab, var(--tint) 55%, var(--ink)); font: 600 11.5px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
+.tw-p-chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--tint); }
+.tw-panel-in h3.tw-p-sideh { margin: 0 0 6px; }
+.tw-p-subj { margin: 0 0 4px; color: var(--ink-2); font-size: 15px; font-weight: 500; }
+.tw-p-stack { margin: 0 0 4px; color: var(--ink-3); font: 500 12px/1.5 var(--font-mono); letter-spacing: .02em; }
+.tw-p-subj + .tw-p-text, .tw-p-subj + .tw-p-about, .tw-p-stack + .tw-p-text, .tw-p-stack + .tw-p-about, .tw-p-sideh + .tw-p-text, .tw-p-sideh + .tw-p-about { margin-top: 16px; }
+.tw-bb-shade { display: none; }
+[data-theme="midnight"] .tw .tw-bb-shade, [data-theme="terminal"] .tw .tw-bb-shade { display: inline; }
+.tw:not(.hall-holed) .tw-hall-in { display: none; }

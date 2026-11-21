@@ -288,10 +288,10 @@
   };
   const frame = (z, left) => {
     const [x, y, w, h] = z, cx = x + w / 2, cy = y + h / 2;
-    const free = 1 - (panel.offsetWidth + 28) / stage.clientWidth, A = vh / vw;
+    const free = clamp(1 - (panel.offsetWidth + 28) / (stage.clientWidth || innerWidth), 0.3, 1), A = vh / vw;
     let fw = w / (free * 0.88), fh = fw * A;
     if (fh < h * 1.25) { fh = h * 1.25; fw = fh / A; }
-    fw = Math.min(fw, vw); fh = fw * A;
+    fw = Math.min(fw, Math.max(vw, w / (free * 0.96))); fh = fw * A;
     const fx = left ? cx - fw * (1 - free / 2) : cx - fw * (free / 2);
     return [fx, clamp(cy - fh / 2, BOTTOM - vh, BOTTOM - fh), fw, fh];
   };
@@ -314,9 +314,9 @@
      on the welcome sign come on (after dark). */
   let intro = false;
   // it starts high enough that only sky and stars show (the hills too are out of sight)
-  const INTRO = 3400, RISE = 480;
+  const INTRO = 4100, RISE = 480;
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
-  const glideDown = (u) => Math.pow(smooth(u), 1.3);
+  const glideDown = (u) => Math.pow(smooth(u), 1.75);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
   const loader = document.getElementById('pageLoader');
   const startBar = () => { if (barOn) return; barOn = true; paintBar(); };
@@ -377,6 +377,18 @@
       <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
     </div>`;
   };
+  const rest = (r, links) => `
+      ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
+      ${r.about ? `<p class="tw-p-about">${esc(r.about)}</p>` : ''}
+      <p class="tw-p-text">${esc(r.text)}</p>
+      ${r.quote ? `<blockquote class="tw-p-quote">“${esc(r.quote)}”</blockquote>` : ''}
+      ${r.photos.length ? `<div class="tw-p-pics">${r.photos.map((s) => `<button type="button" aria-label="Open photo"><img src="${s}" alt="" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
+      ${r.steps ? `<ol class="tw-p-steps">${r.steps.map(([f, t, c]) => `<li><button type="button" aria-label="Open photo"><img src="${f}" alt="" loading="lazy" decoding="async" /></button><div><b>${esc(t)}</b><span>${esc(c)}</span></div></li>`).join('')}</ol>` : ''}
+      ${r.stats.length ? `<ul class="tw-p-stats">${r.stats.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('')}</ul>` : ''}
+      ${links.length ? `<div class="tw-p-links"><h4>How it connects</h4>${links.map(([a, b, long]) => { const o = D.roles[a === r.id ? b : a]; return `<button type="button" class="tw-p-link" data-go="${o.id}" style="--lt:${o.tint}"><b>${esc(nameOf(o))} ${yy(o)}</b> ${esc(long)}</button>`; }).join('')}</div>` : ''}
+      ${r.url ? `<p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.url)}" target="_blank" rel="noopener">See the code ↗</a></p>` : ''}
+      ${r.go ? `<p class="tw-p-gos">${r.go.map(([t, u]) => `<a class="tw-p-go" href="${esc(u)}"${/^https?:/.test(u) ? ' target="_blank" rel="noopener"' : ''}>${esc(t)}</a>`).join('')}</p>` : ''}
+      ${r.tags.length ? `<ul class="tw-p-tags">${r.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}`;
   const render = (r) => {
     const i = D.order.indexOf(r.id), p = D.roles[D.order[i - 1]], n = D.roles[D.order[i + 1]];
     panel.style.setProperty('--tint', r.tint);
@@ -390,22 +402,18 @@
       $$('.tw-pc-snap button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
       return;
     }
-    inner.innerHTML = `
+    const side = /^p-/.test(r.id);
+    const [kind, subj] = side ? (/ · /.test(r.role) ? r.role.split(' · ') : ['Side project', r.role]) : [];
+    inner.innerHTML = side ? `
+      <div class="tw-p-eyebrow"><span class="tw-p-chip"><i></i>${esc(kind)}</span></div>
+      <h3 class="tw-p-sideh">${esc(r.org)}</h3>
+      ${subj ? `<p class="tw-p-subj">${esc(subj.charAt(0).toUpperCase() + subj.slice(1))}</p>` : ''}
+      ${r.when ? `<p class="tw-p-stack">${esc(r.when)}</p>` : ''}` + rest(r, links) : `
       <div class="tw-p-top"><span class="tw-p-logo">${r.logo ? logo(r.logo) : r.gator ? `<img src="${r.gator}" alt="" style="max-height:42px" />` : ''}</span><span class="tw-p-yr">${yy(r)}</span></div>
       <h3>${esc(r.org)}</h3>
       <p class="tw-p-role">${esc(r.role)}</p>
       ${r.when || r.where ? `<p class="tw-p-when">${esc([r.when, r.where].filter(Boolean).join(' · '))}</p>` : ''}
-      ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
-      ${r.about ? `<p class="tw-p-about">${esc(r.about)}</p>` : ''}
-      <p class="tw-p-text">${esc(r.text)}</p>
-      ${r.quote ? `<blockquote class="tw-p-quote">“${esc(r.quote)}”</blockquote>` : ''}
-      ${r.photos.length ? `<div class="tw-p-pics">${r.photos.map((s) => `<button type="button" aria-label="Open photo"><img src="${s}" alt="" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
-      ${r.steps ? `<ol class="tw-p-steps">${r.steps.map(([f, t, c]) => `<li><button type="button" aria-label="Open photo"><img src="${f}" alt="" loading="lazy" decoding="async" /></button><div><b>${esc(t)}</b><span>${esc(c)}</span></div></li>`).join('')}</ol>` : ''}
-      ${r.stats.length ? `<ul class="tw-p-stats">${r.stats.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('')}</ul>` : ''}
-      ${links.length ? `<div class="tw-p-links"><h4>How it connects</h4>${links.map(([a, b, long]) => { const o = D.roles[a === r.id ? b : a]; return `<button type="button" class="tw-p-link" data-go="${o.id}" style="--lt:${o.tint}"><b>${esc(nameOf(o))} ${yy(o)}</b> ${esc(long)}</button>`; }).join('')}</div>` : ''}
-      ${r.url ? `<p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.url)}" target="_blank" rel="noopener">See the code ↗</a></p>` : ''}
-      ${r.go ? `<p class="tw-p-gos">${r.go.map(([t, u]) => `<a class="tw-p-go" href="${esc(u)}"${/^https?:/.test(u) ? ' target="_blank" rel="noopener"' : ''}>${esc(t)}</a>`).join('')}</p>` : ''}
-      ${r.tags.length ? `<ul class="tw-p-tags">${r.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}`;
+` + rest(r, links);
     inner.scrollTop = 0;
     inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
     prevB.hidden = !p; nextB.hidden = !n;
@@ -662,7 +670,7 @@
   if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
 
   if (reduced) { arrived = true; tw.classList.add('arrive', 'parked'); }
-  addEventListener('resize', () => { measure(); if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
+  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
   /* ---------------------------------------------------------- the compact bar */
   // Home (and the logo) slide back to the visitor center; the weather and
   // the menu open small lists under the bar.
@@ -911,7 +919,7 @@
   const hkHot = hotOf('hunter'), hkG = $('.tw-hk-lcd', hkHot), hkCr = $('.tw-hk-cr', hkHot);
   const pokeHunter = (e) => {
     const q = localPt(hkG, e);
-    if (q.x < 935 || q.x > 960 || q.y < 410.4 || q.y > 426) { pokeAny('hunter', e); return; }
+    if (q.x < 935 || q.x > 960 || q.y < 410.4 || q.y > 426) return;
     if (dmg.hk >= 4) return;
     dmg.hk++;
     add(hkCr, crack(q.x, q.y, 4 + dmg.hk * 2.2, q.x * 3 + q.y + dmg.hk, 'tw-lcd-crack2') + `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${(0.7 + dmg.hk * 0.25).toFixed(2)}" class="tw-lcd-ink"/>`);
@@ -981,6 +989,7 @@
     if (n < 3) add(hallCr, crack(q.x, q.y, 3 + n * 2.4, q.x * 3 + q.y + n, 'tw-crk tw-crk-hall'));
     else {
       hallHoles.appendChild(NSel('polygon', { points: P.map((p) => p.join(',')).join(' '), fill: '#000' }));
+      $('.tw-hall-gl', svg).setAttribute('mask', 'url(#twHallMask)'); tw.classList.add('hall-holed');
       add(hallCr, P.map(([x, y], k) => crack(x, y, 2.2, x * 7 + k, 'tw-crk tw-crk-hall')).join(''));
       fallShards(hallCr, P, D.hall.ground);
     }
@@ -1064,6 +1073,7 @@
     Object.keys(hits).forEach((k) => delete hits[k]);
     $$('.tw-dmg', svg).forEach((g) => g.remove());
     [tcG, hkCr, bwG, tvCr, hallCr, hallHoles].forEach((g) => { if (g) g.innerHTML = ''; });
+    $('.tw-hall-gl', svg).removeAttribute('mask'); tw.classList.remove('hall-holed');
     $$('.tw-hcr', svg).forEach((g) => { g.innerHTML = ''; });
     hwins.forEach((w) => w.classList.remove('broke'));
     if (hdoor) hdoor.classList.remove('open');
