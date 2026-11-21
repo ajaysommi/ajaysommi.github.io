@@ -457,3 +457,57 @@
   html, body { scrollbar-width: none; }
   html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
 }
+
+/* A small souvenir of the desktop street at the head of the phone page. */
+@media (max-width: 719px) {
+  .mx-hero { padding-inline: clamp(6px, 3vw, 23px); }
+  .mx-face {
+    display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
+    width: min(100%, 420px); height: clamp(105px, 19svh, 150px); margin-bottom: 23px;
+  }
+  .mx-face img { width: clamp(65px, 10svh, 90px); height: clamp(65px, 10svh, 90px); }
+  .mx-profession {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 17px;
+    color: var(--ink-2); font: 600 12px/1.3 var(--font-mono); letter-spacing: .02em;
+  }
+  .mx-profession::before { content: ''; width: 16px; height: 2px; background: #bd6b43; }
+  .mx-postage {
+    position: absolute; right: 3%; top: 0; width: clamp(78px, 20vw, 116px);
+    height: 100%; max-height: 138px; transform: rotate(8deg); pointer-events: none;
+    filter: drop-shadow(0 2px 1px #473d2926) drop-shadow(1px 6px 8px #4339231a);
+  }
+  .mx-postage i {
+    display: block; width: 100%; aspect-ratio: 148/176; background: #f6e9cd url("assets/images/town/park-print.svg") center/92% 94% no-repeat;
+    mask: linear-gradient(#000 0 0) center / calc(100% - 9px) calc(100% - 9px) no-repeat,
+          radial-gradient(circle at 4px 0, transparent 2.4px, #000 2.8px) 0 0 / 8px 5px repeat-x,
+          radial-gradient(circle at 4px 5px, transparent 2.4px, #000 2.8px) 0 100% / 8px 5px repeat-x,
+          radial-gradient(circle at 0 4px, transparent 2.4px, #000 2.8px) 0 0 / 5px 8px repeat-y,
+          radial-gradient(circle at 5px 4px, transparent 2.4px, #000 2.8px) 100% 0 / 5px 8px repeat-y;
+  }
+  .mx-postage::after {
+    content: ''; position: absolute; width: 76%; height: 30%; left: -58%; top: 62%; opacity: .57;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 86 36' fill='none' stroke='%23876850' stroke-width='1.6'%3E%3Cpath d='M1 9q13-8 29-3t29 1 25-4M1 16q13-8 29-3t29 1 25-4M1 23q13-8 29-3t29 1 25-4M1 30q13-8 29-3t29 1 25-4'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .mx-hi { font-size: clamp(29px, 7.5vw, 38px); }
+  .mx-me { letter-spacing: -.06em; }
+  .mx-hero .mx-cue { min-height: 44px; }
+  .mx-intro { font-size: 16px; line-height: 1.5; }
+  .mx-stop:focus-visible, .mx-proj:focus-visible, .mx-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  @media (max-height: 540px) {
+    .mx-face { height: 79px; margin-bottom: 13px; }
+    .mx-face img { width: 48px; height: 48px; }
+    .mx-postage { width: 65px; }
+  }
+}
+
+@media (max-width: 719px) {
+  .mx-sheet { touch-action: auto; }
+  .mx-sheet-bar { position: relative; flex: 0 0 44px; }
+  .mx-sheet-bar .mx-grab { height: 100%; touch-action: none; }
+  .mx-sheet-close {
+    position: absolute; inset: 1px 6px auto auto; display: grid; place-items: center;
+    width: 42px; height: 42px; background: none; border: 0; color: var(--ink); cursor: pointer;
+  }
+  .mx-sheet-close svg { width: 23px; height: 23px; border-radius: 50%; padding: 4px; box-sizing: content-box; background: var(--m-fill); }
+  .mx-sheet-close:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: 50%; }
+}

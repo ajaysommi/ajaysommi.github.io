@@ -112,6 +112,13 @@
     pager.scrollTo({ left: TAB[key] * W(), behavior: reduced ? 'auto' : 'smooth' });
     placeInk(TAB[key]); select(TAB[key]);
   };
+  // A section link from the résumé can also arrive in the phone layout.
+  const section = location.hash.slice(1);
+  if (phone.matches && (section in TAB || section === 'contact')) {
+    const arrive = () => { if (phone.matches) show(section); };
+    if (document.readyState === 'complete') arrive();
+    else window.addEventListener('load', arrive, { once: true });
+  }
   // The desktop's links, menu and search scroll to desktop sections; on a
   // phone those are put away, so they come here instead.
   const into = Element.prototype.scrollIntoView;
@@ -125,29 +132,46 @@
   /* Slides up with a role or a project. Drag it down by the handle (or by
      the content, once that is scrolled to the top) and it goes away. */
   const scrim = $('.mx-scrim'), sheet = $('.mx-sheet'), sheetIn = sheet && $('.mx-sheet-in', sheet);
-  let opener = null;
+  const sheetClose = sheet && $('.mx-sheet-close', sheet);
+  let opener = null, hideSheetTimer = 0, sheetFrame = 0;
   const lock = (on) => document.documentElement.classList.toggle('mx-lock', on);
   const openSheet = (id, from) => {
     const t = document.getElementById(id);
     if (!t || !sheet) return;
+    clearTimeout(hideSheetTimer); cancelAnimationFrame(sheetFrame);
     opener = from;
     sheetIn.innerHTML = '';
     sheetIn.appendChild(t.content.cloneNode(true));
     sheetIn.scrollTop = 0;
     scrim.hidden = false; sheet.hidden = false; lock(true);
-    requestAnimationFrame(() => requestAnimationFrame(() => { scrim.classList.add('open'); sheet.classList.add('open'); }));
+    sheetClose.focus({ preventScroll: true });
+    sheetFrame = requestAnimationFrame(() => {
+      sheetFrame = requestAnimationFrame(() => { scrim.classList.add('open'); sheet.classList.add('open'); });
+    });
   };
   const closeSheet = () => {
     if (!sheet || sheet.hidden) return;
+    cancelAnimationFrame(sheetFrame); clearTimeout(hideSheetTimer);
     sheet.classList.remove('open', 'drag'); sheet.style.transform = ''; scrim.classList.remove('open'); lock(false);
-    setTimeout(() => { sheet.hidden = true; scrim.hidden = true; }, reduced ? 0 : 420);
-    if (opener && opener.focus) opener.focus({ preventScroll: true });
+    hideSheetTimer = setTimeout(() => { sheet.hidden = true; scrim.hidden = true; }, reduced ? 0 : 420);
+    if (opener && phone.matches) opener.focus({ preventScroll: true });
   };
   $$('[data-sheet]', mx).forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.sheet, b)));
   if (scrim) scrim.addEventListener('click', closeSheet);
   if (sheet) {
+    sheetClose.addEventListener('click', closeSheet);
+    sheet.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.stopPropagation(); closeSheet(); return; }
+      if (e.key !== 'Tab') return;
+      const controls = $$('a[href], button:not([disabled])', sheet);
+      const first = controls[0], last = controls[controls.length - 1];
+      if (e.shiftKey && e.target === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && e.target === last) { e.preventDefault(); first.focus(); }
+    });
+    phone.addEventListener('change', () => { if (!phone.matches && !sheet.hidden) closeSheet(); });
     let d = null;
     sheet.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button, a') || !e.isPrimary) return;
       const onGrab = e.target.closest('.mx-grab');
       if (!onGrab && (sheetIn.scrollTop > 0 || e.target.closest('.mxs-pics'))) return;
       d = { y: e.clientY, id: e.pointerId, t: performance.now(), dy: 0, on: false, grab: !!onGrab };
@@ -353,7 +377,7 @@
     });
     v.addEventListener('pointercancel', () => { if (p) { clearTimeout(p.timer); if (p.hold) pause(false); p = null; v.style.transform = ''; } });
     document.addEventListener('keydown', (e) => {
-      if (v.hidden) { if (e.key === 'Escape') closeSheet(); return; }
+      if (v.hidden) return;
       if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1);
     });
   })();

@@ -2358,3 +2358,10 @@ header.nav .brand-mark svg.brand-aj { overflow: visible; }
   .chip, .chip-clear { position: relative; }
   .chip::before, .chip-clear::before { content: ''; position: absolute; inset: -8px 0; }
 }
+
+/* Lightly etched contours on the abstract paper shapes. They move with
+   their parent, so scrolling does not need another animation layer. */
+.m-field .m-quarter, .m-field .m-disc {
+  background-image: repeating-radial-gradient(ellipse at 10% 112%, transparent 0 20px, color-mix(in srgb, var(--ink) 6%, transparent) 20.5px 21px, transparent 21.6px 32px);
+}
+.m-field .m-ring { outline: 1px solid color-mix(in srgb, var(--m-line) 55%, transparent); outline-offset: 6px; }

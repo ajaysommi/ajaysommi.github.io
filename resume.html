@@ -17,7 +17,7 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="minimal.css?v=2" />
+  <link rel="stylesheet" href="minimal.css?v=3" />
 
   <script>
     (function () {
@@ -78,9 +78,7 @@
     @media (max-width: 719px) {
       .resume-main { padding-top: max(18px, env(safe-area-inset-top)); }
     }
-    /* The page fills the screen, so a short page (the fallback card on a
-       phone) still has its footer at the bottom, above the bar, rather than
-       floating halfway down. */
+    /* Keep the footer above the phone navigation on short screens. */
     body.resume-page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
     body.resume-page .resume-main { flex: 1 0 auto; width: 100%; box-sizing: border-box; }
 
@@ -97,56 +95,14 @@
 
     .resume-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
 
-    /* Fixed aspect keeps the viewer from collapsing before the PDF paints. */
-    .embed {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 8.5 / 11;
-      max-height: 78svh;
-      border-radius: var(--r-lg);
-      overflow: hidden;
+    .resume-preview {
+      position: relative; border: 1px solid var(--stroke-hi); border-radius: 6px;
+      background: #fff; overflow: hidden; box-shadow: 0 8px 30px #27251d14;
     }
+    .resume-preview img { display: block; width: 100%; height: auto; }
+    .resume-preview iframe { width: 100%; height: 78svh; border: 0; display: block; }
+    .resume-preview [hidden], .resume-actions [hidden] { display: none; }
 
-    .embed iframe { width: 100%; height: 100%; border: 0; display: block; }
-
-    /* Shown when the browser will not render a PDF inline (iOS Safari, most
-       mobile browsers), otherwise the visitor just sees an empty box. */
-    .pdf-fallback {
-      display: grid;
-      gap: 14px;
-      justify-items: center;
-      padding: 30px 20px;
-      text-align: center;
-      border-radius: var(--r-lg);
-    }
-
-    /* A sad little Aj: the mark with a frown under it, the loading
-       screen's smile turned upside down. */
-    .pdf-fallback .sad-aj { display: grid; justify-items: center; gap: 10px; margin-bottom: 4px; }
-    .pdf-fallback .sad-aj .aj { width: 66px; height: 62px; }
-    .pdf-fallback .sad-aj .aj .am-a { fill: var(--ink); }
-    .pdf-fallback .sad-aj .frown { width: 82px; height: 20px; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; }
-    .pdf-fallback h2 { margin: 6px 0 0; }
-    .pdf-fallback .actions { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-    .pdf-fallback .open-tab { gap: 9px; min-width: 210px; justify-content: center; }
-    .pdf-fallback .dl {
-      display: grid;
-      place-items: center;
-      flex: none;
-      width: 48px;
-      height: 48px;
-      padding: 0;
-      border-radius: 50%;
-    }
-    .pdf-fallback .actions svg { flex: none; }
-    /* With the fallback showing, its own buttons do the work: the head's
-       back link takes the place of the download/open pair. */
-    .resume-main.is-fallback .resume-head .btn,
-    .resume-main.is-fallback .resume-actions .btn { display: none; }
-    .resume-main.is-fallback .resume-actions .back { display: inline-flex; }
-    .resume-actions .back { display: none; }
-    .pdf-fallback p { margin: 0; max-width: 42ch; color: var(--ink-3); font-size: .92rem; }
-    .pdf-fallback .actions { justify-content: center; }
   </style>
 </head>
 
@@ -171,11 +127,11 @@
     </a>
 
     <nav class="nav-links" aria-label="Primary">
-      <a href="index.html#experience">Experience</a>
-      <a href="index.html#education">Education</a>
-      <a href="index.html#projects">Projects</a>
-      <a href="index.html#skills">Skills</a>
-      <a href="index.html#recs">Recommendations</a>
+      <a href="classic.html#experience">Experience</a>
+      <a href="classic.html#education">Education</a>
+      <a href="classic.html#projects">Projects</a>
+      <a href="classic.html#skills">Skills</a>
+      <a href="classic.html#recs">Recommendations</a>
     </nav>
 
     <div class="nav-actions">
@@ -187,7 +143,7 @@
            label and shows the icon above 720px, so a bare text link here left
            the word Contact sitting in the corner at full width while every
            other control beside it had already collapsed to a glyph. -->
-      <a href="index.html#contact" class="cta">
+      <a href="classic.html#contact" class="cta" aria-label="Contact">
         <svg class="cta-ico" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="cta-label">Contact</span>
       </a>
@@ -205,30 +161,11 @@
     <div class="resume-actions">
       <a class="btn solid" href="./Ajay_Sommi_Resume.pdf" download="Ajay-Sommi-Resume.pdf">Download PDF</a>
       <a class="btn" href="./Ajay_Sommi_Resume.pdf" target="_blank" rel="noopener">Open in new tab</a>
-      <a class="btn back" href="index.html">← Back to portfolio</a>
+      <button type="button" class="btn" id="pdfToggle" aria-controls="pdfEmbed" aria-pressed="false" hidden>PDF viewer</button>
     </div>
 
-    <div class="embed glass" id="pdfEmbed">
-      <iframe data-src="./Ajay_Sommi_Resume.pdf" title="Ajay Sommi Resume" onload="this.dataset.loaded='1'"></iframe>
-      <noscript><iframe src="./Ajay_Sommi_Resume.pdf" title="Ajay Sommi Resume"></iframe></noscript>
-    </div>
-
-    <div class="pdf-fallback glass" id="pdfFallback" hidden>
-      <span class="sad-aj" aria-hidden="true">
-        <svg class="aj" viewBox="9 8.5 45 42" focusable="false"><path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg>
-        <svg class="frown" viewBox="0 0 82 20" focusable="false"><path d="M4 17 Q41 -6 78 17"/></svg>
-      </span>
-      <h2>Your browser can't show the PDF here</h2>
-      <p>Most phone browsers can't display a PDF inside a page. It opens fine in its own tab, or you can download it.</p>
-      <div class="actions">
-        <a class="btn solid open-tab" href="./Ajay_Sommi_Resume.pdf" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M14 4.5h5.5V10M19.5 4.5 11 13M17.5 13.5v5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Open in new tab
-        </a>
-        <a class="btn dl" href="./Ajay_Sommi_Resume.pdf" download="Ajay-Sommi-Resume.pdf" aria-label="Download the resume PDF" title="Download PDF">
-          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
+    <div class="resume-preview" id="pdfEmbed">
+      <img src="assets/images/resume-page.webp" width="1530" height="1980" alt="Ajay Sommi’s one-page résumé. The PDF links above provide the original document and selectable text." />
     </div>
   </main>
 
@@ -239,15 +176,28 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    /* The PDF frame gets its address here. In Safari, during the little
-       scene, hop.js gives it later (see there), so that Safari's own PDF
-       controls do not turn up over the scene. */
+    // The printed page is visible even in browsers with a blank PDF plug-in.
+    // Readers with a native PDF viewer can switch to its search and zoom tools.
     (function () {
-      var f = document.querySelector('#pdfEmbed iframe[data-src]');
-      if (!f) return;
-      var ua = navigator.userAgent;
-      var safari = /Safari\//.test(ua) && !/(Chrome|Chromium|CriOS|FxiOS|Edg|OPR|Android)/.test(ua);
-      if (!(window.__hopScene && safari)) f.src = f.getAttribute('data-src');
+      var toggle = document.getElementById('pdfToggle');
+      if (!navigator.pdfViewerEnabled) return;
+      var embed = document.getElementById('pdfEmbed');
+      var preview = embed.querySelector('img');
+      var frame;
+      toggle.hidden = false;
+      toggle.addEventListener('click', function () {
+        var useViewer = toggle.getAttribute('aria-pressed') === 'false';
+        if (!frame) {
+          frame = document.createElement('iframe');
+          frame.title = 'Ajay Sommi résumé PDF viewer';
+          frame.src = './Ajay_Sommi_Resume.pdf';
+          embed.appendChild(frame);
+        }
+        frame.hidden = !useViewer;
+        preview.hidden = useViewer;
+        toggle.setAttribute('aria-pressed', String(useViewer));
+        toggle.textContent = useViewer ? 'Show page preview' : 'PDF viewer';
+      });
     })();
 
     // Theme: follows the system live; the button flips it for this visit.
@@ -264,28 +214,9 @@
       if (btn) btn.addEventListener('click', function () { set(root.dataset.theme === 'daylight' ? 'midnight' : 'daylight', true); });
     })();
 
-    /* Inline PDF viewing is unsupported on iOS and most mobile browsers, and
-       the iframe fails silently, so swap in explicit open/download actions. */
-    (function () {
-      var embed = document.getElementById('pdfEmbed');
-      var fallback = document.getElementById('pdfFallback');
-      if (!embed || !fallback) return;
-
-      var ua = navigator.userAgent;
-      var isIOS = /iPad|iPhone|iPod/.test(ua) ||
-                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      var noInlinePdf = isIOS || /Android/.test(ua) ||
-                        (navigator.pdfViewerEnabled === false);
-
-      if (noInlinePdf) {
-        embed.hidden = true;
-        fallback.hidden = false;
-        embed.parentElement.classList.add('is-fallback');
-      }
-    })();
   </script>
   <script src="haptics.js" defer></script>
-  <script src="hop.js?v=13" defer></script>
+  <script src="hop.js?v=14" defer></script>
   <script src="brand.js" defer></script>
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>

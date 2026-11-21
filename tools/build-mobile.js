@@ -106,7 +106,10 @@ const html = `<!-- mx:start -->
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <span class="mx-face"><img src="${P.photo}" alt="Ajay Sommi" decoding="async" /></span>
+      <span class="mx-face"><img src="${P.photo}" alt="Ajay Sommi" decoding="async" />
+        <span class="mx-profession">Software engineer</span>
+        <span class="mx-postage" aria-hidden="true"><i></i></span>
+      </span>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
       <button type="button" class="mx-cue" aria-label="Scroll down"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
@@ -199,7 +202,7 @@ const html = `<!-- mx:start -->
 
   <!-- A sheet that slides up for a role or a project, and the story viewer. -->
   <div class="mx-scrim" hidden></div>
-  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-grab" aria-hidden="true"></div><div class="mx-sheet-in"></div></div>
+  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-sheet-bar"><div class="mx-grab" aria-hidden="true"></div><button type="button" class="mx-sheet-close" aria-label="Close details"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="mx-sheet-in"></div></div>
   <div class="mx-viewer" role="dialog" aria-modal="true" aria-label="Story" hidden>
     <div class="mxv-bars" aria-hidden="true"></div>
     <div class="mxv-top"><span class="mxv-title"></span><button type="button" class="mxv-x" aria-label="Close">✕</button></div>

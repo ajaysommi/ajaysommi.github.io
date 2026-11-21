@@ -29,8 +29,20 @@
     else fin.classList.add('in');
   }
 
+})();
+
+(function startTown() {
+  'use strict';
   const tw = document.getElementById('town');
   if (!tw) return;
+  // Measure each landmark only once the street has a layout. On phones the
+  // separate tabbed portfolio can start without building hundreds of hit areas.
+  const wide = matchMedia('(min-width: 720px)');
+  if (!wide.matches) {
+    wide.addEventListener('change', startTown, { once: true });
+    return;
+  }
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -284,14 +296,29 @@
   };
   // script.js asks for it when the theme changes
   window.__twBar = () => { if (!barOn) return null; barSet = ''; requestAnimationFrame(paintBar); return barColour(); };
-  let explored = false;
+  const wayfinding = $('.tw-wayfinding', stage);
+  const guide = $('select', wayfinding);
+  let explored = false, actorFrame = 0, lastT = 0, visible = true;
+  let showRover = false, showRobot = false, showLift = false;
+  const syncActors = () => {
+    const inView = (left, right) => left < vb[0] + vb[2] + 90 && right > vb[0] - 90;
+    showRover = inView(bots.rfa.box[0], bots.rfa.box[1]);
+    showRobot = inView(bots.rjax.box[0], TARGET[0]);
+    const [bayX, , bayWidth] = D.roles.hunter.zoom;
+    showLift = inView(bayX, bayX + bayWidth);
+    if (!actorFrame && visible && !reduced && (showRover || showRobot || showLift)) {
+      lastT = 0;
+      actorFrame = requestAnimationFrame(tickActors);
+    }
+  };
   const setVB = (b) => {
     vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
     farY = (b[1] - (BOTTOM - vh)) * 0.12;
     far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${farY.toFixed(2)})`);
-    paintBar();
+    paintBar(); syncActors();
     // the truck backs in once its waiting spot is well in view
     if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
+    wayfinding.classList.toggle('explored', explored);
     // the edge arrows wait until the street has been moved at least once
     panL.classList.toggle('on', explored && !cur && camX > 4);
     panR.classList.toggle('on', explored && !cur && camX < WORLD - vw - 4);
@@ -347,6 +374,7 @@
   const glideBy = (dx) => {
     cancelAnimationFrame(glide);
     gTo = clamp((gTo === null ? camX : gTo) + dx, 0, Math.max(0, WORLD - vw));
+    if (reduced) { camX = gTo; gTo = null; setVB(view()); return; }
     if (!gRaf) { gT = performance.now(); gRaf = requestAnimationFrame(glideStep); }
   };
   const glideStop = () => { cancelAnimationFrame(gRaf); gRaf = 0; gTo = null; keyDir = 0; };
@@ -360,7 +388,7 @@
      on the welcome sign come on (after dark). */
   let intro = false;
   // it starts high enough that only sky and stars show (the hills too are out of sight)
-  const INTRO = 4100, RISE = 480;
+  const INTRO = 2600, RISE = 350;
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
   const glideDown = (u) => Math.pow(smooth(u), 1.75);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
@@ -374,9 +402,9 @@
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
-      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); hint(); setTimeout(flyAway, 1200); return; }
+      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); setTimeout(flyAway, 1200); return; }
       tween(view(), INTRO, glideDown);
-      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); flyAway(); }, INTRO + 80);
+      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); flyAway(); }, INTRO + 80);
     };
     // the street starts down as the mark takes off; the browser's bar turns
     // sky coloured once the loading screen has cleared
@@ -388,22 +416,7 @@
     mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     setTimeout(() => { begin(); startBar(); }, 7500);
-  } else { startBar(); lampsOn(); setTimeout(() => hint(), 700); setTimeout(flyAway, 1600); }
-
-  /* ---------------------------------------------------------- how to get around */
-  // Once the street has settled, a small card in the middle shows how to
-  // move along it, with the gesture drawn out; it goes once you do.
-  function hint() {
-    if (cur || !matchMedia('(min-width: 720px)').matches || $('.tw-hint', stage)) return;
-    const h = document.createElement('div');
-    h.className = 'tw-hint';
-    h.setAttribute('role', 'status');
-    h.innerHTML = `<div class="tw-hint-g" aria-hidden="true"><div class="tw-hint-pad"><span class="tw-hint-dots"><i></i><i></i></span><span class="tw-hint-ar l"></span><span class="tw-hint-ar r"></span></div><span class="tw-hint-or">or</span><div class="tw-hint-mouse"><span class="tw-hint-wheel"></span><span class="tw-hint-cable"></span></div></div><p><b>Scroll to look around</b><span>Two-finger swipe on a trackpad,<br>or roll the mouse wheel.<br>You can also drag the street.</span></p>`;
-    stage.appendChild(h);
-    const bye = () => { if (!h.isConnected || h.classList.contains('out')) return; h.classList.add('out'); setTimeout(() => h.remove(), 500); ['wheel', 'pointerdown', 'keydown'].forEach((t) => removeEventListener(t, bye, true)); };
-    ['wheel', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, bye, true));
-    setTimeout(bye, 8000);
-  }
+  } else { startBar(); lampsOn(); setTimeout(flyAway, 1600); }
 
   /* ---------------------------------------------------------- the card */
   // Story first, then its photos, then the numbers, the connections and the tools.
@@ -418,7 +431,6 @@
       <div class="tw-pc-top"><span class="tw-pc-greet">Greetings from</span><span class="tw-pc-town">SOMMIVILLE</span></div>
       <div class="tw-pc-stampwrap"><span class="tw-pc-stamp"><img src="${r.photos[0]}" alt="Ajay Sommi" /></span><span class="tw-pc-mark" aria-hidden="true"><b>VISITOR CENTER</b><i>${esc(day)}</i></span></div>
       <div class="tw-pc-note">${r.lines.map((l) => `<p>${esc(l)}</p>`).join('')}</div>
-      ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
       <figure class="tw-pc-snap"><button type="button" aria-label="Open photo"><img src="${r.photos[1]}" alt="" loading="lazy" decoding="async" /></button><figcaption>Me, a long time ago</figcaption></figure>
       ${r.quote ? `<blockquote class="tw-pc-quote">“${esc(r.quote)}”</blockquote>` : ''}
       <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
@@ -432,7 +444,6 @@
   };
   SITES.adt[0] = 'About ADT'; SITES.jm[0] = 'About JM Family'; SITES.toyota[0] = 'About Southeast Toyota';
   const rest = (r, links) => `
-      ${r.ph ? `<p class="tw-p-ph">PLACEHOLDER: ${esc(r.ph)}</p>` : ''}
       ${r.about ? `<p class="tw-p-about">${esc(r.about)}</p>` : ''}
       <p class="tw-p-text">${esc(r.text)}</p>
       ${r.quote ? `<blockquote class="tw-p-quote">“${esc(r.quote)}”</blockquote>` : ''}
@@ -493,6 +504,7 @@
     lb.addEventListener('click', () => { lb.classList.add('out'); setTimeout(() => lb.remove(), 220); });
     document.body.appendChild(lb);
   };
+  let returnToGuide = false;
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
@@ -525,6 +537,7 @@
     setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
     tween(view(), 800);
     tw.classList.remove('zoomed');
+    if (returnToGuide) { guide.focus({ preventScroll: true }); returnToGuide = false; }
     hots.forEach((x) => x.classList.remove('tw-cur'));
     glow(null); over = null;
     chips.forEach((c) => c.classList.remove('on'));
@@ -549,11 +562,21 @@
     c.addEventListener('mouseenter', () => { if (!cur) glow(c.dataset.id); });
     c.addEventListener('mouseleave', () => { if (!cur) glow(null); });
   });
+  guide.addEventListener('change', () => {
+    const id = guide.value;
+    if (!id) return;
+    guide.value = '';
+    explored = true;
+    returnToGuide = true;
+    open(id);
+    if (cur) $('.tw-x', panel).focus({ preventScroll: true });
+  });
   $('.tw-x', panel).addEventListener('click', close);
   prevB.addEventListener('click', () => open(prevB.dataset.id));
   nextB.addEventListener('click', () => open(nextB.dataset.id));
   svg.addEventListener('click', () => { if (!dragged) close(); });
   document.addEventListener('keydown', (e) => {
+    if (!stage.clientWidth || e.target.closest('select, input, textarea, [role="menu"]')) return;
     if (e.key === 'Escape' && !cur) { const big = $('.tw-lightbox'); if (big) { big.remove(); return; } }
     if ((intro || zooming()) && /^Arrow|^Page|^Home$|^End$/.test(e.key)) { e.preventDefault(); return; }
     if (!cur) {
@@ -562,6 +585,7 @@
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
         e.preventDefault();
         const dir = e.key === 'ArrowRight' ? 1 : -1;
+        if (reduced) { glideBy(dir * vw * .08); return; }
         if (!e.repeat) glideBy(dir * vw * 0.1);
         keyDir = dir;
         if (!gRaf) { gT = performance.now(); gTo = gTo === null ? camX : gTo; gRaf = requestAnimationFrame(glideStep); }
@@ -603,8 +627,8 @@
     offT = setTimeout(() => { over = null; glow(null); hideLabel(); }, 160);
   };
   const idAt = (t) => { if (!t || !t.closest) return null; if (t.closest('.tw-adtsticker')) return 'adt'; const h = t.closest('.tw-hot'); return h ? h.dataset.id : null; };
-  svg.addEventListener('pointerover', (e) => { overCol = colOf(e); hoverTo(idAt(e.target)); });
-  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (n - colT > 45) { colT = n; overCol = colOf(e); } });
+  svg.addEventListener('pointerover', (e) => { if (showRobot) overCol = colOf(e); hoverTo(idAt(e.target)); });
+  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (showRobot && n - colT > 45) { colT = n; overCol = colOf(e); } });
   svg.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
 
   /* ---------------------------------------------------------- the pointer */
@@ -637,24 +661,24 @@
     placeBot(b);
     return near;
   };
-  let running = false, lastT = 0, visible = true;
-  const loop = (now) => {
-    if (!running) return;
+  // The robots and alignment lift only repaint while that part of the block is in view.
+  function tickActors(now) {
+    actorFrame = 0;
+    if (!visible || !(showRover || showRobot || showLift)) return;
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
-    if (dt > 0 && (!cur || bots.rfa.scared)) {
+    if (dt > 0 && showRover && (!cur || bots.rfa.scared)) {
       if (!bots.rfa.dead) steer(bots.rfa, dt, now);
     }
-    if (dt > 0 && !cur) {
+    if (dt > 0 && showRobot && !cur) {
       const close = !bots.rjax.dead && steer(bots.rjax, dt, now) && Math.hypot(ptr.x - bots.rjax.x, ptr.y - bots.rjax.y) < 230;
       const want = close ? [ptr.x, ptr.y] : TARGET;
       aim = [aim[0] + (want[0] - aim[0]) * Math.min(1, dt * 2.5), aim[1] + (want[1] - aim[1]) * Math.min(1, dt * 2.5)];
       aimCam();
     }
-    if (dt > 0) { lift(now); tintBeam(dt); }
-    requestAnimationFrame(loop);
-  };
-  const go = () => { if (running || reduced || !visible) return; running = true; lastT = 0; requestAnimationFrame(loop); };
-  go();
+    if (dt > 0 && showLift) lift(now);
+    if (dt > 0 && showRobot) tintBeam(dt);
+    actorFrame = requestAnimationFrame(tickActors);
+  }
 
   let praf = 0, lastE = null;
   stage.addEventListener('pointermove', (e) => {
@@ -684,7 +708,7 @@
       } else if (head) head.style.transform = '';
       // (the rover is drawn flipped when it faces left, so its eyes' x is too)
       const fx = bots.rfa.face < 0 ? -1 : 1;
-      eyes.forEach((el) => {
+      if (showRover) eyes.forEach((el) => {
         const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
         el.style.transform = `translate(${(dx / d * 2.4 * fx).toFixed(2)}px, ${(dy / d * 2.4).toFixed(2)}px)`;
       });
@@ -702,37 +726,61 @@
   if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
     svg.classList.toggle('tw-paused', !visible);
-    if (visible) go(); else running = false;
+    syncActors();
   }).observe(stage);
   stage.addEventListener('wheel', (e) => {
-    if (intro || zooming()) { e.preventDefault(); return; }
-    if (cur || e.ctrlKey || document.documentElement.classList.contains('is-loading')) return;
+    if (cur || e.ctrlKey || e.target.closest('.tw-wayfinding') || document.documentElement.classList.contains('is-loading')) return;
     const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * k;
-    if (!d) return;
+    if (!d || zooming() && !intro) return;
     e.preventDefault();
-    cancelAnimationFrame(glide);
-    if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving', 'tw-zooming'); }
+    if (intro) {
+      intro = false; zoomUntil = 0; cancelAnimationFrame(anim);
+      tw.classList.remove('intro'); svg.classList.remove('tw-moving', 'tw-zooming');
+    }
     explored = true;
     glideBy(d / scale);
   }, { passive: false });
-  let drag = null, dragged = false;
+  let drag = null, dragged = false, dragFrame = 0;
+  const paintDrag = () => {
+    dragFrame = 0;
+    if (!drag || !dragged) return;
+    camX = clamp(drag.cam - (drag.lastX - drag.startX) / scale, 0, Math.max(0, WORLD - vw));
+    explored = true;
+    slid(); setVB(view());
+  };
   svg.addEventListener('pointerdown', (e) => {
+    if (!e.isPrimary || e.button !== 0 || drag) return;
     dragged = false;
-    if (intro || cur || zooming() || e.button !== 0 || e.pointerType === 'touch') return;
-    drag = { x: e.clientX, cam: camX, id: e.pointerId };
+    if (intro || cur || zooming()) return;
+    cancelAnimationFrame(glide); glideStop();
+    drag = { startX: e.clientX, lastX: e.clientX, cam: camX, id: e.pointerId, time: e.timeStamp, speed: 0 };
   });
   addEventListener('pointermove', (e) => {
     if (!drag || e.pointerId !== drag.id) return;
-    const dx = e.clientX - drag.x;
-    if (!dragged && Math.abs(dx) < 6) return;
-    if (!dragged) { dragged = true; tw.classList.add('dragging'); cancelAnimationFrame(glide); glideStop(); if (intro) { intro = false; cancelAnimationFrame(anim); svg.classList.remove('tw-moving', 'tw-zooming'); } }
-    camX = clamp(drag.cam - dx / scale, 0, Math.max(0, WORLD - vw));
-    explored = true;
-    slid();
-    setVB(view());
+    if (!dragged && Math.abs(e.clientX - drag.startX) < 6) return;
+    if (!dragged) {
+      dragged = true; tw.classList.add('dragging');
+      svg.setPointerCapture(e.pointerId);
+    }
+    const dt = Math.max(4, e.timeStamp - drag.time);
+    const velocity = clamp((drag.lastX - e.clientX) / dt, -2.4, 2.4);
+    drag.speed += (velocity - drag.speed) * (1 - Math.exp(-dt / 25));
+    drag.time = e.timeStamp; drag.lastX = e.clientX;
+    if (!dragFrame) dragFrame = requestAnimationFrame(paintDrag);
   });
-  addEventListener('pointerup', () => { if (!drag) return; drag = null; tw.classList.remove('dragging'); setTimeout(() => { dragged = false; }, 0); });
+  const endDrag = e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    cancelAnimationFrame(dragFrame); paintDrag();
+    if (e.type === 'pointerup' && dragged && !reduced && e.timeStamp - drag.time < 75) {
+      glideBy(drag.speed * 150 / scale);
+    }
+    drag = null; tw.classList.remove('dragging');
+    setTimeout(() => { dragged = false; }, 0);
+  };
+  addEventListener('pointerup', endDrag);
+  addEventListener('pointercancel', endDrag);
+  svg.addEventListener('lostpointercapture', endDrag);
   panL.addEventListener('click', () => { if (!zooming()) panTo(camX - vw * 0.6); });
   panR.addEventListener('click', () => { if (!zooming()) panTo(camX + vw * 0.6); });
   const themeB = $('.tw-theme', tw);

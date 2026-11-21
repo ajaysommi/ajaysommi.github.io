@@ -408,10 +408,7 @@
       <path class="blank" d="M2 2H42V58H2Z"><animate class="splat" attributeName="d" begin="0s" fill="freeze" calcMode="spline"/></path>
     </svg></span>`;
 
-  /* Where the resume document sits on the resume page, so the thrown sheet
-     lands right on it: on desktop the embedded PDF (centred, 944px at most,
-     letter shaped, at most 78% of the window tall, 229px from the top); on
-     phones, which show a card instead, a centred page. */
+  // Aim the travelling sheet at the résumé page, using its actual bounds on arrival.
   const docRect = () => {
     // On the resume page, the document's real box, wherever the layout puts it.
     const box = document.getElementById('pdfEmbed');
@@ -910,27 +907,11 @@
     // The page's own paper hands over to the scene's, the same colour.
     requestAnimationFrame(() => document.documentElement.classList.remove('hop-scene'));
 
-    /* The document: loaded, and a beat for the viewer to paint it. In
-       Chrome and Firefox the frame has been loading since the page began,
-       behind the paper, and is long since ready. (It is left visible: Firefox
-       does not load a PDF in a frame that is hidden.) Safari draws the PDF's
-       own controls above everything on the page, a veil included, so there
-       the frame is only created a little before it is wanted, and those
-       controls turn up with the document rather than over the scene. */
-    const frame = document.querySelector('#pdfEmbed iframe');
-    const ua = navigator.userAgent;
-    const webkit = /Safari\//.test(ua) && !/(Chrome|Chromium|CriOS|FxiOS|Edg|OPR|Android)/.test(ua);
-    const late = !!frame && !soft && webkit && !frame.getAttribute('src');
-    const docReady = soft || !frame ? Promise.resolve() : new Promise((done) => {
-      const arm = () => frame.addEventListener('load', () => setTimeout(done, 500), { once: true });
-      if (late) {
-        // A frame with no address reports a load of its own (a blank page),
-        // which is not the document; only the load after the address counts.
-        setTimeout(() => { frame.dataset.loaded = ''; arm(); frame.src = frame.dataset.src; }, Math.max(0, RESUME - 750));
-      } else if (frame.dataset.loaded === '1') setTimeout(done, 500);
-      else arm();
-      setTimeout(done, 6000);   // never hold the page hostage
-    });
+    // Land on the rendered page. Slow or failed images must never hold the veil.
+    const preview = document.querySelector('#pdfEmbed img');
+    const docReady = preview && preview.decode
+      ? Promise.race([preview.decode().catch(() => {}), new Promise(done => setTimeout(done, 4000))])
+      : Promise.resolve();
     /* The hand over: as the splat settles, the paper starts to lift and the
        sheet and batter dissolve over the document, which is already there
        and drawn, so the resume is simply visible as they go. */

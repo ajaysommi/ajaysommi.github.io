@@ -44,9 +44,9 @@
        browser still holding yesterday's stylesheet can never show both. -->
   <style>.sub-short{display:none}@media (max-width:719px){.sub-long{display:none}.sub-short{display:inline}}</style>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="minimal.css?v=2" />
-  <link rel="stylesheet" href="mobile.css?v=23" />
-  <link rel="stylesheet" href="town.css?v=72" />
+  <link rel="stylesheet" href="minimal.css?v=3" />
+  <link rel="stylesheet" href="mobile.css?v=24" />
+  <link rel="stylesheet" href="town.css?v=73" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -163,6 +163,7 @@
   <header class="nav glass" id="siteNav">
     <a class="brand" href="#top" aria-label="Back to the visitor center" title="Back to the visitor center">
       <span class="brand-mark"><svg class="brand-house" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4.4 10.6 12 4.4l7.6 6.2v8.4a.6.6 0 0 1-.6.6H5a.6.6 0 0 1-.6-.6Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="brand-aj" viewBox="9 8.5 45 42" aria-hidden="true" focusable="false"><path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg></span>
+      <span class="tw-owner"><strong>Ajay Sommi</strong><span>Software engineer</span></span>
     </a>
 
     <nav class="nav-links" aria-label="Primary">
@@ -203,7 +204,7 @@
         </div>
       </div>
 
-      <a href="#contact" class="cta">
+      <a href="#contact" class="cta" aria-label="Contact">
         <svg class="cta-ico" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="cta-label">Contact</span>
       </a>
@@ -247,7 +248,10 @@
   <div class="mx" id="mx">
     <!-- The first screen says one thing. -->
     <section class="mx-hero" id="m-top">
-      <span class="mx-face"><img src="assets/images/opt/hero-480.webp" alt="Ajay Sommi" decoding="async" /></span>
+      <span class="mx-face"><img src="assets/images/opt/hero-480.webp" alt="Ajay Sommi" decoding="async" />
+        <span class="mx-profession">Software engineer</span>
+        <span class="mx-postage" aria-hidden="true"><i></i></span>
+      </span>
       <h1 class="mx-name"><span class="mx-hi">Hi, I’m</span> <span class="mx-me">Ajay.</span></h1>
       <p class="mx-line">I build software that feels thoughtful, reliable and good to use.</p>
       <button type="button" class="mx-cue" aria-label="Scroll down"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i></button>
@@ -530,7 +534,7 @@
 
   <!-- A sheet that slides up for a role or a project, and the story viewer. -->
   <div class="mx-scrim" hidden></div>
-  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-grab" aria-hidden="true"></div><div class="mx-sheet-in"></div></div>
+  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-sheet-bar"><div class="mx-grab" aria-hidden="true"></div><button type="button" class="mx-sheet-close" aria-label="Close details"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="mx-sheet-in"></div></div>
   <div class="mx-viewer" role="dialog" aria-modal="true" aria-label="Story" hidden>
     <div class="mxv-bars" aria-hidden="true"></div>
     <div class="mxv-top"><span class="mxv-title"></span><button type="button" class="mxv-x" aria-label="Close">✕</button></div>
@@ -1428,11 +1432,11 @@
 
   <script type="module" src="script.js?v=24"></script>
   <script src="haptics.js" defer></script>
-  <script src="hop.js?v=13" defer></script>
+  <script src="hop.js?v=14" defer></script>
   <script src="brand.js" defer></script>
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
-  <script src="mobile.js?v=12" defer></script>
-  <script src="town.js?v=72" defer></script>
+  <script src="mobile.js?v=13" defer></script>
+  <script src="town.js?v=73" defer></script>
 </body>
 </html>

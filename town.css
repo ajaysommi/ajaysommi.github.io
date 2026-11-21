@@ -477,7 +477,6 @@
 .tw-awning-s { fill: rgba(255, 255, 255, .75); }
 .tw-ph-big { font: 900 15px var(--font-sans); letter-spacing: .06em; fill: #ff1a1a; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
 .tw-ph-note { font: 800 8.6px var(--font-sans); fill: #ff1a1a; paint-order: stroke; stroke: #fff; stroke-width: 2.4px; }
-.tw-p-ph { margin: 0 0 12px; padding: 9px 11px; border: 2px dashed #ff1a1a; border-radius: 9px; background: rgba(255, 26, 26, .07); color: #ff1a1a; font: 800 13px/1.45 var(--font-sans); }
 .tw-p-gos { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
 .tw-p-go { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 1px solid color-mix(in oklab, var(--tint) 45%, var(--stroke)); border-radius: 999px; color: var(--ink); font: 600 13px var(--font-sans); text-decoration: none; }
 .tw-p-go:hover { background: color-mix(in oklab, var(--tint) 10%, transparent); }
@@ -695,19 +694,6 @@
 /* a warm light low on the horizon after dark */
 .tw-warmglow { pointer-events: none; }
 
-/* How to get around: a small card in the middle, the gesture drawn out. */
-.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 18px; background: color-mix(in oklab, var(--bg) 76%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
-.tw-hint.out { opacity: 0; scale: .97; transition: opacity .45s, scale .45s; }
-@keyframes tw-hintin { from { opacity: 0; scale: .94; translate: -50% -42%; } }
-.tw-hint p { margin: 0; display: grid; gap: 3px; max-width: 250px; }
-.tw-hint b { font: 650 15px/1.25 var(--font-sans); }
-.tw-hint span { font: 400 12.5px/1.4 var(--font-sans); color: var(--ink-2); }
-.tw-hint-pad { position: relative; flex: none; width: 66px; height: 46px; border: 1.6px solid color-mix(in oklab, var(--ink) 45%, transparent); border-radius: 9px; }
-.tw-hint-dots { position: absolute; left: 50%; top: 50%; display: flex; gap: 5px; translate: -50% -50%; animation: tw-swipe 2.2s cubic-bezier(.45, 0, .3, 1) infinite; }
-.tw-hint-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); opacity: .85; }
-@keyframes tw-swipe { 0%, 100% { transform: translateX(13px); } 50% { transform: translateX(-13px); } }
-.tw-hint-ar { position: absolute; top: 50%; width: 6px; height: 6px; border: solid color-mix(in oklab, var(--ink) 50%, transparent); border-width: 1.6px 1.6px 0 0; }
-.tw-hint-ar.l { left: 5px; transform: translateY(-50%) rotate(-135deg); } .tw-hint-ar.r { right: 5px; transform: translateY(-50%) rotate(45deg); }
 
 /* The car hauler waits just up the street now. */
 .tw-truckdrive { transform: translateX(-110px); }
@@ -894,16 +880,6 @@
 .tw-signlight { opacity: 0; transition: opacity .9s ease-out; }
 [data-theme="midnight"] .tw.signlit .tw-signlight, [data-theme="terminal"] .tw.signlit .tw-signlight { opacity: 1; }
 
-/* How to get around: the trackpad and the mouse, both drawn. */
-.tw-hint-g { display: flex; align-items: center; gap: 8px; flex: none; }
-.tw-hint-or { font: 500 11px var(--font-mono); color: var(--ink-3); }
-.tw-hint-mouse { position: relative; width: 26px; height: 40px; border: 1.6px solid color-mix(in oklab, var(--ink) 45%, transparent); border-radius: 13px; }
-.tw-hint-mouse::before { content: ''; position: absolute; left: 50%; top: 0; width: 1.4px; height: 12px; background: color-mix(in oklab, var(--ink) 30%, transparent); translate: -50% 0; }
-.tw-hint-wheel { position: absolute; left: 50%; top: 6px; width: 5px; height: 9px; margin-left: -2.5px; border-radius: 3px; background: var(--ink); opacity: .85; animation: tw-wheel 1.4s cubic-bezier(.45, 0, .3, 1) infinite; }
-@keyframes tw-wheel { 0% { transform: translateY(-2px); opacity: 0; } 25% { opacity: .9; } 70% { transform: translateY(7px); opacity: .9; } 100% { transform: translateY(9px); opacity: 0; } }
-.tw-hint-cable { position: absolute; left: 50%; top: -9px; width: 1.4px; height: 9px; background: color-mix(in oklab, var(--ink) 40%, transparent); translate: -50% 0; }
-.tw-hint p { max-width: none; white-space: nowrap; }
-
 /* The dealership's loading bay. */
 .tw-baysign { fill: #2a2c34; } .tw-baysign-t { font: 800 4.4px var(--font-sans); letter-spacing: .14em; fill: #f4f1ea; }
 .tw-bayin { fill: #2a2c32; } .tw-bayfloor { stroke: #3d4048; stroke-width: 1; }
@@ -1022,7 +998,6 @@
 .tw-pc-note p { margin: 0 0 10px; font: 400 15px/1.62 var(--font-sans); color: #3a332b; }
 .tw-pc-note p:first-child { font-weight: 600; font-size: 16px; }
 .tw-pc-note { background: repeating-linear-gradient(180deg, transparent 0 23.3px, rgba(120, 100, 70, .14) 23.3px 24.3px); background-position: 0 1px; }
-.tw-pc .tw-p-ph { clear: both; }
 .tw-pc-snap { clear: both; width: 170px; margin: 12px auto 14px; padding: 8px 8px 0; background: #fff; rotate: -3deg; box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .45); }
 .tw-pc-snap button { display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; background: #eee; cursor: zoom-in; overflow: hidden; }
 .tw-pc-snap img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -1290,7 +1265,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-pr-frame { fill: #1f2026; } .tw-pr-mat { fill: #f4f2ec; } .tw-pr-ph { fill: #2a2c32; } .tw-pr-ph2 { fill: #8d939b; } .tw-pr-scr { fill: #3d4048; }
 
 /* The cards, in a warmer, rounder face */
-.tw-panel, .tw-label, .tw-hint { font-family: 'Nunito', var(--font-sans); }
+.tw-panel, .tw-label { font-family: 'Nunito', var(--font-sans); }
 .tw-panel-in h3 { font-family: 'Nunito', var(--font-sans); font-weight: 800; letter-spacing: -.01em; position: relative; z-index: 1; }
 .tw-p-role { font-weight: 600; position: relative; z-index: 1; }
 .tw-p-text, .tw-p-about { font-family: 'Nunito', var(--font-sans); }
@@ -1486,3 +1461,99 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
    their layers split the whole street in Chrome (visibility can't run on the
    compositor, so the drift is drawn the ordinary way; six small clouds, cheap) */
 @keyframes tw-drift { 0% { transform: translateX(-900px); opacity: 0; visibility: visible; } 7% { opacity: 1; } 93% { opacity: 1; } 100% { transform: translateX(2500px); opacity: 0; visibility: visible; } }
+
+/* The town is printed in a small set of landscape inks. The silhouettes
+   reuse the seasonal leaf and snow colours above. */
+.tw {
+  --tw-grass: #a8b974; --tw-leaf: #8ba85e; --tw-leaf2: #5c845c;
+  --tw-trunk: #71543a; --tw-pine1: #507d65; --tw-pine2: #335f54;
+  --tw-mtn2: #98b2b2; --tw-mtn1: #9cb4a2; --tw-tuft: #899f62;
+  --tw-far-ridge: #c2cbc1; --tw-wood-far: #a0b8a7; --tw-wood-mid: #83a48d;
+  --tw-wood-near: #72957c; --tw-scree: #d4d2b9; --tw-pond: #83b8bc;
+  --tw-paper: #fbf6e9; --tw-forest-ink: #234b43; --tw-paper-rule: #d2cbb4;
+}
+[data-theme="midnight"] .tw, [data-theme="terminal"] .tw {
+  --tw-grass: #49694d; --tw-leaf: #53765b; --tw-leaf2: #355547;
+  --tw-pine1: #395e58; --tw-pine2: #264742; --tw-mtn2: #515970;
+  --tw-far-ridge: #656780; --tw-wood-far: #535f69; --tw-wood-mid: #475d5e;
+  --tw-wood-near: #3c5751; --tw-scree: #697284; --tw-pond: #3d6773;
+  --tw-paper: #253635; --tw-forest-ink: #f2e6ca; --tw-paper-rule: #4c5b52;
+}
+.tw-range-back { fill: var(--tw-far-ridge); }
+.tw-scree { fill: var(--tw-scree); }
+.tw-mtn2-sh { fill: #627e8a; opacity: .52; }
+.tw-mtn2-st { stroke: #f4efcf; opacity: .48; stroke-width: .88; }
+.tw-woodland-0 { fill: var(--tw-wood-far); }
+.tw-woodland-1 { fill: var(--tw-wood-mid); }
+.tw-woodland-2 { fill: var(--tw-wood-near); }
+.tw-cirrus { stroke: #fff6db; opacity: .60; stroke-width: 2; }
+.tw-sky-birds { stroke: #567777; stroke-width: 1.3; opacity: .76; }
+[data-theme="midnight"] .tw-cirrus, [data-theme="terminal"] .tw-cirrus { opacity: .12; }
+[data-theme="midnight"] .tw-sky-birds, [data-theme="terminal"] .tw-sky-birds { opacity: 0; }
+.tw-needle, .tw-leaf-etch, .tw-leaf-vein { fill: none; stroke-linecap: round; }
+.tw-needle { stroke: #d6d79b; stroke-width: .85; opacity: .43; }
+.tw-leaf-etch { stroke: #eade9b; stroke-width: 2.1; opacity: .54; }
+.tw-leaf-vein { stroke: #345d4b; stroke-width: 1.7; opacity: .40; }
+.tw-root-shadow { fill: #344e43; opacity: .24; }
+.tw-lobby { opacity: .8; }
+.tw-water-line { fill: none; stroke: #e7e7c5; stroke-width: 1.2; opacity: .72; stroke-linecap: round; }
+.tw-stage::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: url("assets/images/town/press-grain.svg") repeat; opacity: .075;
+}
+.tw-owner { display: none; }
+.tw-wayfinding { display: none; }
+@media (min-width: 720px) {
+  html:not(.classic) header.nav.glass {
+    background: #fbf6e9; border: 1px solid #b9beaa;
+    box-shadow: 0 2px 0 #526c6424, 0 5px 18px #345d4c14;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  html:not(.classic):not([data-theme="daylight"]) header.nav.glass { background: #253635; border-color: #54625a; }
+  html:not(.classic) header.nav .brand { display: inline-flex; align-items: center; width: auto; gap: 9px; }
+  html:not(.classic) .tw-owner {
+    display: grid; gap: 3px; justify-items: start; margin: 0 5px 0 0;
+    padding: 1px 15px 1px 0; border-right: 1px solid #8a978a66;
+    color: #234b43; text-align: left;
+  }
+  html:not(.classic):not([data-theme="daylight"]) .tw-owner { color: #f2e6ca; }
+  .tw-owner strong { font: bold 20px/1 Georgia, serif; letter-spacing: -.045em; }
+  .tw-owner > span { font: 500 11px/1.15 var(--font-mono); letter-spacing: .008em; }
+  .tw-svg { touch-action: pan-y pinch-zoom; cursor: grab; }
+  .tw-wayfinding {
+    display: flex; align-items: center; gap: 14px; position: absolute; z-index: 3;
+    bottom: max(14px, env(safe-area-inset-bottom)); left: max(16px, env(safe-area-inset-left));
+    transition: opacity .24s, visibility .24s;
+  }
+  .tw.zoomed .tw-wayfinding, .tw.intro .tw-wayfinding { opacity: 0; visibility: hidden; pointer-events: none; }
+  .tw-guide {
+    display: inline-flex; align-items: center; gap: 9px; position: relative;
+    min-height: 43px; padding: 0 14px 0 12px; border-radius: 11px;
+    background: var(--tw-paper) url("assets/images/town/press-grain.svg") 0 0 / 180px;
+    background-blend-mode: soft-light; border: 1px solid var(--tw-paper-rule);
+    color: var(--tw-forest-ink); font: 750 15px/1.2 'Nunito', var(--font-sans);
+    box-shadow: 0 2px 0 #263c3640, 0 4px 15px #142e351f;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .tw-guide svg { width: 23px; height: 23px; }
+  .tw-guide .tw-guide-caret { width: 12px; height: 12px; margin-left: 3px; }
+  .tw-guide select { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; font-size: 16px; }
+  .tw-guide:hover { transform: translateY(-2px); box-shadow: 0 3px 0 #263c3640, 0 6px 18px #142e3526; }
+  .tw-guide:focus-within { outline: 2px solid var(--tw-forest-ink); outline-offset: 3px; }
+  .tw-gesture { color: #fff9e9; font: 650 13px/1.35 'Nunito', var(--font-sans); text-shadow: 0 1px 4px #1f302a; transition: opacity .4s; }
+  .tw-wayfinding.explored .tw-gesture { opacity: 0; }
+  .tw-panel .tw-x { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tw-guide, .tw-wayfinding, .tw-gesture { transition: none; }
+}
+
+.tw-sign-stones { fill: #aaa898; stroke: #6b7269; stroke-width: .85; stroke-linejoin: round; }
+.tw-stone-glints { fill: none; stroke: #e0d4b6; stroke-width: 1; stroke-linecap: round; }
+[data-theme="midnight"] .tw-sign-stones, [data-theme="terminal"] .tw-sign-stones { fill: #797d78; stroke: #575a58; }
+
+.tw-cloudbank { fill: #fff3d7; opacity: .77; }
+.tw:is(.wx-rain, .wx-snow) .tw-cloudbank { opacity: .23; }
+[data-theme="midnight"] .tw-cloudbank, [data-theme="terminal"] .tw-cloudbank { fill: #8383a2; opacity: .29; }
+[data-theme="midnight"] .tw :is(.tw-needle,.tw-leaf-etch,.tw-water-line,.tw-stone-glints),
+[data-theme="terminal"] .tw :is(.tw-needle,.tw-leaf-etch,.tw-water-line,.tw-stone-glints) { opacity: .28; }
