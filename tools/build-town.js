@@ -83,6 +83,7 @@ const PROJECTS = [
 ];
 PROJECTS.forEach((p) => { TINT[p.id] = p.tint; OFF[p.id] = HOMESH - EAST; });
 BENCH.forEach((p) => { TINT[p.id] = p.tint; OFF[p.id] = HOMESH - EAST; });
+TINT.recs = '#d9503a'; OFF.recs = HOMESH - EAST;
 
 /* Where each stop is: the box the scene leans in to, and its pin. */
 const SPOT = {
@@ -96,6 +97,7 @@ const SPOT = {
   fics: { zoom: [3352, 360, 210, 176], pin: [3425, 398] },
   adt: { zoom: [548, 334, 110, 180], pin: [610, 424] },
   vc: { zoom: [2560, 280, 580, 230], pin: [2960, 290] },
+  recs: { zoom: [3744, 534, 86, 68], pin: [3791, 548] },
   tm: { zoom: [5040 + SH, 400, 120, 100], pin: null },
   ...Object.fromEntries(BENCH.map((p) => [p.id, { zoom: p.zoom, pin: p.pin }])),
   ...Object.fromEntries(PROJECTS.map((p) => [p.id, { zoom: p.zoom, pin: p.pin }]))
@@ -123,6 +125,8 @@ const HELLO = [
   'Wander around, poke at whatever catches your eye, and say hi if you’d like.'
 ];
 roles.push({ id: 'vc', org: 'Welcome to Sommiville', short: 'Visitor center', badge: 'Start', role: P.name, when: '', where: '', text: HELLO.join(' '), lines: HELLO, quote: P.quote, about: '', stats: [], tags: [], photos: [big(P.photo), 'assets/images/offclock/kid-2006-640.webp'], logo: null, tint: TINT.vc, postcard: true });
+const ORGLOGO = { 'JM Family': LOGO.jm, 'Hunter Engineering': LOGO.hunter, 'Southeast Toyota': LOGO.toyota, 'Robotics For All': LOGO.rfa };
+roles.push({ id: 'recs', org: 'Kind words', short: 'Mailbox', badge: 'Mail', role: '', when: '', where: '', text: '', about: '', stats: [], tags: [], photos: [], logo: null, tint: TINT.recs, letters: P.recs.map(([n, o, q]) => [n, o, q, ORGLOGO[o] ? ORGLOGO[o][1] : '']), linkedin: P.linkedin });
 roles.push({ id: 'tm', org: 'Time machine', short: 'A strange portal', badge: '1977', role: '', when: '', where: '', text: '', about: '', stats: [], tags: [], photos: [], logo: null, tint: TINT.tm, special: true });
 const stepsOf = (list) => list.map(([f, t, c]) => [big(f), t, c]);
 BENCH.forEach((p) => {
@@ -541,7 +545,21 @@ const home = () => `
       <image href="assets/images/town/adt-sign-lit.webp" x="3473" y="490" width="14" height="22.75" preserveAspectRatio="xMidYMax meet" class="tw-yard-lit tw-nohit" filter="url(#twAdtLit)"/></g>
     ${PROJ['p-avl']()}
     ${PROJ['p-gatorgoods']()}
-    ${PROJ['p-sommiscript']()}`;
+    ${PROJ['p-sommiscript']()}
+    ${mailbox()}`;
+// The mailbox at the curb by the drive: letters from people I've worked with
+// (their LinkedIn recommendations). Its flag is up until it has been opened.
+const mailbox = () => hot('recs', `<g class="tw-mailbox">
+      <ellipse cx="3790" cy="597.6" rx="14" ry="1.9" class="tw-carshadow"/>
+      <rect x="3788.2" y="570" width="3.6" height="28" rx=".6" class="tw-mb-post tw-mb-ol"/>
+      <rect x="3781" y="568.6" width="18" height="2.6" rx=".8" class="tw-mb-post tw-mb-ol"/>
+      <g class="tw-mb-mail"><rect x="3764.4" y="559.4" width="11" height="6.6" rx=".6" transform="rotate(-9 3769.9 562.7)" class="tw-mb-env2 tw-mb-ol"/><rect x="3765.4" y="561.6" width="10.6" height="6.4" rx=".6" transform="rotate(-3 3770.7 564.8)" class="tw-mb-env tw-mb-ol"/><path d="M3765.8 562.1 l4.9 3.3 l5 -3.8" transform="rotate(-3 3770.7 564.8)" class="tw-mb-fold"/></g>
+      <path d="M3774 569.4 V559.4 q0 -6.6 6.6 -6.6 H3801.4 q6.6 0 6.6 6.6 V569.4 Z" class="tw-mb-body tw-mb-ol"/>
+      <path d="M3777 556.2 q1.6 -1.8 4 -1.8 H3800" class="tw-mb-shine"/>
+      <path d="M3774 569.4 V559.4 q0 -6.6 6.6 -6.6 h1.6 V569.4 Z" class="tw-mb-door tw-mb-ol"/>
+      <rect x="3772.4" y="559.2" width="1.8" height="3.4" rx=".6" class="tw-mb-handle"/>
+      <g class="tw-mb-flag"><rect x="3808" y="547.2" width="1.6" height="15.6" rx=".6" class="tw-mb-pole tw-mb-ol"/><path d="M3809.6 547.4 h7.4 v5 h-7.4 z" class="tw-mb-red tw-mb-ol"/></g>
+    </g>`);
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);
   return `
@@ -942,6 +960,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <linearGradient id="twDayInt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ead8"/><stop offset="1" stop-color="#ddd0b6"/></linearGradient>
     ${Object.entries(TINT).map(([id, c]) => `<filter id="twGlow-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="3.6" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="2.4"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twHalo-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="3.6" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="2.4"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".95"/><feComposite in2="b" operator="in"/></filter>`).join('')}
   </defs>
+  <g class="tw-cam">
 
   <!-- Far: the sky, the hills, the clouds; it slides by slower than the
        block as you scroll along it. -->
@@ -1114,7 +1133,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="994" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/><rect x="1112" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/>
       <path class="tw-arm-b" d="M1004 474 L1110 466"/><path class="tw-arm-a" d="M1110 474 L1004 466"/>
       <circle class="tw-pivot" cx="1057" cy="470" r="3"/>
-      <polygon class="tw-laser tw-laser-far" data-b="1" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser tw-laser-far" data-b="1" data-w="1" points="0,0 0,0 0,0"/>
+      <polygon class="tw-laser tw-laser-far" data-b="1" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser tw-laser-far" data-b="1" data-w="1" points="0,0 0,0 0,0"/><line class="tw-lzr" data-b="1" data-w="0" pathLength="100" style="animation-delay:-.3s"/><line class="tw-lzr" data-b="1" data-w="1" pathLength="100" style="animation-delay:-.75s"/>
       <g class="tw-plat">
         <image href="assets/images/town/rav4-side.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-car-img"/>
         <image href="assets/images/town/rav4-drl-lit.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-nohit"/>
@@ -1126,7 +1145,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <path d="M997 456 l6 -9 h5 l3 9 z" class="tw-chock"/><rect x="997" y="453" width="14" height="3" class="tw-chockband"/>
         <image href="assets/logos/opt/hunter.webp" x="1036" y="457.5" width="40" height="7" preserveAspectRatio="xMidYMid meet"/>
       </g>
-      <polygon class="tw-laser" data-b="0" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser" data-b="0" data-w="1" points="0,0 0,0 0,0"/>
+      <polygon class="tw-laser" data-b="0" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser" data-b="0" data-w="1" points="0,0 0,0 0,0"/><line class="tw-lzr" data-b="0" data-w="0" pathLength="100"/><line class="tw-lzr" data-b="0" data-w="1" pathLength="100" style="animation-delay:-.45s"/>
       <g class="tw-beacons tw-nohit">${[[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]].map(([x, y]) => `<g class="tw-beacon"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.4" fill="url(#twBeacon)"/><rect x="${(x - 1.1).toFixed(1)}" y="${(y - 1.6).toFixed(1)}" width="2.2" height="3.2" rx=".5" class="tw-beacon-c"/></g>`).join('')}</g>
     </g>`)}
 
@@ -1196,7 +1215,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <rect x="-41" y="2" width="82" height="17" rx="7" class="tw-frc-bump"/>
         <path d="M-37 6.5 H37" class="tw-frc-bumpl"/>
         <text x="0" y="15.6" class="tw-frc-86" text-anchor="middle">86</text>
-        <g class="tw-turret" transform="translate(23 -48)"><rect x="-8" y="-5.4" width="16" height="10" rx="2.6" class="tw-cam"/><circle cx="6.4" cy="-0.4" r="3.2" class="tw-ringlight"/></g>
+        <g class="tw-rcoat"><path d="M-40 -36 q0 -6 6 -6 H34 q6 0 6 6 L42.4 -8 q-10.6 4 -21.2 0 q-10.6 4 -21.2 0 q-10.6 4 -21.2 0 q-10.6 4 -21.2 0 Z" class="tw-slicker tw-ol"/><path d="M-31 -38 l-1.6 26 M30 -38 l1.4 26" class="tw-slicker-sheen"/><path d="M-36 -14.5 q36 5 72 0" class="tw-slicker-seam"/></g>
+        <g class="tw-turret" transform="translate(23 -48)"><rect x="-8" y="-5.4" width="16" height="10" rx="2.6" class="tw-cam"/><circle cx="6.4" cy="-0.4" r="3.2" class="tw-ringlight"/><g class="tw-rhat"><path d="M-6.4 -5.6 q6.4 -8.6 12.8 0 z" class="tw-slicker tw-ol"/><path d="M-11 -6 q11 -2.8 22 0 q.9 1.4 -.4 2.2 q-10.6 -2 -21.2 0 q-1.3 -.8 -.4 -2.2 z" class="tw-slicker tw-ol"/></g></g>
       </g></g>
     </g>`)}
 
@@ -1222,6 +1242,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-eyes"><rect x="-13.5" y="-44" width="10" height="10" rx="2.4" class="tw-eye"/><rect x="3.5" y="-44" width="10" height="10" rx="2.4" class="tw-eye"/></g>
       <g class="tw-eyes"><circle class="tw-pupil2 tw-follow" cx="-8.5" cy="-39" r="2.1"/><circle class="tw-pupil2 tw-follow" cx="8.5" cy="-39" r="2.1"/></g><path d="M-5 -29.4 q5 3 10 0" class="tw-smile"/><ellipse cx="0" cy="-29" rx="2.2" ry="2.5" class="tw-ohno"/><text x="15" y="-56" class="tw-eek" text-anchor="middle">!</text>
       <g class="tw-mail"><rect x="20" y="-14" width="20" height="14" rx="2" class="tw-paper"/><path d="M21 -13 l9 7 l9 -7" class="tw-fold"/></g>
+      <g class="tw-rcoat"><path d="M-18 -21 h36 q4.4 0 5 4.2 l2.6 20.6 q.4 3.2 -3 3.2 h-45.2 q-3.4 0 -3 -3.2 l2.6 -20.6 q.6 -4.2 5 -4.2 z" class="tw-slicker tw-ol"/><path d="M-8.6 -21 l8.6 6.4 l8.6 -6.4" class="tw-slicker-seam"/><path d="M0 -14.6 v20" class="tw-slicker-seam"/><circle cx="-3" cy="-9" r="1.1" class="tw-slicker-btn"/><circle cx="-3" cy="-1.5" r="1.1" class="tw-slicker-btn"/><path d="M-14 -17 l-1.6 16" class="tw-slicker-sheen"/></g>
+      <g class="tw-rhat"><path d="M-15 -49.4 q15 -16 30 0 z" class="tw-slicker tw-ol"/><path d="M-25.5 -48.8 q25.5 -5 51 0 q2 2.3 -1 3.6 q-24.5 -4.2 -49 0 q-3 -1.3 -1 -3.6 z" class="tw-slicker tw-ol"/></g>
       <g class="tw-jacket"><path d="M-19 -20 h38 a3 3 0 0 1 3 3 v19 a4 4 0 0 1 -4 4 h-36 a4 4 0 0 1 -4 -4 v-19 a3 3 0 0 1 3 -3 z" fill="#e63946" class="tw-ol"/><path d="M-20 -11 h40 M-20 -3 h40" class="tw-quilt"/><path d="M0 -19 v24" class="tw-zip"/><path d="M-12 -21 q12 7 24 0 v-2 h-24 z" fill="#f4f1ea" class="tw-ol"/></g>
       <g class="tw-beanie"><path d="M-21 -46 q21 -19 42 0 z" fill="#e63946" class="tw-ol"/><rect x="-22" y="-51" width="44" height="6" rx="3" fill="#f4f1ea" class="tw-ol"/></g>
     </g></g></g></g></g>`)}
@@ -1374,6 +1396,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g class="tw-ends tw-nohit" aria-hidden="true"><rect x="-800" y="-1700" width="1000" height="3000" fill="url(#twEndL)"/><rect x="${WORLD - 200}" y="-1700" width="1000" height="3000" fill="url(#twEndR)"/></g>
     <!-- A pin on every stop. -->
     <g class="tw-pins">${roles.filter((r) => SPOT[r.id].pin || r.id === 'rjax' || r.id === 'rfa').map((r) => { const at = SPOT[r.id].pin ? [SPOT[r.id].pin[0] + (OFF[r.id] || 0), SPOT[r.id].pin[1]] : null; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
+  </g>
   </g>
 </svg>`;
 

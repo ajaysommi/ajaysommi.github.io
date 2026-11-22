@@ -133,7 +133,7 @@
   /* ---------------------------------------------------------- Hunter's lift */
   // Up, a pause, down, a pause; the scissor arms follow the platform, and
   // the HawkEye's two red beacons keep their lasers on the wheel targets.
-  const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg);
+  const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg), bolts = $$('.tw-lzr', svg);
   const BEACONS = [[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]], WHEELS = [1032, 1105];
   const lift = (now) => {
     const t = (now / 1000) % 9, u = t < 3 ? t / 3 : t < 4.5 ? 1 : t < 7.5 ? 1 - (t - 4.5) / 3 : 0;
@@ -145,6 +145,10 @@
     lasers.forEach((l, i) => {
       const [bx, by] = BEACONS[+l.dataset.b], tx = WHEELS[+l.dataset.w], ty = 445.7 - h;
       l.setAttribute('points', `${bx},${by - 1.6} ${bx},${by + 1.6} ${tx},${(ty + 2).toFixed(1)} ${tx},${(ty - 2).toFixed(1)}`);
+    });
+    bolts.forEach((l) => {
+      const [bx, by] = BEACONS[+l.dataset.b];
+      l.setAttribute('x1', bx); l.setAttribute('y1', by); l.setAttribute('x2', WHEELS[+l.dataset.w]); l.setAttribute('y2', (445.7 - h).toFixed(1));
     });
   };
   lift(0);
@@ -162,6 +166,8 @@
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
   const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-hallglow, .tw-snowimg', shiva: '.tw-bars, .tw-bb-beams, .tw-bb-wash' };
   SKIP.hunter += ', .tw-hk-lcd'; SKIP['p-civic'] += ', .tw-snowimg';
+  // the mailbox's flag comes down and its letters go once it's opened: they glow live
+  LIVE.recs = '.tw-mb-flag, .tw-mb-mail'; SKIP.recs = '.tw-mb-flag, .tw-mb-mail';
   const halos = {};
   const stickers = $$('.tw-adtsticker', svg);
   // A filter's region is a box around what it's on; sized as a share of that
@@ -256,7 +262,7 @@
   /* ---------------------------------------------------------- the lean in */
   let arrived = false;
   const arrive = () => { arrived = true; tw.classList.add('arrive'); };
-  const far = $('.tw-far', svg), panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
+  const cam = $('.tw-cam', svg), far = $('.tw-far', svg), panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
   // The sun and the moon are in the sky, with the stars: set once, where
   // they look right from the visitor center; after that they move as the
   // sky does (a little as the street slides, out of view as it leans in).
@@ -309,17 +315,30 @@
       actorFrame = requestAnimationFrame(tickActors);
     }
   };
-  const setVB = (b) => {
-    vb = b; svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
+  let base = null, camOn = false, barT = 0;
+  const placeVB = (b, moving) => {
+    vb = b;
+    if (moving && base) {
+      const s = base[2] / b[2];
+      cam.style.transform = `translate(${(base[0] - s * b[0]).toFixed(3)}px, ${(base[1] - s * b[1]).toFixed(3)}px) scale(${s.toFixed(5)})`;
+      camOn = true;
+    } else {
+      base = b.slice(); svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
+      if (camOn) { cam.style.transform = ''; camOn = false; }
+    }
     farY = (b[1] - (BOTTOM - vh)) * 0.12;
-    far.setAttribute('transform', `translate(${(b[0] * 0.6).toFixed(2)} ${farY.toFixed(2)})`);
-    paintBar(); syncActors();
+    far.style.transform = `translate(${(b[0] * 0.6).toFixed(2)}px, ${farY.toFixed(2)}px)`;
+    // the browser bar's colour follows the sky, a few times a second while moving
+    const now = performance.now();
+    if (!moving || now - barT > 140) { barT = now; paintBar(); }
+    syncActors();
     // the truck backs in once its waiting spot is well in view
     if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
     // the edge arrows wait until the street has been moved at least once
     panL.classList.toggle('on', explored && !cur && camX > 4);
     panR.classList.toggle('on', explored && !cur && camX < WORLD - vw - 4);
   };
+  const setVB = (b) => placeVB(b, false);
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let zoomUntil = 0;
   const zooming = () => performance.now() < zoomUntil;
@@ -329,9 +348,10 @@
     if (reduced) { setVB(to); return; }
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
+    if (camOn) setVB(vb);
     const from = vb.slice(), t0 = performance.now();
-    svg.classList.add('tw-moving'); if (ms < 2000) svg.classList.add('tw-zooming');
-    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); setVB(from.map((v, i) => v + (to[i] - v) * k)); if (u < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving', 'tw-zooming'); };
+    svg.classList.add('tw-moving', 'tw-zooming'); svg.classList.toggle('tw-glide', ms >= 2000);
+    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); placeVB(from.map((v, i) => v + (to[i] - v) * k), u < 1); if (u < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide'); };
     anim = requestAnimationFrame(f);
   };
   const frame = (z, left) => {
@@ -396,6 +416,7 @@
     intro = true;
     tw.classList.add('intro');
     setVB([camX, BOTTOM - vh - RISE, vw, vh]);
+    tw._pre = $$('image', svg).filter((im) => im.getBoundingClientRect().width).map((im) => { const i = new Image(); i.src = im.getAttribute('href'); if (i.decode) i.decode().catch(() => {}); return i; });
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
@@ -448,6 +469,29 @@
       <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
     </div>`;
   };
+  // The mailbox's card: a letter from each person who wrote a recommendation,
+  // the first one open; each opens and closes in place.
+  const letters = (r) => `
+      <div class="tw-p-eyebrow"><span class="tw-p-chip">Mailbox</span></div>
+      <h3 class="tw-p-sideh">${esc(r.org)}</h3>
+      <p class="tw-p-subj">What people I’ve worked with wrote about me on LinkedIn.</p>
+      <div class="tw-lt-bar"><span>${r.letters.length} letters</span><button type="button" class="tw-lt-all">Open all</button></div>
+      <ul class="tw-lt-list">${r.letters.map(([n, o, q, L], i) => `
+        <li class="tw-lt${i ? '' : ' open'}"><button type="button" class="tw-lt-head" aria-expanded="${i ? 'false' : 'true'}" aria-controls="twLt${i}">
+          <span class="tw-lt-stamp" aria-hidden="true">${L ? `<img src="assets/logos/opt/${L}.webp" alt="" />` : ''}</span>
+          <span class="tw-lt-from"><b>${esc(n)}</b><span>${esc(o)}</span></span>
+          <svg class="tw-lt-chev" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button><div class="tw-lt-wrap" id="twLt${i}"><div><blockquote class="tw-lt-text">“${esc(q)}”</blockquote></div></div></li>`).join('')}
+      </ul>
+      <p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.linkedin)}" target="_blank" rel="noopener">See them on LinkedIn ↗</a></p>`;
+  const wireLetters = () => {
+    const items = $$('.tw-lt', inner), all = $('.tw-lt-all', inner);
+    const sync = () => { all.textContent = items.every((li) => li.classList.contains('open')) ? 'Close all' : 'Open all'; };
+    const set = (li, on) => { li.classList.toggle('open', on); $('.tw-lt-head', li).setAttribute('aria-expanded', on ? 'true' : 'false'); };
+    items.forEach((li) => $('.tw-lt-head', li).addEventListener('click', () => { set(li, !li.classList.contains('open')); sync(); }));
+    all.addEventListener('click', () => { const on = all.textContent === 'Open all'; items.forEach((li) => set(li, on)); sync(); });
+    sync();
+  };
   // where each place lives on the web (the same links as the classic site's logo strip)
   const SITES = {
     adt: ['adt.com', 'https://en.wikipedia.org/wiki/ADT_Inc.'], hunter: ['hunter.com', 'https://www.hunter.com'],
@@ -478,6 +522,15 @@
       inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
       prevB.hidden = nextB.hidden = true;
       $$('.tw-pc-snap button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
+      return;
+    }
+    if (r.letters) {
+      panel.classList.remove('tw-oc', 'tw-oc-one', 'tw-oc-two');
+      inner.innerHTML = letters(r);
+      inner.scrollTop = 0;
+      inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
+      prevB.hidden = nextB.hidden = true;
+      wireLetters();
       return;
     }
     const side = /^p-/.test(r.id);
@@ -538,6 +591,8 @@
     if (id === 'jm') { arrived = true; tw.classList.add('arrive', 'parked'); }
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
     const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
+    // the mailbox's flag comes down once its letters have been read
+    if (id === 'recs') { const mb = $('.tw-hot[data-id="recs"] .tw-mailbox', svg); if (mb) mb.classList.add('seen'); }
     hideLabel(); panL.classList.remove('on'); panR.classList.remove('on');
   };
   const close = () => {
@@ -634,7 +689,7 @@
 
   /* ---------------------------------------------------------- the pointer */
   const head = $('.tw-cctv-head', svg), dish = $('.tw-dish', svg), eyes = $$('.tw-follow', svg);
-  const toSVG = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
+  const toSVG = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(cam.getScreenCTM().inverse()); };
   let ptr = null;
   // A robot comes over when the pointer is near its patch, stops short of
   // it, and otherwise ambles about inside the patch.
@@ -736,8 +791,8 @@
     if (!d || zooming() && !intro) return;
     e.preventDefault();
     if (intro) {
-      intro = false; zoomUntil = 0; cancelAnimationFrame(anim);
-      tw.classList.remove('intro'); svg.classList.remove('tw-moving', 'tw-zooming');
+      intro = false; zoomUntil = 0; cancelAnimationFrame(anim); setVB(vb);
+      tw.classList.remove('intro'); svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
     }
     explored = true;
     glideBy(d / scale);

@@ -1455,7 +1455,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
    zoom (the stalls and the odd blank frame). Pausing isn't enough, the
    layers stay; stopped, the street is drawn as one. Anything that would
    visibly jump on restarting (clouds, the gator, the butterfly) keeps going. */
-.tw-zooming :is(.tw-stargrp, .tw-pin-ring, .tw-canopy, .tw-led, .tw-led-on, .tw-bulb2, .tw-haz-glow, .tw-haz, .tw-laser, .tw-beacon, .tw-pt-mote, .tw-spotcone, .tw-pool, .tw-flame, .tw-steam circle, .tw-smoke circle, .tw-eyes, .tw-bfly-wing, .tw-ripples ellipse, .tw-tvp, .tw-tvball, .tw-tvglow, .tw-rec, .tw-ringlight, .tw-fireglow, .tw-hot-tip, .tw-lid, .tw-vision, .tw-rover-bob, .tw-cctv-head, .tw-cone, .tw-dish, .tw-lidflap, .tw-pt-swirl) { animation-name: none !important; }
+.tw-zooming :is(.tw-pin-ring, .tw-canopy, .tw-led, .tw-led-on, .tw-bulb2, .tw-haz-glow, .tw-haz, .tw-laser, .tw-beacon, .tw-pt-mote, .tw-spotcone, .tw-pool, .tw-flame, .tw-steam circle, .tw-smoke circle, .tw-eyes, .tw-bfly-wing, .tw-ripples ellipse, .tw-tvp, .tw-tvball, .tw-tvglow, .tw-rec, .tw-ringlight, .tw-fireglow, .tw-hot-tip, .tw-lid, .tw-vision, .tw-rover-bob, .tw-cctv-head, .tw-cone, .tw-dish, .tw-lidflap, .tw-pt-swirl) { animation-name: none !important; }
 .tw-zooming :is(.tw-bars rect, .tw-dash, .tw-pings path, .tw-reticle path, .tw-tvbars rect) { animation-name: none !important; }
 /* the clouds drift without layers of their own: they're behind everything, so
    their layers split the whole street in Chrome (visibility can't run on the
@@ -1559,3 +1559,68 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-spotcone { opacity: .45; animation: none; }
 .tw-pool { opacity: .52; animation: none; }
 [data-theme="midnight"] .tw :is(.tw-spotcone, .tw-pool), [data-theme="terminal"] .tw :is(.tw-spotcone, .tw-pool) { opacity: .7; }
+
+/* round 23 */
+/* the camera group moves from the street's origin */
+.tw-cam, .tw-far { transform-box: view-box; transform-origin: 0 0; }
+/* the stars keep twinkling through the opening glide, and stop for a zoom */
+.tw-zooming:not(.tw-glide) .tw-stargrp { animation-name: none !important; }
+/* scene text scales smoothly, without being laid out again at every step of a zoom */
+.tw-svg text { text-rendering: geometricPrecision; }
+/* the pins are never drawn (they only anchor the hover label), so nothing on them animates:
+   each fading pin was a layer of its own that cut up the street during a zoom */
+.tw-pin, .tw-pin * { animation: none !important; transition: none !important; }
+
+/* the mailbox by the drive */
+.tw-mb-post { fill: #8a5a33; }
+.tw-mb-body { fill: #2d5b8c; }
+.tw-mb-door { fill: #234a74; }
+.tw-mb-handle { fill: #c9d3df; }
+.tw-mb-shine { fill: none; stroke: rgba(255, 255, 255, .38); stroke-width: 1.2; stroke-linecap: round; }
+.tw-mb-env { fill: #fffaf0; } .tw-mb-env2 { fill: #ffe1d6; }
+.tw-mb-fold { fill: none; stroke: #c9b79a; stroke-width: .6; stroke-linejoin: round; }
+.tw-mb-pole { fill: #c33a2c; } .tw-mb-red { fill: #e5483a; }
+.tw-mb-flag { transform-box: fill-box; transform-origin: 9% 100%; transition: transform .7s cubic-bezier(.3, 1.4, .5, 1); }
+.tw-mailbox.seen .tw-mb-flag { transform: rotate(-90deg); }
+.tw-mb-mail { transition: opacity .4s; }
+.tw-mailbox.seen .tw-mb-mail { opacity: 0; }
+[data-theme="midnight"] .tw .tw-mb-body, [data-theme="terminal"] .tw .tw-mb-body { fill: #24496f; }
+[data-theme="midnight"] .tw .tw-mb-door, [data-theme="terminal"] .tw .tw-mb-door { fill: #1c3a5c; }
+
+/* the mailbox's card: letters that open in place */
+.tw-lt-bar { display: flex; align-items: center; justify-content: space-between; margin: 16px 0 8px; color: var(--ink-2); font: 600 12px/1 var(--font-sans); letter-spacing: .04em; text-transform: uppercase; }
+.tw-lt-all { padding: 6px 10px; border: 1px solid color-mix(in oklab, var(--tint) 40%, var(--stroke)); border-radius: 999px; background: none; color: var(--ink); font: 600 12px/1 var(--font-sans); letter-spacing: 0; text-transform: none; cursor: pointer; }
+.tw-lt-all:hover { background: color-mix(in oklab, var(--tint) 10%, transparent); }
+.tw-lt-list { display: grid; gap: 8px; margin: 0 0 16px; padding: 0; list-style: none; }
+.tw-lt { border: 1px solid color-mix(in oklab, var(--tint) 20%, var(--stroke)); border-radius: 12px; background: color-mix(in oklab, var(--tint) 4%, transparent); transition: border-color .2s, background-color .2s; }
+.tw-lt.open { border-color: color-mix(in oklab, var(--tint) 45%, var(--stroke)); background: color-mix(in oklab, var(--tint) 7%, transparent); }
+.tw-lt-head { display: grid; grid-template-columns: 38px 1fr 16px; gap: 12px; align-items: center; width: 100%; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; border-radius: 12px; }
+.tw-lt-head:focus-visible { outline: 2px solid var(--tint); outline-offset: -2px; }
+.tw-lt-stamp { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 5px; background: #fbf8f1; box-shadow: inset 0 0 0 2px #fbf8f1, inset 0 0 0 3px color-mix(in oklab, var(--tint) 45%, transparent); }
+.tw-lt-stamp img { max-width: 26px; max-height: 20px; object-fit: contain; }
+.tw-lt-from b { display: block; font: 700 14px/1.25 var(--font-sans); }
+.tw-lt-from span { display: block; margin-top: 2px; color: var(--ink-2); font: 500 12.5px/1.2 var(--font-sans); }
+.tw-lt-chev { width: 16px; height: 16px; color: var(--ink-2); transition: transform .3s; }
+.tw-lt.open .tw-lt-chev { transform: rotate(180deg); }
+.tw-lt-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.3, .8, .3, 1); }
+.tw-lt.open .tw-lt-wrap { grid-template-rows: 1fr; }
+.tw-lt-wrap > div { overflow: hidden; }
+.tw-lt-text { margin: 0 14px 14px 62px; padding: 0 0 0 12px; border-left: 3px solid var(--tint); color: var(--ink); font: 500 14.5px/1.55 var(--font-sans); opacity: 0; transform: translateY(-4px); transition: opacity .25s, transform .3s; }
+.tw-lt.open .tw-lt-text { opacity: 1; transform: none; transition-delay: .06s; }
+@media (prefers-reduced-motion: reduce) { .tw-lt-wrap, .tw-lt-text, .tw-lt-chev { transition: none; } }
+
+/* the HawkEye: steady beams, with a pulse running down each, head to wheel */
+.tw-laser { animation: none; opacity: .38; }
+.tw-lzr { fill: none; stroke: #ff7a6e; stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 14 300; stroke-dashoffset: 14; pointer-events: none; animation: tw-lzr .9s linear infinite; }
+@keyframes tw-lzr { from { stroke-dashoffset: 14; } to { stroke-dashoffset: -100; } }
+.tw-beacon, .tw-beacons { animation: none; opacity: 1; }
+
+/* the robots in the rain: yellow raincoats and sou'westers */
+.tw-slicker { fill: #ffcf33; }
+.tw-slicker-seam { fill: none; stroke: #d9a300; stroke-width: .9; stroke-linecap: round; stroke-linejoin: round; }
+.tw-slicker-sheen { fill: none; stroke: rgba(255, 255, 255, .55); stroke-width: 1.3; stroke-linecap: round; }
+.tw-slicker-btn { fill: #b98500; }
+.tw-rcoat, .tw-rhat { opacity: 0; transform: translateY(-12px); transition: opacity .4s, transform .6s cubic-bezier(.3, 1.6, .5, 1); pointer-events: none; }
+.tw.wx-rain :is(.tw-rcoat, .tw-rhat) { opacity: 1; transform: none; }
+.tw.wx-rain .tw-rhat { transition-delay: .3s; }
+.tw-mb-ol { stroke: var(--tw-line); stroke-width: .9; stroke-linejoin: round; }
