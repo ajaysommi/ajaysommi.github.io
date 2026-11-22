@@ -1553,3 +1553,9 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-mtn2-st { stroke: #f4f6f2; }
 /* the ADT signs, once lit, stay lit (no breathing) */
 .tw.alarm .tw-adtsign-lit, .tw.alarm .tw-adt-alarm, .tw.home-alarm .tw-yard-lit { animation: none; }
+
+/* round 23: the showroom spots shine steadily (no slow breathing), so nothing
+   changes when the breathing is stopped for a zoom */
+.tw-spotcone { opacity: .45; animation: none; }
+.tw-pool { opacity: .52; animation: none; }
+[data-theme="midnight"] .tw :is(.tw-spotcone, .tw-pool), [data-theme="terminal"] .tw :is(.tw-spotcone, .tw-pool) { opacity: .7; }
