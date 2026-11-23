@@ -17,8 +17,28 @@ button.ui-close::after {
 
 .term-close.ui-close {
   flex: 0 0 34px; width: 34px; height: 34px; padding: 0;
-  border: 1px solid #ffffff30; border-radius: 50%; background: #ffffff0a;
 }
+
+/* Use solid fills so each control reads against the surface behind it. */
+:is(.tw-panel.tw-postcard .tw-x, .tw-x, .tw-memory-close, .story .st-close, .lightbox .lb-close, .tw-lb-x, .mxv-x, .mx-sheet-close, .term-close).ui-close {
+  border: 0;
+  border-radius: 50%;
+  background: var(--close-fill, var(--m-fill, #e6e2d9));
+  color: var(--close-ink, var(--ink, #332e27));
+  box-shadow: none;
+}
+@media (hover: hover) {
+  :is(.tw-panel.tw-postcard .tw-x, .tw-x, .tw-memory-close, .story .st-close, .lightbox .lb-close, .tw-lb-x, .mxv-x, .mx-sheet-close, .term-close).ui-close:hover {
+    background: color-mix(in srgb, var(--close-fill, var(--m-fill, #e6e2d9)) 88%, var(--close-ink, var(--ink, #332e27)));
+  }
+}
+.tw-memory-card, .tw-postcard, .tw-mail-panel { --close-fill: #e4d8c3; --close-ink: #3b3025; }
+:is([data-theme="midnight"], [data-theme="terminal"]) :is(.tw-memory-card, .tw-postcard, .tw-mail-panel) {
+  --close-fill: #171310;
+  --close-ink: #f3e5ce;
+}
+:is(.tw-lightbox, .lightbox, .mx-viewer, .terminal) { --close-fill: #2b2928; --close-ink: #f4f0e9; }
+:is([data-theme="midnight"], [data-theme="terminal"]) .story { --close-fill: #2b2928; --close-ink: #f4f0e9; }
 
 @media (forced-colors: active) {
   button.ui-close::after { forced-color-adjust: none; background: ButtonText; }
@@ -28,4 +48,4 @@ button.ui-close::after {
 .win-close.ui-close, .br-title .tb.ui-close, .smp-close.ui-close { --close-mark-size: 8.5px; color: #242424; }
 .win-close.ui-close:active, .smp-close.ui-close:active { color: #fff; }
 .lt.close.ui-close { --close-mark-size: 8.5px; color: #51170e; }
-.sp-card .sp-x.ui-close { --close-mark-size: 18px; }
+.ip-screen .sp-card .sp-x.ui-close { --close-mark-size: 18px; border: 0; }
