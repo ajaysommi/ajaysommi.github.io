@@ -634,7 +634,7 @@
     baby: {
       file: 'baby-photo.webp', width: 1500, height: 1125,
       label: 'Camry childhood photo', alt: 'Me as a baby in the plaid car seat.',
-      caption: 'I was only a few months old when my family brought me home in our green ’96 Camry, in that plaid seat.',
+      caption: 'I was only a few months old when my family brought me home in our green ’96 Camry, in that plaid car seat.',
     },
     trike: {
       file: 'trike-photo.webp', width: 640, height: 480, label: 'Tricycle photo',
@@ -1347,7 +1347,10 @@
   };
   let paneDamage = new WeakMap(), nextPane = 0, paneHits = 0;
   const strikePane = (root, key, poly, q, options = {}) => {
-    const { dark = false, threshold = 4, countAcrossPane = false, windshield = false, holes = null, debris = root, ground = Math.max(...poly.map(([, y]) => y)) + 12 } = options;
+    const {
+      dark = false, threshold = 4, countAcrossPane = false, windshield = false,
+      holes = null, clearOnBreak = false, debris = root, ground = Math.max(...poly.map(([, y]) => y)) + 12
+    } = options;
     let panes = paneDamage.get(root);
     if (!panes) { panes = new Map(); paneDamage.set(root, panes); }
     let pane = panes.get(key);
@@ -1385,7 +1388,7 @@
       ? q : impactGroups(pane.points, radius).find(group => threshold && group.count >= threshold);
     paneHits++;
     if (impact) {
-      Object.assign(pane, fracturePieces(poly, [impact.x, impact.y], pane.scale));
+      Object.assign(pane, clearOnBreak ? { chunks: [], opening: poly } : fracturePieces(poly, [impact.x, impact.y], pane.scale));
       paintBreak(pane);
       fallShards(debris, rectPane(impact.x - 2.8, impact.y - 1, 5.6, 2), ground);
       return 'break';
@@ -1480,11 +1483,7 @@
   // Only the opening in a broken display window exposes the car behind it.
   const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
   const showroomDoor = $('.tw-door-fractures', toyHot), showHoles = $('#twShowroomHoles', svg);
-  const displayPanes = [
-    rectPane(462, 342, 100, 140),
-    [[658,356],[775,356],[775,387.5],[751,387.5],[751,482],[658,482]],
-    [[775,356],[890,356],[890,482],[801,482],[801,387.5],[775,387.5]],
-  ];
+  const displayPanes = D.showroom.map(([x, y, w, h]) => rectPane(x + .8, y + .8, w - 1.6, h - 1.6));
   const showroomDoors = [rectPane(760, 426, 15, 56), rectPane(777, 426, 15, 56)];
   const showroomPanes = [
     ...displayPanes.map((poly, key) => ({ root: crG, key, poly })),
@@ -1683,7 +1682,13 @@
       const { shape, key, poly, q } = glass;
       const layer = shape.dataset.fractureLayer;
       const root = layer ? $(`[data-glass-layer="${layer}"]`, shape.parentNode) : shape.parentNode;
-      strikePane(root, key, poly, q, { dark: shape.dataset.fracturePane === 'dark', threshold: shape.dataset.fracturePane === 'dark' ? 0 : 4 });
+      const { paneHoles, paneThreshold, paneClear, fracturePane } = shape.dataset;
+      const dark = fracturePane === 'dark', clearOnBreak = paneClear !== undefined;
+      strikePane(root, key, poly, q, {
+        dark, threshold: dark ? 0 : +(paneThreshold ?? 4),
+        holes: paneHoles ? svg.getElementById(paneHoles) : null,
+        clearOnBreak, countAcrossPane: clearOnBreak
+      });
       save();
       return;
     }
@@ -1751,7 +1756,7 @@
   function repair() {
     dmg = fresh();
     paneDamage = new WeakMap(); paneHits = 0;
-    $$('.tw-pane-damage, .tw-fallshard', svg).forEach(layer => layer.remove());
+    $$('.tw-pane-damage, .tw-pane-cutout, .tw-fallshard', svg).forEach(layer => layer.remove());
     Object.keys(hits).forEach((k) => delete hits[k]);
     $$('.tw-dmg', svg).forEach((g) => g.remove());
     [tcG, hkCr, bwG, tvCr, hallCr, hallHoles, crG, showroomDoor, showHoles, betHoles].forEach((g) => { if (g) g.innerHTML = ''; });

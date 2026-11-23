@@ -116,6 +116,8 @@
 /* the car and its bow fade as one, so the bow stays solid on the car */
 .tw-showcar { opacity: .64; }
 .tw-glassover { fill: rgba(190, 215, 235, .3); }
+.tw-show-mull { fill: none; stroke: #59656b; stroke-width: 1.6; }
+.tw-show-mull-light { fill: none; stroke: #b5c1c4; stroke-width: .51; opacity: .78; }
 [data-theme="midnight"] .tw .tw-glassover, [data-theme="terminal"] .tw .tw-glassover { fill: rgba(255, 228, 175, .12); }
 .tw-fo { stroke: var(--tw-line); stroke-width: 2.4; }
 .tw-grid { stroke: var(--tw-seam); stroke-width: 1.6; fill: none; }
@@ -775,7 +777,7 @@
 .tw-reed { fill: none; stroke: #4f7a3a; stroke-width: 1; stroke-linecap: round; } .tw-cattail { fill: #6b4428; }
 .tw-hpg { fill: #1c2130; } .tw-hpg-band { fill: #0b0f1a; stroke: #3a4256; stroke-width: .6; }
 .tw-hpg-t { font: 800 6.6px var(--font-sans); letter-spacing: .03em; fill: #ff6a2b; }
-.tw-hpg-glass { fill: #10151f; stroke: #2e3546; stroke-width: .8; } .tw-rackslot { fill: #252c3b; }
+.tw-hpg-frame { fill: none; stroke: #2e3546; stroke-width: .8; } .tw-rackslot { fill: #252c3b; }
 .tw-ficsboard { fill: #fdfbf6; stroke: #fa4616; stroke-width: 1.6; } .tw-ficsboard-t { font: 800 3.5px var(--font-sans); letter-spacing: .06em; fill: #0021a5; }
 
 /* ---------------------------------------------------------- the alarm, round two */
@@ -958,7 +960,7 @@
 .tw-rack-lab { fill: #0c0d10; } .tw-rack-t { font: 800 1.45px var(--font-sans); fill: #ff6a2b; }
 .tw-gpu { fill: url(#twGpu); stroke: #8c7f55; stroke-width: .2; } .tw-gpu-h { fill: #4a4436; }
 .tw-netsw { fill: #23262e; stroke: #3a3e48; stroke-width: .2; } .tw-cable { fill: none; stroke: #3b6fd8; stroke-width: .35; }
-.tw-hpg-glass { fill: rgba(190, 215, 235, .14); stroke: #2e3546; stroke-width: .8; }
+.tw-hpg-glass { fill: rgba(190, 215, 235, .14); }
 .tw-hpg-mull { stroke: #2e3546; stroke-width: 1.2; }
 .tw-hpg-shine { fill: none; stroke: rgba(255, 255, 255, .3); stroke-width: 2.4; stroke-linecap: round; pointer-events: none; }
 [data-theme="midnight"] .tw .tw-hpg-shine, [data-theme="terminal"] .tw .tw-hpg-shine { stroke: rgba(255, 255, 255, .1); }

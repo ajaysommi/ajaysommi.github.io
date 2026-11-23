@@ -832,6 +832,16 @@ const CAR_GLASS = {
   gh: [[.146,.273],[.184,.157],[.227,.075],[.25,.064],[.75,.064],[.776,.078],[.815,.159],[.854,.273]],
 };
 const CAR = { prius: { a: 0.742, l: [[0.169, 0.463], [0.835, 0.464]], p: [[0.135, 0.487], [0.865, 0.487]] }, bz: { a: 0.781, l: [[0.192, 0.432], [0.811, 0.432]], p: [[0.125, 0.405], [0.875, 0.405]] }, gh: { a: 0.814, l: [[0.152, 0.388], [0.847, 0.387]], p: [[0.112, 0.425], [0.888, 0.425]] } };
+const showroomRow = (edges, top, bottom) =>
+  edges.slice(1).map((right, i) => [edges[i], top, right - edges[i], bottom - top]);
+const SHOWROOM_WINDOWS = [
+  ...showroomRow([462, 512, 562], 342, 392),
+  ...showroomRow([462, 512, 562], 392, 482),
+  ...showroomRow([658, 704.5, 751, 801, 845.5, 890], 356, 387.5),
+  ...showroomRow([658, 704.5, 751], 387.5, 482),
+  ...showroomRow([801, 845.5, 890], 387.5, 482)
+];
+const showroomFrames = SHOWROOM_WINDOWS.map(([x, y, w, h]) => `M${x} ${y}h${w}v${h}h${-w}Z`).join(' ');
 /* A Toyota in profile, for the posters: a few body shapes, its own colour. */
 const PROFILE = {
   van: { b: [[0, .6], [.03, .44], [.17, .36], [.31, .13], [.95, .11], [1, .3], [1, .62]], w: [[.33, .17], [.93, .15], [.95, .34], [.24, .36]], r: [.2, .8] },
@@ -885,7 +895,7 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
       ${spots.map((cx, i) => `<ellipse cx="${cx}" cy="${fy + 1}" rx="46" ry="6" class="tw-pool" style="--i:${i}"/>`).join('')}
       <!-- the reception and lounge from the mural picture, standing on the floor (one scale for both rooms) -->
       ${(() => { const k = 232 / 1476, fw = em === 'l' ? 1476 * k : 584 * k, fh = 318 * k; return `<image href="assets/images/town/${em === 'l' ? 'furn-r' : 'furn-l'}.webp" x="${(em === 'l' ? x : x + 4).toFixed(1)}" y="${(fy + 0.6 - fh).toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" preserveAspectRatio="none" class="tw-furn"/>`; })()}
-      <g class="tw-alarmin tw-nohit"><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-dark"/><circle cx="${ex}" cy="${y + 9}" r="30" fill="url(#twEmerg)"/><rect x="${ex - 4.5}" y="${y + 4}" width="9" height="4.6" rx="1.2" class="tw-emerg-box"/><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-white"/></g>
+      <g class="tw-alarmin tw-nohit" clip-path="url(#twShowGlass)"><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-dark"/><circle cx="${ex}" cy="${y + 9}" r="30" fill="url(#twEmerg)"/><rect x="${ex - 4.5}" y="${y + 4}" width="9" height="4.6" rx="1.2" class="tw-emerg-box"/><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-white"/></g>
       ${cars.map((c) => { const K = CAR[c.f], H = c.w * K.a, x0 = c.cx - c.w / 2, y0 = fy + 3 - H, at = (fx, fy2) => [(x0 + c.w * fx).toFixed(1), (y0 + H * fy2).toFixed(1)];
         const drl = (cls, f) => `<image href="assets/images/town/car-${c.f}-drl.webp" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" class="${cls}" filter="url(#${f})"/>`;
         return `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/><g class="tw-showcar" data-car="${c.f}">`
@@ -1109,6 +1119,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     </linearGradient>
     <mask id="twShowroomMask" maskUnits="userSpaceOnUse" x="450" y="332" width="450" height="158"><rect x="450" y="332" width="450" height="158" fill="#fff"/><g id="twShowroomHoles"/></mask>
     <mask id="twBetGlassMask" maskUnits="userSpaceOnUse" x="3408" y="400" width="60" height="46"><rect x="3408" y="400" width="60" height="46" fill="#fff"/><g id="twBetHoles"/></mask>
+    <mask id="twHpgGlassMask" maskUnits="userSpaceOnUse" x="3375" y="417" width="100" height="66"><rect x="3375" y="417" width="100" height="66" fill="#fff"/><g id="twHpgHoles"/></mask>
     ${glassGrain}
     <radialGradient id="twWindshieldCore"><stop stop-color="#f6ffff" stop-opacity=".94"/><stop offset=".45" stop-color="#e5f6f8" stop-opacity=".64"/><stop offset="1" stop-color="#d8edf1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twGlassInterior" cx=".27" cy=".1" r=".9"><stop stop-color="#34434a"/><stop offset=".78" stop-color="#151e22"/><stop offset="1" stop-color="#111719"/></radialGradient>
@@ -1265,6 +1276,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="652" y="350" width="244" height="132" class="tw-portal"/>
       ${showroom(658, 356, 232, 126, [{ f: 'bz', cx: 702, w: 59 }, { f: 'gh', cx: 846, w: 62 }])}
       <g class="tw-cracks" clip-path="url(#twShowGlass)"></g>
+      <g class="tw-nohit" clip-path="url(#twShowGlass)">
+        <path d="${showroomFrames}" class="tw-show-mull"/>
+        <path d="${showroomFrames}" class="tw-show-mull-light"/>
+      </g>
       <rect x="752" y="388" width="48" height="94" class="tw-pillar tw-fo"/>
       <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo tw-temb"/><image href="assets/images/town/snow-temblem2.webp" x="760" y="393.33" width="32" height="22" preserveAspectRatio="none" class="tw-snowimg"/>
       <rect x="760" y="426" width="32" height="56" class="tw-doorglass" mask="url(#twShowroomMask)"/>
@@ -1518,9 +1533,12 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <path d="M3376 474 H3474" class="tw-hpg-floor"/>
       <path d="M3378 422 H3472 M3378 424.4 H3472" class="tw-hpg-tray"/>
       ${[0, 1, 2, 3, 4, 5].map((k) => { const x = 3379 + k * 15.6, net = k === 1 || k === 4; return `<g transform="translate(${x} 426)"><rect width="13.4" height="54" rx=".8" class="tw-rack"/><rect x="2" y="1.4" width="9.4" height="2.4" rx=".3" class="tw-rack-lab"/><text x="6.7" y="3.2" class="tw-rack-t" text-anchor="middle">HiPerGator AI</text>${net ? [0, 1, 2, 3, 4, 5, 6, 7].map((r) => `<rect x="1.6" y="${5.6 + r * 5.8}" width="10.2" height="3.6" rx=".3" class="tw-netsw"/><path d="M${2.6 + (r % 3)} ${9.2 + r * 5.8} q.6 3 -.2 6 M${6 + (r % 2)} ${9.2 + r * 5.8} q.8 2.6 0 5.4 M${9.4 - (r % 3) * 0.6} ${9.2 + r * 5.8} q-.6 2.6 .2 5.4" class="tw-cable"/><circle cx="${3 + (r % 4) * 2}" cy="${7.4 + r * 5.8}" r=".5" class="tw-led" style="--d:${((r * 3 + k) % 7 * 0.19).toFixed(2)}s"/>`).join('') : [0, 1, 2, 3, 4].map((r) => `<rect x="1.4" y="${5.4 + r * 9.4}" width="10.6" height="8.4" rx=".5" class="tw-gpu"/><rect x="1.4" y="${5.4 + r * 9.4}" width="10.6" height="8.4" rx=".5" fill="url(#twPerf)" class="tw-nohit"/><rect x="1.8" y="${6 + r * 9.4}" width="1.2" height="7.2" rx=".3" class="tw-gpu-h"/>`).join('')}</g>`; }).join('')}
-      <rect x="3376" y="418" width="98" height="64" class="tw-hpg-glass" data-fracture-pane data-fracture-layer="lab" data-pane-grid="3424.5;"/>
-      <path d="M3386 419 l-9 28 M3421 419 l-20 62 M3429 419 l-7 22" class="tw-hpg-shine"/>
-      <g data-glass-layer="lab" class="tw-nohit"></g>
+      <g mask="url(#twHpgGlassMask)">
+        <rect x="3376" y="418" width="98" height="64" class="tw-hpg-glass" data-fracture-pane data-fracture-layer="lab" data-pane-grid="3424.5;" data-pane-threshold="2" data-pane-holes="twHpgHoles" data-pane-clear/>
+        <path d="M3386 419 l-9 28 M3421 419 l-20 62 M3429 419 l-7 22" class="tw-hpg-shine"/>
+        <g data-glass-layer="lab" class="tw-nohit"></g>
+      </g>
+      <rect x="3376" y="418" width="98" height="64" class="tw-hpg-frame tw-nohit"/>
       <path d="M3424.5 418 V482" class="tw-hpg-mull"/>
       ${sticker(3466, 474, 7)}
       <g class="tw-dish-g" transform="translate(3400 398)">
@@ -1592,6 +1610,7 @@ const data = {
   W: WORLD, home: HOME, sky: { day: SKY_DAY, night: SKY_NIGHT },
   truck: { wait: TRUCK_WAIT, right: TK.x + TK.w - TRUCK_WAIT, x: TK.x, y: +TK.y.toFixed(2), w: TK.w, h: +TK.h.toFixed(2), glass: TRUCK_GLASS },
   civic: { wins: WINS, fb: FB, rb: RB, ground: CV.ground },
+  showroom: SHOWROOM_WINDOWS,
   hall: { ground: 494, polys: MALW.polys.map((p) => p.map(([u, v]) => [+(MAL.x + u * MAL.w).toFixed(1), +(MAL.y + v * MAL.h).toFixed(1)])) },
   pin: Object.fromEntries(Object.entries(SPOT).map(([k, v]) => [k, v.pin ? [v.pin[0] + (OFF[k] || 0), v.pin[1]] : null])),
   links: LINKS,
