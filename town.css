@@ -407,13 +407,12 @@
   html:not(.classic) button.tw-navx { display: grid !important; }
   html:not(.classic) div.tw-navx { display: block !important; position: relative; }
   html:not(.classic) .tw-repair:not([hidden]) { display: grid; }
-  .tw-repair { place-items: center; width: var(--tw-bar-height); height: var(--tw-bar-height); padding: 0; border-radius: 50%; color: var(--ink-2); cursor: pointer; }
+  .tw-repair { place-items: center; width: var(--tw-bar-height); height: var(--tw-bar-height); padding: 0; border-radius: 50%; color: var(--ink); cursor: pointer; }
   .tw-repair::before {
     content: ""; position: absolute; inset: 0; margin: auto;
     width: 25px; height: 25px; background: currentColor;
-    mask: url("assets/images/town/repair-icon.png") center / contain no-repeat;
+    mask: url("assets/images/town/repair-icon.png?v=2") center / contain no-repeat;
   }
-  .tw-repair:is(:hover, :focus-visible) { color: var(--ink); }
   html.classic a.tw-classic-back { display: grid !important; }
   .tw-pop { position: absolute; top: calc(100% + 12px); left: -6px; z-index: 70; display: grid; gap: 2px; min-width: 200px; padding: 6px; border: 1px solid var(--stroke); border-radius: 16px; background: var(--bg); box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .5); animation: tw-pop .22s cubic-bezier(.2, .8, .2, 1); }
   .tw-pop[hidden] { display: none; }
