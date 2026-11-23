@@ -1,0 +1,113 @@
+/* The mark is symmetric and centered on the button, independent of font metrics. */
+:where(button.ui-close) { position: relative; }
+
+button.ui-close::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: var(--close-mark-size, 22px);
+  height: var(--close-mark-size, 22px);
+  background: currentColor;
+  pointer-events: none;
+  --close-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.5 4.5l15 15m0-15-15 15' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  -webkit-mask: var(--close-mark) center / contain no-repeat;
+  mask: var(--close-mark) center / contain no-repeat;
+}
+
+.term-close.ui-close {
+  flex: 0 0 34px; width: 34px; height: 34px; padding: 0;
+}
+
+/* A quiet solid surface for buttons and tags. Higher contrast still marks
+   primary actions and selected filters. */
+:root {
+  --control-fill: #e3e0d8;
+  --control-hover: #d9d5cb;
+  --control-selected: #d4cfc3;
+}
+:is([data-theme="midnight"], [data-theme="terminal"]) {
+  --control-fill: #2d2b28;
+  --control-hover: #373430;
+  --control-selected: #403c37;
+}
+:is(.tw-memory-card, .tw-postcard, .tw-mail-panel) {
+  --control-fill: #e9deca;
+  --control-hover: #e0d2ba;
+  --close-ink: #3b3025;
+}
+:is([data-theme="midnight"], [data-theme="terminal"]) :is(.tw-memory-card, .tw-postcard, .tw-mail-panel) {
+  --control-fill: #393129;
+  --control-hover: #443a30;
+  --close-ink: #f3e5ce;
+}
+:is([data-theme="midnight"], [data-theme="terminal"]) .tw-mail-panel {
+  --control-fill: #514137;
+  --control-hover: #5b493c;
+}
+:is(.tw-lightbox, .lightbox, .mx-viewer, .terminal),
+:is([data-theme="midnight"], [data-theme="terminal"]) .story {
+  --control-fill: #34312e;
+  --control-hover: #403c38;
+  --close-ink: #f4f0e9;
+}
+
+/* Close controls share the same fill and focus treatment as the pills. */
+:is(.tw-panel.tw-postcard .tw-x, .tw-x, .tw-memory-close, .story .st-close, .lightbox .lb-close, .tw-lb-x, .mxv-x, .mx-sheet-close, .term-close, .era-ad-x).ui-close {
+  border: 0;
+  border-radius: 50%;
+  background: var(--control-fill);
+  color: var(--close-ink, var(--ink, #332e27));
+  box-shadow: none;
+  @media (hover: hover) {
+    &:hover { background: var(--control-hover); }
+  }
+}
+.era-ad-x.ui-close { --close-mark-size: 17px; }
+
+:is(
+  .tw-nav button, .tw-pan, .tw-p-go, .tw-chip, .tw-mail-return, .tw-pop button, .tw-pop a,
+  .tw-p-link, .mx-story-b, .mx-proj, .mx-row,
+  header.nav .icon-btn, .carousel-ctrl .icon-btn, .pal-quick button,
+  .btn:not(.solid), .filter-chip:not(.is-active), .pills button:not(.is-active),
+  .contact a:not(.resume-btn), .card-repo, .chip, .chip-clear, .wf,
+  .mx-btn:not(.mx-btn-solid), .mx-copy:not(.done), .mx-tt,
+  .mx-filter button:not([aria-pressed="true"]), .mx-groups button:not([aria-pressed="true"]),
+  .mx-skill, .lightbox .lb-prev, .lightbox .lb-next, .story .st-btn
+) {
+  border-color: transparent;
+  background: var(--control-fill);
+  box-shadow: none;
+  @media (hover: hover) {
+    &:hover { border-color: transparent; background: var(--control-hover); }
+  }
+}
+:is(.tw-chip.on, .tw-pop .on, .work-filter .wf.is-active, .work-filter .wf-extra) {
+  background: var(--control-selected);
+  color: var(--ink);
+  @media (hover: hover) {
+    &:hover { background: var(--control-selected); }
+  }
+}
+:is(.tw-p-tags li, .tw-p-chip, .tw-p-meta span, .mx-tags li, .card-tags span, .jc-tags span, .row-tags span, .pills span, .mx-ink) {
+  border-color: transparent;
+  background: var(--control-fill);
+  box-shadow: none;
+}
+.wf { border-radius: 999px; padding: 7px 13px; }
+.wf::after { content: none; }
+.wf:focus-visible { border-radius: 999px; }
+.work-filter { gap: 7px; }
+.tw-panel .tw-p-link { border-radius: 12px; padding: 7px 10px; }
+.tw-mail-return { border-radius: 999px; padding-inline: 12px; text-decoration: none; }
+.tw-panel.tw-postcard { border: 0; border-radius: 22px; }
+
+@media (forced-colors: active) {
+  button.ui-close::after { forced-color-adjust: none; background: ButtonText; }
+}
+
+/* The same mark scales down inside the period window chrome. */
+.win-close.ui-close, .br-title .tb.ui-close, .smp-close.ui-close { --close-mark-size: 8.5px; color: #242424; }
+.win-close.ui-close:active, .smp-close.ui-close:active { color: #fff; }
+.lt.close.ui-close { --close-mark-size: 8.5px; color: #51170e; }
+.ip-screen .sp-card .sp-x.ui-close { --close-mark-size: 18px; border: 0; }
