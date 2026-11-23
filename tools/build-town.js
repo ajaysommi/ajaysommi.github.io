@@ -549,16 +549,29 @@ const home = () => `
     ${mailbox()}`;
 // The mailbox at the curb by the drive: letters from people I've worked with
 // (their LinkedIn recommendations). Its flag is up until it has been opened.
-const mailbox = () => hot('recs', `<g class="tw-mailbox">
-      <ellipse cx="3790" cy="597.6" rx="14" ry="1.9" class="tw-carshadow"/>
-      <rect x="3788.2" y="570" width="3.6" height="28" rx=".6" class="tw-mb-post tw-mb-ol"/>
-      <rect x="3781" y="568.6" width="18" height="2.6" rx=".8" class="tw-mb-post tw-mb-ol"/>
-      <g class="tw-mb-mail"><rect x="3764.4" y="559.4" width="11" height="6.6" rx=".6" transform="rotate(-9 3769.9 562.7)" class="tw-mb-env2 tw-mb-ol"/><rect x="3765.4" y="561.6" width="10.6" height="6.4" rx=".6" transform="rotate(-3 3770.7 564.8)" class="tw-mb-env tw-mb-ol"/><path d="M3765.8 562.1 l4.9 3.3 l5 -3.8" transform="rotate(-3 3770.7 564.8)" class="tw-mb-fold"/></g>
-      <path d="M3774 569.4 V559.4 q0 -6.6 6.6 -6.6 H3801.4 q6.6 0 6.6 6.6 V569.4 Z" class="tw-mb-body tw-mb-ol"/>
-      <path d="M3777 556.2 q1.6 -1.8 4 -1.8 H3800" class="tw-mb-shine"/>
-      <path d="M3774 569.4 V559.4 q0 -6.6 6.6 -6.6 h1.6 V569.4 Z" class="tw-mb-door tw-mb-ol"/>
-      <rect x="3772.4" y="559.2" width="1.8" height="3.4" rx=".6" class="tw-mb-handle"/>
-      <g class="tw-mb-flag"><rect x="3808" y="547.2" width="1.6" height="15.6" rx=".6" class="tw-mb-pole tw-mb-ol"/><path d="M3809.6 547.4 h7.4 v5 h-7.4 z" class="tw-mb-red tw-mb-ol"/></g>
+const mailbox = () => hot('recs', `<g class="tw-mailbox" transform="translate(3790 597)">
+      <ellipse cx="1" cy=".8" rx="16" ry="2" class="tw-root-shadow tw-nohit"/>
+      <path d="M-3-34h5v34h-5z M1-26l6-6h3L2-20z" class="tw-mb-post tw-mb-ol"/>
+      <path d="M-1.8-24q1 4 .2 9v10m2-16v7" class="tw-mb-grain"/>
+      <path d="M-15-30h32v3h-32z" class="tw-mb-post tw-mb-ol"/>
+      <g class="tw-mb-mail">
+        <path d="m-25-42 13-2 .9 7.8-13 1.9z" class="tw-mb-env2 tw-mb-ol"/>
+        <path d="m-24-39 13 .5-.3 8-13-.5z" class="tw-mb-env tw-mb-ol"/>
+        <path d="m-23.7-38.6 6.2 4.5 6.1-4.1" class="tw-mb-fold"/>
+        <circle cx="-17.5" cy="-34.3" r="1" class="tw-mb-red"/>
+      </g>
+      <path d="M-16-29v-11q0-8 8-8h17q8 0 10 8v10l-3 1z" class="tw-mb-body tw-mb-ol"/>
+      <path d="M-16-29v-11q0-8 8-8 7 1 7 8v11z" class="tw-mb-door tw-mb-ol"/>
+      <path d="M-13.6-31v-8.8q0-5.7 5.5-6.2m6.3.4H9q5 .2 6.7 4.1" class="tw-mb-shine"/>
+      <path d="M-13-31h11m4-.7h14m-3-13.5q3 2.5 3 6" class="tw-mb-seam"/>
+      <path d="M-11-43h5v1.5h-5z" class="tw-mb-handle tw-mb-ol"/>
+      <circle cx="-11" cy="-30" r=".75" class="tw-mb-handle"/><circle cx="-5" cy="-30" r=".75" class="tw-mb-handle"/>
+      <path d="M3-41h9v6H3z" class="tw-mb-badge"/>
+      <path d="m3.5-40.5 4 3 4-3" class="tw-mb-fold"/>
+      <g transform="translate(16 -35)"><g class="tw-mb-flag">
+        <path d="M-.9 0v-16.5h7.7l-1.6 2.6 1.6 2.6H.9V0z" class="tw-mb-red tw-mb-ol"/>
+        <path d="M.5-15h4.5" class="tw-mb-shine"/>
+      </g><circle r="1.35" class="tw-mb-handle tw-mb-ol"/></g>
     </g>`);
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);
@@ -866,6 +879,7 @@ const HILLS = (() => {
 
 const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A drawn town block. Each part of it is a place I've worked; the buttons below open the same stories.">
   <defs>
+    <linearGradient id="twMbEnamel" x2="0" y2="1"><stop stop-color="var(--tw-mb-light)"/><stop offset=".62" stop-color="var(--tw-mb-mid)"/><stop offset="1" stop-color="var(--tw-mb-dark)"/></linearGradient>
     ${landscapeDefs.trim()}
     <linearGradient id="twSkyDay" gradientUnits="userSpaceOnUse" x1="0" y1="-700" x2="0" y2="600">${SKY_DAY.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>
     <linearGradient id="twSkyNight" gradientUnits="userSpaceOnUse" x1="0" y1="-700" x2="0" y2="600">${SKY_NIGHT.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>
@@ -1133,7 +1147,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="994" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/><rect x="1112" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/>
       <path class="tw-arm-b" d="M1004 474 L1110 466"/><path class="tw-arm-a" d="M1110 474 L1004 466"/>
       <circle class="tw-pivot" cx="1057" cy="470" r="3"/>
-      <polygon class="tw-laser tw-laser-far" data-b="1" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser tw-laser-far" data-b="1" data-w="1" points="0,0 0,0 0,0"/><line class="tw-lzr" data-b="1" data-w="0" pathLength="100" style="animation-delay:-.3s"/><line class="tw-lzr" data-b="1" data-w="1" pathLength="100" style="animation-delay:-.75s"/>
+      <line class="tw-laser" data-b="1" data-w="0"/><line class="tw-laser" data-b="1" data-w="1"/>
       <g class="tw-plat">
         <image href="assets/images/town/rav4-side.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-car-img"/>
         <image href="assets/images/town/rav4-drl-lit.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-nohit"/>
@@ -1145,7 +1159,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <path d="M997 456 l6 -9 h5 l3 9 z" class="tw-chock"/><rect x="997" y="453" width="14" height="3" class="tw-chockband"/>
         <image href="assets/logos/opt/hunter.webp" x="1036" y="457.5" width="40" height="7" preserveAspectRatio="xMidYMid meet"/>
       </g>
-      <polygon class="tw-laser" data-b="0" data-w="0" points="0,0 0,0 0,0"/><polygon class="tw-laser" data-b="0" data-w="1" points="0,0 0,0 0,0"/><line class="tw-lzr" data-b="0" data-w="0" pathLength="100"/><line class="tw-lzr" data-b="0" data-w="1" pathLength="100" style="animation-delay:-.45s"/>
+      <line class="tw-laser" data-b="0" data-w="0"/><line class="tw-laser" data-b="0" data-w="1"/>
       <g class="tw-beacons tw-nohit">${[[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]].map(([x, y]) => `<g class="tw-beacon"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.4" fill="url(#twBeacon)"/><rect x="${(x - 1.1).toFixed(1)}" y="${(y - 1.6).toFixed(1)}" width="2.2" height="3.2" rx=".5" class="tw-beacon-c"/></g>`).join('')}</g>
     </g>`)}
 

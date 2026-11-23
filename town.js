@@ -133,23 +133,27 @@
   /* ---------------------------------------------------------- Hunter's lift */
   // Up, a pause, down, a pause; the scissor arms follow the platform, and
   // the HawkEye's two red beacons keep their lasers on the wheel targets.
-  const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg), bolts = $$('.tw-lzr', svg);
+  const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg);
   const BEACONS = [[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]], WHEELS = [1032, 1105];
+  for (const beam of lasers) {
+    const [x, y] = BEACONS[Number(beam.dataset.b)];
+    beam.setAttribute('x1', x);
+    beam.setAttribute('y1', y);
+    beam.setAttribute('x2', WHEELS[Number(beam.dataset.w)]);
+  }
+  let lastLiftHeight;
   const lift = (now) => {
     const t = (now / 1000) % 9, u = t < 3 ? t / 3 : t < 4.5 ? 1 : t < 7.5 ? 1 - (t - 4.5) / 3 : 0;
-    const h = 22 * (0.5 - 0.5 * Math.cos(Math.PI * u)), top = 466 - h;
-    plat.setAttribute('transform', `translate(0 ${(-h).toFixed(2)})`);
+    const h = Math.round(2200 * (0.5 - 0.5 * Math.cos(Math.PI * u))) / 100;
+    if (h === lastLiftHeight) return;
+    lastLiftHeight = h;
+    const top = 466 - h;
+    plat.setAttribute('transform', `translate(0 ${-h})`);
     armA.setAttribute('d', `M1110 474 L1004 ${top.toFixed(1)}`);
     armB.setAttribute('d', `M1004 474 L1110 ${top.toFixed(1)}`);
     pivot.setAttribute('cy', ((474 + top) / 2).toFixed(1));
-    lasers.forEach((l, i) => {
-      const [bx, by] = BEACONS[+l.dataset.b], tx = WHEELS[+l.dataset.w], ty = 445.7 - h;
-      l.setAttribute('points', `${bx},${by - 1.6} ${bx},${by + 1.6} ${tx},${(ty + 2).toFixed(1)} ${tx},${(ty - 2).toFixed(1)}`);
-    });
-    bolts.forEach((l) => {
-      const [bx, by] = BEACONS[+l.dataset.b];
-      l.setAttribute('x1', bx); l.setAttribute('y1', by); l.setAttribute('x2', WHEELS[+l.dataset.w]); l.setAttribute('y2', (445.7 - h).toFixed(1));
-    });
+    const targetY = (445.7 - h).toFixed(2);
+    for (const beam of lasers) beam.setAttribute('y2', targetY);
   };
   lift(0);
 
@@ -472,22 +476,21 @@
   // The mailbox's card: a letter from each person who wrote a recommendation,
   // the first one open; each opens and closes in place.
   const letters = (r) => `
-      <div class="tw-p-eyebrow"><span class="tw-p-chip">Mailbox</span></div>
       <h3 class="tw-p-sideh">${esc(r.org)}</h3>
       <p class="tw-p-subj">What people I’ve worked with wrote about me on LinkedIn.</p>
       <div class="tw-lt-bar"><span>${r.letters.length} letters</span><button type="button" class="tw-lt-all">Open all</button></div>
       <ul class="tw-lt-list">${r.letters.map(([n, o, q, L], i) => `
         <li class="tw-lt${i ? '' : ' open'}"><button type="button" class="tw-lt-head" aria-expanded="${i ? 'false' : 'true'}" aria-controls="twLt${i}">
-          <span class="tw-lt-stamp" aria-hidden="true">${L ? `<img src="assets/logos/opt/${L}.webp" alt="" />` : ''}</span>
-          <span class="tw-lt-from"><b>${esc(n)}</b><span>${esc(o)}</span></span>
+          <span class="tw-lt-from"><span class="tw-lt-address">From</span><b>${esc(n)}</b><span>${esc(o)}</span></span>
+          <span class="tw-lt-postmark" aria-hidden="true"><span class="tw-lt-stamp">${L ? `<img src="assets/logos/opt/${L}.webp" alt="" />` : esc(n[0])}</span></span>
           <svg class="tw-lt-chev" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button><div class="tw-lt-wrap" id="twLt${i}"><div><blockquote class="tw-lt-text">“${esc(q)}”</blockquote></div></div></li>`).join('')}
+        </button><div class="tw-lt-wrap" id="twLt${i}" aria-hidden="${i ? 'true' : 'false'}"><div><figure class="tw-lt-paper"><blockquote>“${esc(q)}”</blockquote><figcaption>${esc(n)}</figcaption></figure></div></div></li>`).join('')}
       </ul>
       <p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.linkedin)}" target="_blank" rel="noopener">See them on LinkedIn ↗</a></p>`;
   const wireLetters = () => {
     const items = $$('.tw-lt', inner), all = $('.tw-lt-all', inner);
     const sync = () => { all.textContent = items.every((li) => li.classList.contains('open')) ? 'Close all' : 'Open all'; };
-    const set = (li, on) => { li.classList.toggle('open', on); $('.tw-lt-head', li).setAttribute('aria-expanded', on ? 'true' : 'false'); };
+    const set = (li, on) => { li.classList.toggle('open', on); $('.tw-lt-head', li).setAttribute('aria-expanded', String(on)); $('.tw-lt-wrap', li).setAttribute('aria-hidden', String(!on)); };
     items.forEach((li) => $('.tw-lt-head', li).addEventListener('click', () => { set(li, !li.classList.contains('open')); sync(); }));
     all.addEventListener('click', () => { const on = all.textContent === 'Open all'; items.forEach((li) => set(li, on)); sync(); });
     sync();
