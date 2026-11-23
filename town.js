@@ -618,6 +618,8 @@
     document.body.appendChild(lb);
   };
   $$('[data-memory]', svg).forEach((item) => {
+    item.addEventListener('pointerenter', () => item.classList.add('memory-hover'));
+    item.addEventListener('pointerleave', () => item.classList.remove('memory-hover'));
     const show = (e) => {
       e.stopPropagation();
       if (dragged && e.type === 'click') return;
