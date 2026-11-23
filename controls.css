@@ -105,15 +105,15 @@ button.ui-close::after {
 :is(.tw-panel, .lightbox) { border-radius: 28px; }
 .tw-panel.tw-postcard { border: 0; }
 .tw-postcard .tw-pc { display: flex; flex-direction: column; min-height: 100%; gap: 20px; }
-.tw-pc-destinations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: auto; }
+.tw-pc-destinations { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
 .tw-pc-destinations a {
-  display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 9px 11px;
-  border-radius: 16px; background: var(--control-fill); color: inherit;
-  font: 750 14px/1.2 Nunito, system-ui, sans-serif; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px;
+  border-radius: 999px; background: var(--control-fill); color: inherit;
+  font: 700 13px/1.2 Nunito, system-ui, sans-serif; text-decoration: none;
 }
 .tw-pc-destinations a:hover { background: var(--control-hover); }
 .tw-pc-destinations svg {
-  width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor;
+  width: 15px; height: 15px; flex: none; fill: none; stroke: currentColor;
   stroke-width: 1.55; stroke-linecap: round; stroke-linejoin: round;
 }
 .tw-p-eyebrow .tw-p-chip { padding: 5px 12px; line-height: 1.25; }
