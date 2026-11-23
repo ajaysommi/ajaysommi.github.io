@@ -554,6 +554,7 @@ const home = () => `
     ${PROJ['p-avl']()}
     ${PROJ['p-gatorgoods']()}
     ${PROJ['p-sommiscript']()}
+    <g data-memory="trike" role="button" tabindex="0" aria-label="Open tricycle photo"><image href="assets/images/town/memory-trike.webp" x="3794" y="546" width="23" height="18"/></g>
     ${mailbox()}`;
 // The mailbox at the curb by the drive: letters from people I've worked with
 // (their LinkedIn recommendations). Its flag is up until it has been opened.
@@ -627,7 +628,7 @@ const garage = () => {
       <path d="m3664.4 436 .6 4m15.7 0-.3 4" stroke="#c4b8a1" stroke-width="1.4"/>
     </g>
     <image href="assets/images/town/memory-sketch.webp" x="3729" y="422" width="10" height="8"/>
-    <g data-memory="baby" role="button" tabindex="0" aria-label="Open family Camry photo" transform="translate(3690 482) scale(.89) translate(-3690 -483)"><g fill="url(#twParkedShadow)"><ellipse cx="3693" cy="480.6" rx="34" ry="6" opacity=".66"/><ellipse cx="3690" cy="482.6" rx="27" ry="2.6"/><ellipse cx="3668" cy="483.2" rx="4" ry="1.2"/><ellipse cx="3712" cy="483.2" rx="4" ry="1.2"/></g><g filter="url(#twGarageBounce)"><image href="assets/images/town/memory-camry.webp" x="3657" y="442" width="66" height="44"/><path d="M3670 459 q12 -1.2 31 0" fill="none" stroke="#c3b295" stroke-width="1" opacity=".32"/><ellipse cx="3675" cy="458.6" rx="7.4" ry="1.45" fill="url(#twParkedShadow)"/><image href="assets/images/town/memory-seat.webp" x="3663" y="443" width="25" height="17"/></g></g>
+    <g data-memory="baby" role="button" tabindex="0" aria-label="Open family Camry photo" transform="translate(3690 482) scale(.89) translate(-3690 -483)"><g fill="url(#twParkedShadow)"><ellipse cx="3693" cy="480.6" rx="34" ry="6" opacity=".66"/><ellipse cx="3690" cy="482.6" rx="28.5" ry="3.2"/><ellipse cx="3668" cy="483.2" rx="5" ry="1.5"/><ellipse cx="3712" cy="483.2" rx="5" ry="1.5"/></g><g filter="url(#twGarageBounce)"><image href="assets/images/town/memory-camry.webp" x="3657" y="442" width="66" height="44"/><path d="M3670 459 q12 -1.2 31 0" fill="none" stroke="#c3b295" stroke-width="1" opacity=".32"/><ellipse cx="3675" cy="458.6" rx="7.4" ry="1.45" fill="url(#twParkedShadow)"/><image href="assets/images/town/memory-seat.webp" x="3663" y="443" width="25" height="17"/></g></g>
     <g pointer-events="none">
       <rect x="3566" y="400" width="178" height="86" fill="url(#twBaySides)"/>
       <rect x="3587" y="404" width="136" height="75" fill="url(#twBayLamp)"/>
@@ -945,7 +946,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <radialGradient id="twVcLight"><stop offset="0" stop-color="#ffc977" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
     <linearGradient id="twPorchShade" x2="0" y2="1"><stop stop-color="#30241d" stop-opacity=".42"/><stop offset="1" stop-color="#30241d" stop-opacity="0"/></linearGradient><linearGradient id="twBaySides"><stop stop-color="#291e1a" stop-opacity=".48"/><stop offset=".16" stop-color="#291e1a" stop-opacity=".08"/><stop offset=".48" stop-color="#291e1a" stop-opacity="0"/><stop offset=".78" stop-color="#291e1a" stop-opacity=".09"/><stop offset="1" stop-color="#291e1a" stop-opacity=".42"/></linearGradient>
     <radialGradient id="twBayLamp" cx=".5" cy="0" r=".72"><stop stop-color="#ffdfa0" stop-opacity=".27"/><stop offset="1" stop-color="#ffdfa0" stop-opacity="0"/></radialGradient>
-    <filter id="twGarageBounce" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".65" intercept=".115"/><feFuncG type="linear" slope=".64" intercept=".092"/><feFuncB type="linear" slope=".61" intercept=".074"/></feComponentTransfer><feGaussianBlur stdDeviation=".32"/></filter><radialGradient id="twParkedShadow"><stop stop-color="#241c18" stop-opacity=".50"/><stop offset=".52" stop-color="#30251f" stop-opacity=".32"/><stop offset="1" stop-color="#30251f" stop-opacity="0"/></radialGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
+    <filter id="twGarageBounce" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".65" intercept=".115"/><feFuncG type="linear" slope=".64" intercept=".092"/><feFuncB type="linear" slope=".61" intercept=".074"/></feComponentTransfer></filter><radialGradient id="twParkedShadow"><stop stop-color="#241c18" stop-opacity=".76"/><stop offset=".52" stop-color="#30251f" stop-opacity=".48"/><stop offset="1" stop-color="#30251f" stop-opacity="0"/></radialGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
     <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twMoonHalo"><stop offset="0" stop-color="#fff6dc" stop-opacity=".3"/><stop offset=".45" stop-color="#fff6dc" stop-opacity=".14"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></radialGradient>
@@ -1446,7 +1447,6 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g transform="translate(${HOMESH} 0)">
     ${bench()}
     ${garage()}
-    <g data-memory="trike" role="button" tabindex="0" aria-label="Open tricycle photo"><image href="assets/images/town/memory-trike.webp" x="3490" y="504" width="23" height="18"/></g>
     ${tree(4222, 494, 1.0, 0)}${pine(4268, 498, 132)}${tree(4318, 496, 1.12, 2)}
     ${[[4236, 504, .7], [4290, 506, .6], [4344, 502, .75]].map(([x, y, k]) => bush(x, y, k)).join('')}
     ${[4200, 4212, 4226, 4248, 4276, 4300, 4330].map((x, k) => `<circle cx="${x}" cy="${512 + (k % 3) * 2}" r="1.6" class="tw-flower" style="--c:${['#ff6b8b', '#ffd166', '#c084fc', '#ff8fab', '#f97316'][k % 5]}"/>`).join('')}

@@ -436,7 +436,7 @@
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
-      if (!intro || cur) { tw.classList.remove('intro'); lampsOn(); hint(); setTimeout(flyAway, 1200); return; }
+      if (!intro || cur) { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); setTimeout(flyAway, 1200); return; }
       tween(view(), INTRO, glideDown);
       setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); flyAway(); }, INTRO + 80);
     };
@@ -742,7 +742,7 @@
     }, 160);
   };
   const hoverTo = (id) => {
-    if (cur) return;
+    if (intro || document.documentElement.classList.contains('is-loading') || cur) return;
     if (sliding) { pendingHover = id; return; }
     clearTimeout(offT);
     if (id) { if (id !== over) { over = id; glow(id); showLabel(id); } return; }
