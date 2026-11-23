@@ -101,7 +101,18 @@ button.ui-close::after {
 .work-filter { gap: 7px; }
 .tw-panel .tw-p-link { border-radius: 12px; padding: 7px 10px; }
 .tw-mail-return { border-radius: 999px; padding-inline: 12px; text-decoration: none; }
-.tw-panel.tw-postcard { border: 0; border-radius: 22px; }
+/* Leave enough room at the corners for the circular and pill controls. */
+:is(.tw-panel, .lightbox) { border-radius: 28px; }
+.tw-panel.tw-postcard { border: 0; }
+.tw-panel .tw-x { top: 14px; right: 14px; }
+.tw-nav { border-top: 0; padding: 10px 14px 14px; }
+:is(.tw-memory-card, .terminal, .tw-pop) { border-radius: 24px; }
+.tw-memory-card img { border-radius: 12px; }
+.palette-list { border-radius: 28px; }
+.mx-sheet { border-radius: 30px 30px 0 0; }
+@media (min-width: 720px) and (min-height: 521px) {
+  .story { border-radius: 28px; }
+}
 
 @media (forced-colors: active) {
   button.ui-close::after { forced-color-adjust: none; background: ButtonText; }
@@ -117,7 +128,7 @@ button.ui-close::after {
 .has-scroll-cue {
   --scroll-cue-mask: linear-gradient(to bottom,
     #000 calc(100% - var(--scroll-cue-depth)),
-    rgb(0 0 0 / .78) calc(100% - var(--scroll-cue-depth) * .48),
+    rgb(0 0 0 / .62) calc(100% - var(--scroll-cue-depth) * .48),
     transparent);
   -webkit-mask-image: var(--scroll-cue-mask);
   mask-image: var(--scroll-cue-mask);

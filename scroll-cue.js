@@ -22,7 +22,7 @@
       const height = pane.clientHeight;
       const remaining = pane.scrollHeight - height - Math.max(0, pane.scrollTop);
       const scrollable = height && remaining > 2 && /^(auto|scroll)$/.test(getComputedStyle(pane).overflowY);
-      const depth = scrollable ? Math.round(Math.min(38, height * .18, remaining * 1.35)) : 0;
+      const depth = scrollable ? Math.round(Math.min(50, height * .22, remaining * 1.55)) : 0;
       if (watched.get(pane) !== depth) changes.push([pane, depth]);
     }
     pending.clear();
