@@ -68,7 +68,8 @@ button.ui-close::after {
 :is(
   .tw-nav button, .tw-pan, .tw-p-go, .tw-chip, .tw-mail-return, .tw-pop button, .tw-pop a,
   .tw-p-link, .mx-story-b, .mx-proj, .mx-row,
-  header.nav .icon-btn, .carousel-ctrl .icon-btn, .pal-quick button,
+  header.nav .icon-btn:not(:where(body:has(#town) :is(#themeBtn, #twWx, #twMenu))),
+  .carousel-ctrl .icon-btn, .pal-quick button,
   .btn:not(.solid), .filter-chip:not(.is-active), .pills button:not(.is-active),
   .contact a:not(.resume-btn), .card-repo, .chip, .chip-clear, .wf,
   .mx-btn:not(.mx-btn-solid), .mx-copy:not(.done), .mx-tt,
