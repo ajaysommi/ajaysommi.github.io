@@ -112,3 +112,13 @@ button.ui-close::after {
 .win-close.ui-close:active, .smp-close.ui-close:active { color: #fff; }
 .lt.close.ui-close { --close-mark-size: 8.5px; color: #51170e; }
 .ip-screen .sp-card .sp-x.ui-close { --close-mark-size: 18px; border: 0; }
+
+/* The mask reveals the window's own surface and never blocks the last row. */
+.has-scroll-cue {
+  --scroll-cue-mask: linear-gradient(to bottom,
+    #000 calc(100% - var(--scroll-cue-depth)),
+    rgb(0 0 0 / .78) calc(100% - var(--scroll-cue-depth) * .48),
+    transparent);
+  -webkit-mask-image: var(--scroll-cue-mask);
+  mask-image: var(--scroll-cue-mask);
+}
