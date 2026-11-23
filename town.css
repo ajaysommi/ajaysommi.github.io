@@ -158,8 +158,8 @@
 .tw-camshell { fill: #f4f1ea; stroke: var(--tw-line); stroke-width: 2; }
 .tw-rec { fill: #ff3b30; animation: tw-glow 1s steps(1) infinite; }
 .tw-cone { animation: tw-scan 3s ease-in-out infinite; }
-.tw-cctv-head { transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
-.tw:not(.near) .tw-cctv-head { animation: tw-pan 7s ease-in-out infinite; }
+/* turned by town.js: it sweeps, follows the pointer, and eases back */
+.tw-cctv-head { transform: rotate(-104deg); }
 @keyframes tw-pan { 0%, 100% { transform: rotate(-126deg); } 50% { transform: rotate(-82deg); } }
 
 /* ---------------------------------------------------------- the pond */
@@ -389,10 +389,11 @@
   .tw.dragging .tw-svg, .tw.dragging .tw-hot { cursor: grabbing; }
   .tw-panel { bottom: 16px; top: 80px; }
   .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid !important; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
-  .tw-pan svg { width: 20px; height: 20px; }
+  .tw-pan svg { width: 23px; height: 23px; }
+  .tw-pan svg path { stroke-width: 3.1; }
   .tw-pan-l { left: 16px; } .tw-pan-r { right: 16px; }
-  .tw-pan.on { opacity: .9; pointer-events: auto; }
-  .tw-pan:hover { opacity: 1; transform: scale(1.06); }
+  .tw-pan.on { opacity: .78; pointer-events: auto; }
+  .tw-pan:hover { opacity: .9; transform: scale(1.06); }
   .tw.zoomed .tw-pan { opacity: 0; pointer-events: none; }
 
   /* The compact bar: the logo, home, day or night, the weather, the menu. */

@@ -184,13 +184,13 @@
     let b = null; try { b = node.getBBox(); } catch (e) {}
     let url = `url(#${base})`;
     if (b && (b.width || b.height)) {
-      const c = document.getElementById(base).cloneNode(true), m = 18;
+      const c = document.getElementById(base).cloneNode(true), m = 28;
       c.id = `${base}-${++nf}`;
       c.setAttribute('filterUnits', 'userSpaceOnUse');
       c.setAttribute('x', (b.x - m).toFixed(1)); c.setAttribute('y', (b.y - m).toFixed(1));
       c.setAttribute('width', (b.width + 2 * m).toFixed(1)); c.setAttribute('height', (b.height + 2 * m).toFixed(1));
       // a big place gets a wider glow, or it's lost along its long edges
-      if (Math.max(b.width, b.height) > 300) { const bl = c.querySelector('feGaussianBlur'); if (bl) bl.setAttribute('stdDeviation', '6.5'); c.setAttribute('x', (b.x - 30).toFixed(1)); c.setAttribute('y', (b.y - 30).toFixed(1)); c.setAttribute('width', (b.width + 60).toFixed(1)); c.setAttribute('height', (b.height + 60).toFixed(1)); }
+      if (Math.max(b.width, b.height) > 300) { const bl = c.querySelector('feGaussianBlur'); if (bl) bl.setAttribute('stdDeviation', '9'); c.setAttribute('x', (b.x - 46).toFixed(1)); c.setAttribute('y', (b.y - 46).toFixed(1)); c.setAttribute('width', (b.width + 92).toFixed(1)); c.setAttribute('height', (b.height + 92).toFixed(1)); }
       defs.appendChild(c);
       url = `url(#${c.id})`;
     }
@@ -204,8 +204,8 @@
     if (lit) {
       if (halos[lit]) { halos[lit].remove(); halos[lit]._lite.remove(); }
       const h = hotOf(lit); if (h) $$(LIVE[lit] || '.tw-none', h).forEach((n) => { n.style.filter = ''; });
+      if (lit === 'adt') stickers.forEach((n) => { n.style.filter = ''; });
     }
-    if (lit === 'adt') stickers.forEach((n) => { n.style.filter = ''; });
     lit = id;
     if (id === 'adt') stickers.forEach((n) => { n.style.filter = fitted(n, 'twGlow-adt'); });
     const h = id && hotOf(id);
@@ -307,7 +307,7 @@
   // script.js asks for it when the theme changes
   window.__twBar = () => { if (!barOn) return null; barSet = ''; requestAnimationFrame(paintBar); return barColour(); };
   let explored = false, actorFrame = 0, lastT = 0, visible = true;
-  let showRover = false, showRobot = false, showLift = false;
+  let showRover = false, showRobot = false, showLift = false, showCctv = false;
   const syncActors = () => {
     const inView = (left, right) => left < vb[0] + vb[2] + 90 && right > vb[0] - 90;
     showRover = inView(bots.rfa.box[0], bots.rfa.box[1]);
@@ -316,7 +316,8 @@
     const liftInView = inView(bayX, bayX + bayWidth);
     if (showLift !== liftInView) svg.classList.toggle('tw-bay-visible', liftInView);
     showLift = liftInView;
-    if (!actorFrame && visible && !reduced && (showRover || showRobot || showLift)) {
+    showCctv = inView(1180, 1360);
+    if (!actorFrame && visible && !reduced && (showRover || showRobot || showLift || showCctv)) {
       lastT = 0;
       actorFrame = requestAnimationFrame(tickActors);
     }
@@ -745,6 +746,30 @@
   const head = $('.tw-cctv-head', svg), dish = $('.tw-dish', svg), eyes = $$('.tw-follow', svg);
   const toSVG = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(cam.getScreenCTM().inverse()); };
   let ptr = null;
+  /* The security camera sweeps the lot. When the pointer is near it turns to
+     follow; when the pointer goes, it eases back into its sweep from wherever
+     it was looking (joining the sweep at the nearest point, so it never jumps). */
+  const CCTV_REST = -104, CCTV_SWING = 22, CCTV_PERIOD = 7;
+  let cctvA = CCTV_REST, cctvAim = null, cctvPhase = 0, cctvFrom = CCTV_REST, cctvBack = 1;
+  const cctv = (dt) => {
+    if (!head || zooming()) return;
+    if (cctvAim !== null) {
+      cctvA += (cctvAim - cctvA) * (1 - Math.exp(-dt * 9));
+      cctvBack = 0; cctvFrom = cctvA;
+    } else {
+      if (cctvBack === 0) {
+        // start the sweep where the camera is already pointing, headed back to the middle
+        const u = clamp((cctvA - CCTV_REST) / CCTV_SWING, -1, 1);
+        cctvPhase = u > 0 ? Math.PI - Math.asin(u) : Math.asin(u);
+      }
+      cctvPhase += dt * 2 * Math.PI / CCTV_PERIOD;
+      const sweep = CCTV_REST + CCTV_SWING * Math.sin(cctvPhase);
+      cctvBack = Math.min(1, cctvBack + dt / 1.2);
+      const k = cctvBack * cctvBack * (3 - 2 * cctvBack);
+      cctvA = cctvFrom + (sweep - cctvFrom) * k;
+    }
+    head.style.transform = `rotate(${cctvA.toFixed(2)}deg)`;
+  };
   // A robot comes over when the pointer is near its patch, stops short of
   // it, and otherwise ambles about inside the patch.
   const steer = (b, dt, now) => {
@@ -774,7 +799,7 @@
   // The robots and alignment lift only repaint while that part of the block is in view.
   function tickActors(now) {
     actorFrame = 0;
-    if (!visible || !(showRover || showRobot || showLift)) return;
+    if (!visible || !(showRover || showRobot || showLift || showCctv)) return;
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
     if (dt > 0 && showRover && (!cur || bots.rfa.scared)) {
       if (!bots.rfa.dead) steer(bots.rfa, dt, now);
@@ -787,6 +812,7 @@
     }
     if (dt > 0 && showLift) lift(now);
     if (dt > 0 && showRobot) tintBeam(dt);
+    if (dt > 0 && showCctv) cctv(dt);
     actorFrame = requestAnimationFrame(tickActors);
   }
 
@@ -815,8 +841,12 @@
         // sign; it turns only as far as its mount allows.
         let a = Math.atan2(350 - p.y, 1268 - p.x) * 180 / Math.PI;
         if (a > 90) a -= 360;
-        head.style.transform = `rotate(${clamp(a, -160, -30).toFixed(1)}deg)`;
-      } else if (head) head.style.transform = '';
+        cctvAim = clamp(a, -160, -30);
+        if (reduced) head.style.transform = `rotate(${cctvAim.toFixed(1)}deg)`;
+      } else {
+        cctvAim = null;
+        if (reduced && head) head.style.transform = `rotate(${CCTV_REST}deg)`;
+      }
       // (the rover is drawn flipped when it faces left, so its eyes' x is too)
       const fx = bots.rfa.face < 0 ? -1 : 1;
       if (showRover) eyes.forEach((el) => {
@@ -828,7 +858,8 @@
   stage.addEventListener('pointerleave', () => {
     ptr = null;
     tw.classList.remove('sky', 'near', 'dishon');
-    if (head) head.style.transform = '';
+    cctvAim = null;
+    if (reduced && head) head.style.transform = `rotate(${CCTV_REST}deg)`;
     if (dish) dish.style.transform = '';
     eyes.forEach((el) => { el.style.transform = ''; });
     if (!cur) { clearTimeout(offT); over = null; glow(null); hideLabel(); }
@@ -844,12 +875,23 @@
   };
   window.addEventListener('wheel', blockIntroScroll, { passive: false, capture: true });
   window.addEventListener('touchmove', blockIntroScroll, { passive: false, capture: true });
+  /* A swipe keeps the direction it started in: once two fingers move the
+     street sideways, moving them up and down without lifting does nothing,
+     until the trackpad has been still for a moment (its coasting counts as
+     the same swipe). Sideways gets a little more travel, since a sideways
+     swipe is shorter than an up-and-down one. */
+  let wheelAxis = null, wheelLast = -1e9;
+  const SIDE_GAIN = 1.35, SWIPE_GAP = 700;
   stage.addEventListener('wheel', (e) => {
     if (intro || cur || e.ctrlKey || e.target.closest('.tw-wayfinding') || document.documentElement.classList.contains('is-loading')) return;
     const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
-    const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * k;
-    if (!d || zooming() && !intro) return;
+    const ax = Math.abs(e.deltaX), ay = Math.abs(e.deltaY);
+    if (!ax && !ay || zooming()) return;
     e.preventDefault();
+    if (!wheelAxis || e.timeStamp - wheelLast > SWIPE_GAP) wheelAxis = ax > ay ? 'x' : 'y';
+    wheelLast = e.timeStamp;
+    const d = wheelAxis === 'x' ? e.deltaX * k * SIDE_GAIN : e.deltaY * k;
+    if (!d) return;
     explored = true;
     glideBy(d / scale);
   }, { passive: false });
