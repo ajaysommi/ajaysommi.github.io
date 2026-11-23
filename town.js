@@ -617,16 +617,115 @@
     if (caption) { const note = document.createElement('p'); note.textContent = caption; lb.appendChild(note); lb.classList.add('captioned'); }
     document.body.appendChild(lb);
   };
+  let keepsake = null;
+  const photos = {
+    baby: [
+      ['camry-family.webp', 'Our green Camry, parked outside a motel.', 'This was our ’96 Camry. The old key and plate hang above its spot in the garage.'],
+      ['baby-photo.webp', 'Me as a baby in the plaid car seat.', 'I was only a few months old when my family brought me home in that plaid seat.'],
+    ],
+    trike: [['trike-photo.webp', 'Me as a child with the red and blue tricycle.']],
+  };
+  const pointOf = (item) => {
+    const [x, y] = item.dataset.anchor.split(' ').map(Number);
+    return new DOMPoint(x, y).matrixTransform(svg.getScreenCTM().inverse().multiply(item.getScreenCTM()));
+  };
+  const keepsakeFrame = () => {
+    const { item, card } = keepsake, p = pointOf(item);
+    const w = Math.min(vw, Math.max(205, 225 * vw / 900)), h = w * vh / vw;
+    const free = (stage.clientWidth - card.offsetWidth - 36) / stage.clientWidth;
+    return [p.x - w * free * .49, p.y - h * .53, w, h];
+  };
+  const closeKeepsake = (restoreFocus = false, returnView = true) => {
+    if (!keepsake) return;
+    const { item, card, line } = keepsake;
+    keepsake = null;
+    item.classList.remove('memory-open');
+    item.setAttribute('aria-expanded', 'false');
+    card.remove(); line.remove();
+    tw.classList.remove('memory-view', 'memory-settled');
+    if (returnView) tween(view(), 500);
+    else {
+      cancelAnimationFrame(anim);
+      zoomUntil = 0;
+      svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
+    }
+    if (restoreFocus) item.focus({ preventScroll: true });
+  };
+  const openKeepsake = (item) => {
+    if (keepsake?.item === item) { closeKeepsake(true); return; }
+    if (cur === 'adt') return;
+    if (cur) close();
+    closeKeepsake(false, false);
+    cancelAnimationFrame(glide); glideStop();
+    hideLabel(); glow(null); over = null;
+    const entries = photos[item.dataset.memory];
+    const card = document.createElement('aside');
+    card.className = 'tw-memory-card';
+    card.setAttribute('aria-label', entries.length > 1 ? 'Family Camry photos' : 'Tricycle photo');
+    card.innerHTML = `<button class="tw-memory-close" type="button" aria-label="Close photo">×</button>
+      ${entries.length > 1 ? '<h3>Our ’96 Camry</h3>' : ''}
+      <img alt=""><p hidden></p><div class="tw-memory-pages" hidden></div>`;
+    const pic = $('img', card), caption = $('p', card), pages = $('.tw-memory-pages', card);
+    const selectPhoto = (index) => {
+      const [file, alt, note] = entries[index];
+      pic.src = 'assets/images/town/' + file;
+      pic.alt = alt;
+      caption.hidden = !note; caption.textContent = note || '';
+      [...pages.children].forEach((b, i) => b.setAttribute('aria-pressed', String(i === index)));
+    };
+    if (entries.length > 1) {
+      pages.hidden = false;
+      ['The Camry', 'Coming home'].forEach((name, i) => {
+        const button = document.createElement('button');
+        button.type = 'button'; button.textContent = name;
+        button.addEventListener('click', () => selectPhoto(i));
+        pages.appendChild(button);
+      });
+    }
+    selectPhoto(0);
+    const line = NSel('svg', { class: 'tw-memory-line', 'aria-hidden': 'true' });
+    const path = NSel('path', {}), dot = NSel('circle', { r: '5' });
+    line.append(path, dot);
+    stage.append(line, card);
+    const state = keepsake = { item, card, line, path, dot };
+    item.classList.add('memory-open');
+    item.setAttribute('aria-expanded', 'true');
+    tw.classList.add('memory-view');
+    const x = $('.tw-memory-close', card);
+    x.addEventListener('click', () => closeKeepsake(true));
+    tween(keepsakeFrame(), 670);
+    const follow = () => {
+      if (keepsake !== state) return;
+      const {left, top} = stage.getBoundingClientRect();
+      const b = card.getBoundingClientRect();
+      const [ax, ay] = item.dataset.anchor.split(' ').map(Number);
+      const p = new DOMPoint(ax, ay).matrixTransform(item.getScreenCTM());
+      const x0 = p.x - left, y0 = p.y - top, x1 = b.left - left;
+      const y1 = clamp(y0 + 14, b.top - top + 20, b.bottom - top - 20);
+      const elbow = x0 + (x1 - x0) * .62;
+      path.setAttribute('d', `M${x0} ${y0} H${elbow} L${elbow + 14} ${y1} H${x1}`);
+      dot.setAttribute('cx', x0); dot.setAttribute('cy', y0);
+      if (zooming()) requestAnimationFrame(follow);
+      else if (!tw.classList.contains('memory-settled')) {
+        tw.classList.add('memory-settled');
+        x.focus({ preventScroll: true });
+      }
+    };
+    tw.classList.remove('memory-settled');
+    state.follow = follow;
+    requestAnimationFrame(follow);
+  };
   $$('[data-memory]', svg).forEach((item) => {
     const rim = item.querySelector('.tw-keepsake-rim');
+    item.setAttribute('aria-expanded', 'false');
     rim.setAttribute('filter', fitted(rim, item.dataset.memory === 'trike' ? 'twHalo-toyota' : 'twHalo-vc'));
     item.addEventListener('pointerenter', () => item.classList.add('memory-hover'));
     item.addEventListener('pointerleave', () => item.classList.remove('memory-hover'));
     const show = (e) => {
       e.stopPropagation();
       if (dragged && e.type === 'click') return;
-      const baby = item.dataset.memory === 'baby';
-      lightbox('assets/images/town/' + (baby ? 'baby-photo' : 'trike-photo') + '.webp', baby ? 'I was only a few months old. My family brought me home in that little plaid seat, in our green ’96 Camry.' : '');
+      if (intro) return;
+      openKeepsake(item);
     };
     item.addEventListener('click', show);
     item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(e); } });
@@ -634,6 +733,7 @@
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
+    closeKeepsake(false, false);
     if (r.special) { timeTravel(); return; }
     const wasOpen = !!cur;
     cur = id;
@@ -672,11 +772,13 @@
   // again plays with it (see the damage, below).
   hots.forEach((h) => h.addEventListener('click', (e) => {
     e.stopPropagation(); if (dragged) return;
+    if (cur === 'adt') return;
+    if (keepsake) { closeKeepsake(); return; }
     // the open place itself takes the hit; ADT's bushes just step back out
     if (cur === h.dataset.id) { if (e.target.closest('.tw-adtbush')) close(); else poke(h.dataset.id, e); }
     // ADT's and Hunter's stops sit on the dealership: clicking off them goes
     // back out, not into the dealership
-    else if (cur === 'adt' || cur === 'hunter') close();
+    else if (cur === 'hunter') close();
     else open(h.dataset.id);
   }));
   stickers.forEach((n) => {
@@ -690,9 +792,14 @@
   $('.tw-x', panel).addEventListener('click', close);
   prevB.addEventListener('click', () => open(prevB.dataset.id));
   nextB.addEventListener('click', () => open(nextB.dataset.id));
-  svg.addEventListener('click', () => { if (!dragged) close(); });
+  svg.addEventListener('click', () => { if (!dragged) { if (keepsake) closeKeepsake(); else if (cur !== 'adt') close(); } });
   document.addEventListener('keydown', (e) => {
     if (!stage.clientWidth || e.target.closest('select, input, textarea, [role="menu"]')) return;
+    if (keepsake) {
+      if (e.key === 'Escape') closeKeepsake(true);
+      if (/^Arrow|^Page|^Home$|^End$/.test(e.key)) e.preventDefault();
+      return;
+    }
     if (e.key === 'Escape' && !cur) { const big = $('.tw-lightbox'); if (big) { big.remove(); return; } }
     if ((intro || zooming()) && /^Arrow|^Page|^Home$|^End$/.test(e.key)) { e.preventDefault(); return; }
     if (!cur) {
@@ -746,7 +853,7 @@
     }, 160);
   };
   const hoverTo = (id) => {
-    if (intro || document.documentElement.classList.contains('is-loading') || cur) return;
+    if (intro || document.documentElement.classList.contains('is-loading') || cur || keepsake) return;
     if (sliding) { pendingHover = id; return; }
     clearTimeout(offT);
     if (id) { if (id !== over) { over = id; glow(id); showLabel(id); } return; }
@@ -903,7 +1010,7 @@
   let wheelAxis = null, wheelLast = -1e9;
   const SIDE_GAIN = 1.35, SWIPE_GAP = 700;
   stage.addEventListener('wheel', (e) => {
-    if (intro || cur || e.ctrlKey || e.target.closest('.tw-wayfinding') || document.documentElement.classList.contains('is-loading')) return;
+    if (intro || cur || keepsake || e.ctrlKey || e.target.closest('.tw-wayfinding') || document.documentElement.classList.contains('is-loading')) return;
     const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
     const ax = Math.abs(e.deltaX), ay = Math.abs(e.deltaY);
     if (!ax && !ay || zooming()) return;
@@ -926,7 +1033,7 @@
   svg.addEventListener('pointerdown', (e) => {
     if (!e.isPrimary || e.button !== 0 || drag) return;
     dragged = false;
-    if (intro || cur || zooming()) return;
+    if (intro || cur || keepsake || zooming()) return;
     cancelAnimationFrame(glide); glideStop();
     drag = { startX: e.clientX, lastX: e.clientX, cam: camX, id: e.pointerId, time: e.timeStamp, speed: 0 };
   });
@@ -955,17 +1062,17 @@
   addEventListener('pointerup', endDrag);
   addEventListener('pointercancel', endDrag);
   svg.addEventListener('lostpointercapture', endDrag);
-  panL.addEventListener('click', () => { if (!zooming()) panTo(camX - vw * 0.6); });
-  panR.addEventListener('click', () => { if (!zooming()) panTo(camX + vw * 0.6); });
+  panL.addEventListener('click', () => { if (!keepsake && !zooming()) panTo(camX - vw * 0.6); });
+  panR.addEventListener('click', () => { if (!keepsake && !zooming()) panTo(camX + vw * 0.6); });
   const themeB = $('.tw-theme', tw);
   if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
 
   if (reduced) { arrived = true; tw.classList.add('arrive', 'parked'); }
-  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
+  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (keepsake) { cancelAnimationFrame(anim); zoomUntil = 0; svg.classList.remove('tw-moving', 'tw-zooming'); setVB(keepsakeFrame()); keepsake.follow(); } else if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
   /* ---------------------------------------------------------- the compact bar */
   // Home (and the logo) slide back to the visitor center; the weather and
   // the menu open small lists under the bar.
-  const goHome = () => { if (cur) { camX = homeX(); close(); } else panTo(homeX(), 1100); };
+  const goHome = () => { closeKeepsake(false, false); if (cur) { camX = homeX(); close(); } else panTo(homeX(), 1100); };
   const brand = document.querySelector('header.nav .brand');
   if (brand) brand.addEventListener('click', (e) => { if (!matchMedia('(min-width: 720px)').matches) return; e.preventDefault(); goHome(); });
   const pops = [['twWx', 'twWxPop'], ['twMenu', 'twMenuPop']].map(([b, p]) => [document.getElementById(b), document.getElementById(p)]).filter(([b, p]) => b && p);
@@ -1312,7 +1419,7 @@
     save();
   };
   [...hwins, hdoor].forEach((el) => el && el.addEventListener('click', (e) => {
-    if (dragged || (cur && !HOME_STOPS.has(cur))) return;
+    if (dragged || keepsake || (cur && !HOME_STOPS.has(cur))) return;
     e.stopPropagation();
     pokeHouse(el, e);
   }));
@@ -1399,6 +1506,7 @@
   }
 
   function poke(id, e) {
+    if (cur === 'adt' || id === 'adt' || keepsake) return;
     if (id === 'p-civic') pokeCivic(e);
     else if (id === 'p-macbook') { if (dmg.mac >= 2) return; dmg.mac++; drawMac(); save(); }
     else if (id === 'toyota') pokeShowroom(e);

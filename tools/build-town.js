@@ -273,10 +273,26 @@ const PROJ = {
       <rect x="3411" y="440" width="54" height="3.4" rx="1" class="tw-sill"/>
     </g>`),
   // A filing cabinet in the garage, folders sticking up out of the top drawer.
-  'p-wadfs': () => hot('p-wadfs', `<g>
-      ${['#7c3aed', '#f59e0b', '#22c55e', '#3b82f6', '#ef4444'].map((c, k) => `<rect x="${3570.4 + k * 3.8}" y="${428.4 - (k % 2) * 1.6}" width="3.4" height="6" rx=".6" fill="${c}" class="tw-folder"/>`).join('')}
-      <rect x="3567" y="432" width="24" height="54" rx="1.6" class="tw-cab"/>
-      ${[0, 1, 2, 3].map((k) => `<rect x="3569" y="${434.4 + k * 12.6}" width="20" height="11" rx=".8" class="tw-drawer"/><rect x="3575.4" y="${436.2 + k * 12.6}" width="7.2" height="3.4" rx=".4" class="tw-drlabel"/><text x="3579" y="${438.9 + k * 12.6}" class="tw-drlabel-t" text-anchor="middle">${['WAD', 'DIR', 'LUMP', 'FUSE'][k]}</text><path d="M3576 ${442 + k * 12.6} h6" class="tw-drhandle"/>`).join('')}
+  'p-wadfs': () => hot('p-wadfs', `<g transform="translate(3567 432)">
+      <path d="m.3.65 2.1-2.3h20.1l1.55 2.05-.7 2.2H.6Z" fill="#595d5e" stroke="#444847" stroke-width=".6"/>
+      ${['#8a779f', '#c29b60', '#85a38a', '#8199ac', '#af7968'].map((c, k) => `<g transform="translate(${2.4 + k * 3.85} ${-3.5 - (k % 2) * 1.35}) rotate(${k - 2} 2 4)">
+        <path d="M0 1.05V.2h1.65L2-.48h1.7l.35 1.2v3.56h-4Z" fill="${c}" stroke="#625c50" stroke-width=".32"/>
+        <path d="M.55.56h1.12l.38-.41h1.12" fill="none" stroke="#e1d3b8" stroke-width=".34"/>
+      </g>`).join('')}
+      <rect x=".35" y=".45" width="23.4" height="53.35" rx="1.25" class="tw-cab"/>
+      <path d="M1.05 1.5q9.5-.7 21.3-.28m-21 50.25V2.3" fill="none" stroke="#cdcec3" stroke-width=".49"/>
+      <path d="M22.2 1.55h1.1v51.27l-1.18.33Z" fill="#59605f" opacity=".76"/>
+      ${['WAD', 'DIR', 'LUMP', 'FUSE'].map((name, k) => `<g transform="translate(1.82 ${2.55 + k * 12.4})">
+        <rect x=".2" y=".55" width="19.65" height="11.35" rx=".88" fill="#5e6464"/>
+        <rect width="19.55" height="10.95" rx=".77" class="tw-drawer"/>
+        <path d="M.8 9.95V.85h17.9" stroke="#d3d3c7" stroke-width=".36" fill="none"/>
+        <rect x="5.65" y="1.45" width="8.2" height="4.05" rx=".48" fill="#737875"/>
+        <rect x="6.22" y="1.91" width="7.1" height="3.02" rx=".18" class="tw-drlabel"/>
+        <text x="9.75" y="4.27" class="tw-drlabel-t" text-anchor="middle">${name}</text>
+        <path d="M6.5 7.55q.25-.55.85-.55h4.85q.63 0 .85.55l-.12 1.4h-1v-.69H7.7v.69H6.62Z" fill="#535a59"/>
+        <path d="M7.17 7.48h5.16" stroke="#c7c7b7" stroke-width=".42"/>
+      </g>`).join('')}
+      <path d="M1.15 52.3h21.3m-19.6 1.4h2.2m14.4 0h2.2" stroke="#464c48" stroke-width=".7" fill="none"/>
     </g>`),
   // A crash test dummy taking a break against a stack of tires, its chart
   // on a stand beside it.
@@ -554,7 +570,6 @@ const home = () => `
     ${PROJ['p-avl']()}
     ${PROJ['p-gatorgoods']()}
     ${PROJ['p-sommiscript']()}
-    <g data-memory="trike" transform="translate(0 -5)" role="button" tabindex="0" aria-label="Open tricycle photo"><ellipse cx="3832.5" cy="549.5" rx="14.7" ry="2" fill="url(#twParkedShadow)" opacity=".75"/><g class="tw-keepsake-rim" aria-hidden="true"><image href="assets/images/town/memory-trike.webp" x="3817" y="526" width="31" height="24"/></g><image href="assets/images/town/memory-trike.webp" x="3817" y="526" width="31" height="24"/></g>
     ${mailbox()}`;
 // The mailbox at the curb by the drive: letters from people I've worked with
 // (their LinkedIn recommendations). Its flag is up until it has been opened.
@@ -575,72 +590,109 @@ const mailbox = () => hot('recs', `<g class="tw-mailbox" transform="translate(37
         <path d="M1-14h4.8" class="tw-mb-shine"/>
       </g><circle r="1.25" class="tw-mb-handle tw-mb-ol"/></g>
     </g>`);
+// Local coordinates follow the original Camry sprite (66 × 44). The tire
+// contact line is y=41, shared by the chocks and the driveway threshold.
+const storedCamry = () => {
+  const body = '<image href="assets/images/town/memory-camry.webp" width="66" height="44"/>';
+  const cover = '<image href="assets/images/town/camry-cover.svg" width="66" height="44"/>';
+  // Trim the original cutout's translucent backdrop, including from its hover silhouette.
+  const seat = '<g transform="translate(6 1.14) scale(.15625)"><image href="assets/images/town/memory-seat.webp" width="160" height="107" clip-path="url(#twCarrierEdge)"/></g>';
+  const chock = (x) => `<g transform="translate(${x} 41)" stroke-linejoin="round">
+      <path d="m-3.4.72.9-2.15 3.32-.44 2.65 1.95-.34.88-5.94.43Z" fill="#a3855d" stroke="#514936" stroke-width=".42"/>
+      <path d="m-2.43-1.44 3.25-.39 2.49 1.9-3.18.22Z" fill="#baa07a"/>
+      <path d="m-2.7.45 2.16-.17m.87-.93 1.75-.1m-2.7-.7 1.65-.12" stroke="#6e5c44" stroke-width=".31" fill="none"/>
+    </g>`;
+  return `<g data-memory="baby" data-anchor="33 21" role="button" tabindex="0" aria-label="Open family Camry photo" transform="translate(3692 486) scale(.95) translate(-33 -41)">
+    <g class="tw-keepsake-rim" aria-hidden="true">${body}${cover}${seat}</g>
+    <g fill="url(#twParkedShadow)" pointer-events="none">
+      <ellipse cx="35.5" cy="40.1" rx="33" ry="4.5" opacity=".66"/>
+      <ellipse cx="33" cy="40.8" rx="27.5" ry="2.2"/>
+      <ellipse cx="11.1" cy="41.15" rx="5.15" ry="1.15"/><ellipse cx="54.7" cy="41.15" rx="5.15" ry="1.15"/>
+    </g>
+    <g filter="url(#twGarageBounce)">
+      ${body}
+      <!-- The plate is on the wall; just its backing and mounting holes are left. -->
+      <rect x="26.95" y="31.94" width="12.15" height="4.67" rx=".62" fill="#414d4b" stroke="#283332" stroke-width=".38"/>
+      <path d="M28.05 33.05h.27m9.12 0h.27m-9.66 2.63h.27m9.12 0h.27" stroke="#202827" stroke-width=".62" stroke-linecap="round"/>
+      <path d="M28.2 32.65h.3m9 0h.3" stroke="#aaa68c" stroke-width=".28"/>
+      ${cover}
+      <ellipse cx="19.1" cy="16.9" rx="8.35" ry="1.3" fill="url(#twParkedShadow)"/>
+      ${seat}
+      ${chock(11)}${chock(54.8)}
+    </g>
+  </g>`;
+};
+
+// Door casing and jambs sit in front of the bay. The steel rails, stop bead
+// and rolled bottom seal give the opening thickness without adding a floor.
+const garageCasing = () => `<g transform="translate(3566 400)" class="tw-garage-casing" pointer-events="none" aria-hidden="true" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M-3.1-4.4h184.2v90.2h-3.4V2.9H.3v82.9h-3.4Z" fill="var(--casing)" stroke="#645e52" stroke-width=".74"/>
+    <path d="M-2.5 85.4V-3.5l2.8 2.8m180.2 85.9V-3.5l-2.9 2.8" fill="none" stroke="#ece2ca" stroke-width=".6" opacity=".63"/>
+    <path d="M.4 3.1h2.15v82.5H.4zm175.1 0h2.15v82.5h-2.15z" fill="#575950"/>
+    <path d="M1.55 4.4v79m175-79v79" stroke="#b4b1a2" stroke-width=".43"/>
+    <path d="M.2 2.7h177.6v6.2H.2z" fill="url(#twPorchShade)"/>
+    <path d="M-3.5-4.25q92.5-.55 185-.05v6.55q-91.5.36-185 .04Z" fill="var(--enamel)" stroke="#4c4e49" stroke-width=".9"/>
+    <path d="M-3.65-4.65h185.3l.45 1.05-186.2.1Z" fill="var(--cap)" stroke="#62645b" stroke-width=".47"/>
+    <path d="M-3.2 2.22h184.4v1.62L-3.2 4Z" fill="#424641"/>
+    ${[0, 1, 2, 3, 4].map(i => `<g transform="translate(${.9 + i * 35.55} -2.7)">
+      <path d="M.1 0h33l-.55 3.55H.62Z" fill="#5d615a" opacity=".31"/>
+      <path d="M.95.57h31.4l-.27 2.27H1.27Z" fill="var(--enamel)"/>
+      <path d="M1.3 2.95h30.65" stroke="var(--cap)" stroke-width=".4"/>
+    </g>`).join('')}
+    <path d="M85.15 1.6h7.7l-.35 1.02h-7.05Z" fill="#6b6c62" stroke="#52544b" stroke-width=".36"/>
+    ${[1.5, 176.5].map(x => `<g transform="translate(${x} 0)" fill="#898d80" stroke="#4e534d" stroke-width=".35">
+      <rect x="-.8" y="15" width="1.6" height="3" rx=".35"/><rect x="-.8" y="63.8" width="1.6" height="3" rx=".35"/>
+    </g>`).join('')}
+    <!-- A small enamel gooseneck lamp beside the door. -->
+    <g transform="translate(192.5 18)">
+      <ellipse cx="1" cy="3.8" rx="10.8" ry="12.4" fill="url(#twVcLight)" class="tw-night"/>
+      <path d="M.95.05q2.3 0 2.1 2.65-.15 2.1-2.17 2-2.08-.1-2.08-2.32T.95.05Z" fill="#686555" opacity=".4"/>
+      <ellipse cy=".4" rx="1.8" ry="2.15" fill="#575e53" stroke="#494b43" stroke-width=".5"/>
+      <path d="M-.2.12q-.42-4.43-3.05-3.92-1.75.38-1.45 2.95" fill="none" stroke="#454c43" stroke-width="1.1"/>
+      <path d="M-8.7 3q.43-1.36 1.55-1.84l1.43-1.32.1-1.14h1.61l.22 1.12 1.67 1.3Q-.8 1.6-.45 3.05q-4.02 1.2-8.25-.05Z" fill="#69796a" stroke="#434e44" stroke-width=".55"/>
+      <ellipse cx="-4.6" cy="3.04" rx="3.6" ry=".64" fill="#bfb69c"/><path d="M-6 3.26q.07 2.21 1.38 2.25 1.13-.03 1.34-2.19Z" fill="var(--lamp-glass)" stroke="#9b937e" stroke-width=".34"/>
+      <path d="m-7.1 1.75 2.06-1.33m2.22-1.58q1.08.95 1.02 1.8" stroke="#b3b9a2" stroke-width=".39" fill="none"/>
+    </g>
+  </g>`;
+
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);
   return `
     <rect x="3536" y="378" width="238" height="108" class="tw-house"/><path d="M3536 381 V486 H3774 V381" fill="none" class="tw-fo tw-nohit"/>
+    <rect x="3537" y="379" width="236" height="106" fill="url(#twSiding)" opacity=".48" pointer-events="none"/>
     <path d="M3534 379 L3655 330 L3776 379 Z" class="tw-house"/><path d="M3534 379 L3655 330 L3776 379 Z" fill="url(#twSiding)" class="tw-nohit"/>
     ${gableShadow(3536, 3655, 3774, 332, 52 / 123, 12, .78)}
-    <circle cx="3655" cy="358" r="7" class="tw-atticfr"/><circle cx="3655" cy="358" r="5.2" class="tw-vent"/><path d="M3650.4 355.4 h9.2 M3649.8 358 h10.4 M3650.4 360.6 h9.2" class="tw-ventl"/>
+    <g transform="translate(3655 358)" pointer-events="none" aria-hidden="true">
+      <ellipse cx=".5" cy="1.05" rx="7.6" ry="7.2" fill="#4d4233" opacity=".37"/>
+      <circle r="7.25" class="tw-atticfr"/><circle r="5.98" fill="#4b4e43"/>
+      ${[[-3.8, 3.8], [-1.7, 5.37], [.45, 5.48], [2.6, 4.55]].map(([y, w]) => `<path d="M${-w} ${y}q${w}-.23 ${2 * w} 0l-.6 1.05h-${2 * w - 1.2}Z" fill="#baa98a"/><path d="M${-w + .25} ${y}h${2 * w - .5}" stroke="#dbcaae" stroke-width=".33"/>`).join('')}
+      <path d="M-6.38-.45v.9m12.76-.9v.9" stroke="#958974" stroke-width=".4"/>
+    </g>
     <path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3778 384.6 Q3716 358 3655 332.6 Q3594 358 3532 384.6 Z" class="tw-roof"/><path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3778 384.6 Q3716 358 3655 332.6 Q3594 358 3532 384.6 Z" fill="url(#twShingles)" class="tw-nohit"/>
-    <rect x="3566" y="400" width="178" height="86" class="tw-gint"/>
-    <rect x="3566" y="400" width="178" height="86" fill="url(#twGarageLight)" class="tw-glight"/>
-    <rect x="3640" y="402" width="30" height="3" rx="1.5" class="tw-lamp"/>
-    <path d="M3568 409 Q3590 416 3612 409 Q3634 416 3656 409 Q3678 416 3700 409 Q3722 416 3742 409" class="tw-string"/>
-    ${[3576, 3590, 3604, 3620, 3634, 3648, 3664, 3678, 3692, 3708, 3722, 3736].map((x, k) => `<circle cx="${x}" cy="${(411.5 + Math.sin(k * 1.4) * 1.6).toFixed(1)}" r="1.5" class="tw-bulb2" style="--k:${k}"/>`).join('')}
-    <rect x="3566" y="400" width="178" height="86" fill="url(#twDrywall)" class="tw-nohit"/>
-    <g fill="url(#twPorchShade)" opacity=".7" pointer-events="none">
-      <rect x="3598" y="432" width="44" height="4"/><rect x="3598" y="454" width="44" height="4"/><rect x="3690" y="430" width="48" height="4"/>
+    <g fill="none" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" pointer-events="none">
+      <path d="M3778.8 384.85v1.35l-8.1 4.05v88.95l2.1 3.7" stroke="#635c50" opacity=".39" stroke-width="2.9"/>
+      <path d="M3778.1 384.5v1.15l-8.55 4.1v88.6l2.2 3.55" stroke="#9e9787" stroke-width="2.35"/>
+      <path d="M3777.55 384.65v.66l-8.6 4.08v89.1" stroke="#d8cdb8" stroke-width=".66"/>
+      <path d="M3768.1 408.1h2.8m-2.8 49.8h2.8" stroke="#776f60" stroke-width="1.13"/>
     </g>
-    <path d="M3598 432 H3642 M3598 454 H3642 M3690 430 H3738" class="tw-shelf"/>
-    <path d="M3602 432 l3 3 v-3 M3636 432 l-3 3 v-3 M3602 454 l3 3 v-3 M3636 454 l-3 3 v-3 M3694 430 l3 3 v-3 M3733 430 l-3 3 v-3" class="tw-bracket"/>
-    <rect x="3600" y="420" width="12" height="12" class="tw-box"/><path d="M3606 420 v12 M3600 425 h12" class="tw-tape"/><rect x="3602" y="426.5" width="5" height="2.4" class="tw-boxlabel"/>
-    <rect x="3616" y="424" width="16" height="8" class="tw-box"/><path d="M3624 424 v8" class="tw-tape"/>
-    <g class="tw-cans">${[[3609, '#3b6fd8'], [3616, '#f2b705'], [3623, '#e8e4da']].map(([x, c]) => `<rect x="${x}" y="447" width="5.6" height="7" rx=".8" fill="${c}"/><rect x="${x - .3}" y="446.2" width="6.2" height="1.4" rx=".6" class="tw-canlid"/><path d="M${x + .6} 450 h4.4" class="tw-canband"/>`).join('')}</g>
-    <rect x="3631" y="448" width="9" height="6" rx="1" class="tw-toolbox"/><path d="M3633 448 v-1.4 h5 v1.4 M3631 450.6 h9" class="tw-toolbox-l"/>
-    <!-- a framed print on the wall: the iPhone 4S, taken apart -->
-    <g class="tw-nohit tw-print"><rect x="3653" y="413" width="15" height="11.25" rx=".5" class="tw-pr-frame"/><rect x="3654.1" y="414.1" width="12.8" height="9.05" class="tw-pr-mat"/>
-      <rect x="3655.2" y="415.6" width="2.6" height="5" rx=".5" class="tw-pr-ph"/><rect x="3658.6" y="415.6" width="2.6" height="5" rx=".5" class="tw-pr-ph2"/><rect x="3662.2" y="415.6" width="2.6" height="5" rx=".5" class="tw-pr-ph"/>
-      <rect x="3655.6" y="416.4" width="1.8" height="3.2" class="tw-pr-scr"/><rect x="3658.9" y="416" width="2" height="1" fill="#d8a531"/><rect x="3659.2" y="417.6" width="1.4" height="1.6" fill="#7d838c"/>
-      <circle cx="3665.6" cy="416.4" r=".35" fill="#c9ccd2"/><rect x="3665.2" y="417.4" width="1" height="2.4" fill="#2a2c32"/><rect x="3655.4" y="421.4" width="9.6" height=".5" fill="#c9ccd2"/></g>
-    <path d="M3660.5 413 l-2.6 -2.4 M3660.5 413 l2.6 -2.4" class="tw-printwire tw-nohit"/>
-    <!-- a rake and a shovel against the wall, a hose on its hook -->
-    <path d="M3671 486 L3664 432 M3678 486 L3681 438" class="tw-handle2"/><path d="M3659.4 431 h9.2 M3660 431 v3 M3662 431 v3 M3664 431 v3 M3666 431 v3 M3668 431 v3" class="tw-rake"/><path d="M3678.4 486 q-2.4 -1 -2 -6 l4.8 -1.4 q1.6 5 -.6 7.6 z" class="tw-shovel"/>
-    <circle cx="3688" cy="452" r="1" class="tw-hook"/><g class="tw-hose"><circle cx="3688" cy="458" r="5.4"/><circle cx="3688" cy="458" r="3.8"/><circle cx="3688" cy="458" r="2.4"/></g>
-    <rect x="3731" y="470" width="12" height="7" rx="1" class="tw-bin" style="--c:#3b6fd8"/><rect x="3730.4" y="469" width="13.2" height="1.8" rx=".6" class="tw-binlid"/><rect x="3731" y="478" width="12" height="8" rx="1" class="tw-bin" style="--c:#16a34a"/><rect x="3730.4" y="477" width="13.2" height="1.8" rx=".6" class="tw-binlid"/>
-    ${PROJ['p-wadfs']()}
-    <g class="tw-bike" transform="translate(-75 -9)"><circle cx="3700" cy="452" r="7"/><circle cx="3724" cy="452" r="7"/><path d="M3700 452 L3710 440 H3722 L3724 452 M3710 440 L3714 452 H3724 M3708 436 h5 M3721 437 l2 -3"/></g>
-    <rect x="3700" y="420" width="10" height="10" class="tw-box"/><rect x="3716" y="420" width="12" height="8" rx="1" class="tw-jar"/>
-    <rect x="3592" y="470" width="64" height="14" rx="3" class="tw-rug"/>
-    <g pointer-events="none" fill="none" stroke-linecap="round">
-      <!-- Turned wheel hubs, crossing spokes and a small crank on the hanging bicycle. -->
-      <g transform="translate(-75 -9)" stroke="#c1b7a3" stroke-width=".48">
-        ${[3700,3724].map(x => `<path d="M${x-6} 452h12m-6-6v12m-4.4-10.4 8.8 8.8m0-8.8-8.8 8.8"/><circle cx="${x}" cy="452" r="1.1" fill="#605c53"/>`).join('')}
-        <path d="m3714 452 2 2h2" stroke-width="1"/>
-      </g>
-      <path d="M3599 431.5h42m-42 22h42m50-24h45" stroke="#dcc49e" opacity=".62" stroke-width=".55"/>
-      <path d="M3704 421v8m-86-4h4m-18 3h2" stroke="#d9c098" stroke-width="1"/>
-      <path d="M3633 450v1.6m4-1.6v1.6" stroke="#dfc09b" stroke-width=".95"/>
-      <path d="M3735 472h4m-4 8h4" stroke="#d0cdc2" stroke-width="1.2"/>
-      <path d="M3717 421h9m-8 2v3" stroke="#d7ebe6" opacity=".65" stroke-width=".65"/>
-      <path d="M3594 473h60m-60 8h60" stroke="#e2ac82" opacity=".45" stroke-width=".7" stroke-dasharray="2 .9"/>
-      <path d="m3664.4 436 .6 4m15.7 0-.3 4" stroke="#c4b8a1" stroke-width="1.4"/>
-    </g>
-    <image href="assets/images/town/memory-sketch.webp" x="3729" y="422" width="10" height="8"/>
-    <g data-memory="baby" role="button" tabindex="0" aria-label="Open family Camry photo" transform="translate(3690 486) scale(.95) translate(-3690 -483)"><g class="tw-keepsake-rim" aria-hidden="true"><image href="assets/images/town/memory-camry.webp" x="3657" y="442" width="66" height="44"/><image href="assets/images/town/memory-seat.webp" x="3663" y="443" width="25" height="17"/></g><g fill="url(#twParkedShadow)"><ellipse cx="3693" cy="480.6" rx="34" ry="6" opacity=".66"/><ellipse cx="3690" cy="482.6" rx="28.5" ry="3.2"/><ellipse cx="3668" cy="483.2" rx="5" ry="1.5"/><ellipse cx="3712" cy="483.2" rx="5" ry="1.5"/></g><g filter="url(#twGarageBounce)"><image href="assets/images/town/memory-camry.webp" x="3657" y="442" width="66" height="44"/><path d="M3670 459 q12 -1.2 31 0" fill="none" stroke="#c3b295" stroke-width="1" opacity=".32"/><ellipse cx="3675" cy="458.6" rx="7.4" ry="1.45" fill="url(#twParkedShadow)"/><image href="assets/images/town/memory-seat.webp" x="3663" y="443" width="25" height="17"/></g></g>
-    <g pointer-events="none">
-      <rect x="3566" y="400" width="178" height="86" fill="url(#twBaySides)"/>
-      <rect x="3587" y="404" width="136" height="75" fill="url(#twBayLamp)"/>
-    </g>
-    <rect x="3562" y="396" width="186" height="8" rx="1" class="tw-gdoor"/><path d="M3562 398.6 H3748 M3562 401.4 H3748" class="tw-gdoor-l"/><rect x="3650" y="402" width="10" height="1.6" rx=".6" class="tw-gdoor-h"/>
     <path d="M3566 486 H3744 L3769 600 H3541 Z" class="tw-drive"/>
     <path d="M3566 486 H3744 L3769 600 H3541 Z" fill="url(#twConcrete)" class="tw-nohit"/>
     <path d="M3559.4 518 H3750.6 M3550 563 H3760 M3655 486 V600" class="tw-joint tw-nohit"/>
     <path d="M3700 566 l5 4 l1.4 6 l4 3.6 M3596 588 l6 -2 l3 3" class="tw-dcrack tw-nohit"/>
     <path d="M3614 534 L3606 600 M3700 534 L3708 600" class="tw-tracks tw-nohit"/>
     <ellipse cx="3610" cy="531.6" rx="11" ry="2" class="tw-oil tw-nohit"/><ellipse cx="3604" cy="534" rx="4.4" ry="1" class="tw-oil tw-nohit"/><ellipse cx="3676" cy="583" rx="6" ry="1.4" class="tw-oil tw-nohit"/>
+    <rect x="3566" y="400" width="178" height="86" class="tw-gint"/>
+    <rect x="3566" y="400" width="178" height="86" fill="url(#twGarageLight)" class="tw-glight"/>
+    <rect x="3566" y="400" width="178" height="86" fill="url(#twDrywall)" pointer-events="none"/>
+    <image href="assets/images/town/garage-workshop.svg" x="3566" y="400" width="178" height="86" pointer-events="none" aria-hidden="true"/>
+    <image href="assets/images/town/memory-sketch.webp" x="3725.4" y="417.8" width="10.5" height="8" transform="rotate(2 3731 426)" pointer-events="none"/>
+    ${PROJ['p-wadfs']()}
+    ${storedCamry()}
+    <rect x="3566" y="400" width="178" height="86" fill="url(#twBaySides)" pointer-events="none"/>
+    ${garageCasing()}
     ${home()}
     <g clip-path="url(#twGarBleed)"><path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3778 384.6 Q3716 358 3655 332.6 Q3594 358 3532 384.6 Z" class="tw-roof tw-nohit"/><path d="M3524 380 Q3590 352 3655 324.4 Q3720 352 3786 380 L3778 384.6 Q3716 358 3655 332.6 Q3594 358 3532 384.6 Z" fill="url(#twShingles)" class="tw-nohit"/></g>
+    <g data-memory="trike" data-anchor="3832 538" transform="translate(-105 22)" role="button" tabindex="0" aria-label="Open tricycle photo"><ellipse cx="3832.5" cy="549.5" rx="14.7" ry="2" fill="url(#twParkedShadow)" opacity=".75"/><g class="tw-keepsake-rim" aria-hidden="true"><image href="assets/images/town/memory-trike.webp" x="3817" y="526" width="31" height="24"/></g><image href="assets/images/town/memory-trike.webp" x="3817" y="526" width="31" height="24"/></g>
     <g class="tw-civtools tw-nohit" aria-hidden="true">
       ${[['oil', 3556, 535, 6, 12.6], ['acpro', 3562.6, 536.4, 9.2, 18.2], ['stand1', 3592, 557, 9.8, 14.2], ['stand2', 3605, 557, 9.6, 17.2], ['torque', 3620, 553, 19, 2.1], ['feeler', 3643, 552, 4.4, 2.6]].map(([n, x, b, w, h]) => `<ellipse cx="${(x + w / 2).toFixed(1)}" cy="${b}" rx="${(w * 0.48).toFixed(1)}" ry="${Math.max(0.5, Math.min(1.2, w * 0.08)).toFixed(2)}" class="tw-carshadow"/><image href="assets/images/town/tool-${n}.webp" x="${x}" y="${(b - h).toFixed(2)}" width="${w}" height="${h}" preserveAspectRatio="none"/>`).join('')}
       <ellipse cx="3585.2" cy="538.6" rx="11.6" ry="1.5" transform="rotate(-6.6 3585.2 538.6)" class="tw-carshadow"/><image href="assets/images/town/tool-jack.webp" x="3572.6" y="526.2" width="24" height="13.33" preserveAspectRatio="none"/>
@@ -944,7 +996,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <linearGradient id="twVcGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a1"/><stop offset=".6" stop-color="#f7b867"/><stop offset="1" stop-color="#e48f45"/></linearGradient>
     <radialGradient id="twVcLight"><stop offset="0" stop-color="#ffc977" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
     <linearGradient id="twPorchShade" x2="0" y2="1"><stop stop-color="#30241d" stop-opacity=".42"/><stop offset="1" stop-color="#30241d" stop-opacity="0"/></linearGradient><linearGradient id="twBaySides"><stop stop-color="#291e1a" stop-opacity=".48"/><stop offset=".16" stop-color="#291e1a" stop-opacity=".08"/><stop offset=".48" stop-color="#291e1a" stop-opacity="0"/><stop offset=".78" stop-color="#291e1a" stop-opacity=".09"/><stop offset="1" stop-color="#291e1a" stop-opacity=".42"/></linearGradient>
-    <radialGradient id="twBayLamp" cx=".5" cy="0" r=".72"><stop stop-color="#ffdfa0" stop-opacity=".27"/><stop offset="1" stop-color="#ffdfa0" stop-opacity="0"/></radialGradient>
+    <clipPath id="twCarrierEdge"><path d="M92 6.2c18.6-.4 32.6 8.1 38.3 25.1 1.35 4.1 2.15 8.8 1.2 12.2-.6 2.05-4.6 3.55-6.4 4.95-3.3 7.3-7 15.6-9.05 25.6-.65 4.5-1.5 7.1-5.2 10.5-3.2 3.2-3.75 8.85-7.5 13.4-1.65 1.99-3.25 2.6-6.8 2.62H52.1c-6.95.28-10.4-5.05-12.3-10.62l-2.6-6.05c-4.25-3.65-5.75-9.35-3.1-15.2 3.5-7.1 9.55-10.1 17.4-9.55l.52-2.06 10.75-2.03 2.7 1.57c3.5-5.25 5.45-9.35 8.3-14.65 1.4-3.07 1.05-6.65-.13-10.95C68.5 14.75 78.9 6.7 92 6.2Z"/></clipPath>
     <filter id="twGarageBounce" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".77" intercept=".075"/><feFuncG type="linear" slope=".75" intercept=".064"/><feFuncB type="linear" slope=".72" intercept=".050"/></feComponentTransfer></filter><radialGradient id="twParkedShadow"><stop stop-color="#241c18" stop-opacity=".76"/><stop offset=".52" stop-color="#30251f" stop-opacity=".48"/><stop offset="1" stop-color="#30251f" stop-opacity="0"/></radialGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
     <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
@@ -956,6 +1008,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <pattern id="twGrain" patternUnits="userSpaceOnUse" width="16.5" height="12"><path d="M2 0 q1.4 6 0 12 M8 0 q-1.2 4 .4 7 q1 3 -.2 5 M13 0 q1 5 -.6 12" fill="none" stroke="rgba(70,40,15,.16)" stroke-width=".5"/></pattern>
     <pattern id="twDrywall" patternUnits="userSpaceOnUse" width="24" height="86"><path d="M0 0 V86" stroke="rgba(0,0,0,.09)" stroke-width=".6"/></pattern>
     <linearGradient id="twBbShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0c18" stop-opacity=".42"/><stop offset=".45" stop-color="#0a0c18" stop-opacity=".14"/><stop offset=".8" stop-color="#0a0c18" stop-opacity="0"/></linearGradient>
+    <linearGradient id="twHunterConcrete" x2="0" y2="1"><stop stop-color="#374448"/><stop offset="1" stop-color="#566061"/></linearGradient>
     <linearGradient id="twServiceWallShadow" x1="905.2" x2="939" y1="0" y2="0" gradientUnits="userSpaceOnUse">
       <stop stop-color="#243044" stop-opacity=".25"/>
       <stop offset=".38" stop-color="#243044" stop-opacity=".11"/>
@@ -1159,7 +1212,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
 
       <path d="M560 218 Q732 198.6 904 218 V482 H560 Z" class="tw-facade tw-fo"/>
       <path d="M560 218 Q732 198.6 904 218 V482 H560 Z" fill="url(#twBulge)" class="tw-nohit"/>
-      <path d="M561.3 252.88 Q732 237.12 902.7 252.88 M561.3 288.9 Q732 275.7 902.7 288.9 M561.3 324.92 Q732 314.48 902.7 324.92 M646 212.1 V350 M732 209.6 V350 M818 212.1 V350" class="tw-grid"/>
+      <path d="M561.3 252.88 Q732 237.12 902.7 252.88 M561.3 288.9 Q732 275.7 902.7 288.9 M561.3 324.92 Q732 314.48 902.7 324.92 M561.3 362.2 Q605 358.7 651.8 357.1 M561.3 400.2 Q604 397.4 651.8 396.4 M561.3 438.1 Q603 436 651.8 435.6 M561.3 475.8 Q603 474.6 651.8 474.2 M646 212.1 V481 M732 209.6 V350 M818 212.1 V350" class="tw-grid"/>
       <image href="assets/logos/opt/toyota-mark.webp" x="584" y="230" width="112" height="80" preserveAspectRatio="xMidYMid meet" class="tw-tlogo tw-tmark"/><image href="assets/images/town/snow-tmark2.webp" x="584" y="226.92" width="112" height="83.08" preserveAspectRatio="xMidYMid meet" class="tw-snowimg"/>
       <text x="886" y="332.9" class="tw-sommi tw-textsnow" text-anchor="end">SOMMIVILLE</text><text x="886" y="334" class="tw-sommi" text-anchor="end">SOMMIVILLE</text>
       <rect x="652" y="350" width="244" height="132" class="tw-portal"/>
@@ -1182,14 +1235,14 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <path d="M905.2 337.4h227.6" stroke="#702c32" stroke-width="1.2" class="tw-nohit"/>
       <rect x="914" y="344" width="210" height="138" rx="3" class="tw-bay"/>
       <g class="tw-nohit">
-        <path d="M916 348h206v121H916z" fill="#46545a"/><path d="M916 348l17 12v96l-17 13zm206 0-16 12v96l16 13z" fill="#303c42"/>
+        <path d="M916 348h206v121H916z" fill="#46545a"/><path d="M916 348l17 12v96l-17 26zm206 0-16 12v96l16 26z" fill="#303c42"/>
         <path d="M933 360h173v96H933z" fill="#596365"/>
         <path d="M933 376h173m-173 15h173m-173 15h173m-173 15h173m-173 15h173m-173 15h173m-140-91v95m65-95v95m60-95v95" fill="none" stroke="#333f44" opacity=".57" stroke-width=".7"/>
-        <path d="M933 456h173l16 13H916z" fill="#3c4a50"/>
+        <path d="M933 456h173l16 26H916z" fill="url(#twHunterConcrete)"/>
         <path d="M928 354h182m-171 4h159" fill="none" stroke="#829494" stroke-width=".7"/>
         <path d="M947 358h38m33 0h39m23 0h17" stroke="#ffe4ab" stroke-width="1.8" stroke-linecap="round"/>
         <g transform="translate(1090 372)"><rect width="11" height="10" rx=".8" fill="#d8ceb8"/><path d="M2 3h7m-7 2h4m-4 2h5" stroke="#6f7770" stroke-width=".7"/></g>
-        <path d="M915.2 352v123m207.5-123v123" stroke="#aeb8b6" stroke-width="1.6"/>
+        <path d="M915.2 352v128m207.5-128v128" stroke="#aeb8b6" stroke-width="1.6"/>
       </g>
       <rect x="914" y="344" width="210" height="6" class="tw-baylight"/>
       <rect x="905.2" y="285.2" width="33.8" height="195.6" fill="url(#twServiceWallShadow)" class="tw-nohit"/>
@@ -1203,7 +1256,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g transform="translate(${OFF.hunter} 0)">
       <image href="assets/images/town/hawkeye.webp" x="916" y="370" width="75.4" height="112" preserveAspectRatio="xMidYMax meet"/>
       <g class="tw-hk-lcd" clip-path="url(#twHkScr)"><rect x="936" y="411.4" width="23" height="13.5" class="tw-tvlcd-bleed"/>${[[939, '#ff2bd6'], [942.6, '#29f0ff'], [950, '#3dff6e'], [955, '#fff']].map(([x, c]) => `<rect x="${x}" y="411.4" width=".6" height="13.5" fill="${c}" class="tw-tvlcd-bar"/>`).join('')}<g class="tw-hk-cr"></g></g>
-      <rect x="996" y="474" width="124" height="8" rx="2" class="tw-liftbase"/>
+      <ellipse cx="1057" cy="478.5" rx="65" ry="3.4" fill="url(#twParkedShadow)" opacity=".58"/><rect x="999" y="476" width="119" height="4.5" rx="1.4" class="tw-liftbase"/>
       <rect x="994" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/><rect x="1112" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/>
       <path class="tw-arm-b" d="M1004 474 L1110 466"/><path class="tw-arm-a" d="M1110 474 L1004 466"/>
       <circle class="tw-pivot" cx="1057" cy="470" r="3"/>

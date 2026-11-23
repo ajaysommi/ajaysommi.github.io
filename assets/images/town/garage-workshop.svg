@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="178" height="86" viewBox="0 0 178 86" stroke-linecap="round" stroke-linejoin="round">
+  <defs>
+    <linearGradient id="under" x2="0" y2="1">
+      <stop stop-color="#231c19" stop-opacity=".54"/><stop offset="1" stop-color="#231c19" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="wood" x2="0" y2="1">
+      <stop stop-color="#b39770"/><stop offset=".26" stop-color="#967651"/><stop offset="1" stop-color="#775e44"/>
+    </linearGradient>
+    <linearGradient id="metal" x2=".2" y2="1">
+      <stop stop-color="#cbc3af"/><stop offset=".48" stop-color="#a39f94"/><stop offset="1" stop-color="#666967"/>
+    </linearGradient>
+    <linearGradient id="glass">
+      <stop stop-color="#677b78"/><stop offset=".3" stop-color="#acbcb0"/><stop offset=".72" stop-color="#859c94"/><stop offset="1" stop-color="#617772"/>
+    </linearGradient>
+    <radialGradient id="pool" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="1" gradientTransform="translate(88 7) scale(77 67)">
+      <stop stop-color="#ffe3a8" stop-opacity=".28"/><stop offset=".57" stop-color="#f6d3a4" stop-opacity=".09"/><stop offset="1" stop-color="#f6d3a4" stop-opacity="0"/>
+    </radialGradient>
+    <g id="bulb">
+      <path d="M-.5 0v1.25h1V0" fill="#494337"/>
+      <path d="M-.55 1.1C-.6 1.8-1.12 2-1.1 2.72c.03 1.35 2.2 1.37 2.22.01C1.14 2 .55 1.72.54 1.1Z" fill="#efd296" stroke="#8b7553" stroke-width=".24"/>
+      <path d="M-.36 2q-.5.83.04 1.14" fill="none" stroke="#fff0bd" stroke-width=".33"/>
+    </g>
+    <g id="wheel">
+      <circle r="6.8" fill="none" stroke="#393932" stroke-width="1.65"/>
+      <circle r="6.22" fill="none" stroke="#c8bb9f" stroke-width=".52"/>
+      <path d="M-5.9 0h11.8M0-5.9V5.9M-4.2-4.2l8.4 8.4m0-8.4-8.4 8.4" stroke="#b9ae97" stroke-width=".31"/>
+      <circle r=".88" fill="#8f9188" stroke="#484a43" stroke-width=".35"/>
+    </g>
+    <g id="bracket" fill="none">
+      <path d="M0 .2v3.5L5 .2" stroke="#524635" stroke-width="1.25"/>
+      <path d="M.2 2.9 4 .45" stroke="#a18b66" stroke-width=".45"/>
+    </g>
+    <g id="paint-tin">
+      <ellipse cy=".1" rx="3.15" ry=".75" fill="#3c3b32" opacity=".36"/>
+      <path d="M-2.85-6.7q2.85-.75 5.7 0v5.9q-2.8 1.1-5.7 0Z" fill="currentColor" stroke="#584e3c" stroke-width=".42"/>
+      <path d="M-2.85-4q2.85.66 5.7 0v1.95q-2.9.67-5.7 0Z" fill="#dbd0af"/>
+      <path d="M-.95-3.05h1.9" stroke="#827963" stroke-width=".38"/>
+      <path d="M-2.6-5.4q-.45-4.3 2.6-4.2t2.6 4.1" stroke="#c0b5a0" stroke-width=".42" fill="none"/>
+      <ellipse cy="-6.75" rx="3.05" ry=".61" fill="url(#metal)" stroke="#5e5e53" stroke-width=".32"/>
+      <path d="M-2.3-.95q2.3.6 4.6 0" stroke="#c7b99a" fill="none" stroke-width=".35"/>
+    </g>
+    <g id="tote">
+      <path d="M.65 2.1H15.1l-.85 6.6q-.1.65-.9.65H2.4q-.78 0-.88-.68Z" fill="currentColor" stroke="#433f36" stroke-width=".55"/>
+      <path d="M.45 2.2 1.3.4 14.22.05l1.15 1.4-.15 1.08H.55Z" fill="#b6ac91" stroke="#696151" stroke-width=".48"/>
+      <path d="M1.1 1.65 14.8 1.4m-11 3.1.45 3.4m7.75-3.4-.4 3.4" fill="none" stroke="#e1d4b8" stroke-width=".42" opacity=".56"/>
+      <path d="M4.8 3.3h6l-.55 1.35H5.3z" fill="#454a41"/><path d="M5.7 3.65h4.2" stroke="#d3c5a6" stroke-width=".34"/>
+    </g>
+  </defs>
+
+  <!-- The opening returns into the building. The side faces stop at the threshold. -->
+  <path d="M0 0h178l-5.1 8H5.4z" fill="#393934"/>
+  <path d="m0 3.2 5.4 4.9v76L0 86zm178 0-5.1 4.9v76l5.1 1.9z" fill="#453e34"/>
+  <path d="M1.1 3.8 5.4 8h167.5l4.1-4.3" fill="none" stroke="#b4a186" stroke-width=".67"/>
+  <path d="M4.9 8.5h168.2v7.5H4.9z" fill="url(#under)"/>
+  <path d="M0 4h178v82H0z" fill="url(#pool)"/>
+  <path d="M2 4.2v79.6m174.2-79.6v79.6" stroke="#a89c83" stroke-width=".55" opacity=".6"/>
+  <path d="M14 8v16m.65-16v16m86-16v16.5m53-16.5v9.2m-53 12.8v21" stroke="#c2ac8a" stroke-width=".28" opacity=".3"/>
+  <path d="M0 4h178v5.2H0Z" fill="url(#under)"/>
+
+  <!-- Workshop light: a shallow enamel reflector, a diffuser and a little pull chain. -->
+  <path d="M80.4 4.3v1.45m15.2-1.45v1.45" stroke="#47483e" stroke-width="1.1"/>
+  <path d="m78 5.3 18.7-.1 1.8 1.9q.2.45-.65.65H77q-.7-.1-.4-.65Z" fill="#67716a" stroke="#41493f" stroke-width=".48"/>
+  <path d="M77.1 7.3h20.6l-1.3 1.15-17.9.05Z" fill="#f3dfaf"/>
+  <path d="M97.1 8v3.5" stroke="#c3b8a0" stroke-width=".35" stroke-dasharray=".4 .45"/><path d="M97.1 11.55v.8" stroke="#887c62" stroke-width=".75"/>
+
+  <!-- Each lamp hangs from its socket on the sagging wire. -->
+  <path d="M4 8Q24 13.2 44 8.3q21 4.8 42.4.65Q107 13.5 128.6 8.2q23.2 5.15 45.7-.15" fill="none" stroke="#443c32" stroke-width=".65"/>
+  <g>
+    <use href="#bulb" x="13.2" y="9.87"/><use href="#bulb" x="27.6" y="10.58"/><use href="#bulb" x="38.4" y="9.43"/>
+    <use href="#bulb" x="52.4" y="9.84"/><use href="#bulb" x="65.6" y="10.85"/><use href="#bulb" x="79.7" y="10.13"/>
+    <use href="#bulb" x="94.1" y="10.29"/><use href="#bulb" x="107.9" y="11"/><use href="#bulb" x="121.3" y="9.75"/>
+    <use href="#bulb" x="138.9" y="9.95"/><use href="#bulb" x="153.4" y="10.7"/><use href="#bulb" x="166.1" y="9.68"/>
+  </g>
+
+  <!-- Two old pine shelves. A shadow falls from the front lip onto the wall below. -->
+  <path d="M31 31h46.7v4.2H31zm96-2.9h44v4.1h-44z" fill="url(#under)"/>
+  <g transform="translate(32 30.7)"><use href="#bracket" x="2.4"/><use href="#bracket" x="37.9"/></g>
+  <g transform="translate(129 28.1)"><use href="#bracket" x="1.4"/><use href="#bracket" x="34.5"/></g>
+  <path d="m30.8 29.1 2.1-.95H76l2 1.05-.2 1.85q-19 .45-47 .1Z M126.5 26.3l2.4-1.05h40.2l2.4 1.2-.2 1.75-44.7-.1Z" fill="url(#wood)" stroke="#584735" stroke-width=".55"/>
+  <path d="M31.4 29.45q17.9.17 45.6-.05m50.3-2.7 43 .07" stroke="#c5aa7d" stroke-width=".48" fill="none"/>
+  <path d="m37.2 30.25 6.3.13m14.1-.1 8.7-.03m69.5-2.9 7.7.1" stroke="#675139" stroke-width=".32"/>
+
+  <!-- An archive carton with a lifted flap, a spool, and folded shop towels. -->
+  <g transform="translate(34.6 28.7)">
+    <path d="M1-9.5 4.1-11l9.7.55-.05 9.4-2.2 1.2-10.6-.4Z" fill="#ae8961" stroke="#675039" stroke-width=".48"/>
+    <path d="M.95-9.5 4-11l9.8.55-2.05 1.25Z" fill="#ceb08a"/>
+    <path d="m11.7-9.2 2.1-1.25-.1 9.3-2.1 1.2Z" fill="#8f714f"/>
+    <path d="m4.8-9.4 1.9.07v3l-1-.5-.95.25z" fill="#e1c79b"/>
+    <path d="m1.2-9.5-1.45-.85.2-.72 4.7.6Z" fill="#cbab82" stroke="#876747" stroke-width=".35"/>
+    <rect x="2.2" y="-4.45" width="4.9" height="2.55" rx=".35" fill="#e3d5b4"/><path d="m3-3.55 2.65.06m-2.6.7 1.6.05" stroke="#9c9077" stroke-width=".32"/>
+  </g>
+  <g transform="translate(53 28.8)">
+    <path d="M0-2.55q.6-1.1 2.6-1.25l8.4.15.15 3.15L1.3 0Q-.2-.2 0-2.55Z" fill="#738e88" stroke="#4e645d" stroke-width=".43"/>
+    <path d="M.7-4.25q.9-.65 2.55-.8l7.55.1.42 1.5-.42.85-9.35.1q-1-.45-.75-1.75Z" fill="#a5b3a0" stroke="#627567" stroke-width=".38"/>
+    <path d="M1.1-1.05h6.2m-5.2-2.3h6.85" stroke="#cfceb1" stroke-width=".34" fill="none"/>
+  </g>
+  <g transform="translate(68.3 28.4)">
+    <path d="M.8-5.2H5v4.9H.8Z" fill="#ad774b"/><path d="M1.05-4.45 4.8-4m-3.75.7 3.75.45m-3.7.8 3.65.3" stroke="#d6ad75" stroke-width=".5"/>
+    <path d="M0-5.2h5.8M0-.15h5.8" stroke="#69523a" stroke-width="1"/><path d="M5.1-.8q2.4.3 2.8 1.2" fill="none" stroke="#9f744b" stroke-width=".4"/>
+  </g>
+
+  <!-- Right shelf: worn manuals, a small screw jar, and the space for the green Etch A Sketch. -->
+  <g transform="translate(129 25.95)">
+    <path d="m.2-2.85 11.2-.2 1.3.82-.2 2.05L.3 0Z" fill="#6e5344" stroke="#4a3c33" stroke-width=".46"/>
+    <path d="m1-1.95 10.4-.04-.1 1.25L.9-.65Z" fill="#c5b699"/>
+    <path d="m1.7-4.45 7.95-.34 1.7.64-.05 1.31-9.5.26Z" fill="#7b9187" stroke="#4c6159" stroke-width=".4"/>
+    <path d="m5.2-1.05-.05 2.8.8-.55.55.4.1-2.65Z" fill="#a8694b"/>
+  </g>
+  <g transform="translate(146 25.8)">
+    <path d="M.4-6.35q-.75.5-.65 1.8l.16 3.9q.15.73 2.95.73t2.85-.73l.04-3.9q.1-1.2-.6-1.8Z" fill="url(#glass)" stroke="#52615a" stroke-width=".5"/>
+    <g stroke="#746f60" fill="none" stroke-width=".52"><path d="m.9-1.6 1.8-.9m-.43-.49.5.86m.38.53 1.5-.95m-.55-.1.53.65m-3-2.2.85.6"/></g>
+    <path d="M.6-4.8v2.35" stroke="#d5dfc8" stroke-width=".48"/><rect x="-.03" y="-7.4" width="5.8" height="1.5" rx=".5" fill="url(#metal)" stroke="#686659" stroke-width=".35"/>
+  </g>
+
+  <!-- A tiny exploded phone in its shadow box. -->
+  <g transform="translate(84.2 16.5)">
+    <path d="m2.4.4 5.3-3.6L13.3.5" fill="none" stroke="#574d3f" stroke-width=".45"/>
+    <rect x=".7" y="1.15" width="15.6" height="11.8" rx=".4" fill="#241f1b" opacity=".27"/>
+    <rect width="15.6" height="11.8" rx=".45" fill="url(#wood)" stroke="#443b32" stroke-width=".65"/>
+    <rect x="1.1" y="1.1" width="13.4" height="9.55" fill="#e3dac2" stroke="#6b6357" stroke-width=".35"/>
+    <g stroke-width=".35"><rect x="2.4" y="2.7" width="2.7" height="5.2" rx=".45" fill="#373c39" stroke="#787970"/>
+      <rect x="5.9" y="2.8" width="2.6" height="5.1" rx=".45" fill="#adb0a0" stroke="#797e72"/><rect x="9.4" y="2.8" width="2.55" height="5.1" rx=".44" fill="#53584f" stroke="#41473f"/>
+    </g>
+    <path d="M2.9 3.5h1.65v2.9H2.9zm3.45.05h1.65v1.15H6.35z" fill="#7b9293"/><path d="M6.25 3.08h1.8m4.9 1.1v1.25" stroke="#b99551" stroke-width=".42"/>
+    <path d="M2.6 9.05h6.2m1.05 0h2.3" stroke="#b7ac91" stroke-width=".31"/>
+  </g>
+
+  <!-- The wall display faces the car. Its old key hangs on a separate brass pin. -->
+  <g transform="translate(106 35) rotate(-3)">
+    <rect x=".45" y=".9" width="19" height="8.2" rx="1.05" fill="#27251e" opacity=".31"/>
+    <rect width="19" height="8" rx="1.1" fill="#ded9bb" stroke="#635f4e" stroke-width=".57"/>
+    <rect x=".7" y=".65" width="17.6" height="6.7" rx=".67" fill="none" stroke="#80917a" stroke-width=".33"/>
+    <path d="M1.65 5.7h4.25m7 .04h4.4" stroke="#a2b69b" stroke-width=".55"/>
+    <text x="9.5" y="5.94" fill="#476451" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="4.9" letter-spacing=".5">1996</text>
+    <path d="M2.1 1.6h.7m13.45.05h.7M2.1 6.6h.7m13.45 0h.7" stroke="#665f4f" stroke-width=".5"/>
+  </g>
+  <g transform="translate(130.3 34.1) rotate(12)">
+    <circle r=".67" fill="#988465" stroke="#544a39" stroke-width=".4"/>
+    <ellipse cy="1.58" rx="1.35" ry="1.9" stroke="#c0ae87" stroke-width=".42" fill="none"/>
+    <path d="m.12 3.2.95 1.15-.4 1.4-.55.1v3.05l-.9.93-.12-1.5-.49-.45.46-.51V5.55l-.66-.4-.1-1.45Z" fill="#b9b5a2" stroke="#635e51" stroke-width=".36"/>
+    <path d="m1.25 3.5 1.4-.35 1.05 2.5-.65 2.7-1.65-.45-.8-2.3Z" fill="#a9754c" stroke="#624a36" stroke-width=".38"/>
+  </g>
+
+  <!-- A step-through bicycle actually rests in two rubber-lined wall hooks. -->
+  <g transform="translate(40.3 48.35)">
+    <path d="M-5.8-10.7h35v1.8H-5.8z" fill="#86694c"/><path d="M-5-10.4h33.5" stroke="#ad9271" stroke-width=".38"/>
+    <path d="M3.7-10.35v2.8q.1 1.45 1.65 1.15M18.65-10.3v2.9q0 1.4 1.7 1.1" fill="none" stroke="#4a4e46" stroke-width="1.05"/>
+    <g opacity=".24" fill="none" stroke="#322b24" transform="translate(.85 1.15)"><circle r="6.8" stroke-width="1.55"/><circle cx="24.8" r="6.8" stroke-width="1.55"/></g>
+    <use href="#wheel"/><use href="#wheel" x="24.8"/>
+    <path d="M-6.1-2.65q2.1-6.05 8.7-4.26m15.57 3.36q2.93-5.28 8.8-3.35" fill="none" stroke="#c3bcab" stroke-width=".7"/>
+    <path d="M0 0 6.8-8.3 11 .2Z M6.8-8.3l2.05 3.35q2.7 1.3 9.7-3.3l3.1-.8M11 .2l9.4-9.6m.5-2.15 3.9 11.5" stroke="#434c43" stroke-width="1.58" fill="none"/>
+    <path d="M0 0 6.8-8.3l4.2 8.5M6.8-8.3l2.05 3.35q2.7 1.3 9.7-3.3l3.1-.8M11 .2l9.4-9.6m.5-2.15 3.9 11.5" stroke="#819e92" stroke-width=".95" fill="none"/>
+    <path d="m6.8-8.3-.75-2.1m14.6-.5-.5-2.05 3.6-.95" stroke="#b7b6a5" stroke-width=".94" fill="none"/>
+    <path d="M3.35-11.1c-.42-.36-.22-1.2.65-1.25l4.7.26q1.43.15 1.13 1.05-3.03 1.5-6.48-.06Z" fill="#614638" stroke="#43392f" stroke-width=".5"/>
+    <path d="m23.15-13.85 1.5-.28" stroke="#695044" stroke-width="1.16"/>
+    <path d="M23.1-13.55q5.3.45 1.4 5.85" stroke="#57594e" stroke-width=".35" fill="none"/>
+    <path d="M.22-.73 10.7-1.46c2.25-.05 2.5 2.82.23 3.14L.2.62q-1.19-.6.02-1.35Z" fill="#606c63" stroke="#454a42" stroke-width=".45"/>
+    <circle cx="11.05" cy=".08" r=".8" fill="#c2b69c"/><path d="m11 .1 1.7 2h1.8" fill="none" stroke="#544d41" stroke-width=".62"/>
+  </g>
+
+  <!-- Lower work ledge: cans with rolled rims, a steel latch box, a hand-built tote below. -->
+  <g transform="translate(31.2 67)">
+    <path d="M.9.1h48.2v4H.9Z" fill="url(#under)"/>
+    <use href="#bracket" x="3.2" y=".45"/><use href="#bracket" x="42.3" y=".45"/>
+    <path d="M0-1.3 1.35-2.45l46.8.03 1.62.9-.3 2-49.2.18Z" fill="url(#wood)" stroke="#584735" stroke-width=".6"/>
+    <path d="m.8-1.05 47.75-.03" stroke="#c4aa80" stroke-width=".54"/>
+    <use href="#paint-tin" transform="translate(5.7 -2.03) scale(.9)" color="#6c8496"/>
+    <use href="#paint-tin" transform="translate(12.8 -2) scale(.82)" color="#ae8c4d"/>
+    <use href="#paint-tin" transform="translate(19.5 -2) scale(.76)" color="#9d9c83"/>
+    <g transform="translate(30 -2.1)">
+      <path d="M2.8-5.25v-1.6q0-1.1 1.5-1.1h3.65q1.25 0 1.25.95v1.8" stroke="#52463a" stroke-width=".9" fill="none"/>
+      <path d="M.2-4.35 1.4-5.6h10.25l.9 1.05.05 3.86q-.05.63-.78.7H.85Q.2.02.2-.7Z" fill="#a55d46" stroke="#624336" stroke-width=".59"/>
+      <path d="M.6-3.3h11.5m-10.7-1.35 9.8-.04" stroke="#d28b66" stroke-width=".4"/>
+      <path d="M2.6-3.9h1.3v1.65H2.6zm6.2 0h1.3v1.65H8.8z" fill="#c8b799" stroke="#675744" stroke-width=".28"/>
+    </g>
+    <g transform="translate(3.8 17.9)">
+      <path d="M-.5-.2q14-1.05 30.95-.25l.7.8q-15.35 1.6-32.1.2Z" fill="#312a23" opacity=".4"/>
+      <path d="M.7-8.2 4-12.8l2.7-.2 3 4.2 16.2-.1 1.7-4.25 2.1-.03 1.35 4.6-.5 8.15-28.9.13Z" fill="#85664a" stroke="#594a39" stroke-width=".68"/>
+      <path d="m4.25-11.25 23.95-.15" stroke="#4b4136" stroke-width="1.5"/><path d="m5.45-11.6 21.45-.15" stroke="#b59a73" stroke-width=".47"/>
+      <path d="M1.1-7.7 25.7-8.1l4.8-.8-.24 7.95-28.35.35Z" fill="url(#wood)" stroke="#614e3b" stroke-width=".52"/>
+      <path d="m2.2-4.05 26.7-.42m-22 .9 6.5.1m4.3-3.05 5.35-.2" stroke="#735a42" stroke-width=".45"/>
+      <path d="M2.75-6.25h.14m23.4-.3h.15M3.05-2.2h.14m23.8-.32h.1" stroke="#d4bd92" stroke-width=".72"/>
+      <path d="m11.4-7.96 4.7-.12.68 2.8-1.15 2.18-1.3-.57-1.35.64Z" fill="#918d82"/><path d="m13.4-7.35 1.25 3.12" stroke="#c5bca5" stroke-width=".44"/>
+    </g>
+  </g>
+
+  <!-- The garden tools sit in a clip rail, with worn grips and a socket on the spade. -->
+  <g transform="translate(84.2 40)">
+    <path d="M-.8.4q7.7-.29 15.1-.05l.1 1.8-15.15.1z" fill="#81684e" stroke="#564b3b" stroke-width=".44"/>
+    <path d="M1 1.15h.1m11.4.05h.1" stroke="#d1b98c" stroke-width=".55"/>
+    <g transform="rotate(-6 3 3)">
+      <path d="M3-2.1v43.7" fill="none" stroke="#604a35" stroke-width="1.72"/><path d="M2.85-1.8v43" stroke="#b78e5c" stroke-width=".99"/>
+      <path d="M2.48.15v-2.7h1.02v2.7" fill="#9e9c8b"/>
+      <path d="M-1.55-3.6h9.25v1.4h-9.25Z" fill="url(#metal)" stroke="#63685d" stroke-width=".45"/>
+      <path d="M-1.27-2.38v2.25M.8-2.38v2.55m2.1-2.55v2.6m2.1-2.6v2.55m2.15-2.55v2.1" fill="none" stroke="#a8a89a" stroke-width=".68"/>
+    </g>
+    <g transform="rotate(4.5 12 9)">
+      <path d="M12 8v25.8" stroke="#b08b5c" stroke-width="1.35"/>
+      <path d="M9.95 3.7h4.1l-.36 2.25q-.35 2.2-1.74 2.24-1.45-.13-1.71-2.14Z" fill="none" stroke="#6e786b" stroke-width="1.1"/>
+      <path d="m11.45 31.1 1.12.01.47 2.25 2.67.68q-.15 4.67-3.72 7.1-3.55-2.8-3.63-7.15l2.62-.58Z" fill="url(#metal)" stroke="#5c6157" stroke-width=".54"/>
+      <path d="m12 33.05.05 5.8" stroke="#d0c4a6" stroke-width=".44"/>
+    </g>
+  </g>
+  <g transform="translate(165.5 47.5) rotate(-7)">
+    <!-- The loops share a hook at the top; their own weight separates them below. -->
+    <path d="M-1.6-7.1q.05-2.75 1.5-2.75 1.16 0 1.33 2.1" fill="none" stroke="#b6a68b" stroke-width=".78"/>
+    <g fill="none" stroke="#526f5b" stroke-width="1.12">
+      <ellipse cx="-.1" cy=".25" rx="6.15" ry="7.25"/>
+      <ellipse cx="-.5" cy="-.75" rx="4.55" ry="6.15"/>
+      <ellipse cx="-.95" cy="-1.6" rx="2.8" ry="5.2"/>
+      <path d="M3.3 6.55q4.9-1.75 4.05 3.7-.35 2.05-.04 3.65"/>
+    </g>
+    <path d="M-5.88-1.15q.63-3.6 3.02-4.67m-1.87 4.18q.43-2.93 2.42-4.23m-1.32 3.66q.25-1.83 1.23-3.28" fill="none" stroke="#9daa8b" stroke-width=".44"/>
+    <path d="M.25-7.5v2.15l-1.55.65-.8-.42" fill="none" stroke="#8b8170" stroke-width=".85"/>
+    <path d="m6.71 12.7 1.3-.04.25 2.21-1.24 1.02-.62-.7.46-.83Z" fill="#b69b67" stroke="#696448" stroke-width=".37"/>
+  </g>
+  <use href="#tote" transform="translate(158.2 76.3)" color="#697d71"/><use href="#tote" transform="translate(157.6 67.6) rotate(-1.5 8 9)" color="#637c8a"/>
+</svg>
