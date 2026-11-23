@@ -1797,18 +1797,24 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 
 /* Keepsake photos stay beside their objects, inside the scene. */
 [data-memory].memory-open > .tw-keepsake-rim { opacity: 1; }
+.tw.memory-view :is(.tw-hint, .tw-label) { visibility: hidden; }
 .tw.memory-view .tw-pan { opacity: 0; pointer-events: none; }
-.tw-memory-line { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; opacity: 0; transition: opacity .18s; }
-.tw-memory-line path, .tw-memory-line circle { fill: none; stroke: #ffe3ad; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 2px #30251f); }
-.tw-memory-card { position: absolute; z-index: 6; right: clamp(16px, 4vw, 64px); top: 50%; translate: 0 -50%; width: clamp(250px, 34vw, 440px); max-height: calc(100% - 42px); overflow: auto; box-sizing: border-box; padding: 12px; border: 1px solid #9c8a70; border-radius: 16px; background: #f1e6d3; color: #322b24; box-shadow: 0 14px 42px #1e130e45; opacity: 0; visibility: hidden; transition: opacity .2s; font-family: Nunito, system-ui, sans-serif; }
-.tw.memory-settled :is(.tw-memory-card, .tw-memory-line) { opacity: 1; visibility: visible; }
+/* Fit the frame to the photo, using the height budget to cap its width. */
+.tw-memory-card {
+  --frame-edge: 26px;
+  --photo-height: min(64vh, 420px);
+  position: absolute; z-index: 6; right: clamp(16px, 4vw, 64px); top: 50%; translate: 0 -50%;
+  width: min(clamp(250px, 34vw, 460px), calc(var(--photo-height) * var(--photo-ratio) + var(--frame-edge)));
+  max-height: calc(100% - 36px); overflow: auto; box-sizing: border-box;
+  padding: 12px; border: 1px solid #9c8a70; border-radius: 16px;
+  background: #f1e6d3; color: #322b24; box-shadow: 0 14px 42px #1e130e45;
+  opacity: 0; visibility: hidden; transition: opacity .2s; font-family: Nunito, system-ui, sans-serif;
+}
+.tw-memory-card.has-caption { --photo-height: min(56vh, 390px, max(72px, calc(100vh - 176px))); }
+.tw.memory-settled .tw-memory-card { opacity: 1; visibility: visible; }
 .tw-memory-card h3 { margin: 2px 32px 10px 2px; font-size: 20px; }
-.tw-memory-card img { display: block; width: 100%; max-height: min(48vh, 300px); object-fit: contain; background: #312b25; border-radius: 9px; }
+.tw-memory-card img { display: block; width: 100%; height: auto; border-radius: 9px; }
 .tw-memory-card p { margin: 9px 4px; font-size: 14px; line-height: 1.4; }
 .tw-memory-close { position: absolute; top: 15px; right: 15px; z-index: 1; width: 30px; height: 30px; border: 1px solid #87765f; border-radius: 50%; background: #f3e9d9; color: #3c3328; cursor: pointer; font-size: 20px; line-height: 1; }
-.tw-memory-pages:not([hidden]) { display: flex; gap: 6px; }
-.tw-memory-pages button { border: 1px solid #b4a189; padding: 5px 10px; border-radius: 18px; background: transparent; color: inherit; cursor: pointer; font: inherit; font-size: 13px; }
-.tw-memory-pages button[aria-pressed="true"] { background: #dacaad; border-color: #987f5f; }
 :is([data-theme="midnight"], [data-theme="terminal"]) .tw-memory-card { background: #2d261f; color: #f5e5c8; border-color: #776347; }
-:is([data-theme="midnight"], [data-theme="terminal"]) .tw-memory-pages button[aria-pressed="true"] { background: #66503a; border-color: #b6966b; }
-@media (prefers-reduced-motion: reduce) { .tw-memory-card, .tw-memory-line { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .tw-memory-card { transition: none; } }

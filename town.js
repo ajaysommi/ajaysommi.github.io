@@ -352,16 +352,16 @@
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let zoomUntil = 0;
   const zooming = () => performance.now() < zoomUntil;
-  const tween = (to, ms = 850, fn = ease) => {
+  const tween = (to, ms = 850, fn = ease, done) => {
     cancelAnimationFrame(anim);
     zoomUntil = reduced ? 0 : performance.now() + ms + 40;
-    if (reduced) { setVB(to); return; }
+    if (reduced) { setVB(to); done?.(); return; }
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
     if (camOn) setVB(vb);
     const from = vb.slice(), t0 = performance.now();
     svg.classList.add('tw-moving', 'tw-zooming'); svg.classList.toggle('tw-glide', ms >= 2000);
-    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); placeVB(from.map((v, i) => v + (to[i] - v) * k), u < 1); if (u < 1) anim = requestAnimationFrame(f); else svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide'); };
+    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); placeVB(from.map((v, i) => v + (to[i] - v) * k), u < 1); if (u < 1) anim = requestAnimationFrame(f); else { svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide'); done?.(); } };
     anim = requestAnimationFrame(f);
   };
   const frame = (z, left) => {
@@ -619,29 +619,40 @@
   };
   let keepsake = null;
   const photos = {
-    baby: [
-      ['camry-family.webp', 'Our green Camry, parked outside a motel.', 'This was our ’96 Camry. The old key and plate hang above its spot in the garage.'],
-      ['baby-photo.webp', 'Me as a baby in the plaid car seat.', 'I was only a few months old when my family brought me home in that plaid seat.'],
-    ],
-    trike: [['trike-photo.webp', 'Me as a child with the red and blue tricycle.']],
-  };
-  const pointOf = (item) => {
-    const [x, y] = item.dataset.anchor.split(' ').map(Number);
-    return new DOMPoint(x, y).matrixTransform(svg.getScreenCTM().inverse().multiply(item.getScreenCTM()));
+    baby: {
+      file: 'baby-photo.webp', width: 1500, height: 1125,
+      title: 'Our ’96 Camry', alt: 'Me as a baby in the plaid car seat.',
+      caption: 'I was only a few months old when my family brought me home in our green ’96 Camry, in that plaid seat.',
+    },
+    trike: {
+      file: 'trike-photo.webp', width: 640, height: 480,
+      alt: 'Me as a child with the red and blue tricycle.',
+    },
   };
   const keepsakeFrame = () => {
-    const { item, card } = keepsake, p = pointOf(item);
+    const { item, card } = keepsake;
+    const [x, y] = item.dataset.anchor.split(' ').map(Number);
+    const matrix = svg.getScreenCTM().inverse().multiply(item.getScreenCTM());
+    const p = new DOMPoint(x, y).matrixTransform(matrix);
+    const bounds = item.getBBox();
+    const right = new DOMPoint(bounds.x + bounds.width, y).matrixTransform(matrix);
     const w = Math.min(vw, Math.max(205, 225 * vw / 900)), h = w * vh / vw;
-    const free = (stage.clientWidth - card.offsetWidth - 36) / stage.clientWidth;
-    return [p.x - w * free * .49, p.y - h * .53, w, h];
+    const toWorld = w / stage.clientWidth;
+    const gap = clamp(stage.clientWidth * .04, 28, 72);
+    return [right.x - (card.offsetLeft - gap) * toWorld, p.y - h * .5, w, h];
+  };
+  const settleKeepsake = () => {
+    if (!keepsake?.imageReady || !keepsake.cameraReady || tw.classList.contains('memory-settled')) return;
+    tw.classList.add('memory-settled');
+    $('.tw-memory-close', keepsake.card).focus({ preventScroll: true });
   };
   const closeKeepsake = (restoreFocus = false, returnView = true) => {
     if (!keepsake) return;
-    const { item, card, line } = keepsake;
+    const { item, card } = keepsake;
     keepsake = null;
     item.classList.remove('memory-open');
     item.setAttribute('aria-expanded', 'false');
-    card.remove(); line.remove();
+    card.remove();
     tw.classList.remove('memory-view', 'memory-settled');
     if (returnView) tween(view(), 500);
     else {
@@ -658,62 +669,31 @@
     closeKeepsake(false, false);
     cancelAnimationFrame(glide); glideStop();
     hideLabel(); glow(null); over = null;
-    const entries = photos[item.dataset.memory];
+    const photo = photos[item.dataset.memory];
     const card = document.createElement('aside');
     card.className = 'tw-memory-card';
-    card.setAttribute('aria-label', entries.length > 1 ? 'Family Camry photos' : 'Tricycle photo');
+    if (photo.caption) card.classList.add('has-caption');
+    card.style.setProperty('--photo-ratio', photo.width / photo.height);
+    card.setAttribute('aria-label', photo.title || 'Tricycle photo');
     card.innerHTML = `<button class="tw-memory-close" type="button" aria-label="Close photo">×</button>
-      ${entries.length > 1 ? '<h3>Our ’96 Camry</h3>' : ''}
-      <img alt=""><p hidden></p><div class="tw-memory-pages" hidden></div>`;
-    const pic = $('img', card), caption = $('p', card), pages = $('.tw-memory-pages', card);
-    const selectPhoto = (index) => {
-      const [file, alt, note] = entries[index];
-      pic.src = 'assets/images/town/' + file;
-      pic.alt = alt;
-      caption.hidden = !note; caption.textContent = note || '';
-      [...pages.children].forEach((b, i) => b.setAttribute('aria-pressed', String(i === index)));
-    };
-    if (entries.length > 1) {
-      pages.hidden = false;
-      ['The Camry', 'Coming home'].forEach((name, i) => {
-        const button = document.createElement('button');
-        button.type = 'button'; button.textContent = name;
-        button.addEventListener('click', () => selectPhoto(i));
-        pages.appendChild(button);
-      });
-    }
-    selectPhoto(0);
-    const line = NSel('svg', { class: 'tw-memory-line', 'aria-hidden': 'true' });
-    const path = NSel('path', {}), dot = NSel('circle', { r: '5' });
-    line.append(path, dot);
-    stage.append(line, card);
-    const state = keepsake = { item, card, line, path, dot };
+      ${photo.title ? `<h3>${esc(photo.title)}</h3>` : ''}
+      <img src="assets/images/town/${photo.file}" alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}">
+      ${photo.caption ? `<p>${esc(photo.caption)}</p>` : ''}`;
+    stage.append(card);
+    const opened = keepsake = { item, card, imageReady: false, cameraReady: false };
     item.classList.add('memory-open');
     item.setAttribute('aria-expanded', 'true');
     tw.classList.add('memory-view');
-    const x = $('.tw-memory-close', card);
-    x.addEventListener('click', () => closeKeepsake(true));
-    tween(keepsakeFrame(), 670);
-    const follow = () => {
-      if (keepsake !== state) return;
-      const {left, top} = stage.getBoundingClientRect();
-      const b = card.getBoundingClientRect();
-      const [ax, ay] = item.dataset.anchor.split(' ').map(Number);
-      const p = new DOMPoint(ax, ay).matrixTransform(item.getScreenCTM());
-      const x0 = p.x - left, y0 = p.y - top, x1 = b.left - left;
-      const y1 = clamp(y0 + 14, b.top - top + 20, b.bottom - top - 20);
-      const elbow = x0 + (x1 - x0) * .62;
-      path.setAttribute('d', `M${x0} ${y0} H${elbow} L${elbow + 14} ${y1} H${x1}`);
-      dot.setAttribute('cx', x0); dot.setAttribute('cy', y0);
-      if (zooming()) requestAnimationFrame(follow);
-      else if (!tw.classList.contains('memory-settled')) {
-        tw.classList.add('memory-settled');
-        x.focus({ preventScroll: true });
-      }
-    };
-    tw.classList.remove('memory-settled');
-    state.follow = follow;
-    requestAnimationFrame(follow);
+    $('.tw-memory-close', card).addEventListener('click', () => closeKeepsake(true));
+    $('img', card).decode().catch(() => {}).then(() => {
+      if (keepsake !== opened) return;
+      opened.imageReady = true;
+      settleKeepsake();
+    });
+    tween(keepsakeFrame(), 670, ease, () => {
+      opened.cameraReady = true;
+      settleKeepsake();
+    });
   };
   $$('[data-memory]', svg).forEach((item) => {
     const rim = item.querySelector('.tw-keepsake-rim');
@@ -1068,7 +1048,7 @@
   if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
 
   if (reduced) { arrived = true; tw.classList.add('arrive', 'parked'); }
-  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (keepsake) { cancelAnimationFrame(anim); zoomUntil = 0; svg.classList.remove('tw-moving', 'tw-zooming'); setVB(keepsakeFrame()); keepsake.follow(); } else if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
+  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (keepsake) { cancelAnimationFrame(anim); zoomUntil = 0; svg.classList.remove('tw-moving', 'tw-zooming'); setVB(keepsakeFrame()); keepsake.cameraReady = true; settleKeepsake(); } else if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
   /* ---------------------------------------------------------- the compact bar */
   // Home (and the logo) slide back to the visitor center; the weather and
   // the menu open small lists under the bar.
