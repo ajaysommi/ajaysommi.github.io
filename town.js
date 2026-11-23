@@ -633,11 +633,11 @@
   const photos = {
     baby: {
       file: 'baby-photo.webp', width: 1500, height: 1125,
-      title: 'Our ’96 Camry', alt: 'Me as a baby in the plaid car seat.',
+      label: 'Camry childhood photo', alt: 'Me as a baby in the plaid car seat.',
       caption: 'I was only a few months old when my family brought me home in our green ’96 Camry, in that plaid seat.',
     },
     trike: {
-      file: 'trike-photo.webp', width: 640, height: 480,
+      file: 'trike-photo.webp', width: 640, height: 480, label: 'Tricycle photo',
       alt: 'Me as a child with the red and blue tricycle.',
     },
   };
@@ -686,9 +686,8 @@
     card.className = 'tw-memory-card';
     if (photo.caption) card.classList.add('has-caption');
     card.style.setProperty('--photo-ratio', photo.width / photo.height);
-    card.setAttribute('aria-label', photo.title || 'Tricycle photo');
+    card.setAttribute('aria-label', photo.label);
     card.innerHTML = `<div class="tw-memory-header">
-        ${photo.title ? `<h3>${esc(photo.title)}</h3>` : ''}
         <button class="tw-memory-close ui-close" type="button" aria-label="Close photo"></button>
       </div>
       <img src="assets/images/town/${photo.file}" alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}">
