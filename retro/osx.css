@@ -190,8 +190,7 @@
 .lt.min { background: radial-gradient(circle at 50% 70%, #ffe7a0, #e0a10f 70%); }
 .lt.zoom { background: radial-gradient(circle at 50% 70%, #c6f29a, #49a520 70%); }
 .ox-win:not(.is-front) .lt { background: radial-gradient(circle at 50% 70%, #f4f4f4, #c9c9c9 70%); }
-.ox-lights:hover .lt::after { position: absolute; inset: 0; display: grid; place-items: center; font: bold 10px/13px Arial, sans-serif; color: rgba(0,0,0,.6); }
-.ox-lights:hover .lt.close::after { content: '\00d7'; }
+.ox-lights:hover .lt:not(.close)::after { position: absolute; inset: 0; display: grid; place-items: center; font: bold 10px/13px Arial, sans-serif; color: rgba(0,0,0,.6); }
 .ox-lights:hover .lt.min::after { content: '\2013'; }
 .ox-lights:hover .lt.zoom::after { content: '+'; }
 .ox-tools { display: flex; align-items: center; gap: 10px; padding: 2px 10px 8px; }

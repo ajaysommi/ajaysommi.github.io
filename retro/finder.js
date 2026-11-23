@@ -104,7 +104,7 @@ window.FINDER = (function () {
     const el = h('div', 'win' + (spec.cls ? ' ' + spec.cls : ''));
     el.setAttribute('role', 'dialog');
     el.setAttribute('aria-label', spec.title);
-    el.innerHTML = `<div class="win-title"><button class="win-box win-close" aria-label="Close window" type="button"></button><span class="win-name">${esc(spec.title)}</span><button class="win-box win-zoom" aria-label="Zoom window" type="button"></button></div>${spec.info ? `<div class="win-info">${spec.info}</div>` : ''}<div class="win-body"></div><div class="win-grow" aria-hidden="true"></div>`;
+    el.innerHTML = `<div class="win-title"><button class="win-box win-close ui-close" aria-label="Close window" type="button"></button><span class="win-name">${esc(spec.title)}</span><button class="win-box win-zoom" aria-label="Zoom window" type="button"></button></div>${spec.info ? `<div class="win-info">${spec.info}</div>` : ''}<div class="win-body"></div><div class="win-grow" aria-hidden="true"></div>`;
     Object.assign(el.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: ht + 'px' });
     const body = el.querySelector('.win-body');
     const rec = { id, el, body, z: 0, from, spec, prev: null };

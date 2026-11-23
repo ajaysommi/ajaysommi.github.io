@@ -212,7 +212,7 @@ window.OSX = (function () {
     const el = h('div', 'ox-win' + (spec.cls ? ' ' + spec.cls : ''));
     el.setAttribute('role', 'dialog');
     el.setAttribute('aria-label', spec.title);
-    el.innerHTML = `<div class="ox-tb${spec.toolbar ? ' has-tools' : ''}"><div class="ox-lights"><button class="lt close" type="button" aria-label="Close"></button><button class="lt min" type="button" aria-label="Minimize"></button><button class="lt zoom" type="button" aria-label="Zoom"></button></div><div class="ox-title">${esc(t(spec.title))}</div>${spec.toolbar ? `<div class="ox-tools">${spec.toolbar}</div>` : ''}</div><div class="ox-body"></div>${spec.status ? `<div class="ox-status">${spec.status}</div>` : ''}<div class="ox-grip" aria-hidden="true"></div>`;
+    el.innerHTML = `<div class="ox-tb${spec.toolbar ? ' has-tools' : ''}"><div class="ox-lights"><button class="lt close ui-close" type="button" aria-label="Close"></button><button class="lt min" type="button" aria-label="Minimize"></button><button class="lt zoom" type="button" aria-label="Zoom"></button></div><div class="ox-title">${esc(t(spec.title))}</div>${spec.toolbar ? `<div class="ox-tools">${spec.toolbar}</div>` : ''}</div><div class="ox-body"></div>${spec.status ? `<div class="ox-status">${spec.status}</div>` : ''}<div class="ox-grip" aria-hidden="true"></div>`;
     Object.assign(el.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: ht + 'px' });
     root.insertBefore(el, dockEl.parentElement);
     const rec = { key, app, el, body: el.querySelector('.ox-body'), z: 0, min: false, prev: null, spec };

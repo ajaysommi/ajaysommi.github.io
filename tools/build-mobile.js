@@ -199,10 +199,10 @@ const html = `<!-- mx:start -->
 
   <!-- A sheet that slides up for a role or a project, and the story viewer. -->
   <div class="mx-scrim" hidden></div>
-  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-sheet-bar"><div class="mx-grab" aria-hidden="true"></div><button type="button" class="mx-sheet-close" aria-label="Close details"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="mx-sheet-in"></div></div>
+  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-sheet-bar"><div class="mx-grab" aria-hidden="true"></div><button type="button" class="mx-sheet-close ui-close" aria-label="Close details"></button></div><div class="mx-sheet-in"></div></div>
   <div class="mx-viewer" role="dialog" aria-modal="true" aria-label="Story" hidden>
     <div class="mxv-bars" aria-hidden="true"></div>
-    <div class="mxv-top"><span class="mxv-title"></span><button type="button" class="mxv-x" aria-label="Close">✕</button></div>
+    <div class="mxv-top"><span class="mxv-title"></span><button type="button" class="mxv-x ui-close" aria-label="Close"></button></div>
     <div class="mxv-stage"><img alt="" /></div>
     <div class="mxv-cap"><b></b><p></p></div>
     <button type="button" class="mxv-zone mxv-prev" aria-label="Previous"></button><button type="button" class="mxv-zone mxv-next" aria-label="Next"></button>

@@ -45,8 +45,9 @@
   <style>.sub-short{display:none}@media (max-width:719px){.sub-long{display:none}.sub-short{display:inline}}</style>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css?v=3" />
-  <link rel="stylesheet" href="mobile.css?v=25" />
-  <link rel="stylesheet" href="town.css?v=86" />
+  <link rel="stylesheet" href="mobile.css?v=26" />
+  <link rel="stylesheet" href="town.css?v=87" />
+  <link rel="stylesheet" href="close-control.css" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -530,10 +531,10 @@
 
   <!-- A sheet that slides up for a role or a project, and the story viewer. -->
   <div class="mx-scrim" hidden></div>
-  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-sheet-bar"><div class="mx-grab" aria-hidden="true"></div><button type="button" class="mx-sheet-close" aria-label="Close details"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="mx-sheet-in"></div></div>
+  <div class="mx-sheet" role="dialog" aria-modal="true" aria-label="Details" hidden><div class="mx-sheet-bar"><div class="mx-grab" aria-hidden="true"></div><button type="button" class="mx-sheet-close ui-close" aria-label="Close details"></button></div><div class="mx-sheet-in"></div></div>
   <div class="mx-viewer" role="dialog" aria-modal="true" aria-label="Story" hidden>
     <div class="mxv-bars" aria-hidden="true"></div>
-    <div class="mxv-top"><span class="mxv-title"></span><button type="button" class="mxv-x" aria-label="Close">✕</button></div>
+    <div class="mxv-top"><span class="mxv-title"></span><button type="button" class="mxv-x ui-close" aria-label="Close"></button></div>
     <div class="mxv-stage"><img alt="" /></div>
     <div class="mxv-cap"><b></b><p></p></div>
     <button type="button" class="mxv-zone mxv-prev" aria-label="Previous"></button><button type="button" class="mxv-zone mxv-next" aria-label="Next"></button>
@@ -1969,7 +1970,7 @@
           <button type="button" class="tw-pan tw-pan-l" aria-label="Look left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <button type="button" class="tw-pan tw-pan-r" aria-label="Look right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <aside class="tw-panel" aria-live="polite" hidden>
-            <button type="button" class="tw-x" aria-label="Back to the whole block"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <button type="button" class="tw-x ui-close" aria-label="Back to the whole block"></button>
             <div class="tw-panel-in"></div>
             <div class="tw-nav">
               <button type="button" class="tw-prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></button>
@@ -2657,7 +2658,7 @@
     <header class="term-bar">
       <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
       <span class="term-title">ajay@portfolio · zsh</span>
-      <button type="button" class="term-close" id="termClose" aria-label="Close terminal">✕</button>
+      <button type="button" class="term-close ui-close" id="termClose" aria-label="Close terminal"></button>
     </header>
     <div class="term-body" id="termBody" tabindex="0">
       <div class="term-out" id="termOut"></div>
@@ -2674,7 +2675,7 @@
       <div class="st-bars" aria-hidden="true"></div>
       <header class="st-head">
         <span class="st-who"><img class="st-avatar" alt="" aria-hidden="true" /><span class="st-title st-title-top"></span></span>
-        <button type="button" class="st-close" aria-label="Close story"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></button>
+        <button type="button" class="st-close ui-close" aria-label="Close story"></button>
       </header>
       <div class="st-media"><img class="st-blur" alt="" aria-hidden="true" /><img class="st-img" alt="" /></div>
       <button type="button" class="st-tap st-prev" aria-label="Previous"></button>
@@ -2698,7 +2699,7 @@
       <img id="lbImg" alt="" />
       <button class="lb-btn lb-prev" id="lbPrev" type="button" aria-label="Previous photo"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 4.5 7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Next photo"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 4.5 16.5 12 9 19.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg></button>
+      <button class="lb-btn lb-close ui-close" id="lbClose" type="button" aria-label="Close"></button>
     </figure>
     <p class="lb-cap"><span id="lbCap"></span><span class="lb-count" id="lbCount"></span></p>
   </dialog>
@@ -2713,6 +2714,6 @@
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
   <script src="mobile.js?v=13" defer></script>
-  <script src="town.js?v=86" defer></script>
+  <script src="town.js?v=87" defer></script>
 </body>
 </html>

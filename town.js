@@ -612,7 +612,7 @@
     const lb = document.createElement('div');
     lb.className = 'tw-lightbox';
     lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', 'Photo');
-    lb.innerHTML = `<img src="${esc(src)}" alt="" /><button type="button" class="tw-lb-x" aria-label="Close photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`;
+    lb.innerHTML = `<img src="${esc(src)}" alt="" /><button type="button" class="tw-lb-x ui-close" aria-label="Close photo"></button>`;
     lb.addEventListener('click', () => { lb.classList.add('out'); setTimeout(() => lb.remove(), 220); });
     if (caption) { const note = document.createElement('p'); note.textContent = caption; lb.appendChild(note); lb.classList.add('captioned'); }
     document.body.appendChild(lb);
@@ -677,7 +677,7 @@
     card.setAttribute('aria-label', photo.title || 'Tricycle photo');
     card.innerHTML = `<div class="tw-memory-header">
         ${photo.title ? `<h3>${esc(photo.title)}</h3>` : ''}
-        <button class="tw-memory-close" type="button" aria-label="Close photo">×</button>
+        <button class="tw-memory-close ui-close" type="button" aria-label="Close photo"></button>
       </div>
       <img src="assets/images/town/${photo.file}" alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}">
       ${photo.caption ? `<p>${esc(photo.caption)}</p>` : ''}`;

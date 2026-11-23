@@ -303,7 +303,7 @@
   .mxv-bars i.done b { transform: none; }
   .mxv-top { position: absolute; left: 14px; right: 6px; top: calc(20px + env(safe-area-inset-top)); z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .mxv-title { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mxv-x { width: 44px; height: 44px; border: 0; background: none; color: #fff; font-size: 20px; }
+  .mxv-x { width: 44px; height: 44px; flex-shrink: 0; border: 1px solid #ffffff3d; border-radius: 50%; background: #ffffff12; color: #fff; }
   .mxv-stage { position: absolute; inset: calc(70px + env(safe-area-inset-top)) 10px 168px; }
   .mxv-stage img { width: 100%; height: 100%; object-fit: contain; border-radius: 16px; transition: opacity .3s; }
   .mxv-stage img.fade { opacity: 0; }
@@ -474,8 +474,7 @@
   .mx-sheet-bar .mx-grab { height: 100%; touch-action: none; }
   .mx-sheet-close {
     position: absolute; inset: 1px 6px auto auto; display: grid; place-items: center;
-    width: 42px; height: 42px; background: none; border: 0; color: var(--ink); cursor: pointer;
+    width: 42px; height: 42px; background: var(--m-fill); border: 0; border-radius: 50%; color: var(--ink); cursor: pointer;
   }
-  .mx-sheet-close svg { width: 23px; height: 23px; border-radius: 50%; padding: 4px; box-sizing: content-box; background: var(--m-fill); }
   .mx-sheet-close:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: 50%; }
 }

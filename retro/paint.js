@@ -88,7 +88,7 @@ window.SOMMIPAINT = (function () {
       <div class="smp-bar">${[['aj', `<span class="smp-aj">${window.ICONS.pxmark(15, true)}</span>`], ['file', 'File'], ['edit', 'Edit'], ['goodies', 'Goodies'], ['font', 'Font'], ['size', 'FontSize'], ['style', 'Style']].map(([k, l]) => `<button type="button" class="smp-m" data-m="${k}">${l}</button>`).join('')}</div>
       <div class="smp-tools">${TOOLS.map((t) => `<button type="button" data-t="${t}" aria-label="${t}">${svgIcon(t)}</button>`).join('')}</div>
       <div class="smp-widths">${[0, 1, 2, 3, 4].map((w) => `<button type="button" data-w="${w}"><i style="height:${w || 1}px"${w ? '' : ' class="dot"'}></i></button>`).join('')}</div>
-      <div class="smp-win"><div class="smp-title"><button type="button" class="smp-close" aria-label="Close"></button><span>untitled</span></div><div class="smp-view"><canvas class="smp-c" width="${VW}" height="${VH}"></canvas><canvas class="smp-o" width="${VW}" height="${VH}"></canvas></div></div>
+      <div class="smp-win"><div class="smp-title"><button type="button" class="smp-close ui-close" aria-label="Close"></button><span>untitled</span></div><div class="smp-view"><canvas class="smp-c" width="${VW}" height="${VH}"></canvas><canvas class="smp-o" width="${VW}" height="${VH}"></canvas></div></div>
       <div class="smp-pats"><div class="smp-cur"><canvas width="32" height="24"></canvas></div><div class="smp-grid">${PATS.map((_, i) => `<button type="button" data-p="${i}"><canvas width="16" height="12"></canvas></button>`).join('')}</div></div>
       <input class="smp-file" type="file" accept="image/*" hidden />
     </div>`;

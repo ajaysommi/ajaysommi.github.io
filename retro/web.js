@@ -368,7 +368,7 @@ window.WEB = (function () {
     el.className = 'p8 plat';
     w = Math.min(w, W - 24); h = Math.min(h, H - 40);
     el.style.cssText = `left:${Math.max(8, Math.min(W - w - 8, 30 + n * 22))}px;top:${Math.max(30, Math.min(H - h - 8, 40 + n * 20))}px;width:${w}px;height:${h}px`;
-    el.innerHTML = `<div class="br-title"><button type="button" class="tb l" data-x aria-label="Close window"></button><span class="ttl">${esc(title)}</span><button type="button" class="tb z" data-zoom aria-label="Full screen"></button><button type="button" class="tb r" data-shade aria-label="Collapse window"></button></div>${info ? `<div class="p8-info">${info}</div>` : ''}<div class="p8-body bev-in"></div>`;
+    el.innerHTML = `<div class="br-title"><button type="button" class="tb l ui-close" data-x aria-label="Close window"></button><span class="ttl">${esc(title)}</span><button type="button" class="tb z" data-zoom aria-label="Full screen"></button><button type="button" class="tb r" data-shade aria-label="Collapse window"></button></div>${info ? `<div class="p8-info">${info}</div>` : ''}<div class="p8-body bev-in"></div>`;
     root.appendChild(el);
     wins[id] = el;
     front(el);
@@ -512,7 +512,7 @@ window.WEB = (function () {
       </div>
       <div class="nt-desk">${DESK.map(([ic, n, go]) => icoBtn(ic, n, go, 'nt-ico')).join('')}</div>${icoBtn('trash', 'Trash', 'win:trash', 'nt-ico nt-trash')}
       <div class="br plat">
-        <div class="br-title"><button type="button" class="tb l" data-win="close" aria-label="Close window"></button><span class="ttl">SurfBoard</span><button type="button" class="tb z" data-win="zoom" aria-label="Full screen"></button><button type="button" class="tb r" data-win="shade" aria-label="Collapse window"></button></div>
+        <div class="br-title"><button type="button" class="tb l ui-close" data-win="close" aria-label="Close window"></button><span class="ttl">SurfBoard</span><button type="button" class="tb z" data-win="zoom" aria-label="Full screen"></button><button type="button" class="tb r" data-win="shade" aria-label="Collapse window"></button></div>
         <div class="br-tools">
           ${tbtn('back', 'Back', 'back')}${tbtn('fwd', 'Forward', 'fwd')}${tbtn('reload', 'Reload', 'reload')}${tbtn('home', 'Home', 'home')}
           <span class="sep"></span>

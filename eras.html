@@ -105,8 +105,9 @@
   <link rel="stylesheet" href="retro/picker.css?v=147" />
   <script>
     (document.documentElement.dataset.mode === 'mobile' ? ['pocket', 'iphone', 'nokia'] : ['osx'])
-      .forEach(function (n) { document.write('<link rel="stylesheet" href="retro/' + n + '.css?v=147" />'); });
+      .forEach(function (n) { document.write('<link rel="stylesheet" href="retro/' + n + '.css?v=148" />'); });
   </script>
+  <link rel="stylesheet" href="close-control.css" />
 
   <script type="application/ld+json">
   {
@@ -270,7 +271,7 @@
     /* A phone gets the handsets, a computer the desktops, and neither pays for
        the other's. Crossing over reloads the page, so this always holds. */
     (document.documentElement.dataset.mode === 'mobile' ? ['pocket', 'bench', 'iphone', 'nokia'] : ['term', 'paint', 'finder', 'web', 'osx'])
-      .forEach(function (n) { document.write('<script src="retro/' + n + '.js?v=147"><\/script>'); });
+      .forEach(function (n) { document.write('<script src="retro/' + n + '.js?v=148"><\/script>'); });
   </script>
   <script src="retro/shapes.js?v=147"></script>
   <script src="retro/boot.js?v=148"></script>

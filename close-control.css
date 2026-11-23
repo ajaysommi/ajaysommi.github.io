@@ -1,0 +1,31 @@
+/* The mark is symmetric and centered on the button, independent of font metrics. */
+:where(button.ui-close) { position: relative; }
+
+button.ui-close::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: var(--close-mark-size, 24px);
+  height: var(--close-mark-size, 24px);
+  background: currentColor;
+  pointer-events: none;
+  --close-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.5 4.5l15 15m0-15-15 15' fill='none' stroke='black' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  -webkit-mask: var(--close-mark) center / contain no-repeat;
+  mask: var(--close-mark) center / contain no-repeat;
+}
+
+.term-close.ui-close {
+  flex: 0 0 34px; width: 34px; height: 34px; padding: 0;
+  border: 1px solid #ffffff30; border-radius: 50%; background: #ffffff0a;
+}
+
+@media (forced-colors: active) {
+  button.ui-close::after { forced-color-adjust: none; background: ButtonText; }
+}
+
+/* The same mark scales down inside the period window chrome. */
+.win-close.ui-close, .br-title .tb.ui-close, .smp-close.ui-close { --close-mark-size: 9px; color: #242424; }
+.win-close.ui-close:active, .smp-close.ui-close:active { color: #fff; }
+.lt.close.ui-close { --close-mark-size: 9px; color: #51170e; }
+.sp-card .sp-x.ui-close { --close-mark-size: 19px; }

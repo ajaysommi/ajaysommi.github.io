@@ -695,7 +695,7 @@ window.IPHONE = { start(room, exit) {
     const pages = () => {
       const o = h('div', 'saf-pages');
       const draw = () => {
-        o.innerHTML = `<div class="sp-card"><button type="button" class="sp-x" aria-label="Close page">×</button><b>${esc(pretty(tabsList[cur].url) || 'Untitled')}</b><span>${cur + 1} of ${tabsList.length}</span></div><div class="sp-nav"><button type="button" data-d="-1">${ARW.b}</button><span>${tabsList.map((_, i) => `<i class="${i === cur ? 'on' : ''}"></i>`).join('')}</span><button type="button" data-d="1">${ARW.f}</button></div><div class="sp-bar"><button type="button" data-new>New Page</button><button type="button" data-done>Done</button></div>`;
+        o.innerHTML = `<div class="sp-card"><button type="button" class="sp-x ui-close" aria-label="Close page"></button><b>${esc(pretty(tabsList[cur].url) || 'Untitled')}</b><span>${cur + 1} of ${tabsList.length}</span></div><div class="sp-nav"><button type="button" data-d="-1">${ARW.b}</button><span>${tabsList.map((_, i) => `<i class="${i === cur ? 'on' : ''}"></i>`).join('')}</span><button type="button" data-d="1">${ARW.f}</button></div><div class="sp-bar"><button type="button" data-new>New Page</button><button type="button" data-done>Done</button></div>`;
       };
       draw();
       o.addEventListener('click', (e) => {
