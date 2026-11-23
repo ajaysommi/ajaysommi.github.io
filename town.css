@@ -645,6 +645,11 @@
 .tw-fracture-root { stroke-width: .38; }
 .tw-fracture-tip { stroke-width: .23; opacity: .64; }
 .tw-fracture circle { fill: var(--fracture); }
+.tw-windshield-core { fill: url(#twWindshieldCore); }
+.tw-windshield-impact path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.tw-windshield-rim { stroke: #263a48; stroke-width: .33; opacity: .7; }
+.tw-windshield-rays { stroke: #dfedf2; stroke-width: .19; opacity: .82; }
+.tw-windshield-rings { stroke: #f3fbfb; stroke-width: .15; opacity: .86; }
 .tw-pane-opening { fill: url(#twGlassInterior); fill-opacity: .94; }
 .tw-glass-chunk > polygon:first-child { fill: #a2cbd6; fill-opacity: .48; stroke: #c0e7ee; stroke-opacity: .38; stroke-width: .23; }
 .tw-glass-chunk > polyline { fill: none; stroke: #effdff; stroke-opacity: .81; stroke-width: .21; stroke-linejoin: round; }

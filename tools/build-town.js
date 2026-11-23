@@ -1110,6 +1110,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <mask id="twShowroomMask" maskUnits="userSpaceOnUse" x="450" y="332" width="450" height="158"><rect x="450" y="332" width="450" height="158" fill="#fff"/><g id="twShowroomHoles"/></mask>
     <mask id="twBetGlassMask" maskUnits="userSpaceOnUse" x="3408" y="400" width="60" height="46"><rect x="3408" y="400" width="60" height="46" fill="#fff"/><g id="twBetHoles"/></mask>
     ${glassGrain}
+    <radialGradient id="twWindshieldCore"><stop stop-color="#f6ffff" stop-opacity=".94"/><stop offset=".45" stop-color="#e5f6f8" stop-opacity=".64"/><stop offset="1" stop-color="#d8edf1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twGlassInterior" cx=".27" cy=".1" r=".9"><stop stop-color="#34434a"/><stop offset=".78" stop-color="#151e22"/><stop offset="1" stop-color="#111719"/></radialGradient>
     <clipPath id="twShowGlass"><rect x="462" y="342" width="100" height="140"/><rect x="658" y="356" width="232" height="126"/></clipPath>
     <clipPath id="twMacScr"><rect x="3808.6" y="456.4" width="16.8" height="10.1"/></clipPath>

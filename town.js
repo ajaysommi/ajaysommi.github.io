@@ -1180,8 +1180,8 @@
   /* ---------------------------------------------------------- the damage */
   // Click a place again while you're looking at it and it takes the hit.
   // The Civic's windows shatter and its bumpers fall off; the MacBook's
-  // screen breaks, then it catches fire. A second hit to the showroom glass
-  // shatters the frontage and sets off the alarm: the
+  // screen breaks, then it catches fire. Three hits on a showroom pane
+  // shatter it and set off the alarm: the
   // lights inside go out but for a red emergency light in the corner and a
   // white strobe, the ADT sign lights up, the rover runs for its corner, the
   // police come; a car hit through the broken glass goes off too. A car on
@@ -1250,6 +1250,32 @@
       <path class="tw-fracture-root" d="${roots}"/>
       <path class="tw-fracture-tip" d="${tips}"/>
       <circle cx="${x}" cy="${y}" r="${.35 + strength * .15}"/>
+    </g>`;
+  };
+  const windshieldImpact = (poly, { x, y }, scale) => {
+    const random = seeded(x * 7 + y * 13);
+    const reach = Math.max(...poly.map(([px, py]) => Math.hypot(px - x, py - y)));
+    const spokes = 32, turn = random() * Math.PI * 2;
+    const angles = Array.from({ length: spokes }, (_, i) => turn + (i + random() * .72) * Math.PI * 2 / spokes);
+    const at = (angle, r) => `${(x + Math.cos(angle) * r).toFixed(2)} ${(y + Math.sin(angle) * r).toFixed(2)}`;
+    const core = clamp(scale * .12, .45, 3.2);
+    let rays = '', rings = '';
+    for (const angle of angles) {
+      const end = reach * (.18 + random() ** 2 * .94);
+      const bend = (random() - .5) * .19;
+      rays += `M${at(angle, core * random())}L${at(angle, core * 1.3)}L${at(angle + bend, end * .47)}L${at(angle + bend * 1.65, end)}`;
+    }
+    for (const radius of [.52, .74, 1, 1.32, 1.75, 2.35, 3.2, 4.5, 6.1]) {
+      const ring = angles.map(angle => at(angle, core * radius * (.86 + random() * .28)));
+      ring.forEach((point, i) => {
+        if (random() < (radius < 1.75 ? .94 : .68)) rings += `M${point}L${ring[(i + 1) % spokes]}`;
+      });
+    }
+    return `<g class="tw-windshield-impact">
+      <circle class="tw-windshield-core" cx="${x}" cy="${y}" r="${core * 1.55}"/>
+      <path class="tw-windshield-rim" d="${rays}" transform="translate(.13 .16)"/>
+      <path class="tw-windshield-rays" d="${rays}"/>
+      <path class="tw-windshield-rings" d="${rings}"/>
     </g>`;
   };
   const rectPane = (x, y, w, h) => [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
@@ -1321,7 +1347,7 @@
   };
   let paneDamage = new WeakMap(), nextPane = 0, paneHits = 0;
   const strikePane = (root, key, poly, q, options = {}) => {
-    const { dark = false, threshold = 4, holes = null, debris = root, ground = Math.max(...poly.map(([, y]) => y)) + 12 } = options;
+    const { dark = false, threshold = 4, countAcrossPane = false, windshield = false, holes = null, debris = root, ground = Math.max(...poly.map(([, y]) => y)) + 12 } = options;
     let panes = paneDamage.get(root);
     if (!panes) { panes = new Map(); paneDamage.set(root, panes); }
     let pane = panes.get(key);
@@ -1336,6 +1362,13 @@
       pane = { id, marks, points: [], scale: paneScale(poly), holes };
       panes.set(key, pane);
     }
+    if (windshield) {
+      if (pane.points.length) return 'ignored';
+      pane.points.push([q.x, q.y]);
+      paneHits++;
+      pane.marks.innerHTML = windshieldImpact(poly, q, pane.scale);
+      return 'laminated';
+    }
     if (pane.chunks) {
       const chunk = pane.chunks.find(piece => inPoly(q.x, q.y, piece.poly));
       if (!chunk || chunk.gone) return 'hole';
@@ -1348,7 +1381,8 @@
     pane.points.push([q.x, q.y]);
     if (pane.points.length > 64) pane.points.shift();
     const radius = clamp(pane.scale * .23, 1.4, 7);
-    const impact = threshold === 1 ? q : impactGroups(pane.points, radius).find(group => threshold && group.count >= threshold);
+    const impact = threshold === 1 || (countAcrossPane && pane.points.length >= threshold)
+      ? q : impactGroups(pane.points, radius).find(group => threshold && group.count >= threshold);
     paneHits++;
     if (impact) {
       Object.assign(pane, fracturePieces(poly, [impact.x, impact.y], pane.scale));
@@ -1423,7 +1457,8 @@
     else {
       const i = D.civic.wins.findIndex((w) => inPoly(q.x, q.y, w));
       if (i >= 0) {
-        strikePane(winG[i], i, D.civic.wins[i], q, { dark: true, threshold: 1, debris: civG, ground: D.civic.ground });
+        const result = strikePane(winG[i], i, D.civic.wins[i], q, { dark: true, threshold: 1, windshield: i === 0, debris: civG, ground: D.civic.ground });
+        if (result === 'ignored') return;
       } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
       else return;
     }
@@ -1455,9 +1490,7 @@
     ...displayPanes.map((poly, key) => ({ root: crG, key, poly })),
     ...showroomDoors.map((poly, key) => ({ root: showroomDoor, key, poly }))
   ];
-  const strikeShowroomPane = ({ root, key, poly }, q, threshold) =>
-    strikePane(root, key, poly, q, { threshold, holes: showHoles, debris: crG.parentNode, ground: 486 });
-  let showroomCracked = false, policeT = 0;
+  let policeT = 0;
   const scare = (on) => { bots.rfa.scared = on; bots.rfa.el.classList.toggle('scared', on); };
   const drawShowroom = () => {
     tw.classList.toggle('glass-broke', !!dmg.toy);
@@ -1473,27 +1506,17 @@
     const q = localPt(crG, e);
     const pane = showroomPanes.find(({ poly }) => inPoly(q.x, q.y, poly));
     if (!pane) return;
-    if (!showroomCracked) {
-      strikeShowroomPane(pane, q, 0);
-      showroomCracked = true;
-      save();
-      return;
-    }
-    if (!dmg.toy) {
-      for (const section of showroomPanes) {
-        const impact = section === pane ? q : {
-          x: section.poly.reduce((sum, [x]) => sum + x, 0) / section.poly.length,
-          y: section.poly.reduce((sum, [, y]) => sum + y, 0) / section.poly.length
-        };
-        strikeShowroomPane(section, impact, 1);
-      }
+    const result = strikePane(pane.root, pane.key, pane.poly, q, {
+      threshold: 3, countAcrossPane: true, holes: showHoles, debris: crG.parentNode, ground: 486
+    });
+    if (result === 'break' && !dmg.toy) {
       dmg.toy = 1;
       policeT = setTimeout(() => { dmg.police = 1; tw.classList.add('police'); }, 9000);
-    } else if (strikeShowroomPane(pane, q, 1) === 'hole' && pane.root === crG) {
+    } else if (result === 'hole' && pane.root === crG) {
       const car = showcars.find(g => inPoly(q.x, q.y, shapePane($('.tw-carimg', g))));
       if (car) {
         const root = $('.tw-car-fractures', car), poly = shapePane(root);
-        if (inPoly(q.x, q.y, poly)) strikePane(root, 0, poly, q, { dark: true, threshold: 1, ground: 475 });
+        if (inPoly(q.x, q.y, poly) && strikePane(root, 0, poly, q, { windshield: true }) === 'ignored') return;
         dmg.cars[car.dataset.car] = 1;
       }
     }
@@ -1507,14 +1530,20 @@
     [0.184, 0.37, 0.406, 0.724], [0.394, 0.57, 0.46, 0.724], [0.597, 0.773, 0.406, 0.724], [0.799, 0.979, 0.406, 0.724]
   ];
   const jmHot = hotOf('jm'), tcG = $('.tw-tcars', jmHot);
+  // The cab and first five carried cars face left. The last three face right.
   const truckPanes = D.truck.glass.flatMap(({ car, panes }) =>
-    spritePanes($('.tw-truckimg', jmHot), panes, 3944, 876).map((poly, i) => ({ car, key: `${car}:${i}`, poly }))
+    spritePanes($('.tw-truckimg', jmHot), panes, 3944, 876).map((poly, i) => ({
+      car, key: `${car}:${i}`, poly, windshield: i === (car >= 5 ? panes.length - 1 : 0)
+    }))
   );
   const pokeTruck = (e) => {
     const T = D.truck, q = localPt(tcG, e), fx = (q.x - T.x) / T.w, fy = (q.y - T.y) / T.h;
     const pane = truckPanes.find(({ poly }) => inPoly(q.x, q.y, poly));
     const i = pane ? pane.car : TCARS.findIndex(([a, b, c, d]) => fx >= a && fx <= b && fy >= c && fy <= d);
-    if (pane) strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, ground: T.y + T.h });
+    if (pane) {
+      const result = strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, windshield: pane.windshield, ground: T.y + T.h });
+      if (result === 'ignored') return;
+    }
     if (i < 0) { if (pane) save(); else pokeAny('jm', e); return; }
     const n = dmg.tcars[i] || 0;
     if (n < 6) dmg.tcars[i] = n + 1;
@@ -1626,7 +1655,12 @@
   const hallCr = $('.tw-hall-cr', svg), hallHoles = $('.tw-hall-holes', svg);
   const pokeHall = (e) => {
     const q = localPt(hallCr, e), i = D.hall.polys.findIndex((p) => inPoly(q.x, q.y, p));
-    if (i < 0) { pokeAny('edu', e); return; }
+    if (i < 0) {
+      // Mullions and the remaining facade share the window artwork. A dent
+      // there would be painted over the glass by the generic damage layer.
+      if (!e.target.closest('.tw-hall-g')) pokeAny('edu', e);
+      return;
+    }
     const result = strikePane(hallCr, i, D.hall.polys[i], q, { threshold: 3, holes: hallHoles, ground: D.hall.ground });
     if (result === 'break') $('.tw-hall-gl', svg).setAttribute('mask', 'url(#twHallMask)');
     save();
@@ -1716,7 +1750,6 @@
   }
   function repair() {
     dmg = fresh();
-    showroomCracked = false;
     paneDamage = new WeakMap(); paneHits = 0;
     $$('.tw-pane-damage, .tw-fallshard', svg).forEach(layer => layer.remove());
     Object.keys(hits).forEach((k) => delete hits[k]);
