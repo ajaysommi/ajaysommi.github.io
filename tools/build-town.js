@@ -266,7 +266,7 @@ const PROJ = {
       <rect x="3436.4" y="429.6" width="3.2" height="2.6" class="tw-tvstand"/><rect x="3427" y="432" width="22" height="8" rx=".8" class="tw-tvcab"/>
       <g class="tw-tvlcd" clip-path="url(#twTvScr)"><rect x="3424.4" y="412" width="27.2" height="16.2" class="tw-tvlcd-bleed"/>${[[3428, '#ff2bd6'], [3431.6, '#29f0ff'], [3440.2, '#3dff6e'], [3446, '#fff']].map(([x, c]) => `<rect x="${x}" y="412" width=".7" height="16.2" fill="${c}" class="tw-tvlcd-bar"/>`).join('')}<g class="tw-tvlcd-cr"></g></g>
       <path d="M3414 404 h7 q-2.4 18 1 36 h-8 z M3462 404 h-7 q2.4 18 -1 36 h8 z" class="tw-curtain"/>
-      <rect x="3414" y="404" width="48" height="36" rx="1.6" class="tw-winglass"/><path d="M3420 404 l-6 12 M3434 404 l-14 28 M3440 404 l-4 8" class="tw-winsheen"/>
+      <rect x="3414" y="404" width="48" height="36" rx="1.6" class="tw-winglass" mask="url(#twBetGlassMask)"/><path d="M3420 404 l-6 12 M3434 404 l-14 28 M3440 404 l-4 8" class="tw-winsheen" mask="url(#twBetGlassMask)"/>
       <g class="tw-bwcr"></g>
       <path d="M3414 404 l6 0 l-3 7 l5 4 l-8 4 z M3462 404 l-7 0 l4 6 l-5 6 l8 3 z M3414 440 l0 -9 l6 5 l4 4 z M3462 440 l0 -8 l-6 4 l-3 4 z M3436 404 l5 0 l-2 5 z" class="tw-hedge"/>
       <path d="M3438 404 V440 M3414 422 h4 M3458 422 h4" class="tw-mull"/>
@@ -889,10 +889,8 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
           + `<g class="tw-hzs">${K.l.map(([a, b]) => { const [px, py] = at(a, b); return `<ellipse cx="${px}" cy="${py}" rx="8" ry="4.4" fill="url(#twHaz)" opacity=".8"/>`; }).join('')}${drl('tw-drl', 'twDrlA')}</g></g></g>`; }).join('')}
       <!-- the alarm's white strobe catching the cars, in step with it -->
       <g class="tw-strobecars tw-nohit">${cars.map((c) => { const H = c.w * CAR[c.f].a; return `<image href="assets/images/town/car-${c.f}.webp" x="${(c.cx - c.w / 2).toFixed(1)}" y="${(fy + 3 - H).toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" filter="url(#twWhiteOut)"/>` + bow(c.cx, fy + 3 - H + H * 0.125 - c.w * 0.4 * 0.799 * 0.4, c.w * 0.4).replace('class="tw-bow"', 'filter="url(#twWhiteOut)"'); }).join('')}</g>
-      <rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-glassover"/>
-      <g class="tw-shine tw-nohit" clip-path="url(#twShowGlass)" fill="url(#twGlassReflection)" aria-hidden="true">${shine}</g>
-      <path d="M${x} ${y} l7 0 l-4 10 l6 6 l-9 7 Z M${x + w} ${y} l-10 0 l5 8 l-6 9 l11 4 Z M${x} ${y + h - 8} l0 -16 l8 8 l5 8 Z M${x + w} ${y + h - 8} l0 -12 l-9 6 l-3 6 Z M${x + w * 0.4} ${y} l12 0 l-5 9 Z" class="tw-glassedge"/>
-      <g class="tw-shards">${Array.from({ length: Math.round(w / 9) }, (_, i) => { const sx = x + 4 + i * 9 + (i * 37 % 5), sy = y + h + 2 + (i * 13 % 7); return `<path d="M${sx} ${sy} l${2 + i % 3} -1.6 l1 ${1.4 + i % 2} z" class="tw-shard"/>`; }).join('')}</g>`;
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-glassover" mask="url(#twShowroomMask)"/>
+      <g class="tw-shine tw-nohit" mask="url(#twShowroomMask)" clip-path="url(#twShowGlass)" fill="url(#twGlassReflection)" aria-hidden="true">${shine}</g>`;
 };
 
 // Stars: scattered at random (the same random every build), each with its own size and slow breath.
@@ -922,6 +920,26 @@ const police = (x, cls) => {
 };
 // The moon's crescent, worked out from its two circles.
 const MOON = (() => { const R = 30, r2 = 27, cx = 16, cy = -10, d = Math.hypot(cx, cy), a = (R * R - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(R * R - a * a), px = a * cx / d, py = a * cy / d, ox = -cy / d * h, oy = cx / d * h; const p1 = [px + ox, py + oy], p2 = [px - ox, py - oy]; return `M${p1[0].toFixed(2)} ${p1[1].toFixed(2)} A${R} ${R} 0 1 1 ${p2[0].toFixed(2)} ${p2[1].toFixed(2)} A${r2} ${r2} 0 0 0 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)} Z`; })();
+// A single repeating texture with uneven, tiny cells for tempered glass.
+const glassGrain = (() => {
+  const cols = 17, rows = 15, step = .57;
+  let state = 283;
+  const random = () => (state = (state * 16807) % 2147483647) / 2147483647;
+  const offsets = Array.from({ length: rows }, () => Array.from({ length: cols }, () => [random() - .5, random() - .5]));
+  const at = (x, y) => offsets[y % rows][x % cols].map((d, axis) => (((axis ? y : x) + d * .86) * step).toFixed(2)).join(' ');
+  let seams = '', specks = '';
+  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+    const a = at(x, y), b = at(x + 1, y), c = at(x, y + 1), d = at(x + 1, y + 1);
+    if (random() < .88) seams += `M${a}L${b}`;
+    if (random() < .88) seams += `M${a}L${c}`;
+    if (random() < .42) seams += random() < .5 ? `M${a}L${d}` : `M${b}L${c}`;
+    if (random() < .22) specks += `M${a}l.09-.08`;
+  }
+  return `<pattern id="twGlassGrain" width="${cols * step}" height="${rows * step}" patternUnits="userSpaceOnUse">
+    <path d="${seams}" fill="none" stroke="#e0f6f8" stroke-width=".09" stroke-opacity=".62"/>
+    <path d="${specks}" stroke="#fff" stroke-width=".12" stroke-linecap="round" opacity=".65"/>
+  </pattern>`;
+})();
 const SKY_DAY = [[0, '#2779c8'], [.45, '#4f9fe0'], [.62, '#7cb9e9'], [.8, '#c4e0f2'], [.92, '#e3eef0'], [1, '#eef2ea']];
 const SKY_NIGHT = [[0, '#090f26'], [.55, '#1c2b4a'], [.80, '#414769'], [1, '#8d6877']];
 const skyHex = (st, y) => {
@@ -1088,6 +1106,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <stop offset=".76" stop-color="#edf7ff" stop-opacity=".17"/>
       <stop offset="1" stop-color="#edf7ff" stop-opacity="0"/>
     </linearGradient>
+    <mask id="twShowroomMask" maskUnits="userSpaceOnUse" x="450" y="332" width="450" height="158"><rect x="450" y="332" width="450" height="158" fill="#fff"/><g id="twShowroomHoles"/></mask>
+    <mask id="twBetGlassMask" maskUnits="userSpaceOnUse" x="3408" y="400" width="60" height="46"><rect x="3408" y="400" width="60" height="46" fill="#fff"/><g id="twBetHoles"/></mask>
+    ${glassGrain}
+    <radialGradient id="twGlassInterior" cx=".27" cy=".1" r=".9"><stop stop-color="#34434a"/><stop offset=".78" stop-color="#151e22"/><stop offset="1" stop-color="#111719"/></radialGradient>
     <clipPath id="twShowGlass"><rect x="462" y="342" width="100" height="140"/><rect x="658" y="356" width="232" height="126"/></clipPath>
     <clipPath id="twMacScr"><rect x="3808.6" y="456.4" width="16.8" height="10.1"/></clipPath>
     ${WINS.map((w, i) => `<clipPath id="twCivWin${i}"><polygon points="${w.map((p) => p.join(',')).join(' ')}"/></clipPath>`).join('')}
@@ -1243,8 +1265,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-cracks" clip-path="url(#twShowGlass)"></g>
       <rect x="752" y="388" width="48" height="94" class="tw-pillar tw-fo"/>
       <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo tw-temb"/><image href="assets/images/town/snow-temblem2.webp" x="760" y="393.33" width="32" height="22" preserveAspectRatio="none" class="tw-snowimg"/>
-      <rect x="760" y="426" width="32" height="56" class="tw-doorglass"/>
-      <g class="tw-dooralarm tw-nohit"><rect x="760" y="426" width="32" height="56" class="tw-alarm-dark"/><rect x="760" y="426" width="32" height="56" class="tw-alarm-white"/></g>
+      <rect x="760" y="426" width="32" height="56" class="tw-doorglass" mask="url(#twShowroomMask)"/>
+      <g class="tw-dooralarm tw-nohit" mask="url(#twShowroomMask)"><rect x="760" y="426" width="32" height="56" class="tw-alarm-dark"/><rect x="760" y="426" width="32" height="56" class="tw-alarm-white"/></g>
       <g class="tw-door-fractures tw-nohit"></g><path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 437, 11, 'tw-onglass')}
 
       <rect x="904" y="284" width="230" height="198" class="tw-facade2 tw-fo"/>
@@ -1569,7 +1591,6 @@ const data = {
   ravGlass: RAV_GLASS,
   civic: { wins: WINS, fb: FB, rb: RB, ground: CV.ground },
   hall: { ground: 494, polys: MALW.polys.map((p) => p.map(([u, v]) => [+(MAL.x + u * MAL.w).toFixed(1), +(MAL.y + v * MAL.h).toFixed(1)])) },
-  glass: [[462, 342, 100, 140], [658, 356, 232, 126]],
   pin: Object.fromEntries(Object.entries(SPOT).map(([k, v]) => [k, v.pin ? [v.pin[0] + (OFF[k] || 0), v.pin[1]] : null])),
   links: LINKS,
   roles: Object.fromEntries(roles.map((r) => { const z = SPOT[r.id].zoom; return [r.id, { ...r, zoom: z ? [z[0] + (OFF[r.id] || 0), z[1], z[2], z[3]] : null }]; }))

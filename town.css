@@ -614,10 +614,9 @@
 .tw-bump-f { transform-origin: 0% 100%; } .tw-bump-r { transform-origin: 100% 100%; }
 .tw-bump-f.off { transform: translate(0, 3.6px) rotate(-80deg); }
 .tw-bump-r.off { transform: translate(0, 3.6px) rotate(80deg); }
-.tw-civ-hole { fill: #121419; opacity: .92; }
 .tw-dent { fill: none; stroke: rgba(0, 0, 0, .55); stroke-width: .55; }
 .tw-scuff { stroke: rgba(255, 255, 255, .45); stroke-width: .35; }
-.tw-fallshard { fill: rgba(220, 236, 250, .95); transform-box: fill-box; transform-origin: center; animation: tw-fall 1.1s cubic-bezier(.5, 0, 1, .6) forwards; }
+.tw-fallshard { pointer-events: none; fill: rgba(220, 236, 250, .95); transform-box: fill-box; transform-origin: center; animation: tw-fall 1.1s cubic-bezier(.5, 0, 1, .6) forwards; }
 @keyframes tw-fall { to { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); opacity: .2; } }
 
 /* The MacBook: a broken panel, then a fire */
@@ -640,20 +639,17 @@
 .tw-fracture { --fracture: #3f586b; --fracture-rim: #f7faff; pointer-events: none; }
 :is([data-theme="midnight"], [data-theme="terminal"]) .tw-fracture { --fracture: #d8eaf1; --fracture-rim: #263d50; }
 .tw-fracture.tw-fracture-dark { --fracture: #e1edf0; --fracture-rim: #253b49; }
-.tw-pane-damage, .tw-fracture-remnant { pointer-events: none; }
-.tw-fracture-remnant { fill: #cde0e9; fill-opacity: .46; stroke: #eaf6fc; stroke-opacity: .8; stroke-width: .22; }
+.tw-pane-damage { pointer-events: none; }
 .tw-fracture path { fill: none; stroke: var(--fracture); stroke-linejoin: round; stroke-linecap: round; }
 .tw-fracture .tw-fracture-rim { stroke: var(--fracture-rim); stroke-width: .62; opacity: .66; }
 .tw-fracture-root { stroke-width: .38; }
 .tw-fracture-tip { stroke-width: .23; opacity: .64; }
 .tw-fracture circle { fill: var(--fracture); }
-.tw-glassedge, .tw-shards { display: none; }
-.tw.glass-broke :is(.tw-glassover, .tw-shine) { display: none; }
-.tw.glass-broke .tw-glassedge { display: inline; fill: rgba(205, 228, 245, .55); stroke: rgba(255, 255, 255, .7); stroke-width: .5; }
-.tw.glass-broke .tw-shards { display: inline; }
-.tw-shard { fill: rgba(215, 235, 250, .9); stroke: rgba(120, 150, 175, .6); stroke-width: .3; }
-.tw.shatter .tw-shards { animation: tw-shardsin .6s cubic-bezier(.5, 0, 1, .6); }
-@keyframes tw-shardsin { from { transform: translateY(-40px); opacity: 0; } }
+.tw-pane-opening { fill: url(#twGlassInterior); fill-opacity: .94; }
+.tw-glass-chunk > polygon:first-child { fill: #a2cbd6; fill-opacity: .48; stroke: #c0e7ee; stroke-opacity: .38; stroke-width: .23; }
+.tw-glass-chunk > polyline { fill: none; stroke: #effdff; stroke-opacity: .81; stroke-width: .21; stroke-linejoin: round; }
+:is([data-theme="midnight"], [data-theme="terminal"]) .tw-glass-chunk > polygon:first-child { fill: #6eabb8; fill-opacity: .42; }
+
 .tw.glass-broke .tw-showcar { opacity: 1; }
 .tw-showcar { cursor: pointer; }
 .tw-carlights { opacity: 0; } .tw-showcar.alarm .tw-carlights { opacity: 1; }
@@ -895,7 +891,6 @@
 .tw.alarm .tw-int { fill: #120b0c !important; }
 .tw-dooralarm { opacity: 0; } .tw.alarm .tw-dooralarm { opacity: 1; }
 .tw.alarm .tw-doorglass { fill: #160e10; }
-.tw.glass-broke .tw-onglass { display: none; }
 .tw-proj { fill: #fff; }
 
 /* The cars on the truck, each with its own alarm once it's hit. */
