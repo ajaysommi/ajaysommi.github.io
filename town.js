@@ -313,7 +313,9 @@
     showRover = inView(bots.rfa.box[0], bots.rfa.box[1]);
     showRobot = inView(bots.rjax.box[0], TARGET[0]);
     const [bayX, , bayWidth] = D.roles.hunter.zoom;
-    showLift = inView(bayX, bayX + bayWidth);
+    const liftInView = inView(bayX, bayX + bayWidth);
+    if (showLift !== liftInView) svg.classList.toggle('tw-bay-visible', liftInView);
+    showLift = liftInView;
     if (!actorFrame && visible && !reduced && (showRover || showRobot || showLift)) {
       lastT = 0;
       actorFrame = requestAnimationFrame(tickActors);
@@ -322,7 +324,9 @@
   let base = null, camOn = false, barT = 0;
   const placeVB = (b, moving) => {
     vb = b;
-    if (moving && base) {
+    // Use the same camera transform for zooms and pans, rebasing long trips
+    // before their offset grows beyond the current viewport.
+    if (moving && base && Math.abs(base[0] - b[0]) < vw * .9) {
       const s = base[2] / b[2];
       cam.style.transform = `translate(${(base[0] - s * b[0]).toFixed(3)}px, ${(base[1] - s * b[1]).toFixed(3)}px) scale(${s.toFixed(5)})`;
       camOn = true;
@@ -375,7 +379,12 @@
     const to = clamp(x, 0, Math.max(0, WORLD - vw));
     if (reduced || ms === 0) { camX = to; setVB(view()); return; }
     const from = camX, t0 = performance.now();
-    const f = (t) => { const k = ease(clamp((t - t0) / ms, 0, 1)); camX = from + (to - from) * k; slid(); setVB(view()); if (k < 1) glide = requestAnimationFrame(f); };
+    const f = (t) => {
+      const k = ease(clamp((t - t0) / ms, 0, 1));
+      camX = from + (to - from) * k;
+      slid(); placeVB(view(), k < 1);
+      if (k < 1) glide = requestAnimationFrame(f);
+    };
     glide = requestAnimationFrame(f);
   };
   /* Gliding: the wheel, a trackpad and the arrow keys only say where the
@@ -389,8 +398,9 @@
     if (keyDir) gTo = clamp(gTo + keyDir * 820 / scale * dt, 0, max);
     const d = gTo - camX;
     camX = Math.abs(d) < 0.2 && !keyDir ? gTo : camX + d * (1 - Math.exp(-dt * 15));
-    slid(); setVB(view());
-    if (camX !== gTo || keyDir) gRaf = requestAnimationFrame(glideStep); else { gRaf = 0; gTo = null; }
+    const moving = camX !== gTo || !!keyDir;
+    slid(); placeVB(view(), moving);
+    if (moving) gRaf = requestAnimationFrame(glideStep); else { gRaf = 0; gTo = null; }
   };
   const glideBy = (dx) => {
     cancelAnimationFrame(glide);
@@ -468,7 +478,7 @@
       <div class="tw-pc-top"><span class="tw-pc-greet">Greetings from</span><span class="tw-pc-town">SOMMIVILLE</span></div>
       <div class="tw-pc-stampwrap"><span class="tw-pc-stamp"><img src="${r.photos[0]}" alt="Ajay Sommi" /></span><span class="tw-pc-mark" aria-hidden="true"><b>VISITOR CENTER</b><i>${esc(day)}</i></span></div>
       <div class="tw-pc-note">${r.lines.map((l) => `<p>${esc(l)}</p>`).join('')}</div>
-      <figure class="tw-pc-snap"><button type="button" aria-label="Open photo"><img src="${r.photos[1]}" alt="" loading="lazy" decoding="async" /></button><figcaption>Me, a long time ago</figcaption></figure>
+      <figure class="tw-pc-snap"><button type="button" aria-label="Open photo"><img src="${r.photos[1]}" alt="" loading="lazy" decoding="async" /></button><figcaption>20+ years of experience</figcaption></figure>
       ${r.quote ? `<blockquote class="tw-pc-quote">“${esc(r.quote)}”</blockquote>` : ''}
       <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
     </div>`;
@@ -508,9 +518,8 @@
             <span class="tw-envelope-folded" aria-hidden="true"></span>
             <span class="tw-envelope-pocket" aria-hidden="true"></span>
             <span class="tw-envelope-flap" aria-hidden="true"></span>
-            <button type="button" class="tw-seal" aria-label="Break the seal on the letter from ${esc(name)}"><span aria-hidden="true">${esc(name[0])}</span></button>
+            <span class="tw-seal" aria-hidden="true"><span>${esc(name[0])}</span></span>
           </div>
-          <p class="tw-unseal-prompt" aria-hidden="true">Break the seal</p>
         </div>
         <article class="tw-letter-sheet" hidden>
           <p class="tw-letter-to">To Ajay Sommi</p>
@@ -524,24 +533,21 @@
       inner.innerHTML = letters(r);
       wireLetters(r, i);
     });
-    const stage = $('.tw-unseal', inner), seal = $('.tw-seal', stage), sheet = $('.tw-letter-sheet', inner);
+    const stage = $('.tw-unseal', inner), sheet = $('.tw-letter-sheet', inner);
     const reveal = () => {
       if (!stage.isConnected || cur !== 'recs') return;
       stage.hidden = true;
       sheet.hidden = false;
       $('.tw-letter-title', sheet).focus({ preventScroll: true });
     };
-    seal.addEventListener('click', () => {
-      openedLetters.add(i);
-      $('.tw-hot[data-id="recs"] .tw-mailbox', svg).classList.add('seen');
-      seal.disabled = true;
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { reveal(); return; }
-      const foldedPaper = $('.tw-envelope-folded', stage);
-      foldedPaper.addEventListener('animationend', reveal, { once: true });
-      foldedPaper.addEventListener('animationcancel', reveal, { once: true });
-      stage.classList.add('unsealed');
-    });
-    seal.focus({ preventScroll: true });
+    openedLetters.add(i);
+    $('.tw-hot[data-id="recs"] .tw-mailbox', svg).classList.add('seen');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { reveal(); return; }
+    $('.tw-mail-return', inner).focus({ preventScroll: true });
+    const foldedPaper = $('.tw-envelope-folded', stage);
+    foldedPaper.addEventListener('animationend', reveal, { once: true });
+    foldedPaper.addEventListener('animationcancel', reveal, { once: true });
+    stage.classList.add('unsealed');
   };
   // where each place lives on the web (the same links as the classic site's logo strip)
   const SITES = {
@@ -722,7 +728,18 @@
   const slid = () => {
     if (!sliding) { svg.classList.add('tw-moving'); hideLabel(); }
     clearTimeout(sliding);
-    sliding = setTimeout(() => { sliding = 0; svg.classList.remove('tw-moving'); if (pendingHover !== undefined) { const p = pendingHover; pendingHover = undefined; hoverTo(p); } }, 160);
+    sliding = setTimeout(() => {
+      sliding = 0;
+      if (!zooming()) {
+        if (camOn) setVB(vb);
+        svg.classList.remove('tw-moving');
+      }
+      if (pendingHover !== undefined) {
+        const id = pendingHover;
+        pendingHover = undefined;
+        hoverTo(id);
+      }
+    }, 160);
   };
   const hoverTo = (id) => {
     if (cur) return;
@@ -733,8 +750,8 @@
     offT = setTimeout(() => { over = null; glow(null); hideLabel(); }, 160);
   };
   const idAt = (t) => { if (!t || !t.closest) return null; if (t.closest('.tw-adtsticker')) return 'adt'; const h = t.closest('.tw-hot'); return h ? h.dataset.id : null; };
-  svg.addEventListener('pointerover', (e) => { if (showRobot) overCol = colOf(e); hoverTo(idAt(e.target)); });
-  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (showRobot && n - colT > 45) { colT = n; overCol = colOf(e); } });
+  svg.addEventListener('pointerover', (e) => { if (showRobot && !sliding && !zooming()) overCol = colOf(e); hoverTo(idAt(e.target)); });
+  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (showRobot && !sliding && !zooming() && n - colT > 45) { colT = n; overCol = colOf(e); } });
   svg.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
 
   /* ---------------------------------------------------------- the pointer */
@@ -792,6 +809,7 @@
     if (praf) return;
     praf = requestAnimationFrame(() => {
       praf = 0;
+      if (sliding || zooming()) return;
       const e = lastE;
       const p = toSVG(e);
       ptr = { x: p.x, y: p.y };
@@ -853,7 +871,7 @@
     if (!drag || !dragged) return;
     camX = clamp(drag.cam - (drag.lastX - drag.startX) / scale, 0, Math.max(0, WORLD - vw));
     explored = true;
-    slid(); setVB(view());
+    slid(); placeVB(view(), true);
   };
   svg.addEventListener('pointerdown', (e) => {
     if (!e.isPrimary || e.button !== 0 || drag) return;

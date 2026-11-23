@@ -97,7 +97,7 @@ const SPOT = {
   fics: { zoom: [3352, 360, 210, 176], pin: [3425, 398] },
   adt: { zoom: [548, 334, 110, 180], pin: [610, 424] },
   vc: { zoom: [2560, 280, 580, 230], pin: [2960, 290] },
-  recs: { zoom: [3744, 534, 86, 68], pin: [3791, 548] },
+  recs: { zoom: [3700, 507, 180, 115], pin: [3791, 548] },
   tm: { zoom: [5040 + SH, 400, 120, 100], pin: null },
   ...Object.fromEntries(BENCH.map((p) => [p.id, { zoom: p.zoom, pin: p.pin }])),
   ...Object.fromEntries(PROJECTS.map((p) => [p.id, { zoom: p.zoom, pin: p.pin }]))
@@ -550,23 +550,21 @@ const home = () => `
 // The mailbox at the curb by the drive: letters from people I've worked with
 // (their LinkedIn recommendations). Its flag is up until it has been opened.
 const mailbox = () => hot('recs', `<g class="tw-mailbox" transform="translate(3790 597)">
-      <ellipse cx="1" cy=".7" rx="17" ry="2" class="tw-root-shadow tw-nohit"/>
-      <path d="M-4-30l6-1v30l-6 1z M2-23l8-9 2 1L2-18z" class="tw-mb-post tw-mb-ol"/>
-      <path d="M-2.5-25q1.2 5 .1 10t.2 9m2-17v8m-.5 3q1 2 .1 5" class="tw-mb-grain"/>
-      <path d="M-16-31h32l2 2-4 2h-30z" class="tw-mb-post tw-mb-ol"/>
-      <path d="M-17-31v-10q0-9 9-10l18 1q9 1 10 10v9l-3 2-25 1z" class="tw-mb-body tw-mb-ol"/>
-      <path d="M-17-30.8v-10q0-9 8-10 8 1 8 10v11l-7 1.5z" class="tw-mb-door tw-mb-ol"/>
-      <path d="M-15-32v-8.5q0-6.7 6-8m8.6.5 9.8.7q5.2.5 7.3 4.2" class="tw-mb-shine"/>
-      <path d="M-14-33h10m5.5 1.1 15.5-1m-6-14q4 2.2 4.5 6.4M-12-43h6" class="tw-mb-seam"/>
-      <path d="M-12-42.2h6l-.6 2.2h-4.8z" class="tw-mb-handle tw-mb-ol"/>
-      <path d="M-13.3-31.8v2m8.8-1.3v1.8" stroke-width="1.5" class="tw-mb-brass"/>
-      <path d="M2-43.3l10.5.5v6.5L2-36.5z" class="tw-mb-plaque"/>
-      <text x="7.25" y="-38.1" text-anchor="middle" class="tw-mb-number">01</text>
-      <path d="M3-39.4h.1m8.2.3h.1" class="tw-mb-seam"/>
-      <g transform="translate(17 -33)"><g class="tw-mb-flag">
-        <path d="M-.85 0v-19.3q4.8-1.3 8.8.1l-1.6 2.8 1.2 2.7q-3.2-.9-5.9 0V0z" class="tw-mb-red tw-mb-ol"/>
-        <path d="M1-18q2.3-.6 4.6-.1" class="tw-mb-shine"/>
-      </g><circle r="1.4" class="tw-mb-handle tw-mb-ol"/><path d="M-.55 0h1.1" class="tw-mb-seam"/></g>
+      <ellipse cx="0" cy=".6" rx="16" ry="2" class="tw-root-shadow tw-nohit"/>
+      <path d="M-3-30h6v30h-6z M3-22l8-8h-3l-5 5z" class="tw-mb-post tw-mb-ol"/>
+      <path d="M-1.6-23q.7 5 .1 10t.3 9m2-16v7" class="tw-mb-grain"/>
+      <rect x="-18" y="-31" width="36" height="3.2" rx=".6" class="tw-mb-post tw-mb-ol"/>
+      <path d="M-18-31v-10q0-9 8-9h20q8 0 8 9v10z" class="tw-mb-body tw-mb-ol"/>
+      <path d="M-18-31v-10q0-9 8-9 8 0 8 9v10z" class="tw-mb-door tw-mb-ol"/>
+      <path d="M-15.8-34v-7q0-6 5.8-7m7.4.2H9q4.9 0 6.8 4.2" class="tw-mb-shine"/>
+      <path d="M-15-33h10m5-.3h15M2-44H11" class="tw-mb-seam"/>
+      <rect x="-12.8" y="-42.7" width="5.6" height="2.1" rx=".65" class="tw-mb-handle tw-mb-ol"/>
+      <path d="M-14-31.8v2m8-2v2" stroke-width="1.4" class="tw-mb-brass"/>
+      <circle cx="2" cy="-44" r=".6" class="tw-mb-handle"/><circle cx="11" cy="-44" r=".6" class="tw-mb-handle"/>
+      <g transform="translate(13 -35)"><g class="tw-mb-flag">
+        <path d="M-.75 0v-15h7.8v4.6H.75V0z" class="tw-mb-red tw-mb-ol"/>
+        <path d="M1-14h4.8" class="tw-mb-shine"/>
+      </g><circle r="1.25" class="tw-mb-handle tw-mb-ol"/></g>
     </g>`);
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);
@@ -644,11 +642,17 @@ const bench = () => `
     <path d="${Array.from({ length: 18 }, (_, i) => `M${3790 + i * 16.5} 400 V486`).join(' ')}" class="tw-fence-l"/>
     <path d="M3766 390 H4082 L4076 400 H3772 Z" class="tw-awn"/>
     <rect x="3774" y="398" width="300" height="88" fill="url(#twGrain)" class="tw-nohit"/>
+    <path d="M3775 400h298v8h-298z" class="tw-workshop-eave"/>
+    <path d="M3776 391h295m-264 1-3 7m50-7-3 7m50-7-3 7m50-7-3 7m50-7-3 7m50-7-3 7" class="tw-workshop-light"/>
+    <rect x="3797" y="406" width="256" height="48" rx="2" class="tw-workshop-frame"/>
     <rect x="3800" y="408" width="250" height="44" rx="2" class="tw-peg"/>
     <rect x="3800" y="408" width="250" height="44" rx="2" fill="url(#twPegHoles)" class="tw-nohit"/>
     <g class="tw-tools">
+      <path d="M3803 410h244m-244 40h244" class="tw-workshop-light"/>
+      <path d="M3814 412q0-3 2-3m16 4q0-3 2-3m30 4q0-3 2-3m65 8q0-5 2-5m15 5q0-4 2-4m46 17v5m40-5v5" class="tw-workshop-dark"/>
       <!-- a hammer -->
       <rect x="3813.4" y="417" width="3.2" height="22" rx="1.2" class="tw-woodhandle"/><path d="M3808 413 h13 v5 h-13 z M3821 413.4 q4 1 5 4.4 l-1.6 .4 q-1.2 -2.4 -3.4 -2.6" class="tw-steel"/>
+      <path d="M3814.5 420v17m-5-22h10m66 7h23m-82-6h.1" class="tw-workshop-light"/>
       <!-- a wrench -->
       <path d="M3831 418 h3 v19 h-3 z" class="tw-steel"/><circle cx="3832.5" cy="416" r="3.4" class="tw-steel"/><rect x="3831.4" y="412.4" width="2.2" height="3.6" class="tw-pegcut"/><circle cx="3832.5" cy="439" r="2.6" class="tw-steel"/><circle cx="3832.5" cy="439" r="1.2" class="tw-pegcut"/>
       <!-- three screwdrivers -->
@@ -664,10 +668,16 @@ const bench = () => `
       ${[3962, 3972].map((x) => `<path d="M${x} 414 h6 v20 h-6 M${x} 418 h3 M${x} 430 h3" class="tw-clamp2"/><path d="M${x + 3} 418 V430" class="tw-shaft"/>`).join('')}
       <path d="M3990 432 H4040" class="tw-shelf"/><path d="M3993 432 l3 3 v-3 M4037 432 l-3 3 v-3" class="tw-bracket"/>
       <rect x="3994" y="422" width="10" height="10" class="tw-box"/><path d="M3999 422 v10" class="tw-tape"/><rect x="4008" y="425" width="14" height="7" class="tw-box"/><rect x="4026" y="424" width="9" height="8" rx="1" class="tw-jar"/><rect x="4025.6" y="422.6" width="9.8" height="2" rx=".6" class="tw-canlid"/>
+      <path d="M3832.5 423v12m33-10-2 8m6-8 1.7 7m58-12a6 6 0 0 1 5 2m13 1h3m44 1h7m10 2h9m7 0h5" class="tw-workshop-light"/>
+      <path d="M3919 441l3-2h17l4 3-3 3h-17z" class="tw-workshop-notice"/>
+      <path d="M3925 441.7h10m-10 1.6h7" class="tw-workshop-dark"/>
     </g>
     <path d="M3798 468 L3806 440 L3824 438" class="tw-lamparm"/><path d="M3818 434 l14 2 l-4 8 l-12 -2 z" class="tw-lampshade"/>
     <polygon points="3820,442 3830,444 3846,468 3800,468" class="tw-lampcone tw-nohit"/>
     <rect x="3790" y="468" width="270" height="5" rx="1" class="tw-benchtop"/><rect x="3790" y="468" width="270" height="5" rx="1" fill="url(#twGrain)" class="tw-nohit"/><path d="M3790 468.6 H4060" class="tw-benchedge"/>
+    <path d="M3797 473h256v5h-256z" class="tw-workshop-frame"/>
+    <path d="M3799 475h252m-250 20h248" class="tw-workshop-light"/>
+    <path d="M3800 478l11 9h-4l-7-6m249-3-11 9h4l7-6" class="tw-workshop-frame"/>
     <!-- under the bench: a drawer unit, a stool, a bucket -->
     <rect x="3806" y="474" width="34" height="20" rx="1" class="tw-drawers"/>${[0, 1, 2].map((k) => `<path d="M3807.6 ${480 + k * 6} h30.8" class="tw-drawerline"/><rect x="3820" y="${476.4 + k * 6}" width="8" height="1.4" rx=".6" class="tw-drawerpull"/>`).join('')}
     <rect x="3964" y="478" width="16" height="2.4" rx="1" class="tw-stool"/><path d="M3966 480.4 l-2 25 M3978 480.4 l2 25 M3965 494 h14" class="tw-stool-l"/>
@@ -1142,7 +1152,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="994" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/><rect x="1112" y="470" width="10" height="6" rx="1.5" class="tw-liftbase"/>
       <path class="tw-arm-b" d="M1004 474 L1110 466"/><path class="tw-arm-a" d="M1110 474 L1004 466"/>
       <circle class="tw-pivot" cx="1057" cy="470" r="3"/>
-      <line class="tw-laser" data-b="1" data-w="0"/><line class="tw-laser" data-b="1" data-w="1"/>
+      <line class="tw-laser" pathLength="100" data-b="1" data-w="0"/><line class="tw-laser" pathLength="100" data-b="1" data-w="1"/>
       <g class="tw-plat">
         <image href="assets/images/town/rav4-side.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-car-img"/>
         <image href="assets/images/town/rav4-drl-lit.webp" x="${RAV.x.toFixed(2)}" y="${RAV.y.toFixed(2)}" width="${RAV.w.toFixed(2)}" height="${RAV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-nohit"/>
@@ -1154,7 +1164,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
         <path d="M997 456 l6 -9 h5 l3 9 z" class="tw-chock"/><rect x="997" y="453" width="14" height="3" class="tw-chockband"/>
         <image href="assets/logos/opt/hunter.webp" x="1036" y="457.5" width="40" height="7" preserveAspectRatio="xMidYMid meet"/>
       </g>
-      <line class="tw-laser" data-b="0" data-w="0"/><line class="tw-laser" data-b="0" data-w="1"/>
+      <line class="tw-laser" pathLength="100" data-b="0" data-w="0"/><line class="tw-laser" pathLength="100" data-b="0" data-w="1"/>
       <g class="tw-beacons tw-nohit">${[[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]].map(([x, y]) => `<g class="tw-beacon"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.4" fill="url(#twBeacon)"/><rect x="${(x - 1.1).toFixed(1)}" y="${(y - 1.6).toFixed(1)}" width="2.2" height="3.2" rx=".5" class="tw-beacon-c"/></g>`).join('')}</g>
     </g>`)}
 
@@ -1180,13 +1190,21 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <image href="assets/images/town/adt-sign-lit.webp" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
       <g class="tw-adtbush">${bush(580, 518, .8)}${bush(634, 518, .95)}<g class="tw-adt-rim tw-nohit"><use href="#twShrubEdge" transform="translate(580 518) scale(.8)" fill="url(#twAdtRim)"/><use href="#twShrubEdge" transform="translate(634 518) scale(.95)" fill="url(#twAdtRim)"/></g></g>
       <g class="tw-cctv" transform="translate(551 337.4)">
-        <rect x="-5" y="-5" width="10" height="10" rx="2" class="tw-pole"/>
+        <rect x="-6" y="-6" width="12" height="12" rx="2" class="tw-cctv-mount"/>
+        <path d="M-4-3h.1m7 7h.1" class="tw-cctv-rib"/>
         <g class="tw-cctv-head" transform="rotate(-108)">
           <polygon points="-30,0 -150,-30 -150,30" fill="url(#twCone)" class="tw-cone tw-nohit" transform="scale(1 .55)"/>
-          <g class="tw-cambody"><rect x="-8" y="-2.5" width="9" height="5" rx="2" class="tw-pole"/>
-          <rect x="-34" y="-7" width="28" height="14" rx="4" class="tw-camshell"/>
-          <rect x="-39" y="-5" width="6" height="10" rx="2" fill="#1f6fd1"/>
-          <circle cx="-12" cy="3" r="1.8" class="tw-rec"/></g>
+          <g class="tw-cambody">
+            <path d="M-9-2.7H1v5.4H-9z" class="tw-cctv-mount"/>
+            <path d="M-39-5.8l3-3.5h22q7 .7 7 6v7q-1 4-6 5h-22l-4-3.4z" class="tw-camshell"/>
+            <path d="M-36-7.5h21q4 0 6 2.8l-7-.7h-20z" class="tw-cctv-hood"/>
+            <path d="M-35.7 3.8h25l-1.5 3h-22.2z" class="tw-cctv-shadow"/>
+            <path d="M-34 5.4h2m1.2 0h2m1.2 0h2m14-5.5v2" class="tw-cctv-rib"/>
+            <rect x="-41" y="-6" width="7" height="12" rx="2.2" class="tw-cctv-mount"/>
+            <ellipse cx="-39.4" cy="0" rx="2.1" ry="4.1" class="tw-cctv-lens"/>
+            <path d="M-40-2v1.6" class="tw-cctv-glint"/>
+            <circle cx="-15" cy="1" r="1.15" class="tw-rec"/>
+          </g>
         </g>
       </g>
     </g>`)}

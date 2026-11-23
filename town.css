@@ -1565,9 +1565,8 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-mb-grain, .tw-mb-seam { fill: none; stroke: #223733; stroke-width: .6; stroke-linecap: round; opacity: .65; }
 .tw-mb-body { fill: url(#twMbEnamel); }
 .tw-mb-door { fill: var(--tw-mb-dark); }
-.tw-mb-handle, .tw-mb-plaque { fill: #dcc18b; }
+.tw-mb-handle { fill: #dcc18b; }
 .tw-mb-brass { stroke: #b7935e; }
-.tw-mb-number { fill: #4b392a; font: bold 4.7px Georgia, serif; letter-spacing: .3px; }
 .tw-mb-shine { fill: none; stroke: #f1efd7; stroke-opacity: .62; stroke-width: .7; stroke-linecap: round; }
 .tw-mb-red { fill: #c85b46; }
 .tw-mb-flag { transform-origin: 0 0; transition: transform .65s cubic-bezier(.3, 1.4, .5, 1); }
@@ -1576,7 +1575,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* One envelope at a time, from the addressed front to the sealed back. */
 .tw-panel.tw-mail-panel {
   background: radial-gradient(ellipse at 40% 5%, #f8f0df, transparent 56%), #ece0c8;
-  color: #47372d; border-color: #b79d7d;
+  color: #47372d; border-color: #b79d7d; width: min(560px, 49%); font-family: 'Nunito', ui-rounded, system-ui, sans-serif;
 }
 [data-theme="midnight"] .tw-panel.tw-mail-panel, [data-theme="terminal"] .tw-panel.tw-mail-panel {
   background: radial-gradient(ellipse at 40% 5%, #504038, transparent 56%), #3b3029;
@@ -1584,7 +1583,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 }
 .tw-mail-panel .tw-nav { display: none; }
 .tw-mail-tray, .tw-mail-reading { --letter-paper: #fbf1dc; --letter-text: #413228; }
-.tw-mail-panel .tw-mail-title { font: 700 clamp(27px, 3vw, 38px)/1.05 Georgia, serif; padding-right: 34px; }
+.tw-mail-panel .tw-mail-title { font: 700 clamp(27px, 3vw, 38px)/1.05 'Nunito', ui-rounded, system-ui, sans-serif; padding-right: 34px; }
 .tw-mail-intro { margin: 10px 26px 22px 0; line-height: 1.5; font-size: 15px; }
 .tw-mail-stack { list-style: none; padding: 0 4px; margin: 0; display: grid; gap: 13px; }
 .tw-mail-stack li:nth-child(odd) { --tilt: -.8deg; }
@@ -1592,7 +1591,10 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-envelope {
   box-sizing: border-box; width: 100%; position: relative; min-height: 101px;
   display: grid; align-content: center; gap: 4px; padding: 13px 76px 13px 17px;
-  text-align: left; color: var(--letter-text); background: linear-gradient(150deg, #fff7e7, #f1dfbf);
+  text-align: left; color: var(--letter-text); background:
+    linear-gradient(153deg, transparent 49%, #a77d5148 50%, transparent 51%) bottom right / 50% 31px no-repeat,
+    linear-gradient(27deg, transparent 49%, #a77d5148 50%, transparent 51%) bottom left / 50% 31px no-repeat,
+    linear-gradient(150deg, #fff7e7, #f1dfbf);
   border: 1px solid #b4936d; border-radius: 3px;
   box-shadow: inset 0 0 0 3px #fff4db, 0 3px 5px #382c2440;
   transform: rotate(var(--tilt)); transition: transform .2s, box-shadow .2s; cursor: pointer;
@@ -1604,16 +1606,16 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-envelope:hover, .tw-envelope:focus-visible {
   transform: translateY(-3px) rotate(0); box-shadow: inset 0 0 0 3px #fff4db, 0 6px 9px #382c2440;
 }
-.tw-envelope-to { color: #785e4c; font: italic 13px Georgia, serif; }
+.tw-envelope-to { color: #785e4c; font: italic 13px 'Nunito', ui-rounded, system-ui, sans-serif; }
 .tw-envelope-from { font-size: 12px; line-height: 1.3; }
-.tw-envelope-from b { font: 700 17px Georgia, serif; }
+.tw-envelope-from b { font: 700 17px 'Nunito', ui-rounded, system-ui, sans-serif; }
 .tw-envelope-org { font-size: 12.5px; color: #6c5141; }
 .tw-envelope-read { color: #426355; font-size: 11px; }
 .tw-envelope-postage { position: absolute; top: 12px; right: 12px; width: 36px; transform: rotate(5deg); }
 .tw-envelope-postage > span {
   box-sizing: border-box; height: 31px; display: grid; place-items: center;
   background: #fff9eb; border: 2px dotted var(--letter-ink); outline: 2px solid #fff9eb;
-  color: var(--letter-ink); font: bold 17px Georgia, serif;
+  color: var(--letter-ink); font: bold 17px 'Nunito', ui-rounded, system-ui, sans-serif;
 }
 .tw-envelope-postage img { width: 26px; height: 20px; object-fit: contain; }
 .tw-envelope-postage::before, .tw-envelope-postage::after {
@@ -1628,8 +1630,8 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
   text-decoration: underline; text-underline-offset: 4px; font-size: 14px; cursor: pointer;
 }
 .tw-unseal { text-align: center; padding: 11px 8px 14px; }
-.tw-unseal-sender { margin: 0 0 26px; font: italic 17px Georgia, serif; }
-.tw-unseal-sender b { display: block; margin-top: 4px; font: bold 23px Georgia, serif; }
+.tw-unseal-sender { margin: 0 0 26px; font: italic 17px 'Nunito', ui-rounded, system-ui, sans-serif; }
+.tw-unseal-sender b { display: block; margin-top: 4px; font: bold 23px 'Nunito', ui-rounded, system-ui, sans-serif; }
 .tw-envelope-back {
   position: relative; isolation: isolate; aspect-ratio: 1.62; background: #ddc39c;
   border: 1px solid #a88262; border-radius: 4px; box-shadow: 0 6px 13px #32231840;
@@ -1663,17 +1665,15 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
   width: 45px; height: 44px; border: 0; border-radius: 46% 53% 44% 53%;
   display: grid; place-items: center; background: var(--letter-ink); color: #fff3d9;
   box-shadow: inset 1px 2px 2px #fff7e54a, inset -2px -2px 3px #21151960, 0 2px 3px #44332766;
-  cursor: pointer; transition: scale .2s;
+  pointer-events: none;
 }
 .tw-seal span {
   width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%;
-  border: 1px solid #fff1cb8c; font: italic 700 19px Georgia, serif;
+  border: 1px solid #fff1cb8c; font: italic 700 19px 'Nunito', ui-rounded, system-ui, sans-serif;
 }
-.tw-seal:hover { scale: 1.12; }
-.tw-seal:focus-visible, .tw-mail-return:focus-visible, .tw-envelope:focus-visible {
+.tw-mail-return:focus-visible, .tw-envelope:focus-visible {
   outline: 2px solid currentColor; outline-offset: 3px;
 }
-.tw-unseal-prompt { margin: 19px 0 0; font-size: 14px; }
 .tw-unseal.unsealed .tw-seal { animation: tw-wax-break .24s ease-in forwards; }
 .tw-unseal.unsealed .tw-envelope-flap { animation: tw-flap-lift .38s .12s ease-in-out forwards; }
 .tw-unseal.unsealed .tw-envelope-folded { animation: tw-paper-up .5s .37s ease-out forwards; }
@@ -1686,22 +1686,29 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
   box-shadow: 0 3px 8px #30201630; animation: tw-sheet-settle .28s ease-out both;
 }
 @keyframes tw-sheet-settle { from { transform: translateY(8px) rotate(-1.2deg); opacity: 0; } }
-.tw-letter-to { margin: 0 0 7px; color: #785e4c; font: italic 14px Georgia, serif; }
-.tw-panel.tw-mail-panel .tw-letter-title { font: bold 21px/1.25 Georgia, serif; padding: 0; }
-.tw-letter-sheet blockquote { margin: 17px 0 20px; font: 400 17px/1.7 Georgia, serif; white-space: pre-line; }
-.tw-letter-signature { border-top: 1px solid #d5bd9d; padding-top: 13px; margin: 0; color: var(--letter-ink); font: italic 700 20px Georgia, serif; }
-.tw-letter-signature span { display: block; margin-top: 5px; color: #6c5141; font: 13px/1.3 Georgia, serif; }
+.tw-letter-to { margin: 0 0 7px; color: #785e4c; font: italic 14px 'Nunito', ui-rounded, system-ui, sans-serif; }
+.tw-panel.tw-mail-panel .tw-letter-title { font: bold 21px/1.25 'Nunito', ui-rounded, system-ui, sans-serif; padding: 0; }
+.tw-letter-sheet blockquote { margin: 17px 0 20px; font: 400 17px/1.7 'Nunito', ui-rounded, system-ui, sans-serif; white-space: pre-line; }
+.tw-letter-signature { border-top: 1px solid #d5bd9d; padding-top: 13px; margin: 0; color: var(--letter-ink); font: italic 700 20px 'Nunito', ui-rounded, system-ui, sans-serif; }
+.tw-letter-signature span { display: block; margin-top: 5px; color: #6c5141; font: 13px/1.3 'Nunito', ui-rounded, system-ui, sans-serif; }
 @media (prefers-reduced-motion: reduce) {
-  .tw-seal, .tw-envelope, .tw-mb-flag { transition: none; }
+  .tw-envelope, .tw-mb-flag { transition: none; }
   .tw-letter-sheet, .tw-envelope-back { animation: none; }
 }
 
-/* One thin ray per target, with no independently animated overlay. */
+/* The four tracking rays carry pulses along their existing strokes. */
 .tw-laser {
   fill: none; stroke: #ff5d53; stroke-width: 1.15; stroke-linecap: round;
   stroke-opacity: .8; pointer-events: none;
 }
 .tw-laser[data-b="1"] { stroke-opacity: .56; }
+@media (prefers-reduced-motion: no-preference) {
+  .tw-bay-visible:not(.tw-moving) .tw-laser {
+    stroke-dasharray: 23 4 8 3; animation: tw-beam-travel .55s linear infinite;
+  }
+  .tw-bay-visible:not(.tw-moving) .tw-laser[data-b="1"] { animation-delay: -.24s; }
+}
+@keyframes tw-beam-travel { to { stroke-dashoffset: -38; } }
 .tw-beacon, .tw-beacons { animation: none; opacity: 1; }
 
 /* the robots in the rain: yellow raincoats and sou'westers */
@@ -1713,3 +1720,37 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw.wx-rain :is(.tw-rcoat, .tw-rhat) { opacity: 1; transform: none; }
 .tw.wx-rain .tw-rhat { transition-delay: .3s; }
 .tw-mb-ol { stroke: var(--tw-line); stroke-width: .9; stroke-linejoin: round; }
+
+
+/* Workshop materials and details share the town's timber and metal palette. */
+.tw-workshop-eave { fill: #513b2d; opacity: .32; }
+.tw-workshop-frame { fill: #966c4a; stroke: #543d30; stroke-width: .8; }
+.tw-workshop-light, .tw-workshop-dark { fill: none; stroke-width: .66; stroke-linecap: round; }
+.tw-workshop-light { stroke: #eed0a0; opacity: .72; }
+.tw-workshop-dark { stroke: #6d5541; }
+.tw-workshop-notice { fill: #e9d3a7; stroke: #a37d51; stroke-width: .65; }
+.tw-cctv-mount { fill: #5c6a73; stroke: #303c47; stroke-width: .8; }
+.tw-cctv-hood { fill: #fff8e5; }
+.tw-cctv-shadow { fill: #9ba9ad; }
+.tw-cctv-rib, .tw-cctv-glint { fill: none; stroke-width: .9; stroke-linecap: round; }
+.tw-cctv-rib { stroke: #536675; }
+.tw-cctv-glint { stroke: #dbece9; }
+.tw-cctv-lens { fill: #254c5e; stroke: #172e3b; stroke-width: .85; }
+
+.tw-pc-note, [data-theme="midnight"] .tw-pc-note, [data-theme="terminal"] .tw-pc-note {
+  background: none;
+}
+.tw-pc-note { --tw-note-rule: #93724949; }
+[data-theme="midnight"] .tw-pc-note, [data-theme="terminal"] .tw-pc-note { --tw-note-rule: #e9cfa52b; }
+.tw-pc-note p {
+  font-size: 15px; line-height: 1.7;
+  background: repeating-linear-gradient(to bottom, transparent 0 calc(1lh - 1px), var(--tw-note-rule) calc(1lh - 1px) 1lh);
+}
+.tw-pc-note p:first-child { font-size: 15px; }
+.tw-pc-snap {
+  max-width: 90%; background: #f6e6c9 url("assets/images/town/press-grain.svg") 0 0 / 135px;
+  border: 1px solid #d6bf9d; box-shadow: 0 5px 12px #231a153e, inset 0 0 12px #b78f5228;
+}
+.tw-pc-snap button { position: relative; background: #dec9a8; }
+.tw-pc-snap button::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 24px #6f4e314d; }
+.tw-pc-snap img { filter: sepia(.24) saturate(.87); }
