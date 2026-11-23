@@ -490,7 +490,7 @@
       <h3 class="tw-mail-title">${esc(r.org)}</h3>
       <p class="tw-mail-intro">Pick an envelope to read a recommendation from someone I’ve worked with.</p>
       <ul class="tw-mail-stack">${r.letters.map(([name, org, , stamp], i) => `
-        <li><button type="button" class="tw-envelope" data-letter="${i}" style="--letter-ink:${letterInks[i % letterInks.length]}">
+        <li><button type="button" class="tw-envelope" aria-expanded="false" data-letter="${i}" style="--letter-ink:${letterInks[i % letterInks.length]}">
           <span class="tw-envelope-postage" aria-hidden="true"><span>${stamp ? `<img src="assets/logos/opt/${esc(stamp)}.webp" alt="">` : esc(name[0])}</span></span>
           <span class="tw-envelope-to" aria-hidden="true">To Ajay Sommi</span>
           <span class="tw-envelope-from">From <b>${esc(name)}</b></span>
@@ -509,45 +509,32 @@
   };
   const openEnvelope = (r, i) => {
     const [name, org, quote] = r.letters[i];
-    inner.innerHTML = `
-      <section class="tw-mail-reading" style="--letter-ink:${letterInks[i % letterInks.length]}">
-        <button type="button" class="tw-mail-return">All envelopes</button>
-        <div class="tw-unseal">
-          <p class="tw-unseal-sender">From <b>${esc(name)}</b></p>
-          <div class="tw-envelope-back">
-            <span class="tw-envelope-folded" aria-hidden="true"></span>
-            <span class="tw-envelope-pocket" aria-hidden="true"></span>
-            <span class="tw-envelope-flap" aria-hidden="true"></span>
-            <span class="tw-seal" aria-hidden="true"><span>${esc(name[0])}</span></span>
-          </div>
-        </div>
-        <article class="tw-letter-sheet" hidden>
-          <p class="tw-letter-to">To Ajay Sommi</p>
-          <h3 tabindex="-1" class="tw-letter-title">A letter from ${esc(name)}</h3>
-          <blockquote>${esc(quote)}</blockquote>
-          <p class="tw-letter-signature">${esc(name)}<span>${esc(org)}</span></p>
-        </article>
-      </section>`;
-    inner.scrollTop = 0;
-    $('.tw-mail-return', inner).addEventListener('click', () => {
-      inner.innerHTML = letters(r);
-      wireLetters(r, i);
-    });
-    const stage = $('.tw-unseal', inner), sheet = $('.tw-letter-sheet', inner);
-    const reveal = () => {
-      if (!stage.isConnected || cur !== 'recs') return;
-      stage.hidden = true;
-      sheet.hidden = false;
-      $('.tw-letter-title', sheet).focus({ preventScroll: true });
-    };
+    const button = inner.querySelector(`[data-letter="${i}"]`);
+    const item = button.parentElement;
+    const previous = inner.querySelector('.tw-open-mail');
+    const closing = previous?.parentElement === item;
+    if (previous) {
+      previous.parentElement.querySelector('button').setAttribute('aria-expanded', 'false');
+      previous.remove();
+    }
+    if (closing) return;
+    button.setAttribute('aria-expanded', 'true');
+    const paper = document.createElement('article');
+    paper.className = 'tw-open-mail tw-letter-sheet';
+    paper.style.setProperty('--letter-ink', letterInks[i % letterInks.length]);
+    paper.innerHTML = `<p class="tw-letter-to">To Ajay Sommi</p>
+      <h3 class="tw-letter-title" tabindex="-1">A letter from ${esc(name)}</h3>
+      <blockquote>${esc(quote)}</blockquote>
+      <p class="tw-letter-signature">${esc(name)}<span>${esc(org)}</span></p>`;
+    item.insertBefore(paper, button);
+    paper.querySelector('h3').focus({preventScroll:true});
+    const inset = Math.min(72, inner.clientHeight * .14);
+    const offset = paper.getBoundingClientRect().top - inner.getBoundingClientRect().top - inset;
+    if (offset < 0 || offset > inner.clientHeight * .2) {
+      inner.scrollBy({ top: offset, behavior: reduced ? 'instant' : 'smooth' });
+    }
     openedLetters.add(i);
     $('.tw-hot[data-id="recs"] .tw-mailbox', svg).classList.add('seen');
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { reveal(); return; }
-    $('.tw-mail-return', inner).focus({ preventScroll: true });
-    const foldedPaper = $('.tw-envelope-folded', stage);
-    foldedPaper.addEventListener('animationend', reveal, { once: true });
-    foldedPaper.addEventListener('animationcancel', reveal, { once: true });
-    stage.classList.add('unsealed');
   };
   // where each place lives on the web (the same links as the classic site's logo strip)
   const SITES = {
@@ -852,16 +839,17 @@
     svg.classList.toggle('tw-paused', !visible);
     syncActors();
   }).observe(stage);
+  const blockIntroScroll = (event) => {
+    if (intro && !event.ctrlKey) event.preventDefault();
+  };
+  window.addEventListener('wheel', blockIntroScroll, { passive: false, capture: true });
+  window.addEventListener('touchmove', blockIntroScroll, { passive: false, capture: true });
   stage.addEventListener('wheel', (e) => {
-    if (cur || e.ctrlKey || e.target.closest('.tw-wayfinding') || document.documentElement.classList.contains('is-loading')) return;
+    if (intro || cur || e.ctrlKey || e.target.closest('.tw-wayfinding') || document.documentElement.classList.contains('is-loading')) return;
     const k = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vw * scale : 1;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * k;
     if (!d || zooming() && !intro) return;
     e.preventDefault();
-    if (intro) {
-      intro = false; zoomUntil = 0; cancelAnimationFrame(anim); setVB(vb);
-      tw.classList.remove('intro'); svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
-    }
     explored = true;
     glideBy(d / scale);
   }, { passive: false });
@@ -1109,9 +1097,53 @@
   const BREAK = 8, SIZE = [0, 3, 5, 7.5, 10, 13.5, 18, 24];
   let policeT = 0;
   const scare = (on) => { bots.rfa.scared = on; bots.rfa.el.classList.toggle('scared', on); };
+  const showroomFracture = (x, y, size, seed, strength) => {
+    const random = seeded(seed);
+    const point = (x, y) => `${x.toFixed(2)} ${y.toFixed(2)}`;
+    const spokes = 5 + Math.floor(random() * 3);
+    const joints = [];
+    let roots = '', tips = '';
+    for (let i = 0; i < spokes; i++) {
+      const angle = (i + random() * .68) * Math.PI * 2 / spokes;
+      const reach = size * (.45 + random() * .75);
+      const dx = Math.cos(angle), dy = Math.sin(angle);
+      const joint = [x + dx * reach * .35, y + dy * reach * .35];
+      const bend = (random() - .5) * reach * .27;
+      const middle = [x + dx * reach * .68 - dy * bend, y + dy * reach * .68 + dx * bend];
+      joints.push(joint);
+      roots += `M${point(x, y)}L${point(...joint)}L${point(...middle)}`;
+      tips += `M${point(...middle)}l${point(dx * reach * .32, dy * reach * .32)}`;
+      if (random() < .65) {
+        const fork = angle + (i % 2 ? .62 : -.62);
+        tips += `M${point(...joint)}l${point(Math.cos(fork) * reach * .4, Math.sin(fork) * reach * .4)}`;
+      }
+    }
+    if (strength > 1) {
+      joints.forEach(([jx, jy], index) => {
+        if (random() < .38) return;
+        const [nx, ny] = joints[(index + 1) % spokes];
+        tips += `M${point(jx, jy)}L${point((jx + nx) * .46 + x * .08, (jy + ny) * .46 + y * .08)}L${point(nx, ny)}`;
+      });
+    }
+    return `<g class="tw-fracture" opacity="${.58 + .13 * strength}">
+      <path class="tw-fracture-rim" d="${roots}" transform="translate(.18 .23)"/>
+      <path class="tw-fracture-root" d="${roots}"/>
+      <path class="tw-fracture-tip" d="${tips}"/>
+      <circle cx="${x}" cy="${y}" r="${.35 + strength * .15}"/>
+    </g>`;
+  };
   const drawShowroom = (now) => {
     const broke = dmg.toy >= BREAK, lv = Math.min(3, Math.ceil(dmg.toy * 3 / (BREAK - 1)));
-    crG.innerHTML = broke ? '' : dmg.pts.map(([x, y], k) => crack(x, y, SIZE[dmg.toy] * (k === dmg.pts.length - 1 ? 1 : 0.9), x * 3 + y * 5 + k, `tw-crk tw-crk-g lv${lv}`) + (dmg.toy >= BREAK - 2 ? crack(x + 8, y - 6, 16, x + y, 'tw-crk tw-crk-g lv3') : '')).join('');
+    const impacts = [];
+    if (!broke) dmg.pts.forEach(([x, y], i) => {
+      const near = impacts.find(p => Math.hypot(p.x - x, p.y - y) < 7);
+      if (near) near.hits++;
+      else impacts.push({ x, y, i, hits: 1 });
+    });
+    crG.innerHTML = impacts.map(({ x, y, i, hits }) => {
+      const size = Math.min(24, SIZE[i + 1] + (hits - 1) * 3.4 + (dmg.toy - i - 1) * .65);
+      return showroomFracture(x, y, size, x * 3 + y * 5 + i, lv);
+    }).join('');
     tw.classList.toggle('glass-broke', broke);
     tw.classList.toggle('alarm', broke);
     scare(broke);

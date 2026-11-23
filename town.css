@@ -83,8 +83,8 @@
 .tw-showfloor { fill: var(--tw-showfloor); }
 .tw-handle { fill: #8e939d; }
 .tw-mullp { stroke: #8e939d; stroke-width: 3; }
-.tw-shine { stroke: rgba(255, 255, 255, .45); stroke-width: 9; stroke-linecap: round; }
-[data-theme="midnight"] .tw .tw-shine, [data-theme="terminal"] .tw .tw-shine { stroke: rgba(255, 255, 255, .14); }
+.tw-shine { opacity: .64; }
+[data-theme="midnight"] .tw .tw-shine, [data-theme="terminal"] .tw .tw-shine { opacity: .24; }
 .tw-tower { fill: var(--tw-tower); }
 .tw-service { font: italic 800 22px var(--font-sans); fill: #2a2c34; letter-spacing: .02em; }
 .tw-bay { fill: var(--tw-bay); }
@@ -639,6 +639,14 @@
 @keyframes tw-smoke2 { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 15% { opacity: .75; } 100% { opacity: 0; transform: translate(var(--dx), -34px) scale(3.4); } }
 
 /* The showroom glass: cracks that spread, then it comes down */
+/* Thin fractures catch a little light along one side of the glass. */
+.tw-fracture { --fracture: #3f586b; --fracture-rim: #f7faff; pointer-events: none; }
+:is([data-theme="midnight"], [data-theme="terminal"]) .tw-fracture { --fracture: #d8eaf1; --fracture-rim: #263d50; }
+.tw-fracture path { fill: none; stroke: var(--fracture); stroke-linejoin: round; stroke-linecap: round; }
+.tw-fracture .tw-fracture-rim { stroke: var(--fracture-rim); stroke-width: .62; opacity: .66; }
+.tw-fracture-root { stroke-width: .38; }
+.tw-fracture-tip { stroke-width: .23; opacity: .64; }
+.tw-fracture circle { fill: var(--fracture); }
 .tw-crk-g { stroke: rgba(255, 255, 255, .95); }
 .tw-crk-g.lv1 { opacity: .3; stroke-width: .3; } .tw-crk-g.lv2 { opacity: .6; stroke-width: .45; } .tw-crk-g.lv3 { opacity: .95; stroke-width: .6; }
 [data-theme="daylight"] .tw-crk-g, :root:not([data-theme]) .tw-crk-g { stroke: rgba(70, 90, 110, .9); }
@@ -1080,7 +1088,8 @@
 
 .tw-mural-f { fill: none; stroke: #1d1e22; stroke-width: 1.1; }
 
-.tw-furn { pointer-events: none; }
+/* Keep the reception and lounge a little softer than the cars and wall art. */
+.tw-furn { pointer-events: none; filter: brightness(.91) saturate(.84) blur(.55px); }
 [data-theme="midnight"] .tw .tw-furn, [data-theme="terminal"] .tw .tw-furn { opacity: .92; }
 
 /* By day the alarm just turns the showroom lights off: dimmer, not dark. */
@@ -1472,9 +1481,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-woodland-1 { fill: var(--tw-wood-mid); }
 .tw-woodland-2 { fill: var(--tw-wood-near); }
 .tw-cirrus { stroke: #fff6db; opacity: .60; stroke-width: 2; }
-.tw-sky-birds { stroke: #567777; stroke-width: 1.3; opacity: .76; }
 [data-theme="midnight"] .tw-cirrus, [data-theme="terminal"] .tw-cirrus { opacity: .12; }
-[data-theme="midnight"] .tw-sky-birds, [data-theme="terminal"] .tw-sky-birds { opacity: 0; }
 .tw-needle, .tw-leaf-etch, .tw-leaf-vein { fill: none; stroke-linecap: round; }
 .tw-needle { stroke: #d6d79b; stroke-width: .85; opacity: .43; }
 .tw-leaf-etch { stroke: #eade9b; stroke-width: 2.1; opacity: .54; }
@@ -1704,7 +1711,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-laser[data-b="1"] { stroke-opacity: .56; }
 @media (prefers-reduced-motion: no-preference) {
   .tw-bay-visible:not(.tw-moving) .tw-laser {
-    stroke-dasharray: 23 4 8 3; animation: tw-beam-travel .55s linear infinite;
+    stroke-dasharray: 23 4 8 3; animation: tw-beam-travel .46s linear infinite;
   }
   .tw-bay-visible:not(.tw-moving) .tw-laser[data-b="1"] { animation-delay: -.24s; }
 }
@@ -1748,9 +1755,31 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 }
 .tw-pc-note p:first-child { font-size: 15px; }
 .tw-pc-snap {
-  max-width: 90%; background: #f6e6c9 url("assets/images/town/press-grain.svg") 0 0 / 135px;
+  max-width: 90%; background: #f8ecd6;
   border: 1px solid #d6bf9d; box-shadow: 0 5px 12px #231a153e, inset 0 0 12px #b78f5228;
 }
 .tw-pc-snap button { position: relative; background: #dec9a8; }
-.tw-pc-snap button::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 24px #6f4e314d; }
 .tw-pc-snap img { filter: sepia(.24) saturate(.87); }
+
+/* The opened sheet rests behind the addressed pocket in its original tray. */
+.tw-mail-stack li { position: relative; }
+.tw-open-mail { margin: 0 9px -12px; padding-bottom: 25px; max-height: min(42vh, 380px); overflow-y: auto; box-sizing: border-box; scrollbar-width: thin; }
+.tw-envelope[aria-expanded=true] { transform: none; min-height: 78px; border-top: 2px solid #c9aa81; }
+@media (prefers-reduced-motion: no-preference) {
+  .tw-open-mail { animation: tw-draw-letter .48s cubic-bezier(.2,.7,.25,1) both; }
+  @keyframes tw-draw-letter { from { opacity: 0; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
+  .tw-doe { animation: tw-doe-cross 19s ease-in-out infinite alternate; }
+  .tw-doe-step { transform-origin: 0 -9px; animation: tw-doe-step .8s ease-in-out infinite alternate; }
+  @keyframes tw-doe-cross { 0%,12% { transform: translateX(0); } 90%,100% { transform: translateX(38px); } }
+  @keyframes tw-doe-step { to { transform: skewX(10deg); } }
+  :is(.tw-moving,.tw-paused) :is(.tw-doe,.tw-doe-step) { animation-play-state: paused; }
+}
+.tw-tag-t { font: 750 4.4px 'Nunito',system-ui,sans-serif; letter-spacing: 0; fill: #fff4df; stroke: #3c362f; stroke-width: 1.15px; stroke-linejoin: round; paint-order: stroke; }
+.tw-tag-l { stroke: #f2c990; stroke-dasharray: none; }
+.tw-tag-ring { stroke: #f2c990; fill: #594a3c; }
+.tw-tag-d { fill: #f2c990; }
+.tw-hint-pad, .tw-hint-mouse { border-width: 2px; border-color: color-mix(in srgb,var(--ink) 60%,transparent); background: color-mix(in srgb,var(--ink) 5%,transparent); }
+.tw-hint-pad { border-radius: 12px; }
+.tw-hint-mouse { border-radius: 46% 46% 43% 43%; }
+.tw-hint-mouse::before { content: none; }
+.tw-mail-panel .tw-panel-in { overflow-anchor: none; scrollbar-gutter: stable; }
