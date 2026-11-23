@@ -67,7 +67,6 @@ button.ui-close::after {
 
 :is(
   .tw-nav button, .tw-pan, .tw-p-go, .tw-chip, .tw-mail-return,
-  .tw-pop :is(button, a):not(:where(#twMenuPop *)),
   .tw-p-link, .mx-story-b, .mx-proj, .mx-row,
   .carousel-ctrl .icon-btn, .pal-quick button,
   .btn:not(.solid), .filter-chip:not(.is-active), .pills button:not(.is-active),
@@ -87,7 +86,7 @@ button.ui-close::after {
   background: transparent;
   box-shadow: none;
 }
-:is(.tw-chip.on, .tw-pop .on, .work-filter .wf.is-active, .work-filter .wf-extra) {
+:is(.tw-chip.on, .work-filter .wf.is-active, .work-filter .wf-extra) {
   background: var(--control-selected);
   color: var(--ink);
   @media (hover: hover) {

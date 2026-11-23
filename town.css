@@ -408,7 +408,11 @@
   html:not(.classic) div.tw-navx { display: block !important; position: relative; }
   html:not(.classic) .tw-repair:not([hidden]) { display: grid; }
   .tw-repair { place-items: center; width: var(--tw-bar-height); height: var(--tw-bar-height); padding: 0; border-radius: 50%; color: var(--ink-2); cursor: pointer; }
-  .tw-repair svg { width: 26px; height: 26px; }
+  .tw-repair::before {
+    content: ""; position: absolute; inset: 0; margin: auto;
+    width: 25px; height: 25px; background: currentColor;
+    mask: url("assets/images/town/repair-icon.png") center / contain no-repeat;
+  }
   .tw-repair:is(:hover, :focus-visible) { color: var(--ink); }
   html.classic a.tw-classic-back { display: grid !important; }
   .tw-pop { position: absolute; top: calc(100% + 12px); left: -6px; z-index: 70; display: grid; gap: 2px; min-width: 200px; padding: 6px; border: 1px solid var(--stroke); border-radius: 16px; background: var(--bg); box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .5); animation: tw-pop .22s cubic-bezier(.2, .8, .2, 1); }
@@ -416,7 +420,8 @@
   @keyframes tw-pop { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
   .tw-pop :is(button, a) { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0; border-radius: 10px; background: none; color: var(--ink); font: 500 14px var(--font-sans); text-align: left; text-decoration: none; cursor: pointer; }
   .tw-pop :is(button, a):hover { background: color-mix(in oklab, var(--ink) 7%, transparent); }
-  .tw-pop .on { background: color-mix(in oklab, var(--ink) 10%, transparent); font-weight: 600; }
+  #twWxPop button:hover { background: none; }
+  #twWxPop .on { font-weight: 750; }
 }
 
 /* ---------------------------------------------------------- the visitor center */
@@ -661,6 +666,7 @@
 .tw-windshield-rays { stroke: #dfedf2; stroke-width: .19; opacity: .82; }
 .tw-windshield-rings { stroke: #f3fbfb; stroke-width: .15; opacity: .86; }
 .tw-pane-opening { fill: url(#twGlassInterior); fill-opacity: .94; }
+.tw-hot[data-id="vc"] .tw-pane-opening { fill: none; }
 .tw-glass-chunk > polygon:first-child { fill: #a2cbd6; fill-opacity: .48; stroke: #c0e7ee; stroke-opacity: .38; stroke-width: .23; }
 .tw-glass-chunk > polyline { fill: none; stroke: #effdff; stroke-opacity: .81; stroke-width: .21; stroke-linejoin: round; }
 :is([data-theme="midnight"], [data-theme="terminal"]) .tw-glass-chunk > polygon:first-child { fill: #6eabb8; fill-opacity: .42; }

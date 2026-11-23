@@ -1720,10 +1720,11 @@
       const root = layer ? $(`[data-glass-layer="${layer}"]`, shape.parentNode) : shape.parentNode;
       const { paneHoles, paneThreshold, paneClear, fracturePane } = shape.dataset;
       const dark = fracturePane === 'dark', clearOnBreak = paneClear !== undefined;
+      const welcomeGlass = id === 'vc';
       strikePane(root, key, poly, q, {
-        dark, threshold: dark ? 0 : +(paneThreshold ?? 4),
+        dark, threshold: dark ? 0 : +(paneThreshold ?? (welcomeGlass ? 3 : 4)),
         holes: paneHoles ? svg.getElementById(paneHoles) : null,
-        clearOnBreak, countAcrossPane: clearOnBreak
+        clearOnBreak, countAcrossPane: clearOnBreak || welcomeGlass
       });
       save();
       return;
