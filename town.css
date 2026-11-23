@@ -389,19 +389,6 @@
   #experience.town-section { position: fixed; inset: 0; z-index: 1; margin: 0; padding: 0; max-width: none; width: auto; opacity: 1 !important; transform: none !important; }
   #experience .tw { position: absolute; inset: 0; margin: 0; }
   #experience .tw-stage { position: absolute; inset: 0; aspect-ratio: auto; border: 0; border-radius: 0; }
-  html:not(.classic) body::after {
-    --tw-corner: #fff;
-    --tw-corner-radius: 26px;
-    content: ""; position: fixed; inset: 0; z-index: 61; pointer-events: none;
-    background:
-      radial-gradient(circle at bottom right, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) top left,
-      radial-gradient(circle at bottom left, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) top right,
-      radial-gradient(circle at top right, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) bottom left,
-      radial-gradient(circle at top left, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) bottom right;
-    background-size: var(--tw-corner-radius) var(--tw-corner-radius);
-    background-repeat: no-repeat;
-  }
-  html:not(.classic):is([data-theme="midnight"], [data-theme="terminal"]) body::after { --tw-corner: #000; }
   .tw.dragging .tw-svg, .tw.dragging .tw-hot { cursor: grabbing; }
   .tw-panel { bottom: 16px; top: 80px; }
   .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid !important; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
@@ -1732,6 +1719,12 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 }
 .tw-resume-dialog[open] { display: flex; flex-direction: column; }
 .tw-resume-dialog::backdrop { background: #191b2166; backdrop-filter: blur(4px); }
+@media (prefers-reduced-motion: no-preference) {
+  .tw-resume-dialog[open] { animation: tw-resume-enter .32s cubic-bezier(.2, .75, .25, 1) both; }
+  .tw-resume-dialog[open]::backdrop { animation: tw-resume-dim .3s ease-out both; }
+}
+@keyframes tw-resume-enter { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+@keyframes tw-resume-dim { from { opacity: 0; } }
 .tw-resume-header { display: flex; align-items: center; gap: 10px; padding: 12px 15px 10px; }
 .tw-resume-header h2 { margin: 0 auto 0 3px; font: 800 1.16rem 'Nunito', ui-rounded, system-ui, sans-serif; }
 .tw-resume-header a {
