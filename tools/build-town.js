@@ -536,8 +536,9 @@ const home = () => `
       <path d="M3500 445 a9 9 0 0 1 18 0 v2 h-18 z" fill="url(#twVcGlass)"/><path d="M3509 436 V447" class="tw-mull"/>${sticker(3500, 450, 7)}
       <g class="tw-hcr"></g>
     </g></g>
-    <path d="M3484.6 427 L3509 410.4 L3533.4 427 Q3509 425.4 3484.6 427 Z" class="tw-roof"/><path d="M3484.6 427 L3509 410.4 L3533.4 427 Q3509 425.4 3484.6 427 Z" fill="url(#twShingles)" class="tw-nohit"/><path d="M3485.6 427.2 Q3509 425.4 3532.4 427.2" class="tw-fascia"/>
     <rect x="3487" y="427" width="2.6" height="59" class="tw-post"/><rect x="3528.4" y="427" width="2.6" height="59" class="tw-post"/>
+    <path d="M3486 426 Q3509 424 3532 426 v10 h-46z" fill="url(#twPorchShade)"/>
+    <path d="M3484.6 427 L3509 410.4 L3533.4 427 Q3509 425.4 3484.6 427 Z" class="tw-roof"/><path d="M3484.6 427 L3509 410.4 L3533.4 427 Q3509 425.4 3484.6 427 Z" fill="url(#twShingles)" class="tw-nohit"/><path d="M3485.6 427.2 Q3509 425.4 3532.4 427.2" class="tw-fascia"/>
     <circle cx="3492.6" cy="438" r="14" fill="url(#twVcLight)" class="tw-porchglow"/><rect x="3490" y="435" width="5.4" height="8" rx="1.6" class="tw-porchlamp"/>
     <path d="M3492 486 h34 v3 h-34 z M3489 489 h40 v3.4 h-40 z" class="tw-vcstep"/>
     ${PROJ['p-betai']()}
@@ -605,9 +606,11 @@ const garage = () => {
     <circle cx="3688" cy="452" r="1" class="tw-hook"/><g class="tw-hose"><circle cx="3688" cy="458" r="5.4"/><circle cx="3688" cy="458" r="3.8"/><circle cx="3688" cy="458" r="2.4"/></g>
     <rect x="3731" y="470" width="12" height="7" rx="1" class="tw-bin" style="--c:#3b6fd8"/><rect x="3730.4" y="469" width="13.2" height="1.8" rx=".6" class="tw-binlid"/><rect x="3731" y="478" width="12" height="8" rx="1" class="tw-bin" style="--c:#16a34a"/><rect x="3730.4" y="477" width="13.2" height="1.8" rx=".6" class="tw-binlid"/>
     ${PROJ['p-wadfs']()}
-    <g class="tw-bike"><circle cx="3700" cy="452" r="7"/><circle cx="3724" cy="452" r="7"/><path d="M3700 452 L3710 440 H3722 L3724 452 M3710 440 L3714 452 H3724 M3708 436 h5 M3721 437 l2 -3"/></g>
+    <g class="tw-bike" transform="translate(-75 -9)"><circle cx="3700" cy="452" r="7"/><circle cx="3724" cy="452" r="7"/><path d="M3700 452 L3710 440 H3722 L3724 452 M3710 440 L3714 452 H3724 M3708 436 h5 M3721 437 l2 -3"/></g>
     <rect x="3700" y="420" width="10" height="10" class="tw-box"/><rect x="3716" y="420" width="12" height="8" rx="1" class="tw-jar"/>
     <rect x="3592" y="470" width="64" height="14" rx="3" class="tw-rug"/>
+    <image href="assets/images/town/memory-sketch.webp" x="3729" y="422" width="10" height="8"/>
+    <g data-memory="baby" role="button" tabindex="0" aria-label="Open family Camry photo"><ellipse cx="3690" cy="484" rx="46" ry="2" fill="#352f28" opacity=".32"/><image href="assets/images/town/memory-camry.webp" x="3635" y="415" width="110" height="73"/><path d="M3656 443 q20 -2 52 0" fill="none" stroke="#c3b295" stroke-width="1" opacity=".32"/><image href="assets/images/town/memory-seat.webp" x="3652" y="430" width="20" height="14"/></g>
     <rect x="3562" y="396" width="186" height="8" rx="1" class="tw-gdoor"/><path d="M3562 398.6 H3748 M3562 401.4 H3748" class="tw-gdoor-l"/><rect x="3650" y="402" width="10" height="1.6" rx=".6" class="tw-gdoor-h"/>
     <path d="M3566 486 H3744 L3769 600 H3541 Z" class="tw-drive"/>
     <path d="M3566 486 H3744 L3769 600 H3541 Z" fill="url(#twConcrete)" class="tw-nohit"/>
@@ -919,7 +922,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <linearGradient id="twAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf86"/><stop offset="1" stop-color="#e8a24f"/></linearGradient>
     <linearGradient id="twVcGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a1"/><stop offset=".6" stop-color="#f7b867"/><stop offset="1" stop-color="#e48f45"/></linearGradient>
     <radialGradient id="twVcLight"><stop offset="0" stop-color="#ffc977" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
-    <linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
+    <linearGradient id="twPorchShade" x2="0" y2="1"><stop stop-color="#30241d" stop-opacity=".42"/><stop offset="1" stop-color="#30241d" stop-opacity="0"/></linearGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
     <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twMoonHalo"><stop offset="0" stop-color="#fff6dc" stop-opacity=".3"/><stop offset=".45" stop-color="#fff6dc" stop-opacity=".14"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></radialGradient>
@@ -1280,7 +1283,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <!-- 2022, Robotics For All: the rover, in the colours of its logo, in its
          corner of the lawn. It comes over when the pointer is nearby, and
          keeps a polite distance. -->
-    <g class="tw-rover" transform="translate(1850 556)"><g class="tw-rover-flip"><g class="tw-rover-hop"><g class="tw-rover-bob"><g class="tw-rover-shiver">
+    <g class="tw-rover" transform="translate(930 556)"><g class="tw-rover-flip"><g class="tw-rover-hop"><g class="tw-rover-bob"><g class="tw-rover-shiver">
       <rect x="-15" y="1" width="12" height="5.6" rx="2.6" fill="#1d2f6b" class="tw-ol"/><rect x="3" y="1" width="12" height="5.6" rx="2.6" fill="#1d2f6b" class="tw-ol"/>
       <rect x="-13" y="-9" width="10" height="11" fill="#2f63d6" class="tw-ol"/><rect x="3" y="-9" width="10" height="11" fill="#2f63d6" class="tw-ol"/>
       <path d="M-17 -15 l-7 7" class="tw-arm"/><path d="M17 -15 l7 7" class="tw-arm tw-arm-r"/>
@@ -1420,6 +1423,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g transform="translate(${HOMESH} 0)">
     ${bench()}
     ${garage()}
+    <g data-memory="trike" role="button" tabindex="0" aria-label="Open tricycle photo"><image href="assets/images/town/memory-trike.webp" x="3490" y="504" width="23" height="18"/></g>
     ${tree(4222, 494, 1.0, 0)}${pine(4268, 498, 132)}${tree(4318, 496, 1.12, 2)}
     ${[[4236, 504, .7], [4290, 506, .6], [4344, 502, .75]].map(([x, y, k]) => bush(x, y, k)).join('')}
     ${[4200, 4212, 4226, 4248, 4276, 4300, 4330].map((x, k) => `<circle cx="${x}" cy="${512 + (k % 3) * 2}" r="1.6" class="tw-flower" style="--c:${['#ff6b8b', '#ffd166', '#c084fc', '#ff8fab', '#f97316'][k % 5]}"/>`).join('')}

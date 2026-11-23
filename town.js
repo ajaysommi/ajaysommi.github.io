@@ -78,7 +78,7 @@
   // They move like something with a little weight: a soft spring toward
   // where they want to be, never faster than an amble.
   const bots = {
-    rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 1850, y: 556, vx: 0, vy: 0, tx: 1850, ty: 556, face: -1, idleAt: 0, box: [1712, 1872, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
+    rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 930, y: 556, vx: 0, vy: 0, tx: 930, ty: 556, face: -1, idleAt: 0, box: [850, 990, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
     rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 632, y: 578, vx: 0, vy: 0, tx: 632, ty: 578, face: 1, idleAt: 0, box: [602, 670, 574, 580], reach: 140, keep: 64, pinDy: -58, k: 3, max: 45, s: 0.78, tilt: 0 }
   };
   const placeBot = (b) => {
@@ -608,14 +608,25 @@
   };
 
   // A photo from a card opens over the whole window; a click or Esc puts it back.
-  const lightbox = (src) => {
+  const lightbox = (src, caption) => {
     const lb = document.createElement('div');
     lb.className = 'tw-lightbox';
     lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', 'Photo');
     lb.innerHTML = `<img src="${esc(src)}" alt="" /><button type="button" class="tw-lb-x" aria-label="Close photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`;
     lb.addEventListener('click', () => { lb.classList.add('out'); setTimeout(() => lb.remove(), 220); });
+    if (caption) { const note = document.createElement('p'); note.textContent = caption; lb.appendChild(note); lb.classList.add('captioned'); }
     document.body.appendChild(lb);
   };
+  $$('[data-memory]', svg).forEach((item) => {
+    const show = (e) => {
+      e.stopPropagation();
+      if (dragged && e.type === 'click') return;
+      const baby = item.dataset.memory === 'baby';
+      lightbox('assets/images/town/' + (baby ? 'baby-photo' : 'trike-photo') + '.webp', baby ? 'I was just a few months old when my family brought me home in this green 1996 Camry.' : '');
+    };
+    item.addEventListener('click', show);
+    item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(e); } });
+  });
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
