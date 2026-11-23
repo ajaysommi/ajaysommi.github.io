@@ -83,7 +83,7 @@ const PROJECTS = [
 ];
 PROJECTS.forEach((p) => { TINT[p.id] = p.tint; OFF[p.id] = HOMESH - EAST; });
 BENCH.forEach((p) => { TINT[p.id] = p.tint; OFF[p.id] = HOMESH - EAST; });
-TINT.recs = '#d9503a'; OFF.recs = HOMESH - EAST;
+TINT.recs = '#a68154'; OFF.recs = HOMESH - EAST;
 
 /* Where each stop is: the box the scene leans in to, and its pin. */
 const SPOT = {
@@ -550,28 +550,23 @@ const home = () => `
 // The mailbox at the curb by the drive: letters from people I've worked with
 // (their LinkedIn recommendations). Its flag is up until it has been opened.
 const mailbox = () => hot('recs', `<g class="tw-mailbox" transform="translate(3790 597)">
-      <ellipse cx="1" cy=".8" rx="16" ry="2" class="tw-root-shadow tw-nohit"/>
-      <path d="M-3-34h5v34h-5z M1-26l6-6h3L2-20z" class="tw-mb-post tw-mb-ol"/>
-      <path d="M-1.8-24q1 4 .2 9v10m2-16v7" class="tw-mb-grain"/>
-      <path d="M-15-30h32v3h-32z" class="tw-mb-post tw-mb-ol"/>
-      <g class="tw-mb-mail">
-        <path d="m-25-42 13-2 .9 7.8-13 1.9z" class="tw-mb-env2 tw-mb-ol"/>
-        <path d="m-24-39 13 .5-.3 8-13-.5z" class="tw-mb-env tw-mb-ol"/>
-        <path d="m-23.7-38.6 6.2 4.5 6.1-4.1" class="tw-mb-fold"/>
-        <circle cx="-17.5" cy="-34.3" r="1" class="tw-mb-red"/>
-      </g>
-      <path d="M-16-29v-11q0-8 8-8h17q8 0 10 8v10l-3 1z" class="tw-mb-body tw-mb-ol"/>
-      <path d="M-16-29v-11q0-8 8-8 7 1 7 8v11z" class="tw-mb-door tw-mb-ol"/>
-      <path d="M-13.6-31v-8.8q0-5.7 5.5-6.2m6.3.4H9q5 .2 6.7 4.1" class="tw-mb-shine"/>
-      <path d="M-13-31h11m4-.7h14m-3-13.5q3 2.5 3 6" class="tw-mb-seam"/>
-      <path d="M-11-43h5v1.5h-5z" class="tw-mb-handle tw-mb-ol"/>
-      <circle cx="-11" cy="-30" r=".75" class="tw-mb-handle"/><circle cx="-5" cy="-30" r=".75" class="tw-mb-handle"/>
-      <path d="M3-41h9v6H3z" class="tw-mb-badge"/>
-      <path d="m3.5-40.5 4 3 4-3" class="tw-mb-fold"/>
-      <g transform="translate(16 -35)"><g class="tw-mb-flag">
-        <path d="M-.9 0v-16.5h7.7l-1.6 2.6 1.6 2.6H.9V0z" class="tw-mb-red tw-mb-ol"/>
-        <path d="M.5-15h4.5" class="tw-mb-shine"/>
-      </g><circle r="1.35" class="tw-mb-handle tw-mb-ol"/></g>
+      <ellipse cx="1" cy=".7" rx="17" ry="2" class="tw-root-shadow tw-nohit"/>
+      <path d="M-4-30l6-1v30l-6 1z M2-23l8-9 2 1L2-18z" class="tw-mb-post tw-mb-ol"/>
+      <path d="M-2.5-25q1.2 5 .1 10t.2 9m2-17v8m-.5 3q1 2 .1 5" class="tw-mb-grain"/>
+      <path d="M-16-31h32l2 2-4 2h-30z" class="tw-mb-post tw-mb-ol"/>
+      <path d="M-17-31v-10q0-9 9-10l18 1q9 1 10 10v9l-3 2-25 1z" class="tw-mb-body tw-mb-ol"/>
+      <path d="M-17-30.8v-10q0-9 8-10 8 1 8 10v11l-7 1.5z" class="tw-mb-door tw-mb-ol"/>
+      <path d="M-15-32v-8.5q0-6.7 6-8m8.6.5 9.8.7q5.2.5 7.3 4.2" class="tw-mb-shine"/>
+      <path d="M-14-33h10m5.5 1.1 15.5-1m-6-14q4 2.2 4.5 6.4M-12-43h6" class="tw-mb-seam"/>
+      <path d="M-12-42.2h6l-.6 2.2h-4.8z" class="tw-mb-handle tw-mb-ol"/>
+      <path d="M-13.3-31.8v2m8.8-1.3v1.8" stroke-width="1.5" class="tw-mb-brass"/>
+      <path d="M2-43.3l10.5.5v6.5L2-36.5z" class="tw-mb-plaque"/>
+      <text x="7.25" y="-38.1" text-anchor="middle" class="tw-mb-number">01</text>
+      <path d="M3-39.4h.1m8.2.3h.1" class="tw-mb-seam"/>
+      <g transform="translate(17 -33)"><g class="tw-mb-flag">
+        <path d="M-.85 0v-19.3q4.8-1.3 8.8.1l-1.6 2.8 1.2 2.7q-3.2-.9-5.9 0V0z" class="tw-mb-red tw-mb-ol"/>
+        <path d="M1-18q2.3-.6 4.6-.1" class="tw-mb-shine"/>
+      </g><circle r="1.4" class="tw-mb-handle tw-mb-ol"/><path d="M-.55 0h1.1" class="tw-mb-seam"/></g>
     </g>`);
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);

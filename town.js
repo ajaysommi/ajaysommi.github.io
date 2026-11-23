@@ -170,8 +170,8 @@
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
   const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-hallglow, .tw-snowimg', shiva: '.tw-bars, .tw-bb-beams, .tw-bb-wash' };
   SKIP.hunter += ', .tw-hk-lcd'; SKIP['p-civic'] += ', .tw-snowimg';
-  // the mailbox's flag comes down and its letters go once it's opened: they glow live
-  LIVE.recs = '.tw-mb-flag, .tw-mb-mail'; SKIP.recs = '.tw-mb-flag, .tw-mb-mail';
+  // The flag changes position when the first letter is opened.
+  LIVE.recs = '.tw-mb-flag'; SKIP.recs = '.tw-mb-flag';
   const halos = {};
   const stickers = $$('.tw-adtsticker', svg);
   // A filter's region is a box around what it's on; sized as a share of that
@@ -473,27 +473,75 @@
       <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
     </div>`;
   };
-  // The mailbox's card: a letter from each person who wrote a recommendation,
-  // the first one open; each opens and closes in place.
+  const openedLetters = new Set();
+  const letterInks = ['#9c5145', '#50756b', '#776282', '#9d643f'];
   const letters = (r) => `
-      <h3 class="tw-p-sideh">${esc(r.org)}</h3>
-      <p class="tw-p-subj">What people I’ve worked with wrote about me on LinkedIn.</p>
-      <div class="tw-lt-bar"><span>${r.letters.length} letters</span><button type="button" class="tw-lt-all">Open all</button></div>
-      <ul class="tw-lt-list">${r.letters.map(([n, o, q, L], i) => `
-        <li class="tw-lt${i ? '' : ' open'}"><button type="button" class="tw-lt-head" aria-expanded="${i ? 'false' : 'true'}" aria-controls="twLt${i}">
-          <span class="tw-lt-from"><span class="tw-lt-address">From</span><b>${esc(n)}</b><span>${esc(o)}</span></span>
-          <span class="tw-lt-postmark" aria-hidden="true"><span class="tw-lt-stamp">${L ? `<img src="assets/logos/opt/${L}.webp" alt="" />` : esc(n[0])}</span></span>
-          <svg class="tw-lt-chev" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button><div class="tw-lt-wrap" id="twLt${i}" aria-hidden="${i ? 'true' : 'false'}"><div><figure class="tw-lt-paper"><blockquote>“${esc(q)}”</blockquote><figcaption>${esc(n)}</figcaption></figure></div></div></li>`).join('')}
-      </ul>
-      <p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.linkedin)}" target="_blank" rel="noopener">See them on LinkedIn ↗</a></p>`;
-  const wireLetters = () => {
-    const items = $$('.tw-lt', inner), all = $('.tw-lt-all', inner);
-    const sync = () => { all.textContent = items.every((li) => li.classList.contains('open')) ? 'Close all' : 'Open all'; };
-    const set = (li, on) => { li.classList.toggle('open', on); $('.tw-lt-head', li).setAttribute('aria-expanded', String(on)); $('.tw-lt-wrap', li).setAttribute('aria-hidden', String(!on)); };
-    items.forEach((li) => $('.tw-lt-head', li).addEventListener('click', () => { set(li, !li.classList.contains('open')); sync(); }));
-    all.addEventListener('click', () => { const on = all.textContent === 'Open all'; items.forEach((li) => set(li, on)); sync(); });
-    sync();
+    <div class="tw-mail-tray">
+      <h3 class="tw-mail-title">${esc(r.org)}</h3>
+      <p class="tw-mail-intro">Pick an envelope to read a recommendation from someone I’ve worked with.</p>
+      <ul class="tw-mail-stack">${r.letters.map(([name, org, , stamp], i) => `
+        <li><button type="button" class="tw-envelope" data-letter="${i}" style="--letter-ink:${letterInks[i % letterInks.length]}">
+          <span class="tw-envelope-postage" aria-hidden="true"><span>${stamp ? `<img src="assets/logos/opt/${esc(stamp)}.webp" alt="">` : esc(name[0])}</span></span>
+          <span class="tw-envelope-to" aria-hidden="true">To Ajay Sommi</span>
+          <span class="tw-envelope-from">From <b>${esc(name)}</b></span>
+          <span class="tw-envelope-org">${esc(org)}</span>
+          ${openedLetters.has(i) ? '<small class="tw-envelope-read">Opened</small>' : ''}
+        </button></li>`).join('')}</ul>
+      <p class="tw-mail-source"><a href="${esc(r.linkedin)}" target="_blank" rel="noopener">Recommendations on LinkedIn</a></p>
+    </div>`;
+  const wireLetters = (r, returnTo) => {
+    const tray = $('.tw-mail-tray', inner);
+    if (returnTo !== undefined) tray.querySelector(`[data-letter="${returnTo}"]`).focus();
+    tray.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-letter]');
+      if (button) openEnvelope(r, Number(button.dataset.letter));
+    });
+  };
+  const openEnvelope = (r, i) => {
+    const [name, org, quote] = r.letters[i];
+    inner.innerHTML = `
+      <section class="tw-mail-reading" style="--letter-ink:${letterInks[i % letterInks.length]}">
+        <button type="button" class="tw-mail-return">All envelopes</button>
+        <div class="tw-unseal">
+          <p class="tw-unseal-sender">From <b>${esc(name)}</b></p>
+          <div class="tw-envelope-back">
+            <span class="tw-envelope-folded" aria-hidden="true"></span>
+            <span class="tw-envelope-pocket" aria-hidden="true"></span>
+            <span class="tw-envelope-flap" aria-hidden="true"></span>
+            <button type="button" class="tw-seal" aria-label="Break the seal on the letter from ${esc(name)}"><span aria-hidden="true">${esc(name[0])}</span></button>
+          </div>
+          <p class="tw-unseal-prompt" aria-hidden="true">Break the seal</p>
+        </div>
+        <article class="tw-letter-sheet" hidden>
+          <p class="tw-letter-to">To Ajay Sommi</p>
+          <h3 tabindex="-1" class="tw-letter-title">A letter from ${esc(name)}</h3>
+          <blockquote>${esc(quote)}</blockquote>
+          <p class="tw-letter-signature">${esc(name)}<span>${esc(org)}</span></p>
+        </article>
+      </section>`;
+    inner.scrollTop = 0;
+    $('.tw-mail-return', inner).addEventListener('click', () => {
+      inner.innerHTML = letters(r);
+      wireLetters(r, i);
+    });
+    const stage = $('.tw-unseal', inner), seal = $('.tw-seal', stage), sheet = $('.tw-letter-sheet', inner);
+    const reveal = () => {
+      if (!stage.isConnected || cur !== 'recs') return;
+      stage.hidden = true;
+      sheet.hidden = false;
+      $('.tw-letter-title', sheet).focus({ preventScroll: true });
+    };
+    seal.addEventListener('click', () => {
+      openedLetters.add(i);
+      $('.tw-hot[data-id="recs"] .tw-mailbox', svg).classList.add('seen');
+      seal.disabled = true;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { reveal(); return; }
+      const foldedPaper = $('.tw-envelope-folded', stage);
+      foldedPaper.addEventListener('animationend', reveal, { once: true });
+      foldedPaper.addEventListener('animationcancel', reveal, { once: true });
+      stage.classList.add('unsealed');
+    });
+    seal.focus({ preventScroll: true });
   };
   // where each place lives on the web (the same links as the classic site's logo strip)
   const SITES = {
@@ -518,6 +566,7 @@
     panel.style.setProperty('--tint', r.tint);
     const links = linksOf(r.id);
     panel.classList.toggle('tw-postcard', !!r.postcard);
+    panel.classList.toggle('tw-mail-panel', !!r.letters);
     if (r.postcard) panel.classList.remove('tw-oc', 'tw-oc-one', 'tw-oc-two');
     if (r.postcard) {
       inner.innerHTML = postcard(r);
@@ -533,7 +582,7 @@
       inner.scrollTop = 0;
       inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
       prevB.hidden = nextB.hidden = true;
-      wireLetters();
+      wireLetters(r);
       return;
     }
     const side = /^p-/.test(r.id);
@@ -594,8 +643,6 @@
     if (id === 'jm') { arrived = true; tw.classList.add('arrive', 'parked'); }
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
     const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
-    // the mailbox's flag comes down once its letters have been read
-    if (id === 'recs') { const mb = $('.tw-hot[data-id="recs"] .tw-mailbox', svg); if (mb) mb.classList.add('seen'); }
     hideLabel(); panL.classList.remove('on'); panR.classList.remove('on');
   };
   const close = () => {
