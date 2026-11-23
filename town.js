@@ -477,12 +477,24 @@
   const postcard = (r) => {
     const d = new Date(), day = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
     return `<div class="tw-pc">
-      <div class="tw-pc-top"><span class="tw-pc-greet">Greetings from</span><span class="tw-pc-town">SOMMIVILLE</span></div>
-      <div class="tw-pc-stampwrap"><span class="tw-pc-stamp"><img src="${r.photos[0]}" alt="Ajay Sommi" /></span><span class="tw-pc-mark" aria-hidden="true"><b>VISITOR CENTER</b><i>${esc(day)}</i></span></div>
-      <div class="tw-pc-note">${r.lines.map((l) => `<p>${esc(l)}</p>`).join('')}</div>
-      <figure class="tw-pc-snap"><button type="button" aria-label="Open photo"><img src="${r.photos[1]}" alt="" loading="lazy" decoding="async" /></button><figcaption>20+ years of experience</figcaption></figure>
-      ${r.quote ? `<blockquote class="tw-pc-quote">“${esc(r.quote)}”</blockquote>` : ''}
-      <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
+      <div class="tw-pc-letter">
+        <div class="tw-pc-top"><span class="tw-pc-greet">Greetings from</span><span class="tw-pc-town">SOMMIVILLE</span></div>
+        <div class="tw-pc-stampwrap"><span class="tw-pc-stamp"><img src="${r.photos[0]}" alt="Ajay Sommi" /></span><span class="tw-pc-mark" aria-hidden="true"><b>VISITOR CENTER</b><i>${esc(day)}</i></span></div>
+        <div class="tw-pc-note">${r.lines.map((l) => `<p>${esc(l)}</p>`).join('')}</div>
+        <figure class="tw-pc-snap"><button type="button" aria-label="Open photo"><img src="${r.photos[1]}" alt="" loading="lazy" decoding="async" /></button><figcaption>20+ years of experience</figcaption></figure>
+        ${r.quote ? `<blockquote class="tw-pc-quote">“${esc(r.quote)}”</blockquote>` : ''}
+        <p class="tw-pc-sign">See you around town,<b>Ajay Sommi</b></p>
+      </div>
+      <div class="tw-pc-destinations">
+        <a href="resume.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4 4v13H6zM14 3.5v4h4M9 12h6m-6 4h6"/></svg>
+          <span>Resume</span>
+        </a>
+        <a href="classic.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 9h17M8 13h8m-8 3h5"/></svg>
+          <span>Classic Portfolio</span>
+        </a>
+      </div>
     </div>`;
   };
   const openedLetters = new Set();
@@ -726,7 +738,11 @@
     panel.classList.toggle('left', left);
     panel.hidden = false;
     render(r);
-    requestAnimationFrame(() => { panel.classList.add('open'); tween(frame(z, left), wasOpen ? 750 : 900); });
+    requestAnimationFrame(() => {
+      if (cur !== id) return;
+      panel.classList.add('open');
+      tween(frame(z, left), wasOpen ? 750 : 900);
+    });
     tw.classList.add('zoomed');
     // the Civic's hood swings up while its stop is open
     tw.classList.toggle('hood', id === 'p-civic');
@@ -750,16 +766,20 @@
     chips.forEach((c) => c.classList.remove('on'));
   };
 
+  // ADT is a read-only stop. Catch outside clicks before scene objects can
+  // interpret them as clicks on a landmark or as damage.
+  stage.addEventListener('click', (event) => {
+    if (cur !== 'adt' || dragged || panel.contains(event.target)) return;
+    event.stopPropagation();
+    close();
+  }, true);
   // Clicking off the open place steps back out; clicking the place itself
   // again plays with it (see the damage, below).
   hots.forEach((h) => h.addEventListener('click', (e) => {
     e.stopPropagation(); if (dragged) return;
-    if (cur === 'adt') return;
     if (keepsake) { closeKeepsake(); return; }
-    // the open place itself takes the hit; ADT's bushes just step back out
-    if (cur === h.dataset.id) { if (e.target.closest('.tw-adtbush')) close(); else poke(h.dataset.id, e); }
-    // ADT's and Hunter's stops sit on the dealership: clicking off them goes
-    // back out, not into the dealership
+    if (cur === h.dataset.id) poke(h.dataset.id, e);
+    // Hunter's stop sits on the dealership. Clicking off returns to the street.
     else if (cur === 'hunter') close();
     else open(h.dataset.id);
   }));
@@ -774,7 +794,7 @@
   $('.tw-x', panel).addEventListener('click', close);
   prevB.addEventListener('click', () => open(prevB.dataset.id));
   nextB.addEventListener('click', () => open(nextB.dataset.id));
-  svg.addEventListener('click', () => { if (!dragged) { if (keepsake) closeKeepsake(); else if (cur !== 'adt') close(); } });
+  svg.addEventListener('click', () => { if (!dragged) { if (keepsake) closeKeepsake(); else close(); } });
   document.addEventListener('keydown', (e) => {
     if (!stage.clientWidth || e.target.closest('select, input, textarea, [role="menu"]')) return;
     if (keepsake) {
