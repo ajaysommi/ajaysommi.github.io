@@ -618,6 +618,8 @@
     document.body.appendChild(lb);
   };
   $$('[data-memory]', svg).forEach((item) => {
+    const rim = item.querySelector('.tw-keepsake-rim');
+    rim.setAttribute('filter', fitted(rim, item.dataset.memory === 'trike' ? 'twHalo-p-civic' : 'twHalo-vc'));
     item.addEventListener('pointerenter', () => item.classList.add('memory-hover'));
     item.addEventListener('pointerleave', () => item.classList.remove('memory-hover'));
     const show = (e) => {
