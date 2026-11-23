@@ -774,7 +774,9 @@
     <linearGradient id="twAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf86"/><stop offset="1" stop-color="#e8a24f"/></linearGradient>
     <linearGradient id="twVcGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a1"/><stop offset=".6" stop-color="#f7b867"/><stop offset="1" stop-color="#e48f45"/></linearGradient>
     <radialGradient id="twVcLight"><stop offset="0" stop-color="#ffc977" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
-    <linearGradient id="twPorchShade" x2="0" y2="1"><stop stop-color="#30241d" stop-opacity=".42"/><stop offset="1" stop-color="#30241d" stop-opacity="0"/></linearGradient><filter id="twGarageBounce" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".80" intercept=".075"/><feFuncG type="linear" slope=".78" intercept=".060"/><feFuncB type="linear" slope=".74" intercept=".047"/></feComponentTransfer></filter><radialGradient id="twParkedShadow"><stop stop-color="#241c18" stop-opacity=".50"/><stop offset=".52" stop-color="#30251f" stop-opacity=".32"/><stop offset="1" stop-color="#30251f" stop-opacity="0"/></radialGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
+    <linearGradient id="twPorchShade" x2="0" y2="1"><stop stop-color="#30241d" stop-opacity=".42"/><stop offset="1" stop-color="#30241d" stop-opacity="0"/></linearGradient><linearGradient id="twBaySides"><stop stop-color="#291e1a" stop-opacity=".48"/><stop offset=".16" stop-color="#291e1a" stop-opacity=".08"/><stop offset=".48" stop-color="#291e1a" stop-opacity="0"/><stop offset=".78" stop-color="#291e1a" stop-opacity=".09"/><stop offset="1" stop-color="#291e1a" stop-opacity=".42"/></linearGradient>
+    <radialGradient id="twBayLamp" cx=".5" cy="0" r=".72"><stop stop-color="#ffdfa0" stop-opacity=".27"/><stop offset="1" stop-color="#ffdfa0" stop-opacity="0"/></radialGradient>
+    <filter id="twGarageBounce" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".65" intercept=".115"/><feFuncG type="linear" slope=".64" intercept=".092"/><feFuncB type="linear" slope=".61" intercept=".074"/></feComponentTransfer><feGaussianBlur stdDeviation=".32"/></filter><radialGradient id="twParkedShadow"><stop stop-color="#241c18" stop-opacity=".50"/><stop offset=".52" stop-color="#30251f" stop-opacity=".32"/><stop offset="1" stop-color="#30251f" stop-opacity="0"/></radialGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
     <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twMoonHalo"><stop offset="0" stop-color="#fff6dc" stop-opacity=".3"/><stop offset=".45" stop-color="#fff6dc" stop-opacity=".14"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></radialGradient>
@@ -1601,6 +1603,9 @@
     <circle cx="3576" cy="411.5" r="1.5" class="tw-bulb2" style="--k:0"/><circle cx="3590" cy="413.1" r="1.5" class="tw-bulb2" style="--k:1"/><circle cx="3604" cy="412.0" r="1.5" class="tw-bulb2" style="--k:2"/><circle cx="3620" cy="410.1" r="1.5" class="tw-bulb2" style="--k:3"/><circle cx="3634" cy="410.5" r="1.5" class="tw-bulb2" style="--k:4"/><circle cx="3648" cy="412.6" r="1.5" class="tw-bulb2" style="--k:5"/><circle cx="3664" cy="412.9" r="1.5" class="tw-bulb2" style="--k:6"/><circle cx="3678" cy="410.9" r="1.5" class="tw-bulb2" style="--k:7"/><circle cx="3692" cy="409.9" r="1.5" class="tw-bulb2" style="--k:8"/><circle cx="3708" cy="411.6" r="1.5" class="tw-bulb2" style="--k:9"/><circle cx="3722" cy="413.1" r="1.5" class="tw-bulb2" style="--k:10"/><circle cx="3736" cy="412.0" r="1.5" class="tw-bulb2" style="--k:11"/>
     <rect x="3566" y="400" width="178" height="86" fill="url(#twDrywall)" class="tw-nohit"/>
     <path d="M3566 478 H3744" class="tw-gfloorline"/><ellipse cx="3640" cy="483" rx="10" ry="1.6" class="tw-oil"/>
+    <g fill="url(#twPorchShade)" opacity=".7" pointer-events="none">
+      <rect x="3598" y="432" width="44" height="4"/><rect x="3598" y="454" width="44" height="4"/><rect x="3690" y="430" width="48" height="4"/>
+    </g>
     <path d="M3598 432 H3642 M3598 454 H3642 M3690 430 H3738" class="tw-shelf"/>
     <path d="M3602 432 l3 3 v-3 M3636 432 l-3 3 v-3 M3602 454 l3 3 v-3 M3636 454 l-3 3 v-3 M3694 430 l3 3 v-3 M3733 430 l-3 3 v-3" class="tw-bracket"/>
     <rect x="3600" y="420" width="12" height="12" class="tw-box"/><path d="M3606 420 v12 M3600 425 h12" class="tw-tape"/><rect x="3602" y="426.5" width="5" height="2.4" class="tw-boxlabel"/>
@@ -1625,8 +1630,26 @@
     <g class="tw-bike" transform="translate(-75 -9)"><circle cx="3700" cy="452" r="7"/><circle cx="3724" cy="452" r="7"/><path d="M3700 452 L3710 440 H3722 L3724 452 M3710 440 L3714 452 H3724 M3708 436 h5 M3721 437 l2 -3"/></g>
     <rect x="3700" y="420" width="10" height="10" class="tw-box"/><rect x="3716" y="420" width="12" height="8" rx="1" class="tw-jar"/>
     <rect x="3592" y="470" width="64" height="14" rx="3" class="tw-rug"/>
+    <g pointer-events="none" fill="none" stroke-linecap="round">
+      <!-- Turned wheel hubs, crossing spokes and a small crank on the hanging bicycle. -->
+      <g transform="translate(-75 -9)" stroke="#c1b7a3" stroke-width=".48">
+        <path d="M3694 452h12m-6-6v12m-4.4-10.4 8.8 8.8m0-8.8-8.8 8.8"/><circle cx="3700" cy="452" r="1.1" fill="#605c53"/><path d="M3718 452h12m-6-6v12m-4.4-10.4 8.8 8.8m0-8.8-8.8 8.8"/><circle cx="3724" cy="452" r="1.1" fill="#605c53"/>
+        <path d="m3714 452 2 2h2" stroke-width="1"/>
+      </g>
+      <path d="M3599 431.5h42m-42 22h42m50-24h45" stroke="#dcc49e" opacity=".62" stroke-width=".55"/>
+      <path d="M3704 421v8m-86-4h4m-18 3h2" stroke="#d9c098" stroke-width="1"/>
+      <path d="M3633 450v1.6m4-1.6v1.6" stroke="#dfc09b" stroke-width=".95"/>
+      <path d="M3735 472h4m-4 8h4" stroke="#d0cdc2" stroke-width="1.2"/>
+      <path d="M3717 421h9m-8 2v3" stroke="#d7ebe6" opacity=".65" stroke-width=".65"/>
+      <path d="M3594 473h60m-60 8h60" stroke="#e2ac82" opacity=".45" stroke-width=".7" stroke-dasharray="2 .9"/>
+      <path d="m3664.4 436 .6 4m15.7 0-.3 4" stroke="#c4b8a1" stroke-width="1.4"/>
+    </g>
     <image href="assets/images/town/memory-sketch.webp" x="3729" y="422" width="10" height="8"/>
     <g data-memory="baby" role="button" tabindex="0" aria-label="Open family Camry photo" transform="translate(3690 482) scale(.89) translate(-3690 -483)"><g fill="url(#twParkedShadow)"><ellipse cx="3693" cy="480.6" rx="34" ry="6" opacity=".66"/><ellipse cx="3690" cy="482.6" rx="27" ry="2.6"/><ellipse cx="3668" cy="483.2" rx="4" ry="1.2"/><ellipse cx="3712" cy="483.2" rx="4" ry="1.2"/></g><g filter="url(#twGarageBounce)"><image href="assets/images/town/memory-camry.webp" x="3657" y="442" width="66" height="44"/><path d="M3670 459 q12 -1.2 31 0" fill="none" stroke="#c3b295" stroke-width="1" opacity=".32"/><ellipse cx="3675" cy="458.6" rx="7.4" ry="1.45" fill="url(#twParkedShadow)"/><image href="assets/images/town/memory-seat.webp" x="3663" y="443" width="25" height="17"/></g></g>
+    <g pointer-events="none">
+      <rect x="3566" y="400" width="178" height="86" fill="url(#twBaySides)"/>
+      <rect x="3587" y="404" width="136" height="75" fill="url(#twBayLamp)"/>
+    </g>
     <rect x="3562" y="396" width="186" height="8" rx="1" class="tw-gdoor"/><path d="M3562 398.6 H3748 M3562 401.4 H3748" class="tw-gdoor-l"/><rect x="3650" y="402" width="10" height="1.6" rx=".6" class="tw-gdoor-h"/>
     <path d="M3566 486 H3744 L3769 600 H3541 Z" class="tw-drive"/>
     <path d="M3566 486 H3744 L3769 600 H3541 Z" fill="url(#twConcrete)" class="tw-nohit"/>

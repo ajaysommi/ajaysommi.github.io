@@ -622,7 +622,7 @@
       e.stopPropagation();
       if (dragged && e.type === 'click') return;
       const baby = item.dataset.memory === 'baby';
-      lightbox('assets/images/town/' + (baby ? 'baby-photo' : 'trike-photo') + '.webp', baby ? 'I was just a few months old when my family brought me home in this green 1996 Camry.' : '');
+      lightbox('assets/images/town/' + (baby ? 'baby-photo' : 'trike-photo') + '.webp', baby ? 'I was only a few months old. My family brought me home in that little plaid seat, in our green ’96 Camry.' : '');
     };
     item.addEventListener('click', show);
     item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(e); } });
