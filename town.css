@@ -1786,6 +1786,6 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 
 [data-memory] { cursor: pointer; pointer-events: all; transition: filter .14s ease-out; }
 .tw:not(.intro) [data-memory]:is(:hover, :focus-visible) { filter: drop-shadow(0 0 2px #f6d799) drop-shadow(0 0 3px #dcaa657d); }
-.tw-lightbox.captioned { align-content: center; gap: .7rem; }
-.tw-lightbox.captioned img { max-height: 76vh; }
-.tw-lightbox.captioned p { margin: 0; color: #f5ebda; text-align: center; max-width: 50ch; }
+.tw-lightbox.captioned { animation: none; align-content: center; gap: .7rem; }
+.tw-lightbox.captioned img { box-shadow: none; max-height: 76vh; }
+.tw-lightbox.captioned p { position: relative; z-index: 1; margin: 0; color: #f5ebda; text-align: center; max-width: 50ch; }

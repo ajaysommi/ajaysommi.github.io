@@ -554,7 +554,7 @@ const home = () => `
     ${PROJ['p-avl']()}
     ${PROJ['p-gatorgoods']()}
     ${PROJ['p-sommiscript']()}
-    <g data-memory="trike" role="button" tabindex="0" aria-label="Open tricycle photo"><image href="assets/images/town/memory-trike.webp" x="3794" y="546" width="23" height="18"/></g>
+    <g data-memory="trike" role="button" tabindex="0" aria-label="Open tricycle photo"><image href="assets/images/town/memory-trike.webp" x="3820" y="532" width="23" height="18"/></g>
     ${mailbox()}`;
 // The mailbox at the curb by the drive: letters from people I've worked with
 // (their LinkedIn recommendations). Its flag is up until it has been opened.
@@ -589,7 +589,7 @@ const garage = () => {
     <path d="M3568 409 Q3590 416 3612 409 Q3634 416 3656 409 Q3678 416 3700 409 Q3722 416 3742 409" class="tw-string"/>
     ${[3576, 3590, 3604, 3620, 3634, 3648, 3664, 3678, 3692, 3708, 3722, 3736].map((x, k) => `<circle cx="${x}" cy="${(411.5 + Math.sin(k * 1.4) * 1.6).toFixed(1)}" r="1.5" class="tw-bulb2" style="--k:${k}"/>`).join('')}
     <rect x="3566" y="400" width="178" height="86" fill="url(#twDrywall)" class="tw-nohit"/>
-    <path d="M3566 478 H3744" class="tw-gfloorline"/><ellipse cx="3640" cy="483" rx="10" ry="1.6" class="tw-oil"/>
+    <rect class="tw-bay-floor" x="3566" y="467" width="178" height="19" fill="url(#twBayConcrete)"/><path d="M3566 467 H3744" class="tw-gfloorline"/><ellipse cx="3640" cy="483" rx="10" ry="1.6" class="tw-oil"/>
     <g fill="url(#twPorchShade)" opacity=".7" pointer-events="none">
       <rect x="3598" y="432" width="44" height="4"/><rect x="3598" y="454" width="44" height="4"/><rect x="3690" y="430" width="48" height="4"/>
     </g>
@@ -944,9 +944,9 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <linearGradient id="twAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf86"/><stop offset="1" stop-color="#e8a24f"/></linearGradient>
     <linearGradient id="twVcGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a1"/><stop offset=".6" stop-color="#f7b867"/><stop offset="1" stop-color="#e48f45"/></linearGradient>
     <radialGradient id="twVcLight"><stop offset="0" stop-color="#ffc977" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
-    <linearGradient id="twPorchShade" x2="0" y2="1"><stop stop-color="#30241d" stop-opacity=".42"/><stop offset="1" stop-color="#30241d" stop-opacity="0"/></linearGradient><linearGradient id="twBaySides"><stop stop-color="#291e1a" stop-opacity=".48"/><stop offset=".16" stop-color="#291e1a" stop-opacity=".08"/><stop offset=".48" stop-color="#291e1a" stop-opacity="0"/><stop offset=".78" stop-color="#291e1a" stop-opacity=".09"/><stop offset="1" stop-color="#291e1a" stop-opacity=".42"/></linearGradient>
+    <linearGradient id="twPorchShade" x2="0" y2="1"><stop stop-color="#30241d" stop-opacity=".42"/><stop offset="1" stop-color="#30241d" stop-opacity="0"/></linearGradient><linearGradient id="twBayConcrete" x2="0" y2="1"><stop stop-color="#202226"/><stop offset="1" stop-color="#37393b"/></linearGradient><linearGradient id="twBaySides"><stop stop-color="#291e1a" stop-opacity=".48"/><stop offset=".16" stop-color="#291e1a" stop-opacity=".08"/><stop offset=".48" stop-color="#291e1a" stop-opacity="0"/><stop offset=".78" stop-color="#291e1a" stop-opacity=".09"/><stop offset="1" stop-color="#291e1a" stop-opacity=".42"/></linearGradient>
     <radialGradient id="twBayLamp" cx=".5" cy="0" r=".72"><stop stop-color="#ffdfa0" stop-opacity=".27"/><stop offset="1" stop-color="#ffdfa0" stop-opacity="0"/></radialGradient>
-    <filter id="twGarageBounce" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".65" intercept=".115"/><feFuncG type="linear" slope=".64" intercept=".092"/><feFuncB type="linear" slope=".61" intercept=".074"/></feComponentTransfer></filter><radialGradient id="twParkedShadow"><stop stop-color="#241c18" stop-opacity=".76"/><stop offset=".52" stop-color="#30251f" stop-opacity=".48"/><stop offset="1" stop-color="#30251f" stop-opacity="0"/></radialGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
+    <filter id="twGarageBounce" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR type="linear" slope=".77" intercept=".075"/><feFuncG type="linear" slope=".75" intercept=".064"/><feFuncB type="linear" slope=".72" intercept=".050"/></feComponentTransfer></filter><radialGradient id="twParkedShadow"><stop stop-color="#241c18" stop-opacity=".76"/><stop offset=".52" stop-color="#30251f" stop-opacity=".48"/><stop offset="1" stop-color="#30251f" stop-opacity="0"/></radialGradient><linearGradient id="twGarageLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7b0" stop-opacity=".55"/><stop offset=".7" stop-color="#ffe7b0" stop-opacity="0"/></linearGradient>
     <radialGradient id="twAdtGlow"><stop offset="0" stop-color="#3fa0ff" stop-opacity=".75"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twAdtPool"><stop offset="0" stop-color="#4aa8ff" stop-opacity=".7"/><stop offset="1" stop-color="#1f6fd1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twMoonHalo"><stop offset="0" stop-color="#fff6dc" stop-opacity=".3"/><stop offset=".45" stop-color="#fff6dc" stop-opacity=".14"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></radialGradient>
