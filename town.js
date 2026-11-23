@@ -307,7 +307,7 @@
   // script.js asks for it when the theme changes
   window.__twBar = () => { if (!barOn) return null; barSet = ''; requestAnimationFrame(paintBar); return barColour(); };
   let explored = false, actorFrame = 0, lastT = 0, visible = true;
-  let showRover = false, showRobot = false, showLift = false, showCctv = false;
+  let showRover = false, showRobot = false, showLift = false, showCctv = false, showDish = false;
   const syncActors = () => {
     const inView = (left, right) => left < vb[0] + vb[2] + 90 && right > vb[0] - 90;
     showRover = inView(bots.rfa.box[0], bots.rfa.box[1]);
@@ -317,7 +317,8 @@
     if (showLift !== liftInView) svg.classList.toggle('tw-bay-visible', liftInView);
     showLift = liftInView;
     showCctv = inView(1180, 1360);
-    if (!actorFrame && visible && !reduced && (showRover || showRobot || showLift || showCctv)) {
+    showDish = inView(3020, 3140);
+    if (!actorFrame && visible && !reduced && (showRover || showRobot || showLift || showCctv || showDish)) {
       lastT = 0;
       actorFrame = requestAnimationFrame(tickActors);
     }
@@ -746,30 +747,38 @@
   const head = $('.tw-cctv-head', svg), dish = $('.tw-dish', svg), eyes = $$('.tw-follow', svg);
   const toSVG = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(cam.getScreenCTM().inverse()); };
   let ptr = null;
-  /* The security camera sweeps the lot. When the pointer is near it turns to
-     follow; when the pointer goes, it eases back into its sweep from wherever
-     it was looking (joining the sweep at the nearest point, so it never jumps). */
-  const CCTV_REST = -104, CCTV_SWING = 22, CCTV_PERIOD = 7;
-  let cctvA = CCTV_REST, cctvAim = null, cctvPhase = 0, cctvFrom = CCTV_REST, cctvBack = 1;
-  const cctv = (dt) => {
-    if (!head || zooming()) return;
-    if (cctvAim !== null) {
-      cctvA += (cctvAim - cctvA) * (1 - Math.exp(-dt * 9));
-      cctvBack = 0; cctvFrom = cctvA;
-    } else {
-      if (cctvBack === 0) {
-        // start the sweep where the camera is already pointing, headed back to the middle
-        const u = clamp((cctvA - CCTV_REST) / CCTV_SWING, -1, 1);
-        cctvPhase = u > 0 ? Math.PI - Math.asin(u) : Math.asin(u);
+  /* The security camera and the FICS dish sweep on their own. When the
+     pointer is near, each turns to follow it; when the pointer goes, it eases
+     back into its sweep from wherever it was looking (joining the sweep at the
+     nearest point, so it never jumps). */
+  const turner = (el, rest, swing, period, draw) => {
+    const t = { aim: null, a: rest, phase: 0, from: rest, back: 1, rest };
+    t.draw = (a) => { if (el) el.style.transform = draw(a); };
+    t.step = (dt) => {
+      if (!el || zooming()) return;
+      if (t.aim !== null) {
+        t.a += (t.aim - t.a) * (1 - Math.exp(-dt * 9));
+        t.back = 0; t.from = t.a;
+      } else {
+        if (t.back === 0) {
+          // start the sweep where it's already pointing, headed back to the middle
+          const u = clamp((t.a - rest) / swing, -1, 1);
+          t.phase = u > 0 ? Math.PI - Math.asin(u) : Math.asin(u);
+        }
+        t.phase += dt * 2 * Math.PI / period;
+        const sweep = rest + swing * Math.sin(t.phase);
+        t.back = Math.min(1, t.back + dt / 1.2);
+        const k = t.back * t.back * (3 - 2 * t.back);
+        t.a = t.from + (sweep - t.from) * k;
       }
-      cctvPhase += dt * 2 * Math.PI / CCTV_PERIOD;
-      const sweep = CCTV_REST + CCTV_SWING * Math.sin(cctvPhase);
-      cctvBack = Math.min(1, cctvBack + dt / 1.2);
-      const k = cctvBack * cctvBack * (3 - 2 * cctvBack);
-      cctvA = cctvFrom + (sweep - cctvFrom) * k;
-    }
-    head.style.transform = `rotate(${cctvA.toFixed(2)}deg)`;
+      t.draw(t.a);
+    };
+    // with reduced motion there's no sweep: it simply looks, or rests
+    t.set = (aim) => { t.aim = aim; if (reduced) t.draw(aim === null ? rest : aim); };
+    return t;
   };
+  const cctv = turner(head, -104, 22, 7, (a) => `rotate(${a.toFixed(2)}deg)`);
+  const dishT = turner(dish, 0, 30, 9, (a) => `translate(0px, -16px) rotate(${a.toFixed(2)}deg)`);
   // A robot comes over when the pointer is near its patch, stops short of
   // it, and otherwise ambles about inside the patch.
   const steer = (b, dt, now) => {
@@ -799,7 +808,7 @@
   // The robots and alignment lift only repaint while that part of the block is in view.
   function tickActors(now) {
     actorFrame = 0;
-    if (!visible || !(showRover || showRobot || showLift || showCctv)) return;
+    if (!visible || !(showRover || showRobot || showLift || showCctv || showDish)) return;
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
     if (dt > 0 && showRover && (!cur || bots.rfa.scared)) {
       if (!bots.rfa.dead) steer(bots.rfa, dt, now);
@@ -812,7 +821,8 @@
     }
     if (dt > 0 && showLift) lift(now);
     if (dt > 0 && showRobot) tintBeam(dt);
-    if (dt > 0 && showCctv) cctv(dt);
+    if (dt > 0 && showCctv) cctv.step(dt);
+    if (dt > 0 && showDish) dishT.step(dt);
     actorFrame = requestAnimationFrame(tickActors);
   }
 
@@ -834,19 +844,15 @@
       if (dishOn) {
         // The dish sits on HiPerGator's roof at (3080, 382); it turns its face to the pointer.
         const a = Math.atan2(p.x - 3080, 382 - p.y) * 180 / Math.PI;
-        dish.style.transform = `translate(0px, -16px) rotate(${clamp(a, -70, 70).toFixed(1)}deg)`;
-      } else if (dish) dish.style.transform = '';
+        dishT.set(clamp(a, -70, 70));
+      } else dishT.set(null);
       if (!sky && head) {
         // The camera is up at the roofline at (1268, 350), looking down over its
         // sign; it turns only as far as its mount allows.
         let a = Math.atan2(350 - p.y, 1268 - p.x) * 180 / Math.PI;
         if (a > 90) a -= 360;
-        cctvAim = clamp(a, -160, -30);
-        if (reduced) head.style.transform = `rotate(${cctvAim.toFixed(1)}deg)`;
-      } else {
-        cctvAim = null;
-        if (reduced && head) head.style.transform = `rotate(${CCTV_REST}deg)`;
-      }
+        cctv.set(clamp(a, -160, -30));
+      } else cctv.set(null);
       // (the rover is drawn flipped when it faces left, so its eyes' x is too)
       const fx = bots.rfa.face < 0 ? -1 : 1;
       if (showRover) eyes.forEach((el) => {
@@ -858,9 +864,8 @@
   stage.addEventListener('pointerleave', () => {
     ptr = null;
     tw.classList.remove('sky', 'near', 'dishon');
-    cctvAim = null;
-    if (reduced && head) head.style.transform = `rotate(${CCTV_REST}deg)`;
-    if (dish) dish.style.transform = '';
+    cctv.set(null);
+    dishT.set(null);
     eyes.forEach((el) => { el.style.transform = ''; });
     if (!cur) { clearTimeout(offT); over = null; glow(null); hideLabel(); }
   });

@@ -143,8 +143,8 @@
 @keyframes tw-attack { 0% { transform: translateY(10px); opacity: 0; } 20%, 55% { transform: none; opacity: 1; } 70%, 100% { transform: translateY(-4px); opacity: 0; } }
 .tw-shield { transform-box: fill-box; transform-origin: center; animation: tw-catch 5s cubic-bezier(.3, 1.6, .5, 1) infinite; }
 @keyframes tw-catch { 0%, 38% { transform: scale(0); } 48%, 82% { transform: scale(1); } 94%, 100% { transform: scale(0); } }
-.tw-dish { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
-.tw:not(.sky) .tw-dish { animation: tw-scanning 9s ease-in-out infinite; }
+/* turned by town.js: it sweeps, follows the pointer, and eases back */
+.tw-dish { transform: translate(0, -16px); }
 @keyframes tw-scanning { 0%, 100% { transform: translate(0, -16px) rotate(-30deg); } 50% { transform: translate(0, -16px) rotate(30deg); } }
 .tw-dishface { fill: #eef0f3; stroke: var(--tw-line); stroke-width: 2.4; }
 .tw-feed { stroke: var(--tw-line); stroke-width: 2.4; stroke-linecap: round; }
@@ -1386,7 +1386,6 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 
 /* round 18 */
 /* the dish: tracking whenever the pointer is near it */
-.tw.dishon .tw-dish { animation: none; }
 /* the HawkEye's lasers, three times as quick */
 .tw-beacon { animation-duration: .06s; } .tw-beacon + .tw-beacon { animation-delay: -.03s; }
 /* the photo from long ago, uncropped */
