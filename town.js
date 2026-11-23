@@ -168,7 +168,7 @@
   // drawn once. Only the parts that move (the lift, the robots, the dish,
   // the camera, the gator) carry a small live glow of their own.
   const LIVE = { 'p-civic': '.tw-civ-hood', 'p-lid': '.tw-lidflap', tm: '.tw-tm-swirl', hunter: '.tw-plat', rjax: '.tw-frc', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cambody', edu: '.tw-gator', shiva: '.tw-bars' };
-  const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-wscrack, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-hallglow, .tw-snowimg', shiva: '.tw-bars, .tw-bb-beams, .tw-bb-wash' };
+  const SKIP = { toyota: '.tw-alarmin, .tw-dooralarm, .tw-door-fractures, .tw-cracks, .tw-carlights, .tw-shards, .tw-glassedge, .tw-car-fractures, .tw-adtsticker, .tw-snowimg, .tw-textsnow', 'p-betai': '.tw-tvlcd, .tw-bwcr, .tw-hedge, .tw-winglass, .tw-winsheen', 'p-macbook': '.tw-mac-fire', 'p-civic': '.tw-civ-hood, .tw-civ-bay, .tw-engbay, .tw-civ-dmg', 'p-lid': '.tw-lidflap', 'p-iron': '.tw-hot-tip', tm: '.tw-tm-swirl', hunter: '.tw-plat, .tw-arm-a, .tw-arm-b, .tw-pivot, .tw-laser', rjax: '.tw-frc, .tw-vision, .tw-reticle', rfa: '.tw-rover', fics: '.tw-dish', adt: '.tw-cctv-head, .tw-adtbush, .tw-adt-alarm, .tw-adtsign-lit', jm: '.tw-hazards, .tw-tcars, .tw-snowimg', edu: '.tw-gator, .tw-ripples, .tw-hall-in, .tw-hall-gl, .tw-hall-cr, .tw-hallglow, .tw-snowimg', shiva: '.tw-bars, .tw-bb-beams, .tw-bb-wash' };
   SKIP.hunter += ', .tw-hk-lcd'; SKIP['p-civic'] += ', .tw-snowimg';
   // The flag changes position when the first letter is opened.
   LIVE.recs = '.tw-mb-flag'; SKIP.recs = '.tw-mb-flag';
@@ -216,7 +216,7 @@
       g.removeAttribute('data-id'); g.removeAttribute('style');
       g.setAttribute('class', 'tw-halo'); g.setAttribute('aria-hidden', 'true');
       g.setAttribute('filter', fitted(h, `twHalo-${id}`));
-      $$('.tw-hit, .tw-dmg' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
+      $$('.tw-hit, .tw-dmg, .tw-pane-damage' + (SKIP[id] ? ', ' + SKIP[id] : ''), g).forEach((n) => n.remove());
       $$('.tw-bump.off', g).forEach((n) => n.classList.remove('off'));
       $$('.tw-snowimg, .tw-textsnow, .tw-snowy', g).forEach((n) => n.remove());
       // and a light copy for while the scene leans in: the place's shapes in
@@ -1191,28 +1191,14 @@
   // its door give in if you keep at them, its ADT sign lights up and the
   // police come. Everything else takes nicks and cracks. A fresh visit always
   // starts clean.
-  const fresh = () => ({ civ: { cr: D.civic.wins.map(() => []), sh: D.civic.wins.map(() => 0), fb: 0, rb: 0, dents: [] }, mac: 0, toy: 0, pts: [], cars: {}, police: 0, tcars: {}, hk: 0, bw: 0, bwPts: [], tv: 0, hwin: [0, 0], hdoor: 0, home: 0, hall: {} });
+  const fresh = () => ({ civ: { cr: D.civic.wins.map(() => []), sh: D.civic.wins.map(() => 0), fb: 0, rb: 0, dents: [] }, mac: 0, toy: 0, pts: [], doorGlass: [], cars: {}, police: 0, tcars: {}, hk: 0, bw: 0, bwPts: [], tv: 0, hwin: [0, 0], hdoor: 0, home: 0, hall: {} });
   let dmg = fresh();
   const hits = {};
-  const damaged = () => dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || dmg.civ.cr.some((c) => c.length) || Object.keys(hits).length || Object.keys(dmg.tcars).length || dmg.hk || dmg.bw || dmg.hwin[0] || dmg.hwin[1] || dmg.hdoor || Object.keys(dmg.hall).length;
+  const damaged = () => paneHits || dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || dmg.civ.cr.some((c) => c.length) || Object.keys(hits).length || Object.keys(dmg.tcars).length || dmg.hk || dmg.bw || dmg.hwin[0] || dmg.hwin[1] || dmg.hdoor || Object.keys(dmg.hall).length;
   const save = () => { if (fixItem) fixItem.hidden = !damaged(); };
   const localPt = (el, e) => { const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
   const inPoly = (x, y, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) o = !o; } return o; };
   const seeded = (n) => { let v = Math.abs(Math.floor(n * 9301 + 49297)) % 2147483646 + 1; return () => (v = (v * 16807) % 2147483647) / 2147483647; };
-  // A crack: rays out from where it was hit, each bending a little, and a
-  // broken ring around the middle.
-  const crack = (x, y, size, seed, cls = 'tw-crk') => {
-    const r = seeded(seed), n = 6 + Math.floor(r() * 4), ends = [];
-    let d = '';
-    for (let i = 0; i < n; i++) {
-      let a = (i / n) * Math.PI * 2 + r() * 0.6, px = x, py = y;
-      const L = size * (0.55 + r() * 0.6), segs = 2 + Math.floor(r() * 2);
-      d += `M${x.toFixed(2)} ${y.toFixed(2)}`;
-      for (let k = 1; k <= segs; k++) { a += (r() - 0.5) * 0.7; px += Math.cos(a) * L / segs; py += Math.sin(a) * L / segs; d += ` L${px.toFixed(2)} ${py.toFixed(2)}`; if (k === 1) ends.push([px, py]); }
-    }
-    ends.forEach(([ex, ey], i) => { if (r() < 0.75) { const [nx, ny] = ends[(i + 1) % ends.length]; d += ` M${ex.toFixed(2)} ${ey.toFixed(2)} L${nx.toFixed(2)} ${ny.toFixed(2)}`; } });
-    return `<path d="${d}" class="${cls}"/>`;
-  };
   const NSel = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
   const refresh = (id) => { if (halos[id]) { halos[id].remove(); halos[id]._lite.remove(); delete halos[id]; } if (lit === id) { lit = null; glow(id); } };
   const add = (g, html) => { g.insertAdjacentHTML('beforeend', html); };
@@ -1220,6 +1206,7 @@
   const nick = (x, y, k) => `<g class="tw-nick"><ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(2.2 * k).toFixed(2)}" ry="${(1.4 * k).toFixed(2)}" class="tw-scorch"/><path d="M${(x - 2.4 * k).toFixed(1)} ${(y + 0.6 * k).toFixed(1)} q${(2.4 * k).toFixed(1)} ${(-2.6 * k).toFixed(1)} ${(4.8 * k).toFixed(1)} 0" class="tw-dent"/></g>`;
   // glass falling out of a window that gives way, down to the ground
   const fallShards = (g, poly, ground) => {
+    if (reduced) return;
     const xs = poly.map((q) => q[0]), ys = poly.map((q) => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y1 = Math.max(...ys);
     const n = clamp(Math.round((x1 - x0) / 2.4), 5, 12);
     for (let i = 0; i < n; i++) {
@@ -1230,44 +1217,7 @@
     }
   };
 
-  // The Civic
-  const civHot = hotOf('p-civic'), civG = $('.tw-civ-dmg', civHot), winG = $$('.tw-civ-win', civHot), dentG = $('.tw-civ-dents', civHot), bumpF = $('.tw-bump-f', civHot), bumpR = $('.tw-bump-r', civHot);
-  const drawCivic = () => {
-    const c = dmg.civ;
-    winG.forEach((g, i) => {
-      const w = D.civic.wins[i];
-      g.innerHTML = (c.sh[i] ? `<polygon points="${w.map((q) => q.join(',')).join(' ')}" class="tw-civ-hole"/>` + w.map(([x, y], k) => crack(x, y, 2.4, x * 7 + k, 'tw-crk tw-crk-edge')).join('') : '') + c.cr[i].map(([x, y]) => crack(x, y, 5.5, x * 13 + y, c.sh[i] ? 'tw-crk tw-crk-edge' : 'tw-crk')).join('');
-    });
-    dentG.innerHTML = c.dents.map(([x, y], k) => `<path d="M${(x - 1.6).toFixed(2)} ${(y + 0.4).toFixed(2)} q1.6 -1.6 3.2 0" class="tw-dent"/><path d="M${(x - 1).toFixed(2)} ${(y + 1.2).toFixed(2)} l2 -.2" class="tw-scuff" style="--k:${k}"/>`).join('');
-    bumpF.classList.toggle('off', !!c.fb);
-    bumpR.classList.toggle('off', !!c.rb);
-  };
-  const pokeCivic = (e) => {
-    const q = localPt(civG, e), c = dmg.civ;
-    const inB = (b) => q.x >= b.x && q.x <= b.x + b.w && q.y >= b.y && q.y <= b.y + b.h;
-    if (!c.fb && inB(D.civic.fb)) c.fb = 1;
-    else if (!c.rb && inB(D.civic.rb)) c.rb = 1;
-    else {
-      const i = D.civic.wins.findIndex((w) => inPoly(q.x, q.y, w));
-      if (i >= 0) {
-        if (c.sh[i]) return;
-        c.cr[i].push([+q.x.toFixed(2), +q.y.toFixed(2)]);
-        if (c.cr[i].length >= 3) { c.sh[i] = 1; fallShards(civG, D.civic.wins[i], D.civic.ground); }
-      } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
-      else return;
-    }
-    drawCivic(); save(); refresh('p-civic');
-  };
-
-  // The MacBook
-  const drawMac = () => { tw.classList.toggle('mac-lcd', dmg.mac >= 1); tw.classList.toggle('mac-fire', dmg.mac >= 2); };
-
-  // The showroom: it takes BREAK hits for the glass to come down.
-  const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
-  const BREAK = 8, SIZE = [0, 3, 5, 7.5, 10, 13.5, 18, 24];
-  let policeT = 0;
-  const scare = (on) => { bots.rfa.scared = on; bots.rfa.el.classList.toggle('scared', on); };
-  const showroomFracture = (x, y, size, seed, strength) => {
+  const glassFracture = (x, y, size, seed, strength, dark = false) => {
     const random = seeded(seed);
     const point = (x, y) => `${x.toFixed(2)} ${y.toFixed(2)}`;
     const spokes = 5 + Math.floor(random() * 3);
@@ -1295,24 +1245,177 @@
         tips += `M${point(jx, jy)}L${point((jx + nx) * .46 + x * .08, (jy + ny) * .46 + y * .08)}L${point(nx, ny)}`;
       });
     }
-    return `<g class="tw-fracture" opacity="${.58 + .13 * strength}">
+    return `<g class="tw-fracture${dark ? ' tw-fracture-dark' : ''}" opacity="${.58 + .13 * strength}">
       <path class="tw-fracture-rim" d="${roots}" transform="translate(.18 .23)"/>
       <path class="tw-fracture-root" d="${roots}"/>
       <path class="tw-fracture-tip" d="${tips}"/>
       <circle cx="${x}" cy="${y}" r="${.35 + strength * .15}"/>
     </g>`;
   };
+  const rectPane = (x, y, w, h) => [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+  const circlePane = (x, y, r) => Array.from({ length: 24 }, (_, i) => {
+    const angle = i * Math.PI / 12;
+    return [x + r * Math.cos(angle), y + r * Math.sin(angle)];
+  });
+  const glassPoints = (poly) => poly.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+  // Nearby strikes deepen an existing impact instead of stacking identical
+  // spiderwebs. Keep the first impact as its anchor so growth stays coherent.
+  const impactGroups = (points, radius) => {
+    const groups = [];
+    for (const [x, y] of points) {
+      const hit = groups.find(p => Math.hypot(p.x - x, p.y - y) < radius);
+      if (hit) hit.count++;
+      else groups.push({ x, y, count: 1 });
+    }
+    return groups;
+  };
+  const paneScale = (poly) => {
+    const xs = poly.map(([x]) => x), ys = poly.map(([, y]) => y);
+    return clamp(Math.min(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)), 3, 40);
+  };
+  const paneFractures = (points, scale, dark = false) => {
+    const level = Math.min(3, Math.ceil(points.length / 2));
+    return impactGroups(points, clamp(scale * .23, 1.4, 7)).map(({ x, y, count }, i) => {
+      const size = scale * clamp(.18 + count * .18 + points.length * .045, .32, 1.24);
+      return glassFracture(x, y, size, x * 3 + y * 5 + i, level, dark);
+    }).join('');
+  };
+  const brokenRim = (poly) => {
+    const center = poly.reduce(([x, y], [px, py]) => [x + px / poly.length, y + py / poly.length], [0, 0]);
+    const random = seeded(poly[0][0] + poly[0][1] * 7);
+    const shards = poly.map(([x, y], i) => {
+      const [nx, ny] = poly[(i + 1) % poly.length];
+      const edge = .14 + random() * .25, inward = .12 + random() * .21;
+      const tip = [x + (center[0] - x) * inward + (nx - x) * edge * .5, y + (center[1] - y) * inward + (ny - y) * edge * .5];
+      return `M${x} ${y}L${x + (nx - x) * edge} ${y + (ny - y) * edge}L${tip[0]} ${tip[1]}Z`;
+    }).join('');
+    return `<path d="${shards}" class="tw-fracture-remnant"/>`;
+  };
+  let paneDamage = new WeakMap(), nextPane = 0, paneHits = 0;
+  const strikePane = (root, key, poly, q, dark = false) => {
+    let panes = paneDamage.get(root);
+    if (!panes) { panes = new Map(); paneDamage.set(root, panes); }
+    let pane = panes.get(key);
+    if (!pane) {
+      const id = `twImpactPane-${++nextPane}`;
+      const layer = NSel('g', { class: 'tw-pane-damage tw-nohit', 'aria-hidden': 'true' });
+      const clip = NSel('clipPath', { id });
+      clip.append(NSel('polygon', { points: glassPoints(poly) }));
+      const marks = NSel('g', { 'clip-path': `url(#${id})` });
+      layer.append(clip, marks);
+      root.append(layer);
+      pane = { layer, marks, points: [], scale: paneScale(poly) };
+      panes.set(key, pane);
+    }
+    if (pane.points.length >= 8) return;
+    pane.points.push([q.x, q.y]);
+    pane.marks.innerHTML = paneFractures(pane.points, pane.scale, dark);
+    paneHits++;
+  };
+  const clearPane = (root, key) => {
+    const panes = paneDamage.get(root), pane = panes?.get(key);
+    if (pane) { pane.layer.remove(); panes.delete(key); }
+  };
+  const spritePanes = (image, regions, sourceWidth = 1, sourceHeight = 1) => {
+    const x = +image.getAttribute('x'), y = +image.getAttribute('y');
+    const sx = +image.getAttribute('width') / sourceWidth, sy = +image.getAttribute('height') / sourceHeight;
+    return regions.map(poly => poly.map(([px, py]) => [x + px * sx, y + py * sy]));
+  };
+  const shapePane = (shape) => {
+    if (shape.dataset.pane) return shape.dataset.pane.split(' ').map(pair => pair.split(',').map(Number));
+    if (shape.localName === 'circle') return circlePane(shape.cx.baseVal.value, shape.cy.baseVal.value, shape.r.baseVal.value);
+    return rectPane(...['x', 'y', 'width', 'height'].map(name => +shape.getAttribute(name)));
+  };
+  const cutPane = (poly, axis, edge, sign) => poly.flatMap((point, i) => {
+    const prev = poly[(i + poly.length - 1) % poly.length];
+    const inside = sign * (point[axis] - edge) >= 0;
+    const prevInside = sign * (prev[axis] - edge) >= 0;
+    if (inside === prevInside) return inside ? [point] : [];
+    const t = (edge - prev[axis]) / (point[axis] - prev[axis]);
+    const crossing = prev.map((v, j) => v + (point[j] - v) * t);
+    return inside ? [crossing, point] : [crossing];
+  });
+  const glassAt = (hot, e) => {
+    const shapes = $$('[data-fracture-pane]', hot).reverse();
+    for (const [index, shape] of shapes.entries()) {
+      const q = localPt(shape, e);
+      let poly = shapePane(shape), key = String(index);
+      if (!inPoly(q.x, q.y, poly)) continue;
+      if (shape.dataset.paneGrid) {
+        for (const [axis, list] of shape.dataset.paneGrid.split(';').entries()) {
+          const value = axis === 0 ? q.x : q.y;
+          for (const edge of list.split(',').filter(Boolean).map(Number)) {
+            const sign = value >= edge ? 1 : -1;
+            key += sign === 1 ? '+' : '-';
+            poly = cutPane(poly, axis, edge + sign * .65, sign);
+          }
+        }
+        if (!inPoly(q.x, q.y, poly)) return null;
+      }
+      return { shape, key, poly, q };
+    }
+    return null;
+  };
+  // The Civic
+  const civHot = hotOf('p-civic'), civG = $('.tw-civ-dmg', civHot), winG = $$('.tw-civ-win', civHot), dentG = $('.tw-civ-dents', civHot), bumpF = $('.tw-bump-f', civHot), bumpR = $('.tw-bump-r', civHot);
+  const drawCivic = () => {
+    const c = dmg.civ;
+    winG.forEach((g, i) => {
+      const w = D.civic.wins[i];
+      g.innerHTML = c.sh[i]
+        ? `<polygon points="${glassPoints(w)}" class="tw-civ-hole"/>${brokenRim(w)}`
+        : paneFractures(c.cr[i], paneScale(w), true);
+    });
+    dentG.innerHTML = c.dents.map(([x, y], k) => `<path d="M${(x - 1.6).toFixed(2)} ${(y + 0.4).toFixed(2)} q1.6 -1.6 3.2 0" class="tw-dent"/><path d="M${(x - 1).toFixed(2)} ${(y + 1.2).toFixed(2)} l2 -.2" class="tw-scuff" style="--k:${k}"/>`).join('');
+    bumpF.classList.toggle('off', !!c.fb);
+    bumpR.classList.toggle('off', !!c.rb);
+  };
+  const pokeCivic = (e) => {
+    const q = localPt(civG, e), c = dmg.civ;
+    const inB = (b) => q.x >= b.x && q.x <= b.x + b.w && q.y >= b.y && q.y <= b.y + b.h;
+    if (!c.fb && inB(D.civic.fb)) c.fb = 1;
+    else if (!c.rb && inB(D.civic.rb)) c.rb = 1;
+    else {
+      const i = D.civic.wins.findIndex((w) => inPoly(q.x, q.y, w));
+      if (i >= 0) {
+        if (c.sh[i]) return;
+        c.cr[i].push([+q.x.toFixed(2), +q.y.toFixed(2)]);
+        if (c.cr[i].length >= 3) { c.sh[i] = 1; fallShards(civG, D.civic.wins[i], D.civic.ground); }
+      } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
+      else return;
+    }
+    drawCivic(); save(); refresh('p-civic');
+  };
+
+  // The MacBook
+  const macCr = $('.tw-mac-fractures', svg);
+  const pokeMac = (e) => {
+    if (dmg.mac >= 2) return;
+    const q = localPt(macCr, e), pane = shapePane($('#twMacScr rect', svg));
+    if (!inPoly(q.x, q.y, pane)) return;
+    dmg.mac++;
+    strikePane(macCr, 0, pane, q, true);
+    drawMac(); save();
+  };
+  const drawMac = () => { tw.classList.toggle('mac-lcd', dmg.mac >= 1); tw.classList.toggle('mac-fire', dmg.mac >= 2); };
+
+  // The showroom: it takes BREAK hits for the glass to come down.
+  const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
+  const showroomDoor = $('.tw-door-fractures', toyHot), showroomDoorPane = rectPane(760, 426, 32, 56);
+  const BREAK = 8, SIZE = [0, 3, 5, 7.5, 10, 13.5, 18, 24];
+  let policeT = 0;
+  const scare = (on) => { bots.rfa.scared = on; bots.rfa.el.classList.toggle('scared', on); };
   const drawShowroom = (now) => {
     const broke = dmg.toy >= BREAK, lv = Math.min(3, Math.ceil(dmg.toy * 3 / (BREAK - 1)));
-    const impacts = [];
-    if (!broke) dmg.pts.forEach(([x, y], i) => {
-      const near = impacts.find(p => Math.hypot(p.x - x, p.y - y) < 7);
-      if (near) near.hits++;
-      else impacts.push({ x, y, i, hits: 1 });
-    });
-    crG.innerHTML = impacts.map(({ x, y, i, hits }) => {
-      const size = Math.min(24, SIZE[i + 1] + (hits - 1) * 3.4 + (dmg.toy - i - 1) * .65);
-      return showroomFracture(x, y, size, x * 3 + y * 5 + i, lv);
+    const impacts = broke ? [] : impactGroups(dmg.pts, 7);
+    crG.innerHTML = impacts.map(({ x, y, count }, i) => {
+      const size = Math.min(24, SIZE[i + 1] + (count - 1) * 3.4 + (dmg.toy - i - 1) * .65);
+      return glassFracture(x, y, size, x * 3 + y * 5 + i, lv);
+    }).join('');
+    showroomDoor.innerHTML = broke ? '' : [0, 1].map(side => {
+      const points = dmg.doorGlass.filter(([x]) => +(x >= 776) === side);
+      const poly = rectPane(760 + side * 16, 426, 16, 56), id = `twDoorCrackClip${side}`;
+      return points.length ? `<clipPath id="${id}"><polygon points="${glassPoints(poly)}"/></clipPath><g clip-path="url(#${id})">${paneFractures(points, 16)}</g>` : '';
     }).join('');
     tw.classList.toggle('glass-broke', broke);
     tw.classList.toggle('alarm', broke);
@@ -1326,14 +1429,22 @@
   const pokeShowroom = (e) => {
     const car = e.target.closest && e.target.closest('.tw-showcar');
     if (dmg.toy >= BREAK) {
-      if (!car || dmg.cars[car.dataset.car]) return;
+      if (!car) return;
+      const root = $('.tw-car-fractures', car), q = localPt(root, e);
+      const poly = shapePane(root);
+      if (inPoly(q.x, q.y, poly)) strikePane(root, 0, poly, q, true);
+      else if (dmg.cars[car.dataset.car]) return;
       dmg.cars[car.dataset.car] = 1;
     } else {
       const q = localPt(crG, e);
-      // onto the nearest pane of glass
-      let best = null, bd = 1e9;
-      D.glass.forEach(([x, y, w, h]) => { const cx = clamp(q.x, x + 6, x + w - 6), cy = clamp(q.y, y + 6, y + h - 6), d = Math.hypot(cx - q.x, cy - q.y); if (d < bd) { bd = d; best = [cx, cy]; } });
-      dmg.pts.push(best.map((n) => +n.toFixed(1)));
+      if (inPoly(q.x, q.y, showroomDoorPane)) {
+        dmg.doorGlass.push([q.x, q.y]);
+      } else {
+        // Keep showroom impacts inside the exposed wing or display glazing.
+        if (!D.glass.some(([x, y, w, h]) => inPoly(q.x, q.y, rectPane(x, y, w, h)))) return;
+        if (q.x >= 752 && q.x <= 800 && q.y >= 388) return;
+        dmg.pts.push([+q.x.toFixed(1), +q.y.toFixed(1)]);
+      }
       dmg.toy++;
     }
     drawShowroom(true); save(); refresh('toyota');
@@ -1346,15 +1457,20 @@
     [0.184, 0.37, 0.406, 0.724], [0.394, 0.57, 0.46, 0.724], [0.597, 0.773, 0.406, 0.724], [0.799, 0.979, 0.406, 0.724]
   ];
   const jmHot = hotOf('jm'), tcG = $('.tw-tcars', jmHot);
+  const truckPanes = D.truck.glass.flatMap(({ car, panes }) =>
+    spritePanes($('.tw-truckimg', jmHot), panes, 3944, 876).map((poly, i) => ({ car, key: `${car}:${i}`, poly }))
+  );
   const pokeTruck = (e) => {
     const T = D.truck, q = localPt(tcG, e), fx = (q.x - T.x) / T.w, fy = (q.y - T.y) / T.h;
-    const i = TCARS.findIndex(([a, b, c, d]) => fx >= a && fx <= b && fy >= c && fy <= d);
-    if (i < 0) { pokeAny('jm', e); return; }
-    const n = dmg.tcars[i] = (dmg.tcars[i] || 0) + 1;
-    if (n > 6) return;
-    const [a, b, c, d] = TCARS[i], glass = fy < c + (d - c) * 0.42;
-    add(tcG, glass ? crack(q.x, q.y, 2.6 + n * 0.5, q.x * 5 + q.y + n, 'tw-crk tw-crk-any') : nick(q.x, q.y, 0.75));
-    if (n === 1) {
+    const pane = truckPanes.find(({ poly }) => inPoly(q.x, q.y, poly));
+    const i = pane ? pane.car : TCARS.findIndex(([a, b, c, d]) => fx >= a && fx <= b && fy >= c && fy <= d);
+    if (pane) strikePane(tcG, pane.key, pane.poly, q, true);
+    if (i < 0) { if (pane) save(); else pokeAny('jm', e); return; }
+    const n = dmg.tcars[i] || 0;
+    if (n < 6) dmg.tcars[i] = n + 1;
+    const [a, b, c, d] = TCARS[i];
+    if (!pane && n < 6) add(tcG, nick(q.x, q.y, 0.75));
+    if (n === 0) {
       const P = (u, v) => [(T.x + u * T.w).toFixed(1), (T.y + v * T.h).toFixed(1)];
       const hd = P(a + 0.012, c + (d - c) * 0.5), tl = P(b - 0.01, c + (d - c) * 0.4);
       add(tcG, `<g class="tw-tc-al"><g class="tw-tc-w"><circle cx="${hd[0]}" cy="${hd[1]}" r="12" fill="url(#twLedBulb)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" class="tw-proj"/><polygon points="${hd[0]},${(+hd[1] - 2).toFixed(1)} ${hd[0]},${(+hd[1] + 2).toFixed(1)} ${(+hd[0] - 34).toFixed(1)},${(+hd[1] + 10).toFixed(1)} ${(+hd[0] - 34).toFixed(1)},${(+hd[1] - 6).toFixed(1)}" fill="url(#twLed)" opacity=".75"/></g><g class="tw-tc-a"><circle cx="${hd[0]}" cy="${hd[1]}" r="10" fill="url(#twHaz)"/><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twHaz)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" fill="#ffd27a"/><circle cx="${tl[0]}" cy="${tl[1]}" r="1.6" fill="#ffd27a"/></g><g class="tw-tc-r"><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twTail)"/></g></g>`);
@@ -1364,28 +1480,46 @@
 
   // The HawkEye's screen
   const hkHot = hotOf('hunter'), hkG = $('.tw-hk-lcd', hkHot), hkCr = $('.tw-hk-cr', hkHot);
+  const ravPanes = spritePanes($('.tw-car-img', plat), D.ravGlass);
+  const inkAt = (root, q, r) => add(root, `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${r.toFixed(2)}" class="tw-lcd-ink"/>`);
+  const screenPane = (id) => shapePane($(`#${id} rect`, svg));
+  const hkPane = screenPane('twHkScr');
   const pokeHunter = (e) => {
+    const carPoint = localPt(plat, e), i = ravPanes.findIndex(poly => inPoly(carPoint.x, carPoint.y, poly));
+    if (i >= 0) {
+      strikePane(plat, i, ravPanes[i], carPoint, true);
+      save();
+      return;
+    }
     const q = localPt(hkG, e);
-    if (q.x < 935 || q.x > 960 || q.y < 410.4 || q.y > 426) return;
-    if (dmg.hk >= 4) return;
+    if (!inPoly(q.x, q.y, hkPane) || dmg.hk >= 4) return;
     dmg.hk++;
-    add(hkCr, crack(q.x, q.y, 4 + dmg.hk * 2.2, q.x * 3 + q.y + dmg.hk, 'tw-lcd-crack2') + `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${(0.7 + dmg.hk * 0.25).toFixed(2)}" class="tw-lcd-ink"/>`);
+    inkAt(hkCr, q, .7 + dmg.hk * .25);
+    strikePane(hkCr, 0, hkPane, q, true);
     hkHot.classList.add('lcd' + dmg.hk);
     save();
   };
 
   // BetAI: the living room window, then the TV behind it
   const betHot = hotOf('p-betai'), bwG = $('.tw-bwcr', betHot), tvCr = $('.tw-tvlcd-cr', betHot);
-  const WIN = [[3414, 404], [3462, 404], [3462, 440], [3414, 440]];
+  const WIN = rectPane(3414, 404, 48, 36);
+  const tvPane = screenPane('twTvScr');
   const pokeBet = (e) => {
     const q = localPt(bwG, e);
     if (dmg.bw < 6) {
+      if (!inPoly(q.x, q.y, WIN)) return;
       dmg.bw++;
-      if (dmg.bw < 6) add(bwG, crack(clamp(q.x, 3416, 3460), clamp(q.y, 406, 438), 4 + dmg.bw * 1.6, q.x + q.y * 3 + dmg.bw, `tw-crk tw-crk-g lv${Math.min(3, Math.ceil(dmg.bw / 2))}`));
-      else { bwG.innerHTML = ''; betHot.classList.add('bw-broke'); fallShards(bwG, WIN, 446); houseAlarm(); }
-    } else if (dmg.tv < 4) {
+      if (dmg.bw < 6) {
+        const left = q.x < 3438, x = left ? 3414 : 3438;
+        strikePane(bwG, +left, rectPane(x, 404, 24, 36), q);
+      } else {
+        clearPane(bwG, 0); clearPane(bwG, 1);
+        betHot.classList.add('bw-broke'); fallShards(bwG, WIN, 446); houseAlarm();
+      }
+    } else if (dmg.tv < 4 && inPoly(q.x, q.y, tvPane)) {
       dmg.tv++;
-      add(tvCr, crack(clamp(q.x, 3426, 3450), clamp(q.y, 413.5, 426.5), 3 + dmg.tv * 1.8, q.x * 2 + q.y + dmg.tv, 'tw-lcd-crack2') + `<circle cx="${clamp(q.x, 3426, 3450).toFixed(1)}" cy="${clamp(q.y, 413.5, 426.5).toFixed(1)}" r="${(0.6 + dmg.tv * 0.25).toFixed(2)}" class="tw-lcd-ink"/>`);
+      inkAt(tvCr, q, .6 + dmg.tv * .25);
+      strikePane(tvCr, 0, tvPane, q, true);
       betHot.classList.add('tv' + dmg.tv);
     } else return;
     save(); refresh('p-betai');
@@ -1403,19 +1537,34 @@
     clearTimeout(homeT);
     homeT = setTimeout(() => tw.classList.add('police-home'), 6000);
   }
+  const doorGlass = (side) => {
+    const halfArc = Array.from({ length: 13 }, (_, i) => {
+      const angle = -Math.PI / 2 + side * i * Math.PI / 24;
+      return [3509 + 9 * Math.cos(angle), 445 + 9 * Math.sin(angle)];
+    });
+    return [...halfArc, [3509 + 9 * side, 447], [3509, 447]];
+  };
+  const doorPanes = [doorGlass(-1), doorGlass(1)];
   const pokeHouse = (el, e) => {
     const g = $('.tw-hcr', el), q = localPt(g, e);
     if (el === hdoor) {
       if (dmg.hdoor >= 8) return;
       dmg.hdoor++;
-      if (dmg.hdoor < 8) add(g, q.y < 448 ? crack(q.x, q.y, 2.4 + dmg.hdoor * 0.4, q.x + q.y + dmg.hdoor, 'tw-crk tw-crk-any') : nick(q.x, q.y, 0.7 + dmg.hdoor * 0.06));
-      else { el.classList.add('open'); houseAlarm(); }
+      const i = doorPanes.findIndex(poly => inPoly(q.x, q.y, poly));
+      if (dmg.hdoor < 8) {
+        if (i >= 0) strikePane(g, i, doorPanes[i], q);
+        else add(g, nick(q.x, q.y, .7 + dmg.hdoor * .06));
+      } else { el.classList.add('open'); houseAlarm(); }
     } else {
-      const i = +el.dataset.w;
-      if (dmg.hwin[i] >= 6) return;
+      const i = +el.dataset.w, full = shapePane($('.tw-homewin', el));
+      if (dmg.hwin[i] >= 6 || !inPoly(q.x, q.y, full)) return;
+      const [x, y] = full[0], col = +(q.x >= x + 12), row = +(q.y >= y + 14);
       dmg.hwin[i]++;
-      if (dmg.hwin[i] < 6) add(g, crack(q.x, q.y, 3 + dmg.hwin[i] * 1.2, q.x * 3 + q.y + dmg.hwin[i], `tw-crk tw-crk-g lv${Math.min(3, Math.ceil(dmg.hwin[i] / 2))}`));
-      else { g.innerHTML = ''; el.classList.add('broke'); const r = $('.tw-homewin', el), x = +r.getAttribute('x'), y = +r.getAttribute('y'); fallShards(g, [[x, y], [x + 24, y], [x + 24, y + 28], [x, y + 28]], 486); houseAlarm(); }
+      if (dmg.hwin[i] < 6) strikePane(g, row * 2 + col, rectPane(x + col * 12, y + row * 14, 12, 14), q);
+      else {
+        for (let k = 0; k < 4; k++) clearPane(g, k);
+        el.classList.add('broke'); fallShards(g, full, 486); houseAlarm();
+      }
     }
     save();
   };
@@ -1424,6 +1573,13 @@
     e.stopPropagation();
     pokeHouse(el, e);
   }));
+  const attic = $('.tw-attic-glass', svg);
+  attic.addEventListener('click', (e) => {
+    if (dragged || keepsake || (cur && !HOME_STOPS.has(cur))) return;
+    e.stopPropagation();
+    strikePane(attic.parentNode, 'attic', shapePane(attic), localPt(attic, e));
+    save();
+  });
 
   // Malachowsky Hall: each window cracks, then gives way (the glass gone,
   // the rooms behind it plain to see).
@@ -1433,11 +1589,12 @@
     if (i < 0) { pokeAny('edu', e); return; }
     const n = dmg.hall[i] = (dmg.hall[i] || 0) + 1, P = D.hall.polys[i];
     if (n > 3) return;
-    if (n < 3) add(hallCr, crack(q.x, q.y, 3 + n * 2.4, q.x * 3 + q.y + n, 'tw-crk tw-crk-hall'));
+    if (n < 3) strikePane(hallCr, i, P, q);
     else {
       hallHoles.appendChild(NSel('polygon', { points: P.map((p) => p.join(',')).join(' '), fill: '#000' }));
       $('.tw-hall-gl', svg).setAttribute('mask', 'url(#twHallMask)'); tw.classList.add('hall-holed');
-      add(hallCr, P.map(([x, y], k) => crack(x, y, 2.2, x * 7 + k, 'tw-crk tw-crk-hall')).join(''));
+      clearPane(hallCr, i);
+      add(hallCr, brokenRim(P));
       fallShards(hallCr, P, D.hall.ground);
     }
     save();
@@ -1445,7 +1602,6 @@
 
   /* Everything else: glass and screens crack; the rest takes nicks. Marks
      land where it was hit; things that move carry their marks along. */
-  const GLASSY = new Set(['vc', 'fics', 'p-oldlap', 'p-lcd', 'p-dehum', 'tm']);
   const BODY = { rjax: '.tw-frc-flip', rfa: '.tw-rover-shiver' };
   const boxes = {};
   const dmgRoot = (h) => { let g = h.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); h.appendChild(g); } return g; };
@@ -1456,14 +1612,20 @@
     if (e.target.closest && e.target.closest('.tw-woodsign')) return;
     // bushes and trees don't dent: clicking one just steps back out
     if (e.target.closest && e.target.closest('.tw-leaf, .tw-leaf2, .tw-canopy')) { close(); return; }
+    const glass = glassAt(h, e);
+    if (glass) {
+      const { shape, key, poly, q } = glass;
+      strikePane(shape.parentNode, key, poly, q, shape.dataset.fracturePane === 'dark');
+      save();
+      return;
+    }
     const n = (hits[id] || 0) + 1;
     if (n > 6) return;
     hits[id] = n;
     const marks = dmgIn(h, id);
     if (!boxes[id]) { const b = h.getBBox(); boxes[id] = { x: b.x, y: b.y, w: b.width, h: b.height }; }
     const B = boxes[id], s = clamp(Math.sqrt(B.w * B.h) / 70, 0.35, 2), q = localPt(marks, e), big = 1 + (n - 1) * 0.14;
-    if (GLASSY.has(id)) add(marks, crack(q.x, q.y, 6 * s * big, q.x * 7 + q.y + n, 'tw-crk tw-crk-any'));
-    else add(marks, nick(q.x, q.y, s * big));
+    add(marks, nick(q.x, q.y, s * big));
     refresh(id); save();
   };
 
@@ -1509,7 +1671,7 @@
   function poke(id, e) {
     if (cur === 'adt' || id === 'adt' || keepsake) return;
     if (id === 'p-civic') pokeCivic(e);
-    else if (id === 'p-macbook') { if (dmg.mac >= 2) return; dmg.mac++; drawMac(); save(); }
+    else if (id === 'p-macbook') pokeMac(e);
     else if (id === 'toyota') pokeShowroom(e);
     else if (id === 'p-drive') pokeDrive(e);
     else if (id === 'jm') pokeTruck(e);
@@ -1520,6 +1682,8 @@
   }
   function repair() {
     dmg = fresh();
+    paneDamage = new WeakMap(); paneHits = 0;
+    $$('.tw-pane-damage', svg).forEach(layer => layer.remove());
     Object.keys(hits).forEach((k) => delete hits[k]);
     $$('.tw-dmg', svg).forEach((g) => g.remove());
     [tcG, hkCr, bwG, tvCr, hallCr, hallHoles].forEach((g) => { if (g) g.innerHTML = ''; });

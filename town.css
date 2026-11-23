@@ -614,8 +614,6 @@
 .tw-bump-f { transform-origin: 0% 100%; } .tw-bump-r { transform-origin: 100% 100%; }
 .tw-bump-f.off { transform: translate(0, 3.6px) rotate(-80deg); }
 .tw-bump-r.off { transform: translate(0, 3.6px) rotate(80deg); }
-.tw-crk { fill: none; stroke: rgba(255, 255, 255, .9); stroke-width: .32; stroke-linecap: round; stroke-linejoin: round; }
-.tw-crk-edge { stroke: rgba(225, 238, 250, .8); stroke-width: .45; }
 .tw-civ-hole { fill: #121419; opacity: .92; }
 .tw-dent { fill: none; stroke: rgba(0, 0, 0, .55); stroke-width: .55; }
 .tw-scuff { stroke: rgba(255, 255, 255, .45); stroke-width: .35; }
@@ -641,14 +639,14 @@
 /* Thin fractures catch a little light along one side of the glass. */
 .tw-fracture { --fracture: #3f586b; --fracture-rim: #f7faff; pointer-events: none; }
 :is([data-theme="midnight"], [data-theme="terminal"]) .tw-fracture { --fracture: #d8eaf1; --fracture-rim: #263d50; }
+.tw-fracture.tw-fracture-dark { --fracture: #e1edf0; --fracture-rim: #253b49; }
+.tw-pane-damage, .tw-fracture-remnant { pointer-events: none; }
+.tw-fracture-remnant { fill: #cde0e9; fill-opacity: .46; stroke: #eaf6fc; stroke-opacity: .8; stroke-width: .22; }
 .tw-fracture path { fill: none; stroke: var(--fracture); stroke-linejoin: round; stroke-linecap: round; }
 .tw-fracture .tw-fracture-rim { stroke: var(--fracture-rim); stroke-width: .62; opacity: .66; }
 .tw-fracture-root { stroke-width: .38; }
 .tw-fracture-tip { stroke-width: .23; opacity: .64; }
 .tw-fracture circle { fill: var(--fracture); }
-.tw-crk-g { stroke: rgba(255, 255, 255, .95); }
-.tw-crk-g.lv1 { opacity: .3; stroke-width: .3; } .tw-crk-g.lv2 { opacity: .6; stroke-width: .45; } .tw-crk-g.lv3 { opacity: .95; stroke-width: .6; }
-[data-theme="daylight"] .tw-crk-g, :root:not([data-theme]) .tw-crk-g { stroke: rgba(70, 90, 110, .9); }
 .tw-glassedge, .tw-shards { display: none; }
 .tw.glass-broke :is(.tw-glassover, .tw-shine) { display: none; }
 .tw.glass-broke .tw-glassedge { display: inline; fill: rgba(205, 228, 245, .55); stroke: rgba(255, 255, 255, .7); stroke-width: .5; }
@@ -657,8 +655,6 @@
 .tw.shatter .tw-shards { animation: tw-shardsin .6s cubic-bezier(.5, 0, 1, .6); }
 @keyframes tw-shardsin { from { transform: translateY(-40px); opacity: 0; } }
 .tw.glass-broke .tw-showcar { opacity: 1; }
-.tw-wscrack { fill: none; stroke: rgba(255, 255, 255, .95); stroke-width: .5; stroke-linecap: round; opacity: 0; }
-.tw-showcar.hit .tw-wscrack { opacity: 1; }
 .tw-showcar { cursor: pointer; }
 .tw-carlights { opacity: 0; } .tw-showcar.alarm .tw-carlights { opacity: 1; }
 /* hazards on while the headlights are off, and the other way round, never quite in step */
@@ -807,8 +803,6 @@
 .tw-drl { pointer-events: none; }
 
 /* ---------------------------------------------------------- damage, everywhere else */
-.tw-crk-any { stroke: rgba(255, 255, 255, .92); stroke-width: .45; }
-[data-theme="daylight"] .tw .tw-crk-any { stroke: rgba(40, 50, 60, .8); }
 .tw-scorch { fill: rgba(24, 14, 8, .62); }
 .tw-dmg { pointer-events: none; }
 .tw-gsmoke circle { fill: #4f5258; opacity: 0; transform-box: fill-box; transform-origin: center; animation: tw-smoke2 2.6s ease-out infinite; animation-delay: var(--d); }
@@ -917,7 +911,6 @@
 .tw-hot:is(.lcd2, .tv2) .tw-tvlcd-bleed { opacity: 1; }
 .tw-tvlcd-bar { opacity: 0; }
 .tw-hot:is(.lcd3, .tv3) .tw-tvlcd-bar { opacity: 1; animation: tw-glitch 1.4s steps(2) infinite; }
-.tw-lcd-crack2 { fill: none; stroke: #eef3f8; stroke-width: .24; stroke-linecap: round; }
 
 /* BetAI's window: a little glass on it, until it gives way. */
 .tw-winglass { fill: rgba(205, 228, 248, .2); stroke: rgba(255, 255, 255, .3); stroke-width: .4; pointer-events: none; }
@@ -956,8 +949,6 @@
    facade; broken windows show the rooms plainly. */
 .tw-dayonly { transition: opacity .6s; }
 [data-theme="midnight"] .tw .tw-dayonly, [data-theme="terminal"] .tw .tw-dayonly { opacity: 0; }
-.tw-crk-hall { fill: none; stroke: rgba(40, 60, 82, .8); stroke-width: .34; stroke-linecap: round; }
-[data-theme="midnight"] .tw .tw-crk-hall, [data-theme="terminal"] .tw .tw-crk-hall { stroke: rgba(255, 246, 225, .9); }
 
 /* HiPerGator's room: black racks, gold GPU trays, orange labels, blue cables. */
 .tw-hpg-room { fill: #e3e5e9; } [data-theme="midnight"] .tw .tw-hpg-room, [data-theme="terminal"] .tw .tw-hpg-room { fill: #cfd3dc; }

@@ -344,7 +344,7 @@ const visitorCenter = () => {
       <path d="M2804 486V405L2960 310l156 95v81z" fill="url(#twTimber)" class="tw-nohit"/>
       <path d="${Array.from({ length: Math.floor((VC.r - VC.l - 16) / 8) }, (_, i) => VC.l + 12 + i * 8).filter((x) => x < gl - 2 || x > gr + 2).map((x) => `M${x} ${(roofY(x) + 9).toFixed(1)} V${VC.eave - 1}`).join(' ')}" class="tw-batten"/>
       <path d="${batt(VC.l + 8, gl)} ${batt(gr, VC.r - 8)}" class="tw-batten"/>
-      <path d="M${gl} ${VC.base} V${gy} L${VC.c} ${VC.apex + 14} L${gr} ${gy} V${VC.base} Z" fill="url(#twVcGlass)" class="tw-vcglass"/>
+      <path d="M${gl} ${VC.base} V${gy} L${VC.c} ${VC.apex + 14} L${gr} ${gy} V${VC.base} Z" fill="url(#twVcGlass)" class="tw-vcglass" data-fracture-pane data-pane-grid="2930,2960,2990;430,458" data-pane="${gl},${VC.base} ${gl},${gy} ${VC.c},${VC.apex + 14} ${gr},${gy} ${gr},${VC.base}"/>
       <g class="tw-lobby tw-nohit">
         <path d="M2902 453q19-2 38 0v30h-38zm82-13h34v44h-34z" fill="#93704a"/>
         <path d="M2902 454h38m44-12h34m-33 12h31m-29 14h29" fill="none" stroke="#efd2a0" stroke-width="2"/>
@@ -364,7 +364,7 @@ const visitorCenter = () => {
       <rect x="${VC.l + 13}" y="472.4" width="${gl - VC.l - 18}" height="2" class="tw-skirtcap"/><rect x="${gr + 5}" y="472.4" width="${VC.r - gr - 18}" height="2" class="tw-skirtcap"/>
       <!-- the window: a trimmed frame, a sill and a flower box -->
       <rect x="2811" y="417" width="78" height="56" rx="2" class="tw-vctrim"/>
-      <rect x="2814" y="420" width="72" height="50" rx="2" fill="url(#twVcGlass)"/>
+      <rect x="2814" y="420" width="72" height="50" rx="2" data-fracture-pane data-pane-grid="2838,2862;445" fill="url(#twVcGlass)"/>
       <g class="tw-nohit"><path d="M2815 460h70v9h-70z" fill="#987c5a"/><path d="M2820 460l2-6h6l1 6zm42 0 1-5h10l1 5z" fill="#ad7753"/>
       <path d="M2825 455q-9-6-6-10 5 2 6 7-1-9 3-12 3 6-1 12 4-6 8-5-1 6-8 8zm43 0q-6-4-5-8 4 .8 5 5 0-8 4-10 1 6-2 11 4-5 8-3-3 4-10 5z" fill="#5b7b68"/>
       <path d="M2815 437l13-17h5l-18 25zm37 7 16-24h6l-22 32z" fill="#fff6d4" opacity=".34"/></g>
@@ -375,11 +375,11 @@ const visitorCenter = () => {
       <rect x="3032" y="416" width="78" height="30" rx="2" class="tw-vcplaque"/>
       <text x="3071" y="429" class="tw-vcplaque-t" text-anchor="middle">WELCOME</text><text x="3071" y="441" class="tw-vcplaque-t" text-anchor="middle">CENTER</text>
       <rect x="3033" y="449" width="76" height="28" rx="2" class="tw-vctrim"/>
-      <rect x="3036" y="452" width="70" height="22" rx="2" fill="url(#twVcGlass)"/><path d="M3071 452 V474" class="tw-mull"/>${sticker(3092, 455)}
+      <rect x="3036" y="452" width="70" height="22" rx="2" data-fracture-pane data-pane-grid="3071;" fill="url(#twVcGlass)"/><path d="M3071 452 V474" class="tw-mull"/>${sticker(3092, 455)}
       <rect x="3030" y="474" width="82" height="3.4" rx="1" class="tw-sill"/>
       <!-- double glass doors in the middle of the glass front, with handles; a lantern either side -->
       <rect x="${VC.c - 21}" y="440" width="42" height="46" class="tw-vcdoorf"/>
-      <rect x="${VC.c - 18}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor"/><rect x="${VC.c + 1}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor"/>
+      <rect x="${VC.c - 18}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor" data-fracture-pane/><rect x="${VC.c + 1}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor" data-fracture-pane/>
       <path d="M${VC.c - 4} 458 v10 M${VC.c + 4} 458 v10" class="tw-vchandle"/>
       ${[gl - 12, gr + 12].map((x) => `<g transform="translate(${x} 444)"><path d="M0 -10 v4" class="tw-vchandle"/><path d="M-4 -6 h8 l-1 10 h-6 z" class="tw-lantern"/><rect x="-2.6" y="-4.6" width="5.2" height="7.2" class="tw-lantern-g"/><path d="M-5 -6 h10" class="tw-vchandle"/><circle r="9" cy="-1" fill="url(#twBulb)" class="tw-night tw-nohit"/></g>`).join('')}
       ${gableShadow(VC.l + 8, VC.c, VC.r - 8, VC.apex + 9.5, (VC.eave - VC.apex) / (VC.c - VC.l + 6), 12, .85)}
@@ -545,7 +545,7 @@ const home = () => `
     <path d="M3392 333 Q3417 309 3440 286 Q3470.6 284.4 3501 286 Q3525 309 3549.4 333.4 Q3470 330.6 3392 333 Z" fill="url(#twRoofShade)" class="tw-nohit"/>
     <path d="M3395 333.2 Q3470 330.4 3546.6 333.6" class="tw-fascia"/>
     <path d="M3392 333 Q3417 309 3440 286 Q3470.6 284.4 3501 286 Q3525 309 3549.4 333.4" class="tw-roofedge"/>
-    <circle cx="3470.4" cy="301" r="7.6" class="tw-atticfr"/><circle cx="3470.4" cy="301" r="5.8" fill="url(#twVcGlass)" class="tw-homewin"/><path d="M3470.4 295.2 V306.8 M3464.6 301 H3476.2" class="tw-mull"/>
+    <circle cx="3470.4" cy="301" r="7.6" class="tw-atticfr"/><circle cx="3470.4" cy="301" r="5.8" fill="url(#twVcGlass)" class="tw-homewin tw-attic-glass"/><path d="M3470.4 295.2 V306.8 M3464.6 301 H3476.2" class="tw-mull"/>
     <rect x="3496" y="430" width="26" height="56" class="tw-doorway"/>
     <g class="tw-hdoor"><g class="tw-hdoor-in">
       <rect x="3496" y="430" width="26" height="56" rx="2" class="tw-homedoor"/><path d="M3499.6 459 h18.8 v23 h-18.8 z" class="tw-doorpanel"/><circle cx="3517.6" cy="458" r="1.4" class="tw-knob"/>
@@ -773,7 +773,7 @@ const bench = () => `
       <g class="tw-mac-lcd" clip-path="url(#twMacScr)">
         <rect x="3808.6" y="456.4" width="16.8" height="10.1" class="tw-lcd-bleed"/>
         ${[[3810, '#ff2bd6'], [3811.2, '#29f0ff'], [3816.5, '#3dff6e'], [3821, '#fff'], [3823.4, '#ff2bd6']].map(([x, c]) => `<rect x="${x}" y="456.4" width=".5" height="10.1" fill="${c}"/>`).join('')}
-        <path d="M3818 461 l-3.4 -4.6 M3818 461 l5.2 -3 M3818 461 l6 2.6 M3818 461 l-1 5.5 M3818 461 l-6.6 3.2 M3818 461 l-7 -1.6 M3815.8 458 l2.4 -.6 M3821.6 459.4 l.6 2.2 M3813.6 462.4 l1.4 2" class="tw-lcd-crack"/>
+        <g class="tw-mac-fractures"></g>
         <circle cx="3818" cy="461" r="1.6" class="tw-lcd-ink"/>
       </g>
       <g class="tw-mac-fire tw-nohit">${[[3812, 1], [3817.5, 1.35], [3823, 1.1]].map(([x, k], i) => `<path d="M${x} 466 c-2.4 -1.4 -2.6 -4 -1 -6.2 c.2 1.4 1 2 1.6 2.2 c-.4 -2.6 .6 -4.8 2.6 -6.2 c-.6 2.2 .4 3.8 1.4 4.8 c.6 -1 .7 -2 .5 -3 c1.8 2.4 1.8 5.6 -.6 8.4 z" transform="translate(${x} 466) scale(${k}) translate(${-x} -466)" class="tw-flame" style="--d:${(-i * 0.23).toFixed(2)}s"/>`).join('')}<circle cx="3818" cy="462" r="9" fill="url(#twFireGlow)" class="tw-fireglow"/></g>
@@ -781,7 +781,7 @@ const bench = () => `
     <g class="tw-smoke" aria-hidden="true">${[0, 1, 2].map((k) => `<circle cx="${3815 + k * 2.6}" cy="455" r="${1.6 + k * 0.3}" style="--d:${(-k * 0.8).toFixed(1)}s;--dx:${k % 2 ? -3 : 3}px"/>`).join('')}${[0, 1, 2, 3, 4].map((k) => `<circle class="tw-smoke-x" cx="${3810 + k * 4}" cy="452" r="${2.2 + (k % 2)}" style="--d:${(-k * 0.5).toFixed(1)}s;--dx:${k % 2 ? -5 : 5}px"/>`).join('')}</g>
     ${hot('p-lcd', `<g>
       <rect x="3840" y="464" width="20" height="4" rx="1" class="tw-pcb"/>
-      <rect x="3842" y="451" width="16" height="12" rx="1" class="tw-lcdcase"/><rect x="3843.5" y="453" width="13" height="7" class="tw-lcd"/>
+      <rect x="3842" y="451" width="16" height="12" rx="1" class="tw-lcdcase"/><rect x="3843.5" y="453" width="13" height="7" class="tw-lcd" data-fracture-pane="dark"/>
       <text x="3850" y="458.2" class="tw-lcd-t" text-anchor="middle">HELLO</text><rect x="3846" y="463" width="2" height="1" class="tw-pin2"/><rect x="3852" y="463" width="2" height="1" class="tw-pin2"/>
     </g>`)}
     ${hot('p-drive', `<g>
@@ -801,7 +801,7 @@ const bench = () => `
     </g>`)}
     ${hot('p-oldlap', `<g>
       <path d="M3982 466 h26 l2 2 h-30 z" class="tw-oldbase"/>
-      <rect x="3984" y="452" width="22" height="14" rx="1" class="tw-oldlid"/><rect x="3986" y="454" width="18" height="10" class="tw-oldscr"/>
+      <rect x="3984" y="452" width="22" height="14" rx="1" class="tw-oldlid"/><rect x="3986" y="454" width="18" height="10" class="tw-oldscr" data-fracture-pane="dark"/>
       <path d="M3987.5 456.5 h6 M3987.5 459 h10 M3987.5 461.5 h4" class="tw-oldtxt"/>
     </g>`)}
     ${hot('p-dehum', `<g>
@@ -818,6 +818,12 @@ const bench = () => `
    each with its own daytime running lights traced out (car-*-drl): when its
    alarm goes off those strips light up, white, then amber, out of step. */
 // l: the headlamps; p: the LED low-beam projectors under the running lights
+// The windshields occupy different portions of the tinted and untinted sprites.
+const CAR_GLASS = {
+  prius: [[.14,.283],[.23,.06],[.77,.06],[.86,.283]],
+  bz: [[.14,.303],[.24,.064],[.76,.064],[.86,.303]],
+  gh: [[.14,.274],[.24,.062],[.76,.062],[.85,.274]],
+};
 const CAR = { prius: { a: 0.742, l: [[0.169, 0.463], [0.835, 0.464]], p: [[0.135, 0.487], [0.865, 0.487]] }, bz: { a: 0.781, l: [[0.192, 0.432], [0.811, 0.432]], p: [[0.125, 0.405], [0.875, 0.405]] }, gh: { a: 0.814, l: [[0.152, 0.388], [0.847, 0.387]], p: [[0.112, 0.425], [0.888, 0.425]] } };
 /* A Toyota in profile, for the posters: a few body shapes, its own colour. */
 const PROFILE = {
@@ -873,12 +879,12 @@ const showroom = (x, y, w, h, cars, em = 'l') => {
       <!-- the reception and lounge from the mural picture, standing on the floor (one scale for both rooms) -->
       ${(() => { const k = 232 / 1476, fw = em === 'l' ? 1476 * k : 584 * k, fh = 318 * k; return `<image href="assets/images/town/${em === 'l' ? 'furn-r' : 'furn-l'}.webp" x="${(em === 'l' ? x : x + 4).toFixed(1)}" y="${(fy + 0.6 - fh).toFixed(2)}" width="${fw.toFixed(2)}" height="${fh.toFixed(2)}" preserveAspectRatio="none" class="tw-furn"/>`; })()}
       <g class="tw-alarmin tw-nohit"><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-dark"/><circle cx="${ex}" cy="${y + 9}" r="30" fill="url(#twEmerg)"/><rect x="${ex - 4.5}" y="${y + 4}" width="9" height="4.6" rx="1.2" class="tw-emerg-box"/><rect x="${x}" y="${y}" width="${w}" height="${h}" class="tw-alarm-white"/></g>
-      ${cars.map((c) => { const K = CAR[c.f], H = c.w * K.a, x0 = c.cx - c.w / 2, y0 = fy + 3 - H, at = (fx, fy2) => [(x0 + c.w * fx).toFixed(1), (y0 + H * fy2).toFixed(1)]; const ws = at(.36, .17);
+      ${cars.map((c) => { const K = CAR[c.f], H = c.w * K.a, x0 = c.cx - c.w / 2, y0 = fy + 3 - H, at = (fx, fy2) => [(x0 + c.w * fx).toFixed(1), (y0 + H * fy2).toFixed(1)];
         const drl = (cls, f) => `<image href="assets/images/town/car-${c.f}-drl.webp" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" class="${cls}" filter="url(#${f})"/>`;
         return `<ellipse cx="${c.cx}" cy="${fy + 1.5}" rx="${c.w * 0.46}" ry="3.2" class="tw-carshadow"/><g class="tw-showcar" data-car="${c.f}">`
           // behind the glass: softened toward the room, by day and at night (baked into the pictures)
           + ['g tw-dayonly', 'gn tw-nightcar'].map((v) => { const [sfx, cls] = v.split(' '); return `<image href="assets/images/town/car-${c.f}-${sfx}.webp" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${c.w}" height="${H.toFixed(1)}" preserveAspectRatio="none" class="tw-carimg ${cls}"/>` + bow(c.cx, y0 + H * 0.125 - c.w * 0.4 * 0.799 * 0.4, c.w * 0.4).replace('bow.webp', `bow-${sfx}.webp`).replace('class="tw-bow"', `class="tw-bow ${cls}"`); }).join('')
-          + `<path d="M${ws[0]} ${ws[1]} l-5 -3.4 M${ws[0]} ${ws[1]} l6 -4 M${ws[0]} ${ws[1]} l9 1.6 M${ws[0]} ${ws[1]} l-7 2.4 M${ws[0]} ${ws[1]} l2 5 M${ws[0]} ${ws[1]} l12 -2.6" class="tw-wscrack"/>`
+          + `<g class="tw-car-fractures" data-pane="${CAR_GLASS[c.f].map(([x, y]) => at(x, y).join(',')).join(' ')}"></g>`
           + `<g class="tw-carlights tw-nohit"><g class="tw-heads">${K.l.map(([a, b]) => { const [px, py] = at(a, b); return `<ellipse cx="${px}" cy="${py}" rx="9" ry="5" fill="url(#twLedBulb)" opacity=".7"/>`; }).join('')}${K.p.map(([a, b]) => { const [px, py] = at(a, b); return `<circle cx="${px}" cy="${py}" r="4.6" fill="url(#twLedBulb)"/><circle cx="${px}" cy="${py}" r="1.15" class="tw-proj"/>`; }).join('')}${drl('tw-drl', 'twDrlW')}</g>`
           + `<g class="tw-hzs">${K.l.map(([a, b]) => { const [px, py] = at(a, b); return `<ellipse cx="${px}" cy="${py}" rx="8" ry="4.4" fill="url(#twHaz)" opacity=".8"/>`; }).join('')}${drl('tw-drl', 'twDrlA')}</g></g></g>`; }).join('')}
       <!-- the alarm's white strobe catching the cars, in step with it -->
@@ -916,7 +922,7 @@ const police = (x, cls) => {
 };
 // The moon's crescent, worked out from its two circles.
 const MOON = (() => { const R = 30, r2 = 27, cx = 16, cy = -10, d = Math.hypot(cx, cy), a = (R * R - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(R * R - a * a), px = a * cx / d, py = a * cy / d, ox = -cy / d * h, oy = cx / d * h; const p1 = [px + ox, py + oy], p2 = [px - ox, py - oy]; return `M${p1[0].toFixed(2)} ${p1[1].toFixed(2)} A${R} ${R} 0 1 1 ${p2[0].toFixed(2)} ${p2[1].toFixed(2)} A${r2} ${r2} 0 0 0 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)} Z`; })();
-const SKY_DAY = [[0, '#3582cc'], [.45, '#63abe2'], [.62, '#8cc3ea'], [.8, '#c4e0f2'], [.92, '#e3eef0'], [1, '#eef2ea']];
+const SKY_DAY = [[0, '#2779c8'], [.45, '#4f9fe0'], [.62, '#7cb9e9'], [.8, '#c4e0f2'], [.92, '#e3eef0'], [1, '#eef2ea']];
 const SKY_NIGHT = [[0, '#090f26'], [.55, '#1c2b4a'], [.80, '#414769'], [1, '#8d6877']];
 const skyHex = (st, y) => {
   const t = Math.min(1, Math.max(0, (y + 700) / 1300)); let i = 1; while (i < st.length - 1 && st[i][0] < t) i++;
@@ -929,6 +935,23 @@ const skyHex = (st, y) => {
 const RAV = { s: 73 / 1150 }; RAV.w = 1881 * RAV.s; RAV.h = 709 * RAV.s; RAV.x = 1020 - 353 * RAV.s; RAV.y = 455.6 - RAV.h; RAV.wy = RAV.y + 553 * RAV.s;
 const TK = { x: 478, w: 620, ground: 486 };
 TK.s = TK.w / 1972; TK.h = 438 * TK.s; TK.y = TK.ground - TK.h;
+const TRUCK_GLASS = [
+  { car: -1, panes: [[[246,491],[293,482],[347,369],[315,363],[278,414]],[[375,479],[484,461],[491,373],[469,368],[404,368],[375,399]]] },
+  { car: 0, panes: [[[973,102],[1007,65],[1062,39],[1130,37],[1118,100]],[[1147,37],[1290,43],[1313,82],[1291,96],[1140,100]],[[1302,44],[1352,81],[1324,95]]] },
+  { car: 1, panes: [[[1750,102],[1796,59],[1847,35],[1904,34],[1893,101]],[[1923,34],[2029,35],[2042,50],[2044,91],[2028,102],[1919,102]]] },
+  { car: 2, panes: [[[2586,133],[2636,95],[2709,70],[2760,65],[2749,128]],[[2784,65],[2869,73],[2946,108],[2914,122],[2774,128]]] },
+  { car: 3, panes: [[[3350,112],[3408,66],[3464,44],[3538,43],[3524,108]],[[3550,45],[3679,51],[3705,85],[3684,104],[3540,109]],[[3690,51],[3748,82],[3721,101]]] },
+  { car: 4, panes: [[[959,448],[1005,414],[1069,383],[1124,382],[1113,450]],[[1144,382],[1283,384],[1305,416],[1295,439],[1138,449]],[[1299,384],[1340,421],[1311,439]]] },
+  { car: 5, panes: [[[1695,455],[1732,436],[1770,426],[1783,470],[1740,468]],[[1790,425],[1854,422],[1871,473],[1798,470]],[[1880,421],[1943,427],[2028,468],[2004,479],[1891,476]]] },
+  { car: 6, panes: [[[2460,427],[2519,392],[2544,391],[2530,443],[2487,442]],[[2552,393],[2645,391],[2663,448],[2545,443]],[[2669,394],[2710,395],[2775,420],[2829,458],[2691,449]]] },
+  { car: 7, panes: [[[3259,430],[3293,400],[3313,399],[3301,454],[3282,450]],[[3325,399],[3419,398],[3455,465],[3318,454]],[[3443,400],[3509,400],[3602,446],[3582,466],[3477,465]]] },
+];
+const RAV_GLASS = [
+  [[.328,.333],[.417,.194],[.507,.103],[.548,.101],[.526,.319]],
+  [[.572,.097],[.716,.093],[.703,.302],[.559,.317]],
+  [[.73,.094],[.753,.094],[.781,.268],[.72,.3]],
+  [[.766,.094],[.795,.111],[.851,.233],[.798,.271]],
+];
 const tk = (px, py) => [TK.x + px * TK.s, TK.y + py * TK.s];
 // Its own amber lights (the cab's corner and roof lights, the trailer's side
 // markers), flashing as hazards; never the cars it carries.
@@ -1222,7 +1245,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo tw-temb"/><image href="assets/images/town/snow-temblem2.webp" x="760" y="393.33" width="32" height="22" preserveAspectRatio="none" class="tw-snowimg"/>
       <rect x="760" y="426" width="32" height="56" class="tw-doorglass"/>
       <g class="tw-dooralarm tw-nohit"><rect x="760" y="426" width="32" height="56" class="tw-alarm-dark"/><rect x="760" y="426" width="32" height="56" class="tw-alarm-white"/></g>
-      <path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 437, 11, 'tw-onglass')}
+      <g class="tw-door-fractures tw-nohit"></g><path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 437, 11, 'tw-onglass')}
 
       <rect x="904" y="284" width="230" height="198" class="tw-facade2 tw-fo"/>
       <g class="tw-nohit">
@@ -1471,7 +1494,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <path d="M3376 474 H3474" class="tw-hpg-floor"/>
       <path d="M3378 422 H3472 M3378 424.4 H3472" class="tw-hpg-tray"/>
       ${[0, 1, 2, 3, 4, 5].map((k) => { const x = 3379 + k * 15.6, net = k === 1 || k === 4; return `<g transform="translate(${x} 426)"><rect width="13.4" height="54" rx=".8" class="tw-rack"/><rect x="2" y="1.4" width="9.4" height="2.4" rx=".3" class="tw-rack-lab"/><text x="6.7" y="3.2" class="tw-rack-t" text-anchor="middle">HiPerGator AI</text>${net ? [0, 1, 2, 3, 4, 5, 6, 7].map((r) => `<rect x="1.6" y="${5.6 + r * 5.8}" width="10.2" height="3.6" rx=".3" class="tw-netsw"/><path d="M${2.6 + (r % 3)} ${9.2 + r * 5.8} q.6 3 -.2 6 M${6 + (r % 2)} ${9.2 + r * 5.8} q.8 2.6 0 5.4 M${9.4 - (r % 3) * 0.6} ${9.2 + r * 5.8} q-.6 2.6 .2 5.4" class="tw-cable"/><circle cx="${3 + (r % 4) * 2}" cy="${7.4 + r * 5.8}" r=".5" class="tw-led" style="--d:${((r * 3 + k) % 7 * 0.19).toFixed(2)}s"/>`).join('') : [0, 1, 2, 3, 4].map((r) => `<rect x="1.4" y="${5.4 + r * 9.4}" width="10.6" height="8.4" rx=".5" class="tw-gpu"/><rect x="1.4" y="${5.4 + r * 9.4}" width="10.6" height="8.4" rx=".5" fill="url(#twPerf)" class="tw-nohit"/><rect x="1.8" y="${6 + r * 9.4}" width="1.2" height="7.2" rx=".3" class="tw-gpu-h"/>`).join('')}</g>`; }).join('')}
-      <rect x="3376" y="418" width="98" height="64" class="tw-hpg-glass"/>
+      <rect x="3376" y="418" width="98" height="64" class="tw-hpg-glass" data-fracture-pane/>
       <path d="M3386 419 l-9 28 M3421 419 l-20 62 M3429 419 l-7 22" class="tw-hpg-shine"/>
       <path d="M3424.5 418 V482" class="tw-hpg-mull"/>
       ${sticker(3466, 474, 7)}
@@ -1542,7 +1565,8 @@ const work = roles.filter((r) => r.year).sort((a, b) => a.year - b.year || order
 const data = {
   order: [...work.map((r) => r.id), 'vc', ...BENCH.map((p) => p.id), ...PROJECTS.map((p) => p.id)],
   W: WORLD, home: HOME, sky: { day: SKY_DAY, night: SKY_NIGHT },
-  truck: { wait: TRUCK_WAIT, right: TK.x + TK.w - TRUCK_WAIT, x: TK.x, y: +TK.y.toFixed(2), w: TK.w, h: +TK.h.toFixed(2) },
+  truck: { wait: TRUCK_WAIT, right: TK.x + TK.w - TRUCK_WAIT, x: TK.x, y: +TK.y.toFixed(2), w: TK.w, h: +TK.h.toFixed(2), glass: TRUCK_GLASS },
+  ravGlass: RAV_GLASS,
   civic: { wins: WINS, fb: FB, rb: RB, ground: CV.ground },
   hall: { ground: 494, polys: MALW.polys.map((p) => p.map(([u, v]) => [+(MAL.x + u * MAL.w).toFixed(1), +(MAL.y + v * MAL.h).toFixed(1)])) },
   glass: [[462, 342, 100, 140], [658, 356, 232, 126]],
