@@ -66,7 +66,8 @@ button.ui-close::after {
 .era-ad-x.ui-close { --close-mark-size: 17px; }
 
 :is(
-  .tw-nav button, .tw-pan, .tw-p-go, .tw-chip, .tw-mail-return, .tw-pop button, .tw-pop a,
+  .tw-nav button, .tw-pan, .tw-p-go, .tw-chip, .tw-mail-return,
+  .tw-pop :is(button, a):not(:where(#twMenuPop *)),
   .tw-p-link, .mx-story-b, .mx-proj, .mx-row,
   header.nav .icon-btn:not(:where(body:has(#town) :is(#themeBtn, #twWx, #twMenu))),
   .carousel-ctrl .icon-btn, .pal-quick button,

@@ -1179,9 +1179,9 @@
 
   /* ---------------------------------------------------------- the damage */
   // Click a place again while you're looking at it and it takes the hit.
-  // The Civic's windows crack (and give way) and its bumpers fall off; the
-  // MacBook's screen breaks, then it catches fire. The showroom glass takes
-  // a good few hits before it comes down, and that sets off the alarm: the
+  // The Civic's windows shatter and its bumpers fall off; the MacBook's
+  // screen breaks, then it catches fire. A second hit to the showroom glass
+  // shatters the frontage and sets off the alarm: the
   // lights inside go out but for a red emergency light in the corner and a
   // white strobe, the ADT sign lights up, the rover runs for its corner, the
   // police come; a car hit through the broken glass goes off too. A car on
@@ -1348,7 +1348,7 @@
     pane.points.push([q.x, q.y]);
     if (pane.points.length > 64) pane.points.shift();
     const radius = clamp(pane.scale * .23, 1.4, 7);
-    const impact = impactGroups(pane.points, radius).find(group => threshold && group.count >= threshold);
+    const impact = threshold === 1 ? q : impactGroups(pane.points, radius).find(group => threshold && group.count >= threshold);
     paneHits++;
     if (impact) {
       Object.assign(pane, fracturePieces(poly, [impact.x, impact.y], pane.scale));
@@ -1423,7 +1423,7 @@
     else {
       const i = D.civic.wins.findIndex((w) => inPoly(q.x, q.y, w));
       if (i >= 0) {
-        strikePane(winG[i], i, D.civic.wins[i], q, { dark: true, threshold: 3, debris: civG, ground: D.civic.ground });
+        strikePane(winG[i], i, D.civic.wins[i], q, { dark: true, threshold: 1, debris: civG, ground: D.civic.ground });
       } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
       else return;
     }
@@ -1451,7 +1451,13 @@
     [[775,356],[890,356],[890,482],[801,482],[801,387.5],[775,387.5]],
   ];
   const showroomDoors = [rectPane(760, 426, 15, 56), rectPane(777, 426, 15, 56)];
-  let policeT = 0;
+  const showroomPanes = [
+    ...displayPanes.map((poly, key) => ({ root: crG, key, poly })),
+    ...showroomDoors.map((poly, key) => ({ root: showroomDoor, key, poly }))
+  ];
+  const strikeShowroomPane = ({ root, key, poly }, q, threshold) =>
+    strikePane(root, key, poly, q, { threshold, holes: showHoles, debris: crG.parentNode, ground: 486 });
+  let showroomCracked = false, policeT = 0;
   const scare = (on) => { bots.rfa.scared = on; bots.rfa.el.classList.toggle('scared', on); };
   const drawShowroom = () => {
     tw.classList.toggle('glass-broke', !!dmg.toy);
@@ -1465,21 +1471,29 @@
   };
   const pokeShowroom = (e) => {
     const q = localPt(crG, e);
-    const door = showroomDoors.findIndex(poly => inPoly(q.x, q.y, poly));
-    const bay = displayPanes.findIndex(poly => inPoly(q.x, q.y, poly));
-    if (door < 0 && bay < 0) return;
-    const result = door >= 0
-      ? strikePane(showroomDoor, door, showroomDoors[door], q, { threshold: 4, holes: showHoles, debris: crG.parentNode, ground: 486 })
-      : strikePane(crG, bay, displayPanes[bay], q, { threshold: 4, holes: showHoles, debris: crG.parentNode, ground: 486 });
-    if (result === 'break' && !dmg.toy) {
+    const pane = showroomPanes.find(({ poly }) => inPoly(q.x, q.y, poly));
+    if (!pane) return;
+    if (!showroomCracked) {
+      strikeShowroomPane(pane, q, 0);
+      showroomCracked = true;
+      save();
+      return;
+    }
+    if (!dmg.toy) {
+      for (const section of showroomPanes) {
+        const impact = section === pane ? q : {
+          x: section.poly.reduce((sum, [x]) => sum + x, 0) / section.poly.length,
+          y: section.poly.reduce((sum, [, y]) => sum + y, 0) / section.poly.length
+        };
+        strikeShowroomPane(section, impact, 1);
+      }
       dmg.toy = 1;
       policeT = setTimeout(() => { dmg.police = 1; tw.classList.add('police'); }, 9000);
-    }
-    if (result === 'hole' && door < 0) {
+    } else if (strikeShowroomPane(pane, q, 1) === 'hole' && pane.root === crG) {
       const car = showcars.find(g => inPoly(q.x, q.y, shapePane($('.tw-carimg', g))));
       if (car) {
         const root = $('.tw-car-fractures', car), poly = shapePane(root);
-        if (inPoly(q.x, q.y, poly)) strikePane(root, 0, poly, q, { dark: true, ground: 475 });
+        if (inPoly(q.x, q.y, poly)) strikePane(root, 0, poly, q, { dark: true, threshold: 1, ground: 475 });
         dmg.cars[car.dataset.car] = 1;
       }
     }
@@ -1500,7 +1514,7 @@
     const T = D.truck, q = localPt(tcG, e), fx = (q.x - T.x) / T.w, fy = (q.y - T.y) / T.h;
     const pane = truckPanes.find(({ poly }) => inPoly(q.x, q.y, poly));
     const i = pane ? pane.car : TCARS.findIndex(([a, b, c, d]) => fx >= a && fx <= b && fy >= c && fy <= d);
-    if (pane) strikePane(tcG, pane.key, pane.poly, q, { dark: true, ground: T.y + T.h });
+    if (pane) strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, ground: T.y + T.h });
     if (i < 0) { if (pane) save(); else pokeAny('jm', e); return; }
     const n = dmg.tcars[i] || 0;
     if (n < 6) dmg.tcars[i] = n + 1;
@@ -1702,6 +1716,7 @@
   }
   function repair() {
     dmg = fresh();
+    showroomCracked = false;
     paneDamage = new WeakMap(); paneHits = 0;
     $$('.tw-pane-damage, .tw-fallshard', svg).forEach(layer => layer.remove());
     Object.keys(hits).forEach((k) => delete hits[k]);
