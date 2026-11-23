@@ -1359,7 +1359,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <image href="assets/images/town/adt-sign.webp?v=2" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/><image href="assets/images/town/snow-adt.webp" x="588" y="439.61" width="40" height="67.39" preserveAspectRatio="xMidYMax meet" class="tw-snowimg"/>
       <image href="assets/images/town/adt-sign-lit.webp" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
       <g class="tw-adtbush">${bush(580, 518, .8)}${bush(634, 518, .95)}<g class="tw-adt-rim tw-nohit"><use href="#twShrubEdge" transform="translate(580 518) scale(.8)" fill="url(#twAdtRim)"/><use href="#twShrubEdge" transform="translate(634 518) scale(.95)" fill="url(#twAdtRim)"/></g></g>
-      <g class="tw-cctv" transform="translate(554 338.5)">
+      <g class="tw-cctv" transform="translate(554 338.5) scale(.84)">
         <ellipse cx="0" cy=".5" rx="4.8" ry="4.3" fill="#27323b" opacity=".28"/><circle r="4" class="tw-cctv-mount"/>
         <path d="M-4-3h.1m7 7h.1" class="tw-cctv-rib"/>
         <g class="tw-cctv-head" transform="rotate(-108)">

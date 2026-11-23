@@ -379,6 +379,7 @@
    normal page. Phones keep their own layout. */
 .tw-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .tw-pan, .tw-navx, .tw-classic-back { display: none !important; }
+.tw-bar { display: contents; }
 .tw-repair { display: none; }
 @media (min-width: 720px) {
   html:not(.classic), html:not(.classic) body { height: 100%; overflow: hidden !important; }
@@ -388,6 +389,19 @@
   #experience.town-section { position: fixed; inset: 0; z-index: 1; margin: 0; padding: 0; max-width: none; width: auto; opacity: 1 !important; transform: none !important; }
   #experience .tw { position: absolute; inset: 0; margin: 0; }
   #experience .tw-stage { position: absolute; inset: 0; aspect-ratio: auto; border: 0; border-radius: 0; }
+  html:not(.classic) body::after {
+    --tw-corner: #fff;
+    --tw-corner-radius: 26px;
+    content: ""; position: fixed; inset: 0; z-index: 61; pointer-events: none;
+    background:
+      radial-gradient(circle at bottom right, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) top left,
+      radial-gradient(circle at bottom left, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) top right,
+      radial-gradient(circle at top right, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) bottom left,
+      radial-gradient(circle at top left, transparent calc(var(--tw-corner-radius) - 3px), var(--tw-corner) var(--tw-corner-radius)) bottom right;
+    background-size: var(--tw-corner-radius) var(--tw-corner-radius);
+    background-repeat: no-repeat;
+  }
+  html:not(.classic):is([data-theme="midnight"], [data-theme="terminal"]) body::after { --tw-corner: #000; }
   .tw.dragging .tw-svg, .tw.dragging .tw-hot { cursor: grabbing; }
   .tw-panel { bottom: 16px; top: 80px; }
   .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid !important; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
@@ -399,20 +413,16 @@
   .tw.zoomed .tw-pan { opacity: 0; pointer-events: none; }
 
   /* The compact bar: the logo, home, day or night, the weather, the menu. */
-  html:not(.classic) header.nav { left: 16px !important; right: auto !important; top: 16px !important; transform: none !important; width: auto !important; gap: 2px !important; padding: 5px 6px !important; }
+  html:not(.classic) .tw-bar { --tw-bar-height: 58px; position: fixed; inset: 16px auto auto 16px; z-index: 60; display: flex; gap: 8px; }
+  html:not(.classic) header.nav { position: relative; inset: auto; transform: none !important; width: auto !important; height: var(--tw-bar-height); gap: 2px !important; padding: 5px 6px !important; }
   html:not(.classic) header.nav :is(.nav-links, #paletteBtn, .cta, #navToggle) { display: none !important; }
   html:not(.classic) header.nav .nav-actions { gap: 2px; margin-left: 2px; }
   html:not(.classic) button.tw-navx { display: grid !important; }
   html:not(.classic) div.tw-navx { display: block !important; position: relative; }
   html:not(.classic) .tw-repair:not([hidden]) { display: grid; }
-  .tw-repair {
-    position: absolute; inset-inline-start: calc(100% + 8px); top: 50%; translate: 0 -50%;
-    place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
-    background: var(--control-fill); color: var(--ink); cursor: pointer;
-    box-shadow: 0 6px 18px -8px #0008;
-  }
-  .tw-repair svg { width: 19px; height: 19px; }
-  .tw-repair:is(:hover, :focus-visible) { background: var(--control-hover); }
+  .tw-repair { place-items: center; width: var(--tw-bar-height); height: var(--tw-bar-height); padding: 0; border-radius: 50%; color: var(--ink-2); cursor: pointer; }
+  .tw-repair svg { width: 26px; height: 26px; }
+  .tw-repair:is(:hover, :focus-visible) { color: var(--ink); }
   html.classic a.tw-classic-back { display: grid !important; }
   .tw-pop { position: absolute; top: calc(100% + 12px); left: -6px; z-index: 70; display: grid; gap: 2px; min-width: 200px; padding: 6px; border: 1px solid var(--stroke); border-radius: 16px; background: var(--bg); box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .5); animation: tw-pop .22s cubic-bezier(.2, .8, .2, 1); }
   .tw-pop[hidden] { display: none; }
@@ -587,9 +597,9 @@
 .tw-sh { display: grid; place-items: center; width: 18px; height: 18px; flex: none; }
 .tw-sh svg { width: 16px; height: 16px; }
 @media (min-width: 720px) {
-  header.nav #twWx svg { width: 27px; height: 27px; translate: 0 -1.2px; }
+  header.nav #twWx svg { width: 29px; height: 29px; translate: 0 -.55px; }
   /* lined up by eye with the mark and the moon (the lines sat 2.5px low) */
-  header.nav #twMenu .burger { translate: 0 -2.5px; }
+  header.nav #twMenu .burger { translate: 0 -2px; }
   header.nav #twMenu .burger { width: 20px; gap: 4.2px; }
   header.nav #twMenu .burger i { height: 2.8px; border-radius: 3px; }
   header.nav #twMenu[aria-expanded="true"] .burger i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -1122,12 +1132,6 @@
 [data-theme="daylight"] .tw :is(.tw-signlight, .tw-wel-sh) { display: none; }
 .tw:not(.home-alarm) :is(.tw-yard-lit, .tw-yard-glow, .tw-yard-pool) { display: none; }
 
-/* the HawkEye's two lasers take turns, rapid-fire, without a pause */
-/* the bar in the corner, a touch more see-through */
-@media (min-width: 720px) {
-  html:not(.classic) header.nav.glass { background: color-mix(in oklab, var(--surface-solid, var(--surface)) 80%, transparent); }
-}
-
 /* the showroom cars' night pictures: shown at night, and clickable */
 [data-theme="daylight"] .tw .tw-nightcar { display: none; }
 
@@ -1297,7 +1301,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* round 15 */
 /* the corner bar: nearly solid, frosted */
 @media (min-width: 720px) {
-  html:not(.classic) header.nav.glass { background: color-mix(in oklab, var(--surface-solid, var(--surface)) 93%, transparent); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); }
+  html:not(.classic) .tw-bar > .glass { background: color-mix(in oklab, var(--surface-solid, var(--surface)) 93%, transparent); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); }
 }
 /* the cards: one warm face throughout, a touch larger and fuller, even spacing */
 .tw-panel:not(.tw-postcard, .tw-mail-panel) .tw-panel-in, .tw-panel:not(.tw-postcard, .tw-mail-panel) .tw-panel-in *, .tw-nav button { font-family: 'Nunito', ui-rounded, system-ui, sans-serif !important; }
@@ -1713,12 +1717,31 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-laser[data-b="1"] { stroke-opacity: .56; }
 @media (prefers-reduced-motion: no-preference) {
   .tw-bay-visible:not(.tw-moving) .tw-laser {
-    stroke-dasharray: 23 4 8 3; animation: tw-beam-travel .26s linear infinite;
+    stroke-dasharray: 23 4 8 3; animation: tw-beam-travel .30s linear infinite;
   }
-  .tw-bay-visible:not(.tw-moving) .tw-laser[data-b="1"] { animation-delay: -.13s; }
+  .tw-bay-visible:not(.tw-moving) .tw-laser[data-b="1"] { animation-delay: -.15s; }
 }
 @keyframes tw-beam-travel { to { stroke-dashoffset: -38; } }
 .tw-beacon, .tw-beacons { animation: none; opacity: 1; }
+
+.tw-resume-dialog {
+  width: min(670px, calc(100% - 24px)); max-width: none; max-height: min(86dvh, 850px);
+  padding: 0; overflow: hidden; overscroll-behavior: contain; border: 1px solid var(--stroke);
+  border-radius: 24px; background: var(--bg); color: var(--ink); box-shadow: var(--shadow-lg);
+  font-family: 'Nunito', ui-rounded, system-ui, sans-serif;
+}
+.tw-resume-dialog[open] { display: flex; flex-direction: column; }
+.tw-resume-dialog::backdrop { background: #191b2166; backdrop-filter: blur(4px); }
+.tw-resume-header { display: flex; align-items: center; gap: 10px; padding: 12px 15px 10px; }
+.tw-resume-header h2 { margin: 0 auto 0 3px; font: 800 1.16rem 'Nunito', ui-rounded, system-ui, sans-serif; }
+.tw-resume-header a {
+  padding: 7px 12px; border-radius: 999px; background: var(--control-fill);
+  color: inherit; font-size: .85rem; font-weight: 700; text-decoration: none;
+}
+.tw-resume-header a:hover { background: var(--control-hover); }
+.tw-resume-close { width: 38px; height: 38px; cursor: pointer; --close-mark-size: 19px; }
+.tw-resume-page { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 0 14px 14px; }
+.tw-resume-page img { display: block; width: 100%; height: auto; border-radius: 10px; background: white; }
 
 /* the robots in the rain: yellow raincoats and sou'westers */
 .tw-slicker { fill: #ffcf33; }

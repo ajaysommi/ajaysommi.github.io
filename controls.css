@@ -53,7 +53,7 @@ button.ui-close::after {
 }
 
 /* Close controls share the same fill and focus treatment as the pills. */
-:is(.tw-panel.tw-postcard .tw-x, .tw-x, .tw-memory-close, .story .st-close, .lightbox .lb-close, .tw-lb-x, .mxv-x, .mx-sheet-close, .term-close, .era-ad-x).ui-close {
+:is(.tw-panel.tw-postcard .tw-x, .tw-x, .tw-memory-close, .tw-resume-close, .story .st-close, .lightbox .lb-close, .tw-lb-x, .mxv-x, .mx-sheet-close, .term-close, .era-ad-x).ui-close {
   border: 0;
   border-radius: 50%;
   background: var(--control-fill);
@@ -69,7 +69,6 @@ button.ui-close::after {
   .tw-nav button, .tw-pan, .tw-p-go, .tw-chip, .tw-mail-return,
   .tw-pop :is(button, a):not(:where(#twMenuPop *)),
   .tw-p-link, .mx-story-b, .mx-proj, .mx-row,
-  header.nav .icon-btn:not(:where(body:has(#town) :is(#themeBtn, #twWx, #twMenu))),
   .carousel-ctrl .icon-btn, .pal-quick button,
   .btn:not(.solid), .filter-chip:not(.is-active), .pills button:not(.is-active),
   .contact a:not(.resume-btn), .card-repo, .chip, .chip-clear, .wf,
@@ -83,6 +82,10 @@ button.ui-close::after {
   @media (hover: hover) {
     &:hover { border-color: transparent; background: var(--control-hover); }
   }
+}
+:is(header.nav, .dock-fab) .icon-btn:is(:enabled, a) {
+  background: transparent;
+  box-shadow: none;
 }
 :is(.tw-chip.on, .tw-pop .on, .work-filter .wf.is-active, .work-filter .wf-extra) {
   background: var(--control-selected);

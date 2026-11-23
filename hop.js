@@ -814,9 +814,10 @@
 
   const go = (url) => {
     if (going) return;
-    if (reduce.matches) { location.href = url; return; }
     const u = new URL(url, location.href);
     const forResume = /resume\.html$/i.test(u.pathname);
+    if (forResume && u.origin === location.origin && window.openTownResume) return window.openTownResume();
+    if (reduce.matches) { location.href = url; return; }
     const forHome = isEras(u);
     const forClassic = isClassic(u);
     going = true;

@@ -46,8 +46,8 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css?v=3" />
   <link rel="stylesheet" href="mobile.css?v=26" />
-  <link rel="stylesheet" href="town.css?v=92" />
-  <link rel="stylesheet" href="controls.css?v=7" />
+  <link rel="stylesheet" href="town.css?v=93" />
+  <link rel="stylesheet" href="controls.css?v=8" />
 
   <script>
     /* Boot-time theme + motion resolution, inlined to avoid a flash of the wrong theme. */
@@ -161,6 +161,7 @@
   </nav>
 
   <!-- NAV -->
+  <div class="tw-bar">
   <header class="nav glass" id="siteNav">
     <a class="brand" href="#top" aria-label="Back to the visitor center" title="Back to the visitor center">
       <span class="brand-mark"><svg class="brand-house" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4.4 10.6 12 4.4l7.6 6.2v8.4a.6.6 0 0 1-.6.6H5a.6.6 0 0 1-.6-.6Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="brand-aj" viewBox="9 8.5 45 42" aria-hidden="true" focusable="false"><path class="am-a" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#ff6b35"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#3d68ff"/><circle cx="48.20" cy="17.40" r="5.60" fill="#3d68ff"/></svg></span>
@@ -187,7 +188,7 @@
         <svg class="ico-daylight" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5V1m0 22v-2.5M4.2 4.2 2.4 2.4m19.2 19.2-1.8-1.8M3.5 12H1m22 0h-2.5M4.2 19.8 2.4 21.6M21.6 2.4l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
       </button>
       <div class="tw-navx tw-popwrap">
-        <button class="icon-btn" id="twWx" type="button" aria-label="Weather and seasons" title="Weather and seasons" aria-expanded="false" aria-controls="twWxPop"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M6.6 19.4h10.8a4.6 4.6 0 0 0 .5-9.2 6.1 6.1 0 0 0-11.7 1.6 3.8 3.8 0 0 0 .4 7.6Z" fill="currentColor"/></svg></button>
+        <button class="icon-btn" id="twWx" type="button" aria-label="Weather and seasons" title="Weather and seasons" aria-expanded="false" aria-controls="twWxPop"><svg viewBox="0 1 24 24" aria-hidden="true"><path d="M6.6 19.4h10.8a4.6 4.6 0 0 0 .5-9.2 6.1 6.1 0 0 0-11.7 1.6 3.8 3.8 0 0 0 .4 7.6Z" fill="currentColor"/></svg></button>
         <div class="tw-pop" id="twWxPop" role="menu" hidden>
           <button type="button" role="menuitemradio" data-wx="clear" class="on"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.3" fill="currentColor"/><path d="M8 1.3v1.7M8 13v1.7M1.3 8h1.7M13 8h1.7M3.3 3.3l1.2 1.2M11.5 11.5l1.2 1.2M3.3 12.7l1.2-1.2M11.5 4.5l1.2-1.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>Clear</button>
           <button type="button" role="menuitemradio" data-wx="rain"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4.5 9.4h7.1a2.8 2.8 0 0 0 .3-5.6 3.9 3.9 0 0 0-7.3 1 2.3 2.3 0 0 0-.1 4.6Z" fill="currentColor"/><path d="M5.5 11.5l-.9 2.3M8.5 11.5l-.9 2.3M11.5 11.5l-.9 2.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>Rain</button>
@@ -212,10 +213,13 @@
         <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
       </button>
     </div>
-    <button class="tw-repair" id="twRepair" type="button" aria-label="Repair" hidden>
-      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.9 1.4a3.7 3.7 0 0 0-3.4 5L1.9 12a1.45 1.45 0 0 0 2.1 2.1l5.6-5.6a3.7 3.7 0 0 0 5-3.4l-2.3 2.3-2.1-.6-.6-2.1Z" fill="currentColor"/></svg>
-    </button>
   </header>
+  <button class="tw-repair glass" id="twRepair" type="button" aria-label="Repair" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="none" stroke="currentColor" stroke-width="2.05" stroke-linejoin="round" transform="rotate(44 12 12)" d="M8.2 2.65v3.6L10 8h4l1.8-1.75v-3.6a5.25 5.25 0 0 1-2.25 9.3v4.4a3.25 3.25 0 1 1-3.1 0v-4.4a5.25 5.25 0 0 1-2.25-9.3Z"/>
+    </svg>
+  </button>
+  </div>
 
   <!-- Mobile-only search FAB: a sibling of header.nav, not a descendant.
        header.nav has backdrop-filter, which creates a containing block for
@@ -1169,7 +1173,7 @@
       <image href="assets/images/town/adt-sign.webp?v=2" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign"/><image href="assets/images/town/snow-adt.webp" x="588" y="439.61" width="40" height="67.39" preserveAspectRatio="xMidYMax meet" class="tw-snowimg"/>
       <image href="assets/images/town/adt-sign-lit.webp" x="588" y="442" width="40" height="65" preserveAspectRatio="xMidYMax meet" class="tw-adtsign-lit tw-nohit" filter="url(#twAdtLit)"/>
       <g class="tw-adtbush"><use class="tw-leaf2" href="#twShrubArt" transform="translate(580 518) scale(0.8)"/><use class="tw-leaf2" href="#twShrubArt" transform="translate(634 518) scale(0.95)"/><g class="tw-adt-rim tw-nohit"><use href="#twShrubEdge" transform="translate(580 518) scale(.8)" fill="url(#twAdtRim)"/><use href="#twShrubEdge" transform="translate(634 518) scale(.95)" fill="url(#twAdtRim)"/></g></g>
-      <g class="tw-cctv" transform="translate(554 338.5)">
+      <g class="tw-cctv" transform="translate(554 338.5) scale(.84)">
         <ellipse cx="0" cy=".5" rx="4.8" ry="4.3" fill="#27323b" opacity=".28"/><circle r="4" class="tw-cctv-mount"/>
         <path d="M-4-3h.1m7 7h.1" class="tw-cctv-rib"/>
         <g class="tw-cctv-head" transform="rotate(-108)">
@@ -2727,12 +2731,12 @@
 
   <script type="module" src="script.js?v=24"></script>
   <script src="haptics.js" defer></script>
-  <script src="hop.js?v=14" defer></script>
+  <script src="hop.js?v=15" defer></script>
   <script src="brand.js" defer></script>
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
   <script src="mobile.js?v=13" defer></script>
-  <script src="town.js?v=96" defer></script>
+  <script src="town.js?v=97" defer></script>
   <script src="scroll-cue.js?v=2" defer></script>
 </body>
 </html>

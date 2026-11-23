@@ -31,6 +31,32 @@
 
 })();
 
+(function townResume() {
+  if (!document.getElementById('town')) return;
+  let dialog;
+  window.openTownResume = () => {
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.className = 'tw-resume-dialog';
+      dialog.setAttribute('aria-labelledby', 'twResumeTitle');
+      dialog.innerHTML = `
+        <div class="tw-resume-header">
+          <h2 id="twResumeTitle">Résumé</h2>
+          <a href="./Ajay_Sommi_Resume.pdf" download>Download PDF</a>
+          <form method="dialog"><button class="tw-resume-close ui-close" type="submit" aria-label="Close résumé" autofocus></button></form>
+        </div>
+        <div class="tw-resume-page" tabindex="0" aria-label="Résumé preview">
+          <img src="assets/images/resume-page.webp" width="1530" height="1980" alt="Ajay Sommi’s résumé. Download the PDF for selectable text."/>
+        </div>`;
+      dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+      document.body.append(dialog);
+    }
+    if (dialog.open) return;
+    dialog.showModal();
+    dialog.querySelector('.tw-resume-page').scrollTop = 0;
+  };
+})();
+
 (function startTown() {
   'use strict';
   const tw = document.getElementById('town');
@@ -795,7 +821,7 @@
   nextB.addEventListener('click', () => open(nextB.dataset.id));
   svg.addEventListener('click', () => { if (!dragged) { if (keepsake) closeKeepsake(); else close(); } });
   document.addEventListener('keydown', (e) => {
-    if (!stage.clientWidth || e.target.closest('select, input, textarea, [role="menu"]')) return;
+    if ($('.tw-resume-dialog[open]') || !stage.clientWidth || e.target.closest('select, input, textarea, [role="menu"]')) return;
     if (keepsake) {
       if (e.key === 'Escape') closeKeepsake(true);
       if (/^Arrow|^Page|^Home$|^End$/.test(e.key)) e.preventDefault();
@@ -970,9 +996,8 @@
         dishT.set(clamp(a, -70, 70));
       } else dishT.set(null);
       if (!sky && head) {
-        // The camera is up at the roofline at (1268, 350), looking down over its
-        // sign; it turns only as far as its mount allows.
-        let a = Math.atan2(350 - p.y, 1268 - p.x) * 180 / Math.PI;
+        // The camera turns only as far as its roofline mount allows.
+        let a = Math.atan2(338.5 - p.y, 1254 - p.x) * 180 / Math.PI;
         if (a > 90) a -= 360;
         cctv.set(clamp(a, -160, -30));
       } else cctv.set(null);
@@ -1476,8 +1501,7 @@
     else {
       const i = D.civic.wins.findIndex((w) => inPoly(q.x, q.y, w));
       if (i >= 0) {
-        const result = strikePane(winG[i], i, D.civic.wins[i], q, { dark: true, threshold: 1, windshield: i === 0, debris: civG, ground: D.civic.ground });
-        if (result === 'ignored') return;
+        strikePane(winG[i], i, D.civic.wins[i], q, { dark: true, threshold: 1, debris: civG, ground: D.civic.ground });
       } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
       else return;
     }
@@ -1545,20 +1569,16 @@
     [0.184, 0.37, 0.406, 0.724], [0.394, 0.57, 0.46, 0.724], [0.597, 0.773, 0.406, 0.724], [0.799, 0.979, 0.406, 0.724]
   ];
   const jmHot = hotOf('jm'), tcG = $('.tw-tcars', jmHot);
-  // The cab and first five carried cars face left. The last three face right.
   const truckPanes = D.truck.glass.flatMap(({ car, panes }) =>
     spritePanes($('.tw-truckimg', jmHot), panes, 3944, 876).map((poly, i) => ({
-      car, key: `${car}:${i}`, poly, windshield: i === (car >= 5 ? panes.length - 1 : 0)
+      car, key: `${car}:${i}`, poly
     }))
   );
   const pokeTruck = (e) => {
     const T = D.truck, q = localPt(tcG, e), fx = (q.x - T.x) / T.w, fy = (q.y - T.y) / T.h;
     const pane = truckPanes.find(({ poly }) => inPoly(q.x, q.y, poly));
     const i = pane ? pane.car : TCARS.findIndex(([a, b, c, d]) => fx >= a && fx <= b && fy >= c && fy <= d);
-    if (pane) {
-      const result = strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, windshield: pane.windshield, ground: T.y + T.h });
-      if (result === 'ignored') return;
-    }
+    if (pane) strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, ground: T.y + T.h });
     if (i < 0) { if (pane) save(); else pokeAny('jm', e); return; }
     const n = dmg.tcars[i] || 0;
     if (n < 6) dmg.tcars[i] = n + 1;
