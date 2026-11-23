@@ -46,7 +46,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css?v=3" />
   <link rel="stylesheet" href="mobile.css?v=26" />
-  <link rel="stylesheet" href="town.css?v=91" />
+  <link rel="stylesheet" href="town.css?v=92" />
   <link rel="stylesheet" href="controls.css?v=7" />
 
   <script>
@@ -199,7 +199,6 @@
         <button class="icon-btn" id="twMenu" type="button" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="twMenuPop"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span></button>
         <div class="tw-pop" id="twMenuPop" role="menu" hidden>
           <a role="menuitem" href="classic.html"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 1.2 14.8 5v1.4H1.2V5ZM2.6 7.4h2v5h-2Zm4.4 0h2v5H7Zm4.4 0h2v5h-2ZM1.2 13.2h13.6V15H1.2Z" fill="currentColor"/></svg></span>Classic portfolio</a>
-          <button type="button" role="menuitem" data-go="fix" hidden><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M10.9 1.4a3.7 3.7 0 0 0-3.4 5L1.9 12a1.45 1.45 0 0 0 2.1 2.1l5.6-5.6a3.7 3.7 0 0 0 5-3.4l-2.3 2.3-2.1-.6-.6-2.1Z" fill="currentColor"/></svg></span>Tow &amp; repair</button>
           <a role="menuitem" href="resume.html"><span class="tw-sh" aria-hidden="true"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.4 1.2h6.2l3.4 3.4v9.6a.6.6 0 0 1-.6.6H3.4a.6.6 0 0 1-.6-.6V1.8a.6.6 0 0 1 .6-.6Zm1.7 6.4v1.3h5.8V7.6Zm0 2.7v1.3h5.8v-1.3Zm0-5.4v1.3h3.2V4.9Z" fill="currentColor"/></svg></span>Résumé</a>
         </div>
       </div>
@@ -213,6 +212,9 @@
         <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
       </button>
     </div>
+    <button class="tw-repair" id="twRepair" type="button" aria-label="Repair" hidden>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.9 1.4a3.7 3.7 0 0 0-3.4 5L1.9 12a1.45 1.45 0 0 0 2.1 2.1l5.6-5.6a3.7 3.7 0 0 0 5-3.4l-2.3 2.3-2.1-.6-.6-2.1Z" fill="currentColor"/></svg>
+    </button>
   </header>
 
   <!-- Mobile-only search FAB: a sibling of header.nav, not a descendant.
@@ -1092,7 +1094,7 @@
       <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo tw-temb"/><image href="assets/images/town/snow-temblem2.webp" x="760" y="393.33" width="32" height="22" preserveAspectRatio="none" class="tw-snowimg"/>
       <rect x="760" y="426" width="32" height="56" class="tw-doorglass" mask="url(#twShowroomMask)"/>
       <g class="tw-dooralarm tw-nohit" mask="url(#twShowroomMask)"><rect x="760" y="426" width="32" height="56" class="tw-alarm-dark"/><rect x="760" y="426" width="32" height="56" class="tw-alarm-white"/></g>
-      <g class="tw-door-fractures tw-nohit"></g><path d="M776 426 V482" class="tw-mullp"/><image href="assets/images/town/adt-sticker.webp" x="661" y="437" width="11" height="3.94" class="tw-adtsticker tw-onglass"/>
+      <g class="tw-door-fractures tw-nohit"></g><path d="M776 426 V482" class="tw-mullp"/><image href="assets/images/town/adt-sticker.webp" x="661" y="437" width="11" height="3.94" class="tw-adtsticker" data-glass-sticker="twShowroomHoles"/>
 
       <rect x="904" y="284" width="230" height="198" class="tw-facade2 tw-fo"/>
       <g class="tw-nohit">
@@ -1479,7 +1481,7 @@
       </g>
       <rect x="3376" y="418" width="98" height="64" class="tw-hpg-frame tw-nohit"/>
       <path d="M3424.5 418 V482" class="tw-hpg-mull"/>
-      <image href="assets/images/town/adt-sticker.webp" x="3466" y="474" width="7" height="2.51" class="tw-adtsticker"/>
+      <image href="assets/images/town/adt-sticker.webp" x="3466" y="474" width="7" height="2.51" class="tw-adtsticker" data-glass-sticker="twHpgHoles"/>
       <g class="tw-dish-g" transform="translate(3400 398)">
         <rect x="-3" y="-16" width="6" height="16" class="tw-pole"/><rect x="-5" y="-2" width="10" height="3" rx="1" class="tw-pole"/>
         <g class="tw-dish" transform="translate(0 -16)"><path d="M-4.4 1.6 L-2.6 -5 H2.6 L4.4 1.6 Z" class="tw-dishyoke"/><circle cx="0" cy="0" r="2.6" class="tw-dishbolt"/>
@@ -2730,7 +2732,7 @@
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
   <script src="mobile.js?v=13" defer></script>
-  <script src="town.js?v=95" defer></script>
+  <script src="town.js?v=96" defer></script>
   <script src="scroll-cue.js?v=2" defer></script>
 </body>
 </html>

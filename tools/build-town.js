@@ -316,7 +316,7 @@ const PROJ = {
 
 /* A tiny "secured by ADT" sticker, on the doors around town. They light
    up with ADT's stop, and clicking one opens it. */
-const sticker = (x, y, w = 9, cls = '') => `<image href="assets/images/town/adt-sticker.webp" x="${x}" y="${y}" width="${w}" height="${(w / 2.79).toFixed(2)}" class="tw-adtsticker${cls ? ' ' + cls : ''}"/>`;
+const sticker = (x, y, w = 9, holes = '') => `<image href="assets/images/town/adt-sticker.webp" x="${x}" y="${y}" width="${w}" height="${(w / 2.79).toFixed(2)}" class="tw-adtsticker"${holes ? ` data-glass-sticker="${holes}"` : ''}/>`;
 
 /* The visitor center, after a national park one: a big timber gable with a
    wall of warm glass, wood siding, a WELCOME CENTER plaque, steps and
@@ -1284,7 +1284,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <image href="assets/logos/opt/toyota-emblem.webp" x="760" y="394" width="32" height="22" preserveAspectRatio="xMidYMid meet" class="tw-tlogo tw-temb"/><image href="assets/images/town/snow-temblem2.webp" x="760" y="393.33" width="32" height="22" preserveAspectRatio="none" class="tw-snowimg"/>
       <rect x="760" y="426" width="32" height="56" class="tw-doorglass" mask="url(#twShowroomMask)"/>
       <g class="tw-dooralarm tw-nohit" mask="url(#twShowroomMask)"><rect x="760" y="426" width="32" height="56" class="tw-alarm-dark"/><rect x="760" y="426" width="32" height="56" class="tw-alarm-white"/></g>
-      <g class="tw-door-fractures tw-nohit"></g><path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 437, 11, 'tw-onglass')}
+      <g class="tw-door-fractures tw-nohit"></g><path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 437, 11, 'twShowroomHoles')}
 
       <rect x="904" y="284" width="230" height="198" class="tw-facade2 tw-fo"/>
       <g class="tw-nohit">
@@ -1540,7 +1540,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       </g>
       <rect x="3376" y="418" width="98" height="64" class="tw-hpg-frame tw-nohit"/>
       <path d="M3424.5 418 V482" class="tw-hpg-mull"/>
-      ${sticker(3466, 474, 7)}
+      ${sticker(3466, 474, 7, 'twHpgHoles')}
       <g class="tw-dish-g" transform="translate(3400 398)">
         <rect x="-3" y="-16" width="6" height="16" class="tw-pole"/><rect x="-5" y="-2" width="10" height="3" rx="1" class="tw-pole"/>
         <g class="tw-dish" transform="translate(0 -16)"><path d="M-4.4 1.6 L-2.6 -5 H2.6 L4.4 1.6 Z" class="tw-dishyoke"/><circle cx="0" cy="0" r="2.6" class="tw-dishbolt"/>

@@ -1081,8 +1081,13 @@
   pops.forEach(([b, p]) => b.addEventListener('click', (e) => { e.stopPropagation(); const was = !p.hidden; shut(); if (!was) { p.hidden = false; b.setAttribute('aria-expanded', 'true'); } }));
   document.addEventListener('click', (e) => { if (!e.target.closest('.tw-popwrap')) shut(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
-  const fixItem = document.querySelector('#twMenuPop [data-go="fix"]');
-  if (fixItem) fixItem.addEventListener('click', () => { shut(); repair(); });
+  const repairButton = $('#twRepair');
+  repairButton.addEventListener('click', () => {
+    const hadFocus = document.activeElement === repairButton;
+    shut();
+    repair();
+    if (hadFocus) $('#twMenu').focus();
+  });
   const exit = $('.tw-exit', svg);
   if (exit) exit.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); if (dragged) return; if (window.hopTo) window.hopTo('classic.html'); else location.href = 'classic.html'; });
 
@@ -1195,7 +1200,7 @@
   let dmg = fresh();
   const hits = {};
   const damaged = () => paneHits || dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || Object.keys(hits).length || Object.keys(dmg.tcars).length || dmg.hk || dmg.hdoor;
-  const save = () => { if (fixItem) fixItem.hidden = !damaged(); };
+  const save = () => { repairButton.hidden = !damaged(); };
   const localPt = (el, e) => { const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
   const inPoly = (x, y, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) o = !o; } return o; };
   const seeded = (n) => { let v = Math.abs(Math.floor(n * 9301 + 49297)) % 2147483646 + 1; return () => (v = (v * 16807) % 2147483647) / 2147483647; };
@@ -1337,6 +1342,9 @@
       if (!pane.cutout.parentNode) pane.holes.append(pane.cutout);
       pane.cutout.replaceChildren(...polygons.map(poly => NSel('polygon', { points: glassPoints(poly), fill: '#000' })));
     }
+    for (const { sticker, x, y } of pane.stickers) {
+      if (polygons.some(poly => inPoly(x, y, poly))) sticker.classList.add('is-detached');
+    }
     const hole = pane.holes ? '' : polygons.map(poly => `<polygon class="tw-pane-opening" points="${glassPoints(poly)}"/>`).join('');
     pane.marks.innerHTML = hole + pane.chunks.filter(chunk => !chunk.gone).map(chunk => `
       <g class="tw-glass-chunk">
@@ -1362,7 +1370,15 @@
       const marks = NSel('g', { 'clip-path': `url(#${id})` });
       layer.append(clip, marks);
       root.append(layer);
-      pane = { id, marks, points: [], scale: paneScale(poly), holes };
+      const attached = holes ? stickers
+        .filter(sticker => sticker.dataset.glassSticker === holes.id)
+        .map(sticker => ({
+          sticker,
+          x: sticker.x.baseVal.value + sticker.width.baseVal.value / 2,
+          y: sticker.y.baseVal.value + sticker.height.baseVal.value / 2
+        }))
+        .filter(({ x, y }) => inPoly(x, y, poly)) : [];
+      pane = { id, marks, points: [], scale: paneScale(poly), holes, stickers: attached };
       panes.set(key, pane);
     }
     if (windshield) {
@@ -1483,7 +1499,7 @@
   // Only the opening in a broken display window exposes the car behind it.
   const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
   const showroomDoor = $('.tw-door-fractures', toyHot), showHoles = $('#twShowroomHoles', svg);
-  const displayPanes = D.showroom.map(([x, y, w, h]) => rectPane(x + .8, y + .8, w - 1.6, h - 1.6));
+  const displayPanes = D.showroom.map(([x, y, w, h]) => rectPane(x + .55, y + .55, w - 1.1, h - 1.1));
   const showroomDoors = [rectPane(760, 426, 15, 56), rectPane(777, 426, 15, 56)];
   const showroomPanes = [
     ...displayPanes.map((poly, key) => ({ root: crG, key, poly })),
@@ -1756,6 +1772,7 @@
   function repair() {
     dmg = fresh();
     paneDamage = new WeakMap(); paneHits = 0;
+    stickers.forEach(sticker => sticker.classList.remove('is-detached'));
     $$('.tw-pane-damage, .tw-pane-cutout, .tw-fallshard', svg).forEach(layer => layer.remove());
     Object.keys(hits).forEach((k) => delete hits[k]);
     $$('.tw-dmg', svg).forEach((g) => g.remove());
@@ -1776,7 +1793,7 @@
   drawCivic(); drawMac(); drawShowroom();
   // Damage used to be kept between visits; it isn't any more.
   try { localStorage.removeItem('sommiville-damage'); } catch (e) {}
-  if (fixItem) fixItem.hidden = true;
+  save();
 
   tw._bots = bots;
   tw._weather = setWeather;
