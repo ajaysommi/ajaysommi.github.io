@@ -675,8 +675,10 @@
     if (photo.caption) card.classList.add('has-caption');
     card.style.setProperty('--photo-ratio', photo.width / photo.height);
     card.setAttribute('aria-label', photo.title || 'Tricycle photo');
-    card.innerHTML = `<button class="tw-memory-close" type="button" aria-label="Close photo">×</button>
-      ${photo.title ? `<h3>${esc(photo.title)}</h3>` : ''}
+    card.innerHTML = `<div class="tw-memory-header">
+        ${photo.title ? `<h3>${esc(photo.title)}</h3>` : ''}
+        <button class="tw-memory-close" type="button" aria-label="Close photo">×</button>
+      </div>
       <img src="assets/images/town/${photo.file}" alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}">
       ${photo.caption ? `<p>${esc(photo.caption)}</p>` : ''}`;
     stage.append(card);

@@ -1802,7 +1802,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* Fit the frame to the photo, using the height budget to cap its width. */
 .tw-memory-card {
   --frame-edge: 26px;
-  --photo-height: min(64vh, 420px);
+  --photo-height: min(64vh, 420px, max(64px, calc(100vh - 120px)));
   position: absolute; z-index: 6; right: clamp(16px, 4vw, 64px); top: 50%; translate: 0 -50%;
   width: min(clamp(250px, 34vw, 460px), calc(var(--photo-height) * var(--photo-ratio) + var(--frame-edge)));
   max-height: calc(100% - 36px); overflow: auto; box-sizing: border-box;
@@ -1812,9 +1812,15 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 }
 .tw-memory-card.has-caption { --photo-height: min(56vh, 390px, max(72px, calc(100vh - 176px))); }
 .tw.memory-settled .tw-memory-card { opacity: 1; visibility: visible; }
-.tw-memory-card h3 { margin: 2px 32px 10px 2px; font-size: 20px; }
+.tw-memory-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.tw-memory-header h3 { margin: 0 0 0 2px; font-size: 20px; line-height: 1.2; }
 .tw-memory-card img { display: block; width: 100%; height: auto; border-radius: 9px; }
 .tw-memory-card p { margin: 9px 4px; font-size: 14px; line-height: 1.4; }
-.tw-memory-close { position: absolute; top: 15px; right: 15px; z-index: 1; width: 30px; height: 30px; border: 1px solid #87765f; border-radius: 50%; background: #f3e9d9; color: #3c3328; cursor: pointer; font-size: 20px; line-height: 1; }
+.tw-memory-close {
+  display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px;
+  margin-left: auto; padding: 0; border: 1px solid #87765f; border-radius: 50%;
+  background: #f3e9d9; color: #3c3328; cursor: pointer;
+  font-family: inherit; font-size: 26px; font-weight: 850; line-height: 1;
+}
 :is([data-theme="midnight"], [data-theme="terminal"]) .tw-memory-card { background: #2d261f; color: #f5e5c8; border-color: #776347; }
 @media (prefers-reduced-motion: reduce) { .tw-memory-card { transition: none; } }
