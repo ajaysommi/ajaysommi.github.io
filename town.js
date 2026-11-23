@@ -1367,7 +1367,15 @@
   const shapePane = (shape) => {
     if (shape.dataset.pane) return shape.dataset.pane.split(' ').map(pair => pair.split(',').map(Number));
     if (shape.localName === 'circle') return circlePane(shape.cx.baseVal.value, shape.cy.baseVal.value, shape.r.baseVal.value);
-    return rectPane(...['x', 'y', 'width', 'height'].map(name => +shape.getAttribute(name)));
+    const [x, y, w, h, rx] = ['x', 'y', 'width', 'height', 'rx'].map(name => +shape.getAttribute(name));
+    if (!rx) return rectPane(x, y, w, h);
+    const r = Math.min(rx, w / 2, h / 2);
+    return [[x + w - r, y + r], [x + w - r, y + h - r], [x + r, y + h - r], [x + r, y + r]].flatMap(([cx, cy], corner) =>
+      Array.from({ length: 5 }, (_, i) => {
+        const angle = (corner - 1 + i / 4) * Math.PI / 2;
+        return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+      })
+    );
   };
   const cutPane = (poly, axis, edge, sign) => poly.flatMap((point, i) => {
     const prev = poly[(i + poly.length - 1) % poly.length];
@@ -1461,8 +1469,8 @@
     const bay = displayPanes.findIndex(poly => inPoly(q.x, q.y, poly));
     if (door < 0 && bay < 0) return;
     const result = door >= 0
-      ? strikePane(showroomDoor, door, showroomDoors[door], q, { threshold: 8, holes: showHoles, debris: crG.parentNode, ground: 486 })
-      : strikePane(crG, bay, displayPanes[bay], q, { threshold: 8, holes: showHoles, debris: crG.parentNode, ground: 486 });
+      ? strikePane(showroomDoor, door, showroomDoors[door], q, { threshold: 4, holes: showHoles, debris: crG.parentNode, ground: 486 })
+      : strikePane(crG, bay, displayPanes[bay], q, { threshold: 4, holes: showHoles, debris: crG.parentNode, ground: 486 });
     if (result === 'break' && !dmg.toy) {
       dmg.toy = 1;
       policeT = setTimeout(() => { dmg.police = 1; tw.classList.add('police'); }, 9000);
@@ -1508,17 +1516,10 @@
 
   // The HawkEye's screen
   const hkHot = hotOf('hunter'), hkG = $('.tw-hk-lcd', hkHot), hkCr = $('.tw-hk-cr', hkHot);
-  const ravPanes = spritePanes($('.tw-car-img', plat), D.ravGlass);
   const inkAt = (root, q, r) => add(root, `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${r.toFixed(2)}" class="tw-lcd-ink"/>`);
   const screenPane = (id) => shapePane($(`#${id} rect`, svg));
   const hkPane = screenPane('twHkScr');
   const pokeHunter = (e) => {
-    const carPoint = localPt(plat, e), i = ravPanes.findIndex(poly => inPoly(carPoint.x, carPoint.y, poly));
-    if (i >= 0) {
-      strikePane(plat, i, ravPanes[i], carPoint, { dark: true, ground: 460 });
-      save();
-      return;
-    }
     const q = localPt(hkG, e);
     if (!inPoly(q.x, q.y, hkPane) || dmg.hk >= 4) return;
     dmg.hk++;
@@ -1582,8 +1583,13 @@
     } else {
       const full = shapePane($('.tw-homewin', el));
       if (!inPoly(q.x, q.y, full)) return;
-      const [x, y] = full[0], col = +(q.x >= x + 12), row = +(q.y >= y + 14);
-      const result = strikePane(g, row * 2 + col, rectPane(x + col * 12, y + row * 14, 12, 14), q, { threshold: 6, ground: 486 });
+      const glass = $('.tw-homewin', el);
+      const crossX = +glass.getAttribute('x') + 12, crossY = +glass.getAttribute('y') + 14;
+      const col = +(q.x >= crossX), row = +(q.y >= crossY);
+      const vertical = col ? 1 : -1, horizontal = row ? 1 : -1;
+      const pane = cutPane(cutPane(full, 0, crossX + vertical * .55, vertical), 1, crossY + horizontal * .55, horizontal);
+      if (!inPoly(q.x, q.y, pane)) return;
+      const result = strikePane(g, row * 2 + col, pane, q, { threshold: 6, ground: 486 });
       if (result === 'break') houseAlarm();
     }
     save();
@@ -1627,7 +1633,9 @@
     const glass = glassAt(h, e);
     if (glass) {
       const { shape, key, poly, q } = glass;
-      strikePane(shape.parentNode, key, poly, q, { dark: shape.dataset.fracturePane === 'dark', threshold: shape.dataset.fracturePane === 'dark' ? 0 : 4 });
+      const layer = shape.dataset.fractureLayer;
+      const root = layer ? $(`[data-glass-layer="${layer}"]`, shape.parentNode) : shape.parentNode;
+      strikePane(root, key, poly, q, { dark: shape.dataset.fracturePane === 'dark', threshold: shape.dataset.fracturePane === 'dark' ? 0 : 4 });
       save();
       return;
     }

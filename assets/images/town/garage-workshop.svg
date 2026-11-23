@@ -126,13 +126,13 @@
   </g>
 
   <!-- The wall display faces the car. Its old key hangs on a separate brass pin. -->
-  <g transform="translate(106 35) rotate(-3)">
-    <rect x=".45" y=".9" width="19" height="8.2" rx="1.05" fill="#27251e" opacity=".31"/>
-    <rect width="19" height="8" rx="1.1" fill="#ded9bb" stroke="#635f4e" stroke-width=".57"/>
-    <rect x=".7" y=".65" width="17.6" height="6.7" rx=".67" fill="none" stroke="#80917a" stroke-width=".33"/>
-    <path d="M1.65 5.7h4.25m7 .04h4.4" stroke="#a2b69b" stroke-width=".55"/>
-    <text x="9.5" y="5.94" fill="#476451" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="4.9" letter-spacing=".5">1996</text>
-    <path d="M2.1 1.6h.7m13.45.05h.7M2.1 6.6h.7m13.45 0h.7" stroke="#665f4f" stroke-width=".5"/>
+  <g transform="translate(110 35.5) rotate(-3)">
+    <rect x=".44" y=".58" width="11.5" height="5.45" rx=".62" fill="#27251e" opacity=".36"/>
+    <rect width="11.5" height="5.45" rx=".58" fill="#266d98" stroke="#214863" stroke-width=".35"/>
+    <rect x=".37" y=".32" width="10.76" height="4.79" rx=".35" fill="none" stroke="#7caec7" stroke-width=".23"/>
+    <text x="5.5" y="3.98" fill="#f3e7c8" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="2.9" letter-spacing=".25">1996</text>
+    <path d="M1.42 .85h.45m7.28-.01h.46m-8.19 3.73h.45m7.28 0h.46" stroke="#233d4b" stroke-width=".29" stroke-linecap="round"/>
+    <rect x="9.31" y=".53" width="1.35" height="1.11" rx=".1" fill="#efd052"/>
   </g>
   <g transform="translate(130.3 34.1) rotate(12)">
     <circle r=".67" fill="#988465" stroke="#544a39" stroke-width=".4"/>
