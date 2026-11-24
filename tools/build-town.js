@@ -937,26 +937,6 @@ const police = (x, cls) => {
 };
 // The moon's crescent, worked out from its two circles.
 const MOON = (() => { const R = 30, r2 = 27, cx = 16, cy = -10, d = Math.hypot(cx, cy), a = (R * R - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(R * R - a * a), px = a * cx / d, py = a * cy / d, ox = -cy / d * h, oy = cx / d * h; const p1 = [px + ox, py + oy], p2 = [px - ox, py - oy]; return `M${p1[0].toFixed(2)} ${p1[1].toFixed(2)} A${R} ${R} 0 1 1 ${p2[0].toFixed(2)} ${p2[1].toFixed(2)} A${r2} ${r2} 0 0 0 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)} Z`; })();
-// A single repeating texture with uneven, tiny cells for tempered glass.
-const glassGrain = (() => {
-  const cols = 17, rows = 15, step = .57;
-  let state = 283;
-  const random = () => (state = (state * 16807) % 2147483647) / 2147483647;
-  const offsets = Array.from({ length: rows }, () => Array.from({ length: cols }, () => [random() - .5, random() - .5]));
-  const at = (x, y) => offsets[y % rows][x % cols].map((d, axis) => (((axis ? y : x) + d * .86) * step).toFixed(2)).join(' ');
-  let seams = '', specks = '';
-  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-    const a = at(x, y), b = at(x + 1, y), c = at(x, y + 1), d = at(x + 1, y + 1);
-    if (random() < .88) seams += `M${a}L${b}`;
-    if (random() < .88) seams += `M${a}L${c}`;
-    if (random() < .42) seams += random() < .5 ? `M${a}L${d}` : `M${b}L${c}`;
-    if (random() < .22) specks += `M${a}l.09-.08`;
-  }
-  return `<pattern id="twGlassGrain" width="${cols * step}" height="${rows * step}" patternUnits="userSpaceOnUse">
-    <path d="${seams}" fill="none" stroke="#e0f6f8" stroke-width=".09" stroke-opacity=".62"/>
-    <path d="${specks}" stroke="#fff" stroke-width=".12" stroke-linecap="round" opacity=".65"/>
-  </pattern>`;
-})();
 const SKY_DAY = [[0, '#2779c8'], [.45, '#4f9fe0'], [.62, '#7cb9e9'], [.8, '#c4e0f2'], [.92, '#e3eef0'], [1, '#eef2ea']];
 const SKY_NIGHT = [[0, '#090f26'], [.55, '#1c2b4a'], [.80, '#414769'], [1, '#8d6877']];
 const skyHex = (st, y) => {
@@ -1025,7 +1005,13 @@ const HILLS = (() => {
   return { far, farShade, strata, scree, near };
 })();
 
-const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A drawn town block. Each part of it is a place I've worked; the buttons below open the same stories.">
+// Separate paint surfaces keep a blinking patrol car or moving lift from
+// repainting the glass, buildings and landscape behind it. Bounds include
+// the artwork's travel, shadows and hover halos, in street coordinates.
+const slice = (name, bounds = '') => `<div class="tw-slice"${bounds ? ` data-bounds="${bounds}"` : ''}><svg class="tw-art-${name}" viewBox="0 0 1200 600"${name === 'sky' || name === 'street-front' ? ' aria-hidden="true"' : ''}>`;
+const endSlice = '</svg></div>';
+const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illustrated street of places I’ve worked">
+  <div class="tw-plane tw-sky-plane">${slice('sky')}
   <defs>
     <linearGradient id="twMbEnamel" x2="0" y2="1"><stop stop-color="var(--tw-mb-light)"/><stop offset=".62" stop-color="var(--tw-mb-mid)"/><stop offset="1" stop-color="var(--tw-mb-dark)"/></linearGradient>
     ${landscapeDefs.trim()}
@@ -1120,7 +1106,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <mask id="twShowroomMask" maskUnits="userSpaceOnUse" x="450" y="332" width="450" height="158"><rect x="450" y="332" width="450" height="158" fill="#fff"/><g id="twShowroomHoles"/></mask>
     <mask id="twBetGlassMask" maskUnits="userSpaceOnUse" x="3408" y="400" width="60" height="46"><rect x="3408" y="400" width="60" height="46" fill="#fff"/><g id="twBetHoles"/></mask>
     <mask id="twHpgGlassMask" maskUnits="userSpaceOnUse" x="3375" y="417" width="100" height="66"><rect x="3375" y="417" width="100" height="66" fill="#fff"/><g id="twHpgHoles"/></mask>
-    ${glassGrain}
+    <pattern id="twGlassGrain" width="9.69" height="8.55" patternUnits="userSpaceOnUse"><image href="assets/images/town/glass-grain.png" width="9.69" height="8.55" preserveAspectRatio="none"/></pattern>
     <radialGradient id="twWindshieldCore"><stop stop-color="#f6ffff" stop-opacity=".94"/><stop offset=".45" stop-color="#e5f6f8" stop-opacity=".64"/><stop offset="1" stop-color="#d8edf1" stop-opacity="0"/></radialGradient>
     <radialGradient id="twGlassInterior" cx=".27" cy=".1" r=".9"><stop stop-color="#34434a"/><stop offset=".78" stop-color="#151e22"/><stop offset="1" stop-color="#111719"/></radialGradient>
     <clipPath id="twShowGlass"><rect x="462" y="342" width="100" height="140"/><rect x="658" y="356" width="232" height="126"/></clipPath>
@@ -1148,7 +1134,6 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <linearGradient id="twDayInt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ead8"/><stop offset="1" stop-color="#ddd0b6"/></linearGradient>
     ${Object.entries(TINT).map(([id, c]) => `<filter id="twGlow-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="7.2" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="1.5"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".69"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="twHalo-${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="7.2" result="s"/><feComponentTransfer in="s" result="b"><feFuncA type="linear" slope="1.5"/></feComponentTransfer><feFlood flood-color="${c}" flood-opacity=".69"/><feComposite in2="b" operator="in"/></filter>`).join('')}
   </defs>
-  <g class="tw-cam">
 
   <!-- Far: the sky, the hills, the clouds; it slides by slower than the
        block as you scroll along it. -->
@@ -1185,8 +1170,10 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     ${distantWoods(WORLD)}
   </g>
 
-  <!-- Middle: the block. -->
-  <g class="tw-mid">
+  ${endSlice}</div>
+  <div class="tw-plane tw-street-plane">
+  ${slice('ground')}
+  <g class="tw-art tw-mid">
     <rect class="tw-grass" x="-800" y="474" width="${WORLD + 1600}" height="700"/>
     <path class="tw-grass" d="${grassEdge()}"/>
     <rect x="-800" y="474" width="${WORLD + 1600}" height="126" fill="url(#twMeadowLight)" class="tw-nohit"/>
@@ -1238,7 +1225,9 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
 
     <!-- 2025, JM Family Enterprises: one of its Southeast Toyota car haulers,
          backing up to the dealership with its hazards flashing. -->
-    <g class="tw-truckdrive">
+    </g>${endSlice}
+    ${slice('hauler', `${TK.x - TRUCK_WAIT - 240} 210 ${TK.x + TK.w + 80} 570`)}
+    <g class="tw-art tw-truckdrive">
     ${hot('jm', `
     <g>
       <image href="assets/images/town/jm-truck.webp" x="${TK.x}" y="${TK.y.toFixed(2)}" width="${TK.w}" height="${TK.h.toFixed(2)}" preserveAspectRatio="none" class="tw-truckimg"/>
@@ -1250,6 +1239,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     </g>
 
 
+    ${endSlice}
+    ${slice('showroom', '1000 120 1900 560')}<g class="tw-art">
     ${hot('toyota', `
     <!-- 2024, Toyota: the dealership. A showroom wing, the tall main block
          with the emblem and the store's name, a glass entrance with a pillar
@@ -1310,6 +1301,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="905.2" y="285.2" width="33.8" height="195.6" fill="url(#twServiceWallShadow)" class="tw-nohit"/>
     </g>`)}
 
+    </g>${endSlice}
+    ${slice('service', '430 210 1940 715')}<g class="tw-art">
     ${hot('hunter', `
     <!-- 2026, Hunter Engineering: in Toyota's service bay, a Hunter HawkEye
          aligner (its two red beacons firing lasers) reading the targets on
@@ -1445,13 +1438,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-beanie"><path d="M-21 -46 q21 -19 42 0 z" fill="#e63946" class="tw-ol"/><rect x="-22" y="-51" width="44" height="6" rx="3" fill="#f4f1ea" class="tw-ol"/></g>
     </g></g></g></g></g>`)}
 
-    <!-- The police, once an alarm has gone off for a while: at the
-         dealership, and at the house. -->
-
-
-    <!-- East of here everything is drawn in its own coordinates and slid
-         back by EAST (see the top). -->
-    <g transform="translate(${-EAST} 0)">
+    </g>${endSlice}
+    ${slice('welcome', '2030 70 3390 750')}<g class="tw-art" transform="translate(${-EAST} 0)">
     <!-- The visitor center, where everyone starts: the woods behind it, the
          center, the welcome sign, a signpost, the Classic Line bus stop
          and the time machine. -->
@@ -1468,6 +1456,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     ${slabs([VC.c - 58, 507], [VC.c + 58, 507], [VC.c + 69.5, 600], [VC.c - 69.5, 600], 15.5)}<path d="M${VC.c} 507 V600" class="tw-joint tw-nohit"/>
     ${busStop()}
 
+    </g>${endSlice}
+    ${slice('campus', '2880 130 4140 710')}<g class="tw-art" transform="translate(${-EAST} 0)">
     <!-- The UF corner: FICS (its sign, and HiPerGator's racks behind glass,
          the dish on the roof watching the sky), Malachowsky Hall, the gator
          pond in front of it, the gator globe. -->
@@ -1560,6 +1550,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <text x="3424" y="519.6" class="tw-fics-t" text-anchor="middle">CYBERSECURITY RESEARCH</text>
     </g>`)}
 
+    </g>${endSlice}
+    ${slice('home', '3080 115 5370 720')}<g class="tw-art" transform="translate(${-EAST} 0)">
     <!-- Home: the house, the garage with my Civic, the bench, and the
          projects around them (see PROJECTS), then palms to the east. -->
     <g transform="translate(${HOMESH} 0)">
@@ -1575,7 +1567,7 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <rect x="3493" y="237" width="25" height="6" rx="3" class="tw-snowcap"/></g></g>
     </g>
 
-    ${tree(2250, 482, 1.15, 2)}${tree(5128 + SH, 486, 1.25, 0)}${bush(5068 + SH, 492, .9)}${tree(5170 + SH, 492, .95, 1)}
+    ${tree(5128 + SH, 486, 1.25, 0)}${bush(5068 + SH, 492, .9)}${tree(5170 + SH, 492, .95, 1)}
     ${hot('tm', `
     <g transform="translate(${5094 + SH} 489) scale(.42) translate(-3390 -487)" class="tw-portal-g">
       <ellipse cx="3390" cy="430" rx="80" ry="92" fill="url(#twPortalGlow)" class="tw-pt-halo tw-nohit"/>
@@ -1586,6 +1578,9 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
       <g class="tw-pt-motes tw-nohit"><circle cx="3366" cy="470" r="1.6" class="tw-pt-mote" style="--d:0.0s;--x:-6px"/><circle cx="3378" cy="467" r="2.2" class="tw-pt-mote" style="--d:-0.7s;--x:6px"/><circle cx="3388" cy="464" r="2.8" class="tw-pt-mote" style="--d:-1.4s;--x:-6px"/><circle cx="3399" cy="461" r="1.6" class="tw-pt-mote" style="--d:-2.1s;--x:6px"/><circle cx="3408" cy="458" r="2.2" class="tw-pt-mote" style="--d:-2.8s;--x:-6px"/><circle cx="3416" cy="455" r="2.8" class="tw-pt-mote" style="--d:-3.5s;--x:6px"/><circle cx="3372" cy="452" r="1.6" class="tw-pt-mote" style="--d:-4.2s;--x:-6px"/><circle cx="3394" cy="449" r="2.2" class="tw-pt-mote" style="--d:-4.9s;--x:6px"/></g>
     </g>`)}
     ${bush(5094 + SH - 16, 497, .9)}${bush(5094 + SH + 20, 499, .8)}${bush(5094 + SH + 3, 504, 1.02)}
+    </g>${endSlice}
+    ${slice('street-front')}<g transform="translate(${-EAST} 0)">
+    ${tree(2250, 482, 1.15, 2)}
     <g class="tw-snowy" aria-hidden="true">${[[2568, 388, 208], [3172, 512, 100], [3268, 494, 60], [3366, 398, 118]].map(([x, y, w]) => `<rect x="${x - 1}" y="${y - 7}" width="${w + 2}" height="8.5" rx="4" class="tw-snowcap"/>`).join('')}
       <path d="M3284 467 Q3298 443.6 3312 467 Q3298 453.5 3285 466.5 Z" class="tw-snowslope"/>
       <path d="M${VC.l - 14} ${VC.eave + 6} L${VC.c} ${VC.apex - 4} L${VC.r + 14} ${VC.eave + 6} L${VC.r + 8} ${VC.eave + 1} L${VC.c} ${VC.apex - 12} L${VC.l - 8} ${VC.eave + 1} Z" class="tw-snowslope"/></g>
@@ -1600,9 +1595,8 @@ const svg = `<svg class="tw-svg" viewBox="0 0 1200 600" preserveAspectRatio="xMi
     <g class="tw-ends tw-nohit" aria-hidden="true"><rect x="-800" y="-1700" width="1000" height="3000" fill="url(#twEndL)"/><rect x="${WORLD - 200}" y="-1700" width="1000" height="3000" fill="url(#twEndR)"/></g>
     <!-- A pin on every stop. -->
     <g class="tw-pins">${roles.filter((r) => SPOT[r.id].pin || r.id === 'rjax' || r.id === 'rfa').map((r) => { const at = SPOT[r.id].pin ? [SPOT[r.id].pin[0] + (OFF[r.id] || 0), SPOT[r.id].pin[1]] : null; return `<g class="tw-pin" data-id="${r.id}"${at ? ` transform="translate(${at[0]} ${at[1]})"` : ''} style="--tint:${r.tint}"><circle r="9" class="tw-pin-ring"/><circle r="4.4" class="tw-pin-dot"/></g>`; }).join('')}</g>
-  </g>
-  </g>
-</svg>`;
+  ${endSlice}</div>
+</div>`;
 
 const work = roles.filter((r) => r.year).sort((a, b) => a.year - b.year || order.indexOf(a.id) - order.indexOf(b.id));
 const data = {

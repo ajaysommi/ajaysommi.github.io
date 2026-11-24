@@ -31,8 +31,13 @@
   --tw-pond: #2e5d86; --tw-rock: #5b5d66; --tw-pole: #6a6e78; --tw-card: #f1eee6; --tw-lab: #222738;
 }
 
-.tw-stage { position: relative; aspect-ratio: 1200 / 600; border: 1px solid var(--stroke); border-radius: var(--r-xl, 22px); overflow: hidden; background: var(--tw-grass); isolation: isolate; }
-.tw-svg { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
+.tw-stage { position: relative; aspect-ratio: 1200 / 600; border: 1px solid var(--stroke); border-radius: var(--r-xl, 22px); overflow: clip; background: var(--tw-grass); isolation: isolate; }
+.tw-scene { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
+.tw-plane { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; }
+.tw-slice { position: absolute; left: 0; top: 0; width: 100%; height: 100%; contain: strict; transform-origin: 0 0; }
+.tw-slice > svg { display: block; width: 100%; height: 100%; fill: #1b1c21; pointer-events: none; }
+.tw-art, .tw-far { pointer-events: visiblePainted; }
+.tw-slice.tw-culled { visibility: hidden; content-visibility: hidden; }
 .tw-mono { font-family: var(--font-mono); }
 .tw-ol { stroke: var(--tw-line); stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
 
@@ -389,7 +394,7 @@
   #experience.town-section { position: fixed; inset: 0; z-index: 1; margin: 0; padding: 0; max-width: none; width: auto; opacity: 1 !important; transform: none !important; }
   #experience .tw { position: absolute; inset: 0; margin: 0; }
   #experience .tw-stage { position: absolute; inset: 0; aspect-ratio: auto; border: 0; border-radius: 0; }
-  .tw.dragging .tw-svg, .tw.dragging .tw-hot { cursor: grabbing; }
+  .tw.dragging .tw-scene, .tw.dragging .tw-hot { cursor: grabbing; }
   .tw-panel { bottom: 16px; top: 80px; }
   .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid !important; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
   .tw-pan svg { width: 23px; height: 23px; }
@@ -666,9 +671,9 @@
 .tw-windshield-rings { stroke: #f3fbfb; stroke-width: .15; opacity: .86; }
 .tw-pane-opening { fill: url(#twGlassInterior); fill-opacity: .94; }
 .tw-hot[data-id="vc"] .tw-pane-opening { fill: none; }
-.tw-glass-chunk > polygon:first-child { fill: #a2cbd6; fill-opacity: .48; stroke: #c0e7ee; stroke-opacity: .38; stroke-width: .23; }
-.tw-glass-chunk > polyline { fill: none; stroke: #effdff; stroke-opacity: .81; stroke-width: .21; stroke-linejoin: round; }
-:is([data-theme="midnight"], [data-theme="terminal"]) .tw-glass-chunk > polygon:first-child { fill: #6eabb8; fill-opacity: .42; }
+.tw-glass-body { fill: #a2cbd6; fill-opacity: .48; stroke: #c0e7ee; stroke-opacity: .38; stroke-width: .23; }
+.tw-glass-rim { fill: none; stroke: #effdff; stroke-opacity: .81; stroke-width: .21; stroke-linejoin: round; }
+:is([data-theme="midnight"], [data-theme="terminal"]) .tw-glass-body { fill: #6eabb8; fill-opacity: .42; }
 
 .tw.glass-broke .tw-showcar { opacity: 1; }
 .tw-showcar { cursor: pointer; }
@@ -832,7 +837,7 @@
 .tw-debris { fill: #2a2018; transform-box: fill-box; animation: tw-debris 1.1s cubic-bezier(.2, .6, .5, 1) forwards; }
 @keyframes tw-debris { to { transform: translate(var(--x), calc(var(--y) + 26px)) rotate(var(--r)); opacity: 0; } }
 /* (SVG filters, not CSS ones: Safari draws no CSS filter effects on SVG shapes) */
-.tw-stage.tw-shake .tw-svg { animation: tw-shake .45s cubic-bezier(.3, 0, .3, 1); }
+.tw-stage.tw-shake .tw-scene { animation: tw-shake .45s cubic-bezier(.3, 0, .3, 1); }
 @keyframes tw-shake { 15% { transform: translate(-5px, 2px); } 30% { transform: translate(5px, -3px); } 45% { transform: translate(-3px, 2px); } 60% { transform: translate(3px, -1px); } 80% { transform: translate(-1px, 1px); } }
 /* the hard drive: spinning, scored */
 .tw-hdd-rot.spin { animation: tw-spin 1.2s linear infinite; }
@@ -1492,7 +1497,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
   background: url("assets/images/town/press-grain.svg") repeat; opacity: .075;
 }
 @media (min-width: 720px) {
-  .tw-svg { touch-action: pan-y pinch-zoom; cursor: grab; }
+  .tw-scene { touch-action: pan-y pinch-zoom; cursor: grab; }
   .tw-panel .tw-x { width: 38px; height: 38px; }
 }
 
@@ -1550,13 +1555,10 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-pool { opacity: .52; animation: none; }
 [data-theme="midnight"] .tw :is(.tw-spotcone, .tw-pool), [data-theme="terminal"] .tw :is(.tw-spotcone, .tw-pool) { opacity: .7; }
 
-/* round 23 */
-/* the camera group moves from the street's origin */
-.tw-cam, .tw-far { transform-box: view-box; transform-origin: 0 0; }
 /* the stars keep twinkling through the opening glide, and stop for a zoom */
 .tw-zooming:not(.tw-glide) .tw-stargrp { animation-name: none !important; }
 /* scene text scales smoothly, without being laid out again at every step of a zoom */
-.tw-svg text { text-rendering: geometricPrecision; }
+.tw-scene text { text-rendering: geometricPrecision; }
 /* the pins are never drawn (they only anchor the hover label), so nothing on them animates:
    each fading pin was a layer of its own that cut up the street during a zoom */
 .tw-pin, .tw-pin * { animation: none !important; transition: none !important; }

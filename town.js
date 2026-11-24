@@ -76,16 +76,18 @@
   const NS = 'http://www.w3.org/2000/svg';
 
   const D = JSON.parse($('#town-data').textContent);
-  const svg = $('.tw-svg', tw), stage = $('.tw-stage', tw), panel = $('.tw-panel', tw), inner = $('.tw-panel-in', panel);
+  const scene = $('.tw-scene', tw), stage = $('.tw-stage', tw), panel = $('.tw-panel', tw), inner = $('.tw-panel-in', panel);
+  const world = $('.tw-art-ground', scene);
   const label = $('.tw-label', tw), prevB = $('.tw-prev', panel), nextB = $('.tw-next', panel);
-  const chips = $$('.tw-chip', tw), hots = $$('.tw-hot', svg);
+  const chips = $$('.tw-chip', tw), hots = $$('.tw-hot', scene);
   // The camera: the block is WORLD units wide and fills the window; it
   // scrolls sideways. The window shows about 640 units top to bottom, so
   // the street and the buildings take up most of it and the sky the rest.
   const WORLD = D.W, BOTTOM = 676;
-  let scale = 1, vw = 1200, vh = 600, camX = 0;
+  let scale = 1, vw = 1200, vh = 600, camX = 0, viewportWidth = 0;
   const measure = () => {
     const w = stage.clientWidth || innerWidth, h = stage.clientHeight || innerHeight;
+    viewportWidth = w;
     scale = clamp(h / 640, 0.8, 1.7);
     vw = w / scale; vh = h / scale;
     camX = clamp(camX, 0, Math.max(0, WORLD - vw));
@@ -104,19 +106,29 @@
   // They move like something with a little weight: a soft spring toward
   // where they want to be, never faster than an amble.
   const bots = {
-    rfa: { el: $('.tw-rover', svg), flip: $('.tw-rover-flip', svg), pin: $('.tw-pin[data-id="rfa"]', svg), x: 930, y: 556, vx: 0, vy: 0, tx: 930, ty: 556, face: -1, idleAt: 0, box: [850, 990, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
-    rjax: { el: $('.tw-frc', svg), flip: $('.tw-frc-flip', svg), pin: $('.tw-pin[data-id="rjax"]', svg), x: 632, y: 578, vx: 0, vy: 0, tx: 632, ty: 578, face: 1, idleAt: 0, box: [602, 670, 574, 580], reach: 140, keep: 64, pinDy: -58, k: 3, max: 45, s: 0.78, tilt: 0 }
+    rfa: { el: $('.tw-rover', scene), flip: $('.tw-rover-flip', scene), pin: $('.tw-pin[data-id="rfa"]', scene), x: 930, y: 556, vx: 0, vy: 0, tx: 930, ty: 556, face: -1, idleAt: 0, box: [850, 990, 536, 566], reach: 110, keep: 50, pinDy: -78, k: 5, max: 70, s: 1, tilt: 0 },
+    rjax: { el: $('.tw-frc', scene), flip: $('.tw-frc-flip', scene), pin: $('.tw-pin[data-id="rjax"]', scene), x: 632, y: 578, vx: 0, vy: 0, tx: 632, ty: 578, face: 1, idleAt: 0, box: [602, 670, 574, 580], reach: 140, keep: 64, pinDy: -58, k: 3, max: 45, s: 0.78, tilt: 0 }
   };
   const placeBot = (b) => {
-    b.el.setAttribute('transform', `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`);
-    b.flip.setAttribute('transform', `scale(${(b.face * b.s).toFixed(3)} ${b.s}) rotate(${b.tilt.toFixed(1)})`);
-    b.pin.setAttribute('transform', `translate(${b.x.toFixed(1)} ${(b.y + b.pinDy).toFixed(1)})`);
-    if (b.num) b.num.setAttribute('transform', `scale(${b.face} 1)`);
+    // The frightened rover eventually stays in its corner. Leave its SVG
+    // alone once position and tilt have reached the same painted values.
+    const position = `translate(${b.x.toFixed(1)} ${b.y.toFixed(1)})`;
+    const pose = `scale(${(b.face * b.s).toFixed(3)} ${b.s}) rotate(${b.tilt.toFixed(1)})`;
+    if (position !== b.position) {
+      b.position = position;
+      b.el.setAttribute('transform', position);
+      b.pin.setAttribute('transform', `translate(${b.x.toFixed(1)} ${(b.y + b.pinDy).toFixed(1)})`);
+    }
+    if (pose !== b.pose) {
+      b.pose = pose;
+      b.flip.setAttribute('transform', pose);
+      if (b.num) b.num.setAttribute('transform', `scale(${b.face} 1)`);
+    }
   };
-  bots.rjax.num = $('.tw-frc-86', svg);
+  bots.rjax.num = $('.tw-frc-86', scene);
   Object.values(bots).forEach(placeBot);
   // The competition robot's camera: on its target, or on the pointer when close.
-  const turret = $('.tw-turret', svg), vision = $('.tw-vision', svg), reticle = $('.tw-reticle', svg);
+  const turret = $('.tw-turret', scene), vision = $('.tw-vision', scene), reticle = $('.tw-reticle', scene);
   const TARGET = [714, 535];
   let aim = TARGET.slice();
   const aimCam = () => {
@@ -139,7 +151,7 @@
   // the first solid colour under the pointer (patterns and glows are looked through)
   const colOf = (e) => {
     for (const t of document.elementsFromPoint(e.clientX, e.clientY)) {
-      if (t === svg || !svg.contains(t)) break;
+      if (t === scene || !scene.contains(t)) break;
       if (t.closest('.tw-rover, .tw-frc, .tw-vision, .tw-reticle, .tw-halo')) continue;
       const h = t.closest('.tw-hot'), id = h && h.dataset.id;
       if (t.tagName === 'image') { if (id && id !== 'rjax' && D.roles[id]) return rgbOf(D.roles[id].tint); continue; }
@@ -159,7 +171,7 @@
   /* ---------------------------------------------------------- Hunter's lift */
   // Up, a pause, down, a pause; the scissor arms follow the platform, and
   // the HawkEye's two red beacons keep their lasers on the wheel targets.
-  const plat = $('.tw-plat', svg), armA = $('.tw-arm-a', svg), armB = $('.tw-arm-b', svg), pivot = $('.tw-pivot', svg), lasers = $$('.tw-laser', svg);
+  const plat = $('.tw-plat', scene), armA = $('.tw-arm-a', scene), armB = $('.tw-arm-b', scene), pivot = $('.tw-pivot', scene), lasers = $$('.tw-laser', scene);
   const BEACONS = [[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]], WHEELS = [1032, 1105];
   for (const beam of lasers) {
     const [x, y] = BEACONS[Number(beam.dataset.b)];
@@ -199,11 +211,11 @@
   // The flag changes position when the first letter is opened.
   LIVE.recs = '.tw-mb-flag'; SKIP.recs = '.tw-mb-flag';
   const halos = {};
-  const stickers = $$('.tw-adtsticker', svg);
+  const stickers = $$('.tw-adtsticker', scene);
   // A filter's region is a box around what it's on; sized as a share of that
   // box, a small or thin thing's glow got cut off square. So each gets its own
   // copy of the filter, sized to it with room to spare, in its own units.
-  const defs = $('defs', svg);
+  const defs = $('defs', scene);
   let nf = 0;
   const fitted = (node, base) => {
     if (node._fit && node._fit[0] === base) return node._fit[1];
@@ -264,9 +276,9 @@
   };
   // Generous, invisible hit areas, so a small move doesn't drop the hover
   // in the gaps between a thing's parts.
-  const skip = $$('.tw-nohit', svg);
+  const skip = $$('.tw-nohit', scene);
   skip.forEach((n) => { n.style.display = 'none'; });
-  hots.forEach((h) => {
+  const hitAreas = hots.map((h) => {
     const parts = h.firstElementChild && h.firstElementChild.tagName === 'g' ? [...h.firstElementChild.children] : [...h.children];
     const hit = document.createElementNS(NS, 'g');
     hit.setAttribute('class', 'tw-hit');
@@ -277,7 +289,7 @@
       if (p.matches('.tw-nohit, .tw-snowimg, .tw-snowy, .tw-textsnow')) return;
       let b; try { b = p.getBBox(); } catch (e) { return; }
       if (!b || b.width * b.height === 0) return;
-      const m = back.multiply(p.getCTM()), pt = svg.createSVGPoint();
+      const m = back.multiply(p.getCTM()), pt = world.createSVGPoint();
       const xs = [], ys = [];
       [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].forEach(([x, y]) => { pt.x = x; pt.y = y; const q = pt.matrixTransform(m); xs.push(q.x); ys.push(q.y); });
       const x0 = Math.min(...xs), y0 = Math.min(...ys);
@@ -285,18 +297,19 @@
       r.setAttribute('x', x0 - 1); r.setAttribute('y', y0 - 1); r.setAttribute('width', Math.max(...xs) - x0 + 2); r.setAttribute('height', Math.max(...ys) - y0 + 2);
       hit.appendChild(r);
     });
-    h.insertBefore(hit, h.firstChild);
+    return hit;
   });
+  hots.forEach((h, i) => h.prepend(hitAreas[i]));
   skip.forEach((n) => { n.style.display = ''; });
 
   /* ---------------------------------------------------------- the lean in */
   let arrived = false;
   const arrive = () => { arrived = true; tw.classList.add('arrive'); };
-  const cam = $('.tw-cam', svg), far = $('.tw-far', svg), panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
+  const panL = $('.tw-pan-l', tw), panR = $('.tw-pan-r', tw);
   // The sun and the moon are in the sky, with the stars: set once, where
   // they look right from the visitor center; after that they move as the
   // sky does (a little as the street slides, out of view as it leans in).
-  const moonG = $('.tw-moon', svg), sunG = $('.tw-sun', svg);
+  const moonG = $('.tw-moon', scene), sunG = $('.tw-sun', scene);
   const placeOrbs = () => {
     const x = homeX() * 0.4 + vw * 0.8, y = BOTTOM - vh + Math.max(64, vh * 0.16);
     moonG.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
@@ -340,7 +353,7 @@
     showRobot = inView(bots.rjax.box[0], TARGET[0]);
     const [bayX, , bayWidth] = D.roles.hunter.zoom;
     const liftInView = inView(bayX, bayX + bayWidth);
-    if (showLift !== liftInView) svg.classList.toggle('tw-bay-visible', liftInView);
+    if (showLift !== liftInView) scene.classList.toggle('tw-bay-visible', liftInView);
     showLift = liftInView;
     showCctv = inView(1180, 1360);
     showDish = inView(3020, 3140);
@@ -349,21 +362,61 @@
       actorFrame = requestAnimationFrame(tickActors);
     }
   };
-  let base = null, camOn = false, barT = 0;
+  // Each slice is a real, bounded paint surface. The sky and the street
+  // move on two HTML compositor layers; SVG geometry stays at rest between
+  // changes of resolution or trips beyond the prepainted margin.
+  const makePlane = selector => {
+    const element = $(selector, scene);
+    return { element, slices: [...element.children].map(box => ({
+      box, art: box.firstElementChild, bounds: box.dataset.bounds?.split(' ').map(Number)
+    })) };
+  };
+  const skyPlane = makePlane('.tw-sky-plane'), streetPlane = makePlane('.tw-street-plane');
+  let barT = 0;
+  const skyY = y => y - (y - (BOTTOM - vh)) * .12;
+  const movePlane = (plane, x, y, w, h, density, moving) => {
+    // Keep a landmark's backing store anchored to the street. A horizontal
+    // pan can reuse it all the way across the screen, including reversals.
+    for (const slice of plane.slices) {
+      const { box, art, bounds } = slice;
+      const left = bounds ? Math.max(x, bounds[0]) : x;
+      const top = bounds ? Math.max(y, bounds[1]) : y;
+      const right = bounds ? Math.min(x + w, bounds[2]) : x + w;
+      const bottom = bounds ? Math.min(y + h, bounds[3]) : y + h;
+      const outside = right < left - w * .24 || bottom < top - h * .22;
+      if (outside !== slice.outside) {
+        slice.outside = outside;
+        box.classList.toggle('tw-culled', outside);
+      }
+      if (outside) continue;
+
+      const cache = slice.cache;
+      if (cache && left >= cache.left && top >= cache.top &&
+          right <= cache.right && bottom <= cache.bottom &&
+          density < cache.density * (moving ? 2.4 : 1.05) &&
+          (moving || density > cache.density * .85)) continue;
+      // Small sections fit in one surface. For long stretches of sky or
+      // road and close-ups, keep only a padded neighborhood at this scale.
+      const x0 = bounds ? Math.max(bounds[0], left - w * .58) : x - w * .58;
+      const y0 = bounds ? Math.max(bounds[1], top - h * .35) : y - h * .35;
+      const x1 = bounds ? Math.min(bounds[2], right + w * .58) : x + w * 1.58;
+      const y1 = bounds ? Math.min(bounds[3], bottom + h * .35) : y + h * 1.35;
+      slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density };
+      box.style.left = x0 + 'px';
+      box.style.top = y0 + 'px';
+      box.style.width = (x1 - x0) * density + 'px';
+      box.style.height = (y1 - y0) * density + 'px';
+      box.style.transform = `scale(${1 / density}) translateZ(0)`;
+      art.setAttribute('viewBox', `${x0} ${y0} ${x1 - x0} ${y1 - y0}`);
+    }
+    plane.element.style.transform = `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density})`;
+  };
   const placeVB = (b, moving) => {
     vb = b;
-    // Use the same camera transform for zooms and pans, rebasing long trips
-    // before their offset grows beyond the current viewport.
-    if (moving && base && Math.abs(base[0] - b[0]) < vw * .9) {
-      const s = base[2] / b[2];
-      cam.style.transform = `translate(${(base[0] - s * b[0]).toFixed(3)}px, ${(base[1] - s * b[1]).toFixed(3)}px) scale(${s.toFixed(5)})`;
-      camOn = true;
-    } else {
-      base = b.slice(); svg.setAttribute('viewBox', b.map((n) => n.toFixed(2)).join(' '));
-      if (camOn) { cam.style.transform = ''; camOn = false; }
-    }
-    farY = (b[1] - (BOTTOM - vh)) * 0.12;
-    far.style.transform = `translate(${(b[0] * 0.6).toFixed(2)}px, ${farY.toFixed(2)}px)`;
+    const [x, y, w, h] = b, density = viewportWidth / w;
+    movePlane(streetPlane, x, y, w, h, density, moving);
+    movePlane(skyPlane, x * .4, skyY(y), w, h, density, moving);
+    farY = y - skyY(y);
     // the browser bar's colour follows the sky, a few times a second while moving
     const now = performance.now();
     if (!moving || now - barT > 140) { barT = now; paintBar(); }
@@ -384,10 +437,9 @@
     if (reduced) { setVB(to); done?.(); return; }
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
-    if (camOn) setVB(vb);
     const from = vb.slice(), t0 = performance.now();
-    svg.classList.add('tw-moving', 'tw-zooming'); svg.classList.toggle('tw-glide', ms >= 2000);
-    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); placeVB(from.map((v, i) => v + (to[i] - v) * k), u < 1); if (u < 1) anim = requestAnimationFrame(f); else { svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide'); done?.(); } };
+    scene.classList.add('tw-moving', 'tw-zooming'); scene.classList.toggle('tw-glide', ms >= 2000);
+    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); placeVB(from.map((v, i) => v + (to[i] - v) * k), u < 1); if (u < 1) anim = requestAnimationFrame(f); else { scene.classList.remove('tw-moving', 'tw-zooming', 'tw-glide'); done?.(); } };
     anim = requestAnimationFrame(f);
   };
   const frame = (z, left) => {
@@ -451,14 +503,13 @@
   const smooth = (u) => u * u * u * (u * (u * 6 - 15) + 10);
   const glideDown = (u) => Math.pow(smooth(u), 1.75);
   const lampsOn = () => setTimeout(() => tw.classList.add('signlit'), 500);
-  const flyAway = () => { const b = $('.tw-bfly', svg); if (!b || tw.classList.contains('bfly-away')) return; tw.classList.add('bfly-away'); setTimeout(() => b.remove(), 4200); };
+  const flyAway = () => { const b = $('.tw-bfly', scene); if (!b || tw.classList.contains('bfly-away')) return; tw.classList.add('bfly-away'); setTimeout(() => b.remove(), 4200); };
   const loader = document.getElementById('pageLoader');
   const startBar = () => { if (barOn) return; barOn = true; paintBar(); };
   if (!reduced && loader && document.documentElement.classList.contains('is-loading')) {
     intro = true;
     tw.classList.add('intro');
     setVB([camX, BOTTOM - vh - RISE, vw, vh]);
-    tw._pre = $$('image', svg).filter((im) => im.getBoundingClientRect().width).map((im) => { const i = new Image(); i.src = im.getAttribute('href'); if (i.decode) i.decode().catch(() => {}); return i; });
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
@@ -574,7 +625,7 @@
       inner.scrollBy({ top: offset, behavior: reduced ? 'instant' : 'smooth' });
     }
     openedLetters.add(i);
-    $('.tw-hot[data-id="recs"] .tw-mailbox', svg).classList.add('seen');
+    $('.tw-hot[data-id="recs"] .tw-mailbox', scene).classList.add('seen');
   };
   // where each place lives on the web (the same links as the classic site's logo strip)
   const SITES = {
@@ -670,7 +721,9 @@
   const keepsakeFrame = () => {
     const { item, card } = keepsake;
     const [x, y] = item.dataset.anchor.split(' ').map(Number);
-    const matrix = svg.getScreenCTM().inverse().multiply(item.getScreenCTM());
+    // Both transforms must come from the same SVG viewport. A neighboring
+    // slice can have a different cached viewBox just after returning to town.
+    const matrix = item.ownerSVGElement.getCTM().inverse().multiply(item.getCTM());
     const p = new DOMPoint(x, y).matrixTransform(matrix);
     const bounds = item.getBBox();
     const right = new DOMPoint(bounds.x + bounds.width, y).matrixTransform(matrix);
@@ -696,7 +749,7 @@
     else {
       cancelAnimationFrame(anim);
       zoomUntil = 0;
-      svg.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
+      scene.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
     }
     if (restoreFocus) item.focus({ preventScroll: true });
   };
@@ -734,7 +787,7 @@
       settleKeepsake();
     });
   };
-  $$('[data-memory]', svg).forEach((item) => {
+  $$('[data-memory]', scene).forEach((item) => {
     const rim = item.querySelector('.tw-keepsake-rim');
     item.setAttribute('aria-expanded', 'false');
     rim.setAttribute('filter', fitted(rim, item.dataset.memory === 'trike' ? 'twHalo-toyota' : 'twHalo-vc'));
@@ -775,7 +828,7 @@
     if (lit !== id) { glow(null); glow(id); } else if (halos[id]) { halos[id].classList.add('keep'); halos[id]._lite.classList.add('keep'); }
     if (id === 'jm') { arrived = true; tw.classList.add('arrive', 'parked'); }
     chips.forEach((c) => c.classList.toggle('on', c.dataset.id === id));
-    const pin = $(`.tw-pin[data-id="${id}"]`, svg); if (pin) pin.classList.add('seen');
+    const pin = $(`.tw-pin[data-id="${id}"]`, scene); if (pin) pin.classList.add('seen');
     hideLabel(); panL.classList.remove('on'); panR.classList.remove('on');
   };
   const close = () => {
@@ -819,7 +872,7 @@
   $('.tw-x', panel).addEventListener('click', close);
   prevB.addEventListener('click', () => open(prevB.dataset.id));
   nextB.addEventListener('click', () => open(nextB.dataset.id));
-  svg.addEventListener('click', () => { if (!dragged) { if (keepsake) closeKeepsake(); else close(); } });
+  scene.addEventListener('click', () => { if (!dragged) { if (keepsake) closeKeepsake(); else close(); } });
   document.addEventListener('keydown', (e) => {
     if ($('.tw-resume-dialog[open]') || !stage.clientWidth || e.target.closest('select, input, textarea, [role="menu"]')) return;
     if (keepsake) {
@@ -852,7 +905,7 @@
   // moment between one part and the next.
   const hideLabel = () => label.classList.remove('on');
   const showLabel = (id) => {
-    const r = D.roles[id], s = stage.getBoundingClientRect(), pin = $(`.tw-pin[data-id="${id}"]`, svg);
+    const r = D.roles[id], s = stage.getBoundingClientRect(), pin = $(`.tw-pin[data-id="${id}"]`, scene);
     if (!pin) { hideLabel(); return; }
     const at = pin.getBoundingClientRect();
     label.style.setProperty('--tint', r.tint);
@@ -864,14 +917,11 @@
   let over = null, offT = 0;
   let sliding = 0, pendingHover;
   const slid = () => {
-    if (!sliding) { svg.classList.add('tw-moving'); hideLabel(); }
+    if (!sliding) { scene.classList.add('tw-moving'); hideLabel(); }
     clearTimeout(sliding);
     sliding = setTimeout(() => {
       sliding = 0;
-      if (!zooming()) {
-        if (camOn) setVB(vb);
-        svg.classList.remove('tw-moving');
-      }
+      if (!zooming()) scene.classList.remove('tw-moving');
       if (pendingHover !== undefined) {
         const id = pendingHover;
         pendingHover = undefined;
@@ -888,13 +938,13 @@
     offT = setTimeout(() => { over = null; glow(null); hideLabel(); }, 160);
   };
   const idAt = (t) => { if (!t || !t.closest) return null; if (t.closest('.tw-adtsticker')) return 'adt'; const h = t.closest('.tw-hot'); return h ? h.dataset.id : null; };
-  svg.addEventListener('pointerover', (e) => { if (showRobot && !sliding && !zooming()) overCol = colOf(e); hoverTo(idAt(e.target)); });
-  let colT = 0; svg.addEventListener('pointermove', (e) => { const n = performance.now(); if (showRobot && !sliding && !zooming() && n - colT > 45) { colT = n; overCol = colOf(e); } });
-  svg.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
+  scene.addEventListener('pointerover', (e) => { if (showRobot && !sliding && !zooming()) overCol = colOf(e); hoverTo(idAt(e.target)); });
+  let colT = 0; scene.addEventListener('pointermove', (e) => { const n = performance.now(); if (showRobot && !sliding && !zooming() && n - colT > 45) { colT = n; overCol = colOf(e); } });
+  scene.addEventListener('pointerout', (e) => hoverTo(idAt(e.relatedTarget)));
 
   /* ---------------------------------------------------------- the pointer */
-  const head = $('.tw-cctv-head', svg), dish = $('.tw-dish', svg), eyes = $$('.tw-follow', svg);
-  const toSVG = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(cam.getScreenCTM().inverse()); };
+  const head = $('.tw-cctv-head', scene), dish = $('.tw-dish', scene), eyes = $$('.tw-follow', scene);
+  const toSVG = (e) => { const p = world.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(world.getScreenCTM().inverse()); };
   let ptr = null;
   /* The security camera and the FICS dish sweep on their own. When the
      pointer is near, each turns to follow it; when the pointer goes, it eases
@@ -1018,11 +1068,7 @@
     if (!cur) { clearTimeout(offT); over = null; glow(null); hideLabel(); }
   });
 
-  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => {
-    visible = e.isIntersecting;
-    svg.classList.toggle('tw-paused', !visible);
-    syncActors();
-  }).observe(stage);
+
   const blockIntroScroll = (event) => {
     if (intro && !event.ctrlKey) event.preventDefault();
   };
@@ -1056,7 +1102,7 @@
     explored = true;
     slid(); placeVB(view(), true);
   };
-  svg.addEventListener('pointerdown', (e) => {
+  scene.addEventListener('pointerdown', (e) => {
     if (!e.isPrimary || e.button !== 0 || drag) return;
     dragged = false;
     if (intro || cur || keepsake || zooming()) return;
@@ -1068,7 +1114,7 @@
     if (!dragged && Math.abs(e.clientX - drag.startX) < 6) return;
     if (!dragged) {
       dragged = true; tw.classList.add('dragging');
-      svg.setPointerCapture(e.pointerId);
+      scene.setPointerCapture(e.pointerId);
     }
     const dt = Math.max(4, e.timeStamp - drag.time);
     const velocity = clamp((drag.lastX - e.clientX) / dt, -2.4, 2.4);
@@ -1087,14 +1133,14 @@
   };
   addEventListener('pointerup', endDrag);
   addEventListener('pointercancel', endDrag);
-  svg.addEventListener('lostpointercapture', endDrag);
+  scene.addEventListener('lostpointercapture', endDrag);
   panL.addEventListener('click', () => { if (!keepsake && !zooming()) panTo(camX - vw * 0.6); });
   panR.addEventListener('click', () => { if (!keepsake && !zooming()) panTo(camX + vw * 0.6); });
   const themeB = $('.tw-theme', tw);
   if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
 
   if (reduced) { arrived = true; tw.classList.add('arrive', 'parked'); }
-  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (keepsake) { cancelAnimationFrame(anim); zoomUntil = 0; svg.classList.remove('tw-moving', 'tw-zooming'); setVB(keepsakeFrame()); keepsake.cameraReady = true; settleKeepsake(); } else if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
+  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (keepsake) { cancelAnimationFrame(anim); zoomUntil = 0; scene.classList.remove('tw-moving', 'tw-zooming'); setVB(keepsakeFrame()); keepsake.cameraReady = true; settleKeepsake(); } else if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
   /* ---------------------------------------------------------- the compact bar */
   // Home (and the logo) slide back to the visitor center; the weather and
   // the menu open small lists under the bar.
@@ -1113,12 +1159,12 @@
     repair();
     if (hadFocus) $('#twMenu').focus();
   });
-  const exit = $('.tw-exit', svg);
+  const exit = $('.tw-exit', scene);
   if (exit) exit.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); if (dragged) return; if (window.hopTo) window.hopTo('classic.html'); else location.href = 'classic.html'; });
 
   /* ---------------------------------------------------------- the time machine */
   // Its display rolls through the eras it can take you to.
-  const tmYr = $('.tw-tm-yr', svg);
+  const tmYr = $('.tw-tm-yr', scene);
   if (tmYr && !reduced) { const ys = ['1977', '1984', '1998', '2007']; let k = 0; setInterval(() => { k = (k + 1) % ys.length; tmYr.textContent = ys[k]; }, 1400); }
   // Stepping in plays the standard site's own trip to the eras: the mark
   // flies from the bar to the middle and the era picker loads (hop.js).
@@ -1151,7 +1197,7 @@
   // the canvas at the screen's own size (one pixel per point is plenty for rain and snow)
   const sizeWx = () => { wxc.width = stage.clientWidth; wxc.height = stage.clientHeight; };
   const spawn = (mode, any) => {
-    const w = stage.clientWidth, h = stage.clientHeight, y = any ? Math.random() * h : -20;
+    const w = wxc.width, h = wxc.height, y = any ? Math.random() * h : -20;
     const z = 0.75 + Math.random() * 0.45;
     if (mode === 'snow') return { x: Math.random() * w, y, z, vx: 0, r: (1 + Math.random() * 2.4) * z, vy: (28 + Math.random() * 46) * z, ph: Math.random() * 6.3, sw: 10 + Math.random() * 22 };
     if (mode === 'rain') return { x: Math.random() * (w + 200), y, z, vx: 0, l: (10 + Math.random() * 12) * z, vy: (820 + Math.random() * 380) * z };
@@ -1201,11 +1247,32 @@
     sizeWx();
     const n = mode === 'snow' ? 190 : mode === 'rain' ? 240 : mode === 'fall' ? 34 : 0;
     parts = Array.from({ length: reduced ? Math.round(n / 4) : n }, () => spawn(mode, true));
-    if (n) wxRaf = requestAnimationFrame(wxLoop); else wctx.clearRect(0, 0, wxc.width, wxc.height);
+    wxRaf = 0;
+    if (n && visible) wxRaf = requestAnimationFrame(wxLoop); else wctx.clearRect(0, 0, wxc.width, wxc.height);
     tw.classList.toggle('wx-on', !!n);
   };
   document.querySelectorAll('#twWxPop [data-wx]').forEach((b) => b.addEventListener('click', () => { setWeather(b.dataset.wx); shut(); }));
   addEventListener('resize', () => { if (wx !== 'clear') sizeWx(); });
+
+  let stageInView = true;
+  const syncVisibility = () => {
+    visible = stageInView && !document.hidden;
+    scene.classList.toggle('tw-paused', !visible);
+    if (!visible) {
+      cancelAnimationFrame(actorFrame);
+      cancelAnimationFrame(wxRaf);
+      actorFrame = wxRaf = wxLast = 0;
+      wxCam = null;
+    } else {
+      syncActors();
+      if (parts.length && !wxRaf) wxRaf = requestAnimationFrame(wxLoop);
+    }
+  };
+  if ('IntersectionObserver' in window) new IntersectionObserver(([entry]) => {
+    stageInView = entry.isIntersecting;
+    syncVisibility();
+  }).observe(stage);
+  document.addEventListener('visibilitychange', syncVisibility);
 
   /* ---------------------------------------------------------- the damage */
   // Click a place again while you're looking at it and it takes the hit.
@@ -1226,7 +1293,7 @@
   const hits = {};
   const damaged = () => paneHits || dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || Object.keys(hits).length || Object.keys(dmg.tcars).length || dmg.hk || dmg.hdoor;
   const save = () => { repairButton.hidden = !damaged(); };
-  const localPt = (el, e) => { const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
+  const localPt = (el, e) => { const q = world.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
   const inPoly = (x, y, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) o = !o; } return o; };
   const seeded = (n) => { let v = Math.abs(Math.floor(n * 9301 + 49297)) % 2147483646 + 1; return () => (v = (v * 16807) % 2147483647) / 2147483647; };
   const NSel = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
@@ -1352,11 +1419,18 @@
       const angle = offset + Math.PI * 2 * (i + random() * .32) / count;
       return { angle, inner: tornEdge(angle), outer: polar(angle, reach) };
     });
+    const xs = poly.map(([x]) => x), ys = poly.map(([, y]) => y);
+    const limits = [[0, Math.min(...xs), 1], [0, Math.max(...xs), -1],
+      [1, Math.min(...ys), 1], [1, Math.max(...ys), -1]];
     const chunks = edges.map((edge, i) => {
       const next = edges[(i + 1) % count];
       const end = i === count - 1 ? next.angle + Math.PI * 2 : next.angle;
       const inner = [edge.inner, ...[.12, .24, .36, .48, .61, .74, .86].map(t => tornEdge(edge.angle + (end - edge.angle) * t)), next.inner];
-      return { inner, poly: [...inner, next.outer, edge.outer], gone: false };
+      // Clip overshooting rays once so the texture and cutout mask never
+      // need a backing surface larger than the pane.
+      const wedge = limits.reduce((p, [axis, edge, sign]) => cutPane(p, axis, edge, sign),
+        [...inner, next.outer, edge.outer]);
+      return { inner, poly: wedge, gone: false };
     });
     return { chunks, opening: chunks.flatMap(chunk => chunk.inner.slice(0, -1)) };
   };
@@ -1371,12 +1445,16 @@
       if (polygons.some(poly => inPoly(x, y, poly))) sticker.classList.add('is-detached');
     }
     const hole = pane.holes ? '' : polygons.map(poly => `<polygon class="tw-pane-opening" points="${glassPoints(poly)}"/>`).join('');
-    pane.marks.innerHTML = hole + pane.chunks.filter(chunk => !chunk.gone).map(chunk => `
-      <g class="tw-glass-chunk">
-        <polygon points="${glassPoints(chunk.poly)}"/>
-        <polygon points="${glassPoints(chunk.poly)}" fill="url(#twGlassGrain)"/>
-        <polyline points="${glassPoints(chunk.inner)}"/>
-      </g>`).join('');
+    const remaining = pane.chunks.filter(chunk => !chunk.gone && chunk.poly.length >= 3);
+    // Keep the grain continuous across the surviving glass. Painting it once
+    // per pane also avoids allocating a separate pattern surface for every shard.
+    const path = remaining.map(chunk => `M${glassPoints(chunk.poly)}Z`).join('');
+    const rim = remaining.map(chunk => `M${glassPoints(chunk.inner)}`).join('');
+    pane.marks.innerHTML = hole + (remaining.length ? `<g class="tw-glass-chunks">
+      <path class="tw-glass-body" d="${path}"/>
+      <path fill="url(#twGlassGrain)" d="${path}"/>
+      <path class="tw-glass-rim" d="${rim}"/>
+    </g>` : '');
   };
   let paneDamage = new WeakMap(), nextPane = 0, paneHits = 0;
   const strikePane = (root, key, poly, q, options = {}) => {
@@ -1509,10 +1587,10 @@
   };
 
   // The MacBook
-  const macCr = $('.tw-mac-fractures', svg);
+  const macCr = $('.tw-mac-fractures', scene);
   const pokeMac = (e) => {
     if (dmg.mac >= 2) return;
-    const q = localPt(macCr, e), pane = shapePane($('#twMacScr rect', svg));
+    const q = localPt(macCr, e), pane = shapePane($('#twMacScr rect', scene));
     if (!inPoly(q.x, q.y, pane)) return;
     dmg.mac++;
     strikePane(macCr, 0, pane, q, { dark: true, threshold: 0 });
@@ -1522,7 +1600,7 @@
 
   // Only the opening in a broken display window exposes the car behind it.
   const toyHot = hotOf('toyota'), crG = $('.tw-cracks', toyHot), showcars = $$('.tw-showcar', toyHot);
-  const showroomDoor = $('.tw-door-fractures', toyHot), showHoles = $('#twShowroomHoles', svg);
+  const showroomDoor = $('.tw-door-fractures', toyHot), showHoles = $('#twShowroomHoles', scene);
   const displayPanes = D.showroom.map(([x, y, w, h]) => rectPane(x + .55, y + .55, w - 1.1, h - 1.1));
   const showroomDoors = [rectPane(760, 426, 15, 56), rectPane(777, 426, 15, 56)];
   const showroomPanes = [
@@ -1595,7 +1673,7 @@
   // The HawkEye's screen
   const hkHot = hotOf('hunter'), hkG = $('.tw-hk-lcd', hkHot), hkCr = $('.tw-hk-cr', hkHot);
   const inkAt = (root, q, r) => add(root, `<circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${r.toFixed(2)}" class="tw-lcd-ink"/>`);
-  const screenPane = (id) => shapePane($(`#${id} rect`, svg));
+  const screenPane = (id) => shapePane($(`#${id} rect`, scene));
   const hkPane = screenPane('twHkScr');
   const pokeHunter = (e) => {
     const q = localPt(hkG, e);
@@ -1611,7 +1689,7 @@
   const betHot = hotOf('p-betai'), bwG = $('.tw-bwcr', betHot), tvCr = $('.tw-tvlcd-cr', betHot);
   const WIN = rectPane(3414, 404, 48, 36);
   const tvPane = screenPane('twTvScr');
-  const betHoles = $('#twBetHoles', svg);
+  const betHoles = $('#twBetHoles', scene);
   const pokeBet = (e) => {
     const q = localPt(bwG, e);
     if (!inPoly(q.x, q.y, WIN)) return;
@@ -1630,7 +1708,7 @@
   // The house: its windows give way after a few hits, the door after a few
   // more; either sets off its alarm (the ADT sign, then the police).
   const HOME_STOPS = new Set(['p-betai', 'p-avl', 'p-gatorgoods', 'p-sommiscript']);
-  const hwins = $$('.tw-hwin', svg), hdoor = $('.tw-hdoor', svg);
+  const hwins = $$('.tw-hwin', scene), hdoor = $('.tw-hdoor', scene);
   let homeT = 0;
   function houseAlarm() {
     if (dmg.home) return;
@@ -1677,7 +1755,7 @@
     e.stopPropagation();
     pokeHouse(el, e);
   }));
-  const attic = $('.tw-attic-glass', svg);
+  const attic = $('.tw-attic-glass', scene);
   attic.addEventListener('click', (e) => {
     if (dragged || keepsake || (cur && !HOME_STOPS.has(cur))) return;
     e.stopPropagation();
@@ -1687,7 +1765,7 @@
 
   // Malachowsky Hall: each window cracks, then gives way (the glass gone,
   // the rooms behind it plain to see).
-  const hallCr = $('.tw-hall-cr', svg), hallHoles = $('.tw-hall-holes', svg);
+  const hallCr = $('.tw-hall-cr', scene), hallHoles = $('.tw-hall-holes', scene);
   const pokeHall = (e) => {
     const q = localPt(hallCr, e), i = D.hall.polys.findIndex((p) => inPoly(q.x, q.y, p));
     if (i < 0) {
@@ -1697,7 +1775,7 @@
       return;
     }
     const result = strikePane(hallCr, i, D.hall.polys[i], q, { threshold: 3, holes: hallHoles, ground: D.hall.ground });
-    if (result === 'break') $('.tw-hall-gl', svg).setAttribute('mask', 'url(#twHallMask)');
+    if (result === 'break') $('.tw-hall-gl', scene).setAttribute('mask', 'url(#twHallMask)');
     save();
   };
 
@@ -1723,7 +1801,7 @@
       const welcomeGlass = id === 'vc';
       strikePane(root, key, poly, q, {
         dark, threshold: dark ? 0 : +(paneThreshold ?? (welcomeGlass ? 3 : 4)),
-        holes: paneHoles ? svg.getElementById(paneHoles) : null,
+        holes: paneHoles ? document.getElementById(paneHoles) : null,
         clearOnBreak, countAcrossPane: clearOnBreak || welcomeGlass
       });
       save();
@@ -1741,7 +1819,7 @@
 
   // The hard drive: a tap leaves a spot and sets the platter spinning; press
   // and hold and the head scores a ring all the way round as it spins.
-  const hddRot = $('.tw-hdd-rot', svg), hddRings = $('.tw-hdd-rings', svg);
+  const hddRot = $('.tw-hdd-rot', scene), hddRings = $('.tw-hdd-rings', scene);
   let hddHold = 0, hddRing = null, hddHeld = false;
   const pokeDrive = (e) => {
     if (hddHeld) { hddHeld = false; return; }
@@ -1794,12 +1872,12 @@
     dmg = fresh();
     paneDamage = new WeakMap(); paneHits = 0;
     stickers.forEach(sticker => sticker.classList.remove('is-detached'));
-    $$('.tw-pane-damage, .tw-pane-cutout, .tw-fallshard', svg).forEach(layer => layer.remove());
+    $$('.tw-pane-damage, .tw-pane-cutout, .tw-fallshard', scene).forEach(layer => layer.remove());
     Object.keys(hits).forEach((k) => delete hits[k]);
-    $$('.tw-dmg', svg).forEach((g) => g.remove());
+    $$('.tw-dmg', scene).forEach((g) => g.remove());
     [tcG, hkCr, bwG, tvCr, hallCr, hallHoles, crG, showroomDoor, showHoles, betHoles].forEach((g) => { if (g) g.innerHTML = ''; });
-    $('.tw-hall-gl', svg).removeAttribute('mask'); tw.classList.remove('hall-holed');
-    $$('.tw-hcr', svg).forEach((g) => { g.innerHTML = ''; });
+    $('.tw-hall-gl', scene).removeAttribute('mask'); tw.classList.remove('hall-holed');
+    $$('.tw-hcr', scene).forEach((g) => { g.innerHTML = ''; });
     hwins.forEach((w) => w.classList.remove('broke'));
     if (hdoor) hdoor.classList.remove('open');
     hkHot.classList.remove('lcd1', 'lcd2', 'lcd3', 'lcd4');
