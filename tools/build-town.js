@@ -664,7 +664,7 @@ const garageCasing = () => `<g transform="translate(3566 400)" class="tw-garage-
 
 const garage = () => {
   const [hx, hy] = HINGE, [ix, iy] = cv(39.237, 143.706);
-  return `
+  return [`
     <rect x="3536" y="378" width="238" height="108" class="tw-house"/><path d="M3536 381 V486 H3774 V381" fill="none" class="tw-fo tw-nohit"/>
     <rect x="3537" y="379" width="236" height="106" fill="url(#twSiding)" opacity=".48" pointer-events="none"/>
     <path d="M3534 379 L3655 330 L3776 379 Z" class="tw-house"/><path d="M3534 379 L3655 330 L3776 379 Z" fill="url(#twSiding)" class="tw-nohit"/>
@@ -694,7 +694,7 @@ const garage = () => {
     <image href="assets/images/town/garage-workshop.svg?v=2" x="3566" y="400" width="178" height="86" pointer-events="none" aria-hidden="true"/>
     <image href="assets/images/town/memory-sketch.webp" x="3725.4" y="417.8" width="10.5" height="8" transform="rotate(2 3731 426)" pointer-events="none"/>
     ${PROJ['p-wadfs']()}
-    ${storedCamry()}
+    `, `
     <rect x="3566" y="400" width="178" height="86" fill="url(#twBaySides)" pointer-events="none"/>
     ${garageCasing()}
     ${home()}
@@ -723,7 +723,7 @@ const garage = () => {
       <g transform="translate(${hx.toFixed(2)} ${hy.toFixed(2)})"><g class="tw-civ-hood" style="transform-origin:${((217.3 - 39.237) / 180 * 100).toFixed(1)}% ${((150 - 143.706) / 56 * 100).toFixed(1)}%;--up:${HOOD_UP}deg"><path d="M${HOOD.slice(6).map(([x, y]) => `${(x - hx).toFixed(2)} ${(y - hy).toFixed(2)}`).join(' L')}" class="tw-hood-under"/><image href="assets/images/town/civic-hood.webp" x="${(ix - hx).toFixed(2)}" y="${(iy - hy).toFixed(2)}" width="${(180 * CV.u).toFixed(2)}" height="${(56 * CV.u).toFixed(2)}" preserveAspectRatio="none"/></g></g>
     </g>`)}
     <g class="tw-steam" aria-hidden="true">${[0, 1, 2, 3, 4].map((k) => `<circle cx="${(CV.x + 8 + k * 4.5).toFixed(1)}" cy="${(HINGE[1] - 2).toFixed(1)}" r="${3 + (k % 2)}" style="--d:${(-k * 0.55).toFixed(2)}s;--dx:${k % 2 ? -5 : 4}px"/>`).join('')}</g>
-    <g class="tw-civ-tags" aria-hidden="true">${[['Spark plugs', 3615.4, 495.4, 470], ['Throttle body', 3610, 496.5, 478], ['AC compressor', 3604.6, 497.7, 486], ['Transmission', 3599.2, 499.3, 494]].map(([t, x, y, ty], i) => { return `<g style="--i:${i}"><path d="M3579 ${ty - 1.3} H3583 L${x} ${y}" class="tw-tag-l"/><circle cx="${x}" cy="${y}" r="1.25" class="tw-tag-ring"/><circle cx="${x}" cy="${y}" r=".6" class="tw-tag-d"/><text x="3578" y="${ty}" text-anchor="end" class="tw-tag-t">${t}</text></g>`; }).join('')}</g>`;
+    <g class="tw-civ-tags" aria-hidden="true">${[['Spark plugs', 3615.4, 495.4, 470], ['Throttle body', 3610, 496.5, 478], ['AC compressor', 3604.6, 497.7, 486], ['Transmission', 3599.2, 499.3, 494]].map(([t, x, y, ty], i) => { return `<g style="--i:${i}"><path d="M3579 ${ty - 1.3} H3583 L${x} ${y}" class="tw-tag-l"/><circle cx="${x}" cy="${y}" r="1.25" class="tw-tag-ring"/><circle cx="${x}" cy="${y}" r=".6" class="tw-tag-d"/><text x="3578" y="${ty}" text-anchor="end" class="tw-tag-t">${t}</text></g>`; }).join('')}</g>`];
 };
 
 /* The workbench beside it: a lean to with a pegboard, a lamp, and
@@ -1010,6 +1010,8 @@ const HILLS = (() => {
 // the artwork's travel, shadows and hover halos, in street coordinates.
 const slice = (name, bounds = '') => `<div class="tw-slice"${bounds ? ` data-bounds="${bounds}"` : ''}><svg class="tw-art-${name}" viewBox="0 0 1200 600"${name === 'sky' || name === 'street-front' ? ' aria-hidden="true"' : ''}>`;
 const endSlice = '</svg></div>';
+const [garageBack, garageFront] = garage();
+const homeOffset = HOMESH - EAST;
 const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illustrated street of places I’ve worked">
   <div class="tw-plane tw-sky-plane">${slice('sky')}
   <defs>
@@ -1557,12 +1559,19 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     </g>`)}
 
     </g>${endSlice}
-    ${slice('home', '3080 115 5370 720')}<g class="tw-art" transform="translate(${-EAST} 0)">
+    ${slice('home', '3080 230 4950 670')}<g class="tw-art" transform="translate(${-EAST} 0)">
     <!-- Home: the house, the garage with my Civic, the bench, and the
          projects around them (see PROJECTS), then palms to the east. -->
     <g transform="translate(${HOMESH} 0)">
     ${bench()}
-    ${garage()}
+    ${garageBack.trim()}
+    </g></g>${endSlice}
+    ${slice('camry', `${homeOffset + 3634} 418 ${homeOffset + 3750} 515`)}<g class="tw-art" transform="translate(${homeOffset} 0)">
+    ${storedCamry()}
+    </g>${endSlice}
+    ${slice('home-front', '3880 115 5370 690')}<g class="tw-art" transform="translate(${-EAST} 0)">
+    <g transform="translate(${HOMESH} 0)">
+    ${garageFront.trim()}
     ${tree(4222, 494, 1.0, 0)}${pine(4268, 498, 132)}${tree(4318, 496, 1.12, 2)}
     ${[[4236, 504, .7], [4290, 506, .6], [4344, 502, .75]].map(([x, y, k]) => bush(x, y, k)).join('')}
     ${[4200, 4212, 4226, 4248, 4276, 4300, 4330].map((x, k) => `<circle cx="${x}" cy="${512 + (k % 3) * 2}" r="1.6" class="tw-flower" style="--c:${['#ff6b8b', '#ffd166', '#c084fc', '#ff8fab', '#f97316'][k % 5]}"/>`).join('')}

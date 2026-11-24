@@ -1807,6 +1807,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 
 [data-memory] { cursor: pointer; pointer-events: all; }
 [data-memory]:focus:not(:focus-visible) { outline: none; }
+.tw-zooming [data-memory] > .tw-keepsake-rim { opacity: 0 !important; transition: none; }
 .tw-keepsake-rim { pointer-events: none; opacity: 0; transition: opacity .14s ease-out; }
 [data-memory]:is(.memory-hover, :hover, :focus-visible) > .tw-keepsake-rim { opacity: 1; }
 .tw-lightbox.captioned { animation: none; align-content: center; gap: .7rem; }
@@ -1845,3 +1846,9 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 }
 :is([data-theme="midnight"], [data-theme="terminal"]) .tw-memory-card { background: #2d261f; color: #f5e5c8; border-color: #776347; }
 @media (prefers-reduced-motion: reduce) { .tw-memory-card { transition: none; } }
+
+/* Avoid blurring a different part of the street behind the bar every frame. */
+html:not(.classic):has(.tw-scene.tw-zooming) .tw-bar > header.nav.glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}

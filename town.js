@@ -374,13 +374,16 @@
   const skyPlane = makePlane('.tw-sky-plane'), streetPlane = makePlane('.tw-street-plane');
   let barT = 0;
   const skyY = y => y - (y - (BOTTOM - vh)) * .12;
+  const planeTransform = (plane, x, y, density) =>
+    `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density / plane.baseDensity})`;
   const movePlane = (plane, x, y, w, h, density, moving, sweep) => {
     // Finish at the actual display scale. Leaving opposing scale transforms
     // on the layers can make the compositor reuse a low-resolution raster.
     const nextBase = sweep?.targetDensity ?? (moving ? plane.baseDensity || density : density);
     if (plane.baseDensity !== nextBase) plane.baseDensity = nextBase;
     const base = plane.baseDensity;
-    plane.element.style.transform = `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density / base})`;
+    const closeup = density > scale * 1.05;
+    plane.element.style.transform = planeTransform(plane, x, y, density);
     if (sweep && plane.sweep === sweep) return;
     plane.sweep = sweep;
     const [visibleLeft, visibleTop, visibleRight, visibleBottom] = sweep?.bounds ?? [x, y, x + w, y + h];
@@ -394,7 +397,8 @@
       const bottom = bounds ? Math.min(visibleBottom, bounds[3]) : visibleBottom;
       // A slice outside the zoom path still has its old coordinates.
       // Hide it before the parent layer switches to the new scale.
-      const outside = sweep ? right <= left || bottom <= top :
+      const outside = sweep || (closeup && !moving) ?
+        right <= left || bottom <= top :
         right < left - w * .24 || bottom < top - h * .22;
       if (outside !== slice.outside) {
         slice.outside = outside;
@@ -413,9 +417,12 @@
       const paintDensity = detail ? Math.min(sweep.targetDensity, rasterLimit) :
         sweep ? Math.min(sweepDensity, sweep.startDensity) : density;
       const cache = slice.cache;
+      // On the return trip, reuse a detailed layer that's already painted
+      // across this path. It will shrink on screen as the camera pulls back.
+      const reuseDetail = sweep && density > sweep.endDensity && cache?.detail;
       if (cache && left >= cache.left && top >= cache.top &&
           right <= cache.right && bottom <= cache.bottom &&
-          (sweep ? (detail ? cache.density === paintDensity : cache.density <= paintDensity * 1.45) :
+          (sweep ? (detail ? cache.density === paintDensity : reuseDetail || cache.density <= paintDensity * 1.45) :
             moving ? density < cache.density * 2.4 : density === cache.density)) {
         if (cache.base !== base) {
           cache.base = base;
@@ -427,12 +434,13 @@
       }
       // Zoom bounds already cover every intermediate frame. Extra margins
       // are only needed for open-ended panning.
-      const padX = sweep ? 0 : w * .58, padY = sweep ? 0 : h * .35;
+      const padX = sweep ? 0 : w * (closeup ? .08 : .58);
+      const padY = sweep ? 0 : h * (closeup ? .08 : .35);
       const x0 = bounds ? Math.max(bounds[0], left - padX) : left - padX;
       const y0 = bounds ? Math.max(bounds[1], top - padY) : top - padY;
       const x1 = bounds ? Math.min(bounds[2], right + padX) : right + padX;
       const y1 = bounds ? Math.min(bounds[3], bottom + padY) : bottom + padY;
-      slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density: paintDensity, base };
+      slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density: paintDensity, base, detail };
       box.style.left = x0 * base + 'px';
       box.style.top = y0 * base + 'px';
       box.style.width = (x1 - x0) * paintDensity + 'px';
@@ -461,8 +469,14 @@
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let zoomUntil = 0;
   const zooming = () => scene.classList.contains('tw-zooming') || performance.now() < zoomUntil;
-  const tween = (to, ms = 850, fn = ease, done) => {
+  let cameraMotion = [];
+  const stopCamera = () => {
     cancelAnimationFrame(anim);
+    for (const motion of cameraMotion) motion.cancel();
+    cameraMotion = [];
+  };
+  const tween = (to, ms = 850, fn = ease, done) => {
+    stopCamera();
     zoomUntil = reduced ? 0 : performance.now() + ms + 40;
     if (reduced) { setVB(to); done?.(); return; }
     // While the scene moves the glow steps aside (redrawing it at every
@@ -484,28 +498,57 @@
         bounds: [left, top, right, bottom],
         targetDensity: focus && !sky ? targetDensity : undefined,
         startDensity,
+        endDensity: targetDensity,
         focus: sky ? null : focus
       };
     };
     const sweeps = ms < 2000 ? [sweep(false), sweep(true)] : undefined;
+    const interpolate = u => {
+      const k = fn(clamp(u, 0, 1));
+      return from.map((v, i) => v + (to[i] - v) * k);
+    };
     let t0;
     const f = (t) => {
       t0 ??= t;
-      const u = clamp((t - t0) / ms, 0, 1), k = fn(u);
+      const u = (t - t0) / ms;
       if (u < 1) {
-        placeVB(from.map((v, i) => v + (to[i] - v) * k), true, sweeps);
+        const current = interpolate(u);
+        if (cameraMotion.length) {
+          // Keep input and weather coordinates in sync while the browser
+          // animates the prepared layers independently of the main thread.
+          vb = current;
+          farY = vb[1] - skyY(vb[1]);
+        } else {
+          placeVB(current, true, sweeps);
+        }
         anim = requestAnimationFrame(f);
       } else {
+        stopCamera();
         scene.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
         setVB(to);
         done?.();
       }
     };
+    const start = t => {
+      if (sweeps?.every(Boolean) && scene.animate) {
+        const steps = Math.ceil(ms / 12);
+        const frames = Array.from({ length: steps + 1 }, (_, i) => interpolate(i / steps));
+        cameraMotion = [streetPlane, skyPlane].map((plane, i) => {
+          const keyframes = frames.map(([x, y, w]) => ({
+            transform: planeTransform(plane, i ? x * .4 : x, i ? skyY(y) : y, viewportWidth / w)
+          }));
+          const motion = plane.element.animate(keyframes, { duration: ms, fill: 'both' });
+          motion.startTime = t;
+          return motion;
+        });
+      }
+      f(t);
+    };
     if (from[2] !== to[2] && sweeps?.some(Boolean)) {
       placeVB(from, true, sweeps);
       // Give the browser a paint at the prepared resolution before moving.
       zoomUntil += 80;
-      anim = requestAnimationFrame(() => { anim = requestAnimationFrame(f); });
+      anim = requestAnimationFrame(() => { anim = requestAnimationFrame(start); });
     } else {
       anim = requestAnimationFrame(f);
     }
@@ -815,7 +858,7 @@
     tw.classList.remove('memory-view', 'memory-settled');
     if (returnView) tween(view(), 500);
     else {
-      cancelAnimationFrame(anim);
+      stopCamera();
       zoomUntil = 0;
       scene.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
     }
@@ -1210,7 +1253,24 @@
   if (themeB) themeB.addEventListener('click', () => { const b = document.getElementById('themeBtn'); if (b) b.click(); });
 
   if (reduced) { arrived = true; tw.classList.add('arrive', 'parked'); }
-  addEventListener('resize', () => { if (!stage.clientWidth || !stage.clientHeight) return; measure(); if (keepsake) { cancelAnimationFrame(anim); zoomUntil = 0; scene.classList.remove('tw-moving', 'tw-zooming'); setVB(keepsakeFrame()); keepsake.cameraReady = true; settleKeepsake(); } else if (cur) setVB(frame(zoomOf(cur), panel.classList.contains('left'))); else setVB(view()); });
+  addEventListener('resize', () => {
+    if (!stage.clientWidth || !stage.clientHeight) return;
+    measure();
+    if (!intro && scene.classList.contains('tw-zooming')) {
+      stopCamera();
+      zoomUntil = 0;
+      scene.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
+    }
+    if (keepsake) {
+      setVB(keepsakeFrame());
+      keepsake.cameraReady = true;
+      settleKeepsake();
+    } else if (cur) {
+      setVB(frame(zoomOf(cur), panel.classList.contains('left')));
+    } else {
+      setVB(view());
+    }
+  });
   /* ---------------------------------------------------------- the compact bar */
   // Home (and the logo) slide back to the visitor center; the weather and
   // the menu open small lists under the bar.
