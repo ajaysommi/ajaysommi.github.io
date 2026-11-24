@@ -392,8 +392,10 @@
       const top = bounds ? Math.max(visibleTop, bounds[1]) : visibleTop;
       const right = bounds ? Math.min(visibleRight, bounds[2]) : visibleRight;
       const bottom = bounds ? Math.min(visibleBottom, bounds[3]) : visibleBottom;
-      if (sweep && (right <= left || bottom <= top)) continue;
-      const outside = right < left - w * .24 || bottom < top - h * .22;
+      // A slice outside the zoom path still has its old coordinates.
+      // Hide it before the parent layer switches to the new scale.
+      const outside = sweep ? right <= left || bottom <= top :
+        right < left - w * .24 || bottom < top - h * .22;
       if (outside !== slice.outside) {
         slice.outside = outside;
         box.classList.toggle('tw-culled', outside);
