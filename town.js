@@ -367,7 +367,7 @@
   // changes of resolution or trips beyond the prepainted margin.
   const makePlane = selector => {
     const element = $(selector, scene);
-    return { element, slices: [...element.children].map(box => ({
+    return { element, baseDensity: 0, slices: [...element.children].map(box => ({
       box, art: box.firstElementChild, bounds: box.dataset.bounds?.split(' ').map(Number)
     })) };
   };
@@ -375,6 +375,11 @@
   let barT = 0;
   const skyY = y => y - (y - (BOTTOM - vh)) * .12;
   const movePlane = (plane, x, y, w, h, density, moving) => {
+    // Finish at the actual display scale. Leaving opposing scale transforms
+    // on the layers can make the compositor reuse a low-resolution raster.
+    const baseChanged = !plane.baseDensity || (!moving && plane.baseDensity !== density);
+    if (baseChanged) plane.baseDensity = density;
+    const base = plane.baseDensity;
     // Keep a landmark's backing store anchored to the street. A horizontal
     // pan can reuse it all the way across the screen, including reversals.
     for (const slice of plane.slices) {
@@ -391,25 +396,24 @@
       if (outside) continue;
 
       const cache = slice.cache;
-      if (cache && left >= cache.left && top >= cache.top &&
+      if (!baseChanged && cache && cache.base === base && left >= cache.left && top >= cache.top &&
           right <= cache.right && bottom <= cache.bottom &&
-          density < cache.density * (moving ? 2.4 : 1.05) &&
-          (moving || density > cache.density * .85)) continue;
+          (moving ? density < cache.density * 2.4 : density === cache.density)) continue;
       // Small sections fit in one surface. For long stretches of sky or
       // road and close-ups, keep only a padded neighborhood at this scale.
       const x0 = bounds ? Math.max(bounds[0], left - w * .58) : x - w * .58;
       const y0 = bounds ? Math.max(bounds[1], top - h * .35) : y - h * .35;
       const x1 = bounds ? Math.min(bounds[2], right + w * .58) : x + w * 1.58;
       const y1 = bounds ? Math.min(bounds[3], bottom + h * .35) : y + h * 1.35;
-      slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density };
-      box.style.left = x0 + 'px';
-      box.style.top = y0 + 'px';
+      slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density, base };
+      box.style.left = x0 * base + 'px';
+      box.style.top = y0 * base + 'px';
       box.style.width = (x1 - x0) * density + 'px';
       box.style.height = (y1 - y0) * density + 'px';
-      box.style.transform = `scale(${1 / density}) translateZ(0)`;
+      box.style.transform = base === density ? 'translateZ(0)' : `scale(${base / density}) translateZ(0)`;
       art.setAttribute('viewBox', `${x0} ${y0} ${x1 - x0} ${y1 - y0}`);
     }
-    plane.element.style.transform = `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density})`;
+    plane.element.style.transform = `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density / base})`;
   };
   const placeVB = (b, moving) => {
     vb = b;
