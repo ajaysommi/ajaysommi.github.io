@@ -673,9 +673,11 @@ const onScrollFrame = (() => {
        sheet swept across the page on a slant; a layer that size, turned, is
        drawn in tiles by Safari and by a real graphics card, and it went by in
        pieces.) */
-    const paper = document.createElement('div');
-    paper.className = 'loader-paper';
-    el.prepend(paper);
+    const paper = el.querySelector('.loader-paper') || document.createElement('div');
+    if (!paper.parentNode) {
+      paper.className = 'loader-paper';
+      el.prepend(paper);
+    }
     // (The easing is on the segment, not on the whole animation, which would squeeze every time in it.)
     anims.push(ani(paper, [
       { opacity: 1, easing: 'linear' },

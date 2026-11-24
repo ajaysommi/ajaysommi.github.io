@@ -46,7 +46,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css?v=3" />
   <link rel="stylesheet" href="mobile.css?v=26" />
-  <link rel="stylesheet" href="town.css?v=103" />
+  <link rel="stylesheet" href="town.css?v=104" />
   <link rel="stylesheet" href="controls.css?v=9" />
 
   <script>
@@ -108,6 +108,7 @@
 
   <!-- Boot sequence; removed by script.js, with a CSS-only fallback timeout. -->
   <div class="page-loader" id="pageLoader" aria-hidden="true">
+    <div class="loader-paper town-paint-paper"><svg class="town-paint-field" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true"></svg></div>
     <div class="loader-stars"></div>
     <div class="loader-card">
       <!-- Minimal experiment: the flat loader. Hidden without minimal.css. -->
@@ -138,6 +139,8 @@
        two frames in, so none of it is spent before the first paint. */
     (function () { var l = document.getElementById('pageLoader'); if (l && location.hash) l.classList.add('is-fixed'); if (l) requestAnimationFrame(function () { requestAnimationFrame(function () { l.classList.add('is-go'); }); }); })();
   </script>
+
+  <script async src="town-paint.js?v=1"></script>
 
   <!-- Ambient field. One environment under the whole page whose lighting
        follows the chapter you are reading; script.js blends between seven
@@ -2741,7 +2744,7 @@
   <!-- Toasts -->
   <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
 
-  <script type="module" src="script.js?v=24"></script>
+  <script type="module" src="script.js?v=25"></script>
   <script src="haptics.js" defer></script>
   <script src="hop.js?v=15" defer></script>
   <script src="brand.js" defer></script>

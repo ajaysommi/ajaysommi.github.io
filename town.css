@@ -1852,3 +1852,41 @@ html:not(.classic):has(.tw-scene.tw-zooming) .tw-bar > header.nav.glass {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
+
+/* A woven ground for the Sommiville opening. It shares the reveal's paper
+   layer, so the pigment and the ground dissolve into the sky together. */
+.town-paint-field { display: none; }
+@media (min-width: 720px) {
+  .town-painted {
+    --paint-moss: #53745d; --paint-water: #477f8d;
+    --paint-clay: #ae6956; --paint-ochre: #a18044;
+  }
+  [data-theme="midnight"] .town-painted {
+    --paint-moss: #94b79c; --paint-water: #82b5c3;
+    --paint-clay: #d09681; --paint-ochre: #cdb283;
+  }
+  .town-painted .town-paint-paper {
+    overflow: hidden;
+    background-image: var(--paint-linen, none);
+  }
+  .town-painted .town-paint-field { display: block; width: 100%; height: 100vh; height: 100lvh; }
+  .town-painted .m-load-line i { background: var(--paint-linen, none), linear-gradient(90deg, var(--stroke-0), var(--stroke-1), var(--stroke-2)); }
+  .town-painted .m-load-smile { stroke: url(#town-smile-ink); }
+  .town-painted .town-ink { transition: opacity .34s ease-out; }
+  .town-painted.is-flying .town-ink { opacity: 0; }
+}
+@media (min-width: 720px) and (prefers-reduced-motion: no-preference) {
+  .town-painted .town-brush {
+    transform-box: fill-box;
+    clip-path: inset(-2% 100% -2% -1%);
+  }
+  .town-painted.is-go .town-brush {
+    animation: town-lay-pigment var(--brush-time, 1.1s) cubic-bezier(.22,.58,.31,1) var(--brush-delay, 0ms) forwards;
+  }
+  .town-brush-tip { transform: translateX(var(--brush-travel)); }
+  .town-painted.is-go .town-brush-tip {
+    animation: town-brush-travel var(--brush-time) cubic-bezier(.22,.58,.31,1) var(--brush-delay) forwards;
+  }
+  @keyframes town-brush-travel { to { transform: translateX(0); } }
+  @keyframes town-lay-pigment { to { clip-path: inset(-2% -1% -2% -1%); } }
+}
