@@ -664,6 +664,15 @@ const onScrollFrame = (() => {
 
     if (phone) flySoft(); else flyPieces();
 
+    // Keep the printed mark intact through the blink. The ink clears only
+    // on the approach to the menu, on the same clock as the moving pieces.
+    el.querySelectorAll('.town-ink').forEach((ink) => {
+      anims.push(ani(ink, [
+        { opacity: 1 }, { opacity: 1, offset: o(TS + MOVE * .52) },
+        { opacity: 0, offset: o(TS + MOVE) }, { opacity: 0 }
+      ], { duration: D, ...fx }));
+    });
+
     // The smile and bar are left behind, thinning away as the mark leaves.
     if (bar) anims.push(ani(bar, [{ opacity: 1 }, { opacity: 1, offset: o(TS) }, { opacity: 0, offset: o(TS + 190) }, { opacity: 0 }], { duration: D, ...fx }));
 

@@ -200,7 +200,7 @@ window.POCKET = { start(room, exit) {
       return textScreen('Fortune', `<p class="q" style="font-size:18px;margin-top:20px">“${esc(P.quote)}”</p>`);
     },
     eggs: () => textScreen('Easter eggs', window.EGGS.list.map(([id, n, d]) => window.EGGS.has(id) ? `<p>★ <b>${esc(n)}</b><br/><span class="m">${esc(d)}</span></p>` : '<p class="m">☆ ??? still hidden</p>').join('') + '<div class="hint">some only live on the desktop version</div>'),
-    desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="index.html">see the classic site</a>.</p>'),
+    desk: () => textScreen('More eras', '<h2>There are whole computers.</h2><p>On a laptop or desktop, this portfolio boots a full operating system from the era you pick.</p><p>Open this page on a computer to try them.</p><p class="m">Or <a href="classic.html">see the classic site</a>.</p>'),
     letter: () => textScreen('A Letter', window.STORY.html('pocket')),
     /* The Music Store, 2003: what everyone was buying, 99 cents a song. */
     store: () => ({ type: 'menu', title: 'Music Store', items: TOP04.map(([s, a], i) => [li(s, store04().includes(i) ? '✓' : '›'), () => open('song', i)]) }),

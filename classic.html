@@ -46,7 +46,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="minimal.css?v=3" />
   <link rel="stylesheet" href="mobile.css?v=26" />
-  <link rel="stylesheet" href="town.css?v=103" />
+  <link rel="stylesheet" href="town.css?v=105" />
   <link rel="stylesheet" href="controls.css?v=9" />
 
   <script>
@@ -239,7 +239,7 @@
     <a href="#skills">Skills<span>04</span></a>
     <a href="#recs">Recommendations<span>05</span></a>
     <a href="resume.html">Resume<span>06</span></a>
-    <a href="eras.html">Another era<span>07</span></a>
+    <a href="eras.html?from=classic">Another era<span>07</span></a>
     <a href="#contact" class="sheet-cta">Contact<span>→</span></a>
   </nav>
 
@@ -405,7 +405,7 @@
         <a class="mx-btn" href="https://www.linkedin.com/in/ajay-sommi/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.980 3.500a2.490 2.490 0 1 1 0 4.980 2.490 2.490 0 0 1 0-4.980zM3 9.750h4V21H3zM9.500 9.750h3.800v1.540h.060c.530-1 1.820-2.050 3.750-2.050 4 0 4.750 2.640 4.750 6.070V21h-4v-5.050c0-1.200-.020-2.750-1.680-2.750s-1.940 1.310-1.940 2.660V21h-4z"/></svg></a>
       </div>
     </section>
-    <a class="mx-tt" href="eras.html"><span class="mx-tt-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></span><span>Step into the time machine</span></a>
+    <a class="mx-tt" href="eras.html?from=classic"><span class="mx-tt-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1h7v1.2c0 1.6-1.4 2.6-2.6 3.8 1.2 1.2 2.6 2.2 2.6 3.8V11h-7V9.8c0-1.6 1.4-2.6 2.6-3.8C3.9 4.8 2.5 3.8 2.5 2.2Z" fill="currentColor"/></svg></span><span>Step into the time machine</span></a>
     <p class="mx-psst"><span class="mx-psst-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5V15H4ZM2 17h20l-1 2H3Z" fill="currentColor"/></svg></span><span><b>Psst.</b> This page has another side to it, a place you can wander around in. It only opens on a computer.</span></p>
     <p class="mx-foot mx-mono">© 2026 Ajay Sommi</p>
 
@@ -554,7 +554,7 @@
          phone it floats over the bottom nav and says less), and its close button puts it away until the next
          load. -->
     <div class="era-ad-wrap" id="eraAd"><div class="era-ad-box">
-      <a href="eras.html" class="era-ad">
+      <a href="eras.html?from=classic" class="era-ad">
         <span class="era-ad-stripes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
         <span class="era-ad-copy">
           <span class="era-ad-kicker"><b>New</b></span>
@@ -565,7 +565,7 @@
       </a>
       <button type="button" class="era-ad-x ui-close" aria-label="Hide this for now"></button>
     </div></div>
-    <a href="eras.html" class="era-mini glass" id="eraMini" aria-label="Boot this portfolio on an older device" hidden><span class="era-mini-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>Time Travel</a>
+    <a href="eras.html?from=classic" class="era-mini glass" id="eraMini" aria-label="Boot this portfolio on an older device" hidden><span class="era-mini-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>Time Travel</a>
 
     <!-- HERO -->
     <section class="hero">
@@ -1342,7 +1342,7 @@
     <!-- The last thing on the page, on a computer: for whoever scrolls all
          the way down, the way into the eras. -->
     <section class="finale" id="finale" aria-label="Another era">
-      <a href="eras.html">
+      <a href="eras.html?from=classic">
         <span class="finale-st" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
         <span><span class="finale-k">You made it to the bottom. One more thing</span><span class="finale-t">Try this portfolio in <span class="finale-yr" data-years="1977,1984,1998,2007">1977</span></span><span class="finale-s">The same story, booted on the machines of another time. Pick one and step in.</span></span>
         <span class="finale-go">Step in <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9m-3.5-4L12.5 8l-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1429,7 +1429,7 @@
   <!-- Toasts -->
   <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
 
-  <script type="module" src="script.js?v=24"></script>
+  <script type="module" src="script.js?v=26"></script>
   <script src="haptics.js" defer></script>
   <script src="hop.js?v=15" defer></script>
   <script src="brand.js" defer></script>

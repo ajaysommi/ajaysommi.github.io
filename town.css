@@ -1860,20 +1860,28 @@ html:not(.classic):has(.tw-scene.tw-zooming) .tw-bar > header.nav.glass {
   .town-painted {
     --paint-moss: #53745d; --paint-water: #477f8d;
     --paint-clay: #ae6956; --paint-ochre: #a18044;
+    --paint-distance: #bfcbd6; --paint-ridge: #a3b9cc; --paint-meadow: #c0ca94;
+    --paint-wood: #83a48d; --paint-highlight: #fff3ce;
+    --paint-sheet: #f3eee3; --paint-light: #faf8ef;
   }
   [data-theme="midnight"] .town-painted {
     --paint-moss: #94b79c; --paint-water: #82b5c3;
     --paint-clay: #d09681; --paint-ochre: #cdb283;
+    --paint-distance: #495067; --paint-ridge: #515970; --paint-meadow: #475d5e;
+    --paint-wood: #3c5751; --paint-highlight: #b9c5b3;
+    --paint-sheet: #191d20; --paint-light: #242927;
   }
   .town-painted .town-paint-paper {
     overflow: hidden;
-    background-image: var(--paint-linen, none);
+    background: radial-gradient(ellipse at 48% 33%, var(--paint-light), var(--paint-sheet) 76%);
+  }
+  .town-painted .town-paint-paper::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image: var(--paint-linen, none); opacity: .78;
   }
   .town-painted .town-paint-field { display: block; width: 100%; height: 100vh; height: 100lvh; }
   .town-painted .m-load-line i { background: var(--paint-linen, none), linear-gradient(90deg, var(--stroke-0), var(--stroke-1), var(--stroke-2)); }
   .town-painted .m-load-smile { stroke: url(#town-smile-ink); }
-  .town-painted .town-ink { transition: opacity .34s ease-out; }
-  .town-painted.is-flying .town-ink { opacity: 0; }
 }
 @media (min-width: 720px) and (prefers-reduced-motion: no-preference) {
   .town-painted .town-brush {
@@ -1883,10 +1891,15 @@ html:not(.classic):has(.tw-scene.tw-zooming) .tw-bar > header.nav.glass {
   .town-painted.is-go .town-brush {
     animation: town-lay-pigment var(--brush-time, 1.1s) cubic-bezier(.22,.58,.31,1) var(--brush-delay, 0ms) forwards;
   }
-  .town-brush-tip { transform: translateX(var(--brush-travel)); }
-  .town-painted.is-go .town-brush-tip {
-    animation: town-brush-travel var(--brush-time) cubic-bezier(.22,.58,.31,1) var(--brush-delay) forwards;
+  .town-painted .town-relief { opacity: 0; }
+  .town-painted.is-go .town-relief {
+    animation: town-print-relief 1.35s cubic-bezier(.2,.65,.3,1) var(--print-delay, 0ms) both;
   }
-  @keyframes town-brush-travel { to { transform: translateX(0); } }
+  .town-painted.is-go .town-contour {
+    stroke-dasharray: 1;
+    animation: town-trace-contour 1.2s ease-out var(--print-delay, 0ms) both;
+  }
+  @keyframes town-trace-contour { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes town-print-relief { from { opacity: 0; transform: translate(-13px, -8px); } to { opacity: 1; transform: none; } }
   @keyframes town-lay-pigment { to { clip-path: inset(-2% -1% -2% -1%); } }
 }

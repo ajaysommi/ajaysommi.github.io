@@ -1,5 +1,5 @@
-// A few translucent passes of a loaded brush. Generate the paths once per visit.
-// Each pass tapers with pressure, leaving individual bristles at its dry end.
+// Print a new valley study on the opening paper each visit. Only the logo uses
+// wet brushwork. The surrounding landforms use flat inks like the town scene.
 (() => {
   const paper = document.querySelector('.town-paint-paper');
   if (!paper || !matchMedia('(min-width: 720px)').matches) return;
@@ -52,46 +52,94 @@
     }
   }
 
-  // Short uneven threads catch light where the warp crosses the weft.
-  // One small repeat supplies both the screen and the wet paint on the bar.
+  // A tile of cotton rag paper. Crossing threads have a lit and a shadowed
+  // edge, interspersed with pulp and a few longer fibres. Draw it only once.
   const cloth = document.createElement('canvas');
-  cloth.width = cloth.height = 96;
+  cloth.width = cloth.height = 192;
   const ctx = cloth.getContext('2d');
   if (ctx) {
-    for (let i = 0; i < 32; i++) {
-      for (let j = 0; j < 32; j++) {
-        const upright = (i + j) % 2 === 0;
-        const x = i * 3 + between(-.5, .5), y = j * 3 + between(-.5, .5);
-        ctx.fillStyle = `rgba(140,128,105,${between(.025, .13)})`;
-        ctx.fillRect(x, y, upright ? 1 : between(2, 4), upright ? between(2, 4) : 1);
+    const grain = ctx.createImageData(192, 192);
+    for (let i = 0; i < grain.data.length; i += 4) {
+      const shade = Math.random() < .5 ? 48 : 247;
+      grain.data[i] = shade;
+      grain.data[i + 1] = shade - 4;
+      grain.data[i + 2] = shade - 12;
+      grain.data[i + 3] = between(0, 22);
+    }
+    ctx.putImageData(grain, 0, 0);
+    for (let y = 0; y < 192; y += 3) {
+      for (let x = 0; x < 192; x += 3) {
+        const warp = (x + y) % 6 === 0;
+        const start = between(-.5, .5), length = between(1.6, 3.4);
+        ctx.fillStyle = 'rgba(87,72,52,.11)';
+        ctx.fillRect(x + start, y, warp ? .7 : length, warp ? length : .7);
+        ctx.fillStyle = 'rgba(255,243,216,.11)';
+        ctx.fillRect(x + start + .7, y + .7, warp ? .7 : length, warp ? length : .7);
       }
+    }
+    for (let i = 0; i < 94; i++) {
+      const x = between(0, 192), y = between(0, 192);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + 2, y - 1, x + between(3, 9), y + between(-2, 1));
+      ctx.lineWidth = between(.35, .8);
+      ctx.strokeStyle = 'rgba(141,123,91,.17)';
+      ctx.stroke();
     }
     loader.style.setProperty('--paint-linen', `url("${cloth.toDataURL()}")`);
   }
 
-  const fieldDefs = svg(field, 'defs', {});
-  const edge = svg(fieldDefs, 'linearGradient', { id: 'town-brush-edge' });
-  svg(edge, 'stop', { offset: '.82', 'stop-color': 'white' });
-  svg(edge, 'stop', { offset: '1', 'stop-color': 'white', 'stop-opacity': 0 });
-  const mirror = Math.random() < .5;
-  const composition = svg(field, 'g', { transform: mirror ? 'translate(1000 0) scale(-1 1)' : 'translate(0 0)' });
-  function sweep(x, y, angle, length, width, bend, color, opacity, delay) {
-    const axis = svg(composition, 'g', { transform: `translate(${x} ${y}) rotate(${angle})` });
-    const id = 'town-sweep-' + delay;
-    const mask = svg(fieldDefs, 'mask', { id, maskUnits: 'userSpaceOnUse', x: -5, y: -240, width: length + 10, height: 480 });
-    const tip = svg(mask, 'rect', { x: -length * .3, y: -240, width: length * 1.6, height: 480, fill: 'url(#town-brush-edge)', class: 'town-brush-tip' });
-    tip.style.setProperty('--brush-travel', -length * 1.3 + 'px');
-    tip.style.setProperty('--brush-delay', delay + 'ms');
-    tip.style.setProperty('--brush-time', Math.round(between(950, 1610)) + 'ms');
-    const stroke = svg(axis, 'g', { mask: `url(#${id})` });
-    brush(stroke, length, width, bend, color, opacity);
+  // The slope is shared by all ink layers within a corner. Spacing varies
+  // along the slope so the lowland, ridge and bank separate and meet again.
+  function relief(parent, width, height, inks) {
+    const bend = between(-.12, .12), phase = between(0, 2 * Math.PI);
+    const drift = between(.09, .17);
+    function shore(t, level) {
+      const envelope = Math.sin(Math.PI * t);
+      const x = width * (t + .10 * envelope * Math.sin(2 * Math.PI * t + phase));
+      const y = height * (1 - t + envelope * (bend + drift * Math.sin(2 * Math.PI * t) + .045 * Math.sin(5 * Math.PI * t + phase)));
+      return [level * x, level * y + (1 - level) * height * .16 * envelope * Math.sin(3 * Math.PI * t + phase)];
+    }
+    const pair = ([x, y]) => coord(x) + ' ' + coord(y);
+    function line(level, start = 0, end = 1) {
+      const pts = Array.from({ length: 27 }, (_, i) => shore(start + (end - start) * i / 26, level));
+      let d = 'M' + pair(pts[0]);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const [x, y] = pts[i], next = pts[i + 1];
+        d += 'Q' + pair(pts[i]) + ' ' + pair([(x + next[0]) / 2, (y + next[1]) / 2]);
+      }
+      return d + 'L' + pair(pts[pts.length - 1]);
+    }
+    function rule(level, start, end, ink, opacity, weight) {
+      svg(parent, 'path', { d: line(level, start, end), fill: 'none', stroke: ink,
+        opacity, 'stroke-width': weight, 'stroke-linecap': 'round', pathLength: 1, class: 'town-contour' });
+    }
+    [1, .79, .57].forEach((level, i) => {
+      path(parent, line(level) + ' L0 0Z', inks[i], [.38, .46, .47][i]);
+      rule(level, .03, .96, inks[i], .50, .8);
+    });
+    // Short contours and a broken line of sunlit ink, like the marks on the
+    // mountain faces and meadow in the scene. Leave clear paper between them.
+    rule(1.045, .08, .54, inks[1], .38, .8);
+    rule(1.045, .565, .71, inks[1], .32, .8);
+    rule(.85, .25, .89, 'var(--paint-highlight)', .70, 1.3);
+    rule(.61, .06, .41, 'var(--paint-highlight)', .64, .9);
+    for (let i = 0; i < 65; i++) {
+      const [x, y] = shore(between(.05, .95), between(.27, .97));
+      svg(parent, 'path', { d: `M${coord(x)} ${coord(y)}q1.4 -.6 ${coord(between(1.6, 5))} -1.4`,
+        stroke: i % 3 ? inks[2] : 'var(--paint-highlight)', opacity: between(.22, .53), fill: 'none',
+        'stroke-width': between(.65, 1.45), 'stroke-linecap': 'round' });
+    }
   }
-  const y = between(135, 260), angle = between(-20, -8);
-  sweep(-145, y, angle, between(590, 780), between(86, 138), between(30, 70), pigments[0], .17, 0);
-  sweep(-90, y + between(16, 48), angle - 5, between(390, 540), 36, 46, pigments[1], .15, 140);
-  const lower = between(435, 545), slant = between(147, 166);
-  sweep(1090, lower, slant, between(570, 745), between(95, 150), between(-65, -25), pigments[1], .17, 70);
-  sweep(1050, lower + between(12, 45), slant - 3, between(470, 650), between(20, 47), -33, glaze, .23, 220);
+  const flip = Math.random() < .5;
+  const print = svg(field, 'g', { transform: flip ? 'translate(1000 0) scale(-1 1)' : 'translate(0 0)' });
+  const ridge = svg(print, 'g', { transform: 'translate(1000 0) scale(-1 1)' });
+  const ridgeLayers = svg(ridge, 'g', { class: 'town-relief' });
+  relief(ridgeLayers, between(470, 700), between(210, 318), ['var(--paint-distance)', 'var(--paint-ridge)', 'var(--paint-water)']);
+  const meadow = svg(print, 'g', { transform: 'translate(0 700) scale(1 -1)' });
+  const meadowLayers = svg(meadow, 'g', { class: 'town-relief' });
+  meadowLayers.style.setProperty('--print-delay', '120ms');
+  relief(meadowLayers, between(540, 750), between(215, 345), ['var(--paint-meadow)', 'var(--paint-wood)', 'var(--paint-moss)']);
 
   // The texture sits inside each moving piece, so its painted edge follows the
   // original AJ silhouette through assembly and the flight to the navigation.

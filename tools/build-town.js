@@ -1666,6 +1666,9 @@ console.log('index.html updated', page.length);
    html:not(.classic)). */
 let classic = page
   .replace('<html lang="en">', '<html lang="en" class="classic">')
+  .replaceAll('href="eras.html"', 'href="eras.html?from=classic"')
+  .replace(/^    <div class="loader-paper town-paint-paper">.*<\/div>\n/m, '')
+  .replace(/^  <script async src="town-paint\.js[^"]*"><\/script>\n\n/m, '')
   .replace('content="#070a1a" media', 'content="#050814" media').replace('content="#9fcbef" media', 'content="#eef2f8" media')
   .replace(/<!-- town:start -->[\s\S]*?<!-- town:end -->/, '')
   .replace('<section id="path-circuit" class="section journey-section tw-retired" data-compact hidden>', '<section id="experience" class="section journey-section" data-compact>')
