@@ -856,7 +856,7 @@
     item.setAttribute('aria-expanded', 'false');
     card.remove();
     tw.classList.remove('memory-view', 'memory-settled');
-    if (returnView) tween(view(), 500);
+    if (returnView) tween(view(), 600);
     else {
       stopCamera();
       zoomUntil = 0;
