@@ -1736,8 +1736,9 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 @keyframes tw-resume-dim { from { opacity: 0; } }
 .tw-resume-header { display: flex; align-items: center; gap: 10px; padding: 12px 15px 10px; }
 .tw-resume-header h2 { margin: 0 auto 0 3px; font: 800 1.16rem 'Nunito', ui-rounded, system-ui, sans-serif; }
+.tw-resume-header form { display: flex; margin: 0; }
 .tw-resume-header a {
-  padding: 7px 12px; border-radius: 999px; background: var(--control-fill);
+  display: inline-flex; align-items: center; min-height: 38px; padding: 0 12px; border-radius: 999px; background: var(--control-fill);
   color: inherit; font-size: .85rem; font-weight: 700; text-decoration: none;
 }
 .tw-resume-header a:hover { background: var(--control-hover); }
