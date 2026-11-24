@@ -856,7 +856,7 @@
     item.setAttribute('aria-expanded', 'false');
     card.remove();
     tw.classList.remove('memory-view', 'memory-settled');
-    if (returnView) tween(view(), 600);
+    if (returnView) tween(view(), 700);
     else {
       stopCamera();
       zoomUntil = 0;
@@ -893,7 +893,7 @@
       opened.imageReady = true;
       settleKeepsake();
     });
-    tween(keepsakeFrame(), 670, ease, () => {
+    tween(keepsakeFrame(), 750, ease, () => {
       opened.cameraReady = true;
       settleKeepsake();
     });
