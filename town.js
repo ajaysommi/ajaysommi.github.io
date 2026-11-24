@@ -414,15 +414,15 @@
         8192 / ((devicePixelRatio || 1) * Math.max(right - left, bottom - top))
       );
       const sweepDensity = sweep && viewportWidth / (visibleRight - visibleLeft);
-      const paintDensity = detail ? Math.min(sweep.targetDensity, rasterLimit) :
-        sweep ? Math.min(sweepDensity, sweep.startDensity) : density;
+      const paintDensity = sweep?.streetReturn ? sweep.endDensity :
+        detail ? Math.min(sweep.targetDensity, rasterLimit) : sweep ? Math.min(sweepDensity, sweep.startDensity) : density;
       const cache = slice.cache;
       // On the return trip, reuse a detailed layer that's already painted
       // across this path. It will shrink on screen as the camera pulls back.
       const reuseDetail = sweep && density > sweep.endDensity && cache?.detail;
       if (cache && left >= cache.left && top >= cache.top &&
           right <= cache.right && bottom <= cache.bottom &&
-          (sweep ? (detail ? cache.density === paintDensity : reuseDetail || cache.density <= paintDensity * 1.45) :
+          (sweep ? (detail || sweep.streetReturn ? cache.density === paintDensity : reuseDetail || cache.density <= paintDensity * 1.45) :
             moving ? density < cache.density * 2.4 : density === cache.density)) {
         if (cache.base !== base) {
           cache.base = base;
@@ -475,7 +475,7 @@
     for (const motion of cameraMotion) motion.cancel();
     cameraMotion = [];
   };
-  const tween = (to, ms = 850, fn = ease, done) => {
+  const tween = (to, ms = 850, fn = ease, done, { streetReturn = false } = {}) => {
     stopCamera();
     zoomUntil = reduced ? 0 : performance.now() + ms + 40;
     if (reduced) { setVB(to); done?.(); return; }
@@ -494,9 +494,13 @@
       const top = Math.min(y(from), y(to)), bottom = Math.max(y(from) + from[3], y(to) + to[3]);
       // Long jumps use the normal moving window to keep memory bounded.
       if (right - left > Math.max(from[2], to[2]) * 1.55 || bottom - top > Math.max(from[3], to[3]) * 1.55) return;
+      // Give the return view a small guard band for fractional tile edges.
+      const padX = streetReturn ? to[2] * .08 : 0;
+      const padY = streetReturn ? to[3] * .08 : 0;
       return {
-        bounds: [left, top, right, bottom],
-        targetDensity: focus && !sky ? targetDensity : undefined,
+        bounds: [left - padX, top - padY, right + padX, bottom + padY],
+        streetReturn,
+        targetDensity: streetReturn || (focus && !sky) ? targetDensity : undefined,
         startDensity,
         endDensity: targetDensity,
         focus: sky ? null : focus
@@ -530,7 +534,9 @@
       }
     };
     const start = t => {
-      if (sweeps?.every(Boolean) && scene.animate) {
+      // Keep the prepared return tiles on the same transform path as a pan,
+      // so WebKit doesn't swap a separately animated backing store at the end.
+      if (!streetReturn && sweeps?.every(Boolean) && scene.animate) {
         const steps = Math.ceil(ms / 12);
         const frames = Array.from({ length: steps + 1 }, (_, i) => interpolate(i / steps));
         cameraMotion = [streetPlane, skyPlane].map((plane, i) => {
@@ -856,7 +862,7 @@
     item.setAttribute('aria-expanded', 'false');
     card.remove();
     tw.classList.remove('memory-view', 'memory-settled');
-    if (returnView) tween(view(), 700);
+    if (returnView) tween(view(), 700, ease, undefined, { streetReturn: true });
     else {
       stopCamera();
       zoomUntil = 0;
