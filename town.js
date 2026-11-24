@@ -954,7 +954,7 @@
     tw.classList.remove('hood');
     panel.classList.remove('open');
     setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
-    tween(view(), 800);
+    tween(view(), 800, ease, undefined, { streetReturn: true });
     tw.classList.remove('zoomed');
     hots.forEach((x) => x.classList.remove('tw-cur'));
     glow(null); over = null;
