@@ -1302,7 +1302,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     </g>`)}
 
     </g>${endSlice}
-    ${slice('service', '430 210 1940 715')}<g class="tw-art">
+    ${slice('hunter', '1570 315 1890 515')}<g class="tw-art">
     ${hot('hunter', `
     <!-- 2026, Hunter Engineering: in Toyota's service bay, a Hunter HawkEye
          aligner (its two red beacons firing lasers) reading the targets on
@@ -1331,6 +1331,8 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
       <g class="tw-beacons tw-nohit">${[[916 + 75.4 * 0.0745, 370 + 112 * 0.2057], [916 + 75.4 * 0.923, 370 + 112 * 0.2057]].map(([x, y]) => `<g class="tw-beacon"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.4" fill="url(#twBeacon)"/><rect x="${(x - 1.1).toFixed(1)}" y="${(y - 1.6).toFixed(1)}" width="2.2" height="3.2" rx=".5" class="tw-beacon-c"/></g>`).join('')}</g>
     </g>`)}
 
+    </g>${endSlice}
+    ${slice('showroom-lawn', '1090 405 1900 625')}<g class="tw-art">
     <!-- Front lawn: a walk to the door, a drive to the service bay, hedges. -->
     <g transform="translate(${OFF.toyota} 0)">
     <path d="M760 482 H792 L815.2 600 H736.8 Z" class="tw-walk"/>
@@ -1344,6 +1346,8 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     ${[700, 852].map((x) => `<g transform="translate(${x} 560)" class="tw-lamppost"><circle cx="0" cy="-60" r="30" fill="url(#twLamp)" class="tw-lampglow"/><rect x="-2" y="-60" width="4" height="60" class="tw-pole"/><rect x="-7" y="-66" width="14" height="7" rx="3" class="tw-bulb"/></g>`).join('')}
     </g>
 
+    </g>${endSlice}
+    ${slice('adt', '1100 280 1450 605')}<g class="tw-art">
     ${hot('adt', `
     <!-- 2026, ADT: its sign in the hedge in front of the dealership's wall, and
          its camera up at the roofline looking down over it. -->
@@ -1372,6 +1376,8 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
       </g>
     </g>`)}
 
+    </g>${endSlice}
+    ${slice('service', '430 210 1080 715')}<g class="tw-art">
     <!-- a pocket-sized competition field for the robot -->
     <g class="tw-court" aria-hidden="true">
       <path d="M574 566 H700 L708 597 H566 Z" class="tw-court-floor"/>

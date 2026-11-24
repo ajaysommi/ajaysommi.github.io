@@ -373,7 +373,7 @@
 .tw-halo-lite { display: none; }
 .tw-moving .tw-halo-lite.keep { display: inline; opacity: .5; }
 .tw-halo-lite * { fill: var(--tint) !important; stroke: var(--tint) !important; stroke-width: 6px !important; stroke-linejoin: round !important; stroke-dasharray: none !important; filter: none !important; }
-.tw-moving .tw-hot:not(.tw-cur) [style*="twGlow"] { filter: none !important; }
+.tw-moving .tw-hot [style*="twGlow"] { filter: none !important; }
 
 /* ---------------------------------------------------------- lights after dark */
 .tw-night { opacity: 0; transition: opacity .6s; pointer-events: none; }

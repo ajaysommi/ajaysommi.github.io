@@ -377,13 +377,13 @@
   const movePlane = (plane, x, y, w, h, density, moving, sweep) => {
     // Finish at the actual display scale. Leaving opposing scale transforms
     // on the layers can make the compositor reuse a low-resolution raster.
-    const baseChanged = !plane.baseDensity || (!moving && plane.baseDensity !== density);
-    if (baseChanged) plane.baseDensity = density;
+    const nextBase = sweep?.targetDensity ?? (moving ? plane.baseDensity || density : density);
+    if (plane.baseDensity !== nextBase) plane.baseDensity = nextBase;
     const base = plane.baseDensity;
-    const [visibleLeft, visibleTop, visibleRight, visibleBottom] = sweep ?? [x, y, x + w, y + h];
-    // A zoom-out reveals more ground. Size its backing stores for the wide
-    // view, so newly visible scenery isn't rasterized at close-up scale.
-    const paintDensity = sweep ? Math.min(base, viewportWidth / (visibleRight - visibleLeft)) : density;
+    plane.element.style.transform = `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density / base})`;
+    if (sweep && plane.sweep === sweep) return;
+    plane.sweep = sweep;
+    const [visibleLeft, visibleTop, visibleRight, visibleBottom] = sweep?.bounds ?? [x, y, x + w, y + h];
     // Keep a landmark's backing store anchored to the street. A horizontal
     // pan can reuse it all the way across the screen, including reversals.
     for (const slice of plane.slices) {
@@ -400,16 +400,36 @@
       }
       if (outside) continue;
 
+      // Prepaint the zoom path at its highest magnification where the slice
+      // fits. Cap the backing store for long sweeps and large displays.
+      const detail = sweep?.focus === box;
+      const rasterLimit = detail && Math.min(
+        Math.sqrt(5.5 * viewportWidth * vh * scale / ((right - left) * (bottom - top))),
+        8192 / ((devicePixelRatio || 1) * Math.max(right - left, bottom - top))
+      );
+      const sweepDensity = sweep && viewportWidth / (visibleRight - visibleLeft);
+      const paintDensity = detail ? Math.min(sweep.targetDensity, rasterLimit) :
+        sweep ? Math.min(sweepDensity, sweep.startDensity) : density;
       const cache = slice.cache;
-      if (!baseChanged && cache && cache.base === base && left >= cache.left && top >= cache.top &&
+      if (cache && left >= cache.left && top >= cache.top &&
           right <= cache.right && bottom <= cache.bottom &&
-          (sweep ? cache.density <= paintDensity * 1.45 : moving ? density < cache.density * 2.4 : density === cache.density)) continue;
-      // Small sections fit in one surface. For long stretches of sky or
-      // road and close-ups, keep only a padded neighborhood at this scale.
-      const x0 = bounds ? Math.max(bounds[0], left - w * .58) : left - w * .58;
-      const y0 = bounds ? Math.max(bounds[1], top - h * .35) : top - h * .35;
-      const x1 = bounds ? Math.min(bounds[2], right + w * .58) : right + w * .58;
-      const y1 = bounds ? Math.min(bounds[3], bottom + h * .35) : bottom + h * .35;
+          (sweep ? (detail ? cache.density === paintDensity : cache.density <= paintDensity * 1.45) :
+            moving ? density < cache.density * 2.4 : density === cache.density)) {
+        if (cache.base !== base) {
+          cache.base = base;
+          box.style.left = cache.left * base + 'px';
+          box.style.top = cache.top * base + 'px';
+          box.style.transform = base === cache.density ? 'translateZ(0)' : `scale(${base / cache.density}) translateZ(0)`;
+        }
+        continue;
+      }
+      // Zoom bounds already cover every intermediate frame. Extra margins
+      // are only needed for open-ended panning.
+      const padX = sweep ? 0 : w * .58, padY = sweep ? 0 : h * .35;
+      const x0 = bounds ? Math.max(bounds[0], left - padX) : left - padX;
+      const y0 = bounds ? Math.max(bounds[1], top - padY) : top - padY;
+      const x1 = bounds ? Math.min(bounds[2], right + padX) : right + padX;
+      const y1 = bounds ? Math.min(bounds[3], bottom + padY) : bottom + padY;
       slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density: paintDensity, base };
       box.style.left = x0 * base + 'px';
       box.style.top = y0 * base + 'px';
@@ -418,7 +438,6 @@
       box.style.transform = base === paintDensity ? 'translateZ(0)' : `scale(${base / paintDensity}) translateZ(0)`;
       art.setAttribute('viewBox', `${x0} ${y0} ${x1 - x0} ${y1 - y0}`);
     }
-    plane.element.style.transform = `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density / base})`;
   };
   const placeVB = (b, moving, sweeps) => {
     vb = b;
@@ -439,15 +458,19 @@
   const setVB = (b) => placeVB(b, false);
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let zoomUntil = 0;
-  const zooming = () => performance.now() < zoomUntil;
+  const zooming = () => scene.classList.contains('tw-zooming') || performance.now() < zoomUntil;
   const tween = (to, ms = 850, fn = ease, done) => {
     cancelAnimationFrame(anim);
     zoomUntil = reduced ? 0 : performance.now() + ms + 40;
     if (reduced) { setVB(to); done?.(); return; }
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
-    const from = vb.slice(), t0 = performance.now();
+    const from = vb.slice();
     scene.classList.add('tw-moving', 'tw-zooming'); scene.classList.toggle('tw-glide', ms >= 2000);
+    const targetDensity = viewportWidth / to[2];
+    const startDensity = viewportWidth / from[2];
+    const focus = targetDensity > startDensity ?
+      $('.tw-hot.tw-cur, [data-memory].memory-open', scene)?.closest('.tw-slice') : null;
     const sweep = (sky) => {
       const x = b => b[0] * (sky ? .4 : 1);
       const y = b => sky ? skyY(b[1]) : b[1];
@@ -455,10 +478,17 @@
       const top = Math.min(y(from), y(to)), bottom = Math.max(y(from) + from[3], y(to) + to[3]);
       // Long jumps use the normal moving window to keep memory bounded.
       if (right - left > Math.max(from[2], to[2]) * 1.55 || bottom - top > Math.max(from[3], to[3]) * 1.55) return;
-      return [left, top, right, bottom];
+      return {
+        bounds: [left, top, right, bottom],
+        targetDensity: focus && !sky ? targetDensity : undefined,
+        startDensity,
+        focus: sky ? null : focus
+      };
     };
-    const sweeps = [sweep(false), sweep(true)];
+    const sweeps = ms < 2000 ? [sweep(false), sweep(true)] : undefined;
+    let t0;
     const f = (t) => {
+      t0 ??= t;
       const u = clamp((t - t0) / ms, 0, 1), k = fn(u);
       if (u < 1) {
         placeVB(from.map((v, i) => v + (to[i] - v) * k), true, sweeps);
@@ -469,7 +499,14 @@
         done?.();
       }
     };
-    anim = requestAnimationFrame(f);
+    if (from[2] !== to[2] && sweeps?.some(Boolean)) {
+      placeVB(from, true, sweeps);
+      // Give the browser a paint at the prepared resolution before moving.
+      zoomUntil += 80;
+      anim = requestAnimationFrame(() => { anim = requestAnimationFrame(f); });
+    } else {
+      anim = requestAnimationFrame(f);
+    }
   };
   const frame = (z, left) => {
     const [x, y, w, h] = z, cx = x + w / 2, cy = y + h / 2;
