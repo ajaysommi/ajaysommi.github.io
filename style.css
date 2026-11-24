@@ -4147,8 +4147,7 @@
   }
 
   header.nav,
-  .dock-fab,
-  .tw-repair {
+  .dock-fab {
     /* Written by script.js. These defaults are what a visitor gets before
        it runs. */
     --lg-env: 120, 160, 230;

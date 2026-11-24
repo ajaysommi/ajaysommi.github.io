@@ -387,7 +387,6 @@
 .tw-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .tw-pan, .tw-navx, .tw-classic-back { display: none !important; }
 .tw-bar { display: contents; }
-.tw-repair { display: none; }
 @media (min-width: 720px) {
   html:not(.classic), html:not(.classic) body { height: 100%; overflow: hidden !important; }
   html:not(.classic) :is(.bg, .rail, .dock-fab, .sheet-scrim, .mobile-sheet, .footer, .skip-link) { display: none !important; }
@@ -413,16 +412,10 @@
   html:not(.classic) header.nav .nav-actions { gap: 2px; margin-left: 2px; }
   html:not(.classic) button.tw-navx { display: grid !important; }
   html:not(.classic) div.tw-navx { display: block !important; position: relative; }
-  html:not(.classic) .tw-repair:not([hidden]) { display: grid; }
-  .tw-repair { place-items: center; width: var(--tw-bar-height); height: var(--tw-bar-height); padding: 0; border-radius: 50%; color: var(--ink); cursor: pointer; }
-  .tw-repair::before {
-    content: ""; position: absolute; inset: 0; margin: auto;
-    width: 25px; height: 25px; background: currentColor;
-    mask: url("assets/images/town/repair-icon.png?v=2") center / contain no-repeat;
-  }
   html.classic a.tw-classic-back { display: grid !important; }
   .tw-pop { position: absolute; top: calc(100% + 12px); left: -6px; z-index: 70; display: grid; gap: 2px; min-width: 200px; padding: 6px; border: 1px solid var(--stroke); border-radius: 16px; background: var(--bg); box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .5); animation: tw-pop .22s cubic-bezier(.2, .8, .2, 1); }
-  .tw-pop[hidden] { display: none; }
+  .tw-pop[hidden], .tw-pop button[hidden] { display: none; }
+  .tw-reset-icon { background: currentColor; mask: url("assets/images/town/reset-town.png") center / 16px no-repeat; }
   @keyframes tw-pop { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
   .tw-pop :is(button, a) { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0; border-radius: 10px; background: none; color: var(--ink); font: 500 14px var(--font-sans); text-align: left; text-decoration: none; cursor: pointer; }
   .tw-pop :is(button, a):hover { background: color-mix(in oklab, var(--ink) 7%, transparent); }
