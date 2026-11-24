@@ -179,7 +179,7 @@
     beam.setAttribute('y1', y);
     beam.setAttribute('x2', WHEELS[Number(beam.dataset.w)]);
   }
-  let lastLiftHeight;
+  let lastLiftHeight, liftTime = 0;
   const lift = (now) => {
     const t = (now / 1000) % 9, u = t < 3 ? t / 3 : t < 4.5 ? 1 : t < 7.5 ? 1 - (t - 4.5) / 3 : 0;
     const h = Math.round(2200 * (0.5 - 0.5 * Math.cos(Math.PI * u))) / 100;
@@ -357,7 +357,7 @@
     showLift = liftInView;
     showCctv = inView(1180, 1360);
     showDish = inView(3020, 3140);
-    if (!actorFrame && visible && !reduced && (showRover || showRobot || showLift || showCctv || showDish)) {
+    if (!actorFrame && visible && !reduced && !scene.classList.contains('tw-zooming') && (showRover || showRobot || showLift || showCctv || showDish)) {
       lastT = 0;
       actorFrame = requestAnimationFrame(tickActors);
     }
@@ -374,20 +374,25 @@
   const skyPlane = makePlane('.tw-sky-plane'), streetPlane = makePlane('.tw-street-plane');
   let barT = 0;
   const skyY = y => y - (y - (BOTTOM - vh)) * .12;
-  const movePlane = (plane, x, y, w, h, density, moving) => {
+  const movePlane = (plane, x, y, w, h, density, moving, sweep) => {
     // Finish at the actual display scale. Leaving opposing scale transforms
     // on the layers can make the compositor reuse a low-resolution raster.
     const baseChanged = !plane.baseDensity || (!moving && plane.baseDensity !== density);
     if (baseChanged) plane.baseDensity = density;
     const base = plane.baseDensity;
+    const [visibleLeft, visibleTop, visibleRight, visibleBottom] = sweep ?? [x, y, x + w, y + h];
+    // A zoom-out reveals more ground. Size its backing stores for the wide
+    // view, so newly visible scenery isn't rasterized at close-up scale.
+    const paintDensity = sweep ? Math.min(base, viewportWidth / (visibleRight - visibleLeft)) : density;
     // Keep a landmark's backing store anchored to the street. A horizontal
     // pan can reuse it all the way across the screen, including reversals.
     for (const slice of plane.slices) {
       const { box, art, bounds } = slice;
-      const left = bounds ? Math.max(x, bounds[0]) : x;
-      const top = bounds ? Math.max(y, bounds[1]) : y;
-      const right = bounds ? Math.min(x + w, bounds[2]) : x + w;
-      const bottom = bounds ? Math.min(y + h, bounds[3]) : y + h;
+      const left = bounds ? Math.max(visibleLeft, bounds[0]) : visibleLeft;
+      const top = bounds ? Math.max(visibleTop, bounds[1]) : visibleTop;
+      const right = bounds ? Math.min(visibleRight, bounds[2]) : visibleRight;
+      const bottom = bounds ? Math.min(visibleBottom, bounds[3]) : visibleBottom;
+      if (sweep && (right <= left || bottom <= top)) continue;
       const outside = right < left - w * .24 || bottom < top - h * .22;
       if (outside !== slice.outside) {
         slice.outside = outside;
@@ -398,28 +403,28 @@
       const cache = slice.cache;
       if (!baseChanged && cache && cache.base === base && left >= cache.left && top >= cache.top &&
           right <= cache.right && bottom <= cache.bottom &&
-          (moving ? density < cache.density * 2.4 : density === cache.density)) continue;
+          (sweep ? cache.density <= paintDensity * 1.45 : moving ? density < cache.density * 2.4 : density === cache.density)) continue;
       // Small sections fit in one surface. For long stretches of sky or
       // road and close-ups, keep only a padded neighborhood at this scale.
-      const x0 = bounds ? Math.max(bounds[0], left - w * .58) : x - w * .58;
-      const y0 = bounds ? Math.max(bounds[1], top - h * .35) : y - h * .35;
-      const x1 = bounds ? Math.min(bounds[2], right + w * .58) : x + w * 1.58;
-      const y1 = bounds ? Math.min(bounds[3], bottom + h * .35) : y + h * 1.35;
-      slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density, base };
+      const x0 = bounds ? Math.max(bounds[0], left - w * .58) : left - w * .58;
+      const y0 = bounds ? Math.max(bounds[1], top - h * .35) : top - h * .35;
+      const x1 = bounds ? Math.min(bounds[2], right + w * .58) : right + w * .58;
+      const y1 = bounds ? Math.min(bounds[3], bottom + h * .35) : bottom + h * .35;
+      slice.cache = { left: x0, top: y0, right: x1, bottom: y1, density: paintDensity, base };
       box.style.left = x0 * base + 'px';
       box.style.top = y0 * base + 'px';
-      box.style.width = (x1 - x0) * density + 'px';
-      box.style.height = (y1 - y0) * density + 'px';
-      box.style.transform = base === density ? 'translateZ(0)' : `scale(${base / density}) translateZ(0)`;
+      box.style.width = (x1 - x0) * paintDensity + 'px';
+      box.style.height = (y1 - y0) * paintDensity + 'px';
+      box.style.transform = base === paintDensity ? 'translateZ(0)' : `scale(${base / paintDensity}) translateZ(0)`;
       art.setAttribute('viewBox', `${x0} ${y0} ${x1 - x0} ${y1 - y0}`);
     }
     plane.element.style.transform = `translate3d(${-x * density}px, ${-y * density}px, 0) scale(${density / base})`;
   };
-  const placeVB = (b, moving) => {
+  const placeVB = (b, moving, sweeps) => {
     vb = b;
     const [x, y, w, h] = b, density = viewportWidth / w;
-    movePlane(streetPlane, x, y, w, h, density, moving);
-    movePlane(skyPlane, x * .4, skyY(y), w, h, density, moving);
+    movePlane(streetPlane, x, y, w, h, density, moving, sweeps?.[0]);
+    movePlane(skyPlane, x * .4, skyY(y), w, h, density, moving, sweeps?.[1]);
     farY = y - skyY(y);
     // the browser bar's colour follows the sky, a few times a second while moving
     const now = performance.now();
@@ -443,7 +448,27 @@
     // step of the zoom is the expensive part) and comes back when it lands.
     const from = vb.slice(), t0 = performance.now();
     scene.classList.add('tw-moving', 'tw-zooming'); scene.classList.toggle('tw-glide', ms >= 2000);
-    const f = (t) => { const u = clamp((t - t0) / ms, 0, 1), k = fn(u); placeVB(from.map((v, i) => v + (to[i] - v) * k), u < 1); if (u < 1) anim = requestAnimationFrame(f); else { scene.classList.remove('tw-moving', 'tw-zooming', 'tw-glide'); done?.(); } };
+    const sweep = (sky) => {
+      const x = b => b[0] * (sky ? .4 : 1);
+      const y = b => sky ? skyY(b[1]) : b[1];
+      const left = Math.min(x(from), x(to)), right = Math.max(x(from) + from[2], x(to) + to[2]);
+      const top = Math.min(y(from), y(to)), bottom = Math.max(y(from) + from[3], y(to) + to[3]);
+      // Long jumps use the normal moving window to keep memory bounded.
+      if (right - left > Math.max(from[2], to[2]) * 1.55 || bottom - top > Math.max(from[3], to[3]) * 1.55) return;
+      return [left, top, right, bottom];
+    };
+    const sweeps = [sweep(false), sweep(true)];
+    const f = (t) => {
+      const u = clamp((t - t0) / ms, 0, 1), k = fn(u);
+      if (u < 1) {
+        placeVB(from.map((v, i) => v + (to[i] - v) * k), true, sweeps);
+        anim = requestAnimationFrame(f);
+      } else {
+        scene.classList.remove('tw-moving', 'tw-zooming', 'tw-glide');
+        setVB(to);
+        done?.();
+      }
+    };
     anim = requestAnimationFrame(f);
   };
   const frame = (z, left) => {
@@ -1011,7 +1036,9 @@
   // The robots and alignment lift only repaint while that part of the block is in view.
   function tickActors(now) {
     actorFrame = 0;
-    if (!visible || !(showRover || showRobot || showLift || showCctv || showDish)) return;
+    // During a camera tween, let the compositor move the existing artwork.
+    // Resume the actors at the same pose once the view settles.
+    if (!visible || scene.classList.contains('tw-zooming') || !(showRover || showRobot || showLift || showCctv || showDish)) return;
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
     if (dt > 0 && showRover && (!cur || bots.rfa.scared)) {
       if (!bots.rfa.dead) steer(bots.rfa, dt, now);
@@ -1022,7 +1049,7 @@
       aim = [aim[0] + (want[0] - aim[0]) * Math.min(1, dt * 2.5), aim[1] + (want[1] - aim[1]) * Math.min(1, dt * 2.5)];
       aimCam();
     }
-    if (dt > 0 && showLift) lift(now);
+    if (dt > 0 && showLift) { liftTime += dt * 1000; lift(liftTime); }
     if (dt > 0 && showRobot) tintBeam(dt);
     if (dt > 0 && showCctv) cctv.step(dt);
     if (dt > 0 && showDish) dishT.step(dt);
