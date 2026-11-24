@@ -98,6 +98,7 @@
   const homeX = () => clamp(D.home - vw / 2, 0, Math.max(0, WORLD - vw));
   camX = homeX();
   let vb = view(), anim = 0, cur = null;
+  let focusedPointerMatrix = null;
   const nameOf = (r) => (r.school ? 'University of Florida' : r.short);
   const yy = (r) => r.badge || `’${String(r.year).slice(2)}`;
 
@@ -450,6 +451,7 @@
     }
   };
   const placeVB = (b, moving, sweeps) => {
+    focusedPointerMatrix = null;
     vb = b;
     const [x, y, w, h] = b, density = viewportWidth / w;
     movePlane(streetPlane, x, y, w, h, density, moving, sweeps?.[0]);
@@ -1061,7 +1063,16 @@
 
   /* ---------------------------------------------------------- the pointer */
   const head = $('.tw-cctv-head', scene), dish = $('.tw-dish', scene), eyes = $$('.tw-follow', scene);
-  const toSVG = (e) => { const p = world.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(world.getScreenCTM().inverse()); };
+  function pointerInWorld(e) {
+    // The focused street stays fixed while the pointer or a text selection
+    // moves. Only a camera change, resize, or damage shake can move its origin.
+    const fixed = cur && !stage.classList.contains('tw-shake');
+    const point = new DOMPoint(e.clientX, e.clientY);
+    if (fixed && focusedPointerMatrix) return point.matrixTransform(focusedPointerMatrix);
+    const matrix = world.getScreenCTM().inverse();
+    if (fixed) focusedPointerMatrix = matrix;
+    return point.matrixTransform(matrix);
+  }
   let ptr = null;
   /* The security camera and the FICS dish sweep on their own. When the
      pointer is near, each turns to follow it; when the pointer goes, it eases
@@ -1069,11 +1080,17 @@
      nearest point, so it never jumps). */
   const turner = (el, rest, swing, period, draw) => {
     const t = { aim: null, a: rest, phase: 0, from: rest, back: 1, rest };
-    t.draw = (a) => { if (el) el.style.transform = draw(a); };
+    t.draw = (a) => {
+      const transform = draw(a);
+      if (el && transform !== t.lastTransform) {
+        el.style.transform = transform;
+        t.lastTransform = transform;
+      }
+    };
     t.step = (dt) => {
       if (!el || zooming()) return;
       if (t.aim !== null) {
-        t.a += (t.aim - t.a) * (1 - Math.exp(-dt * 9));
+        t.a += (t.aim - t.a) * (1 - Math.exp(-dt * (cur ? 26 : 9)));
         t.back = 0; t.from = t.a;
       } else {
         if (t.back === 0) {
@@ -1127,6 +1144,7 @@
     // During a camera tween, let the compositor move the existing artwork.
     // Resume the actors at the same pose once the view settles.
     if (!visible || scene.classList.contains('tw-zooming') || !(showRover || showRobot || showLift || showCctv || showDish)) return;
+    if (cur && lastE && !praf) consumePointer();
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now;
     if (dt > 0 && showRover && (!cur || bots.rfa.scared)) {
       if (!bots.rfa.dead) steer(bots.rfa, dt, now);
@@ -1145,42 +1163,42 @@
   }
 
   let praf = 0, lastE = null;
-  stage.addEventListener('pointermove', (e) => {
-    lastE = e;
-    if (praf) return;
-    praf = requestAnimationFrame(() => {
-      praf = 0;
-      if (sliding || zooming()) return;
-      const e = lastE;
-      const p = toSVG(e);
-      ptr = { x: p.x, y: p.y };
-      const sky = p.y < 330;
-      tw.classList.toggle('sky', sky);
-      tw.classList.toggle('near', !sky);
-      const dishOn = !!dish && (p.y < 376 || Math.hypot(p.x - 3080, p.y - 382) < 120);
-      tw.classList.toggle('dishon', dishOn);
-      if (dishOn) {
-        // The dish sits on HiPerGator's roof at (3080, 382); it turns its face to the pointer.
-        const a = Math.atan2(p.x - 3080, 382 - p.y) * 180 / Math.PI;
-        dishT.set(clamp(a, -70, 70));
-      } else dishT.set(null);
-      if (!sky && head) {
-        // The camera turns only as far as its roofline mount allows.
-        let a = Math.atan2(338.5 - p.y, 1254 - p.x) * 180 / Math.PI;
-        if (a > 90) a -= 360;
-        cctv.set(clamp(a, -160, -30));
-      } else cctv.set(null);
-      // (the rover is drawn flipped when it faces left, so its eyes' x is too)
+  function consumePointer() {
+    praf = 0;
+    const e = lastE;
+    lastE = null;
+    if (!e || sliding || zooming()) return;
+    ptr = pointerInWorld(e);
+    const dishOn = ptr.y < 376 || Math.hypot(ptr.x - 3080, ptr.y - 382) < 120;
+    if (dishOn) {
+      const a = Math.atan2(ptr.x - 3080, 382 - ptr.y) * 180 / Math.PI;
+      dishT.set(clamp(a, -70, 70));
+    } else dishT.set(null);
+    if (ptr.y >= 330 && head) {
+      let a = Math.atan2(338.5 - ptr.y, 1254 - ptr.x) * 180 / Math.PI;
+      if (a > 90) a -= 360;
+      cctv.set(clamp(a, -160, -30));
+    } else cctv.set(null);
+    if (showRover) {
       const fx = bots.rfa.face < 0 ? -1 : 1;
-      if (showRover) eyes.forEach((el) => {
-        const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
+      const positions = eyes.map(el => el.getBoundingClientRect());
+      eyes.forEach((el, i) => {
+        const r = positions[i], dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1;
         el.style.transform = `translate(${(dx / d * 2.4 * fx).toFixed(2)}px, ${(dy / d * 2.4).toFixed(2)}px)`;
       });
-    });
+    }
+  }
+  stage.addEventListener('pointermove', (e) => {
+    if (cur && !showCctv && !showDish && !showRover) return;
+    lastE = e;
+    // In a close-up the already scheduled actor frame can use this sample
+    // before drawing. A second callback added a frame of tracking latency.
+    if (!praf && !(cur && actorFrame)) praf = requestAnimationFrame(consumePointer);
   });
   stage.addEventListener('pointerleave', () => {
-    ptr = null;
-    tw.classList.remove('sky', 'near', 'dishon');
+    lastE = ptr = null;
+    cancelAnimationFrame(praf);
+    praf = 0;
     cctv.set(null);
     dishT.set(null);
     eyes.forEach((el) => { el.style.transform = ''; });
