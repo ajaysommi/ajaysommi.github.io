@@ -1862,14 +1862,14 @@ html:not(.classic):has(.tw-scene.tw-zooming) .tw-bar > header.nav.glass {
     --paint-moss: #577f83; --paint-water: #497fa9;
     --paint-clay: #b57865; --paint-ochre: #ad894e;
     --paint-distance: #acc9df; --paint-ridge: #87abc5; --paint-meadow: #b3c7b9;
-    --paint-wood: #83a9a6; --paint-highlight: #fff2d2;
+    --paint-pine: #344e49; --paint-wood: #83a9a6; --paint-highlight: #fff2d2;
     --paint-sheet: #b8d7ed; --paint-light: #dcebf2;
   }
   html[data-theme="midnight"]:not(.classic) .page-loader {
     --paint-moss: #8c9bb9; --paint-water: #85afcf;
     --paint-clay: #c58f94; --paint-ochre: #ceb591;
     --paint-distance: #465273; --paint-ridge: #566485; --paint-meadow: #485775;
-    --paint-wood: #415571; --paint-highlight: #c6d4e4;
+    --paint-pine: #91b6a9; --paint-wood: #415571; --paint-highlight: #c6d4e4;
     --paint-sheet: #1b2945; --paint-light: #303d5b;
   }
   .town-paint-paper {

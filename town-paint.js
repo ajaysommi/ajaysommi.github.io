@@ -126,7 +126,7 @@
       // Two uneven tiers and a short trunk, like the pines on the street.
       const fir = 'M0 0l-1.3 3.4 .7-.3-1.3 2.6 1.6-.4v1.1h.6V5.3l1.5.4-1.3-2.6 .7.3Z';
       for (const [x, y, scale] of [[16.6, 36, .72], [19.5, 32.8, 1.02], [22.4, 34.1, .64], [38.2, 26.7, .86]]) {
-        svg(hills, 'path', { d: fir, fill: '#344e49', transform: `translate(${x} ${y}) scale(${scale})` });
+        svg(hills, 'path', { d: fir, fill: 'var(--paint-pine)', transform: `translate(${x} ${y}) scale(${scale})` });
       }
       path(hills, 'M26 22.7L30 19l2.8 1.7-2.6-.7Z', 'var(--paint-highlight)', .75);
     } else if (part.classList.contains('mk-j')) {
