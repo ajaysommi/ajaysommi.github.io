@@ -1050,7 +1050,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     <linearGradient id="twBbWash" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff3c8" stop-opacity=".35"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></linearGradient>
     <pattern id="twConcrete" patternUnits="userSpaceOnUse" width="9" height="7"><circle cx="1.5" cy="2" r=".35" fill="rgba(0,0,0,.12)"/><circle cx="6" cy="5" r=".3" fill="rgba(255,255,255,.18)"/><circle cx="4" cy="1" r=".25" fill="rgba(0,0,0,.08)"/></pattern>
     <pattern id="twPegHoles" patternUnits="userSpaceOnUse" width="4" height="4"><circle cx="2" cy="2" r=".42" fill="rgba(80,55,30,.4)"/></pattern>
-    <pattern id="twCanvas" patternUnits="userSpaceOnUse" width="44" height="44"><image href="assets/images/town/canvas-weave.png" width="44" height="44" opacity=".13"/></pattern>
+    <pattern id="twCanvas" patternUnits="userSpaceOnUse" width="44" height="44"><image href="assets/images/town/canvas-weave.png" width="44" height="44" opacity=".18"/></pattern>
     <pattern id="twGrain" patternUnits="userSpaceOnUse" width="16.5" height="12"><path d="M2 0 q1.4 6 0 12 M8 0 q-1.2 4 .4 7 q1 3 -.2 5 M13 0 q1 5 -.6 12" fill="none" stroke="rgba(70,40,15,.16)" stroke-width=".5"/></pattern>
     <pattern id="twDrywall" patternUnits="userSpaceOnUse" width="24" height="86"><path d="M0 0 V86" stroke="rgba(0,0,0,.09)" stroke-width=".6"/></pattern>
     <linearGradient id="twBbShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0c18" stop-opacity=".42"/><stop offset=".45" stop-color="#0a0c18" stop-opacity=".14"/><stop offset=".8" stop-color="#0a0c18" stop-opacity="0"/></linearGradient>
@@ -1148,6 +1148,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
   <g class="tw-far">
     <rect class="tw-sky-d" x="-800" y="-1600" width="${WORLD + 1600}" height="2140" fill="url(#twSkyDay)"/>
     <rect class="tw-sky-n" x="-800" y="-1600" width="${WORLD + 1600}" height="2140" fill="url(#twSkyNight)"/>
+    <rect x="-800" y="-1600" width="${WORLD + 1600}" height="2140" fill="url(#twCanvas)" fill-opacity=".8" class="tw-nohit"/>
     <g class="tw-stars">${(() => { const c = STARS.split('<circle').filter((x) => x.trim()).map((x) => '<circle' + x); const G = 7; return Array.from({ length: G }, (_, g) => `<g class="tw-stargrp" style="--gt:${(4 + (g % 3) * 1.6).toFixed(1)}s;--gd:${(-g * 1.3).toFixed(1)}s">${c.filter((_, i) => i % G === g).join('')}</g>`).join(''); })()}</g>
     <!-- The sun and the moon are in the sky with the stars: they stay put while
          the street slides (a little, as the sky does), and lean out of view
