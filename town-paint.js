@@ -1,5 +1,4 @@
-// Print a new valley study on the opening paper each visit. Only the logo uses
-// wet brushwork. The surrounding landforms use flat inks like the town scene.
+// Print a new valley study on the opening paper each visit.
 (() => {
   const paper = document.querySelector('.town-paint-paper');
   if (!paper || !matchMedia('(min-width: 720px)').matches) return;
@@ -18,39 +17,6 @@
   const pigments = ['var(--paint-moss)', 'var(--paint-water)', 'var(--paint-clay)', 'var(--paint-ochre)'];
   if (Math.random() < 0.5) [pigments[0], pigments[1]] = [pigments[1], pigments[0]];
   const glaze = pigments[Math.random() < 0.5 ? 2 : 3];
-
-  function brush(parent, length, width, bend, color, opacity) {
-    const phase = between(-2, 2);
-    // All filaments follow the same wrist movement. Small variations in width
-    // break the edges without introducing a shimmer as the brush is revealed.
-    function point(t, offset) {
-      const arc = Math.sin(Math.PI * t);
-      const spine = bend * arc + 0.035 * length * Math.sin(2 * Math.PI * t + phase);
-      const pressure = Math.pow(Math.max(0, arc), .7) * (1.08 - .32 * t);
-      const tooth = 1 + .048 * Math.sin(38 * t + phase) + .024 * Math.sin(101 * t);
-      return coord(length * t) + ',' + coord(spine + offset * pressure * tooth);
-    }
-    function ribbon(start, end, low, high) {
-      const top = [], bottom = [];
-      for (let i = 0; i <= 50; i++) {
-        const t = start + (end - start) * i / 50;
-        top.push(point(t, high));
-        bottom.push(point(t, low));
-      }
-      return 'M' + top.concat(bottom.reverse()).join('L') + 'Z';
-    }
-    path(parent, ribbon(0, 1, -width * .48, width * .48), color, opacity * .53);
-    for (let i = 0; i < 18; i++) {
-      const edge = between(-.57, .57) * width;
-      path(parent, ribbon(between(0, .15), between(.76, 1), edge, edge + between(.008, .115) * width), color, opacity * between(.32, .86));
-    }
-    // A few tiny satellites of pigment, grouped around the sweep.
-    for (let i = 0; i < 22; i++) {
-      const t = between(.18, .92);
-      const [cx, cy] = point(t, between(-.72, .75) * width).split(',');
-      svg(parent, 'ellipse', { cx, cy, rx: between(.4, 2), ry: between(.35, 1.1), fill: color, opacity: opacity * between(.55, 1.4) });
-    }
-  }
 
   // A tile of cotton rag paper. Crossing threads have a lit and a shadowed
   // edge, interspersed with pulp and a few longer fibres. Draw it only once.
@@ -141,19 +107,35 @@
   meadowLayers.style.setProperty('--print-delay', '120ms');
   relief(meadowLayers, between(540, 750), between(215, 345), ['var(--paint-meadow)', 'var(--paint-wood)', 'var(--paint-moss)']);
 
-  // The texture sits inside each moving piece, so its painted edge follows the
-  // original AJ silhouette through assembly and the flight to the navigation.
-  for (const [i, part] of [...loader.querySelectorAll('.m-load-mark .mk')].entries()) {
+  // Cut a small landscape into the A. Its hills and firs are deliberately
+  // broad enough to read at the mark's final size. Leave the dot solid.
+  const ridgeShift = between(-1.1, 1.1).toFixed(2);
+  for (const [i, part] of [...loader.querySelectorAll('.m-load-mark .mk:not(.mk-dot)')].entries()) {
     const silhouette = part.firstElementChild;
     const defs = svg(part, 'defs', {});
     const clip = svg(defs, 'clipPath', { id: 'town-ink-' + i });
     clip.append(silhouette.cloneNode(true));
     const surface = svg(part, 'g', { 'clip-path': `url(#town-ink-${i})`, class: 'town-ink' });
-    const paint = svg(surface, 'g', { transform: 'translate(3 37) rotate(-28)', class: 'town-brush' });
-    brush(paint, 61, i === 0 ? 22 : 15, -3, i === 0 ? pigments[0] : glaze, .85);
-    for (let layer = 0; layer < 3; layer++) {
-      const flecks = Array.from({ length: 48 }, () => `M${coord(between(9, 55))},${coord(between(8, 50))}l.62,-.14`);
-      svg(surface, 'path', { d: flecks.join(''), stroke: 'var(--bg)', 'stroke-width': between(.18, .42), opacity: between(.25, .55) });
+    const print = svg(surface, 'g', { class: 'town-brush' });
+    if (part.classList.contains('mk-a')) {
+      const hills = svg(print, 'g', { transform: `translate(${ridgeShift} 0)` });
+      path(hills, 'M6 8H48V46H6Z', 'var(--paint-distance)', .78);
+      path(hills, 'M6 28L18 24 23 25 30 19 35 22 39 21 48 26V46H6Z', 'var(--paint-water)', 1);
+      path(hills, 'M6 36Q15 35 22 30T34 27Q41 26 48 23V46H6Z', 'var(--paint-wood)', 1);
+      path(hills, 'M6 42Q14 37 22 37T38 31L48 30V46H6Z', '#344e49', 1);
+      // Two uneven tiers and a short trunk, like the pines on the street.
+      const fir = 'M0 0l-1.3 3.4 .7-.3-1.3 2.6 1.6-.4v1.1h.6V5.3l1.5.4-1.3-2.6 .7.3Z';
+      for (const [x, y, scale] of [[16.6, 36, .72], [19.5, 32.8, 1.02], [22.4, 34.1, .64], [38.2, 26.7, .86]]) {
+        svg(hills, 'path', { d: fir, fill: '#344e49', transform: `translate(${x} ${y}) scale(${scale})` });
+      }
+      path(hills, 'M26 22.7L30 19l2.8 1.7-2.6-.7Z', 'var(--paint-highlight)', .75);
+    } else if (part.classList.contains('mk-j')) {
+      // A warm bank along the foot of the J, with two little grass tufts.
+      path(print, 'M24 40Q31 44 37 43T47 39L54 38V52H24Z', '#bd5236', 1);
+      svg(print, 'path', { d: 'M34 44.6l-.6-1.2m.6 1.2 .8-1.5m9.6-.6 .7-1.1', fill: 'none',
+        stroke: 'var(--paint-highlight)', 'stroke-width': .38, 'stroke-linecap': 'round', opacity: .8 });
+    } else {
+      path(print, 'M42 34L47 31.5 49 32 54 28.6V38H42Z', 'var(--paint-water)', .60);
     }
   }
 
