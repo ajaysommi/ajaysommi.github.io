@@ -1509,26 +1509,26 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* round 22 */
 /* the hint card in the middle, back */
 /* How to get around: a small card in the middle, the gesture drawn out. */
-.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent); border-radius: 18px; background: color-mix(in oklab, var(--bg) 76%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
+.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid var(--tw-paper-rule); border-radius: 18px; background: var(--tw-paper); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--tw-forest-ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
 .tw-hint.out { opacity: 0; scale: .97; transition: opacity .45s, scale .45s; }
 @keyframes tw-hintin { from { opacity: 0; scale: .94; translate: -50% -42%; } }
 .tw-hint p { margin: 0; display: grid; gap: 3px; max-width: 250px; }
-.tw-hint b { font: 650 15px/1.25 var(--font-sans); }
-.tw-hint span { font: 400 12.5px/1.4 var(--font-sans); color: var(--ink-2); }
-.tw-hint-pad { position: relative; flex: none; width: 66px; height: 46px; border: 1.6px solid color-mix(in oklab, var(--ink) 45%, transparent); border-radius: 9px; }
+.tw-hint b { font: 800 15px/1.25 Nunito, var(--font-sans); }
+.tw-hint p span { font: 600 12.5px/1.45 Nunito, var(--font-sans); color: color-mix(in srgb, var(--tw-forest-ink) 86%, var(--tw-paper)); }
+.tw-hint-pad { position: relative; flex: none; width: 66px; height: 46px; border: 1.6px solid color-mix(in oklab, var(--tw-forest-ink) 45%, transparent); border-radius: 9px; }
 .tw-hint-dots { position: absolute; left: 50%; top: 50%; display: flex; gap: 5px; translate: -50% -50%; animation: tw-swipe 2.2s cubic-bezier(.45, 0, .3, 1) infinite; }
-.tw-hint-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); opacity: .85; }
+.tw-hint-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--tw-forest-ink); opacity: .85; }
 @keyframes tw-swipe { 0%, 100% { transform: translateX(13px); } 50% { transform: translateX(-13px); } }
-.tw-hint-ar { position: absolute; top: 50%; width: 6px; height: 6px; border: solid color-mix(in oklab, var(--ink) 50%, transparent); border-width: 1.6px 1.6px 0 0; }
+.tw-hint-ar { position: absolute; top: 50%; width: 6px; height: 6px; border: solid color-mix(in oklab, var(--tw-forest-ink) 50%, transparent); border-width: 1.6px 1.6px 0 0; }
 .tw-hint-ar.l { left: 5px; transform: translateY(-50%) rotate(-135deg); } .tw-hint-ar.r { right: 5px; transform: translateY(-50%) rotate(45deg); }
 /* How to get around: the trackpad and the mouse, both drawn. */
 .tw-hint-g { display: flex; align-items: center; gap: 8px; flex: none; }
-.tw-hint-or { font: 500 11px var(--font-mono); color: var(--ink-3); }
-.tw-hint-mouse { position: relative; width: 26px; height: 40px; border: 1.6px solid color-mix(in oklab, var(--ink) 45%, transparent); border-radius: 13px; }
-.tw-hint-mouse::before { content: ''; position: absolute; left: 50%; top: 0; width: 1.4px; height: 12px; background: color-mix(in oklab, var(--ink) 30%, transparent); translate: -50% 0; }
-.tw-hint-wheel { position: absolute; left: 50%; top: 6px; width: 5px; height: 9px; margin-left: -2.5px; border-radius: 3px; background: var(--ink); opacity: .85; animation: tw-wheel 1.4s cubic-bezier(.45, 0, .3, 1) infinite; }
+.tw-hint-or { font: 700 11px Nunito, var(--font-sans); color: var(--tw-forest-ink); }
+.tw-hint-mouse { position: relative; width: 26px; height: 40px; border: 1.6px solid color-mix(in oklab, var(--tw-forest-ink) 45%, transparent); border-radius: 13px; }
+.tw-hint-mouse::before { content: ''; position: absolute; left: 50%; top: 0; width: 1.4px; height: 12px; background: color-mix(in oklab, var(--tw-forest-ink) 30%, transparent); translate: -50% 0; }
+.tw-hint-wheel { position: absolute; left: 50%; top: 6px; width: 5px; height: 9px; margin-left: -2.5px; border-radius: 3px; background: var(--tw-forest-ink); opacity: .85; animation: tw-wheel 1.4s cubic-bezier(.45, 0, .3, 1) infinite; }
 @keyframes tw-wheel { 0% { transform: translateY(-2px); opacity: 0; } 25% { opacity: .9; } 70% { transform: translateY(7px); opacity: .9; } 100% { transform: translateY(9px); opacity: 0; } }
-.tw-hint-cable { position: absolute; left: 50%; top: -9px; width: 1.4px; height: 9px; background: color-mix(in oklab, var(--ink) 40%, transparent); translate: -50% 0; }
+.tw-hint-cable { position: absolute; left: 50%; top: -9px; width: 1.4px; height: 9px; background: color-mix(in oklab, var(--tw-forest-ink) 40%, transparent); translate: -50% 0; }
 .tw-hint p { max-width: none; white-space: nowrap; }
 .tw-hint { font-family: 'Nunito', var(--font-sans); }
 
@@ -1799,7 +1799,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-tag-l { stroke: #f2c990; stroke-dasharray: none; }
 .tw-tag-ring { stroke: #f2c990; fill: #594a3c; }
 .tw-tag-d { fill: #f2c990; }
-.tw-hint-pad, .tw-hint-mouse { border-width: 2px; border-color: color-mix(in srgb,var(--ink) 60%,transparent); background: color-mix(in srgb,var(--ink) 5%,transparent); }
+.tw-hint-pad, .tw-hint-mouse { border-width: 2px; border-color: color-mix(in srgb,var(--tw-forest-ink) 60%,transparent); background: color-mix(in srgb,var(--tw-forest-ink) 5%,transparent); }
 .tw-hint-pad { border-radius: 12px; }
 .tw-hint-mouse { border-radius: 46% 46% 43% 43%; }
 .tw-hint-mouse::before { content: none; }
