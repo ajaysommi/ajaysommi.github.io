@@ -1857,21 +1857,22 @@ html:not(.classic):has(.tw-scene.tw-zooming) .tw-bar > header.nav.glass {
    layer, so the pigment and the ground dissolve into the sky together. */
 .town-paint-field { display: none; }
 @media (min-width: 720px) {
-  .town-painted {
-    --paint-moss: #53745d; --paint-water: #477f8d;
-    --paint-clay: #ae6956; --paint-ochre: #a18044;
-    --paint-distance: #bfcbd6; --paint-ridge: #a3b9cc; --paint-meadow: #c0ca94;
-    --paint-wood: #83a48d; --paint-highlight: #fff3ce;
-    --paint-sheet: #f3eee3; --paint-light: #faf8ef;
+  /* Tint the paper from the first paint, including while the print is being drawn. */
+  html:not(.classic) .page-loader {
+    --paint-moss: #577f83; --paint-water: #497fa9;
+    --paint-clay: #b57865; --paint-ochre: #ad894e;
+    --paint-distance: #acc9df; --paint-ridge: #87abc5; --paint-meadow: #b3c7b9;
+    --paint-wood: #83a9a6; --paint-highlight: #fff2d2;
+    --paint-sheet: #b8d7ed; --paint-light: #dcebf2;
   }
-  [data-theme="midnight"] .town-painted {
-    --paint-moss: #94b79c; --paint-water: #82b5c3;
-    --paint-clay: #d09681; --paint-ochre: #cdb283;
-    --paint-distance: #495067; --paint-ridge: #515970; --paint-meadow: #475d5e;
-    --paint-wood: #3c5751; --paint-highlight: #b9c5b3;
-    --paint-sheet: #191d20; --paint-light: #242927;
+  html[data-theme="midnight"]:not(.classic) .page-loader {
+    --paint-moss: #8c9bb9; --paint-water: #85afcf;
+    --paint-clay: #c58f94; --paint-ochre: #ceb591;
+    --paint-distance: #465273; --paint-ridge: #566485; --paint-meadow: #485775;
+    --paint-wood: #415571; --paint-highlight: #c6d4e4;
+    --paint-sheet: #1b2945; --paint-light: #303d5b;
   }
-  .town-painted .town-paint-paper {
+  .town-paint-paper {
     overflow: hidden;
     background: radial-gradient(ellipse at 48% 33%, var(--paint-light), var(--paint-sheet) 76%);
   }
