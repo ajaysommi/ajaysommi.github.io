@@ -839,8 +839,15 @@ const onScrollFrame = (() => {
     if (lifted || ready || reduced || typeof el.animate !== 'function' || !smilePath) return;
     try { ready = openFlight(); } catch { ready = fade; }
   };
+  const prepareTown = () => {
+    if (!el.querySelector('.town-paint-paper') || el.hasAttribute('data-town-ready')) return false;
+    el.setAttribute('data-town-ready', '');
+    el.dispatchEvent(new Event('town:prepare'));
+    return true;
+  };
   const lift = () => {
     if (lifted) return;
+    prepareTown();
     lifted = true;
     if (reduced || typeof el.animate !== 'function' || !smilePath) { fade(); return; }
     try {
@@ -891,7 +898,11 @@ const onScrollFrame = (() => {
   });
   /* The flight is prepared as soon as the bar and the mark are done, before
      the smile, while nothing on the page is moving. */
-  Promise.all([built, fonts, markDone, barDone]).then(() => { prepare(); }).then(smile).then(finish);
+  Promise.all([built, fonts, markDone, barDone]).then(() => {
+    const paintedTown = !reduced && matchMedia('(min-width: 720px)').matches && prepareTown();
+    prepare();
+    if (paintedTown) return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }).then(smile).then(finish);
 
   // Hard cap so a hung asset can never trap the visitor behind the overlay.
   setTimeout(lift, 4000);

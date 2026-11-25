@@ -68,6 +68,21 @@
     wide.addEventListener('change', startTown, { once: true });
     return;
   }
+  // Build the street and its camera tiles in the still beat after the bar lands.
+  const opening = document.getElementById('pageLoader');
+  if (opening && document.documentElement.classList.contains('is-loading') &&
+      !matchMedia('(prefers-reduced-motion: reduce)').matches && !opening.hasAttribute('data-town-ready')) {
+    let fallback;
+    const resume = () => {
+      clearTimeout(fallback);
+      opening.removeEventListener('town:prepare', resume);
+      opening.setAttribute('data-town-ready', '');
+      startTown();
+    };
+    opening.addEventListener('town:prepare', resume, { once: true });
+    fallback = setTimeout(resume, 4000);
+    return;
+  }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
