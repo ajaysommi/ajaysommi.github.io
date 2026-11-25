@@ -1487,10 +1487,6 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-root-shadow { fill: #344e43; opacity: .24; }
 .tw-lobby { opacity: .8; }
 .tw-water-line { fill: none; stroke: #e7e7c5; stroke-width: 1.2; opacity: .72; stroke-linecap: round; }
-.tw-stage::after {
-  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: url("assets/images/town/canvas-weave.png") repeat; opacity: .14;
-}
 @media (min-width: 720px) {
   .tw-scene { touch-action: pan-y pinch-zoom; cursor: grab; }
   .tw-panel .tw-x { width: 38px; height: 38px; }

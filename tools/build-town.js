@@ -345,6 +345,7 @@ const visitorCenter = () => {
       <rect x="${VC.l + 8}" y="${VC.eave - 2}" width="${VC.r - VC.l - 16}" height="${VC.base - VC.eave + 2}" class="tw-vcwood tw-fo"/>
       <path d="M${VC.l + 8} ${VC.eave - 1} L${VC.c} ${VC.apex + 6} L${VC.r - 8} ${VC.eave - 1} Z" class="tw-vcwood"/>
       <path d="M2804 486V405L2960 310l156 95v81z" fill="url(#twTimber)" class="tw-nohit"/>
+      <path d="M2804 486V405L2960 310l156 95v81z" fill="url(#twCanvas)" class="tw-nohit"/>
       <path d="${Array.from({ length: Math.floor((VC.r - VC.l - 16) / 8) }, (_, i) => VC.l + 12 + i * 8).filter((x) => x < gl - 2 || x > gr + 2).map((x) => `M${x} ${(roofY(x) + 9).toFixed(1)} V${VC.eave - 1}`).join(' ')}" class="tw-batten"/>
       <path d="${batt(VC.l + 8, gl)} ${batt(gr, VC.r - 8)}" class="tw-batten"/>
       <path d="M${gl} ${VC.base} V${gy} L${VC.c} ${VC.apex + 14} L${gr} ${gy} V${VC.base} Z" fill="#ffeac2" class="tw-nohit"/><path d="M${gl} ${VC.base} V${gy} L${VC.c} ${VC.apex + 14} L${gr} ${gy} V${VC.base} Z" fill="url(#twVcGlazed)" class="tw-vcglass" data-fracture-pane data-fracture-layer="center" data-pane-grid="2930,2960,2990;430,458" data-pane="${gl + 2},${VC.base} ${gl + 2},${glassShoulder} ${VC.c},${glassApex} ${gr - 2},${glassShoulder} ${gr - 2},${VC.base}" mask="url(#twVcPane-center)" data-pane-holes="twVcHoles-center"/>
@@ -543,6 +544,7 @@ const home = () => `
     <path d="M3494.4 247.4 q5.6 -1.4 11 -.6 q5.6 -.6 11.2 .4 v-5 q-5.6 -.8 -11.2 -.2 q-5.4 -.6 -11 .4 z" class="tw-chimcap"/>
     <path d="M3404.6 324 Q3470 322.6 3536.6 324.4 L3536 486 Q3470 486.8 3405.2 486 Z" class="tw-housewall tw-fo"/>
     <path d="M3404.6 324 Q3470 322.6 3536.6 324.4 L3536 486 Q3470 486.8 3405.2 486 Z" fill="url(#twSiding)" class="tw-nohit"/>
+    <path d="M3404.6 324 Q3470 322.6 3536.6 324.4 L3536 486 Q3470 486.8 3405.2 486 Z" fill="url(#twCanvas)" class="tw-nohit"/>
     <path d="M3404.6 324 Q3470 322.6 3536.6 324.4 L3536.4 360 H3404.8 Z" fill="url(#twEaveShade)" class="tw-nohit"/>
     <path d="M3405 326 V485.4 M3535.8 326 V485.4" class="tw-trim"/>
     ${hwin(0, 3416, 342)}${hwin(1, 3494, 342)}
@@ -667,6 +669,7 @@ const garage = () => {
   return [`
     <rect x="3536" y="378" width="238" height="108" class="tw-house"/><path d="M3536 381 V486 H3774 V381" fill="none" class="tw-fo tw-nohit"/>
     <rect x="3537" y="379" width="236" height="106" fill="url(#twSiding)" opacity=".48" pointer-events="none"/>
+    <rect x="3537" y="379" width="236" height="106" opacity=".48" pointer-events="none" fill="url(#twCanvas)" class="tw-nohit"/>
     <path d="M3534 379 L3655 330 L3776 379 Z" class="tw-house"/><path d="M3534 379 L3655 330 L3776 379 Z" fill="url(#twSiding)" class="tw-nohit"/>
     ${gableShadow(3536, 3655, 3774, 332, 52 / 123, 12, .78)}
     <g transform="translate(3655 358)" pointer-events="none" aria-hidden="true">
@@ -1047,6 +1050,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     <linearGradient id="twBbWash" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff3c8" stop-opacity=".35"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></linearGradient>
     <pattern id="twConcrete" patternUnits="userSpaceOnUse" width="9" height="7"><circle cx="1.5" cy="2" r=".35" fill="rgba(0,0,0,.12)"/><circle cx="6" cy="5" r=".3" fill="rgba(255,255,255,.18)"/><circle cx="4" cy="1" r=".25" fill="rgba(0,0,0,.08)"/></pattern>
     <pattern id="twPegHoles" patternUnits="userSpaceOnUse" width="4" height="4"><circle cx="2" cy="2" r=".42" fill="rgba(80,55,30,.4)"/></pattern>
+    <pattern id="twCanvas" patternUnits="userSpaceOnUse" width="44" height="44"><image href="assets/images/town/canvas-weave.png" width="44" height="44" opacity=".13"/></pattern>
     <pattern id="twGrain" patternUnits="userSpaceOnUse" width="16.5" height="12"><path d="M2 0 q1.4 6 0 12 M8 0 q-1.2 4 .4 7 q1 3 -.2 5 M13 0 q1 5 -.6 12" fill="none" stroke="rgba(70,40,15,.16)" stroke-width=".5"/></pattern>
     <pattern id="twDrywall" patternUnits="userSpaceOnUse" width="24" height="86"><path d="M0 0 V86" stroke="rgba(0,0,0,.09)" stroke-width=".6"/></pattern>
     <linearGradient id="twBbShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0c18" stop-opacity=".42"/><stop offset=".45" stop-color="#0a0c18" stop-opacity=".14"/><stop offset=".8" stop-color="#0a0c18" stop-opacity="0"/></linearGradient>
@@ -1181,6 +1185,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     <rect class="tw-grass" x="-800" y="474" width="${WORLD + 1600}" height="700"/>
     <path class="tw-grass" d="${grassEdge()}"/>
     <rect x="-800" y="474" width="${WORLD + 1600}" height="126" fill="url(#twMeadowLight)" class="tw-nohit"/>
+    <rect x="-800" y="474" width="${WORLD + 1600}" height="126" fill="url(#twCanvas)" class="tw-nohit"/>
     ${lawn()}
     <!-- trees further back, only where nothing stands in front of them: beside the dealership's dock, behind the garage and the shed -->
     <g class="tw-backtrees">${tree(1010, 478, .62, 1)}${pine(1058, 480, 96)}${tree(1112, 478, .7, 2)}${tree(4238, 476, .95, 0)}${pine(4405, 478, 120)}${tree(4478, 476, 1.0, 2)}${pine(4560, 478, 132)}${tree(4632, 476, .95, 1)}${tree(4716, 476, .9, 0)}</g>
@@ -1265,6 +1270,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
 
       <path d="M560 218 Q732 198.6 904 218 V482 H560 Z" class="tw-facade tw-fo"/>
       <path d="M560 218 Q732 198.6 904 218 V482 H560 Z" fill="url(#twBulge)" class="tw-nohit"/>
+      <path d="M560 218 Q732 198.6 904 218 V482 H560 Z" fill="url(#twCanvas)" class="tw-nohit"/>
       <path d="M561.3 252.88 Q732 237.12 902.7 252.88 M561.3 288.9 Q732 275.7 902.7 288.9 M561.3 324.92 Q732 314.48 902.7 324.92 M561.3 362.2 Q605 358.7 651.8 357.1 M561.3 400.2 Q604 397.4 651.8 396.4 M561.3 438.1 Q603 436 651.8 435.6 M561.3 475.8 Q603 474.6 651.8 474.2 M646 212.1 V481 M732 209.6 V350 M818 212.1 V350" class="tw-grid"/>
       <image href="assets/logos/opt/toyota-mark.webp" x="584" y="230" width="112" height="80" preserveAspectRatio="xMidYMid meet" class="tw-tlogo tw-tmark"/><image href="assets/images/town/snow-tmark2.webp" x="584" y="226.92" width="112" height="83.08" preserveAspectRatio="xMidYMid meet" class="tw-snowimg"/>
       <text x="886" y="332.9" class="tw-sommi tw-textsnow" text-anchor="end">SOMMIVILLE</text><text x="886" y="334" class="tw-sommi" text-anchor="end">SOMMIVILLE</text>
@@ -1282,6 +1288,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
       <g class="tw-door-fractures tw-nohit"></g><path d="M776 426 V482" class="tw-mullp"/>${sticker(661, 437, 11, 'twShowroomHoles')}
 
       <rect x="904" y="284" width="230" height="198" class="tw-facade2 tw-fo"/>
+      <rect x="904" y="284" width="230" height="198" fill="url(#twCanvas)" class="tw-nohit"/>
       <g class="tw-nohit">
         <path d="M905.2 285.2h57v19h-57z M1020 305h56v24h-56z" fill="#fff" opacity=".12"/>
         <path d="M962 285.2v44.8m58-44.8v44.8m56-44.8v44.8m-170.8-25h227.6" fill="none" stroke="#65717c" stroke-opacity=".48" stroke-width=".7"/>
