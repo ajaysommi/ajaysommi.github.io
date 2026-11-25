@@ -1509,7 +1509,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* round 22 */
 /* the hint card in the middle, back */
 /* How to get around: a small card in the middle, the gesture drawn out. */
-.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid var(--tw-paper-rule); border-radius: 18px; background: var(--tw-paper); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--tw-forest-ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
+.tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid var(--tw-paper-rule); border-radius: 18px; background: color-mix(in srgb, color-mix(in srgb, var(--tw-paper) 55%, var(--bg)) 76%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--tw-forest-ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
 .tw-hint.out { opacity: 0; scale: .97; transition: opacity .45s, scale .45s; }
 @keyframes tw-hintin { from { opacity: 0; scale: .94; translate: -50% -42%; } }
 .tw-hint p { margin: 0; display: grid; gap: 3px; max-width: 250px; }
