@@ -341,7 +341,6 @@ const visitorCenter = () => {
   const glassShoulder = VC.apex + 11.4 + (VC.eave - VC.apex) * (gr - VC.c) / (VC.r - VC.c + 6);
   const batt = (a, b) => Array.from({ length: Math.floor((b - a) / 8) }, (_, i) => `M${a + 4 + i * 8} ${VC.eave + 2} V${VC.base}`).join(' ');
   return `
-      <defs>${['center', 'west', 'east', 'doors'].map(layer => `<mask id="twVcPane-${layer}" maskUnits="userSpaceOnUse" x="2800" y="310" width="320" height="176"><rect x="2800" y="310" width="320" height="176" fill="white"/><g id="twVcHoles-${layer}"></g></mask>`).join('')}</defs>
       <ellipse cx="${VC.c}" cy="470" rx="230" ry="70" class="tw-vc-halo tw-nohit"/>
       <rect x="${VC.l + 8}" y="${VC.eave - 2}" width="${VC.r - VC.l - 16}" height="${VC.base - VC.eave + 2}" class="tw-vcwood tw-fo"/>
       <path d="M${VC.l + 8} ${VC.eave - 1} L${VC.c} ${VC.apex + 6} L${VC.r - 8} ${VC.eave - 1} Z" class="tw-vcwood"/>
@@ -1034,6 +1033,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     <radialGradient id="twTail"><stop offset="0" stop-color="#ff6a5a"/><stop offset=".4" stop-color="#ff2b2b" stop-opacity=".8"/><stop offset="1" stop-color="#ff2b2b" stop-opacity="0"/></radialGradient>
     <radialGradient id="twHaz"><stop offset="0" stop-color="#ffb21a" stop-opacity=".95"/><stop offset="1" stop-color="#ffb21a" stop-opacity="0"/></radialGradient>
     <linearGradient id="twAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf86"/><stop offset="1" stop-color="#e8a24f"/></linearGradient>
+    ${['center', 'west', 'east', 'doors'].map(layer => `<mask id="twVcPane-${layer}" maskUnits="userSpaceOnUse" x="2800" y="310" width="320" height="176"><rect x="2800" y="310" width="320" height="176" fill="white"/><g id="twVcHoles-${layer}"></g></mask>`).join('')}
     <linearGradient id="twVcGlazed" x2="0" y2="1"><stop stop-color="#ddcea8"/><stop offset=".6" stop-color="#caa676"/><stop offset="1" stop-color="#af7e50"/></linearGradient>
     <linearGradient id="twVcGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a1"/><stop offset=".6" stop-color="#f7b867"/><stop offset="1" stop-color="#e48f45"/></linearGradient>
     <radialGradient id="twVcLight"><stop offset="0" stop-color="#ffc977" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
