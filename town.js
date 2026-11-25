@@ -477,7 +477,7 @@
     for (const motion of cameraMotion) motion.cancel();
     cameraMotion = [];
   };
-  const tween = (to, ms = 850, fn = ease, done, { streetReturn = false } = {}) => {
+  const tween = (to, ms = 850, fn = ease, done, { streetReturn = false, preparedPan } = {}) => {
     stopCamera();
     zoomUntil = reduced ? 0 : performance.now() + ms + 40;
     if (reduced) { setVB(to); done?.(); return; }
@@ -508,7 +508,7 @@
         focus: sky ? null : focus
       };
     };
-    const sweeps = ms < 2000 ? [sweep(false), sweep(true)] : undefined;
+    const sweeps = preparedPan ?? (ms < 2000 ? [sweep(false), sweep(true)] : undefined);
     const interpolate = u => {
       const k = fn(clamp(u, 0, 1));
       return from.map((v, i) => v + (to[i] - v) * k);
@@ -628,12 +628,22 @@
   if (!reduced && loader && document.documentElement.classList.contains('is-loading')) {
     intro = true;
     tw.classList.add('intro');
-    setVB([camX, BOTTOM - vh - RISE, vw, vh]);
+    const arrival = view();
+    const departure = [camX, BOTTOM - vh - RISE, vw, vh];
+    // Rasterize the visible downward route while the loading paper covers it.
+    const panLayers = [false, true].map(sky => {
+      const x = camX * (sky ? .4 : 1);
+      const y = value => sky ? skyY(value) : value;
+      return { bounds: [x, y(departure[1]), x + vw, y(arrival[1]) + vh], startDensity: viewportWidth / vw, endDensity: viewportWidth / vw };
+    });
+    placeVB(departure, true, panLayers);
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
       if (!intro || cur) { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); setTimeout(flyAway, 1200); return; }
-      tween(view(), INTRO, glideDown);
+      const target = view();
+      const prepared = target.every((value, i) => value === arrival[i]) && vb.every((value, i) => value === departure[i]);
+      tween(target, INTRO, glideDown, undefined, { preparedPan: prepared ? panLayers : undefined });
       setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); flyAway(); }, INTRO + 80);
     };
     // the street starts down as the mark takes off; the browser's bar turns

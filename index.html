@@ -137,10 +137,17 @@
   <script>
     /* Start the loading animation once the loader has actually been drawn,
        two frames in, so none of it is spent before the first paint. */
-    (function () { var l = document.getElementById('pageLoader'); if (l && location.hash) l.classList.add('is-fixed'); if (l) requestAnimationFrame(function () { requestAnimationFrame(function () { l.classList.add('is-go'); }); }); })();
+    (() => {
+      const loader = document.getElementById('pageLoader');
+      if (location.hash) loader.classList.add('is-fixed');
+      const start = () => requestAnimationFrame(() => requestAnimationFrame(() => loader.classList.add('is-go')));
+      if (loader.querySelector('.town-paint-paper') && matchMedia('(min-width: 720px)').matches) {
+        document.addEventListener('DOMContentLoaded', start, { once: true });
+      } else start();
+    })();
   </script>
 
-  <script async src="town-paint.js?v=5"></script>
+  <script defer src="town-paint.js?v=5"></script>
 
   <!-- Ambient field. One environment under the whole page whose lighting
        follows the chapter you are reading; script.js blends between seven
@@ -2754,7 +2761,7 @@
   <script src="liquid.js" defer></script>
   <script src="minimal.js" defer></script>
   <script src="mobile.js?v=13" defer></script>
-  <script src="town.js?v=110" defer></script>
+  <script src="town.js?v=111" defer></script>
   <script src="scroll-cue.js?v=2" defer></script>
 </body>
 </html>
