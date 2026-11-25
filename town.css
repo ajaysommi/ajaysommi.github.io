@@ -13,7 +13,7 @@
 .tw-retired { display: none !important; }
 
 .tw {
-  --tw-line: #2a2c34; --tw-grass: #9cc46f; --tw-leaf: #6fae4f; --tw-leaf2: #4f8f3c; --tw-trunk: #7a5a3e;
+  --tw-line: #34343b; --tw-grass: #9cc46f; --tw-leaf: #6fae4f; --tw-leaf2: #4f8f3c; --tw-trunk: #7a5a3e;
   --tw-mtn1: #a9c49c; --tw-mtn2: #b2c3d6; --tw-cloud: #ffffff; --tw-road: #3d3f47; --tw-curb: #e9e5dc;
   --tw-panel: #f6f6f5; --tw-panel2: #e1e3e7; --tw-tower: #fbfbfa; --tw-roofcap: #c9ccd2; --tw-seam: #e2e4e8;
   --tw-glass: #bcd6ea; --tw-showfloor: #d9dde3; --tw-bay: #3a3d46; --tw-red: #e1262d;
@@ -26,7 +26,7 @@
   --tw-line: #0e0f14; --tw-grass: #3f6b44; --tw-leaf: #3f7a3e; --tw-leaf2: #2c5a30; --tw-trunk: #4a3726;
   --tw-mtn1: #3a3d6a; --tw-mtn2: #2c3058; --tw-cloud: #6b5a8e; --tw-road: #20212a; --tw-curb: #44454f;
   --tw-panel: #e6e7ea; --tw-panel2: #c4c8cf; --tw-tower: #eeeff1; --tw-roofcap: #7e828c; --tw-seam: #cfd2d8;
-  --tw-glass: #f7c978; --tw-showfloor: #e7b86c; --tw-bay: #2a2c34; --tw-red: #c81f26;
+  --tw-glass: #f7c978; --tw-showfloor: #e7b86c; --tw-bay: #34343b; --tw-red: #c81f26;
   --tw-jm: #2f3852; --tw-jmband: #1e2539; --tw-win: #f5c76f; --tw-walk: #6b6a70; --tw-drive: #4a4a52;
   --tw-pond: #2e5d86; --tw-rock: #5b5d66; --tw-pole: #6a6e78; --tw-card: #f1eee6; --tw-lab: #222738;
 }
@@ -1465,9 +1465,9 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
   --tw-paper: #fbf6e9; --tw-forest-ink: #234b43; --tw-paper-rule: #d2cbb4;
 }
 [data-theme="midnight"] .tw, [data-theme="terminal"] .tw {
-  --tw-grass: #49694d; --tw-leaf: #53765b; --tw-leaf2: #355547;
-  --tw-pine1: #395e58; --tw-pine2: #264742; --tw-mtn2: #515970;
-  --tw-far-ridge: #656780; --tw-wood-far: #535f69; --tw-wood-mid: #475d5e;
+  --tw-grass: #4c6956; --tw-leaf: #567866; --tw-leaf2: #355547;
+  --tw-pine1: #395e58; --tw-pine2: #264742; --tw-mtn2: #545e76;
+  --tw-far-ridge: #6b7088; --tw-wood-far: #535f69; --tw-wood-mid: #475d5e;
   --tw-wood-near: #3c5751; --tw-scree: #697284; --tw-pond: #3d6773;
   --tw-paper: #253635; --tw-forest-ink: #f2e6ca; --tw-paper-rule: #4c5b52;
 }
@@ -1489,7 +1489,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-water-line { fill: none; stroke: #e7e7c5; stroke-width: 1.2; opacity: .72; stroke-linecap: round; }
 .tw-stage::after {
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: url("assets/images/town/press-grain.svg") repeat; opacity: .075;
+  background: url("assets/images/town/canvas-weave.png") repeat; opacity: .14;
 }
 @media (min-width: 720px) {
   .tw-scene { touch-action: pan-y pinch-zoom; cursor: grab; }
@@ -1534,11 +1534,11 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 
 /* daytime: a clearer, bluer look (less of the warm cast) */
 .tw {
-  --tw-grass: #9ec070; --tw-leaf: #80ab5a; --tw-leaf2: #578a50; --tw-tuft: #85a75e;
-  --tw-mtn2: #a3b9cc; --tw-mtn1: #a0bba2; --tw-far-ridge: #bfcbd6; --tw-scree: #d3d5cd;
+  --tw-grass: #a6bc79; --tw-leaf: #87a863; --tw-leaf2: #628658; --tw-tuft: #8ba465;
+  --tw-mtn2: #a3b8c7; --tw-mtn1: #a0bba2; --tw-far-ridge: #c6ced2; --tw-scree: #d3d5cd;
   --tw-wood-far: #9db9ac; --tw-pond: #7fb6c8;
 }
-.tw-cloudbank { fill: #f7fbff; }
+.tw-cloudbank { fill: #fcf8ed; }
 .tw-cirrus { stroke: #ffffff; }
 .tw-mtn2-st { stroke: #f4f6f2; }
 /* the ADT signs, once lit, stay lit (no breathing) */
