@@ -341,20 +341,21 @@ const visitorCenter = () => {
   const glassShoulder = VC.apex + 11.4 + (VC.eave - VC.apex) * (gr - VC.c) / (VC.r - VC.c + 6);
   const batt = (a, b) => Array.from({ length: Math.floor((b - a) / 8) }, (_, i) => `M${a + 4 + i * 8} ${VC.eave + 2} V${VC.base}`).join(' ');
   return `
+      <defs>${['center', 'west', 'east', 'doors'].map(layer => `<mask id="twVcPane-${layer}" maskUnits="userSpaceOnUse" x="2800" y="310" width="320" height="176"><rect x="2800" y="310" width="320" height="176" fill="white"/><g id="twVcHoles-${layer}"></g></mask>`).join('')}</defs>
       <ellipse cx="${VC.c}" cy="470" rx="230" ry="70" class="tw-vc-halo tw-nohit"/>
       <rect x="${VC.l + 8}" y="${VC.eave - 2}" width="${VC.r - VC.l - 16}" height="${VC.base - VC.eave + 2}" class="tw-vcwood tw-fo"/>
       <path d="M${VC.l + 8} ${VC.eave - 1} L${VC.c} ${VC.apex + 6} L${VC.r - 8} ${VC.eave - 1} Z" class="tw-vcwood"/>
       <path d="M2804 486V405L2960 310l156 95v81z" fill="url(#twTimber)" class="tw-nohit"/>
       <path d="${Array.from({ length: Math.floor((VC.r - VC.l - 16) / 8) }, (_, i) => VC.l + 12 + i * 8).filter((x) => x < gl - 2 || x > gr + 2).map((x) => `M${x} ${(roofY(x) + 9).toFixed(1)} V${VC.eave - 1}`).join(' ')}" class="tw-batten"/>
       <path d="${batt(VC.l + 8, gl)} ${batt(gr, VC.r - 8)}" class="tw-batten"/>
-      <path d="M${gl} ${VC.base} V${gy} L${VC.c} ${VC.apex + 14} L${gr} ${gy} V${VC.base} Z" fill="url(#twVcGlass)" class="tw-vcglass" data-fracture-pane data-fracture-layer="center" data-pane-grid="2930,2960,2990;430,458" data-pane="${gl + 2},${VC.base} ${gl + 2},${glassShoulder} ${VC.c},${glassApex} ${gr - 2},${glassShoulder} ${gr - 2},${VC.base}"/>
+      <path d="M${gl} ${VC.base} V${gy} L${VC.c} ${VC.apex + 14} L${gr} ${gy} V${VC.base} Z" fill="#ffdb99" data-fracture-pane class="tw-nohit"/><path d="M${gl} ${VC.base} V${gy} L${VC.c} ${VC.apex + 14} L${gr} ${gy} V${VC.base} Z" fill="url(#twVcGlass)" class="tw-vcglass" data-fracture-pane data-fracture-layer="center" data-pane-grid="2930,2960,2990;430,458" data-pane="${gl + 2},${VC.base} ${gl + 2},${glassShoulder} ${VC.c},${glassApex} ${gr - 2},${glassShoulder} ${gr - 2},${VC.base}" mask="url(#twVcPane-center)" data-pane-holes="twVcHoles-center"/>
       <g class="tw-lobby tw-nohit">
         <path d="M2902 453q19-2 38 0v30h-38zm82-13h34v44h-34z" fill="#93704a"/>
         <path d="M2902 454h38m44-12h34m-33 12h31m-29 14h29" fill="none" stroke="#efd2a0" stroke-width="2"/>
         <path d="M2990 440v-8h4v8m2 0v-6h3v6m3 0 2-9 3 1-2 8m2 12v-6h4v6" fill="#687d72"/>
         <path d="M2910 452l2-18 14-1 2 19z" fill="#694c3a"/>
         <image href="assets/images/town/park-print.svg" x="2912.8" y="434" width="12" height="17.5" preserveAspectRatio="xMidYMid slice"/>
-        <path d="M2901 400l32-53 9-5-41 77zm0 30 45-72-28 54-17 32zm85-60 10-22 7 4-17 29z" fill="#fff3c8" opacity=".42"/>
+        <path mask="url(#twVcPane-center)" d="M2901 400l32-53 9-5-41 77zm0 30 45-72-28 54-17 32zm85-60 10-22 7 4-17 29z" fill="#fff3c8" opacity=".42"/>
         <path d="M2910 451q12-2 22 0m59-27 12-.4" fill="none" stroke="#fff1bb" stroke-linecap="round"/>
       </g>
       <g data-glass-layer="center" class="tw-nohit"></g>
@@ -368,10 +369,10 @@ const visitorCenter = () => {
       <rect x="${VC.l + 13}" y="472.4" width="${gl - VC.l - 18}" height="2" class="tw-skirtcap"/><rect x="${gr + 5}" y="472.4" width="${VC.r - gr - 18}" height="2" class="tw-skirtcap"/>
       <!-- the window: a trimmed frame, a sill and a flower box -->
       <rect x="2811" y="417" width="78" height="56" rx="2" class="tw-vctrim"/>
-      <rect x="2814" y="420" width="72" height="50" rx="2" data-fracture-pane data-fracture-layer="west" data-pane-grid="2838,2862;445" fill="url(#twVcGlass)"/>
+      <rect x="2814" y="420" width="72" height="50" rx="2" data-fracture-pane fill="#ffdb99" class="tw-nohit"/><rect x="2814" y="420" width="72" height="50" rx="2" data-fracture-pane data-fracture-layer="west" data-pane-grid="2838,2862;445" fill="url(#twVcGlass)" mask="url(#twVcPane-west)" data-pane-holes="twVcHoles-west"/>
       <g class="tw-nohit"><path d="M2815 460h70v9h-70z" fill="#987c5a"/><path d="M2820 460l2-6h6l1 6zm42 0 1-5h10l1 5z" fill="#ad7753"/>
       <path d="M2825 455q-9-6-6-10 5 2 6 7-1-9 3-12 3 6-1 12 4-6 8-5-1 6-8 8zm43 0q-6-4-5-8 4 .8 5 5 0-8 4-10 1 6-2 11 4-5 8-3-3 4-10 5z" fill="#5b7b68"/>
-      <path d="M2815 437l13-17h5l-18 25zm37 7 16-24h6l-22 32z" fill="#fff6d4" opacity=".34"/></g>
+      <path mask="url(#twVcPane-west)" d="M2815 437l13-17h5l-18 25zm37 7 16-24h6l-22 32z" fill="#fff6d4" opacity=".34"/></g>
       <g data-glass-layer="west" class="tw-nohit"></g>
       <path d="M2838 420 V470 M2862 420 V470 M2814 445 H2886" class="tw-mull"/>
       <rect x="2808" y="470" width="84" height="3.4" rx="1" class="tw-sill"/>
@@ -380,11 +381,11 @@ const visitorCenter = () => {
       <rect x="3032" y="416" width="78" height="30" rx="2" class="tw-vcplaque"/>
       <text x="3071" y="429" class="tw-vcplaque-t" text-anchor="middle">WELCOME</text><text x="3071" y="441" class="tw-vcplaque-t" text-anchor="middle">CENTER</text>
       <rect x="3033" y="449" width="76" height="28" rx="2" class="tw-vctrim"/>
-      <rect x="3036" y="452" width="70" height="22" rx="2" data-fracture-pane data-fracture-layer="east" data-pane-grid="3071;" fill="url(#twVcGlass)"/><g data-glass-layer="east" class="tw-nohit"></g><path d="M3071 452 V474" class="tw-mull"/>${sticker(3092, 455)}
+      <rect x="3036" y="452" width="70" height="22" rx="2" data-fracture-pane fill="#ffdb99" class="tw-nohit"/><rect x="3036" y="452" width="70" height="22" rx="2" data-fracture-pane data-fracture-layer="east" data-pane-grid="3071;" fill="url(#twVcGlass)" mask="url(#twVcPane-east)" data-pane-holes="twVcHoles-east"/><g data-glass-layer="east" class="tw-nohit"></g><path d="M3071 452 V474" class="tw-mull"/>${sticker(3092, 455)}
       <rect x="3030" y="474" width="82" height="3.4" rx="1" class="tw-sill"/>
       <!-- double glass doors in the middle of the glass front, with handles; a lantern either side -->
       <rect x="${VC.c - 21}" y="440" width="42" height="46" class="tw-vcdoorf"/>
-      <rect x="${VC.c - 18}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor" data-fracture-pane data-fracture-layer="doors"/><rect x="${VC.c + 1}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor" data-fracture-pane data-fracture-layer="doors"/>
+      <rect x="${VC.c - 18}" y="443" width="17" height="43" fill="#ffdb99" data-fracture-pane class="tw-nohit"/><rect x="${VC.c - 18}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor" data-fracture-pane data-fracture-layer="doors" mask="url(#twVcPane-doors)" data-pane-holes="twVcHoles-doors"/><rect x="${VC.c + 1}" y="443" width="17" height="43" fill="#ffdb99" data-fracture-pane class="tw-nohit"/><rect x="${VC.c + 1}" y="443" width="17" height="43" fill="url(#twVcGlass)" class="tw-vcdoor" data-fracture-pane data-fracture-layer="doors" mask="url(#twVcPane-doors)" data-pane-holes="twVcHoles-doors"/>
       <g data-glass-layer="doors" class="tw-nohit"></g>
       <path d="M${VC.c - 4} 458 v10 M${VC.c + 4} 458 v10" class="tw-vchandle"/>
       ${[gl - 12, gr + 12].map((x) => `<g transform="translate(${x} 444)"><path d="M0 -10 v4" class="tw-vchandle"/><path d="M-4 -6 h8 l-1 10 h-6 z" class="tw-lantern"/><rect x="-2.6" y="-4.6" width="5.2" height="7.2" class="tw-lantern-g"/><path d="M-5 -6 h10" class="tw-vchandle"/><circle r="9" cy="-1" fill="url(#twBulb)" class="tw-night tw-nohit"/></g>`).join('')}
@@ -719,7 +720,7 @@ const garage = () => {
       <image href="assets/images/town/civic-body2.webp" x="${CV.x}" y="${CV.y.toFixed(2)}" width="${CV.w}" height="${CV.h.toFixed(2)}" preserveAspectRatio="none"/>
       <image href="assets/images/town/snow-civic.webp" x="${CV.x}" y="${CV.y.toFixed(2)}" width="${CV.w}" height="${CV.h.toFixed(2)}" preserveAspectRatio="none" class="tw-snowimg"/>
       ${[['f', FB], ['r', RB]].map(([k, b]) => `<g class="tw-bump tw-bump-${k}"><image href="assets/images/town/civic-${k}bump.webp" x="${b.x.toFixed(2)}" y="${b.y.toFixed(2)}" width="${b.w.toFixed(2)}" height="${b.h.toFixed(2)}" preserveAspectRatio="none"/></g>`).join('')}
-      <g class="tw-civ-dmg">${WINS.map((w, i) => `<g clip-path="url(#twCivWin${i})" class="tw-civ-win" data-w="${i}"></g>`).join('')}<g class="tw-civ-dents"></g></g>
+      <g class="tw-civ-dmg">${WINS.map((w, i) => `<g clip-path="url(#twCivWin${i})" class="tw-civ-win" data-w="${i}"></g>`).join('')}</g>
       <g transform="translate(${hx.toFixed(2)} ${hy.toFixed(2)})"><g class="tw-civ-hood" style="transform-origin:${((217.3 - 39.237) / 180 * 100).toFixed(1)}% ${((150 - 143.706) / 56 * 100).toFixed(1)}%;--up:${HOOD_UP}deg"><path d="M${HOOD.slice(6).map(([x, y]) => `${(x - hx).toFixed(2)} ${(y - hy).toFixed(2)}`).join(' L')}" class="tw-hood-under"/><image href="assets/images/town/civic-hood.webp" x="${(ix - hx).toFixed(2)}" y="${(iy - hy).toFixed(2)}" width="${(180 * CV.u).toFixed(2)}" height="${(56 * CV.u).toFixed(2)}" preserveAspectRatio="none"/></g></g>
     </g>`)}
     <g class="tw-steam" aria-hidden="true">${[0, 1, 2, 3, 4].map((k) => `<circle cx="${(CV.x + 8 + k * 4.5).toFixed(1)}" cy="${(HINGE[1] - 2).toFixed(1)}" r="${3 + (k % 2)}" style="--d:${(-k * 0.55).toFixed(2)}s;--dx:${k % 2 ? -5 : 4}px"/>`).join('')}</g>

@@ -1436,16 +1436,16 @@
   // lights inside go out but for a red emergency light in the corner and a
   // white strobe, the ADT sign lights up, the rover runs for its corner, the
   // police come; a car hit through the broken glass goes off too. A car on
-  // the truck, dented or cracked, sets off its own alarm. Malachowsky's
+  // the truck with broken glass, sets off its own alarm. Malachowsky's
   // windows crack and give way, one at a time; the HawkEye's screen and the
   // BetAI TV break (the TV once its window is gone); the house's windows and
   // its door give in if you keep at them, its ADT sign lights up and the
-  // police come. Everything else takes nicks and cracks. A fresh visit always
+  // police come. Other glass can crack too. A fresh visit always
   // starts clean.
-  const fresh = () => ({ civ: { fb: 0, rb: 0, dents: [] }, mac: 0, toy: 0, cars: {}, police: 0, tcars: {}, hk: 0, tv: 0, hdoor: 0, home: 0 });
+  const fresh = () => ({ civ: { fb: 0, rb: 0 }, mac: 0, toy: 0, cars: {}, police: 0, tcars: {}, hk: 0, tv: 0, hdoor: 0, home: 0 });
   let dmg = fresh();
   const hits = {};
-  const damaged = () => paneHits || dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || dmg.civ.dents.length || Object.keys(hits).length || Object.keys(dmg.tcars).length || dmg.hk || dmg.hdoor;
+  const damaged = () => paneHits || dmg.mac || dmg.toy || dmg.civ.fb || dmg.civ.rb || Object.keys(hits).length || Object.keys(dmg.tcars).length || dmg.hk || dmg.hdoor;
   const save = () => { repairButton.hidden = !damaged(); };
   const localPt = (el, e) => { const q = world.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(el.getScreenCTM().inverse()); };
   const inPoly = (x, y, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) o = !o; } return o; };
@@ -1453,8 +1453,6 @@
   const NSel = (tag, attrs) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
   const refresh = (id) => { if (halos[id]) { halos[id].remove(); halos[id]._lite.remove(); delete halos[id]; } if (lit === id) { lit = null; glow(id); } };
   const add = (g, html) => { g.insertAdjacentHTML('beforeend', html); };
-  // a dent: a dark crease and a little bare metal
-  const nick = (x, y, k) => `<g class="tw-nick"><ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(2.2 * k).toFixed(2)}" ry="${(1.4 * k).toFixed(2)}" class="tw-scorch"/><path d="M${(x - 2.4 * k).toFixed(1)} ${(y + 0.6 * k).toFixed(1)} q${(2.4 * k).toFixed(1)} ${(-2.6 * k).toFixed(1)} ${(4.8 * k).toFixed(1)} 0" class="tw-dent"/></g>`;
   // glass falling out of a window that gives way, down to the ground
   const fallShards = (g, poly, ground) => {
     if (reduced) return;
@@ -1718,10 +1716,9 @@
     return null;
   };
   // The Civic
-  const civHot = hotOf('p-civic'), civG = $('.tw-civ-dmg', civHot), winG = $$('.tw-civ-win', civHot), dentG = $('.tw-civ-dents', civHot), bumpF = $('.tw-bump-f', civHot), bumpR = $('.tw-bump-r', civHot);
+  const civHot = hotOf('p-civic'), civG = $('.tw-civ-dmg', civHot), winG = $$('.tw-civ-win', civHot), bumpF = $('.tw-bump-f', civHot), bumpR = $('.tw-bump-r', civHot);
   const drawCivic = () => {
     const c = dmg.civ;
-    dentG.innerHTML = c.dents.map(([x, y], k) => `<path d="M${(x - 1.6).toFixed(2)} ${(y + 0.4).toFixed(2)} q1.6 -1.6 3.2 0" class="tw-dent"/><path d="M${(x - 1).toFixed(2)} ${(y + 1.2).toFixed(2)} l2 -.2" class="tw-scuff" style="--k:${k}"/>`).join('');
     bumpF.classList.toggle('off', !!c.fb);
     bumpR.classList.toggle('off', !!c.rb);
   };
@@ -1734,8 +1731,7 @@
       const i = D.civic.wins.findIndex((w) => inPoly(q.x, q.y, w));
       if (i >= 0) {
         strikePane(winG[i], i, D.civic.wins[i], q, { dark: true, threshold: 1, debris: civG, ground: D.civic.ground });
-      } else if (c.dents.length < 14) c.dents.push([+q.x.toFixed(2), +q.y.toFixed(2)]);
-      else return;
+      } else return;
     }
     drawCivic(); save(); refresh('p-civic');
   };
@@ -1807,15 +1803,14 @@
     }))
   );
   const pokeTruck = (e) => {
-    const T = D.truck, q = localPt(tcG, e), fx = (q.x - T.x) / T.w, fy = (q.y - T.y) / T.h;
+    const T = D.truck, q = localPt(tcG, e);
     const pane = truckPanes.find(({ poly }) => inPoly(q.x, q.y, poly));
-    const i = pane ? pane.car : TCARS.findIndex(([a, b, c, d]) => fx >= a && fx <= b && fy >= c && fy <= d);
-    if (pane) strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, ground: T.y + T.h });
-    if (i < 0) { if (pane) save(); else pokeAny('jm', e); return; }
+    if (!pane) return;
+    const i = pane.car;
+    strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, ground: T.y + T.h });
     const n = dmg.tcars[i] || 0;
     if (n < 6) dmg.tcars[i] = n + 1;
     const [a, b, c, d] = TCARS[i];
-    if (!pane && n < 6) add(tcG, nick(q.x, q.y, 0.75));
     if (n === 0) {
       const P = (u, v) => [(T.x + u * T.w).toFixed(1), (T.y + v * T.h).toFixed(1)];
       const hd = P(a + 0.012, c + (d - c) * 0.5), tl = P(b - 0.01, c + (d - c) * 0.4);
@@ -1888,7 +1883,6 @@
       } else if (dmg.hdoor < 8) {
         dmg.hdoor++;
         if (dmg.hdoor === 8) { el.classList.add('open'); houseAlarm(); }
-        else add(g, nick(q.x, q.y, .7 + dmg.hdoor * .06));
       }
     } else {
       const full = shapePane($('.tw-homewin', el));
@@ -1922,23 +1916,12 @@
   const hallCr = $('.tw-hall-cr', scene), hallHoles = $('.tw-hall-holes', scene);
   const pokeHall = (e) => {
     const q = localPt(hallCr, e), i = D.hall.polys.findIndex((p) => inPoly(q.x, q.y, p));
-    if (i < 0) {
-      // Mullions and the remaining facade share the window artwork. A dent
-      // there would be painted over the glass by the generic damage layer.
-      if (!e.target.closest('.tw-hall-g')) pokeAny('edu', e);
-      return;
-    }
+    if (i < 0) return;
     const result = strikePane(hallCr, i, D.hall.polys[i], q, { threshold: 3, holes: hallHoles, ground: D.hall.ground });
     if (result === 'break') $('.tw-hall-gl', scene).setAttribute('mask', 'url(#twHallMask)');
     save();
   };
 
-  /* Everything else: glass and screens crack; the rest takes nicks. Marks
-     land where it was hit; things that move carry their marks along. */
-  const BODY = { rjax: '.tw-frc-flip', rfa: '.tw-rover-shiver' };
-  const boxes = {};
-  const dmgRoot = (h) => { let g = h.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); h.appendChild(g); } return g; };
-  const dmgIn = (h, id) => { const b = BODY[id] && $(BODY[id], h); if (!b) return dmgRoot(h); let g = b.querySelector(':scope > .tw-dmg'); if (!g) { g = NSel('g', { class: 'tw-dmg tw-nohit' }); b.appendChild(g); } return g; };
   const pokeAny = (id, e) => {
     const h = hotOf(id); if (!h) return;
     // the welcome sign is solid wood: nothing to crack
@@ -1961,14 +1944,7 @@
       save();
       return;
     }
-    const n = (hits[id] || 0) + 1;
-    if (n > 6) return;
-    hits[id] = n;
-    const marks = dmgIn(h, id);
-    if (!boxes[id]) { const b = h.getBBox(); boxes[id] = { x: b.x, y: b.y, w: b.width, h: b.height }; }
-    const B = boxes[id], s = clamp(Math.sqrt(B.w * B.h) / 70, 0.35, 2), q = localPt(marks, e), big = 1 + (n - 1) * 0.14;
-    add(marks, nick(q.x, q.y, s * big));
-    refresh(id); save();
+
   };
 
   // The hard drive: a tap leaves a spot and sets the platter spinning; press

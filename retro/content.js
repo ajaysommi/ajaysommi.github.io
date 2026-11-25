@@ -185,7 +185,8 @@ window.PORTFOLIO = (function () {
           [O + 'civic-plug-480.webp', 'First engine work.', 'My first time working inside an engine. This is what a spark plug looks like after almost 200,000 miles.'],
           [O + 'civic-throttle-480.webp', 'Running rough.', 'The engine was running rough. Hours of troubleshooting, well past midnight, came down to a dirty throttle body. One careful cleaning later, it was running noticeably better.'],
           [O + 'civic-magnet-480.webp', 'What 180,000 miles leaves behind.', 'The transmission had never had its fluid changed. Grinding, violent shaking, jerky shifts and a transmission code. When the drain plug came out, its magnet was coated in burnt black sludge: raw metal shavings from inside the transmission.'],
-          [O + 'civic-fluid-480.webp', 'Fresh fluid.', 'After weeks of research, a drain and fill with fresh fluid. It shifted buttery smooth again, and I saved about $2,000.']
+          [O + 'civic-fluid-480.webp', 'Fresh fluid.', 'After weeks of research, a drain and fill with fresh fluid. It shifted buttery smooth again, and I saved about $2,000.'],
+          [O + 'civic-road-960.webp', 'Back on the road.', 'After all those repairs, the Civic is back to taking our family on adventures.']
         ]
       }
     ],
