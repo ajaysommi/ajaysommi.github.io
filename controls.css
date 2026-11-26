@@ -102,7 +102,7 @@ button.ui-close::after {
 .wf::after { content: none; }
 .wf:focus-visible { border-radius: 999px; }
 .work-filter { gap: 7px; }
-.tw-panel .tw-p-link { border-radius: 12px; padding: 7px 10px; }
+.tw-panel .tw-p-link { border-radius: 6px; padding: 7px 10px; }
 .tw-mail-return { border-radius: 999px; padding-inline: 12px; text-decoration: none; }
 /* Leave enough room at the corners for the circular and pill controls. */
 :is(.tw-panel, .lightbox) { border-radius: 28px; }

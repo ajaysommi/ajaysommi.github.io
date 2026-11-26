@@ -397,7 +397,7 @@
   #experience .tw-stage { position: absolute; inset: 0; aspect-ratio: auto; border: 0; border-radius: 0; }
   .tw.dragging .tw-scene, .tw.dragging .tw-hot { cursor: grabbing; }
   .tw-panel { bottom: 16px; top: 80px; }
-  .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid !important; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--stroke); border-radius: 50%; background: color-mix(in oklab, var(--bg) 85%, transparent); color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
+  .tw-pan { position: absolute; z-index: 4; top: 50%; display: grid !important; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 1px solid var(--tw-paper-rule); border-radius: 50%; background: color-mix(in srgb, var(--tw-paper) 85%, transparent); color: var(--tw-forest-ink); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .5); }
   .tw-pan svg { width: 23px; height: 23px; }
   .tw-pan svg path { stroke-width: 3.1; }
   .tw-pan-l { left: 16px; } .tw-pan-r { right: 16px; }
@@ -1326,7 +1326,7 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 .tw-dishshade { fill: none; stroke: rgba(0, 0, 0, .14); stroke-width: 2.4; } .tw-dishrim { fill: #dfe3e8; stroke: var(--tw-line); stroke-width: 1.2; }
 .tw-strut { stroke: #5d616b; stroke-width: 1.1; fill: none; } .tw-lnb { fill: #3a3d46; }
 /* the visitor center's flag and garden, and the butterfly */
-.tw-vcflag { fill: #e9a23b; } .tw-vcflag-p { fill: #fff7e6; }
+.tw-vcflag { fill: #356652; }
 .tw-soil { fill: #6b4a2e; } [data-theme="midnight"] .tw .tw-soil, [data-theme="terminal"] .tw .tw-soil { fill: #3e2c1d; }
 .tw-glamp-p { fill: #3a3d46; } .tw-glamp { fill: #2a2c34; }
 .tw-bath { fill: #b9bcc4; stroke: #6f7380; stroke-width: .6; } .tw-bathwater { fill: #7cc4ef; } .tw-dial { fill: #c9a46a; stroke: #6b4428; stroke-width: .5; } .tw-gnomon { fill: none; stroke: #3e2515; stroke-width: .8; }
@@ -1510,6 +1510,9 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 /* the hint card in the middle, back */
 /* How to get around: a small card in the middle, the gesture drawn out. */
 .tw-hint { position: absolute; left: 50%; top: 46%; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 16px; border: 1px solid var(--tw-paper-rule); border-radius: 18px; background: color-mix(in srgb, color-mix(in srgb, var(--tw-paper) 55%, var(--bg)) 74%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .55); color: var(--tw-forest-ink); translate: -50% -50%; pointer-events: none; animation: tw-hintin .7s cubic-bezier(.2, .8, .2, 1) both; }
+[data-theme="midnight"] .tw-hint {
+  background: color-mix(in srgb, #29433b 74%, transparent);
+}
 .tw-hint.out { opacity: 0; scale: .97; transition: opacity .45s, scale .45s; }
 @keyframes tw-hintin { from { opacity: 0; scale: .94; translate: -50% -42%; } }
 .tw-hint p { margin: 0; display: grid; gap: 3px; max-width: 250px; }

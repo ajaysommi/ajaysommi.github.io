@@ -1816,15 +1816,10 @@
   };
 
   // The cars on the truck: each one hit sets off its own alarm.
-  // (where each sits on the picture, and its headlights and taillights)
-  const TCARS = [
-    [0.178, 0.377, 0.006, 0.305], [0.381, 0.599, 0.019, 0.305], [0.601, 0.787, 0.057, 0.305], [0.793, 0.981, 0.019, 0.305],
-    [0.184, 0.37, 0.406, 0.724], [0.394, 0.57, 0.46, 0.724], [0.597, 0.773, 0.406, 0.724], [0.799, 0.979, 0.406, 0.724]
-  ];
   const jmHot = hotOf('jm'), tcG = $('.tw-tcars', jmHot);
-  const truckPanes = D.truck.glass.flatMap(({ car, panes }) =>
-    spritePanes($('.tw-truckimg', jmHot), panes, 3944, 876).map((poly, i) => ({
-      car, key: `${car}:${i}`, poly
+  const truckPanes = D.truck.glass.flatMap(({ car, lamps, panes }) =>
+    spritePanes($('.tw-truckimg', jmHot), panes).map((poly, i) => ({
+      car, lamps, key: `${car}:${i}`, poly
     }))
   );
   const pokeTruck = (e) => {
@@ -1835,11 +1830,11 @@
     strikePane(tcG, pane.key, pane.poly, q, { dark: true, threshold: 1, ground: T.y + T.h });
     const n = dmg.tcars[i] || 0;
     if (n < 6) dmg.tcars[i] = n + 1;
-    const [a, b, c, d] = TCARS[i];
-    if (n === 0) {
+    if (n === 0 && pane.lamps) {
       const P = (u, v) => [(T.x + u * T.w).toFixed(1), (T.y + v * T.h).toFixed(1)];
-      const hd = P(a + 0.012, c + (d - c) * 0.5), tl = P(b - 0.01, c + (d - c) * 0.4);
-      add(tcG, `<g class="tw-tc-al"><g class="tw-tc-w"><circle cx="${hd[0]}" cy="${hd[1]}" r="12" fill="url(#twLedBulb)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" class="tw-proj"/><polygon points="${hd[0]},${(+hd[1] - 2).toFixed(1)} ${hd[0]},${(+hd[1] + 2).toFixed(1)} ${(+hd[0] - 34).toFixed(1)},${(+hd[1] + 10).toFixed(1)} ${(+hd[0] - 34).toFixed(1)},${(+hd[1] - 6).toFixed(1)}" fill="url(#twLed)" opacity=".75"/></g><g class="tw-tc-a"><circle cx="${hd[0]}" cy="${hd[1]}" r="10" fill="url(#twHaz)"/><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twHaz)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" fill="#ffd27a"/><circle cx="${tl[0]}" cy="${tl[1]}" r="1.6" fill="#ffd27a"/></g><g class="tw-tc-r"><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twTail)"/></g></g>`);
+      const hd = P(...pane.lamps[0]), tl = P(...pane.lamps[1]);
+      const beamEnd = +hd[0] + (+hd[0] < +tl[0] ? -34 : 34);
+      add(tcG, `<g class="tw-tc-al"><g class="tw-tc-w"><circle cx="${hd[0]}" cy="${hd[1]}" r="12" fill="url(#twLedBulb)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" class="tw-proj"/><polygon points="${hd[0]},${(+hd[1] - 2).toFixed(1)} ${hd[0]},${(+hd[1] + 2).toFixed(1)} ${beamEnd.toFixed(1)},${(+hd[1] + 10).toFixed(1)} ${beamEnd.toFixed(1)},${(+hd[1] - 6).toFixed(1)}" fill="url(#twLed)" opacity=".75"/></g><g class="tw-tc-a"><circle cx="${hd[0]}" cy="${hd[1]}" r="10" fill="url(#twHaz)"/><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twHaz)"/><circle cx="${hd[0]}" cy="${hd[1]}" r="1.6" fill="#ffd27a"/><circle cx="${tl[0]}" cy="${tl[1]}" r="1.6" fill="#ffd27a"/></g><g class="tw-tc-r"><circle cx="${tl[0]}" cy="${tl[1]}" r="10" fill="url(#twTail)"/></g></g>`);
     }
     save();
   };

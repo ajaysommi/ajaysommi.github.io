@@ -408,7 +408,7 @@ const visitorCenter = () => {
       <!-- planters by the steps -->
       ${[VC.c - 70, VC.c + 70].map((x) => `<path d="M${x - 7} 488 h14 l-2 11 h-10 z" class="tw-pot"/><circle cx="${x - 4}" cy="485" r="4.4" class="tw-leaf2"/><circle cx="${x + 4}" cy="485" r="4.6" class="tw-leaf"/><circle cx="${x}" cy="481" r="5" class="tw-leaf"/>${[[-4, 483], [3, 480], [5, 485], [-1, 478.6]].map(([dx, dy], k) => `<circle cx="${x + dx}" cy="${dy}" r="1.3" class="tw-flower" style="--c:${['#ffd166', '#ff8fab', '#ffffff', '#ff6b8b'][k]}"/>`).join('')}`).join('')}
       ${[2832, 3088].map((x) => `<rect x="${x - 16}" y="478" width="32" height="3" rx="1" class="tw-bench"/><rect x="${x - 14}" y="481" width="2.4" height="5" class="tw-bench"/><rect x="${x + 11.6}" y="481" width="2.4" height="5" class="tw-bench"/>`).join('')}
-      <g transform="translate(3140 486)"><rect x="-1.4" y="-150" width="2.8" height="150" class="tw-pole"/><path d="M1.4-148q7-3 15-.8 7 2 13-.3l-6 8 5.6 6.9q-6.2 2.7-13.5.3-7.4-2.3-14.1 1z" class="tw-vcflag"/><path d="M2.8-146.8q7-2.4 13.2-.4m1.4.5q4.5 1.2 7.5.6" fill="none" stroke="#ffe3a0" stroke-width=".8"/><path d="M11 -136.4 l3.4 -7.4 l3.4 7.4 z M13.6 -136.4 h1.6 v2 h-1.6 z" class="tw-vcflag-p"/></g>
+      <g transform="translate(3140 486)"><rect x="-1.4" y="-150" width="2.8" height="150" class="tw-pole"/><path d="M1.4-148q7-3 15-.8 7 2 13-.3l-6 8 5.6 6.9q-6.2 2.7-13.5.3-7.4-2.3-14.1 1z" class="tw-vcflag"/><path d="M2.8-146.8q7-2.4 13.2-.4m1.4.5q4.5 1.2 7.5.6" fill="none" stroke="#d2c48b" stroke-width=".8"/><g transform="translate(7.5 -149) scale(.30)"><path fill="#fff3d4" d="M10.29 44.57 L30.86 9.90 L43.20 32.70 L43.20 36.19 L36.19 36.19 L30.86 26.67 L20.19 44.57Z"/><path d="M26.25 36.19 A13.16 13.16 0 0 0 52.57 36.19 L43.83 36.19 A4.42 4.42 0 0 1 34.99 36.19Z" fill="#e7bd69"/><rect x="43.83" y="24.60" width="8.74" height="11.79" fill="#fff3d4"/><circle cx="48.20" cy="17.40" r="5.60" fill="#fff3d4"/></g></g>
       <g class="tw-woodsign">
         <path d="M2596 486 q-4 -26 10 -28 h130 q14 2 10 28 z" class="tw-stone"/>
         <g transform="translate(2597 461)" class="tw-sign-stones tw-nohit">
@@ -949,23 +949,26 @@ const skyHex = (st, y) => {
    and 1093, its tyres on the lift. */
 const RAV = { s: 73 / 1150 }; RAV.w = 1881 * RAV.s; RAV.h = 709 * RAV.s; RAV.x = 1020 - 353 * RAV.s; RAV.y = 455.6 - RAV.h; RAV.wy = RAV.y + 553 * RAV.s;
 const TK = { x: 478, w: 620, ground: 486 };
-TK.s = TK.w / 1972; TK.h = 438 * TK.s; TK.y = TK.ground - TK.h;
+// Coordinates trace the supplied 2196 × 732 image before its transparent margins are cropped.
+const TRUCK_CROP_TOP = 120, TRUCK_W = 2196, TRUCK_H = 500;
+TK.s = TK.w / TRUCK_W; TK.h = TRUCK_H * TK.s; TK.y = TK.ground - (616 - TRUCK_CROP_TOP) * TK.s;
 const TRUCK_GLASS = [
-  { car: -1, panes: [[[246,491],[293,482],[347,369],[315,363],[278,414]],[[375,479],[484,461],[491,373],[469,368],[404,368],[375,399]]] },
-  { car: 0, panes: [[[973,102],[1007,65],[1062,39],[1130,37],[1118,100]],[[1147,37],[1290,43],[1313,82],[1291,96],[1140,100]],[[1302,44],[1352,81],[1324,95]]] },
-  { car: 1, panes: [[[1750,102],[1796,59],[1847,35],[1904,34],[1893,101]],[[1923,34],[2029,35],[2042,50],[2044,91],[2028,102],[1919,102]]] },
-  { car: 2, panes: [[[2586,133],[2636,95],[2709,70],[2760,65],[2749,128]],[[2784,65],[2869,73],[2946,108],[2914,122],[2774,128]]] },
-  { car: 3, panes: [[[3350,112],[3408,66],[3464,44],[3538,43],[3524,108]],[[3550,45],[3679,51],[3705,85],[3684,104],[3540,109]],[[3690,51],[3748,82],[3721,101]]] },
-  { car: 4, panes: [[[959,448],[1005,414],[1069,383],[1124,382],[1113,450]],[[1144,382],[1283,384],[1305,416],[1295,439],[1138,449]],[[1299,384],[1340,421],[1311,439]]] },
-  { car: 5, panes: [[[1695,455],[1732,436],[1770,426],[1783,470],[1740,468]],[[1790,425],[1854,422],[1871,473],[1798,470]],[[1880,421],[1943,427],[2028,468],[2004,479],[1891,476]]] },
-  { car: 6, panes: [[[2460,427],[2519,392],[2544,391],[2530,443],[2487,442]],[[2552,393],[2645,391],[2663,448],[2545,443]],[[2669,394],[2710,395],[2775,420],[2829,458],[2691,449]]] },
-  { car: 7, panes: [[[3259,430],[3293,400],[3313,399],[3301,454],[3282,450]],[[3325,399],[3419,398],[3455,465],[3318,454]],[[3443,400],[3509,400],[3602,446],[3582,466],[3477,465]]] },
-];
-const tk = (px, py) => [TK.x + px * TK.s, TK.y + py * TK.s];
-// Its own amber lights (the cab's corner and roof lights, the trailer's side
-// markers), flashing as hazards; never the cars it carries.
-const HAZ = [[48, 327], [166, 162], [186, 160], [350, 328], [755, 392], [1552, 328], [1953, 370], [1934, 156]].map(([x, y]) => tk(x, y));
-const HEAD = tk(34, 330);
+  { car: -1, panes: [[[143,399],[174,339],[193,339],[177,376],[161,399]],[[218,348],[232,334],[270,333],[277,336],[277,378],[271,385],[218,397]]] },
+  { car: 0, lamps: [[413,205],[806,192]], panes: [[[530,184],[564,158],[591,151],[624,150],[615,186],[560,189]],[[639,151],[701,152],[706,183],[636,185]],[[708,153],[724,155],[746,171],[730,181],[713,182]]] },
+  { car: 1, lamps: [[853,205],[1287,202]], panes: [[[981,177],[1007,157],[1028,150],[1059,149],[1055,187],[1000,188]],[[1077,149],[1128,150],[1136,156],[1137,178],[1128,183],[1076,186]]] },
+  { car: 2, lamps: [[1327,225],[1692,215]], panes: [[[1442,201],[1474,181],[1500,176],[1530,175],[1523,204],[1462,206]],[[1545,175],[1592,177],[1600,201],[1542,204]],[[1600,179],[1624,190],[1607,199]]] },
+  { car: 3, lamps: [[1744,206],[2120,194]], panes: [[[1844,187],[1874,165],[1903,158],[1946,156],[1938,189],[1880,191]],[[1955,157],[2014,158],[2020,186],[1950,189]],[[2022,159],[2042,161],[2060,174],[2048,182],[2028,185]]] },
+  { car: 4, lamps: [[429,398],[793,381]], panes: [[[537,376],[565,354],[592,345],[624,343],[614,378],[565,381]],[[640,344],[697,345],[705,371],[636,377]],[[705,346],[722,348],[741,360],[728,368],[712,371]]] },
+  { car: 5, lamps: [[1225,414],[880,399]], panes: [[[928,383],[956,372],[978,366],[985,388],[954,389]],[[988,365],[1031,362],[1038,389],[992,389]],[[1042,362],[1070,364],[1105,379],[1117,389],[1049,390]]] },
+  { car: 6, lamps: [[1661,403],[1318,382]], panes: [[[1366,367],[1389,352],[1414,350],[1407,375],[1380,375]],[[1420,350],[1464,350],[1471,377],[1415,375]],[[1479,351],[1504,352],[1530,363],[1558,381],[1487,378]]] },
+  { car: 7, lamps: [[2106,416],[1751,390]], panes: [[[1787,372],[1814,357],[1859,354],[1850,381],[1792,379]],[[1866,354],[1937,356],[1939,388],[1858,383]],[[1948,358],[1976,363],[1999,373],[1986,392],[1948,389]],[[2016,382],[2031,395],[2006,394]]] },
+].map(({ car, lamps, panes }) => ({
+  car, lamps: lamps?.map(([x, y]) => [x / TRUCK_W, (y - TRUCK_CROP_TOP) / TRUCK_H]),
+  panes: panes.map(poly => poly.map(([x, y]) => [x / TRUCK_W, (y - TRUCK_CROP_TOP) / TRUCK_H]))
+}));
+const tk = (px, py) => [TK.x + px * TK.s, TK.y + (py - TRUCK_CROP_TOP) * TK.s];
+const HAZ = [[74, 492], [189, 309], [394, 496], [845, 565], [1715, 496], [2129, 304], [2159, 542]].map(([x, y]) => tk(x, y));
+const HEAD = tk(58, 496);
 
 /* The hills: a far range of rocky peaks (jagged ridges, a shaded face on
    each, a few strata), and in front of it a green ridge with a bumpy,
@@ -1234,8 +1237,10 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
     <g class="tw-art tw-truckdrive">
     ${hot('jm', `
     <g>
-      <image href="assets/images/town/jm-truck.webp" x="${TK.x}" y="${TK.y.toFixed(2)}" width="${TK.w}" height="${TK.h.toFixed(2)}" preserveAspectRatio="none" class="tw-truckimg"/>
-      <image href="assets/images/town/snow-truck.webp" x="${TK.x}" y="${TK.y.toFixed(2)}" width="${TK.w}" height="${TK.h.toFixed(2)}" preserveAspectRatio="none" class="tw-snowimg"/>
+      <image href="assets/images/town/jm-sienna-carrier.webp" x="${TK.x}" y="${TK.y.toFixed(2)}" width="${TK.w}" height="${TK.h.toFixed(2)}" preserveAspectRatio="none" class="tw-truckimg"/>
+      <g class="tw-textsnow tw-nohit" transform="translate(${TK.x} ${TK.y - TRUCK_CROP_TOP * TK.s}) scale(${TK.s})">
+        <path d="M222 296Q267 270 315 263 M564 146Q627 124 750 137 M996 151Q1058 130 1138 139 M1464 182Q1502 164 1594 172 M1884 150Q1937 132 2054 144 M564 348Q621 324 728 333 M970 367Q1020 350 1077 359 M1374 349Q1445 332 1505 345 M1808 350Q1892 335 1973 358" fill="none" stroke="#edf6fc" stroke-width="6" stroke-linecap="round"/>
+      </g>
       <g class="tw-tcars"></g>
       <g class="tw-hazards">${HAZ.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="url(#twHaz)" class="tw-haz-glow"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" class="tw-haz"/>`).join('')}</g>
       <g class="tw-night tw-nohit"><polygon points="${HEAD[0]},${HEAD[1] - 5} ${HEAD[0]},${HEAD[1] + 5} ${HEAD[0] - 190},${HEAD[1] + 46} ${HEAD[0] - 190},${HEAD[1] - 26}" fill="url(#twHead)"/><circle cx="${HEAD[0]}" cy="${HEAD[1]}" r="11" fill="url(#twBulb)"/></g>
