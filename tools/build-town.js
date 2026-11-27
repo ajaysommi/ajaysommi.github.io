@@ -262,7 +262,7 @@ const PROJ = {
       <circle cx="3438" cy="420.1" r="2.4" class="tw-tvline"/>
       <circle cx="3433" cy="423.6" r=".9" class="tw-tvp a"/><circle cx="3442.6" cy="417.2" r=".9" class="tw-tvp b"/><circle cx="3436.4" cy="415.8" r=".7" class="tw-tvball"/>
       <rect x="3425.2" y="412.8" width="11.4" height="4.2" rx=".6" class="tw-tvbug"/><text x="3426.2" y="416.1" class="tw-tvodds">62%</text>
-      <g class="tw-tvbars">${[0, 1, 2].map((k) => `<rect class="tw-anim" x="${3445.6 + k * 1.9}" y="${413 + k * 0.8}" width="1.2" height="${3.8 - k * 0.8}" style="--i:${k}"/>`).join('')}</g>
+      <g class="tw-tvbars">${[0, 1, 2].map((k) => `<rect x="${3445.6 + k * 1.9}" y="${413 + k * 0.8}" width="1.2" height="${3.8 - k * 0.8}" style="--i:${k}"/>`).join('')}</g>
       <rect x="3436.4" y="429.6" width="3.2" height="2.6" class="tw-tvstand"/><rect x="3427" y="432" width="22" height="8" rx=".8" class="tw-tvcab"/>
       <g class="tw-tvlcd" clip-path="url(#twTvScr)"><rect x="3424.4" y="412" width="27.2" height="16.2" class="tw-tvlcd-bleed"/>${[[3428, '#ff2bd6'], [3431.6, '#29f0ff'], [3440.2, '#3dff6e'], [3446, '#fff']].map(([x, c]) => `<rect x="${x}" y="412" width=".7" height="16.2" fill="${c}" class="tw-tvlcd-bar"/>`).join('')}<g class="tw-tvlcd-cr"></g></g>
       <path d="M3414 404 h7 q-2.4 18 1 36 h-8 z M3462 404 h-7 q2.4 18 -1 36 h8 z" class="tw-curtain"/>
@@ -722,7 +722,7 @@ const garage = () => {
       <g class="tw-civ-dmg">${WINS.map((w, i) => `<g clip-path="url(#twCivWin${i})" class="tw-civ-win" data-w="${i}"></g>`).join('')}</g>
       <g transform="translate(${hx.toFixed(2)} ${hy.toFixed(2)})"><g class="tw-civ-hood" style="transform-origin:${((217.3 - 39.237) / 180 * 100).toFixed(1)}% ${((150 - 143.706) / 56 * 100).toFixed(1)}%;--up:${HOOD_UP}deg"><path d="M${HOOD.slice(6).map(([x, y]) => `${(x - hx).toFixed(2)} ${(y - hy).toFixed(2)}`).join(' L')}" class="tw-hood-under"/><image href="assets/images/town/civic-hood.webp" x="${(ix - hx).toFixed(2)}" y="${(iy - hy).toFixed(2)}" width="${(180 * CV.u).toFixed(2)}" height="${(56 * CV.u).toFixed(2)}" preserveAspectRatio="none"/></g></g>
     </g>`)}
-    <g class="tw-steam" aria-hidden="true">${[0, 1, 2, 3, 4].map((k) => `<circle class="tw-anim" cx="${(CV.x + 8 + k * 4.5).toFixed(1)}" cy="${(HINGE[1] - 2).toFixed(1)}" r="${3 + (k % 2)}" style="--d:${(-k * 0.55).toFixed(2)}s;--dx:${k % 2 ? -5 : 4}px"/>`).join('')}</g>
+    <g class="tw-steam" aria-hidden="true">${[0, 1, 2, 3, 4].map((k) => `<circle cx="${(CV.x + 8 + k * 4.5).toFixed(1)}" cy="${(HINGE[1] - 2).toFixed(1)}" r="${3 + (k % 2)}" style="--d:${(-k * 0.55).toFixed(2)}s;--dx:${k % 2 ? -5 : 4}px"/>`).join('')}</g>
     <g class="tw-civ-tags" aria-hidden="true">${[['Spark plugs', 3615.4, 495.4, 470], ['Throttle body', 3610, 496.5, 478], ['AC compressor', 3604.6, 497.7, 486], ['Transmission', 3599.2, 499.3, 494]].map(([t, x, y, ty], i) => { return `<g style="--i:${i}"><path d="M3579 ${ty - 1.3} H3583 L${x} ${y}" class="tw-tag-l"/><circle cx="${x}" cy="${y}" r="1.25" class="tw-tag-ring"/><circle cx="${x}" cy="${y}" r=".6" class="tw-tag-d"/><text x="3578" y="${ty}" text-anchor="end" class="tw-tag-t">${t}</text></g>`; }).join('')}</g>`];
 };
 
@@ -785,7 +785,7 @@ const bench = () => `
       </g>
       <g class="tw-mac-fire tw-nohit">${[[3812, 1], [3817.5, 1.35], [3823, 1.1]].map(([x, k], i) => `<path d="M${x} 466 c-2.4 -1.4 -2.6 -4 -1 -6.2 c.2 1.4 1 2 1.6 2.2 c-.4 -2.6 .6 -4.8 2.6 -6.2 c-.6 2.2 .4 3.8 1.4 4.8 c.6 -1 .7 -2 .5 -3 c1.8 2.4 1.8 5.6 -.6 8.4 z" transform="translate(${x} 466) scale(${k}) translate(${-x} -466)" class="tw-flame" style="--d:${(-i * 0.23).toFixed(2)}s"/>`).join('')}<circle cx="3818" cy="462" r="9" fill="url(#twFireGlow)" class="tw-fireglow"/></g>
     </g>`)}
-    <g class="tw-smoke" aria-hidden="true">${[0, 1, 2].map((k) => `<circle class="tw-anim" cx="${3815 + k * 2.6}" cy="455" r="${1.6 + k * 0.3}" style="--d:${(-k * 0.8).toFixed(1)}s;--dx:${k % 2 ? -3 : 3}px"/>`).join('')}${[0, 1, 2, 3, 4].map((k) => `<circle class="tw-smoke-x tw-anim" cx="${3810 + k * 4}" cy="452" r="${2.2 + (k % 2)}" style="--d:${(-k * 0.5).toFixed(1)}s;--dx:${k % 2 ? -5 : 5}px"/>`).join('')}</g>
+    <g class="tw-smoke" aria-hidden="true">${[0, 1, 2].map((k) => `<circle cx="${3815 + k * 2.6}" cy="455" r="${1.6 + k * 0.3}" style="--d:${(-k * 0.8).toFixed(1)}s;--dx:${k % 2 ? -3 : 3}px"/>`).join('')}${[0, 1, 2, 3, 4].map((k) => `<circle class="tw-smoke-x" cx="${3810 + k * 4}" cy="452" r="${2.2 + (k % 2)}" style="--d:${(-k * 0.5).toFixed(1)}s;--dx:${k % 2 ? -5 : 5}px"/>`).join('')}</g>
     ${hot('p-lcd', `<g>
       <rect x="3840" y="464" width="20" height="4" rx="1" class="tw-pcb"/>
       <rect x="3842" y="451" width="16" height="12" rx="1" class="tw-lcdcase"/><rect x="3843.5" y="453" width="13" height="7" class="tw-lcd" data-fracture-pane="dark"/>
@@ -1244,7 +1244,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
       <rect x="18" y="244" width="258" height="106" rx="6" class="tw-board"/>
       <rect x="18" y="244" width="258" height="106" rx="6" fill="url(#twBbWash)" class="tw-bb-wash tw-nohit"/>
       <image href="assets/logos/opt/shiva.webp" x="36" y="256" width="82" height="82" preserveAspectRatio="xMidYMid meet" class="tw-rounded"/>
-      <g class="tw-bars">${[16, 24, 34, 48].map((h, i) => `<rect class="tw-anim" x="${150 + i * 26}" y="${322 - h}" width="18" height="${h}" rx="3" style="--i:${i}"/>`).join('')}</g>
+      <g class="tw-bars">${[16, 24, 34, 48].map((h, i) => `<rect x="${150 + i * 26}" y="${322 - h}" width="18" height="${h}" rx="3" style="--i:${i}"/>`).join('')}</g>
       <path d="M152 300 L244 258 m-14 -1 l14 1 l-3 13" class="tw-arrow"/>
       <text x="205" y="342" class="tw-plus" text-anchor="middle">+20%</text>
       <!-- the catwalk and its four floodlights, aimed up at the board -->
@@ -1442,7 +1442,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
       <g transform="translate(552 534)"><rect x="-1.6" y="0" width="3.2" height="40" class="tw-pole"/><image href="assets/logos/opt/renaissance-jax.webp" x="-17" y="-30" width="34" height="34" class="tw-rounded"/></g>
       <g transform="translate(714 544)"><rect x="-2" y="0" width="4" height="34" class="tw-pole"/><path d="M-12 -18 v14 h24 v-14 h-6 v8 h-12 v-8 z" class="tw-target"/></g>
       <path class="tw-vision" d="M0 0"/>
-      <g class="tw-reticle"><path class="tw-anim" d="M-20 -14 v-7 h7 M13 -21 h7 v7 M20 14 v7 h-7 M-13 21 h-7 v-7"/></g>
+      <g class="tw-reticle"><path d="M-20 -14 v-7 h7 M13 -21 h7 v7 M20 14 v7 h-7 M-13 21 h-7 v-7"/></g>
       <g class="tw-frc"><g class="tw-frc-flip">
         <circle cx="-25" cy="21" r="5" class="tw-tyre"/><circle cx="25" cy="21" r="5" class="tw-tyre"/><circle cx="0" cy="21" r="5" class="tw-tyre"/>
         <rect x="-35" y="-34" width="70" height="40" class="tw-frc-poly"/>
@@ -1535,7 +1535,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
       <circle cx="3862" cy="558.6" r="1.6" class="tw-flower" style="--c:#ff9ec4"/>
       <ellipse cx="3684" cy="546" rx="12" ry="7" class="tw-rock"/><ellipse cx="3916" cy="566" rx="11" ry="6" class="tw-rock"/><ellipse cx="3876" cy="532" rx="9" ry="5" class="tw-rock"/>
       ${[3690, 3696, 3702, 3908, 3914, 3920].map((x, k) => `<path d="M${x} ${560 - (k % 3)} q${k % 2 ? 2 : -2} -14 ${k % 2 ? 1 : -1} -24" class="tw-reed"/><rect x="${x + (k % 2 ? 0.4 : -2.4)}" y="${531 - (k % 3)}" width="2.4" height="7" rx="1.2" class="tw-cattail"/>`).join('')}
-      <g class="tw-ripples"><ellipse class="tw-anim" cx="3804" cy="555" rx="20" ry="5"/><ellipse class="tw-anim" cx="3804" cy="555" rx="20" ry="5" style="animation-delay:-1.6s"/></g>
+      <g class="tw-ripples"><ellipse cx="3804" cy="555" rx="20" ry="5"/><ellipse cx="3804" cy="555" rx="20" ry="5" style="animation-delay:-1.6s"/></g>
       <g transform="translate(3696 3)"><g class="tw-gator" transform="translate(-10 26)">
         <!-- the back, a row of ridged scutes trailing off behind the head -->
         <path d="M54 530 Q66 525.4 86 523.6 L88 530 Z" class="tw-gator-b"/>
@@ -1587,7 +1587,7 @@ const svg = `<div class="tw-scene" role="group" aria-label="Sommiville, an illus
         <g class="tw-dish" transform="translate(0 -16)"><path d="M-4.4 1.6 L-2.6 -5 H2.6 L4.4 1.6 Z" class="tw-dishyoke"/><circle cx="0" cy="0" r="2.6" class="tw-dishbolt"/>
           <path d="M-22 -14 q22 22 44 0 z" class="tw-dishface"/><path d="M-19 -12.6 q19 15 38 0" class="tw-dishshade"/><ellipse cx="0" cy="-14" rx="22" ry="2.2" class="tw-dishrim"/>
           <path d="M-17 -13.4 L0 -23 M17 -13.4 L0 -23" class="tw-strut"/><path d="M0 -6 l0 -16" class="tw-feed"/><rect x="-2.2" y="-26.6" width="4.4" height="4" rx="1" class="tw-lnb"/><circle cx="0" cy="-28" r="2.2" class="tw-led-on"/>
-        <g class="tw-pings"><path class="tw-anim" d="M-10 -34 a14 14 0 0 1 20 0"/><path class="tw-anim" d="M-18 -42 a26 26 0 0 1 36 0" style="animation-delay:.4s"/></g></g>
+        <g class="tw-pings"><path d="M-10 -34 a14 14 0 0 1 20 0"/><path d="M-18 -42 a26 26 0 0 1 36 0" style="animation-delay:.4s"/></g></g>
       </g>
       <!-- thick cables from the sign, coiled on the grass, up into HiPerGator -->
       ${[0, 1, 2, 3].map((k) => { const o = k * 2.4, c = ['#1b1d22', '#2a4fa8', '#c2410c', '#3a3d46'][k]; return `<path d="M${3450 + o * 0.4} ${514 - o} C${3466 + o} ${520 - o * 0.4} ${3482 + o} ${516 - o} ${3478 + o * 0.6} ${504 - o * 0.2} C${3474} ${494} ${3461 - o * 0.4} ${497 + o * 0.2} ${3464} ${506 + o * 0.3} C${3467 + o * 0.3} ${514} ${3481 + o} ${508} ${3470 + o} ${486}" class="tw-hcable" style="--c:${c}"/><path d="M${3398 - o * 0.4} ${514 - o} C${3384 - o} ${521} ${3372 - o} ${514} ${3380 - o * 0.4} ${505} C${3388} ${497} ${3396 + o * 0.2} ${504} ${3389} ${510} C${3382} ${515} ${3374 - o * 0.6} ${502} ${3380 + o} ${486}" class="tw-hcable" style="--c:${c}"/>`; }).join('')}

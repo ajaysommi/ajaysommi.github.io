@@ -252,187 +252,12 @@
     return url;
   };
   const hotOf = (id) => hots.find((h) => h.dataset.id === id);
-  /* A moving part's glow, baked. A blur over something that moves every
-     frame (Hunter's lift, the robots, the dish) is recomputed every frame,
-     and Safari couldn't keep up at close range: about 40 fps with Hunter
-     open. So the first time a part lights, its silhouette is drawn once,
-     blurred and tinted to the numbers in its own glow filter, and the
-     picture rides along inside the part. The live filter covers the moment
-     until the picture is ready. Parts whose shape changes (Shiva's bars)
-     keep the live filter. */
-  const BAKE_SKIP = '.tw-bars';
-  // (not visibility: a part can be baked while its slice is still hidden off screen)
-  const PAINT = ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'opacity', 'display', 'transform', 'transform-origin', 'transform-box'];
-  const dataURL = (src) => fetch(src).then((r) => r.blob()).then((b) => new Promise((done, fail) => {
-    const fr = new FileReader(); fr.onload = () => done(fr.result); fr.onerror = fail; fr.readAsDataURL(b);
-  }));
-  // A gaussian blur as three box blurs, over one channel.
-  const blurAlpha = (a, w, h, sigma) => {
-    const n = 3, ideal = Math.sqrt(12 * sigma * sigma / n + 1);
-    let lo = Math.floor(ideal); if (lo % 2 === 0) lo--;
-    const m = Math.round((12 * sigma * sigma - n * lo * lo - 4 * n * lo - 3 * n) / (-4 * lo - 4));
-    const tmp = new Float32Array(a.length);
-    const pass = (src, dst, r, horizontal) => {
-      const len = horizontal ? w : h, lines = horizontal ? h : w, step = horizontal ? 1 : w, next = horizontal ? w : 1, k = 1 / (2 * r + 1);
-      for (let l = 0; l < lines; l++) {
-        const o = l * next; let acc = 0;
-        for (let i = -r; i <= r; i++) acc += src[o + Math.min(len - 1, Math.max(0, i)) * step];
-        for (let i = 0; i < len; i++) {
-          dst[o + i * step] = acc * k;
-          acc += src[o + Math.min(len - 1, i + r + 1) * step] - src[o + Math.max(0, i - r) * step];
-        }
-      }
-    };
-    for (let i = 0; i < n; i++) {
-      const r = ((i < m ? lo : lo + 2) - 1) / 2;
-      pass(a, tmp, r, true); pass(tmp, a, r, false);
-    }
-    return a;
-  };
-  // At rest, and with the part's slice showing: a hidden slice's styles
-  // aren't kept up to date, so a part is only read once it's on screen.
-  const atRest = (node) => new Promise((done) => {
-    const check = () => (zooming() || scene.classList.contains('tw-moving') || intro || node?.closest('.tw-culled')) ? setTimeout(check, 300) : requestAnimationFrame(() => setTimeout(done, 0));
-    check();
-  });
-  const bakePicture = async (node, filterId) => {
-    await atRest(node);
-    // its look is read from the page, so it must still be on it
-    if (!node.isConnected) return;
-    const fl = document.getElementById(filterId);
-    if (!fl) return;
-    const [x, y, w, h] = ['x', 'y', 'width', 'height'].map((k) => parseFloat(fl.getAttribute(k)));
-    const std = parseFloat(fl.querySelector('feGaussianBlur')?.getAttribute('stdDeviation') || '0');
-    const slope = parseFloat(fl.querySelector('feFuncA')?.getAttribute('slope') || '1');
-    const flood = fl.querySelector('feFlood');
-    if (!(w > 0 && h > 0 && std > 0) || !flood) return;
-    // the part as it's drawn, in its own coordinates, its look written inline
-    const copy = node.cloneNode(true);
-    copy.removeAttribute('transform'); copy.removeAttribute('class');
-    const from = [node, ...node.querySelectorAll('*')], to = [copy, ...copy.querySelectorAll('*')];
-    from.forEach((el, i) => {
-      const cs = getComputedStyle(el), dst = to[i];
-      dst.removeAttribute('class');
-      let css = PAINT.map((p) => {
-        let v = cs.getPropertyValue(p);
-        // paint servers live in the page's defs: a silhouette only needs the cover
-        if (/url\(/.test(v)) v = '#000';
-        return v ? `${p}:${v}` : '';
-      }).filter(Boolean).join(';');
-      // the part's own place and opacity still apply to the picture inside it
-      if (el === node) css += ';transform:none;filter:none;opacity:1';
-      dst.setAttribute('style', css);
-    });
-    await Promise.all([...copy.querySelectorAll('image')].map(async (im) => {
-      const href = im.getAttribute('href') || im.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
-      if (href && !href.startsWith('data:')) im.setAttribute('href', await dataURL(href));
-    }));
-    await atRest(node);
-    const k = Math.min(2, 900 / Math.max(w, h)), W = Math.ceil(w * k), H = Math.ceil(h * k);
-    const doc = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="${x} ${y} ${w} ${h}">${new XMLSerializer().serializeToString(copy)}</svg>`;
-    const pic = new Image();
-    pic.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(doc);
-    await pic.decode();
-    await atRest(node);
-    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-    const cx = cv.getContext('2d', { willReadFrequently: true });
-    cx.drawImage(pic, 0, 0, W, H);
-    const px = cx.getImageData(0, 0, W, H), d = px.data, a = new Float32Array(W * H);
-    for (let i = 0; i < a.length; i++) a[i] = d[i * 4 + 3] / 255;
-    await atRest(node);
-    blurAlpha(a, W, H, std * k);
-    // the canvas reads any colour notation back as #rrggbb or rgba()
-    cx.fillStyle = flood.getAttribute('flood-color') || '#000';
-    const norm = String(cx.fillStyle);
-    const [r, g, b] = norm[0] === '#' ? [1, 3, 5].map((i) => parseInt(norm.slice(i, i + 2), 16)) : norm.match(/[\d.]+/g).map(Number);
-    const op = parseFloat(flood.getAttribute('flood-opacity') || '1');
-    for (let i = 0; i < a.length; i++) {
-      d[i * 4] = r; d[i * 4 + 1] = g; d[i * 4 + 2] = b;
-      d[i * 4 + 3] = Math.round(255 * op * Math.min(1, slope * a[i]));
-    }
-    cx.putImageData(px, 0, 0);
-    await atRest(node);
-    const im = document.createElementNS(NS, 'image');
-    im.setAttribute('class', 'tw-baked tw-nohit');
-    im.setAttribute('href', cv.toDataURL('image/png'));
-    for (const [k2, v] of [['x', x], ['y', y], ['width', w], ['height', h]]) im.setAttribute(k2, v);
-    im.setAttribute('preserveAspectRatio', 'none');
-    im.setAttribute('aria-hidden', 'true');
-    await im.decode?.().catch(() => {});
-    return im;
-  };
-  // Bakes wait their turn: one at a time, while the scene is at rest, and
-  // only for a part that's on screen; a lit part goes first.
-  const bakeJobs = [];
-  let baking = false, bakeT = 0;
-  const pumpBakes = () => {
-    bakeT = 0;
-    if (baking || !bakeJobs.length) return;
-    const ready = bakeJobs.filter((j) => j.node.isConnected && !j.node.closest('.tw-culled'));
-    if (zooming() || scene.classList.contains('tw-moving') || intro || !ready.length) { bakeT = setTimeout(pumpBakes, 500); return; }
-    const job = ready.find((j) => j.node.matches('.tw-live-glow, .tw-halo')) || ready[0];
-    bakeJobs.splice(bakeJobs.indexOf(job), 1);
-    baking = true;
-    job.run().catch(() => {}).then(() => { baking = false; clearTimeout(bakeT); bakeT = setTimeout(pumpBakes, 120); });
-  };
-  const queueBake = (node, run) => { bakeJobs.push({ node, run }); if (!baking && !bakeT) bakeT = setTimeout(pumpBakes, 0); };
-  const bakePart = (n, id) => {
-    if (n._baked || n._baking || n.matches(BAKE_SKIP) || typeof XMLSerializer === 'undefined') return;
-    n._baking = true;
-    queueBake(n, async () => {
-      fitted(n, `twGlow-${id}`);
-      const filterId = (n._fit?.[1] || '').match(/#([^)"']+)/)?.[1];
-      const im = filterId && await bakePicture(n, filterId);
-      if (!im) { n._baking = false; return; }
-      n.prepend(im);
-      n._baked = im;
-      // lit while it was baking: hand over from the live filter
-      if (n.classList.contains('tw-live-glow')) n.style.filter = '';
-    });
-  };
-  const liveGlow = (n, id) => {
-    n.classList.add('tw-live-glow');
-    if (n._baked) return;
-    n.style.filter = fitted(n, `twGlow-${id}`);
-    bakePart(n, id);
-  };
-  // after the opening, the moving parts are baked ahead of their first hover
-  const bakeAhead = () => Object.entries(LIVE).forEach(([id, sel]) => {
-    const h = hotOf(id);
-    if (h) $$(sel, h).forEach((n) => bakePart(n, id));
-  });
-  // Shiva's bars rise and fall under the place's still halo, and Safari
-  // re-blurred the whole halo on every frame of it (about 33 fps with Shiva
-  // open). Its halo is baked once into a picture the same way.
-  const BAKE_HALO = new Set(['shiva']);
-  const bakeHalo = (id, g) => {
-    if (g._baking) return;
-    g._baking = true;
-    const filterId = (g.getAttribute('filter') || '').match(/#([^)"']+)/)?.[1];
-    const run = () => {
-      if (halos[id] !== g) return;
-      if (!g.isConnected) { g._baking = false; return; }
-      queueBake(g, () => (halos[id] === g && g.isConnected ? bakePicture(g, filterId) : Promise.resolve(null)).then((im) => {
-        if (!im || halos[id] !== g || !g.isConnected) { if (halos[id] === g) g._baking = false; return; }
-        im.setAttribute('class', 'tw-nohit');
-        const still = document.createElementNS(NS, 'g');
-        still.setAttribute('class', g.getAttribute('class'));
-        still.setAttribute('aria-hidden', 'true');
-        if (g.hasAttribute('transform')) still.setAttribute('transform', g.getAttribute('transform'));
-        still.append(im);
-        still._lite = g._lite;
-        halos[id] = still;
-        if (g.isConnected) g.replaceWith(still);
-      }));
-    };
-    if (filterId) setTimeout(run, 300);
-  };
   let lit = null;
   const glow = (id) => {
     if (lit === id) return;
     if (lit) {
       if (halos[lit]) { halos[lit].remove(); halos[lit]._lite.remove(); }
-      const h = hotOf(lit); if (h) $$(LIVE[lit] || '.tw-none', h).forEach((n) => { n.style.filter = ''; n.classList.remove('tw-live-glow'); });
+      const h = hotOf(lit); if (h) $$(LIVE[lit] || '.tw-none', h).forEach((n) => { n.style.filter = ''; });
       if (lit === 'adt') stickers.forEach((n) => { n.style.filter = ''; });
     }
     lit = id;
@@ -461,10 +286,9 @@
     }
     h.parentNode.insertBefore(g._lite, h);
     h.parentNode.insertBefore(g, h);
-    if (BAKE_HALO.has(id)) bakeHalo(id, g);
     // the open place keeps its glow while the scene leans in
     g.classList.toggle('keep', id === cur); g._lite.classList.toggle('keep', id === cur);
-    $$(LIVE[id] || '.tw-none', h).forEach((n) => liveGlow(n, id));
+    $$(LIVE[id] || '.tw-none', h).forEach((n) => { n.style.filter = fitted(n, `twGlow-${id}`); });
   };
   // Generous, invisible hit areas, so a small move doesn't drop the hover
   // in the gaps between a thing's parts.
@@ -554,31 +378,6 @@
       actorFrame = requestAnimationFrame(tickActors);
     }
   };
-  /* Only what's in view keeps moving. An animation off the edge of the
-     screen still costs the page a style, layout and paint pass every frame,
-     so once the camera settles, those well out of sight wait where they are
-     (paused, not reset) until the camera brings them back. */
-  let stageT = 0, offstage = new Set();
-  const restage = () => {
-    stageT = 0;
-    if (scene.classList.contains('tw-moving') || !stage.clientWidth) { queueRestage(); return; }
-    const w = innerWidth, h = innerHeight, mx = w * .25, my = h * .25;
-    const away = new Set();
-    for (const a of scene.getAnimations({ subtree: true })) {
-      const t = a.effect?.target;
-      if (!t || typeof CSSAnimation === 'undefined' || !(a instanceof CSSAnimation) || away.has(t)) continue;
-      let out = !!t.closest('.tw-culled');
-      if (!out) {
-        const r = t.getBoundingClientRect();
-        out = (r.width || r.height) > 0 && (r.right < -mx || r.left > w + mx || r.bottom < -my || r.top > h + my);
-      }
-      if (out) away.add(t);
-    }
-    for (const t of offstage) if (!away.has(t)) t.classList.remove('tw-offstage');
-    for (const t of away) if (!offstage.has(t)) t.classList.add('tw-offstage');
-    offstage = away;
-  };
-  const queueRestage = () => { clearTimeout(stageT); stageT = setTimeout(restage, 120); };
   // Each slice is a real, bounded paint surface. The sky and the street
   // move on two HTML compositor layers; SVG geometry stays at rest between
   // changes of resolution or trips beyond the prepainted margin.
@@ -632,7 +431,7 @@
       );
       const sweepDensity = sweep && viewportWidth / (visibleRight - visibleLeft);
       const paintDensity = sweep?.streetReturn ? sweep.endDensity :
-        detail ? Math.min(sweep.targetDensity, rasterLimit) : sweep ? Math.min(Math.max(sweepDensity, sweep.floorDensity), sweep.startDensity) : density;
+        detail ? Math.min(sweep.targetDensity, rasterLimit) : sweep ? Math.min(sweepDensity, sweep.startDensity) : density;
       const cache = slice.cache;
       // On the return trip, reuse a detailed layer that's already painted
       // across this path. It will shrink on screen as the camera pulls back.
@@ -676,7 +475,6 @@
     // the browser bar's colour follows the sky, a few times a second while moving
     const now = performance.now();
     if (!moving || now - barT > 140) { barT = now; paintBar(); }
-    if (!moving) queueRestage();
     syncActors();
     // the truck backs in once its waiting spot is well in view
     if (!arrived && camX < D.truck.right - vw * 0.15) arrive();
@@ -686,7 +484,6 @@
   };
   const setVB = (b) => placeVB(b, false);
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const SWEEP_SPAN = 3.2;
   let zoomUntil = 0;
   const zooming = () => scene.classList.contains('tw-zooming') || performance.now() < zoomUntil;
   let cameraMotion = [];
@@ -695,10 +492,10 @@
     for (const motion of cameraMotion) motion.cancel();
     cameraMotion = [];
   };
-  const tween = (to, ms = 850, fn = ease, done, { streetReturn = false, preparedPan, onStart } = {}) => {
+  const tween = (to, ms = 850, fn = ease, done, { streetReturn = false, preparedPan } = {}) => {
     stopCamera();
     zoomUntil = reduced ? 0 : performance.now() + ms + 40;
-    if (reduced) { setVB(to); onStart?.(); done?.(); return; }
+    if (reduced) { setVB(to); done?.(); return; }
     // While the scene moves the glow steps aside (redrawing it at every
     // step of the zoom is the expensive part) and comes back when it lands.
     const from = vb.slice();
@@ -712,11 +509,8 @@
       const y = b => sky ? skyY(b[1]) : b[1];
       const left = Math.min(x(from), x(to)), right = Math.max(x(from) + from[2], x(to) + to[2]);
       const top = Math.min(y(from), y(to)), bottom = Math.max(y(from) + from[3], y(to) + to[3]);
-      // A trip up to about three screens wide is prepared too, so the
-      // compositor carries the camera instead of the page repainting the
-      // street every frame. Wider trips keep the normal moving window.
-      const span = Math.max((right - left) / Math.max(from[2], to[2]), (bottom - top) / Math.max(from[3], to[3]));
-      if (span > SWEEP_SPAN) return;
+      // Long jumps use the normal moving window to keep memory bounded.
+      if (right - left > Math.max(from[2], to[2]) * 1.55 || bottom - top > Math.max(from[3], to[3]) * 1.55) return;
       // Give the return view a small guard band for fractional tile edges.
       const padX = streetReturn ? to[2] * .08 : 0;
       const padY = streetReturn ? to[3] * .08 : 0;
@@ -725,9 +519,6 @@
         streetReturn,
         targetDensity: streetReturn || (focus && !sky) ? targetDensity : undefined,
         startDensity,
-        // Never paint the street softer than a trip at the old 1.55 limit
-        // did, however wide the trip; memory stays bounded by SWEEP_SPAN.
-        floorDensity: startDensity / 1.55,
         endDensity: targetDensity,
         focus: sky ? null : focus
       };
@@ -739,7 +530,7 @@
     };
     let t0;
     const f = (t) => {
-      if (t0 === undefined) { t0 = t; onStart?.(); }
+      t0 ??= t;
       const u = (t - t0) / ms;
       if (u < 1) {
         const current = interpolate(u);
@@ -777,15 +568,10 @@
       f(t);
     };
     if (from[2] !== to[2] && sweeps?.some(Boolean)) {
-      // Give the browser a paint at the prepared resolution before moving:
-      // the street's layers in one frame and the sky's in the next, so no
-      // single frame carries both.
-      placeVB(from, true, [sweeps[0], undefined]);
+      placeVB(from, true, sweeps);
+      // Give the browser a paint at the prepared resolution before moving.
       zoomUntil += 80;
-      anim = requestAnimationFrame(() => {
-        placeVB(from, true, sweeps);
-        anim = requestAnimationFrame(start);
-      });
+      anim = requestAnimationFrame(() => { anim = requestAnimationFrame(start); });
     } else {
       anim = requestAnimationFrame(f);
     }
@@ -866,22 +652,6 @@
       return { bounds: [x, y(departure[1]), x + vw, y(arrival[1]) + vh], startDensity: viewportWidth / vw, endDensity: viewportWidth / vw };
     });
     placeVB(departure, true, panLayers);
-    // While the paper still covers the street, the pictures along the opening
-    // pan must have arrived, so none pops in late on a slow connection; the
-    // loader waits on this (capped). Each also starts decoding now, behind
-    // the paper, rather than the first time the pan draws it.
-    const seen = new Set();
-    loader.townArt = Promise.all($$('.tw-slice:not(.tw-culled) image', scene).map((im) => {
-      const src = im.getAttribute('href');
-      if (!src || seen.has(src)) return null;
-      seen.add(src);
-      const pic = new Image();
-      pic.decoding = 'async';
-      const arrived = new Promise((done) => { pic.onload = pic.onerror = done; });
-      pic.src = src;
-      arrived.then(() => pic.decode?.().catch(() => {}));
-      return pic.complete ? null : arrived;
-    }));
     let begun = false;
     const begin = () => {
       if (begun) return; begun = true;
@@ -889,7 +659,7 @@
       const target = view();
       const prepared = target.every((value, i) => value === arrival[i]) && vb.every((value, i) => value === departure[i]);
       tween(target, INTRO, glideDown, undefined, { preparedPan: prepared ? panLayers : undefined });
-      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); flyAway(); setTimeout(bakeAhead, 1500); }, INTRO + 80);
+      setTimeout(() => { intro = false; tw.classList.remove('intro'); lampsOn(); hint(); flyAway(); }, INTRO + 80);
     };
     // the street starts down as the mark takes off; the browser's bar turns
     // sky coloured once the loading screen has cleared
@@ -901,7 +671,7 @@
     mo.observe(loader, { attributes: true, attributeFilter: ['class'] });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     setTimeout(() => { begin(); startBar(); }, 7500);
-  } else { startBar(); lampsOn(); setTimeout(() => hint(), 700); setTimeout(flyAway, 1600); setTimeout(bakeAhead, 2500); }
+  } else { startBar(); lampsOn(); setTimeout(() => hint(), 700); setTimeout(flyAway, 1600); }
 
   /* ---------------------------------------------------------- how to get around */
   // Once the street has settled, a small card in the middle shows how to
@@ -1019,54 +789,32 @@
       ${r.url ? `<p class="tw-p-gos"><a class="tw-p-go" href="${esc(r.url)}" target="_blank" rel="noopener">See the code ↗</a></p>` : ''}
       ${r.go ? `<p class="tw-p-gos">${r.go.map(([t, u]) => `<a class="tw-p-go" href="${esc(u)}"${/^https?:/.test(u) ? ' target="_blank" rel="noopener"' : ''}>${esc(t)}</a>`).join('')}</p>` : ''}
       ${r.tags.length ? `<ul class="tw-p-tags">${r.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}`;
-  /* The card's shell (its kind, tint, width and neighbours) is set the moment
-     a place is chosen, so the camera can frame it; the contents are built
-     once the camera is under way (see open()). */
-  const dress = (r) => {
+  const render = (r) => {
+    const i = D.order.indexOf(r.id), p = D.roles[D.order[i - 1]], n = D.roles[D.order[i + 1]];
     panel.style.setProperty('--tint', r.tint);
+    const links = linksOf(r.id);
     panel.classList.toggle('tw-postcard', !!r.postcard);
     panel.classList.toggle('tw-mail-panel', !!r.letters);
-    const side = !r.postcard && !r.letters && /^p-/.test(r.id);
-    const oc = side && (/ · /.test(r.role) ? r.role.split(' · ')[0] : 'Side project') === 'Off the clock';
-    panel.classList.toggle('tw-oc', oc);
-    panel.classList.toggle('tw-oc-one', oc && !r.steps && r.photos.length === 1);
-    panel.classList.toggle('tw-oc-two', oc && !r.steps && r.photos.length === 2);
-    if (r.postcard || r.letters) { prevB.hidden = nextB.hidden = true; return; }
-    const i = D.order.indexOf(r.id), p = D.roles[D.order[i - 1]], n = D.roles[D.order[i + 1]];
-    prevB.hidden = !p; nextB.hidden = !n;
-    if (p) { $('span', prevB).textContent = p.school ? 'UF' : p.short; prevB.dataset.id = p.id; }
-    if (n) { $('span', nextB).textContent = n.school ? 'UF' : n.short; nextB.dataset.id = n.id; }
-    nextB.style.marginLeft = 'auto';
-  };
-  // A card's photos are only fetched once its card opens. Any that aren't in
-  // yet wait on a soft placeholder and fade in once decoded, rather than
-  // popping in half-drawn.
-  const photosIn = (root) => {
-    for (const img of root.querySelectorAll('img')) {
-      if (img.complete && img.naturalWidth) continue;
-      img.classList.add('tw-wait');
-      const show = () => img.classList.remove('tw-wait');
-      img.addEventListener('error', show, { once: true });
-      (img.decode ? img.decode() : Promise.reject()).then(show, () => img.addEventListener('load', show, { once: true }));
-    }
-  };
-  const render = (r) => {
-    dress(r);
-    const links = linksOf(r.id);
+    if (r.postcard) panel.classList.remove('tw-oc', 'tw-oc-one', 'tw-oc-two');
     if (r.postcard) {
       inner.innerHTML = postcard(r);
-      photosIn(inner);
+      prevB.hidden = nextB.hidden = true;
       $$('.tw-pc-snap button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
       return;
     }
     if (r.letters) {
+      panel.classList.remove('tw-oc', 'tw-oc-one', 'tw-oc-two');
       inner.innerHTML = letters(r);
-      photosIn(inner);
+      prevB.hidden = nextB.hidden = true;
       wireLetters(r);
       return;
     }
     const side = /^p-/.test(r.id);
     const [kind, subj] = side ? (/ · /.test(r.role) ? r.role.split(' · ') : ['Side project', r.role]) : [];
+    const oc = side && kind === 'Off the clock';
+    panel.classList.toggle('tw-oc', oc);
+    panel.classList.toggle('tw-oc-one', oc && !r.steps && r.photos.length === 1);
+    panel.classList.toggle('tw-oc-two', oc && !r.steps && r.photos.length === 2);
     inner.innerHTML = side ? `
       <div class="tw-p-eyebrow"><span class="tw-p-chip">${esc(kind)}</span></div>
       <h3 class="tw-p-sideh">${esc(r.org)}</h3>
@@ -1078,7 +826,10 @@
       ${r.when || r.where ? `<p class="tw-p-meta">${r.when ? `<span><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.2" width="12" height="10.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.6 6.6h10.8M5.4 1.8v2.8M10.6 1.8v2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>${esc(r.when.replace(' to ', ' – '))}</span>` : ''}${r.where ? `<span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14.6s4.8-4.4 4.8-8.2A4.8 4.8 0 0 0 3.2 6.4c0 3.8 4.8 8.2 4.8 8.2z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.7" fill="currentColor"/></svg>${esc(r.where)}</span>` : ''}</p>` : ''}
       ${SITES[r.id] ? `<p class="tw-p-site"><a href="${SITES[r.id][1]}" target="_blank" rel="noopener">${esc(SITES[r.id][0])}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5h6.5V10M12.2 3.8 4 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>` : ''}
 ` + rest(r, links);
-    photosIn(inner);
+    prevB.hidden = !p; nextB.hidden = !n;
+    if (p) { $('span', prevB).textContent = p.school ? 'UF' : p.short; prevB.dataset.id = p.id; }
+    if (n) { $('span', nextB).textContent = n.school ? 'UF' : n.short; nextB.dataset.id = n.id; }
+    nextB.style.marginLeft = 'auto';
     $$('.tw-p-link', inner).forEach((b) => b.addEventListener('click', () => open(b.dataset.go)));
     $$('.tw-p-pics button, .tw-p-steps button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
   };
@@ -1189,7 +940,7 @@
     item.addEventListener('click', show);
     item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(e); } });
   });
-  let panelOpenFrame = 0, panelHideTimer = 0, fillTimer = 0, openCount = 0, contentSwap;
+  let panelOpenFrame = 0, panelHideTimer = 0, contentSwap;
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
@@ -1203,37 +954,21 @@
     camX = clamp(z[0] + z[2] / 2 - vw / 2, 0, Math.max(0, WORLD - vw));
     panel.classList.toggle('left', left);
     cancelAnimationFrame(panelOpenFrame);
-    clearTimeout(panelHideTimer); clearTimeout(fillTimer);
+    clearTimeout(panelHideTimer);
     panel.hidden = false;
     contentSwap?.cancel();
-    // The shell decides the card's width, and so the framing, before
-    // anything else on the page has changed.
-    dress(r);
-    const to = frame(z, left);
-    // Laying out a card's text and photos is the biggest piece of work in
-    // an open. It waits until the camera is running on the compositor, so
-    // it can no longer hold up the first frames of the zoom.
-    let filled = false;
-    const visit = ++openCount;
-    const fill = () => {
-      if (filled || visit !== openCount || cur !== id) return;
-      clearTimeout(fillTimer);
-      filled = true;
-      inner.scrollTop = 0;
-      render(r);
-      if (wasOpen && !reduced) {
-        contentSwap = inner.animate([
-          { opacity: 0, transform: 'translateY(10px)' },
-          { opacity: 1, transform: 'none' }
-        ], { duration: 450, easing: 'cubic-bezier(.2, .8, .2, 1)' });
-      }
-    };
-    if (reduced) fill();
-    else fillTimer = setTimeout(fill, 240);
+    render(r);
+    inner.scrollTop = 0;
+    if (wasOpen && !reduced) {
+      contentSwap = inner.animate([
+        { opacity: 0, transform: 'translateY(10px)' },
+        { opacity: 1, transform: 'none' }
+      ], { duration: 450, easing: 'cubic-bezier(.2, .8, .2, 1)' });
+    }
     panelOpenFrame = requestAnimationFrame(() => {
       if (cur !== id) return;
       panel.classList.add('open');
-      tween(to, wasOpen ? 750 : 900, ease, undefined, { onStart: () => setTimeout(fill, 0) });
+      tween(frame(z, left), wasOpen ? 750 : 900);
     });
     tw.classList.add('zoomed');
     // the Civic's hood swings up while its stop is open
@@ -1251,8 +986,7 @@
     tw.classList.remove('hood');
     cancelAnimationFrame(panelOpenFrame);
     panel.classList.remove('open');
-    clearTimeout(fillTimer); openCount++;
-    panelHideTimer = setTimeout(() => { if (!cur) { panel.hidden = true; inner.replaceChildren(); } }, 360);
+    panelHideTimer = setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
     tween(view(), 800, ease, undefined, { streetReturn: true });
     tw.classList.remove('zoomed');
     hots.forEach((x) => x.classList.remove('tw-cur'));
@@ -1337,7 +1071,7 @@
     clearTimeout(sliding);
     sliding = setTimeout(() => {
       sliding = 0;
-      if (!zooming()) { scene.classList.remove('tw-moving'); queueRestage(); }
+      if (!zooming()) scene.classList.remove('tw-moving');
       if (pendingHover !== undefined) {
         const id = pendingHover;
         pendingHover = undefined;

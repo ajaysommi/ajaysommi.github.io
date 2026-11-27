@@ -901,19 +901,11 @@ const onScrollFrame = (() => {
   Promise.all([built, fonts, markDone, barDone]).then(() => {
     const paintedTown = !reduced && matchMedia('(min-width: 720px)').matches && prepareTown();
     prepare();
-    if (paintedTown) {
-      /* The town's pictures along the opening pan arrive and decode behind the
-         paper first: a moment longer on the loader for a pan that never draws
-         a picture for the first time. A slow picture is not waited on long. */
-      const art = el.townArt ? Promise.race([el.townArt, new Promise((r) => setTimeout(r, 2500))]) : Promise.resolve();
-      return art.then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    }
+    if (paintedTown) return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   }).then(smile).then(finish);
 
-  // Hard cap so a hung asset can never trap the visitor behind the overlay
-  // (a little longer where the town's pictures are being readied behind it).
-  const townFirst = !reduced && !!el.querySelector('.town-paint-paper') && matchMedia('(min-width: 720px)').matches;
-  setTimeout(lift, townFirst ? 6500 : 4000);
+  // Hard cap so a hung asset can never trap the visitor behind the overlay.
+  setTimeout(lift, 4000);
 })();
 
 /* ==========================================================================
