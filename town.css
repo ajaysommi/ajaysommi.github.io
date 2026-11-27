@@ -325,6 +325,8 @@
 }
 /* Off screen, the street holds still. */
 .tw-paused *, .tw-paused { animation-play-state: paused !important; }
+/* out of sight, out of the frame budget (see restage() in town.js) */
+.tw-offstage { animation-play-state: paused !important; }
 .tw-hit rect { fill: transparent; pointer-events: all; }
 .tw-nohit { pointer-events: none; }
 
@@ -383,7 +385,11 @@
 .tw-halo-lite { display: none; }
 .tw-moving .tw-halo-lite.keep { display: inline; opacity: .5; }
 .tw-halo-lite * { fill: var(--tint) !important; stroke: var(--tint) !important; stroke-width: 6px !important; stroke-linejoin: round !important; stroke-dasharray: none !important; filter: none !important; }
-.tw-moving .tw-hot [style*="twGlow"] { filter: none !important; }
+.tw-moving .tw-live-glow { filter: none !important; }
+/* a moving part's baked glow (see bakePart() in town.js) shows only while it's lit */
+.tw-baked { display: none; pointer-events: none; }
+.tw-live-glow > .tw-baked { display: inline; }
+.tw-moving .tw-live-glow > .tw-baked { display: none; }
 
 /* ---------------------------------------------------------- lights after dark */
 .tw-night { opacity: 0; transition: opacity .6s; pointer-events: none; }
@@ -548,7 +554,7 @@
 .tw.hood .tw-civ-hood { transform: rotate(var(--up)); transition: transform 1s cubic-bezier(.3, 1.25, .5, 1) .25s; }
 .tw-steam circle { fill: #f4f6f8; opacity: 0; transform-box: fill-box; transform-origin: center; animation: tw-steam 3.2s ease-out infinite; animation-delay: var(--d); pointer-events: none; }
 @keyframes tw-steam { 0% { opacity: 0; transform: translate(0, 0) scale(.5); } 18% { opacity: .75; } 100% { opacity: 0; transform: translate(var(--dx), -34px) scale(2.4); } }
-.tw.hood .tw-steam circle { animation-duration: 2.4s; }
+.tw.hood .tw-steam .tw-anim { animation-duration: 2.4s; }
 .tw-civ-tags { opacity: 0; transition: opacity .3s; pointer-events: none; }
 .tw.hood .tw-civ-tags { opacity: 1; transition: opacity .5s .9s; }
 .tw-tag-l { fill: none; stroke: #ff6b35; stroke-width: .5; } .tw-tag-d { fill: #ff6b35; }
@@ -587,6 +593,12 @@
 .tw-p-steps li { display: grid; grid-template-columns: 84px 1fr; gap: 10px; align-items: start; counter-increment: st; }
 .tw-p-steps button { padding: 0; border: 0; border-radius: 10px; overflow: hidden; aspect-ratio: 1; background: var(--m-fill); cursor: zoom-in; }
 .tw-p-steps img { width: 100%; height: 100%; object-fit: cover; }
+/* Photos still on their way: the box keeps its place on a soft fill, and the
+   photo fades in once it's decoded (see photosIn() in town.js). */
+.tw-panel-in img { transition: opacity .35s ease; }
+.tw-panel-in img.tw-wait { opacity: 0; }
+.tw-oc-one .tw-p-pics button:has(img.tw-wait), .tw-oc-two .tw-p-pics button:has(img.tw-wait) { aspect-ratio: 4 / 3; }
+@media (prefers-reduced-motion: reduce) { .tw-panel-in img { transition: none; } }
 .tw-p-steps b { display: block; margin-bottom: 2px; font-size: 13.5px; color: var(--ink); }
 .tw-p-steps b::before { content: counter(st) ". "; color: var(--tint); }
 .tw-p-steps span { font-size: 13px; line-height: 1.5; color: var(--ink-2); }
@@ -1146,7 +1158,7 @@
 .tw-bb-arm { stroke: #3a3d46; stroke-width: 2; } .tw-bb-lamp { fill: #2a2c34; }
 .tw-bb-beams, .tw-bb-wash { display: none; }
 [data-theme="midnight"] .tw :is(.tw-bb-beams, .tw-bb-wash), [data-theme="terminal"] .tw :is(.tw-bb-beams, .tw-bb-wash) { display: inline; }
-[data-theme="midnight"] .tw .tw-bars rect, [data-theme="terminal"] .tw .tw-bars rect { animation: none; transform: none; }
+[data-theme="midnight"] .tw .tw-bars .tw-anim, [data-theme="terminal"] .tw .tw-bars .tw-anim { animation: none; transform: none; }
 [data-theme="midnight"] .tw .tw-board, [data-theme="terminal"] .tw .tw-board { fill: #f4efe2; }
 /* the garage */
 .tw-gfloorline { stroke: rgba(0, 0, 0, .18); stroke-width: .8; }
@@ -1453,8 +1465,8 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
    zoom (the stalls and the odd blank frame). Pausing isn't enough, the
    layers stay; stopped, the street is drawn as one. Anything that would
    visibly jump on restarting (clouds, the gator, the butterfly) keeps going. */
-.tw-zooming :is(.tw-pin-ring, .tw-canopy, .tw-led, .tw-led-on, .tw-bulb2, .tw-haz-glow, .tw-haz, .tw-laser, .tw-beacon, .tw-pt-mote, .tw-spotcone, .tw-pool, .tw-flame, .tw-steam circle, .tw-smoke circle, .tw-eyes, .tw-bfly-wing, .tw-ripples ellipse, .tw-tvp, .tw-tvball, .tw-tvglow, .tw-rec, .tw-ringlight, .tw-fireglow, .tw-hot-tip, .tw-lid, .tw-vision, .tw-rover-bob, .tw-cctv-head, .tw-cone, .tw-dish, .tw-lidflap, .tw-pt-swirl) { animation-name: none !important; }
-.tw-zooming :is(.tw-bars rect, .tw-dash, .tw-pings path, .tw-reticle path, .tw-tvbars rect) { animation-name: none !important; }
+.tw-zooming :is(.tw-pin-ring, .tw-canopy, .tw-led, .tw-led-on, .tw-bulb2, .tw-haz-glow, .tw-haz, .tw-laser, .tw-beacon, .tw-pt-mote, .tw-spotcone, .tw-pool, .tw-flame, .tw-anim, .tw-eyes, .tw-bfly-wing, .tw-tvp, .tw-tvball, .tw-tvglow, .tw-rec, .tw-ringlight, .tw-fireglow, .tw-hot-tip, .tw-lid, .tw-vision, .tw-rover-bob, .tw-cctv-head, .tw-cone, .tw-dish, .tw-lidflap, .tw-pt-swirl) { animation-name: none !important; }
+.tw-zooming .tw-dash { animation-name: none !important; }
 /* the clouds drift without layers of their own: they're behind everything, so
    their layers split the whole street in Chrome (visibility can't run on the
    compositor, so the drift is drawn the ordinary way; six small clouds, cheap) */
