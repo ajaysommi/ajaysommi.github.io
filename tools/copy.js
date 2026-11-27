@@ -19,7 +19,7 @@ const ABOUT = {
   toyota: 'Southeast Toyota gets new Toyotas from the factory to more than 170 dealerships across five southeastern states. It’s part of JM Family.',
   jm: 'One of the largest privately owned companies in the US, based in Florida. It runs Southeast Toyota, which delivers new Toyotas to dealers across the Southeast, and JM Lexus, its own Lexus dealership, along with car loan and warranty businesses.',
   hunter: 'Hunter makes the machines repair shops use to align wheels and balance tires.',
-  adt: 'The home security company behind the blue sign.'
+  adt: 'The security company behind the blue sign.'
 };
 
 /* The things I've built, told the way the off the clock stories are. */

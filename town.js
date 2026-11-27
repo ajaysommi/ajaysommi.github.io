@@ -798,8 +798,6 @@
     if (r.postcard) panel.classList.remove('tw-oc', 'tw-oc-one', 'tw-oc-two');
     if (r.postcard) {
       inner.innerHTML = postcard(r);
-      inner.scrollTop = 0;
-      inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
       prevB.hidden = nextB.hidden = true;
       $$('.tw-pc-snap button', inner).forEach((b) => b.addEventListener('click', () => lightbox(b.querySelector('img').src)));
       return;
@@ -807,8 +805,6 @@
     if (r.letters) {
       panel.classList.remove('tw-oc', 'tw-oc-one', 'tw-oc-two');
       inner.innerHTML = letters(r);
-      inner.scrollTop = 0;
-      inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
       prevB.hidden = nextB.hidden = true;
       wireLetters(r);
       return;
@@ -830,8 +826,6 @@
       ${r.when || r.where ? `<p class="tw-p-meta">${r.when ? `<span><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.2" width="12" height="10.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.6 6.6h10.8M5.4 1.8v2.8M10.6 1.8v2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>${esc(r.when.replace(' to ', ' – '))}</span>` : ''}${r.where ? `<span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14.6s4.8-4.4 4.8-8.2A4.8 4.8 0 0 0 3.2 6.4c0 3.8 4.8 8.2 4.8 8.2z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.7" fill="currentColor"/></svg>${esc(r.where)}</span>` : ''}</p>` : ''}
       ${SITES[r.id] ? `<p class="tw-p-site"><a href="${SITES[r.id][1]}" target="_blank" rel="noopener">${esc(SITES[r.id][0])}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5h6.5V10M12.2 3.8 4 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>` : ''}
 ` + rest(r, links);
-    inner.scrollTop = 0;
-    inner.classList.remove('swap'); void inner.offsetWidth; inner.classList.add('swap');
     prevB.hidden = !p; nextB.hidden = !n;
     if (p) { $('span', prevB).textContent = p.school ? 'UF' : p.short; prevB.dataset.id = p.id; }
     if (n) { $('span', nextB).textContent = n.school ? 'UF' : n.short; nextB.dataset.id = n.id; }
@@ -946,6 +940,7 @@
     item.addEventListener('click', show);
     item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(e); } });
   });
+  let panelOpenFrame = 0, panelHideTimer = 0, contentSwap;
   const open = (id) => {
     const r = D.roles[id];
     if (!r) return;
@@ -958,9 +953,19 @@
     // when the card closes, the street is left centred on this place
     camX = clamp(z[0] + z[2] / 2 - vw / 2, 0, Math.max(0, WORLD - vw));
     panel.classList.toggle('left', left);
+    cancelAnimationFrame(panelOpenFrame);
+    clearTimeout(panelHideTimer);
     panel.hidden = false;
+    contentSwap?.cancel();
     render(r);
-    requestAnimationFrame(() => {
+    inner.scrollTop = 0;
+    if (wasOpen && !reduced) {
+      contentSwap = inner.animate([
+        { opacity: 0, transform: 'translateY(10px)' },
+        { opacity: 1, transform: 'none' }
+      ], { duration: 450, easing: 'cubic-bezier(.2, .8, .2, 1)' });
+    }
+    panelOpenFrame = requestAnimationFrame(() => {
       if (cur !== id) return;
       panel.classList.add('open');
       tween(frame(z, left), wasOpen ? 750 : 900);
@@ -979,8 +984,9 @@
     if (!cur) return;
     cur = null;
     tw.classList.remove('hood');
+    cancelAnimationFrame(panelOpenFrame);
     panel.classList.remove('open');
-    setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
+    panelHideTimer = setTimeout(() => { if (!cur) panel.hidden = true; }, 360);
     tween(view(), 800, ease, undefined, { streetReturn: true });
     tw.classList.remove('zoomed');
     hots.forEach((x) => x.classList.remove('tw-cur'));

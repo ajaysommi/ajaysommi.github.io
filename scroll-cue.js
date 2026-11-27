@@ -14,6 +14,10 @@
   const pending = new Set();
   let frame = 0;
 
+  // Town cards paint their fade on the stationary frame around the scroller.
+  const surfaceFor = pane => pane.parentElement?.classList.contains('tw-panel-body')
+    ? pane.parentElement : pane;
+
   const update = () => {
     frame = 0;
     // Measure everything before changing any styles.
@@ -28,9 +32,10 @@
     pending.clear();
     for (const [pane, depth] of changes) {
       watched.set(pane, depth);
-      if (depth) pane.style.setProperty('--scroll-cue-depth', `${depth}px`);
-      else pane.style.removeProperty('--scroll-cue-depth');
-      pane.classList.toggle('has-scroll-cue', depth > 0);
+      const surface = surfaceFor(pane);
+      if (depth) surface.style.setProperty('--scroll-cue-depth', `${depth}px`);
+      else surface.style.removeProperty('--scroll-cue-depth');
+      if (surface === pane) pane.classList.toggle('has-scroll-cue', depth > 0);
     }
   };
 
@@ -57,7 +62,7 @@
     if (pane.isConnected || !watched.delete(pane)) return;
     resize.unobserve(pane);
     pending.delete(pane);
-    pane.style.removeProperty('--scroll-cue-depth');
+    surfaceFor(pane).style.removeProperty('--scroll-cue-depth');
     pane.classList.remove('has-scroll-cue');
   };
 

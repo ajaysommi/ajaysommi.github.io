@@ -32,7 +32,7 @@
 }
 
 .tw-stage { position: relative; aspect-ratio: 1200 / 600; border: 1px solid var(--stroke); border-radius: var(--r-xl, 22px); overflow: clip; background: var(--tw-grass); isolation: isolate; }
-.tw-scene { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
+.tw-scene { position: relative; z-index: 0; display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
 .tw-plane { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; }
 .tw-slice { position: absolute; left: 0; top: 0; width: 100%; height: 100%; contain: strict; transform-origin: 0 0; }
 .tw-slice > svg { display: block; width: 100%; height: 100%; fill: #1b1c21; pointer-events: none; }
@@ -221,14 +221,24 @@
 .tw-label.on { opacity: 1; transform: translate(-50%, calc(-100% - 12px)) scale(1); }
 
 /* ---------------------------------------------------------- the story card */
-.tw-panel { position: absolute; z-index: 4; top: 14px; bottom: 14px; right: 14px; width: min(390px, 40%); display: flex; flex-direction: column; border: 1px solid var(--stroke); border-radius: 18px; background: var(--bg); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .45); color: var(--ink); opacity: 0; transform: translateX(24px); transition: opacity .35s, transform .5s cubic-bezier(.2, .8, .2, 1); }
+/* Keep the paper and its children on the same layer throughout a camera move,
+   including the frame where the card finishes sliding. */
+.tw-panel { position: absolute; z-index: 4; top: 14px; bottom: 14px; right: 14px; width: min(390px, 40%); display: flex; flex-direction: column; border: 1px solid var(--stroke); border-radius: 18px; --panel-paper: var(--bg); background: var(--panel-paper); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .45); color: var(--ink); opacity: 0; transform: translate3d(24px, 0, 0); transition: opacity .35s, transform .5s cubic-bezier(.2, .8, .2, 1); }
 /* Clip the animated year and native scrollbar to the panel’s rounded edge. */
-.tw-panel { overflow: hidden; contain: paint; }
+.tw-panel { overflow: hidden; }
 .tw-panel[hidden] { display: none; }
-.tw-panel.left { right: auto; left: 14px; transform: translateX(-24px); }
-.tw-panel.open { opacity: 1; transform: none; }
+.tw-panel.left { right: auto; left: 14px; transform: translate3d(-24px, 0, 0); }
+.tw-panel.open { opacity: 1; transform: translate3d(0, 0, 0); }
 .tw-panel-in { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 22px 22px 12px; scrollbar-width: thin; }
-.tw-panel-in.swap { animation: tw-swap .45s cubic-bezier(.2, .8, .2, 1); }
+/* Fade just the last strip of the viewport. Masking the entire scrolling
+   photo gallery requires a separate, potentially very tall backing surface. */
+.tw-panel-body { position: relative; z-index: 0; display: flex; flex: 1; min-height: 0; overflow: clip; }
+.tw-panel-body > .tw-panel-in { position: relative; z-index: 0; }
+.tw-panel-body::after {
+  content: ""; position: absolute; inset: auto 0 0; height: var(--scroll-cue-depth, 0px);
+  pointer-events: none; background: linear-gradient(to bottom, transparent,
+    color-mix(in srgb, var(--panel-paper) 38%, transparent) 52%, var(--panel-paper));
+}
 @keyframes tw-swap { from { opacity: 0; transform: translateY(10px); } }
 .tw-x { position: absolute; z-index: 2; top: 12px; right: 12px; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--stroke); border-radius: 50%; background: var(--bg); color: var(--ink); cursor: pointer; }
 .tw-p-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-right: 40px; margin-bottom: 14px; }
@@ -353,8 +363,8 @@
 
 /* ---------------------------------------------------------- the car hauler */
 /* Waits off to the left, then backs in slowly and eases to a stop. */
-.tw-truckdrive { transform: translateX(-280px); }
-.tw.arrive .tw-truckdrive { transform: none; transition: transform 6.5s cubic-bezier(.45, 0, .2, 1) .4s; }
+.tw-truckdrive { transform: translateX(-110px); }
+.tw.arrive .tw-truckdrive { transform: none; transition: transform 4.6s cubic-bezier(.45, 0, .2, 1) .3s; }
 .tw.parked .tw-truckdrive { transition: none; }
 .tw-haz { fill: #ffb21a; animation: tw-hazard 1.1s steps(1) infinite; }
 .tw-haz-glow { animation: tw-hazard 1.1s steps(1) infinite; }
@@ -712,10 +722,6 @@
 .tw-warmglow { pointer-events: none; }
 
 
-/* The car hauler waits just up the street now. */
-.tw-truckdrive { transform: translateX(-110px); }
-.tw.arrive .tw-truckdrive { transition: transform 4.6s cubic-bezier(.45, 0, .2, 1) .3s; }
-
 /* ---------------------------------------------------------- the lawn */
 .tw-flower { fill: var(--c); }
 .tw-mulch { fill: #6b4a2e; }
@@ -988,8 +994,8 @@
 .tw-rover.scared .tw-blink { animation-duration: .3s; }
 
 /* The visitor center's card: a postcard. */
-.tw-panel.tw-postcard { background: #fbf7ee; color: #2b2620; border-color: #e6dcc7; }
-[data-theme="midnight"] .tw-panel.tw-postcard, [data-theme="terminal"] .tw-panel.tw-postcard { background: #f3ecdc; }
+.tw-panel.tw-postcard { --panel-paper: #fbf7ee; color: #2b2620; border-color: #e6dcc7; }
+[data-theme="midnight"] .tw-panel.tw-postcard, [data-theme="terminal"] .tw-panel.tw-postcard { --panel-paper: #f3ecdc; }
 .tw-panel.tw-postcard .tw-x { background: #fbf7ee; color: #2b2620; border-color: #ddd1b8; }
 .tw-panel.tw-postcard .tw-nav { display: none; }
 .tw-panel.tw-postcard .tw-panel-in { padding: 20px 20px 18px; }
@@ -1051,7 +1057,7 @@
 .tw-ziptie { stroke: #f4f1ea; stroke-width: 1; stroke-linecap: round; }
 .tw-conduit { fill: #5d616b; stroke: var(--tw-line); stroke-width: .6; }
 /* The postcard follows the theme. */
-[data-theme="midnight"] .tw-panel.tw-postcard, [data-theme="terminal"] .tw-panel.tw-postcard { background: #1e1a15; color: #efe6d6; border-color: #3a3128; }
+[data-theme="midnight"] .tw-panel.tw-postcard, [data-theme="terminal"] .tw-panel.tw-postcard { --panel-paper: #1e1a15; color: #efe6d6; border-color: #3a3128; }
 [data-theme="midnight"] .tw-panel.tw-postcard .tw-x, [data-theme="terminal"] .tw-panel.tw-postcard .tw-x { background: #1e1a15; color: #efe6d6; border-color: #4a3f33; }
 [data-theme="midnight"] .tw-pc-note p, [data-theme="terminal"] .tw-pc-note p { color: #e6dccb; }
 [data-theme="midnight"] .tw-pc-note, [data-theme="terminal"] .tw-pc-note { background: repeating-linear-gradient(180deg, transparent 0 23.3px, rgba(239, 230, 214, .1) 23.3px 24.3px); background-position: 0 1px; }
@@ -1579,11 +1585,11 @@ html.is-loading #experience .tw-stage { background: var(--bg); }
 
 /* One envelope at a time, from the addressed front to the sealed back. */
 .tw-panel.tw-mail-panel {
-  background: radial-gradient(ellipse at 40% 5%, #f8f0df, transparent 56%), #ece0c8;
+  --panel-paper: #ece0c8; background: radial-gradient(ellipse at 40% 5%, #f8f0df, transparent 56%), var(--panel-paper);
   color: #47372d; border-color: #b79d7d; width: min(560px, 49%); font-family: 'Nunito', ui-rounded, system-ui, sans-serif;
 }
 [data-theme="midnight"] .tw-panel.tw-mail-panel, [data-theme="terminal"] .tw-panel.tw-mail-panel {
-  background: radial-gradient(ellipse at 40% 5%, #504038, transparent 56%), #3b3029;
+  --panel-paper: #3b3029; background: radial-gradient(ellipse at 40% 5%, #504038, transparent 56%), var(--panel-paper);
   color: #f5e5cc; border-color: #7a6350;
 }
 .tw-mail-panel .tw-nav { display: none; }
